@@ -1,0 +1,33 @@
+logging:
+    level:
+        com:
+            wensheng: TRACE
+        root: WARN
+mongodb:
+    database: chaodi
+    host: localhost
+    port: 27017
+spring:
+    datasource:
+        password: wensheng
+        url: jdbc:mysql://localhost:3306/ZCC
+        username: root
+    jpa:
+        generate-ddl: false
+        hibernate:
+            ddl-auto: 'none '
+            naming:
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        properties:
+            hibernate:
+                hbm2ddl:
+                    auto: none
+        show-sql: true
+    user:
+        datasource:
+            driver-class-name: com.mysql.jdbc.Driver
+weixin:
+    accessUrl: https://api.weixin.qq.com/sns/oauth2/access_token
+    appId: wx0b3ccac3723da62d
+    appSec: e1fb60842affad010ecff2ee9a495fdf
+    loginUrl: https://api.weixin.qq.com/sns/jscode2session

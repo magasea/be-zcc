@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />
+    <result column="title" jdbcType="CHAR" property="title" />
+    <result column="base_amount" jdbcType="CHAR" property="baseAmount" />
+    <result column="base_date" jdbcType="TIMESTAMP" property="baseDate" />
+    <result column="total_amount" jdbcType="CHAR" property="totalAmount" />
+    <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="amc_debt_code" jdbcType="CHAR" property="amcDebtCode" />
+    <result column="court_name" jdbcType="CHAR" property="courtName" />
+    <result column="court_province" jdbcType="CHAR" property="courtProvince" />
+    <result column="court_city" jdbcType="CHAR" property="courtCity" />
+    <result column="court_county" jdbcType="CHAR" property="courtCounty" />
+    <result column="edit_status" jdbcType="INTEGER" property="editStatus" />
+    <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
+    <result column="estimated_price" jdbcType="CHAR" property="estimatedPrice" />
+    <result column="rating" jdbcType="CHAR" property="rating" />
+    <result column="amc_contact1" jdbcType="CHAR" property="amcContact1" />
+    <result column="amc_contact2" jdbcType="CHAR" property="amcContact2" />
+    <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
+    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
+    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, debtpack_id, title, base_amount, base_date, total_amount, settle_date, status, 
+    amc_debt_code, court_name, court_province, court_city, court_county, edit_status, 
+    publish_date, estimated_price, rating, amc_contact1, amc_contact2, is_recommanded, 
+    start_date, end_date
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AMC_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample">
+    delete from AMC_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
+    insert into AMC_DEBT (id, debtpack_id, title, 
+      base_amount, base_date, total_amount, 
+      settle_date, status, amc_debt_code, 
+      court_name, court_province, court_city, 
+      court_county, edit_status, publish_date, 
+      estimated_price, rating, amc_contact1, 
+      amc_contact2, is_recommanded, start_date, 
+      end_date)
+    values (#{id,jdbcType=BIGINT}, #{debtpackId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
+      #{baseAmount,jdbcType=CHAR}, #{baseDate,jdbcType=TIMESTAMP}, #{totalAmount,jdbcType=CHAR}, 
+      #{settleDate,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{amcDebtCode,jdbcType=CHAR}, 
+      #{courtName,jdbcType=CHAR}, #{courtProvince,jdbcType=CHAR}, #{courtCity,jdbcType=CHAR}, 
+      #{courtCounty,jdbcType=CHAR}, #{editStatus,jdbcType=INTEGER}, #{publishDate,jdbcType=TIMESTAMP}, 
+      #{estimatedPrice,jdbcType=CHAR}, #{rating,jdbcType=CHAR}, #{amcContact1,jdbcType=CHAR}, 
+      #{amcContact2,jdbcType=CHAR}, #{isRecommanded,jdbcType=INTEGER}, #{startDate,jdbcType=TIMESTAMP}, 
+      #{endDate,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
+    insert into AMC_DEBT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="debtpackId != null">
+        debtpack_id,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="baseAmount != null">
+        base_amount,
+      </if>
+      <if test="baseDate != null">
+        base_date,
+      </if>
+      <if test="totalAmount != null">
+        total_amount,
+      </if>
+      <if test="settleDate != null">
+        settle_date,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="amcDebtCode != null">
+        amc_debt_code,
+      </if>
+      <if test="courtName != null">
+        court_name,
+      </if>
+      <if test="courtProvince != null">
+        court_province,
+      </if>
+      <if test="courtCity != null">
+        court_city,
+      </if>
+      <if test="courtCounty != null">
+        court_county,
+      </if>
+      <if test="editStatus != null">
+        edit_status,
+      </if>
+      <if test="publishDate != null">
+        publish_date,
+      </if>
+      <if test="estimatedPrice != null">
+        estimated_price,
+      </if>
+      <if test="rating != null">
+        rating,
+      </if>
+      <if test="amcContact1 != null">
+        amc_contact1,
+      </if>
+      <if test="amcContact2 != null">
+        amc_contact2,
+      </if>
+      <if test="isRecommanded != null">
+        is_recommanded,
+      </if>
+      <if test="startDate != null">
+        start_date,
+      </if>
+      <if test="endDate != null">
+        end_date,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="debtpackId != null">
+        #{debtpackId,jdbcType=BIGINT},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=CHAR},
+      </if>
+      <if test="baseAmount != null">
+        #{baseAmount,jdbcType=CHAR},
+      </if>
+      <if test="baseDate != null">
+        #{baseDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="totalAmount != null">
+        #{totalAmount,jdbcType=CHAR},
+      </if>
+      <if test="settleDate != null">
+        #{settleDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="amcDebtCode != null">
+        #{amcDebtCode,jdbcType=CHAR},
+      </if>
+      <if test="courtName != null">
+        #{courtName,jdbcType=CHAR},
+      </if>
+      <if test="courtProvince != null">
+        #{courtProvince,jdbcType=CHAR},
+      </if>
+      <if test="courtCity != null">
+        #{courtCity,jdbcType=CHAR},
+      </if>
+      <if test="courtCounty != null">
+        #{courtCounty,jdbcType=CHAR},
+      </if>
+      <if test="editStatus != null">
+        #{editStatus,jdbcType=INTEGER},
+      </if>
+      <if test="publishDate != null">
+        #{publishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estimatedPrice != null">
+        #{estimatedPrice,jdbcType=CHAR},
+      </if>
+      <if test="rating != null">
+        #{rating,jdbcType=CHAR},
+      </if>
+      <if test="amcContact1 != null">
+        #{amcContact1,jdbcType=CHAR},
+      </if>
+      <if test="amcContact2 != null">
+        #{amcContact2,jdbcType=CHAR},
+      </if>
+      <if test="isRecommanded != null">
+        #{isRecommanded,jdbcType=INTEGER},
+      </if>
+      <if test="startDate != null">
+        #{startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endDate != null">
+        #{endDate,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultType="java.lang.Long">
+    select count(*) from AMC_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update AMC_DEBT
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.debtpackId != null">
+        debtpack_id = #{record.debtpackId,jdbcType=BIGINT},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=CHAR},
+      </if>
+      <if test="record.baseAmount != null">
+        base_amount = #{record.baseAmount,jdbcType=CHAR},
+      </if>
+      <if test="record.baseDate != null">
+        base_date = #{record.baseDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.totalAmount != null">
+        total_amount = #{record.totalAmount,jdbcType=CHAR},
+      </if>
+      <if test="record.settleDate != null">
+        settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.amcDebtCode != null">
+        amc_debt_code = #{record.amcDebtCode,jdbcType=CHAR},
+      </if>
+      <if test="record.courtName != null">
+        court_name = #{record.courtName,jdbcType=CHAR},
+      </if>
+      <if test="record.courtProvince != null">
+        court_province = #{record.courtProvince,jdbcType=CHAR},
+      </if>
+      <if test="record.courtCity != null">
+        court_city = #{record.courtCity,jdbcType=CHAR},
+      </if>
+      <if test="record.courtCounty != null">
+        court_county = #{record.courtCounty,jdbcType=CHAR},
+      </if>
+      <if test="record.editStatus != null">
+        edit_status = #{record.editStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.publishDate != null">
+        publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.estimatedPrice != null">
+        estimated_price = #{record.estimatedPrice,jdbcType=CHAR},
+      </if>
+      <if test="record.rating != null">
+        rating = #{record.rating,jdbcType=CHAR},
+      </if>
+      <if test="record.amcContact1 != null">
+        amc_contact1 = #{record.amcContact1,jdbcType=CHAR},
+      </if>
+      <if test="record.amcContact2 != null">
+        amc_contact2 = #{record.amcContact2,jdbcType=CHAR},
+      </if>
+      <if test="record.isRecommanded != null">
+        is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
+      </if>
+      <if test="record.startDate != null">
+        start_date = #{record.startDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.endDate != null">
+        end_date = #{record.endDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update AMC_DEBT
+    set id = #{record.id,jdbcType=BIGINT},
+      debtpack_id = #{record.debtpackId,jdbcType=BIGINT},
+      title = #{record.title,jdbcType=CHAR},
+      base_amount = #{record.baseAmount,jdbcType=CHAR},
+      base_date = #{record.baseDate,jdbcType=TIMESTAMP},
+      total_amount = #{record.totalAmount,jdbcType=CHAR},
+      settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      amc_debt_code = #{record.amcDebtCode,jdbcType=CHAR},
+      court_name = #{record.courtName,jdbcType=CHAR},
+      court_province = #{record.courtProvince,jdbcType=CHAR},
+      court_city = #{record.courtCity,jdbcType=CHAR},
+      court_county = #{record.courtCounty,jdbcType=CHAR},
+      edit_status = #{record.editStatus,jdbcType=INTEGER},
+      publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
+      estimated_price = #{record.estimatedPrice,jdbcType=CHAR},
+      rating = #{record.rating,jdbcType=CHAR},
+      amc_contact1 = #{record.amcContact1,jdbcType=CHAR},
+      amc_contact2 = #{record.amcContact2,jdbcType=CHAR},
+      is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
+      start_date = #{record.startDate,jdbcType=TIMESTAMP},
+      end_date = #{record.endDate,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

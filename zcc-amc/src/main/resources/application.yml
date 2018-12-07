@@ -4,30 +4,58 @@ logging:
             wensheng: TRACE
         root: WARN
 mongodb:
-    database: chaodi
-    host: localhost
+  primary:
+    host: 10.20.100.227
     port: 27017
+    database: wensheng
+  secondary:
+    host: 10.20.100.236
+    port: 27017
+    database: second
+
 spring:
-    datasource:
-        password: wensheng
-        url: jdbc:mysql://localhost:3306/ZCC
-        username: root
-    jpa:
-        generate-ddl: false
-        hibernate:
-            ddl-auto: 'none '
-            naming:
-                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-        properties:
-            hibernate:
-                hbm2ddl:
-                    auto: none
-        show-sql: true
-    user:
-        datasource:
-            driver-class-name: com.mysql.jdbc.Driver
-weixin:
-    accessUrl: https://api.weixin.qq.com/sns/oauth2/access_token
-    appId: wx0b3ccac3723da62d
-    appSec: e1fb60842affad010ecff2ee9a495fdf
-    loginUrl: https://api.weixin.qq.com/sns/jscode2session
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+  datasource:
+      password: wensheng
+      url: jdbc:mysql://localhost:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8
+      username: root
+      driverClassName: com.mysql.cj.jdbc.Driver
+      filters: stat
+      maxActive: 20
+      initialSize: 1
+      maxWait: 60000
+      minIdle: 1
+      timeBetweenEvictionRunsMillis: 60000
+      minEvictableIdleTimeMillis: 300000
+      validationQuery: select 'x'
+      testWhileIdle: true
+      testOnBorrow: false
+      testOnReturn: false
+      poolPreparedStatements: true
+      maxOpenPreparedStatements: 20
+
+
+#  jpa:
+#      generate-ddl: false
+#      hibernate:
+#          ddl-auto: 'none'
+#          naming:
+#              physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#      properties:
+#          hibernate:
+#              hbm2ddl:
+#                  auto: none
+#      show-sql: true
+  user:
+      datasource:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+
+
+mybatis:
+  type-aliases-package: com.wensheng.zcc.amc.module
+  mapper-locations: classpath:/mapper/*Mapper.xml
+
+
+
+

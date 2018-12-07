@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson">
+    <result column="id" jdbcType="BIGINT" property="id" />
+    <result column="last_name" jdbcType="CHAR" property="lastName" />
+    <result column="first_name" jdbcType="CHAR" property="firstName" />
+    <result column="gender" jdbcType="INTEGER" property="gender" />
+    <result column="personal_doc_type" jdbcType="INTEGER" property="personalDocType" />
+    <result column="personal_doc" jdbcType="CHAR" property="personalDoc" />
+    <result column="nation" jdbcType="CHAR" property="nation" />
+    <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="amc_cmpy_id" jdbcType="BIGINT" property="amcCmpyId" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, last_name, first_name, gender, personal_doc_type, personal_doc, nation, notes, 
+    address, amc_cmpy_id
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPersonExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AMC_PERSON
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPersonExample">
+    delete from AMC_PERSON
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson">
+    insert into AMC_PERSON (id, last_name, first_name, 
+      gender, personal_doc_type, personal_doc, 
+      nation, notes, address, 
+      amc_cmpy_id)
+    values (#{id,jdbcType=BIGINT}, #{lastName,jdbcType=CHAR}, #{firstName,jdbcType=CHAR}, 
+      #{gender,jdbcType=INTEGER}, #{personalDocType,jdbcType=INTEGER}, #{personalDoc,jdbcType=CHAR}, 
+      #{nation,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, 
+      #{amcCmpyId,jdbcType=BIGINT})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson">
+    insert into AMC_PERSON
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="lastName != null">
+        last_name,
+      </if>
+      <if test="firstName != null">
+        first_name,
+      </if>
+      <if test="gender != null">
+        gender,
+      </if>
+      <if test="personalDocType != null">
+        personal_doc_type,
+      </if>
+      <if test="personalDoc != null">
+        personal_doc,
+      </if>
+      <if test="nation != null">
+        nation,
+      </if>
+      <if test="notes != null">
+        notes,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="amcCmpyId != null">
+        amc_cmpy_id,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="lastName != null">
+        #{lastName,jdbcType=CHAR},
+      </if>
+      <if test="firstName != null">
+        #{firstName,jdbcType=CHAR},
+      </if>
+      <if test="gender != null">
+        #{gender,jdbcType=INTEGER},
+      </if>
+      <if test="personalDocType != null">
+        #{personalDocType,jdbcType=INTEGER},
+      </if>
+      <if test="personalDoc != null">
+        #{personalDoc,jdbcType=CHAR},
+      </if>
+      <if test="nation != null">
+        #{nation,jdbcType=CHAR},
+      </if>
+      <if test="notes != null">
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="amcCmpyId != null">
+        #{amcCmpyId,jdbcType=BIGINT},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPersonExample" resultType="java.lang.Long">
+    select count(*) from AMC_PERSON
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update AMC_PERSON
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.lastName != null">
+        last_name = #{record.lastName,jdbcType=CHAR},
+      </if>
+      <if test="record.firstName != null">
+        first_name = #{record.firstName,jdbcType=CHAR},
+      </if>
+      <if test="record.gender != null">
+        gender = #{record.gender,jdbcType=INTEGER},
+      </if>
+      <if test="record.personalDocType != null">
+        personal_doc_type = #{record.personalDocType,jdbcType=INTEGER},
+      </if>
+      <if test="record.personalDoc != null">
+        personal_doc = #{record.personalDoc,jdbcType=CHAR},
+      </if>
+      <if test="record.nation != null">
+        nation = #{record.nation,jdbcType=CHAR},
+      </if>
+      <if test="record.notes != null">
+        notes = #{record.notes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amcCmpyId != null">
+        amc_cmpy_id = #{record.amcCmpyId,jdbcType=BIGINT},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update AMC_PERSON
+    set id = #{record.id,jdbcType=BIGINT},
+      last_name = #{record.lastName,jdbcType=CHAR},
+      first_name = #{record.firstName,jdbcType=CHAR},
+      gender = #{record.gender,jdbcType=INTEGER},
+      personal_doc_type = #{record.personalDocType,jdbcType=INTEGER},
+      personal_doc = #{record.personalDoc,jdbcType=CHAR},
+      nation = #{record.nation,jdbcType=CHAR},
+      notes = #{record.notes,jdbcType=VARCHAR},
+      address = #{record.address,jdbcType=VARCHAR},
+      amc_cmpy_id = #{record.amcCmpyId,jdbcType=BIGINT}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+</mapper>

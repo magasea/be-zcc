@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="reg_id" jdbcType="CHAR" property="regId" />
     <result column="social_creditid" jdbcType="CHAR" property="socialCreditid" />
@@ -83,6 +83,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AMC_CMPY
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from AMC_CMPY
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample">
     delete from AMC_CMPY
     <if test="_parameter != null">
@@ -90,17 +100,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
-    insert into AMC_CMPY (id, name, reg_id, social_creditid, 
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_CMPY (name, reg_id, social_creditid, 
       related_url)
-    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{regId,jdbcType=CHAR}, #{socialCreditid,jdbcType=CHAR}, 
+    values (#{name,jdbcType=CHAR}, #{regId,jdbcType=CHAR}, #{socialCreditid,jdbcType=CHAR}, 
       #{relatedUrl,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into AMC_CMPY
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="name != null">
         name,
       </if>
@@ -115,9 +128,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
@@ -171,5 +181,31 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
+    update AMC_CMPY
+    <set>
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="regId != null">
+        reg_id = #{regId,jdbcType=CHAR},
+      </if>
+      <if test="socialCreditid != null">
+        social_creditid = #{socialCreditid,jdbcType=CHAR},
+      </if>
+      <if test="relatedUrl != null">
+        related_url = #{relatedUrl,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
+    update AMC_CMPY
+    set name = #{name,jdbcType=CHAR},
+      reg_id = #{regId,jdbcType=CHAR},
+      social_creditid = #{socialCreditid,jdbcType=CHAR},
+      related_url = #{relatedUrl,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

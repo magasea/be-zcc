@@ -10,13 +10,21 @@ public interface AmcDebtpackMapper {
 
     int deleteByExample(AmcDebtpackExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcDebtpack record);
 
     int insertSelective(AmcDebtpack record);
 
     List<AmcDebtpack> selectByExample(AmcDebtpackExample example);
 
+    AmcDebtpack selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcDebtpack record, @Param("example") AmcDebtpackExample example);
 
     int updateByExample(@Param("record") AmcDebtpack record, @Param("example") AmcDebtpackExample example);
+
+    int updateByPrimaryKeySelective(AmcDebtpack record);
+
+    int updateByPrimaryKey(AmcDebtpack record);
 }

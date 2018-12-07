@@ -89,17 +89,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRole">
-    insert into RESOURCE_ROLE (id, asset_type, debt_type, 
-      access_role)
-    values (#{id,jdbcType=BIGINT}, #{assetType,jdbcType=INTEGER}, #{debtType,jdbcType=INTEGER}, 
-      #{accessRole,jdbcType=INTEGER})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into RESOURCE_ROLE (asset_type, debt_type, access_role
+      )
+    values (#{assetType,jdbcType=INTEGER}, #{debtType,jdbcType=INTEGER}, #{accessRole,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRole">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into RESOURCE_ROLE
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="assetType != null">
         asset_type,
       </if>
@@ -111,9 +114,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="assetType != null">
         #{assetType,jdbcType=INTEGER},
       </if>

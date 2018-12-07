@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
     <result column="amount" jdbcType="CHAR" property="amount" />
     <result column="type" jdbcType="INTEGER" property="type" />
@@ -85,6 +85,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AMC_GRNTCTRCT
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from AMC_GRNTCTRCT
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample">
     delete from AMC_GRNTCTRCT
     <if test="_parameter != null">
@@ -92,19 +102,22 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
-    insert into AMC_GRNTCTRCT (id, debt_id, amount, 
-      type, notes, contract_number, 
-      sign_date)
-    values (#{id,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, #{amount,jdbcType=CHAR}, 
-      #{type,jdbcType=INTEGER}, #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, 
-      #{signDate,jdbcType=TIMESTAMP})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_GRNTCTRCT (debt_id, amount, type, 
+      notes, contract_number, sign_date
+      )
+    values (#{debtId,jdbcType=BIGINT}, #{amount,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, 
+      #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, #{signDate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into AMC_GRNTCTRCT
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="debtId != null">
         debt_id,
       </if>
@@ -125,9 +138,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
       </if>
@@ -195,5 +205,39 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
+    update AMC_GRNTCTRCT
+    <set>
+      <if test="debtId != null">
+        debt_id = #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=CHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="notes != null">
+        notes = #{notes,jdbcType=CHAR},
+      </if>
+      <if test="contractNumber != null">
+        contract_number = #{contractNumber,jdbcType=CHAR},
+      </if>
+      <if test="signDate != null">
+        sign_date = #{signDate,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
+    update AMC_GRNTCTRCT
+    set debt_id = #{debtId,jdbcType=BIGINT},
+      amount = #{amount,jdbcType=CHAR},
+      type = #{type,jdbcType=INTEGER},
+      notes = #{notes,jdbcType=CHAR},
+      contract_number = #{contractNumber,jdbcType=CHAR},
+      sign_date = #{signDate,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

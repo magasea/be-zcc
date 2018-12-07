@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyShareholderMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholder">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="amount" jdbcType="CHAR" property="amount" />
     <result column="percentage" jdbcType="CHAR" property="percentage" />
     <result column="name" jdbcType="CHAR" property="name" />
@@ -92,6 +92,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AMC_CMPY_SHAREHOLDER
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from AMC_CMPY_SHAREHOLDER
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholderExample">
     delete from AMC_CMPY_SHAREHOLDER
     <if test="_parameter != null">
@@ -99,23 +109,26 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholder">
-    insert into AMC_CMPY_SHAREHOLDER (id, amount, percentage, 
-      name, person_id, cmpy_id, 
-      subscribed_amount, subscribed_date, paid_amount, 
-      paid_date, parent_holder_id, type, 
-      link)
-    values (#{id,jdbcType=BIGINT}, #{amount,jdbcType=CHAR}, #{percentage,jdbcType=CHAR}, 
-      #{name,jdbcType=CHAR}, #{personId,jdbcType=BIGINT}, #{cmpyId,jdbcType=BIGINT}, 
-      #{subscribedAmount,jdbcType=CHAR}, #{subscribedDate,jdbcType=TIMESTAMP}, #{paidAmount,jdbcType=CHAR}, 
-      #{paidDate,jdbcType=TIMESTAMP}, #{parentHolderId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
-      #{link,jdbcType=VARCHAR})
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_CMPY_SHAREHOLDER (amount, percentage, name, 
+      person_id, cmpy_id, subscribed_amount, 
+      subscribed_date, paid_amount, paid_date, 
+      parent_holder_id, type, link
+      )
+    values (#{amount,jdbcType=CHAR}, #{percentage,jdbcType=CHAR}, #{name,jdbcType=CHAR}, 
+      #{personId,jdbcType=BIGINT}, #{cmpyId,jdbcType=BIGINT}, #{subscribedAmount,jdbcType=CHAR}, 
+      #{subscribedDate,jdbcType=TIMESTAMP}, #{paidAmount,jdbcType=CHAR}, #{paidDate,jdbcType=TIMESTAMP}, 
+      #{parentHolderId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{link,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholder">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into AMC_CMPY_SHAREHOLDER
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="amount != null">
         amount,
       </if>
@@ -154,9 +167,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="amount != null">
         #{amount,jdbcType=CHAR},
       </if>
@@ -266,5 +276,63 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholder">
+    update AMC_CMPY_SHAREHOLDER
+    <set>
+      <if test="amount != null">
+        amount = #{amount,jdbcType=CHAR},
+      </if>
+      <if test="percentage != null">
+        percentage = #{percentage,jdbcType=CHAR},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="personId != null">
+        person_id = #{personId,jdbcType=BIGINT},
+      </if>
+      <if test="cmpyId != null">
+        cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="subscribedAmount != null">
+        subscribed_amount = #{subscribedAmount,jdbcType=CHAR},
+      </if>
+      <if test="subscribedDate != null">
+        subscribed_date = #{subscribedDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="paidAmount != null">
+        paid_amount = #{paidAmount,jdbcType=CHAR},
+      </if>
+      <if test="paidDate != null">
+        paid_date = #{paidDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="parentHolderId != null">
+        parent_holder_id = #{parentHolderId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="link != null">
+        link = #{link,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholder">
+    update AMC_CMPY_SHAREHOLDER
+    set amount = #{amount,jdbcType=CHAR},
+      percentage = #{percentage,jdbcType=CHAR},
+      name = #{name,jdbcType=CHAR},
+      person_id = #{personId,jdbcType=BIGINT},
+      cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      subscribed_amount = #{subscribedAmount,jdbcType=CHAR},
+      subscribed_date = #{subscribedDate,jdbcType=TIMESTAMP},
+      paid_amount = #{paidAmount,jdbcType=CHAR},
+      paid_date = #{paidDate,jdbcType=TIMESTAMP},
+      parent_holder_id = #{parentHolderId,jdbcType=BIGINT},
+      type = #{type,jdbcType=INTEGER},
+      link = #{link,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

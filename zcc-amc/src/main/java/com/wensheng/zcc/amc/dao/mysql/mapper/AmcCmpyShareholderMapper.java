@@ -10,13 +10,21 @@ public interface AmcCmpyShareholderMapper {
 
     int deleteByExample(AmcCmpyShareholderExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcCmpyShareholder record);
 
     int insertSelective(AmcCmpyShareholder record);
 
     List<AmcCmpyShareholder> selectByExample(AmcCmpyShareholderExample example);
 
+    AmcCmpyShareholder selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcCmpyShareholder record, @Param("example") AmcCmpyShareholderExample example);
 
     int updateByExample(@Param("record") AmcCmpyShareholder record, @Param("example") AmcCmpyShareholderExample example);
+
+    int updateByPrimaryKeySelective(AmcCmpyShareholder record);
+
+    int updateByPrimaryKey(AmcCmpyShareholder record);
 }

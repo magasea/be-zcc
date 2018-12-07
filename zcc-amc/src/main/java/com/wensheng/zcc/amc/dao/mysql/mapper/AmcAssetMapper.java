@@ -10,13 +10,21 @@ public interface AmcAssetMapper {
 
     int deleteByExample(AmcAssetExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcAsset record);
 
     int insertSelective(AmcAsset record);
 
     List<AmcAsset> selectByExample(AmcAssetExample example);
 
+    AmcAsset selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcAsset record, @Param("example") AmcAssetExample example);
 
     int updateByExample(@Param("record") AmcAsset record, @Param("example") AmcAssetExample example);
+
+    int updateByPrimaryKeySelective(AmcAsset record);
+
+    int updateByPrimaryKey(AmcAsset record);
 }

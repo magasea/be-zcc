@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -102,6 +102,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AMC_ASSET
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from AMC_ASSET
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample">
     delete from AMC_ASSET
     <if test="_parameter != null">
@@ -109,29 +119,30 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
-    insert into AMC_ASSET (id, title, type, 
-      status, state, edit_status, 
-      amc_id, amc_code, estm_price, 
-      debt_id, init_price, restrictions, 
-      area, land_area, publish_date, 
-      province, city, county, street, 
-      building_name, gps_lng, gps_lat
-      )
-    values (#{id,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, 
-      #{status,jdbcType=INTEGER}, #{state,jdbcType=INTEGER}, #{editStatus,jdbcType=INTEGER}, 
-      #{amcId,jdbcType=BIGINT}, #{amcCode,jdbcType=CHAR}, #{estmPrice,jdbcType=CHAR}, 
-      #{debtId,jdbcType=BIGINT}, #{initPrice,jdbcType=CHAR}, #{restrictions,jdbcType=INTEGER}, 
-      #{area,jdbcType=CHAR}, #{landArea,jdbcType=CHAR}, #{publishDate,jdbcType=DATE}, 
-      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, 
-      #{buildingName,jdbcType=CHAR}, #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}
-      )
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_ASSET (title, type, status, 
+      state, edit_status, amc_id, 
+      amc_code, estm_price, debt_id, 
+      init_price, restrictions, area, 
+      land_area, publish_date, province, 
+      city, county, street, building_name, 
+      gps_lng, gps_lat)
+    values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
+      #{state,jdbcType=INTEGER}, #{editStatus,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
+      #{amcCode,jdbcType=CHAR}, #{estmPrice,jdbcType=CHAR}, #{debtId,jdbcType=BIGINT}, 
+      #{initPrice,jdbcType=CHAR}, #{restrictions,jdbcType=INTEGER}, #{area,jdbcType=CHAR}, 
+      #{landArea,jdbcType=CHAR}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
+      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into AMC_ASSET
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="title != null">
         title,
       </if>
@@ -197,9 +208,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="title != null">
         #{title,jdbcType=CHAR},
       </if>
@@ -372,5 +380,99 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
+    update AMC_ASSET
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=CHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="state != null">
+        state = #{state,jdbcType=INTEGER},
+      </if>
+      <if test="editStatus != null">
+        edit_status = #{editStatus,jdbcType=INTEGER},
+      </if>
+      <if test="amcId != null">
+        amc_id = #{amcId,jdbcType=BIGINT},
+      </if>
+      <if test="amcCode != null">
+        amc_code = #{amcCode,jdbcType=CHAR},
+      </if>
+      <if test="estmPrice != null">
+        estm_price = #{estmPrice,jdbcType=CHAR},
+      </if>
+      <if test="debtId != null">
+        debt_id = #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="initPrice != null">
+        init_price = #{initPrice,jdbcType=CHAR},
+      </if>
+      <if test="restrictions != null">
+        restrictions = #{restrictions,jdbcType=INTEGER},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=CHAR},
+      </if>
+      <if test="landArea != null">
+        land_area = #{landArea,jdbcType=CHAR},
+      </if>
+      <if test="publishDate != null">
+        publish_date = #{publishDate,jdbcType=DATE},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=CHAR},
+      </if>
+      <if test="county != null">
+        county = #{county,jdbcType=CHAR},
+      </if>
+      <if test="street != null">
+        street = #{street,jdbcType=CHAR},
+      </if>
+      <if test="buildingName != null">
+        building_name = #{buildingName,jdbcType=CHAR},
+      </if>
+      <if test="gpsLng != null">
+        gps_lng = #{gpsLng,jdbcType=CHAR},
+      </if>
+      <if test="gpsLat != null">
+        gps_lat = #{gpsLat,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
+    update AMC_ASSET
+    set title = #{title,jdbcType=CHAR},
+      type = #{type,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      state = #{state,jdbcType=INTEGER},
+      edit_status = #{editStatus,jdbcType=INTEGER},
+      amc_id = #{amcId,jdbcType=BIGINT},
+      amc_code = #{amcCode,jdbcType=CHAR},
+      estm_price = #{estmPrice,jdbcType=CHAR},
+      debt_id = #{debtId,jdbcType=BIGINT},
+      init_price = #{initPrice,jdbcType=CHAR},
+      restrictions = #{restrictions,jdbcType=INTEGER},
+      area = #{area,jdbcType=CHAR},
+      land_area = #{landArea,jdbcType=CHAR},
+      publish_date = #{publishDate,jdbcType=DATE},
+      province = #{province,jdbcType=CHAR},
+      city = #{city,jdbcType=CHAR},
+      county = #{county,jdbcType=CHAR},
+      street = #{street,jdbcType=CHAR},
+      building_name = #{buildingName,jdbcType=CHAR},
+      gps_lng = #{gpsLng,jdbcType=CHAR},
+      gps_lat = #{gpsLat,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

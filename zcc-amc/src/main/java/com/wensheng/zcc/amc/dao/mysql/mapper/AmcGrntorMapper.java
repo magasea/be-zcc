@@ -10,13 +10,21 @@ public interface AmcGrntorMapper {
 
     int deleteByExample(AmcGrntorExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcGrntor record);
 
     int insertSelective(AmcGrntor record);
 
     List<AmcGrntor> selectByExample(AmcGrntorExample example);
 
+    AmcGrntor selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcGrntor record, @Param("example") AmcGrntorExample example);
 
     int updateByExample(@Param("record") AmcGrntor record, @Param("example") AmcGrntorExample example);
+
+    int updateByPrimaryKeySelective(AmcGrntor record);
+
+    int updateByPrimaryKey(AmcGrntor record);
 }

@@ -10,13 +10,21 @@ public interface AmcCmpyMapper {
 
     int deleteByExample(AmcCmpyExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcCmpy record);
 
     int insertSelective(AmcCmpy record);
 
     List<AmcCmpy> selectByExample(AmcCmpyExample example);
 
+    AmcCmpy selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcCmpy record, @Param("example") AmcCmpyExample example);
 
     int updateByExample(@Param("record") AmcCmpy record, @Param("example") AmcCmpyExample example);
+
+    int updateByPrimaryKeySelective(AmcCmpy record);
+
+    int updateByPrimaryKey(AmcCmpy record);
 }

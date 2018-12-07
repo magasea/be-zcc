@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="grntctrt_id" jdbcType="BIGINT" property="grntctrtId" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
     <result column="type" jdbcType="INTEGER" property="type" />
@@ -85,6 +85,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AMC_GRNTOR
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from AMC_GRNTOR
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample">
     delete from AMC_GRNTOR
     <if test="_parameter != null">
@@ -92,19 +102,20 @@
     </if>
   </delete>
   <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
-    insert into AMC_GRNTOR (id, grntctrt_id, debt_id, 
-      type, cmpy_id, name, notes
-      )
-    values (#{id,jdbcType=BIGINT}, #{grntctrtId,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
-      #{type,jdbcType=INTEGER}, #{cmpyId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{notes,jdbcType=CHAR}
-      )
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_GRNTOR (grntctrt_id, debt_id, type, 
+      cmpy_id, name, notes)
+    values (#{grntctrtId,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
+      #{cmpyId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{notes,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
     insert into AMC_GRNTOR
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        id,
-      </if>
       <if test="grntctrtId != null">
         grntctrt_id,
       </if>
@@ -125,9 +136,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="id != null">
-        #{id,jdbcType=BIGINT},
-      </if>
       <if test="grntctrtId != null">
         #{grntctrtId,jdbcType=BIGINT},
       </if>
@@ -195,5 +203,39 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
+    update AMC_GRNTOR
+    <set>
+      <if test="grntctrtId != null">
+        grntctrt_id = #{grntctrtId,jdbcType=BIGINT},
+      </if>
+      <if test="debtId != null">
+        debt_id = #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="cmpyId != null">
+        cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="notes != null">
+        notes = #{notes,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
+    update AMC_GRNTOR
+    set grntctrt_id = #{grntctrtId,jdbcType=BIGINT},
+      debt_id = #{debtId,jdbcType=BIGINT},
+      type = #{type,jdbcType=INTEGER},
+      cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      name = #{name,jdbcType=CHAR},
+      notes = #{notes,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

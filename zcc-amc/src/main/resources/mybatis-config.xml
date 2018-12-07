@@ -5,6 +5,8 @@
 <configuration>
     <settings>
         <setting name="logImpl" value="LOG4J" />
+        <!--<setting name="useGeneratedKeys" value="true"/>-->
+        <setting name="generatedKey" value="true"/>
     </settings>
 
     <typeAliases>

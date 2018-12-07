@@ -67,7 +67,8 @@ fabric.properties
 
 .DS_Store
 .idea
-
+logs/
+**/logs/
 *.log
 **/target/
 **/untitle*/

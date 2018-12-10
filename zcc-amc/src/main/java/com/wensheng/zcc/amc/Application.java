@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.wensheng.zcc.amc.mapper")
+@MapperScan("com.wensheng.zcc.amc.dao.mysql.mapper")
 public class Application {
 
     public static void main(String[] args) {

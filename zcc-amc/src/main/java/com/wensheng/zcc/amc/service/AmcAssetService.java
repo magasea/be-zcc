@@ -1,6 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
-import com.wensheng.zcc.amc.module.dao.mysql.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
 import java.util.List;
 
@@ -10,5 +10,5 @@ import java.util.List;
  */
 public interface AmcAssetService {
 
-    List<AmcAsset> getAllAmcAssets();
+    AmcAsset getAllAmcAssets(Long key);
 }

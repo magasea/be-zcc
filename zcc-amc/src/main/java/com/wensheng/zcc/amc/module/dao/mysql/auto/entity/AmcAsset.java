@@ -2,7 +2,7 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
 import java.util.Date;
 
-public class AmcAsset {
+public class AmcAsset  {
     private Long id;
 
     private String title;

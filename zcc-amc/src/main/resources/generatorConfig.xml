@@ -10,6 +10,7 @@
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->
             <property name="suppressAllComments" value="true"/>
             <property name="generatedKeys" value="true"/>
+            <property name="useGeneratedKeys" value="true"/>
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
@@ -27,7 +28,7 @@
             <property name="trimStrings" value="true" />
         </javaModelGenerator>
 
-        <sqlMapGenerator targetPackage="com.wensheng.zcc.amc.dao.mysql.mapper"  targetProject="/home/chenwei/working/miniapp-backend/zcc-amc/src/main/resources/mappers">
+        <sqlMapGenerator targetPackage="src/main/resources/mappers"  targetProject="./">
             <property name="enableSubPackages" value="true" />
         </sqlMapGenerator>
 
@@ -38,6 +39,7 @@
         <table tableName="%">
 
                 <generatedKey column="ID" sqlStatement="MySql" identity="true"/>
+            <columnOverride column="*" javaType="Long" jdbcType="BIGINT" />
             <!--<generatedKey column="id" sqlStatement="MySql" identity="true"/>-->
         </table>
 

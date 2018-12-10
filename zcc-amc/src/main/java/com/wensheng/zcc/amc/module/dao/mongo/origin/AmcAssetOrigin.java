@@ -1,5 +1,8 @@
 package com.wensheng.zcc.amc.module.dao.mongo.origin;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -40,6 +43,7 @@ import java.util.Objects;
         "reportPath": "/reports/Asset_Report/Asset_Report_6917.pdf"
  */
 @Document(collection = "asset")
+@Data
 public class AmcAssetOrigin implements Serializable {
     String title;					// 抵押物名称
     String mainPic;					// 抵押物主图片路径
@@ -84,9 +88,10 @@ public class AmcAssetOrigin implements Serializable {
     boolean isRecommanded = false; //是否推荐
     Date startDate;      //推荐资产的开始时间
     Date endDate;        //推荐资产的结束时间
-
+    Long debtsNo;
     List debts ;
 //    UserCompany amc;
+    Long amc;
 
     String reportPath;
 

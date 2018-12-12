@@ -1,5 +1,8 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
+import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 12/10/18
  * @project zcc-backend
@@ -14,6 +17,12 @@ public enum AssetStateEnum {
 
     private int status;
     private String name;
+
+    private static final Function<String, AssetStateEnum> func =
+        EnumUtils.lookupMap(AssetStateEnum.class, e -> e.getName());
+    public static AssetStateEnum lookupByDisplayNameUtil(String name) {
+        return func.apply(name);
+    }
     AssetStateEnum(int status, String name){
         this.status = status;
         this.name = name;

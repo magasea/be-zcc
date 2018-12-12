@@ -1,5 +1,8 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
+import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 12/10/18
  * @project zcc-backend
@@ -15,7 +18,11 @@ public enum RestrictionsEnum {
         this.status = status;
         this.name = name;
     }
-
+    private static final Function<String, RestrictionsEnum> func =
+        EnumUtils.lookupMap(RestrictionsEnum.class, e -> e.getName());
+    public static RestrictionsEnum lookupByDisplayNameUtil(String name) {
+        return func.apply(name);
+    }
     public int getStatus() {
         return status;
     }

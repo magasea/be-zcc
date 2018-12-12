@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.module.dao.mongo.origin;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
@@ -45,6 +46,8 @@ import java.util.Objects;
 @Document(collection = "asset")
 @Data
 public class AmcAssetOrigin implements Serializable {
+    @Id
+    Long id;
     String title;					// 抵押物名称
     String mainPic;					// 抵押物主图片路径
     String type;						// 抵押物类别

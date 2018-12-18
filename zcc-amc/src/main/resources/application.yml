@@ -18,7 +18,7 @@ spring:
     exclude: org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   datasource:
       password: wensheng
-      url: jdbc:mysql://10.20.100.48:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8
+      url: jdbc:mysql://10.20.100.70:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8
       username: root
       driverClassName: com.mysql.cj.jdbc.Driver
       filters: stat

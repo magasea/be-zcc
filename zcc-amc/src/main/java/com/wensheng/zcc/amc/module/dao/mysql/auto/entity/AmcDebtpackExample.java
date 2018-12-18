@@ -245,62 +245,52 @@ public class AmcDebtpackExample {
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountEqualTo(String value) {
+        public Criteria andBaseAmountEqualTo(Long value) {
             addCriterion("base_amount =", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotEqualTo(String value) {
+        public Criteria andBaseAmountNotEqualTo(Long value) {
             addCriterion("base_amount <>", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThan(String value) {
+        public Criteria andBaseAmountGreaterThan(Long value) {
             addCriterion("base_amount >", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThanOrEqualTo(String value) {
+        public Criteria andBaseAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("base_amount >=", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThan(String value) {
+        public Criteria andBaseAmountLessThan(Long value) {
             addCriterion("base_amount <", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThanOrEqualTo(String value) {
+        public Criteria andBaseAmountLessThanOrEqualTo(Long value) {
             addCriterion("base_amount <=", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLike(String value) {
-            addCriterion("base_amount like", value, "baseAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andBaseAmountNotLike(String value) {
-            addCriterion("base_amount not like", value, "baseAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andBaseAmountIn(List<String> values) {
+        public Criteria andBaseAmountIn(List<Long> values) {
             addCriterion("base_amount in", values, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotIn(List<String> values) {
+        public Criteria andBaseAmountNotIn(List<Long> values) {
             addCriterion("base_amount not in", values, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountBetween(String value1, String value2) {
+        public Criteria andBaseAmountBetween(Long value1, Long value2) {
             addCriterion("base_amount between", value1, value2, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotBetween(String value1, String value2) {
+        public Criteria andBaseAmountNotBetween(Long value1, Long value2) {
             addCriterion("base_amount not between", value1, value2, "baseAmount");
             return (Criteria) this;
         }
@@ -315,62 +305,52 @@ public class AmcDebtpackExample {
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountEqualTo(String value) {
+        public Criteria andTotalAmountEqualTo(Long value) {
             addCriterion("total_amount =", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotEqualTo(String value) {
+        public Criteria andTotalAmountNotEqualTo(Long value) {
             addCriterion("total_amount <>", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountGreaterThan(String value) {
+        public Criteria andTotalAmountGreaterThan(Long value) {
             addCriterion("total_amount >", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountGreaterThanOrEqualTo(String value) {
+        public Criteria andTotalAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("total_amount >=", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLessThan(String value) {
+        public Criteria andTotalAmountLessThan(Long value) {
             addCriterion("total_amount <", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLessThanOrEqualTo(String value) {
+        public Criteria andTotalAmountLessThanOrEqualTo(Long value) {
             addCriterion("total_amount <=", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLike(String value) {
-            addCriterion("total_amount like", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountNotLike(String value) {
-            addCriterion("total_amount not like", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountIn(List<String> values) {
+        public Criteria andTotalAmountIn(List<Long> values) {
             addCriterion("total_amount in", values, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotIn(List<String> values) {
+        public Criteria andTotalAmountNotIn(List<Long> values) {
             addCriterion("total_amount not in", values, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountBetween(String value1, String value2) {
+        public Criteria andTotalAmountBetween(Long value1, Long value2) {
             addCriterion("total_amount between", value1, value2, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotBetween(String value1, String value2) {
+        public Criteria andTotalAmountNotBetween(Long value1, Long value2) {
             addCriterion("total_amount not between", value1, value2, "totalAmount");
             return (Criteria) this;
         }

@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="amount" jdbcType="CHAR" property="amount" />
+    <result column="amount" jdbcType="BIGINT" property="amount" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="notes" jdbcType="CHAR" property="notes" />
     <result column="contract_number" jdbcType="CHAR" property="contractNumber" />
@@ -108,7 +108,7 @@
     insert into AMC_GRNTCTRCT (debt_id, amount, type, 
       notes, contract_number, sign_date
       )
-    values (#{debtId,jdbcType=BIGINT}, #{amount,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, 
+    values (#{debtId,jdbcType=BIGINT}, #{amount,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
       #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, #{signDate,jdbcType=TIMESTAMP}
       )
   </insert>
@@ -142,7 +142,7 @@
         #{debtId,jdbcType=BIGINT},
       </if>
       <if test="amount != null">
-        #{amount,jdbcType=CHAR},
+        #{amount,jdbcType=BIGINT},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -174,7 +174,7 @@
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
       <if test="record.amount != null">
-        amount = #{record.amount,jdbcType=CHAR},
+        amount = #{record.amount,jdbcType=BIGINT},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
@@ -197,7 +197,7 @@
     update AMC_GRNTCTRCT
     set id = #{record.id,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      amount = #{record.amount,jdbcType=CHAR},
+      amount = #{record.amount,jdbcType=BIGINT},
       type = #{record.type,jdbcType=INTEGER},
       notes = #{record.notes,jdbcType=CHAR},
       contract_number = #{record.contractNumber,jdbcType=CHAR},
@@ -213,7 +213,7 @@
         debt_id = #{debtId,jdbcType=BIGINT},
       </if>
       <if test="amount != null">
-        amount = #{amount,jdbcType=CHAR},
+        amount = #{amount,jdbcType=BIGINT},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
@@ -233,7 +233,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
     update AMC_GRNTCTRCT
     set debt_id = #{debtId,jdbcType=BIGINT},
-      amount = #{amount,jdbcType=CHAR},
+      amount = #{amount,jdbcType=BIGINT},
       type = #{type,jdbcType=INTEGER},
       notes = #{notes,jdbcType=CHAR},
       contract_number = #{contractNumber,jdbcType=CHAR},

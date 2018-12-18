@@ -12,7 +12,9 @@ public enum AssetStateEnum {
     PLEDGE(1, "质押"),
     FROZEN(2, "冻结"),
     MORTGAGE(3, "抵押"),
-    SEAL(4, "查封");
+    SEAL(4, "查封"),
+    WAITING_SEAL(5, "轮候查封"),
+    ;
 
 
     private int status;

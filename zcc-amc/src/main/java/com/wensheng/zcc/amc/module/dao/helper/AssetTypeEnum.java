@@ -15,8 +15,13 @@ public enum AssetTypeEnum {
     OFFICE_BUILDING(4, "写字楼"),
     INDUSTRY_REAL_ESTATE(5, "工业房地产"),
     LAND(6, "土地"),
-    MECHANICAL_EQUIP(7, "机器设备");
-
+    MECHANICAL_EQUIP(7, "机器设备"),
+    COMMERCIAL_HOUSE(8, "商品房"),
+    OTHER(9, "其他"),
+    OTHER1(9, "其它"),
+    APARTMENT(11, "公寓"),
+    FACTORY_BUILDING(12, "厂房"),
+    ;
     AssetTypeEnum(int type, String name){
         this.type = type;
         this.name = name;

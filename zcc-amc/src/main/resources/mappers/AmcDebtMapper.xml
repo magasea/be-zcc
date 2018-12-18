@@ -5,9 +5,9 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />
     <result column="title" jdbcType="CHAR" property="title" />
-    <result column="base_amount" jdbcType="CHAR" property="baseAmount" />
+    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
     <result column="base_date" jdbcType="TIMESTAMP" property="baseDate" />
-    <result column="total_amount" jdbcType="CHAR" property="totalAmount" />
+    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="amc_debt_code" jdbcType="CHAR" property="amcDebtCode" />
@@ -24,6 +24,7 @@
     <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
     <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
     <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
+    <result column="origin_id" jdbcType="CHAR" property="originId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -87,7 +88,7 @@
     id, debtpack_id, title, base_amount, base_date, total_amount, settle_date, status, 
     amc_debt_code, court_name, court_province, court_city, court_county, edit_status, 
     publish_date, estimated_price, rating, amc_contact1, amc_contact2, is_recommanded, 
-    start_date, end_date
+    start_date, end_date, origin_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -129,16 +130,16 @@
       court_province, court_city, court_county, 
       edit_status, publish_date, estimated_price, 
       rating, amc_contact1, amc_contact2, 
-      is_recommanded, start_date, end_date
-      )
-    values (#{debtpackId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, #{baseAmount,jdbcType=CHAR}, 
-      #{baseDate,jdbcType=TIMESTAMP}, #{totalAmount,jdbcType=CHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
+      is_recommanded, start_date, end_date, 
+      origin_id)
+    values (#{debtpackId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, 
+      #{baseDate,jdbcType=TIMESTAMP}, #{totalAmount,jdbcType=BIGINT}, #{settleDate,jdbcType=TIMESTAMP}, 
       #{status,jdbcType=INTEGER}, #{amcDebtCode,jdbcType=CHAR}, #{courtName,jdbcType=CHAR}, 
       #{courtProvince,jdbcType=CHAR}, #{courtCity,jdbcType=CHAR}, #{courtCounty,jdbcType=CHAR}, 
       #{editStatus,jdbcType=INTEGER}, #{publishDate,jdbcType=TIMESTAMP}, #{estimatedPrice,jdbcType=CHAR}, 
       #{rating,jdbcType=CHAR}, #{amcContact1,jdbcType=CHAR}, #{amcContact2,jdbcType=CHAR}, 
-      #{isRecommanded,jdbcType=INTEGER}, #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}
-      )
+      #{isRecommanded,jdbcType=INTEGER}, #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
+      #{originId,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -209,6 +210,9 @@
       <if test="endDate != null">
         end_date,
       </if>
+      <if test="originId != null">
+        origin_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="debtpackId != null">
@@ -218,13 +222,13 @@
         #{title,jdbcType=CHAR},
       </if>
       <if test="baseAmount != null">
-        #{baseAmount,jdbcType=CHAR},
+        #{baseAmount,jdbcType=BIGINT},
       </if>
       <if test="baseDate != null">
         #{baseDate,jdbcType=TIMESTAMP},
       </if>
       <if test="totalAmount != null">
-        #{totalAmount,jdbcType=CHAR},
+        #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="settleDate != null">
         #{settleDate,jdbcType=TIMESTAMP},
@@ -274,6 +278,9 @@
       <if test="endDate != null">
         #{endDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="originId != null">
+        #{originId,jdbcType=CHAR},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultType="java.lang.Long">
@@ -295,13 +302,13 @@
         title = #{record.title,jdbcType=CHAR},
       </if>
       <if test="record.baseAmount != null">
-        base_amount = #{record.baseAmount,jdbcType=CHAR},
+        base_amount = #{record.baseAmount,jdbcType=BIGINT},
       </if>
       <if test="record.baseDate != null">
         base_date = #{record.baseDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.totalAmount != null">
-        total_amount = #{record.totalAmount,jdbcType=CHAR},
+        total_amount = #{record.totalAmount,jdbcType=BIGINT},
       </if>
       <if test="record.settleDate != null">
         settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
@@ -351,6 +358,9 @@
       <if test="record.endDate != null">
         end_date = #{record.endDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.originId != null">
+        origin_id = #{record.originId,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -361,9 +371,9 @@
     set id = #{record.id,jdbcType=BIGINT},
       debtpack_id = #{record.debtpackId,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
-      base_amount = #{record.baseAmount,jdbcType=CHAR},
+      base_amount = #{record.baseAmount,jdbcType=BIGINT},
       base_date = #{record.baseDate,jdbcType=TIMESTAMP},
-      total_amount = #{record.totalAmount,jdbcType=CHAR},
+      total_amount = #{record.totalAmount,jdbcType=BIGINT},
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
       amc_debt_code = #{record.amcDebtCode,jdbcType=CHAR},
@@ -379,7 +389,8 @@
       amc_contact2 = #{record.amcContact2,jdbcType=CHAR},
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       start_date = #{record.startDate,jdbcType=TIMESTAMP},
-      end_date = #{record.endDate,jdbcType=TIMESTAMP}
+      end_date = #{record.endDate,jdbcType=TIMESTAMP},
+      origin_id = #{record.originId,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -394,13 +405,13 @@
         title = #{title,jdbcType=CHAR},
       </if>
       <if test="baseAmount != null">
-        base_amount = #{baseAmount,jdbcType=CHAR},
+        base_amount = #{baseAmount,jdbcType=BIGINT},
       </if>
       <if test="baseDate != null">
         base_date = #{baseDate,jdbcType=TIMESTAMP},
       </if>
       <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=CHAR},
+        total_amount = #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="settleDate != null">
         settle_date = #{settleDate,jdbcType=TIMESTAMP},
@@ -450,6 +461,9 @@
       <if test="endDate != null">
         end_date = #{endDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="originId != null">
+        origin_id = #{originId,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -457,9 +471,9 @@
     update AMC_DEBT
     set debtpack_id = #{debtpackId,jdbcType=BIGINT},
       title = #{title,jdbcType=CHAR},
-      base_amount = #{baseAmount,jdbcType=CHAR},
+      base_amount = #{baseAmount,jdbcType=BIGINT},
       base_date = #{baseDate,jdbcType=TIMESTAMP},
-      total_amount = #{totalAmount,jdbcType=CHAR},
+      total_amount = #{totalAmount,jdbcType=BIGINT},
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       amc_debt_code = #{amcDebtCode,jdbcType=CHAR},
@@ -475,7 +489,8 @@
       amc_contact2 = #{amcContact2,jdbcType=CHAR},
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       start_date = #{startDate,jdbcType=TIMESTAMP},
-      end_date = #{endDate,jdbcType=TIMESTAMP}
+      end_date = #{endDate,jdbcType=TIMESTAMP},
+      origin_id = #{originId,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

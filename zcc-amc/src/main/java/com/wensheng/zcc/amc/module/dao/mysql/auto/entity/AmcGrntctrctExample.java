@@ -235,62 +235,52 @@ public class AmcGrntctrctExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmountEqualTo(String value) {
+        public Criteria andAmountEqualTo(Long value) {
             addCriterion("amount =", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountNotEqualTo(String value) {
+        public Criteria andAmountNotEqualTo(Long value) {
             addCriterion("amount <>", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountGreaterThan(String value) {
+        public Criteria andAmountGreaterThan(Long value) {
             addCriterion("amount >", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountGreaterThanOrEqualTo(String value) {
+        public Criteria andAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("amount >=", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountLessThan(String value) {
+        public Criteria andAmountLessThan(Long value) {
             addCriterion("amount <", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountLessThanOrEqualTo(String value) {
+        public Criteria andAmountLessThanOrEqualTo(Long value) {
             addCriterion("amount <=", value, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountLike(String value) {
-            addCriterion("amount like", value, "amount");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmountNotLike(String value) {
-            addCriterion("amount not like", value, "amount");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmountIn(List<String> values) {
+        public Criteria andAmountIn(List<Long> values) {
             addCriterion("amount in", values, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountNotIn(List<String> values) {
+        public Criteria andAmountNotIn(List<Long> values) {
             addCriterion("amount not in", values, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountBetween(String value1, String value2) {
+        public Criteria andAmountBetween(Long value1, Long value2) {
             addCriterion("amount between", value1, value2, "amount");
             return (Criteria) this;
         }
 
-        public Criteria andAmountNotBetween(String value1, String value2) {
+        public Criteria andAmountNotBetween(Long value1, Long value2) {
             addCriterion("amount not between", value1, value2, "amount");
             return (Criteria) this;
         }

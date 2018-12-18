@@ -4,8 +4,8 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
-    <result column="base_amount" jdbcType="CHAR" property="baseAmount" />
-    <result column="total_amount" jdbcType="CHAR" property="totalAmount" />
+    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
+    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="creditor" jdbcType="CHAR" property="creditor" />
     <result column="creditor_branch" jdbcType="CHAR" property="creditorBranch" />
@@ -114,7 +114,7 @@
       settle_date, creditor, creditor_branch, 
       original_creditor, notes, amc_company_id, 
       pack_status)
-    values (#{title,jdbcType=CHAR}, #{baseAmount,jdbcType=CHAR}, #{totalAmount,jdbcType=CHAR}, 
+    values (#{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
       #{settleDate,jdbcType=TIMESTAMP}, #{creditor,jdbcType=CHAR}, #{creditorBranch,jdbcType=CHAR}, 
       #{originalCreditor,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, 
       #{packStatus,jdbcType=INTEGER})
@@ -161,10 +161,10 @@
         #{title,jdbcType=CHAR},
       </if>
       <if test="baseAmount != null">
-        #{baseAmount,jdbcType=CHAR},
+        #{baseAmount,jdbcType=BIGINT},
       </if>
       <if test="totalAmount != null">
-        #{totalAmount,jdbcType=CHAR},
+        #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="settleDate != null">
         #{settleDate,jdbcType=TIMESTAMP},
@@ -205,10 +205,10 @@
         title = #{record.title,jdbcType=CHAR},
       </if>
       <if test="record.baseAmount != null">
-        base_amount = #{record.baseAmount,jdbcType=CHAR},
+        base_amount = #{record.baseAmount,jdbcType=BIGINT},
       </if>
       <if test="record.totalAmount != null">
-        total_amount = #{record.totalAmount,jdbcType=CHAR},
+        total_amount = #{record.totalAmount,jdbcType=BIGINT},
       </if>
       <if test="record.settleDate != null">
         settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
@@ -240,8 +240,8 @@
     update AMC_DEBTPACK
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
-      base_amount = #{record.baseAmount,jdbcType=CHAR},
-      total_amount = #{record.totalAmount,jdbcType=CHAR},
+      base_amount = #{record.baseAmount,jdbcType=BIGINT},
+      total_amount = #{record.totalAmount,jdbcType=BIGINT},
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       creditor = #{record.creditor,jdbcType=CHAR},
       creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
@@ -260,10 +260,10 @@
         title = #{title,jdbcType=CHAR},
       </if>
       <if test="baseAmount != null">
-        base_amount = #{baseAmount,jdbcType=CHAR},
+        base_amount = #{baseAmount,jdbcType=BIGINT},
       </if>
       <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=CHAR},
+        total_amount = #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="settleDate != null">
         settle_date = #{settleDate,jdbcType=TIMESTAMP},
@@ -292,8 +292,8 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     update AMC_DEBTPACK
     set title = #{title,jdbcType=CHAR},
-      base_amount = #{baseAmount,jdbcType=CHAR},
-      total_amount = #{totalAmount,jdbcType=CHAR},
+      base_amount = #{baseAmount,jdbcType=BIGINT},
+      total_amount = #{totalAmount,jdbcType=BIGINT},
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
       creditor = #{creditor,jdbcType=CHAR},
       creditor_branch = #{creditorBranch,jdbcType=CHAR},

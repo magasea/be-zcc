@@ -305,62 +305,52 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountEqualTo(String value) {
+        public Criteria andBaseAmountEqualTo(Long value) {
             addCriterion("base_amount =", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotEqualTo(String value) {
+        public Criteria andBaseAmountNotEqualTo(Long value) {
             addCriterion("base_amount <>", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThan(String value) {
+        public Criteria andBaseAmountGreaterThan(Long value) {
             addCriterion("base_amount >", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThanOrEqualTo(String value) {
+        public Criteria andBaseAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("base_amount >=", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThan(String value) {
+        public Criteria andBaseAmountLessThan(Long value) {
             addCriterion("base_amount <", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThanOrEqualTo(String value) {
+        public Criteria andBaseAmountLessThanOrEqualTo(Long value) {
             addCriterion("base_amount <=", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLike(String value) {
-            addCriterion("base_amount like", value, "baseAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andBaseAmountNotLike(String value) {
-            addCriterion("base_amount not like", value, "baseAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andBaseAmountIn(List<String> values) {
+        public Criteria andBaseAmountIn(List<Long> values) {
             addCriterion("base_amount in", values, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotIn(List<String> values) {
+        public Criteria andBaseAmountNotIn(List<Long> values) {
             addCriterion("base_amount not in", values, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountBetween(String value1, String value2) {
+        public Criteria andBaseAmountBetween(Long value1, Long value2) {
             addCriterion("base_amount between", value1, value2, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotBetween(String value1, String value2) {
+        public Criteria andBaseAmountNotBetween(Long value1, Long value2) {
             addCriterion("base_amount not between", value1, value2, "baseAmount");
             return (Criteria) this;
         }
@@ -435,62 +425,52 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountEqualTo(String value) {
+        public Criteria andTotalAmountEqualTo(Long value) {
             addCriterion("total_amount =", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotEqualTo(String value) {
+        public Criteria andTotalAmountNotEqualTo(Long value) {
             addCriterion("total_amount <>", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountGreaterThan(String value) {
+        public Criteria andTotalAmountGreaterThan(Long value) {
             addCriterion("total_amount >", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountGreaterThanOrEqualTo(String value) {
+        public Criteria andTotalAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("total_amount >=", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLessThan(String value) {
+        public Criteria andTotalAmountLessThan(Long value) {
             addCriterion("total_amount <", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLessThanOrEqualTo(String value) {
+        public Criteria andTotalAmountLessThanOrEqualTo(Long value) {
             addCriterion("total_amount <=", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLike(String value) {
-            addCriterion("total_amount like", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountNotLike(String value) {
-            addCriterion("total_amount not like", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountIn(List<String> values) {
+        public Criteria andTotalAmountIn(List<Long> values) {
             addCriterion("total_amount in", values, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotIn(List<String> values) {
+        public Criteria andTotalAmountNotIn(List<Long> values) {
             addCriterion("total_amount not in", values, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountBetween(String value1, String value2) {
+        public Criteria andTotalAmountBetween(Long value1, Long value2) {
             addCriterion("total_amount between", value1, value2, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotBetween(String value1, String value2) {
+        public Criteria andTotalAmountNotBetween(Long value1, Long value2) {
             addCriterion("total_amount not between", value1, value2, "totalAmount");
             return (Criteria) this;
         }
@@ -1542,6 +1522,76 @@ public class AmcDebtExample {
 
         public Criteria andEndDateNotBetween(Date value1, Date value2) {
             addCriterion("end_date not between", value1, value2, "endDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdIsNull() {
+            addCriterion("origin_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdIsNotNull() {
+            addCriterion("origin_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdEqualTo(String value) {
+            addCriterion("origin_id =", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdNotEqualTo(String value) {
+            addCriterion("origin_id <>", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdGreaterThan(String value) {
+            addCriterion("origin_id >", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdGreaterThanOrEqualTo(String value) {
+            addCriterion("origin_id >=", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdLessThan(String value) {
+            addCriterion("origin_id <", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdLessThanOrEqualTo(String value) {
+            addCriterion("origin_id <=", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdLike(String value) {
+            addCriterion("origin_id like", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdNotLike(String value) {
+            addCriterion("origin_id not like", value, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdIn(List<String> values) {
+            addCriterion("origin_id in", values, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdNotIn(List<String> values) {
+            addCriterion("origin_id not in", values, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdBetween(String value1, String value2) {
+            addCriterion("origin_id between", value1, value2, "originId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginIdNotBetween(String value1, String value2) {
+            addCriterion("origin_id not between", value1, value2, "originId");
             return (Criteria) this;
         }
     }

@@ -7,7 +7,7 @@ public class AmcGrntctrct {
 
     private Long debtId;
 
-    private String amount;
+    private Long amount;
 
     private Integer type;
 
@@ -33,12 +33,12 @@ public class AmcGrntctrct {
         this.debtId = debtId;
     }
 
-    public String getAmount() {
+    public Long getAmount() {
         return amount;
     }
 
-    public void setAmount(String amount) {
-        this.amount = amount == null ? null : amount.trim();
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 
     public Integer getType() {

@@ -2,7 +2,7 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
 import java.util.Date;
 
-public class AmcAsset  {
+public class AmcAsset {
     private Long id;
 
     private String title;
@@ -17,19 +17,19 @@ public class AmcAsset  {
 
     private Long amcId;
 
-    private String amcCode;
+    private String amcAssetCode;
 
-    private String estmPrice;
+    private Long estmPrice;
 
     private Long debtId;
 
-    private String initPrice;
+    private Long initPrice;
 
     private Integer restrictions;
 
-    private String area;
+    private Long area;
 
-    private String landArea;
+    private Long landArea;
 
     private Date publishDate;
 
@@ -46,6 +46,8 @@ public class AmcAsset  {
     private String gpsLng;
 
     private String gpsLat;
+
+    private String originDebtId;
 
     public Long getId() {
         return id;
@@ -103,20 +105,20 @@ public class AmcAsset  {
         this.amcId = amcId;
     }
 
-    public String getAmcCode() {
-        return amcCode;
+    public String getAmcAssetCode() {
+        return amcAssetCode;
     }
 
-    public void setAmcCode(String amcCode) {
-        this.amcCode = amcCode == null ? null : amcCode.trim();
+    public void setAmcAssetCode(String amcAssetCode) {
+        this.amcAssetCode = amcAssetCode == null ? null : amcAssetCode.trim();
     }
 
-    public String getEstmPrice() {
+    public Long getEstmPrice() {
         return estmPrice;
     }
 
-    public void setEstmPrice(String estmPrice) {
-        this.estmPrice = estmPrice == null ? null : estmPrice.trim();
+    public void setEstmPrice(Long estmPrice) {
+        this.estmPrice = estmPrice;
     }
 
     public Long getDebtId() {
@@ -127,12 +129,12 @@ public class AmcAsset  {
         this.debtId = debtId;
     }
 
-    public String getInitPrice() {
+    public Long getInitPrice() {
         return initPrice;
     }
 
-    public void setInitPrice(String initPrice) {
-        this.initPrice = initPrice == null ? null : initPrice.trim();
+    public void setInitPrice(Long initPrice) {
+        this.initPrice = initPrice;
     }
 
     public Integer getRestrictions() {
@@ -143,20 +145,20 @@ public class AmcAsset  {
         this.restrictions = restrictions;
     }
 
-    public String getArea() {
+    public Long getArea() {
         return area;
     }
 
-    public void setArea(String area) {
-        this.area = area == null ? null : area.trim();
+    public void setArea(Long area) {
+        this.area = area;
     }
 
-    public String getLandArea() {
+    public Long getLandArea() {
         return landArea;
     }
 
-    public void setLandArea(String landArea) {
-        this.landArea = landArea == null ? null : landArea.trim();
+    public void setLandArea(Long landArea) {
+        this.landArea = landArea;
     }
 
     public Date getPublishDate() {
@@ -221,5 +223,13 @@ public class AmcAsset  {
 
     public void setGpsLat(String gpsLat) {
         this.gpsLat = gpsLat == null ? null : gpsLat.trim();
+    }
+
+    public String getOriginDebtId() {
+        return originDebtId;
+    }
+
+    public void setOriginDebtId(String originDebtId) {
+        this.originDebtId = originDebtId == null ? null : originDebtId.trim();
     }
 }

@@ -12,7 +12,7 @@ public interface AmcAssetMapper {
 
     int deleteByPrimaryKey(Long id);
 
-    Long insert(AmcAsset record);
+    int insert(AmcAsset record);
 
     int insertSelective(AmcAsset record);
 

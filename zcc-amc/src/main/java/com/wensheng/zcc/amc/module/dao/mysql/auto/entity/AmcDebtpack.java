@@ -7,9 +7,9 @@ public class AmcDebtpack {
 
     private String title;
 
-    private String baseAmount;
+    private Long baseAmount;
 
-    private String totalAmount;
+    private Long totalAmount;
 
     private Date settleDate;
 
@@ -41,20 +41,20 @@ public class AmcDebtpack {
         this.title = title == null ? null : title.trim();
     }
 
-    public String getBaseAmount() {
+    public Long getBaseAmount() {
         return baseAmount;
     }
 
-    public void setBaseAmount(String baseAmount) {
-        this.baseAmount = baseAmount == null ? null : baseAmount.trim();
+    public void setBaseAmount(Long baseAmount) {
+        this.baseAmount = baseAmount;
     }
 
-    public String getTotalAmount() {
+    public Long getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(String totalAmount) {
-        this.totalAmount = totalAmount == null ? null : totalAmount.trim();
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public Date getSettleDate() {

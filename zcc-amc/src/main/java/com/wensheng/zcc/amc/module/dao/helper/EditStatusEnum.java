@@ -13,7 +13,8 @@ public enum EditStatusEnum {
     NOTPUBLISHED(2, "未发布"),
     DELETED(0, "已删除"),
     ABORTED(3, "已放弃"),
-    SOLD(4, "已售出");
+    SOLD(4, "已售出"),
+    PUBLISHED1(1, "已发布");;
 
     private int status;
     private String name;

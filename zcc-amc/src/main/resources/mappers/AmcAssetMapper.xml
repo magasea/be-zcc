@@ -9,13 +9,13 @@
     <result column="state" jdbcType="INTEGER" property="state" />
     <result column="edit_status" jdbcType="INTEGER" property="editStatus" />
     <result column="amc_id" jdbcType="BIGINT" property="amcId" />
-    <result column="amc_code" jdbcType="CHAR" property="amcCode" />
-    <result column="estm_price" jdbcType="CHAR" property="estmPrice" />
+    <result column="amc_asset_code" jdbcType="CHAR" property="amcAssetCode" />
+    <result column="estm_price" jdbcType="BIGINT" property="estmPrice" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="init_price" jdbcType="CHAR" property="initPrice" />
+    <result column="init_price" jdbcType="BIGINT" property="initPrice" />
     <result column="restrictions" jdbcType="INTEGER" property="restrictions" />
-    <result column="area" jdbcType="CHAR" property="area" />
-    <result column="land_area" jdbcType="CHAR" property="landArea" />
+    <result column="area" jdbcType="BIGINT" property="area" />
+    <result column="land_area" jdbcType="BIGINT" property="landArea" />
     <result column="publish_date" jdbcType="DATE" property="publishDate" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
@@ -24,6 +24,7 @@
     <result column="building_name" jdbcType="CHAR" property="buildingName" />
     <result column="gps_lng" jdbcType="CHAR" property="gpsLng" />
     <result column="gps_lat" jdbcType="CHAR" property="gpsLat" />
+    <result column="origin_debt_id" jdbcType="CHAR" property="originDebtId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -84,9 +85,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, type, status, state, edit_status, amc_id, amc_code, estm_price, debt_id, 
-    init_price, restrictions, area, land_area, publish_date, province, city, county, 
-    street, building_name, gps_lng, gps_lat
+    id, title, type, status, state, edit_status, amc_id, amc_asset_code, estm_price, 
+    debt_id, init_price, restrictions, area, land_area, publish_date, province, city, 
+    county, street, building_name, gps_lng, gps_lat, origin_debt_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -124,18 +125,20 @@
     </selectKey>
     insert into AMC_ASSET (title, type, status, 
       state, edit_status, amc_id, 
-      amc_code, estm_price, debt_id, 
+      amc_asset_code, estm_price, debt_id, 
       init_price, restrictions, area, 
       land_area, publish_date, province, 
       city, county, street, building_name, 
-      gps_lng, gps_lat)
+      gps_lng, gps_lat, origin_debt_id
+      )
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
       #{state,jdbcType=INTEGER}, #{editStatus,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
-      #{amcCode,jdbcType=CHAR}, #{estmPrice,jdbcType=CHAR}, #{debtId,jdbcType=BIGINT}, 
-      #{initPrice,jdbcType=CHAR}, #{restrictions,jdbcType=INTEGER}, #{area,jdbcType=CHAR}, 
-      #{landArea,jdbcType=CHAR}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
+      #{amcAssetCode,jdbcType=CHAR}, #{estmPrice,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
+      #{initPrice,jdbcType=BIGINT}, #{restrictions,jdbcType=INTEGER}, #{area,jdbcType=BIGINT}, 
+      #{landArea,jdbcType=BIGINT}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
       #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
-      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR})
+      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{originDebtId,jdbcType=CHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -161,8 +164,8 @@
       <if test="amcId != null">
         amc_id,
       </if>
-      <if test="amcCode != null">
-        amc_code,
+      <if test="amcAssetCode != null">
+        amc_asset_code,
       </if>
       <if test="estmPrice != null">
         estm_price,
@@ -206,6 +209,9 @@
       <if test="gpsLat != null">
         gps_lat,
       </if>
+      <if test="originDebtId != null">
+        origin_debt_id,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
@@ -226,26 +232,26 @@
       <if test="amcId != null">
         #{amcId,jdbcType=BIGINT},
       </if>
-      <if test="amcCode != null">
-        #{amcCode,jdbcType=CHAR},
+      <if test="amcAssetCode != null">
+        #{amcAssetCode,jdbcType=CHAR},
       </if>
       <if test="estmPrice != null">
-        #{estmPrice,jdbcType=CHAR},
+        #{estmPrice,jdbcType=BIGINT},
       </if>
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
       </if>
       <if test="initPrice != null">
-        #{initPrice,jdbcType=CHAR},
+        #{initPrice,jdbcType=BIGINT},
       </if>
       <if test="restrictions != null">
         #{restrictions,jdbcType=INTEGER},
       </if>
       <if test="area != null">
-        #{area,jdbcType=CHAR},
+        #{area,jdbcType=BIGINT},
       </if>
       <if test="landArea != null">
-        #{landArea,jdbcType=CHAR},
+        #{landArea,jdbcType=BIGINT},
       </if>
       <if test="publishDate != null">
         #{publishDate,jdbcType=DATE},
@@ -270,6 +276,9 @@
       </if>
       <if test="gpsLat != null">
         #{gpsLat,jdbcType=CHAR},
+      </if>
+      <if test="originDebtId != null">
+        #{originDebtId,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -303,26 +312,26 @@
       <if test="record.amcId != null">
         amc_id = #{record.amcId,jdbcType=BIGINT},
       </if>
-      <if test="record.amcCode != null">
-        amc_code = #{record.amcCode,jdbcType=CHAR},
+      <if test="record.amcAssetCode != null">
+        amc_asset_code = #{record.amcAssetCode,jdbcType=CHAR},
       </if>
       <if test="record.estmPrice != null">
-        estm_price = #{record.estmPrice,jdbcType=CHAR},
+        estm_price = #{record.estmPrice,jdbcType=BIGINT},
       </if>
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
       <if test="record.initPrice != null">
-        init_price = #{record.initPrice,jdbcType=CHAR},
+        init_price = #{record.initPrice,jdbcType=BIGINT},
       </if>
       <if test="record.restrictions != null">
         restrictions = #{record.restrictions,jdbcType=INTEGER},
       </if>
       <if test="record.area != null">
-        area = #{record.area,jdbcType=CHAR},
+        area = #{record.area,jdbcType=BIGINT},
       </if>
       <if test="record.landArea != null">
-        land_area = #{record.landArea,jdbcType=CHAR},
+        land_area = #{record.landArea,jdbcType=BIGINT},
       </if>
       <if test="record.publishDate != null">
         publish_date = #{record.publishDate,jdbcType=DATE},
@@ -348,6 +357,9 @@
       <if test="record.gpsLat != null">
         gps_lat = #{record.gpsLat,jdbcType=CHAR},
       </if>
+      <if test="record.originDebtId != null">
+        origin_debt_id = #{record.originDebtId,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -362,13 +374,13 @@
       state = #{record.state,jdbcType=INTEGER},
       edit_status = #{record.editStatus,jdbcType=INTEGER},
       amc_id = #{record.amcId,jdbcType=BIGINT},
-      amc_code = #{record.amcCode,jdbcType=CHAR},
-      estm_price = #{record.estmPrice,jdbcType=CHAR},
+      amc_asset_code = #{record.amcAssetCode,jdbcType=CHAR},
+      estm_price = #{record.estmPrice,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      init_price = #{record.initPrice,jdbcType=CHAR},
+      init_price = #{record.initPrice,jdbcType=BIGINT},
       restrictions = #{record.restrictions,jdbcType=INTEGER},
-      area = #{record.area,jdbcType=CHAR},
-      land_area = #{record.landArea,jdbcType=CHAR},
+      area = #{record.area,jdbcType=BIGINT},
+      land_area = #{record.landArea,jdbcType=BIGINT},
       publish_date = #{record.publishDate,jdbcType=DATE},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
@@ -376,7 +388,8 @@
       street = #{record.street,jdbcType=CHAR},
       building_name = #{record.buildingName,jdbcType=CHAR},
       gps_lng = #{record.gpsLng,jdbcType=CHAR},
-      gps_lat = #{record.gpsLat,jdbcType=CHAR}
+      gps_lat = #{record.gpsLat,jdbcType=CHAR},
+      origin_debt_id = #{record.originDebtId,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -402,26 +415,26 @@
       <if test="amcId != null">
         amc_id = #{amcId,jdbcType=BIGINT},
       </if>
-      <if test="amcCode != null">
-        amc_code = #{amcCode,jdbcType=CHAR},
+      <if test="amcAssetCode != null">
+        amc_asset_code = #{amcAssetCode,jdbcType=CHAR},
       </if>
       <if test="estmPrice != null">
-        estm_price = #{estmPrice,jdbcType=CHAR},
+        estm_price = #{estmPrice,jdbcType=BIGINT},
       </if>
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
       </if>
       <if test="initPrice != null">
-        init_price = #{initPrice,jdbcType=CHAR},
+        init_price = #{initPrice,jdbcType=BIGINT},
       </if>
       <if test="restrictions != null">
         restrictions = #{restrictions,jdbcType=INTEGER},
       </if>
       <if test="area != null">
-        area = #{area,jdbcType=CHAR},
+        area = #{area,jdbcType=BIGINT},
       </if>
       <if test="landArea != null">
-        land_area = #{landArea,jdbcType=CHAR},
+        land_area = #{landArea,jdbcType=BIGINT},
       </if>
       <if test="publishDate != null">
         publish_date = #{publishDate,jdbcType=DATE},
@@ -447,6 +460,9 @@
       <if test="gpsLat != null">
         gps_lat = #{gpsLat,jdbcType=CHAR},
       </if>
+      <if test="originDebtId != null">
+        origin_debt_id = #{originDebtId,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -458,13 +474,13 @@
       state = #{state,jdbcType=INTEGER},
       edit_status = #{editStatus,jdbcType=INTEGER},
       amc_id = #{amcId,jdbcType=BIGINT},
-      amc_code = #{amcCode,jdbcType=CHAR},
-      estm_price = #{estmPrice,jdbcType=CHAR},
+      amc_asset_code = #{amcAssetCode,jdbcType=CHAR},
+      estm_price = #{estmPrice,jdbcType=BIGINT},
       debt_id = #{debtId,jdbcType=BIGINT},
-      init_price = #{initPrice,jdbcType=CHAR},
+      init_price = #{initPrice,jdbcType=BIGINT},
       restrictions = #{restrictions,jdbcType=INTEGER},
-      area = #{area,jdbcType=CHAR},
-      land_area = #{landArea,jdbcType=CHAR},
+      area = #{area,jdbcType=BIGINT},
+      land_area = #{landArea,jdbcType=BIGINT},
       publish_date = #{publishDate,jdbcType=DATE},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
@@ -472,7 +488,8 @@
       street = #{street,jdbcType=CHAR},
       building_name = #{buildingName,jdbcType=CHAR},
       gps_lng = #{gpsLng,jdbcType=CHAR},
-      gps_lat = #{gpsLat,jdbcType=CHAR}
+      gps_lat = #{gpsLat,jdbcType=CHAR},
+      origin_debt_id = #{originDebtId,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

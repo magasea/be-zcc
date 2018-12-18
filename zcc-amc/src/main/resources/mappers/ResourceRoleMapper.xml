@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ResourceRoleMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRole">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="asset_type" jdbcType="INTEGER" property="assetType" />
     <result column="debt_type" jdbcType="INTEGER" property="debtType" />
     <result column="access_role" jdbcType="INTEGER" property="accessRole" />
@@ -82,6 +82,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from RESOURCE_ROLE
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from RESOURCE_ROLE
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRoleExample">
     delete from RESOURCE_ROLE
     <if test="_parameter != null">
@@ -160,5 +170,27 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRole">
+    update RESOURCE_ROLE
+    <set>
+      <if test="assetType != null">
+        asset_type = #{assetType,jdbcType=INTEGER},
+      </if>
+      <if test="debtType != null">
+        debt_type = #{debtType,jdbcType=INTEGER},
+      </if>
+      <if test="accessRole != null">
+        access_role = #{accessRole,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRole">
+    update RESOURCE_ROLE
+    set asset_type = #{assetType,jdbcType=INTEGER},
+      debt_type = #{debtType,jdbcType=INTEGER},
+      access_role = #{accessRole,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

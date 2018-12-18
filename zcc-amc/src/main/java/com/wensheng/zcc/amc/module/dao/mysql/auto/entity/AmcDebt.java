@@ -9,11 +9,11 @@ public class AmcDebt {
 
     private String title;
 
-    private String baseAmount;
+    private Long baseAmount;
 
     private Date baseDate;
 
-    private String totalAmount;
+    private Long totalAmount;
 
     private Date settleDate;
 
@@ -47,6 +47,8 @@ public class AmcDebt {
 
     private Date endDate;
 
+    private String originId;
+
     public Long getId() {
         return id;
     }
@@ -71,12 +73,12 @@ public class AmcDebt {
         this.title = title == null ? null : title.trim();
     }
 
-    public String getBaseAmount() {
+    public Long getBaseAmount() {
         return baseAmount;
     }
 
-    public void setBaseAmount(String baseAmount) {
-        this.baseAmount = baseAmount == null ? null : baseAmount.trim();
+    public void setBaseAmount(Long baseAmount) {
+        this.baseAmount = baseAmount;
     }
 
     public Date getBaseDate() {
@@ -87,12 +89,12 @@ public class AmcDebt {
         this.baseDate = baseDate;
     }
 
-    public String getTotalAmount() {
+    public Long getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(String totalAmount) {
-        this.totalAmount = totalAmount == null ? null : totalAmount.trim();
+    public void setTotalAmount(Long totalAmount) {
+        this.totalAmount = totalAmount;
     }
 
     public Date getSettleDate() {
@@ -221,5 +223,13 @@ public class AmcDebt {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getOriginId() {
+        return originId;
+    }
+
+    public void setOriginId(String originId) {
+        this.originId = originId == null ? null : originId.trim();
     }
 }

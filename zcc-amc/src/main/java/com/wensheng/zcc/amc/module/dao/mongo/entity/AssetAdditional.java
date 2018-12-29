@@ -12,6 +12,7 @@ import java.util.List;
 public class AssetAdditional {
     @Id
     String _id;
+    Long amcAssetId;
 //    String title;					// 抵押物名称
     String mainPic;					// 抵押物主图片路径
 //    String type;						;// 抵押物类别
@@ -35,7 +36,7 @@ public class AssetAdditional {
     String courtCity;		        // 法院所在市
     String courtCounty;		        // 法院所在县
     String courtInfo;               //法院信息
-//    String amcAssetCode;				// AMC内部编码
+    String amcAssetCode;				// AMC内部编码
     Integer viewCount	=0;			// 浏览次数
     Integer likeCount	=0;			// 点赞次数
     Integer watchCount	=0;			// 关注次数
@@ -58,7 +59,6 @@ public class AssetAdditional {
 //    Long debtsNo;
 //    List debts ;
     //    UserCompany amc;
-    Long amc;
 
     String reportPath;
 }

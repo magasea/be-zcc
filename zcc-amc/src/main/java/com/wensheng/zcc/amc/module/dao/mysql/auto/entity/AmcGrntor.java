@@ -7,6 +7,8 @@ public class AmcGrntor {
 
     private Long debtId;
 
+    private Long originDebtId;
+
     private Integer type;
 
     private Long cmpyId;
@@ -37,6 +39,14 @@ public class AmcGrntor {
 
     public void setDebtId(Long debtId) {
         this.debtId = debtId;
+    }
+
+    public Long getOriginDebtId() {
+        return originDebtId;
+    }
+
+    public void setOriginDebtId(Long originDebtId) {
+        this.originDebtId = originDebtId;
     }
 
     public Integer getType() {

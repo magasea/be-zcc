@@ -1,23 +1,24 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
-import com.wensheng.zcc.amc.module.dao.helper.AssetStateEnum;
-import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
-import com.wensheng.zcc.amc.module.dao.helper.RestrictionsEnum;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
+import com.wensheng.zcc.amc.module.dao.helper.*;
+import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AmcAssetOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AssetImageOrigin;
-import com.wensheng.zcc.amc.module.dao.mysql.AmcAssetDao;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
+import com.wensheng.zcc.amc.module.dao.mongo.origin.DebtOrigin;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.BeanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -26,9 +27,9 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
-import org.springframework.util.NumberUtils;
 import org.springframework.util.StringUtils;
 
+import javax.validation.constraints.Email;
 import java.util.List;
 
 /**
@@ -38,7 +39,13 @@ import java.util.List;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration
+
 public class AmcAssetServiceImplTest {
+
+    Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+
+
 
     @Autowired
     AmcAssetService amcAssetService;
@@ -53,6 +60,12 @@ public class AmcAssetServiceImplTest {
     @Autowired
     AmcAssetMapper amcAssetMapper;
 
+    @Autowired
+    CurtInfoMapper curtInfoMapper;
+
+    @Autowired
+    AmcDebtMapper amcDebtMapper;
+
 
 //    @Test
 //    public void getAllAmcAssets() {
@@ -61,51 +74,51 @@ public class AmcAssetServiceImplTest {
 
 
     @Test
-    public void transferMongoDb2MySql(){
+    public void transferMongoDb2MySqlAsset() {
         List<AmcAssetOrigin> amcAssetOrigins = primaryMongoTemplate.findAll(AmcAssetOrigin.class, "asset");
         System.out.println(amcAssetOrigins.size());
 
         // generate pojo for mysql and save
 
         AmcAsset amcAssetMysql = null;
-        for(AmcAssetOrigin originItem : amcAssetOrigins){
-          try{
-           amcAssetMysql = new AmcAsset();
-            AssetAdditional assetAdditional = new AssetAdditional();
+        for (AmcAssetOrigin originItem : amcAssetOrigins) {
+            try {
+                amcAssetMysql = new AmcAsset();
+
 //            BeanUtils.copyProperties(originItem, amcAssetMysql );
 
-            handleAmcAsset(originItem, amcAssetMysql);
-            AmcAssetExample amcAssetExample = new AmcAssetExample();
-            amcAssetExample.createCriteria().andTitleEqualTo(originItem.getTitle());
-            List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
-              Long amcAssetId = -1L;
-              if( !CollectionUtils.isEmpty(amcAssets) ){
-                System.out.println("this item alredy exists, need update");
-                if(amcAssets.size() > 1){
-                    System.out.println("There is duplicated items for title:"+ originItem.getTitle());
-                    continue;
-                }else{
-                    //try to update the origin record
-                    amcAssetId = amcAssets.get(0).getId();
-                    amcAssetMysql.setId(amcAssetId);
-                    amcAssetMapper.updateByPrimaryKeySelective(amcAssetMysql);
+                handleAmcAsset(originItem, amcAssetMysql);
+                AmcAssetExample amcAssetExample = new AmcAssetExample();
+                amcAssetExample.createCriteria().andTitleEqualTo(originItem.getTitle());
+                List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+                Long amcAssetId = -1L;
+                if (!CollectionUtils.isEmpty(amcAssets)) {
+                    System.out.println("this item alredy exists, need update");
+                    if (amcAssets.size() > 1) {
+                        System.out.println("There is duplicated items for title:" + originItem.getTitle());
+                        continue;
+                    } else {
+                        //try to update the origin record
+                        amcAssetId = amcAssets.get(0).getId();
+                        amcAssetMysql.setId(amcAssetId);
+                        amcAssetMapper.updateByPrimaryKeySelective(amcAssetMysql);
+                    }
+
+                } else {
+                    amcAssetId = new Long(amcAssetMapper.insertSelective(amcAssetMysql));
                 }
 
-            }else{
-               amcAssetId = new Long (amcAssetMapper.insertSelective(amcAssetMysql)) ;
-            }
-
-            handleAmcAddtional(originItem, assetAdditional, amcAssetId);
+                handleAmcAddtional(originItem, amcAssetId);
 //            handleAssetComments(originItem, amcAssetId);
-            handleAssetImages(originItem, amcAssetId);
-            handleAssetDocument(originItem, amcAssetId);
-            amcAssetMysql = null;
+                handleAssetImages(originItem, amcAssetId);
+                handleAssetDocument(originItem, amcAssetId);
+                amcAssetMysql = null;
 
-          }catch (Exception ex){
-              ex.printStackTrace();
-              System.out.println(originItem.toString());
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.out.println(originItem.toString());
 
-          }
+            }
 
         }
 
@@ -126,8 +139,15 @@ public class AmcAssetServiceImplTest {
         queryAssetImage.addCriteria(Criteria.where("asset").is(originItem.getId()));
         List<AssetImageOrigin> assetImages = primaryMongoTemplate.find(queryAssetImage, AssetImageOrigin.class);
         //2. generate assetImages and insert them into current datasource with current amcAssetId
-        for (AssetImageOrigin assetImage: assetImages){
+        for (AssetImageOrigin assetImage : assetImages) {
             AssetImage assetImageCur = new AssetImage();
+            Query queryCurrImageRepo = new Query();
+            queryCurrImageRepo.addCriteria(Criteria.where("assetId").is(amcAssetId).and("originalName").is(assetImage.getOriginalName()));
+            List<AssetImage> assetImageList = secondaryMongoTemplate.find(queryCurrImageRepo, AssetImage.class);
+            if (!CollectionUtils.isEmpty(assetImageList)) {
+                assetImageCur = assetImageList.get(0);
+                removeRundtFromSecondMongo(assetImageList);
+            }
             assetImageCur.setAssetId(amcAssetId);
             assetImageCur.setDescription(assetImage.getDescription());
             assetImageCur.setIsToOss(assetImage.getIsToOss());
@@ -135,7 +155,8 @@ public class AmcAssetServiceImplTest {
             assetImageCur.setOriginalName(assetImage.getOriginalName());
             assetImageCur.setOriginAssetId(assetImage.getAsset());
             assetImageCur.setPath(assetImage.getPath());
-            secondaryMongoTemplate.save(assetImageCur);
+            secondaryMongoTemplate.save(assetImageCurprivate static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
+);
         }
     }
 
@@ -148,72 +169,238 @@ public class AmcAssetServiceImplTest {
         // and origin
     }
 
-    private void handleAmcAddtional(AmcAssetOrigin originItem, AssetAdditional assetAdditional, Long amcAssetId) {
-        assetAdditional.setAmc(amcAssetId);
-        assetAdditional.setAmcContact1(originItem.getAmcContact1());;
-        assetAdditional.setAmcContact2(originItem.getAmcContact2());;
-        assetAdditional.setAmcNotes(originItem.getAmcNotes());;
-        assetAdditional.setBidLink(originItem.getBidLink());;
-        assetAdditional.setCommentCount(originItem.getCommentCount());;
-        assetAdditional.setCourtCity(originItem.getCourtCity());;
-        assetAdditional.setCourtCounty(originItem.getCourtCity());;
-        assetAdditional.setCourtInfo(originItem.getCourtInfo());;
-        assetAdditional.setCourtName(originItem.getCourtName());;
-        assetAdditional.setCourtProvince(originItem.getCourtProvince());;
-        assetAdditional.setDescription(originItem.getDescription());;
-        assetAdditional.setEndDate(originItem.getEndDate());;
+    private <T> void removeRundtFromSecondMongo(List<T> listInput) {
+
+        if (listInput.size() <= 1) {
+            return;
+        }
+        for (int idx = 1; idx < listInput.size() - 1; idx++) {
+            secondaryMongoTemplate.remove(listInput.get(idx));
+        }
+    }
+
+    private void handleAmcAddtional(AmcAssetOrigin originItem, Long amcAssetId) {
+        AssetAdditional assetAdditional = new AssetAdditional();
+        Query queryCurrAdditional = new Query();
+        queryCurrAdditional.addCriteria(Criteria.where("amcAssetId").is(amcAssetId));
+        List<AssetAdditional> assetAdditionals = secondaryMongoTemplate.find(queryCurrAdditional, AssetAdditional.class);
+        if (!CollectionUtils.isEmpty(assetAdditionals)) {
+            assetAdditional = assetAdditionals.get(0);
+            removeRundtFromSecondMongo(assetAdditionals);
+        }
+
+
+        assetAdditional.setAmcAssetId(amcAssetId);
+        assetAdditional.setAmcContact1(originItem.getAmcContact1());
+        ;
+        assetAdditional.setAmcContact2(originItem.getAmcContact2());
+        ;
+        assetAdditional.setAmcNotes(originItem.getAmcNotes());
+        ;
+        assetAdditional.setBidLink(originItem.getBidLink());
+        ;
+        assetAdditional.setCommentCount(originItem.getCommentCount());
+        ;
+        assetAdditional.setCourtCity(originItem.getCourtCity());
+        ;
+        assetAdditional.setCourtCounty(originItem.getCourtCity());
+        ;
+        assetAdditional.setCourtInfo(originItem.getCourtInfo());
+        ;
+        assetAdditional.setCourtName(originItem.getCourtName());
+        ;
+        assetAdditional.setCourtProvince(originItem.getCourtProvince());
+        ;
+        assetAdditional.setDescription(originItem.getDescription());
+        ;
+        assetAdditional.setEndDate(originItem.getEndDate());
+        ;
         assetAdditional.setGpsLat(originItem.getGpsLat());
         assetAdditional.setGpsLng(originItem.getGpsLng());
         assetAdditional.setKeywords(originItem.getKeywords());
         assetAdditional.setLikeCount(originItem.getLikeCount());
         assetAdditional.setLinkUrl(originItem.getLinkUrl());
         assetAdditional.setMainPic(originItem.getMainPic());
+        assetAdditional.setOtherCatalog(originItem.getOtherCatalog());
+        assetAdditional.setRecommanded(originItem.isRecommanded());
+        assetAdditional.setReportPath(originItem.getReportPath());
+        assetAdditional.setWatchCount(originItem.getWatchCount());
+        assetAdditional.setStartDate(originItem.getStartDate());
+        assetAdditional.setZipCode(originItem.getZipCode());
+        secondaryMongoTemplate.save(assetAdditional);
 
     }
 
     private void handleAmcAsset(AmcAssetOrigin originItem, AmcAsset amcAssetMysql) {
-        if(!StringUtils.isEmpty(originItem.getAmcAssetCode())){
+        if (!StringUtils.isEmpty(originItem.getAmcAssetCode())) {
             amcAssetMysql.setAmcAssetCode(originItem.getAmcAssetCode());
         }
         amcAssetMysql.setAmcId(originItem.getAmc());
-        if(originItem.getArea() != null) {
-          amcAssetMysql.setArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getArea()));
+        if (originItem.getArea() != null) {
+            amcAssetMysql.setArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getArea()));
         }
         amcAssetMysql.setBuildingName(originItem.getBuildingName());
         amcAssetMysql.setCity(originItem.getCity());
         amcAssetMysql.setCounty(originItem.getCounty());
         //debts default only one item
-        amcAssetMysql.setDebtId(CollectionUtils.isEmpty(originItem.getDebts())?-1L:(Long)originItem.getDebts().get(0));
+        amcAssetMysql.setDebtId(CollectionUtils.isEmpty(originItem.getDebts()) ? -1L : (Long) originItem.getDebts().get(0));
         amcAssetMysql.setEditStatus(EditStatusEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
         amcAssetMysql.setBuildingName(originItem.getBuildingName());
-        if(originItem.getEstimatedPrice() != null){
-          amcAssetMysql.setEstmPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice().toString()));
+        if (originItem.getEstimatedPrice() != null) {
+            amcAssetMysql.setEstmPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice().toString()));
         }
-        if(!StringUtils.isEmpty(originItem.getGpsLat())){
-          amcAssetMysql.setGpsLat(originItem.getGpsLat().toString());
+        if (!StringUtils.isEmpty(originItem.getGpsLat())) {
+            amcAssetMysql.setGpsLat(originItem.getGpsLat().toString());
         }
-        if(!StringUtils.isEmpty(originItem.getGpsLng())){
-          amcAssetMysql.setGpsLng(originItem.getGpsLng().toString());
+        if (!StringUtils.isEmpty(originItem.getGpsLng())) {
+            amcAssetMysql.setGpsLng(originItem.getGpsLng().toString());
         }
 
-        if(originItem.getInitialPrice() != null){
-          amcAssetMysql.setInitPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getInitialPrice().toString()));
+        if (originItem.getInitialPrice() != null) {
+            amcAssetMysql.setInitPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getInitialPrice().toString()));
         }
-        if(originItem.getLandArea() != null){
-          amcAssetMysql.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getLandArea()));
+        if (originItem.getLandArea() != null) {
+            amcAssetMysql.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getLandArea()));
         }
         amcAssetMysql.setProvince(originItem.getProvince());
         amcAssetMysql.setPublishDate(originItem.getPublishDate());
-        amcAssetMysql.setRestrictions(StringUtils.isEmpty(originItem.getRestrictions())? -1: RestrictionsEnum.valueOf(originItem.getRestrictions()).getStatus());
-        if(!StringUtils.isEmpty(originItem.getState())){
-          amcAssetMysql.setState(AssetStateEnum.lookupByDisplayNameUtil(originItem.getState()).getStatus());
+        amcAssetMysql.setRestrictions(StringUtils.isEmpty(originItem.getRestrictions()) ? -1 : RestrictionsEnum.valueOf(originItem.getRestrictions()).getStatus());
+        if (!StringUtils.isEmpty(originItem.getState())) {
+            amcAssetMysql.setState(AssetStateEnum.lookupByDisplayNameUtil(originItem.getState()).getStatus());
         }
         amcAssetMysql.setStreet(originItem.getStreet());
         amcAssetMysql.setTitle(originItem.getTitle());
-        if(!StringUtils.isEmpty(originItem.getType())){
-          amcAssetMysql.setType(AssetTypeEnum.lookupByDisplayNameUtil(originItem.getType()).getType());
+        if (!StringUtils.isEmpty(originItem.getType())) {
+            amcAssetMysql.setType(AssetTypeEnum.lookupByDisplayNameUtil(originItem.getType()).getType());
+        }
+    }
+
+
+    @Test
+    public void transferMongoDb2MySqlDebt() {
+        List<DebtOrigin> amcAssetOrigins = primaryMongoTemplate.findAll(DebtOrigin.class, "debt");
+        System.out.println(amcAssetOrigins.size());
+
+        // generate pojo for mysql and save
+
+        AmcDebt amcDebt = null;
+        for (DebtOrigin debtOriginItem : amcAssetOrigins) {
+            try {
+
+//            BeanUtils.copyProperties(originItem, amcAssetMysql );
+
+                handleAmcDebt(debtOriginItem);
+                AmcAssetExample amcAssetExample = new AmcAssetExample();
+                amcAssetExample.createCriteria().andTitleEqualTo(debtOriginItem.getTitle());
+                List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+                Long amcAssetId = -1L;
+                if (!CollectionUtils.isEmpty(amcAssets)) {
+                    System.out.println("this item alredy exists, need update");
+                    if (amcAssets.size() > 1) {
+                        System.out.println("There is duplicated items for title:" + originItem.getTitle());
+                        continue;
+                    } else {
+                        //try to update the origin record
+                        amcAssetId = amcAssets.get(0).getId();
+                        amcAssetMysql.setId(amcAssetId);
+                        amcAssetMapper.updateByPrimaryKeySelective(amcAssetMysql);
+                    }
+
+                } else {
+                    amcAssetId = new Long(amcAssetMapper.insertSelective(amcAssetMysql));
+                }
+
+                handleAmcAddtional(originItem, amcAssetId);
+//            handleAssetComments(originItem, amcAssetId);
+                handleAssetImages(originItem, amcAssetId);
+                handleAssetDocument(originItem, amcAssetId);
+                amcAssetMysql = null;
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                System.out.println(originItem.toString());
+
+            }
+
         }
 
 
+        // generate pojo for mongo and save
+
+    }
+
+    private Long handleAmcDebt(DebtOrigin originItem) {
+        AmcDebt amcDebt = null;
+        boolean isUpdate = false;
+        AmcDebtExample amcDebtExample = new AmcDebtExample();
+        amcDebtExample.createCriteria().andTitleEqualTo(originItem.getTitle()).andAmcIdEqualTo(originItem.getAmc());
+        List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+        if(!CollectionUtils.isEmpty(amcDebts)){
+            if(amcDebts.size() >=2 ){
+                logger.error("There is multipule same title debts there");
+                for(int idx = 1; idx < amcDebts.size() - 1; idx ++){
+                    logger.info("will remove"+GSON.toJson(amcDebts.get(idx)));
+                    amcDebtMapper.deleteByPrimaryKey(amcDebts.get(idx).getId());
+                }
+            }
+            amcDebt = amcDebts.get(0);
+            isUpdate = true;
+        }else{
+            amcDebt = new AmcDebt();
+        }
+        if (!StringUtils.isEmpty(originItem.getAmcContact1())) {
+            amcDebt.setAmcContact1(originItem.getAmcContact1());
+        }
+        if (!StringUtils.isEmpty(originItem.getAmcContact2())) {
+            amcDebt.setAmcContact2(originItem.getAmcContact2());
+        }
+        if (!StringUtils.isEmpty(originItem.getAmcDebtCode())) {
+            amcDebt.setAmcDebtCode(originItem.getAmcDebtCode());
+
+        }
+        amcDebt.setBaseAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getBaseAmount()));
+        if (originItem.getBaseDate() != null) {
+            amcDebt.setBaseDate(originItem.getBaseDate());
+        }
+        Long courtId = handleCourtInfo(originItem);
+        amcDebt.setCourtId(courtId);
+        amcDebt.setDebtpackId(originItem.getDebtpackId());
+        amcDebt.setEditStatus(EditStatusEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
+        if(originItem.getEndDate() != null){
+            amcDebt.setEndDate(originItem.getEndDate());
+        }
+        amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
+        amcDebt.setIsRecommanded(originItem.getIsRecommanded());
+        amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
+        amcDebt.setOriginId(originItem.getId());
+        amcDebt.setPublishDate(originItem.getPublishDate());
+        amcDebt.setSettleDate(originItem.getSettleDate());
+        amcDebt.setStartDate(originItem.getStartDate());
+        amcDebt.setTitle(originItem.getTitle());
+        amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getTotalAmount()));
+        if( isUpdate ){
+            amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+        }else{
+            Long debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
+        }
+
+
+
+    }
+
+    private Long handleCourtInfo(DebtOrigin originItem) {
+        CurtInfoExample curtInfoExample = new CurtInfoExample();
+        curtInfoExample.createCriteria().andCurtNameEqualTo(originItem.getCourtName()).andCurtCityEqualTo(originItem.getCourtCity())
+        List<CurtInfo> curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
+        if (CollectionUtils.isEmpty(curtInfos)) {
+            CurtInfo curtInfo = new CurtInfo();
+            curtInfo.setCurtCity(originItem.getCourtCity());
+            curtInfo.setCurtName(originItem.getCourtName());
+            curtInfo.setCurtProvince(originItem.getCourtProvince());
+            Long curtId = Long.valueOf(curtInfoMapper.insertSelective(curtInfo));
+            return curtId;
+        } else {
+            return curtInfos.get(0).getId();
+        }
     }
 }

@@ -19,6 +19,8 @@ public class AmcAsset {
 
     private String amcAssetCode;
 
+    private String zccAssetCode;
+
     private Long estmPrice;
 
     private Long debtId;
@@ -111,6 +113,14 @@ public class AmcAsset {
 
     public void setAmcAssetCode(String amcAssetCode) {
         this.amcAssetCode = amcAssetCode == null ? null : amcAssetCode.trim();
+    }
+
+    public String getZccAssetCode() {
+        return zccAssetCode;
+    }
+
+    public void setZccAssetCode(String zccAssetCode) {
+        this.zccAssetCode = zccAssetCode == null ? null : zccAssetCode.trim();
     }
 
     public Long getEstmPrice() {

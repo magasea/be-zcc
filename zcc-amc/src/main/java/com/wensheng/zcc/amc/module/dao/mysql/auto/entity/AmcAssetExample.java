@@ -632,6 +632,76 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
+        public Criteria andZccAssetCodeIsNull() {
+            addCriterion("zcc_asset_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeIsNotNull() {
+            addCriterion("zcc_asset_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeEqualTo(String value) {
+            addCriterion("zcc_asset_code =", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeNotEqualTo(String value) {
+            addCriterion("zcc_asset_code <>", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeGreaterThan(String value) {
+            addCriterion("zcc_asset_code >", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("zcc_asset_code >=", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeLessThan(String value) {
+            addCriterion("zcc_asset_code <", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeLessThanOrEqualTo(String value) {
+            addCriterion("zcc_asset_code <=", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeLike(String value) {
+            addCriterion("zcc_asset_code like", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeNotLike(String value) {
+            addCriterion("zcc_asset_code not like", value, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeIn(List<String> values) {
+            addCriterion("zcc_asset_code in", values, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeNotIn(List<String> values) {
+            addCriterion("zcc_asset_code not in", values, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeBetween(String value1, String value2) {
+            addCriterion("zcc_asset_code between", value1, value2, "zccAssetCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andZccAssetCodeNotBetween(String value1, String value2) {
+            addCriterion("zcc_asset_code not between", value1, value2, "zccAssetCode");
+            return (Criteria) this;
+        }
+
         public Criteria andEstmPriceIsNull() {
             addCriterion("estm_price is null");
             return (Criteria) this;

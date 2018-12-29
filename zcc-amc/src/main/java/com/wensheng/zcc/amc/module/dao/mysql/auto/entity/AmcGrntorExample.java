@@ -284,6 +284,66 @@ public class AmcGrntorExample {
             return (Criteria) this;
         }
 
+        public Criteria andOriginDebtIdIsNull() {
+            addCriterion("origin_debt_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdIsNotNull() {
+            addCriterion("origin_debt_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdEqualTo(Long value) {
+            addCriterion("origin_debt_id =", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdNotEqualTo(Long value) {
+            addCriterion("origin_debt_id <>", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdGreaterThan(Long value) {
+            addCriterion("origin_debt_id >", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("origin_debt_id >=", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdLessThan(Long value) {
+            addCriterion("origin_debt_id <", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdLessThanOrEqualTo(Long value) {
+            addCriterion("origin_debt_id <=", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdIn(List<Long> values) {
+            addCriterion("origin_debt_id in", values, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdNotIn(List<Long> values) {
+            addCriterion("origin_debt_id not in", values, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdBetween(Long value1, Long value2) {
+            addCriterion("origin_debt_id between", value1, value2, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdNotBetween(Long value1, Long value2) {
+            addCriterion("origin_debt_id not between", value1, value2, "originDebtId");
+            return (Criteria) this;
+        }
+
         public Criteria andTypeIsNull() {
             addCriterion("type is null");
             return (Criteria) this;

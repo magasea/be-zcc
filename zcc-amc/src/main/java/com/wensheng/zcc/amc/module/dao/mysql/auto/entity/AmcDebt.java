@@ -7,6 +7,8 @@ public class AmcDebt {
 
     private Long debtpackId;
 
+    private Long amcId;
+
     private String title;
 
     private Long baseAmount;
@@ -17,25 +19,21 @@ public class AmcDebt {
 
     private Date settleDate;
 
-    private Integer status;
+    private Long courtId;
+
+    private String grantor;
+
+    private Short grantType;
 
     private String amcDebtCode;
-
-    private String courtName;
-
-    private String courtProvince;
-
-    private String courtCity;
-
-    private String courtCounty;
 
     private Integer editStatus;
 
     private Date publishDate;
 
-    private String estimatedPrice;
+    private Integer lawStatus;
 
-    private String rating;
+    private Long estimatedPrice;
 
     private String amcContact1;
 
@@ -47,7 +45,7 @@ public class AmcDebt {
 
     private Date endDate;
 
-    private String originId;
+    private Long originId;
 
     public Long getId() {
         return id;
@@ -63,6 +61,14 @@ public class AmcDebt {
 
     public void setDebtpackId(Long debtpackId) {
         this.debtpackId = debtpackId;
+    }
+
+    public Long getAmcId() {
+        return amcId;
+    }
+
+    public void setAmcId(Long amcId) {
+        this.amcId = amcId;
     }
 
     public String getTitle() {
@@ -105,12 +111,28 @@ public class AmcDebt {
         this.settleDate = settleDate;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Long getCourtId() {
+        return courtId;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setCourtId(Long courtId) {
+        this.courtId = courtId;
+    }
+
+    public String getGrantor() {
+        return grantor;
+    }
+
+    public void setGrantor(String grantor) {
+        this.grantor = grantor == null ? null : grantor.trim();
+    }
+
+    public Short getGrantType() {
+        return grantType;
+    }
+
+    public void setGrantType(Short grantType) {
+        this.grantType = grantType;
     }
 
     public String getAmcDebtCode() {
@@ -119,38 +141,6 @@ public class AmcDebt {
 
     public void setAmcDebtCode(String amcDebtCode) {
         this.amcDebtCode = amcDebtCode == null ? null : amcDebtCode.trim();
-    }
-
-    public String getCourtName() {
-        return courtName;
-    }
-
-    public void setCourtName(String courtName) {
-        this.courtName = courtName == null ? null : courtName.trim();
-    }
-
-    public String getCourtProvince() {
-        return courtProvince;
-    }
-
-    public void setCourtProvince(String courtProvince) {
-        this.courtProvince = courtProvince == null ? null : courtProvince.trim();
-    }
-
-    public String getCourtCity() {
-        return courtCity;
-    }
-
-    public void setCourtCity(String courtCity) {
-        this.courtCity = courtCity == null ? null : courtCity.trim();
-    }
-
-    public String getCourtCounty() {
-        return courtCounty;
-    }
-
-    public void setCourtCounty(String courtCounty) {
-        this.courtCounty = courtCounty == null ? null : courtCounty.trim();
     }
 
     public Integer getEditStatus() {
@@ -169,20 +159,20 @@ public class AmcDebt {
         this.publishDate = publishDate;
     }
 
-    public String getEstimatedPrice() {
+    public Integer getLawStatus() {
+        return lawStatus;
+    }
+
+    public void setLawStatus(Integer lawStatus) {
+        this.lawStatus = lawStatus;
+    }
+
+    public Long getEstimatedPrice() {
         return estimatedPrice;
     }
 
-    public void setEstimatedPrice(String estimatedPrice) {
-        this.estimatedPrice = estimatedPrice == null ? null : estimatedPrice.trim();
-    }
-
-    public String getRating() {
-        return rating;
-    }
-
-    public void setRating(String rating) {
-        this.rating = rating == null ? null : rating.trim();
+    public void setEstimatedPrice(Long estimatedPrice) {
+        this.estimatedPrice = estimatedPrice;
     }
 
     public String getAmcContact1() {
@@ -225,11 +215,11 @@ public class AmcDebt {
         this.endDate = endDate;
     }
 
-    public String getOriginId() {
+    public Long getOriginId() {
         return originId;
     }
 
-    public void setOriginId(String originId) {
-        this.originId = originId == null ? null : originId.trim();
+    public void setOriginId(Long originId) {
+        this.originId = originId;
     }
 }

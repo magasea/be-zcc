@@ -21,10 +21,6 @@ public class AmcDebt {
 
     private Long courtId;
 
-    private String grantor;
-
-    private Short grantType;
-
     private String amcDebtCode;
 
     private Integer editStatus;
@@ -117,22 +113,6 @@ public class AmcDebt {
 
     public void setCourtId(Long courtId) {
         this.courtId = courtId;
-    }
-
-    public String getGrantor() {
-        return grantor;
-    }
-
-    public void setGrantor(String grantor) {
-        this.grantor = grantor == null ? null : grantor.trim();
-    }
-
-    public Short getGrantType() {
-        return grantType;
-    }
-
-    public void setGrantType(Short grantType) {
-        this.grantType = grantType;
     }
 
     public String getAmcDebtCode() {

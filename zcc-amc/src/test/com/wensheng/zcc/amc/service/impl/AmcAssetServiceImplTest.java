@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
@@ -12,6 +13,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AmcAssetOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AssetImageOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.DebtOrigin;
+import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
@@ -65,6 +67,11 @@ public class AmcAssetServiceImplTest {
 
     @Autowired
     AmcDebtMapper amcDebtMapper;
+
+
+
+    @Autowired
+    AmcGrntorMapper amcGrntorMapper;
 
 
 //    @Test
@@ -155,8 +162,7 @@ public class AmcAssetServiceImplTest {
             assetImageCur.setOriginalName(assetImage.getOriginalName());
             assetImageCur.setOriginAssetId(assetImage.getAsset());
             assetImageCur.setPath(assetImage.getPath());
-            secondaryMongoTemplate.save(assetImageCurprivate static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
-);
+            secondaryMongoTemplate.save(assetImage);
         }
     }
 
@@ -289,39 +295,17 @@ public class AmcAssetServiceImplTest {
 
 //            BeanUtils.copyProperties(originItem, amcAssetMysql );
 
-                handleAmcDebt(debtOriginItem);
-                AmcAssetExample amcAssetExample = new AmcAssetExample();
-                amcAssetExample.createCriteria().andTitleEqualTo(debtOriginItem.getTitle());
-                List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
-                Long amcAssetId = -1L;
-                if (!CollectionUtils.isEmpty(amcAssets)) {
-                    System.out.println("this item alredy exists, need update");
-                    if (amcAssets.size() > 1) {
-                        System.out.println("There is duplicated items for title:" + originItem.getTitle());
-                        continue;
-                    } else {
-                        //try to update the origin record
-                        amcAssetId = amcAssets.get(0).getId();
-                        amcAssetMysql.setId(amcAssetId);
-                        amcAssetMapper.updateByPrimaryKeySelective(amcAssetMysql);
-                    }
+                amcDebt = handleAmcDebt(debtOriginItem);
+                Long courtId = handleCourtInfo(debtOriginItem);
+                amcDebt.setCourtId(courtId);
+                handleDebtGrantor(debtOriginItem, amcDebt);
+                handleDebtorInfo(debtOriginItem, amcDebt);
 
-                } else {
-                    amcAssetId = new Long(amcAssetMapper.insertSelective(amcAssetMysql));
-                }
-
-                handleAmcAddtional(originItem, amcAssetId);
-//            handleAssetComments(originItem, amcAssetId);
-                handleAssetImages(originItem, amcAssetId);
-                handleAssetDocument(originItem, amcAssetId);
-                amcAssetMysql = null;
 
             } catch (Exception ex) {
                 ex.printStackTrace();
-                System.out.println(originItem.toString());
-
+                logger.error(GSON.toJson(debtOriginItem));
             }
-
         }
 
 
@@ -329,7 +313,16 @@ public class AmcAssetServiceImplTest {
 
     }
 
-    private Long handleAmcDebt(DebtOrigin originItem) {
+    private void handleDebtGrantor(DebtOrigin debtOriginItem, AmcDebt amcDebt) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOriginId()));
+        primaryMongoTemplate.find(query, Grntor.class)
+        AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
+        amcGrntorExample.createCriteria().
+        amcGrntorMapper.selectByExample()
+    }
+
+    private AmcDebt handleAmcDebt(DebtOrigin originItem) {
         AmcDebt amcDebt = null;
         boolean isUpdate = false;
         AmcDebtExample amcDebtExample = new AmcDebtExample();
@@ -378,14 +371,14 @@ public class AmcAssetServiceImplTest {
         amcDebt.setStartDate(originItem.getStartDate());
         amcDebt.setTitle(originItem.getTitle());
         amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getTotalAmount()));
+        Long debtId;
         if( isUpdate ){
+            debtId = amcDebt.getId();
             amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
         }else{
-            Long debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
+            debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
         }
-
-
-
+        return amcDebt;
     }
 
     private Long handleCourtInfo(DebtOrigin originItem) {

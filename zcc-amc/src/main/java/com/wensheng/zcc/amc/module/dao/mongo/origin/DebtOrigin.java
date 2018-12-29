@@ -38,6 +38,11 @@ public class DebtOrigin {
     private int isRecommanded;
     private Timestamp startDate;
     private Timestamp endDate;
+    String creditor;            // 债权人（AMC）
+    String creditorBranch;	        // 债权人（分行）
+    String originalCreditor;	    // 原始债权人(银行)
+    String guarantorType;   //担保方式
+    String guarantor;        //保证人
 
 
 }

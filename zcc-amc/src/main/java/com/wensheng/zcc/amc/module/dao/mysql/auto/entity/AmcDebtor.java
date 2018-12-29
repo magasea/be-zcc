@@ -9,6 +9,8 @@ public class AmcDebtor {
 
     private String debtContract;
 
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -39,5 +41,13 @@ public class AmcDebtor {
 
     public void setDebtContract(String debtContract) {
         this.debtContract = debtContract == null ? null : debtContract.trim();
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 }

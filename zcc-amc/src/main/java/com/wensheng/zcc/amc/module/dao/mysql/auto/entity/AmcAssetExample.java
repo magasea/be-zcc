@@ -702,6 +702,66 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
+        public Criteria andIsMainAssetIsNull() {
+            addCriterion("is_main_asset is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetIsNotNull() {
+            addCriterion("is_main_asset is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetEqualTo(Short value) {
+            addCriterion("is_main_asset =", value, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetNotEqualTo(Short value) {
+            addCriterion("is_main_asset <>", value, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetGreaterThan(Short value) {
+            addCriterion("is_main_asset >", value, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetGreaterThanOrEqualTo(Short value) {
+            addCriterion("is_main_asset >=", value, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetLessThan(Short value) {
+            addCriterion("is_main_asset <", value, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetLessThanOrEqualTo(Short value) {
+            addCriterion("is_main_asset <=", value, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetIn(List<Short> values) {
+            addCriterion("is_main_asset in", values, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetNotIn(List<Short> values) {
+            addCriterion("is_main_asset not in", values, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetBetween(Short value1, Short value2) {
+            addCriterion("is_main_asset between", value1, value2, "isMainAsset");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsMainAssetNotBetween(Short value1, Short value2) {
+            addCriterion("is_main_asset not between", value1, value2, "isMainAsset");
+            return (Criteria) this;
+        }
+
         public Criteria andEstmPriceIsNull() {
             addCriterion("estm_price is null");
             return (Criteria) this;

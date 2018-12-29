@@ -11,8 +11,6 @@
     <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="court_id" jdbcType="BIGINT" property="courtId" />
-    <result column="grantor" jdbcType="CHAR" property="grantor" />
-    <result column="grant_type" jdbcType="SMALLINT" property="grantType" />
     <result column="amc_debt_code" jdbcType="CHAR" property="amcDebtCode" />
     <result column="edit_status" jdbcType="INTEGER" property="editStatus" />
     <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
@@ -85,9 +83,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, debtpack_id, amc_id, title, base_amount, base_date, total_amount, settle_date, 
-    court_id, grantor, grant_type, amc_debt_code, edit_status, publish_date, law_status, 
-    estimated_price, amc_contact1, amc_contact2, is_recommanded, start_date, end_date, 
-    origin_id
+    court_id, amc_debt_code, edit_status, publish_date, law_status, estimated_price, 
+    amc_contact1, amc_contact2, is_recommanded, start_date, end_date, origin_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -125,20 +122,18 @@
     </selectKey>
     insert into AMC_DEBT (debtpack_id, amc_id, title, 
       base_amount, base_date, total_amount, 
-      settle_date, court_id, grantor, 
-      grant_type, amc_debt_code, edit_status, 
-      publish_date, law_status, estimated_price, 
-      amc_contact1, amc_contact2, is_recommanded, 
-      start_date, end_date, origin_id
-      )
+      settle_date, court_id, amc_debt_code, 
+      edit_status, publish_date, law_status, 
+      estimated_price, amc_contact1, amc_contact2, 
+      is_recommanded, start_date, end_date, 
+      origin_id)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseDate,jdbcType=TIMESTAMP}, #{totalAmount,jdbcType=BIGINT}, 
-      #{settleDate,jdbcType=TIMESTAMP}, #{courtId,jdbcType=BIGINT}, #{grantor,jdbcType=CHAR}, 
-      #{grantType,jdbcType=SMALLINT}, #{amcDebtCode,jdbcType=CHAR}, #{editStatus,jdbcType=INTEGER}, 
-      #{publishDate,jdbcType=TIMESTAMP}, #{lawStatus,jdbcType=INTEGER}, #{estimatedPrice,jdbcType=BIGINT}, 
-      #{amcContact1,jdbcType=CHAR}, #{amcContact2,jdbcType=CHAR}, #{isRecommanded,jdbcType=INTEGER}, 
-      #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{originId,jdbcType=BIGINT}
-      )
+      #{settleDate,jdbcType=TIMESTAMP}, #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=CHAR}, 
+      #{editStatus,jdbcType=INTEGER}, #{publishDate,jdbcType=TIMESTAMP}, #{lawStatus,jdbcType=INTEGER}, 
+      #{estimatedPrice,jdbcType=BIGINT}, #{amcContact1,jdbcType=CHAR}, #{amcContact2,jdbcType=CHAR}, 
+      #{isRecommanded,jdbcType=INTEGER}, #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, 
+      #{originId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -169,12 +164,6 @@
       </if>
       <if test="courtId != null">
         court_id,
-      </if>
-      <if test="grantor != null">
-        grantor,
-      </if>
-      <if test="grantType != null">
-        grant_type,
       </if>
       <if test="amcDebtCode != null">
         amc_debt_code,
@@ -234,12 +223,6 @@
       </if>
       <if test="courtId != null">
         #{courtId,jdbcType=BIGINT},
-      </if>
-      <if test="grantor != null">
-        #{grantor,jdbcType=CHAR},
-      </if>
-      <if test="grantType != null">
-        #{grantType,jdbcType=SMALLINT},
       </if>
       <if test="amcDebtCode != null">
         #{amcDebtCode,jdbcType=CHAR},
@@ -312,12 +295,6 @@
       <if test="record.courtId != null">
         court_id = #{record.courtId,jdbcType=BIGINT},
       </if>
-      <if test="record.grantor != null">
-        grantor = #{record.grantor,jdbcType=CHAR},
-      </if>
-      <if test="record.grantType != null">
-        grant_type = #{record.grantType,jdbcType=SMALLINT},
-      </if>
       <if test="record.amcDebtCode != null">
         amc_debt_code = #{record.amcDebtCode,jdbcType=CHAR},
       </if>
@@ -367,8 +344,6 @@
       total_amount = #{record.totalAmount,jdbcType=BIGINT},
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       court_id = #{record.courtId,jdbcType=BIGINT},
-      grantor = #{record.grantor,jdbcType=CHAR},
-      grant_type = #{record.grantType,jdbcType=SMALLINT},
       amc_debt_code = #{record.amcDebtCode,jdbcType=CHAR},
       edit_status = #{record.editStatus,jdbcType=INTEGER},
       publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
@@ -410,12 +385,6 @@
       </if>
       <if test="courtId != null">
         court_id = #{courtId,jdbcType=BIGINT},
-      </if>
-      <if test="grantor != null">
-        grantor = #{grantor,jdbcType=CHAR},
-      </if>
-      <if test="grantType != null">
-        grant_type = #{grantType,jdbcType=SMALLINT},
       </if>
       <if test="amcDebtCode != null">
         amc_debt_code = #{amcDebtCode,jdbcType=CHAR},
@@ -463,8 +432,6 @@
       total_amount = #{totalAmount,jdbcType=BIGINT},
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
       court_id = #{courtId,jdbcType=BIGINT},
-      grantor = #{grantor,jdbcType=CHAR},
-      grant_type = #{grantType,jdbcType=SMALLINT},
       amc_debt_code = #{amcDebtCode,jdbcType=CHAR},
       edit_status = #{editStatus,jdbcType=INTEGER},
       publish_date = #{publishDate,jdbcType=TIMESTAMP},

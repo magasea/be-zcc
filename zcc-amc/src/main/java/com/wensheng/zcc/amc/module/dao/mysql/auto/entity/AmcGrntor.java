@@ -5,6 +5,8 @@ public class AmcGrntor {
 
     private Long grntctrtId;
 
+    private Long originCtrtId;
+
     private Long debtId;
 
     private Long originDebtId;
@@ -12,6 +14,8 @@ public class AmcGrntor {
     private Integer type;
 
     private Long cmpyId;
+
+    private Long originCmpyId;
 
     private String name;
 
@@ -31,6 +35,14 @@ public class AmcGrntor {
 
     public void setGrntctrtId(Long grntctrtId) {
         this.grntctrtId = grntctrtId;
+    }
+
+    public Long getOriginCtrtId() {
+        return originCtrtId;
+    }
+
+    public void setOriginCtrtId(Long originCtrtId) {
+        this.originCtrtId = originCtrtId;
     }
 
     public Long getDebtId() {
@@ -63,6 +75,14 @@ public class AmcGrntor {
 
     public void setCmpyId(Long cmpyId) {
         this.cmpyId = cmpyId;
+    }
+
+    public Long getOriginCmpyId() {
+        return originCmpyId;
+    }
+
+    public void setOriginCmpyId(Long originCmpyId) {
+        this.originCmpyId = originCmpyId;
     }
 
     public String getName() {

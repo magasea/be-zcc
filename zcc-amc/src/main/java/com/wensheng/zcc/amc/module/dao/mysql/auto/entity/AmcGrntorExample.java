@@ -224,6 +224,66 @@ public class AmcGrntorExample {
             return (Criteria) this;
         }
 
+        public Criteria andOriginCtrtIdIsNull() {
+            addCriterion("origin_ctrt_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdIsNotNull() {
+            addCriterion("origin_ctrt_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdEqualTo(Long value) {
+            addCriterion("origin_ctrt_id =", value, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdNotEqualTo(Long value) {
+            addCriterion("origin_ctrt_id <>", value, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdGreaterThan(Long value) {
+            addCriterion("origin_ctrt_id >", value, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("origin_ctrt_id >=", value, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdLessThan(Long value) {
+            addCriterion("origin_ctrt_id <", value, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdLessThanOrEqualTo(Long value) {
+            addCriterion("origin_ctrt_id <=", value, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdIn(List<Long> values) {
+            addCriterion("origin_ctrt_id in", values, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdNotIn(List<Long> values) {
+            addCriterion("origin_ctrt_id not in", values, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdBetween(Long value1, Long value2) {
+            addCriterion("origin_ctrt_id between", value1, value2, "originCtrtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCtrtIdNotBetween(Long value1, Long value2) {
+            addCriterion("origin_ctrt_id not between", value1, value2, "originCtrtId");
+            return (Criteria) this;
+        }
+
         public Criteria andDebtIdIsNull() {
             addCriterion("debt_id is null");
             return (Criteria) this;
@@ -461,6 +521,66 @@ public class AmcGrntorExample {
 
         public Criteria andCmpyIdNotBetween(Long value1, Long value2) {
             addCriterion("cmpy_id not between", value1, value2, "cmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdIsNull() {
+            addCriterion("origin_cmpy_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdIsNotNull() {
+            addCriterion("origin_cmpy_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdEqualTo(Long value) {
+            addCriterion("origin_cmpy_id =", value, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdNotEqualTo(Long value) {
+            addCriterion("origin_cmpy_id <>", value, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdGreaterThan(Long value) {
+            addCriterion("origin_cmpy_id >", value, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("origin_cmpy_id >=", value, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdLessThan(Long value) {
+            addCriterion("origin_cmpy_id <", value, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdLessThanOrEqualTo(Long value) {
+            addCriterion("origin_cmpy_id <=", value, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdIn(List<Long> values) {
+            addCriterion("origin_cmpy_id in", values, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdNotIn(List<Long> values) {
+            addCriterion("origin_cmpy_id not in", values, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdBetween(Long value1, Long value2) {
+            addCriterion("origin_cmpy_id between", value1, value2, "originCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginCmpyIdNotBetween(Long value1, Long value2) {
+            addCriterion("origin_cmpy_id not between", value1, value2, "originCmpyId");
             return (Criteria) this;
         }
 

@@ -333,12 +333,21 @@ public class AmcAssetServiceImplTest {
                 amcGrntor = amcGrntors.get(0);
                 amcGrntor.setType(grntor.getType());
                 amcGrntor.setDebtId(amcDebt.getId());
-                amcGrntor.setGrntctrtId(grntor.);
+                amcGrntor.setOriginCtrtId(grntor.getContract());
+                //ToDo:need generate contract
+                amcGrntor.setC generateContract(grntor.getContract());
+                amcGrntor.setOriginCmpyId(grntor);
             }
           }
         }
 
         amcGrntorMapper.selectByExample()
+    }
+
+    private void generateContract(Long contractId) {
+        //find contract from origin database
+
+        // insert into mysql database
     }
 
     private AmcDebt handleAmcDebt(DebtOrigin originItem) {

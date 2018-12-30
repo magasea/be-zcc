@@ -316,9 +316,28 @@ public class AmcAssetServiceImplTest {
     private void handleDebtGrantor(DebtOrigin debtOriginItem, AmcDebt amcDebt) {
         Query query = new Query();
         query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOriginId()));
-        primaryMongoTemplate.find(query, Grntor.class)
-        AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
-        amcGrntorExample.createCriteria().
+        List<Grntor> grntors = primaryMongoTemplate.find(query, Grntor.class);
+
+        for(Grntor grntor : grntors){
+          AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
+          amcGrntorExample.createCriteria().andOriginDebtIdEqualTo(grntor.getDebtNo()).andNameEqualTo(grntor.getName());
+          List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
+          AmcGrntor amcGrntor = null;
+          if(!CollectionUtils.isEmpty(amcGrntors)){
+            if(amcGrntors.size() >= 2){
+                logger.error(" there is redundent item for "+ grntor.getDebtNo() + " and "+ grntor.getName() );
+                for(int idx = 1; idx < amcGrntors.size() - 1; idx ++){
+                    amcGrntorMapper.deleteByPrimaryKey(amcGrntors.get(idx).getId());
+                }
+            }else{
+                amcGrntor = amcGrntors.get(0);
+                amcGrntor.setType(grntor.getType());
+                amcGrntor.setDebtId(amcDebt.getId());
+                amcGrntor.setGrntctrtId(grntor.);
+            }
+          }
+        }
+
         amcGrntorMapper.selectByExample()
     }
 
@@ -383,7 +402,7 @@ public class AmcAssetServiceImplTest {
 
     private Long handleCourtInfo(DebtOrigin originItem) {
         CurtInfoExample curtInfoExample = new CurtInfoExample();
-        curtInfoExample.createCriteria().andCurtNameEqualTo(originItem.getCourtName()).andCurtCityEqualTo(originItem.getCourtCity())
+        curtInfoExample.createCriteria().andCurtNameEqualTo(originItem.getCourtName()).andCurtCityEqualTo(originItem.getCourtCity());
         List<CurtInfo> curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
         if (CollectionUtils.isEmpty(curtInfos)) {
             CurtInfo curtInfo = new CurtInfo();

@@ -3,7 +3,7 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="grntctrt_id" jdbcType="BIGINT" property="grntctrtId" />
+    <result column="ctrt_id" jdbcType="BIGINT" property="ctrtId" />
     <result column="origin_ctrt_id" jdbcType="BIGINT" property="originCtrtId" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
     <result column="origin_debt_id" jdbcType="BIGINT" property="originDebtId" />
@@ -72,7 +72,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, grntctrt_id, origin_ctrt_id, debt_id, origin_debt_id, type, cmpy_id, origin_cmpy_id, 
+    id, ctrt_id, origin_ctrt_id, debt_id, origin_debt_id, type, cmpy_id, origin_cmpy_id, 
     name, notes
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample" resultMap="BaseResultMap">
@@ -109,10 +109,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_GRNTOR (grntctrt_id, origin_ctrt_id, debt_id, 
+    insert into AMC_GRNTOR (ctrt_id, origin_ctrt_id, debt_id, 
       origin_debt_id, type, cmpy_id, 
       origin_cmpy_id, name, notes)
-    values (#{grntctrtId,jdbcType=BIGINT}, #{originCtrtId,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
+    values (#{ctrtId,jdbcType=BIGINT}, #{originCtrtId,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
       #{originDebtId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{cmpyId,jdbcType=BIGINT}, 
       #{originCmpyId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{notes,jdbcType=CHAR})
   </insert>
@@ -122,8 +122,8 @@
     </selectKey>
     insert into AMC_GRNTOR
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="grntctrtId != null">
-        grntctrt_id,
+      <if test="ctrtId != null">
+        ctrt_id,
       </if>
       <if test="originCtrtId != null">
         origin_ctrt_id,
@@ -151,8 +151,8 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="grntctrtId != null">
-        #{grntctrtId,jdbcType=BIGINT},
+      <if test="ctrtId != null">
+        #{ctrtId,jdbcType=BIGINT},
       </if>
       <if test="originCtrtId != null">
         #{originCtrtId,jdbcType=BIGINT},
@@ -192,8 +192,8 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.grntctrtId != null">
-        grntctrt_id = #{record.grntctrtId,jdbcType=BIGINT},
+      <if test="record.ctrtId != null">
+        ctrt_id = #{record.ctrtId,jdbcType=BIGINT},
       </if>
       <if test="record.originCtrtId != null">
         origin_ctrt_id = #{record.originCtrtId,jdbcType=BIGINT},
@@ -227,7 +227,7 @@
   <update id="updateByExample" parameterType="map">
     update AMC_GRNTOR
     set id = #{record.id,jdbcType=BIGINT},
-      grntctrt_id = #{record.grntctrtId,jdbcType=BIGINT},
+      ctrt_id = #{record.ctrtId,jdbcType=BIGINT},
       origin_ctrt_id = #{record.originCtrtId,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
       origin_debt_id = #{record.originDebtId,jdbcType=BIGINT},
@@ -243,8 +243,8 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     update AMC_GRNTOR
     <set>
-      <if test="grntctrtId != null">
-        grntctrt_id = #{grntctrtId,jdbcType=BIGINT},
+      <if test="ctrtId != null">
+        ctrt_id = #{ctrtId,jdbcType=BIGINT},
       </if>
       <if test="originCtrtId != null">
         origin_ctrt_id = #{originCtrtId,jdbcType=BIGINT},
@@ -275,7 +275,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     update AMC_GRNTOR
-    set grntctrt_id = #{grntctrtId,jdbcType=BIGINT},
+    set ctrt_id = #{ctrtId,jdbcType=BIGINT},
       origin_ctrt_id = #{originCtrtId,jdbcType=BIGINT},
       debt_id = #{debtId,jdbcType=BIGINT},
       origin_debt_id = #{originDebtId,jdbcType=BIGINT},

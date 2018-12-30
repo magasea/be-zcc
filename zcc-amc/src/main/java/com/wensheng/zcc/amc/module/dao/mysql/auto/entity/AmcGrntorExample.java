@@ -164,63 +164,63 @@ public class AmcGrntorExample {
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdIsNull() {
-            addCriterion("grntctrt_id is null");
+        public Criteria andCtrtIdIsNull() {
+            addCriterion("ctrt_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdIsNotNull() {
-            addCriterion("grntctrt_id is not null");
+        public Criteria andCtrtIdIsNotNull() {
+            addCriterion("ctrt_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdEqualTo(Long value) {
-            addCriterion("grntctrt_id =", value, "grntctrtId");
+        public Criteria andCtrtIdEqualTo(Long value) {
+            addCriterion("ctrt_id =", value, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdNotEqualTo(Long value) {
-            addCriterion("grntctrt_id <>", value, "grntctrtId");
+        public Criteria andCtrtIdNotEqualTo(Long value) {
+            addCriterion("ctrt_id <>", value, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdGreaterThan(Long value) {
-            addCriterion("grntctrt_id >", value, "grntctrtId");
+        public Criteria andCtrtIdGreaterThan(Long value) {
+            addCriterion("ctrt_id >", value, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("grntctrt_id >=", value, "grntctrtId");
+        public Criteria andCtrtIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("ctrt_id >=", value, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdLessThan(Long value) {
-            addCriterion("grntctrt_id <", value, "grntctrtId");
+        public Criteria andCtrtIdLessThan(Long value) {
+            addCriterion("ctrt_id <", value, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdLessThanOrEqualTo(Long value) {
-            addCriterion("grntctrt_id <=", value, "grntctrtId");
+        public Criteria andCtrtIdLessThanOrEqualTo(Long value) {
+            addCriterion("ctrt_id <=", value, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdIn(List<Long> values) {
-            addCriterion("grntctrt_id in", values, "grntctrtId");
+        public Criteria andCtrtIdIn(List<Long> values) {
+            addCriterion("ctrt_id in", values, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdNotIn(List<Long> values) {
-            addCriterion("grntctrt_id not in", values, "grntctrtId");
+        public Criteria andCtrtIdNotIn(List<Long> values) {
+            addCriterion("ctrt_id not in", values, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdBetween(Long value1, Long value2) {
-            addCriterion("grntctrt_id between", value1, value2, "grntctrtId");
+        public Criteria andCtrtIdBetween(Long value1, Long value2) {
+            addCriterion("ctrt_id between", value1, value2, "ctrtId");
             return (Criteria) this;
         }
 
-        public Criteria andGrntctrtIdNotBetween(Long value1, Long value2) {
-            addCriterion("grntctrt_id not between", value1, value2, "grntctrtId");
+        public Criteria andCtrtIdNotBetween(Long value1, Long value2) {
+            addCriterion("ctrt_id not between", value1, value2, "ctrtId");
             return (Criteria) this;
         }
 

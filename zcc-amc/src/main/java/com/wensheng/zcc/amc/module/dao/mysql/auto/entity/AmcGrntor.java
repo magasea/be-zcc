@@ -3,7 +3,7 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 public class AmcGrntor {
     private Long id;
 
-    private Long grntctrtId;
+    private Long ctrtId;
 
     private Long originCtrtId;
 
@@ -29,12 +29,12 @@ public class AmcGrntor {
         this.id = id;
     }
 
-    public Long getGrntctrtId() {
-        return grntctrtId;
+    public Long getCtrtId() {
+        return ctrtId;
     }
 
-    public void setGrntctrtId(Long grntctrtId) {
-        this.grntctrtId = grntctrtId;
+    public void setCtrtId(Long ctrtId) {
+        this.ctrtId = ctrtId;
     }
 
     public Long getOriginCtrtId() {

@@ -402,7 +402,7 @@ public class AmcAssetServiceImplTest {
         AmcDebt amcDebt = null;
         boolean isUpdate = false;
         AmcDebtExample amcDebtExample = new AmcDebtExample();
-        amcDebtExample.createCriteria().andTitleEqualTo(originItem.getTitle()).andAmcIdEqualTo(originItem.getAmc());
+        amcDebtExample.createCriteria().andTitleEqualTo(originItem.getTitle()).andAmcIdEqualTo(originItem.getAmc() == null? AMCEnum.AMC_WENSHENG.getId(): AMCEnum.lookupByIdUtil(originItem.getAmc()).getId());
         List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
         if(!CollectionUtils.isEmpty(amcDebts)){
             if(amcDebts.size() >=2 ){
@@ -438,13 +438,25 @@ public class AmcAssetServiceImplTest {
         Long courtId = handleCourtInfo(originItem);
         amcDebt.setCourtId(courtId);
         amcDebt.setDebtpackId(originItem.getDebtpackId());
-        amcDebt.setEditStatus(EditStatusEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
+        if(StringUtils.isEmpty(originItem.getEditStatus())){
+            logger.error("cannot handle editStatus because originItem is empty in this field:" + originItem.getEditStatus());
+        }else{
+            amcDebt.setEditStatus(EditStatusEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
+        }
         if(originItem.getEndDate() != null){
             amcDebt.setEndDate(originItem.getEndDate());
         }
-        amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
-        amcDebt.setIsRecommanded(originItem.getIsRecommanded());
-        amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
+        if(StringUtils.isEmpty(originItem.getEstimatedPrice())){
+            logger.error("this originItem with:" + originItem.getTitle() + " estimate price is empty");
+        }else{
+            amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
+        }
+        amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommand.RECOMMAND.getId(): IsRecommand.NOT_RECOMMAND.getId());
+        if(StringUtils.isEmpty(originItem.getLawStatus())){
+            logger.error("this originItem with title:" + originItem.getTitle() +" lawstatus is empty");
+        }else{
+            amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
+        }
         amcDebt.setOriginId(originItem.getId());
         amcDebt.setPublishDate(originItem.getPublishDate());
         try {
@@ -466,7 +478,15 @@ public class AmcAssetServiceImplTest {
     }
 
     private Long handleCourtInfo(DebtOrigin originItem) {
+        if(StringUtils.isEmpty(originItem.getCourtName())){
+            logger.error("cannot handleCourtInfo because courtName is null for :" + GSON.toJson(originItem));
+            return -1L;
+        }
         CurtInfoExample curtInfoExample = new CurtInfoExample();
+        if(StringUtils.isEmpty(originItem.getCourtCity())){
+            logger.error("originItem:" + GSON.toJson(originItem) + "courtCit is empty");
+            return -1L;
+        }
         curtInfoExample.createCriteria().andCurtNameEqualTo(originItem.getCourtName()).andCurtCityEqualTo(originItem.getCourtCity());
         List<CurtInfo> curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
         if (CollectionUtils.isEmpty(curtInfos)) {

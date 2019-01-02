@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.dao.mongo.origin;
 
+import java.util.Date;
 import lombok.Data;
 
 import java.sql.Timestamp;
@@ -21,7 +22,7 @@ public class DebtOrigin {
     private String baseDate;
     private String totalAmount;
     private String settleDate;
-    private int status;
+    private String status;
     private List<String> amcOwners;
     private String amcDebtCode;
     private String courtName;
@@ -30,14 +31,14 @@ public class DebtOrigin {
     private String courtCounty;
     private String editStatus;
     private String lawStatus;
-    private Timestamp publishDate;
+    private Date publishDate;
     private String estimatedPrice;
     private String rating;
     private String amcContact1;
     private String amcContact2;
-    private int isRecommanded;
-    private Timestamp startDate;
-    private Timestamp endDate;
+    private boolean isRecommanded;
+    private Date startDate;
+    private Date endDate;
     String creditor;            // 债权人（AMC）
     String creditorBranch;	        // 债权人（分行）
     String originalCreditor;	    // 原始债权人(银行)

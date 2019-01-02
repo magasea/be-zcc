@@ -10,19 +10,38 @@ import java.util.function.Function;
  */
 public enum AMCEnum {
 
-    AMC_WENSHENG(2, "WenSheng", "文盛资产管理公司"),
+    AMC_WENSHENG(2L, "WenSheng", "文盛资产管理公司"),
         ;
-    int id;
+    Long id;
     String amcName;
     String amcCnName;
-    AMCEnum(int id, String amcName, String amcCnName){
+    AMCEnum(Long id, String amcName, String amcCnName){
         this.id = id;
         this.amcName = amcName;
         this.amcCnName = amcCnName;
     }
-    private static final Function<String, AssetTypeEnum> func =
-            EnumUtils.lookupMap(AssetTypeEnum.class, e -> e.getName());
-    public static AssetTypeEnum lookupByDisplayNameUtil(String name) {
+    private static final Function<String, AMCEnum> func =
+            EnumUtils.lookupMap(AMCEnum.class, e -> e.getAmcName());
+    public static AMCEnum lookupByDisplayNameUtil(String name) {
         return func.apply(name);
+    }
+
+
+    private static final Function<Long, AMCEnum> funcInt =
+        EnumUtils.lookupMap(AMCEnum.class, e -> e.getId());
+    public static AMCEnum lookupByIdUtil(Long id) {
+        return funcInt.apply(id);
+    }
+
+    public Long getId(){
+        return this.id;
+    }
+
+    public String getAmcName(){
+        return this.amcName;
+    }
+
+    public String getAmcCnName(){
+        return this.amcCnName;
     }
 }

@@ -303,7 +303,8 @@ public class AmcAssetServiceImplTest {
                 Long courtId = handleCourtInfo(debtOriginItem);
                 amcDebt.setCourtId(courtId);
                 handleDebtGrantor(debtOriginItem, amcDebt);
-                handleDebtorInfo(debtOriginItem, amcDebt);
+                //todo: handling debtor creation
+//                handleDebtorInfo(debtOriginItem, amcDebt);
 
 
             } catch (Exception ex) {
@@ -351,7 +352,7 @@ public class AmcAssetServiceImplTest {
               amcGrntor.setName(grntor.getName());
               newGrntorId = Long.valueOf(amcGrntorMapper.insertSelective(amcGrntor));
           }
-            //ToDo:need generate contract
+            // generate contract
           AmcGrntctrctExample amcGrntctrctExample = new AmcGrntctrctExample();
           amcGrntctrctExample.createCriteria().andOriginDebtIdEqualTo(grntor.getDebtNo()).andOriginContractIdEqualTo(grntor.getContract());
 
@@ -370,31 +371,30 @@ public class AmcAssetServiceImplTest {
                   amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
                   amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
                   amcGrntctrctNew.setOriginContractId(grntor.getContract());
+                  amcGrntctrctNew.setOriginGrantorId(grntor.getId());
+                  amcGrntctrctNew.setGrantorId(newGrntorId);
+                  amcGrntctrctMapper.updateByPrimaryKey(amcGrntctrctNew);
               }
 
-          }
-            amcGrntor.setDebtId(amcDebt.getId());
-            amcGrntor.setOriginCtrtId(grntor.getContract());
+          }else{
+              amcGrntctrctNew = new AmcGrntctrct();
+              amcGrntctrctNew.setDebtId(amcDebt.getId());
+              amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
+              amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
+              amcGrntctrctNew.setOriginContractId(grntor.getContract());
+              amcGrntctrctNew.setOriginGrantorId(grntor.getId());
+              amcGrntctrctNew.setGrantorId(newGrntorId);
+              amcGrntctrctMapper.insertSelective(amcGrntctrctNew);
 
-            amcGrntor.setCtrtId(generateContract(grntor));
+          }
             //Todo: search company by name ? from origin mongodb
-    //                amcGrntor.setOriginCmpyId();
+            //                amcGrntor.setOriginCmpyId();
+
+
         }
 
-        amcGrntorMapper.selectByExample()
     }
-    //Todo: finish coding
-    private Long generateContract(Grntor grntor) {
-        //find contract from origin database
-        Query query = new Query();
-        query.addCriteria(Criteria.where("contract").is(contractId));
-        primaryMongoTemplate.find(query, Grntor.class);
 
-        // insert into mysql database
-
-
-        return -1L;
-    }
 
     private AmcDebt handleAmcDebt(DebtOrigin originItem) {
         AmcDebt amcDebt = null;

@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
@@ -72,6 +73,9 @@ public class AmcAssetServiceImplTest {
 
     @Autowired
     AmcGrntorMapper amcGrntorMapper;
+
+    @Autowired
+    AmcGrntctrctMapper amcGrntctrctMapper;
 
 
 //    @Test
@@ -323,9 +327,11 @@ public class AmcAssetServiceImplTest {
 
         for(Grntor grntor : grntors){
           AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
-          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(GrantorTypeEnum.
+              lookupByDisplayNameUtil(grntor.getType()).getId());
           List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
           AmcGrntor amcGrntor = null;
+          Long newGrntorId = null;
           if(!CollectionUtils.isEmpty(amcGrntors)){
             if(amcGrntors.size() >= 2){
                 logger.error(" there is redundent item for "+ grntor.getDebtNo() + " and "+ grntor.getName() );
@@ -334,15 +340,45 @@ public class AmcAssetServiceImplTest {
                 }
             }else{
                 amcGrntor = amcGrntors.get(0);
-                amcGrntor.setType(grntor.getType());
-                amcGrntor.setDebtId(amcDebt.getId());
-                amcGrntor.setOriginCtrtId(grntor.getContract());
-                //ToDo:need generate contract
-                amcGrntor.setCtrtId(generateContract(grntor));
-                //Todo: search company by name ? from origin mongodb
-//                amcGrntor.setOriginCmpyId();
+                amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+                amcGrntor.setName(grntor.getName());
+                amcGrntorMapper.updateByPrimaryKeySelective(amcGrntor);
+                newGrntorId = amcGrntor.getId();
             }
+          }else{
+              amcGrntor = new AmcGrntor();
+              amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+              amcGrntor.setName(grntor.getName());
+              newGrntorId = Long.valueOf(amcGrntorMapper.insertSelective(amcGrntor));
           }
+            //ToDo:need generate contract
+          AmcGrntctrctExample amcGrntctrctExample = new AmcGrntctrctExample();
+          amcGrntctrctExample.createCriteria().andOriginDebtIdEqualTo(grntor.getDebtNo()).andOriginContractIdEqualTo(grntor.getContract());
+
+          List<AmcGrntctrct> amcGrntctrcts =  amcGrntctrctMapper.selectByExample(amcGrntctrctExample);
+          AmcGrntctrct amcGrntctrctNew = null;
+          if(!CollectionUtils.isEmpty(amcGrntctrcts)){
+              if(amcGrntctrcts.size() >= 2){
+                  logger.error("there is redundent grant contract itme for debt:"+ grntor.getDebtNo() + " and "
+                      + "contractId:" + grntor.getContract());
+                  for(int idx = 1; idx < amcGrntctrcts.size() - 1; idx ++){
+                      amcGrntctrctMapper.deleteByPrimaryKey(amcGrntctrcts.get(idx).getId());
+                  }
+              }else{
+                  amcGrntctrctNew = amcGrntctrcts.get(0);
+                  amcGrntctrctNew.setDebtId(amcDebt.getId());
+                  amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
+                  amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
+                  amcGrntctrctNew.setOriginContractId(grntor.getContract());
+              }
+
+          }
+            amcGrntor.setDebtId(amcDebt.getId());
+            amcGrntor.setOriginCtrtId(grntor.getContract());
+
+            amcGrntor.setCtrtId(generateContract(grntor));
+            //Todo: search company by name ? from origin mongodb
+    //                amcGrntor.setOriginCmpyId();
         }
 
         amcGrntorMapper.selectByExample()

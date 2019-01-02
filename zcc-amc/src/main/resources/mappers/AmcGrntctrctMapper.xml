@@ -7,6 +7,8 @@
     <result column="origin_debt_id" jdbcType="BIGINT" property="originDebtId" />
     <result column="origin_contract_id" jdbcType="BIGINT" property="originContractId" />
     <result column="amount" jdbcType="BIGINT" property="amount" />
+    <result column="origin_grantor_id" jdbcType="BIGINT" property="originGrantorId" />
+    <result column="grantor_id" jdbcType="BIGINT" property="grantorId" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="notes" jdbcType="CHAR" property="notes" />
     <result column="contract_number" jdbcType="CHAR" property="contractNumber" />
@@ -71,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, debt_id, origin_debt_id, origin_contract_id, amount, type, notes, contract_number, 
-    sign_date
+    id, debt_id, origin_debt_id, origin_contract_id, amount, origin_grantor_id, grantor_id, 
+    type, notes, contract_number, sign_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample" resultMap="BaseResultMap">
     select
@@ -109,10 +111,12 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_GRNTCTRCT (debt_id, origin_debt_id, origin_contract_id, 
-      amount, type, notes, contract_number, 
+      amount, origin_grantor_id, grantor_id, 
+      type, notes, contract_number, 
       sign_date)
     values (#{debtId,jdbcType=BIGINT}, #{originDebtId,jdbcType=BIGINT}, #{originContractId,jdbcType=BIGINT}, 
-      #{amount,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, 
+      #{amount,jdbcType=BIGINT}, #{originGrantorId,jdbcType=BIGINT}, #{grantorId,jdbcType=BIGINT}, 
+      #{type,jdbcType=INTEGER}, #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, 
       #{signDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
@@ -132,6 +136,12 @@
       </if>
       <if test="amount != null">
         amount,
+      </if>
+      <if test="originGrantorId != null">
+        origin_grantor_id,
+      </if>
+      <if test="grantorId != null">
+        grantor_id,
       </if>
       <if test="type != null">
         type,
@@ -158,6 +168,12 @@
       </if>
       <if test="amount != null">
         #{amount,jdbcType=BIGINT},
+      </if>
+      <if test="originGrantorId != null">
+        #{originGrantorId,jdbcType=BIGINT},
+      </if>
+      <if test="grantorId != null">
+        #{grantorId,jdbcType=BIGINT},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -197,6 +213,12 @@
       <if test="record.amount != null">
         amount = #{record.amount,jdbcType=BIGINT},
       </if>
+      <if test="record.originGrantorId != null">
+        origin_grantor_id = #{record.originGrantorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.grantorId != null">
+        grantor_id = #{record.grantorId,jdbcType=BIGINT},
+      </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
       </if>
@@ -221,6 +243,8 @@
       origin_debt_id = #{record.originDebtId,jdbcType=BIGINT},
       origin_contract_id = #{record.originContractId,jdbcType=BIGINT},
       amount = #{record.amount,jdbcType=BIGINT},
+      origin_grantor_id = #{record.originGrantorId,jdbcType=BIGINT},
+      grantor_id = #{record.grantorId,jdbcType=BIGINT},
       type = #{record.type,jdbcType=INTEGER},
       notes = #{record.notes,jdbcType=CHAR},
       contract_number = #{record.contractNumber,jdbcType=CHAR},
@@ -244,6 +268,12 @@
       <if test="amount != null">
         amount = #{amount,jdbcType=BIGINT},
       </if>
+      <if test="originGrantorId != null">
+        origin_grantor_id = #{originGrantorId,jdbcType=BIGINT},
+      </if>
+      <if test="grantorId != null">
+        grantor_id = #{grantorId,jdbcType=BIGINT},
+      </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
       </if>
@@ -265,6 +295,8 @@
       origin_debt_id = #{originDebtId,jdbcType=BIGINT},
       origin_contract_id = #{originContractId,jdbcType=BIGINT},
       amount = #{amount,jdbcType=BIGINT},
+      origin_grantor_id = #{originGrantorId,jdbcType=BIGINT},
+      grantor_id = #{grantorId,jdbcType=BIGINT},
       type = #{type,jdbcType=INTEGER},
       notes = #{notes,jdbcType=CHAR},
       contract_number = #{contractNumber,jdbcType=CHAR},

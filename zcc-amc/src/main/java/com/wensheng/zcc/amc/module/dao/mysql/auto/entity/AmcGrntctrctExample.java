@@ -405,6 +405,126 @@ public class AmcGrntctrctExample {
             return (Criteria) this;
         }
 
+        public Criteria andOriginGrantorIdIsNull() {
+            addCriterion("origin_grantor_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdIsNotNull() {
+            addCriterion("origin_grantor_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdEqualTo(Long value) {
+            addCriterion("origin_grantor_id =", value, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdNotEqualTo(Long value) {
+            addCriterion("origin_grantor_id <>", value, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdGreaterThan(Long value) {
+            addCriterion("origin_grantor_id >", value, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("origin_grantor_id >=", value, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdLessThan(Long value) {
+            addCriterion("origin_grantor_id <", value, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdLessThanOrEqualTo(Long value) {
+            addCriterion("origin_grantor_id <=", value, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdIn(List<Long> values) {
+            addCriterion("origin_grantor_id in", values, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdNotIn(List<Long> values) {
+            addCriterion("origin_grantor_id not in", values, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdBetween(Long value1, Long value2) {
+            addCriterion("origin_grantor_id between", value1, value2, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginGrantorIdNotBetween(Long value1, Long value2) {
+            addCriterion("origin_grantor_id not between", value1, value2, "originGrantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdIsNull() {
+            addCriterion("grantor_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdIsNotNull() {
+            addCriterion("grantor_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdEqualTo(Long value) {
+            addCriterion("grantor_id =", value, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdNotEqualTo(Long value) {
+            addCriterion("grantor_id <>", value, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdGreaterThan(Long value) {
+            addCriterion("grantor_id >", value, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("grantor_id >=", value, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdLessThan(Long value) {
+            addCriterion("grantor_id <", value, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdLessThanOrEqualTo(Long value) {
+            addCriterion("grantor_id <=", value, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdIn(List<Long> values) {
+            addCriterion("grantor_id in", values, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdNotIn(List<Long> values) {
+            addCriterion("grantor_id not in", values, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdBetween(Long value1, Long value2) {
+            addCriterion("grantor_id between", value1, value2, "grantorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andGrantorIdNotBetween(Long value1, Long value2) {
+            addCriterion("grantor_id not between", value1, value2, "grantorId");
+            return (Criteria) this;
+        }
+
         public Criteria andTypeIsNull() {
             addCriterion("type is null");
             return (Criteria) this;

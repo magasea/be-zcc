@@ -9,6 +9,8 @@ public class AmcGrntor {
 
     private Long originCmpyId;
 
+    private String personId;
+
     private String name;
 
     private String notes;
@@ -43,6 +45,14 @@ public class AmcGrntor {
 
     public void setOriginCmpyId(Long originCmpyId) {
         this.originCmpyId = originCmpyId;
+    }
+
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
+        this.personId = personId == null ? null : personId.trim();
     }
 
     public String getName() {

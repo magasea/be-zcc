@@ -13,6 +13,10 @@ public class AmcGrntctrct {
 
     private Long amount;
 
+    private Long originGrantorId;
+
+    private Long grantorId;
+
     private Integer type;
 
     private String notes;
@@ -59,6 +63,22 @@ public class AmcGrntctrct {
 
     public void setAmount(Long amount) {
         this.amount = amount;
+    }
+
+    public Long getOriginGrantorId() {
+        return originGrantorId;
+    }
+
+    public void setOriginGrantorId(Long originGrantorId) {
+        this.originGrantorId = originGrantorId;
+    }
+
+    public Long getGrantorId() {
+        return grantorId;
+    }
+
+    public void setGrantorId(Long grantorId) {
+        this.grantorId = grantorId;
     }
 
     public Integer getType() {

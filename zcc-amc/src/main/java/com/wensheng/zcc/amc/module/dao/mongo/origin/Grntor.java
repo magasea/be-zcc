@@ -17,6 +17,7 @@ public class Grntor {
     private long debtNo;
     private String type;
     private String name;
+    private Double amount;
 
 
 }

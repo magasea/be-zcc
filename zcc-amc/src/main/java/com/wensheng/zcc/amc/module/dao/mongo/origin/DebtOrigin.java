@@ -18,9 +18,9 @@ public class DebtOrigin {
     private long debtpackId;
     private String title;
     private String baseAmount;
-    private Timestamp baseDate;
+    private String baseDate;
     private String totalAmount;
-    private Timestamp settleDate;
+    private String settleDate;
     private int status;
     private List<String> amcOwners;
     private String amcDebtCode;

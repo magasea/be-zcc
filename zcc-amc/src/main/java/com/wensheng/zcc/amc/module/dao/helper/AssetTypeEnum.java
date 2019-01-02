@@ -22,6 +22,7 @@ public enum AssetTypeEnum {
     APARTMENT(11, "公寓"),
     FACTORY_BUILDING(12, "厂房"),
     PARKING_SPACE(9, "车位"),
+    GARAGE_SPACE(9, "车库"),
     ;
     AssetTypeEnum(int type, String name){
         this.type = type;

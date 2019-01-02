@@ -17,7 +17,9 @@ import com.wensheng.zcc.amc.module.dao.mongo.origin.DebtOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.utils.AmcDateUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+import java.text.ParseException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -427,7 +429,11 @@ public class AmcAssetServiceImplTest {
         }
         amcDebt.setBaseAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getBaseAmount()));
         if (originItem.getBaseDate() != null) {
-            amcDebt.setBaseDate(originItem.getBaseDate());
+            try {
+                amcDebt.setBaseDate(AmcDateUtils.getDateFromStr(originItem.getBaseDate()));
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
         }
         Long courtId = handleCourtInfo(originItem);
         amcDebt.setCourtId(courtId);
@@ -441,7 +447,11 @@ public class AmcAssetServiceImplTest {
         amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
         amcDebt.setOriginId(originItem.getId());
         amcDebt.setPublishDate(originItem.getPublishDate());
-        amcDebt.setSettleDate(originItem.getSettleDate());
+        try {
+            amcDebt.setSettleDate(AmcDateUtils.getDateFromStr(originItem.getSettleDate()));
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         amcDebt.setStartDate(originItem.getStartDate());
         amcDebt.setTitle(originItem.getTitle());
         amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getTotalAmount()));

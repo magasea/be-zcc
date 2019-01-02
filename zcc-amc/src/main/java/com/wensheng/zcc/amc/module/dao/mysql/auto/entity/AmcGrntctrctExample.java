@@ -225,6 +225,126 @@ public class AmcGrntctrctExample {
             return (Criteria) this;
         }
 
+        public Criteria andOriginDebtIdIsNull() {
+            addCriterion("origin_debt_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdIsNotNull() {
+            addCriterion("origin_debt_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdEqualTo(Long value) {
+            addCriterion("origin_debt_id =", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdNotEqualTo(Long value) {
+            addCriterion("origin_debt_id <>", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdGreaterThan(Long value) {
+            addCriterion("origin_debt_id >", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("origin_debt_id >=", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdLessThan(Long value) {
+            addCriterion("origin_debt_id <", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdLessThanOrEqualTo(Long value) {
+            addCriterion("origin_debt_id <=", value, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdIn(List<Long> values) {
+            addCriterion("origin_debt_id in", values, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdNotIn(List<Long> values) {
+            addCriterion("origin_debt_id not in", values, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdBetween(Long value1, Long value2) {
+            addCriterion("origin_debt_id between", value1, value2, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginDebtIdNotBetween(Long value1, Long value2) {
+            addCriterion("origin_debt_id not between", value1, value2, "originDebtId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdIsNull() {
+            addCriterion("origin_contract_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdIsNotNull() {
+            addCriterion("origin_contract_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdEqualTo(Long value) {
+            addCriterion("origin_contract_id =", value, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdNotEqualTo(Long value) {
+            addCriterion("origin_contract_id <>", value, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdGreaterThan(Long value) {
+            addCriterion("origin_contract_id >", value, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("origin_contract_id >=", value, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdLessThan(Long value) {
+            addCriterion("origin_contract_id <", value, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdLessThanOrEqualTo(Long value) {
+            addCriterion("origin_contract_id <=", value, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdIn(List<Long> values) {
+            addCriterion("origin_contract_id in", values, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdNotIn(List<Long> values) {
+            addCriterion("origin_contract_id not in", values, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdBetween(Long value1, Long value2) {
+            addCriterion("origin_contract_id between", value1, value2, "originContractId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOriginContractIdNotBetween(Long value1, Long value2) {
+            addCriterion("origin_contract_id not between", value1, value2, "originContractId");
+            return (Criteria) this;
+        }
+
         public Criteria andAmountIsNull() {
             addCriterion("amount is null");
             return (Criteria) this;

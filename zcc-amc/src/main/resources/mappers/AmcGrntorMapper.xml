@@ -3,10 +3,6 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="ctrt_id" jdbcType="BIGINT" property="ctrtId" />
-    <result column="origin_ctrt_id" jdbcType="BIGINT" property="originCtrtId" />
-    <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="origin_debt_id" jdbcType="BIGINT" property="originDebtId" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="cmpy_id" jdbcType="BIGINT" property="cmpyId" />
     <result column="origin_cmpy_id" jdbcType="BIGINT" property="originCmpyId" />
@@ -72,8 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, ctrt_id, origin_ctrt_id, debt_id, origin_debt_id, type, cmpy_id, origin_cmpy_id, 
-    name, notes
+    id, type, cmpy_id, origin_cmpy_id, name, notes
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample" resultMap="BaseResultMap">
     select
@@ -109,12 +104,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_GRNTOR (ctrt_id, origin_ctrt_id, debt_id, 
-      origin_debt_id, type, cmpy_id, 
-      origin_cmpy_id, name, notes)
-    values (#{ctrtId,jdbcType=BIGINT}, #{originCtrtId,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
-      #{originDebtId,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{cmpyId,jdbcType=BIGINT}, 
-      #{originCmpyId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{notes,jdbcType=CHAR})
+    insert into AMC_GRNTOR (type, cmpy_id, origin_cmpy_id, 
+      name, notes)
+    values (#{type,jdbcType=INTEGER}, #{cmpyId,jdbcType=BIGINT}, #{originCmpyId,jdbcType=BIGINT}, 
+      #{name,jdbcType=CHAR}, #{notes,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -122,18 +115,6 @@
     </selectKey>
     insert into AMC_GRNTOR
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="ctrtId != null">
-        ctrt_id,
-      </if>
-      <if test="originCtrtId != null">
-        origin_ctrt_id,
-      </if>
-      <if test="debtId != null">
-        debt_id,
-      </if>
-      <if test="originDebtId != null">
-        origin_debt_id,
-      </if>
       <if test="type != null">
         type,
       </if>
@@ -151,18 +132,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="ctrtId != null">
-        #{ctrtId,jdbcType=BIGINT},
-      </if>
-      <if test="originCtrtId != null">
-        #{originCtrtId,jdbcType=BIGINT},
-      </if>
-      <if test="debtId != null">
-        #{debtId,jdbcType=BIGINT},
-      </if>
-      <if test="originDebtId != null">
-        #{originDebtId,jdbcType=BIGINT},
-      </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>
@@ -192,18 +161,6 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.ctrtId != null">
-        ctrt_id = #{record.ctrtId,jdbcType=BIGINT},
-      </if>
-      <if test="record.originCtrtId != null">
-        origin_ctrt_id = #{record.originCtrtId,jdbcType=BIGINT},
-      </if>
-      <if test="record.debtId != null">
-        debt_id = #{record.debtId,jdbcType=BIGINT},
-      </if>
-      <if test="record.originDebtId != null">
-        origin_debt_id = #{record.originDebtId,jdbcType=BIGINT},
-      </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
       </if>
@@ -227,10 +184,6 @@
   <update id="updateByExample" parameterType="map">
     update AMC_GRNTOR
     set id = #{record.id,jdbcType=BIGINT},
-      ctrt_id = #{record.ctrtId,jdbcType=BIGINT},
-      origin_ctrt_id = #{record.originCtrtId,jdbcType=BIGINT},
-      debt_id = #{record.debtId,jdbcType=BIGINT},
-      origin_debt_id = #{record.originDebtId,jdbcType=BIGINT},
       type = #{record.type,jdbcType=INTEGER},
       cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
       origin_cmpy_id = #{record.originCmpyId,jdbcType=BIGINT},
@@ -243,18 +196,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     update AMC_GRNTOR
     <set>
-      <if test="ctrtId != null">
-        ctrt_id = #{ctrtId,jdbcType=BIGINT},
-      </if>
-      <if test="originCtrtId != null">
-        origin_ctrt_id = #{originCtrtId,jdbcType=BIGINT},
-      </if>
-      <if test="debtId != null">
-        debt_id = #{debtId,jdbcType=BIGINT},
-      </if>
-      <if test="originDebtId != null">
-        origin_debt_id = #{originDebtId,jdbcType=BIGINT},
-      </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
       </if>
@@ -275,11 +216,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor">
     update AMC_GRNTOR
-    set ctrt_id = #{ctrtId,jdbcType=BIGINT},
-      origin_ctrt_id = #{originCtrtId,jdbcType=BIGINT},
-      debt_id = #{debtId,jdbcType=BIGINT},
-      origin_debt_id = #{originDebtId,jdbcType=BIGINT},
-      type = #{type,jdbcType=INTEGER},
+    set type = #{type,jdbcType=INTEGER},
       cmpy_id = #{cmpyId,jdbcType=BIGINT},
       origin_cmpy_id = #{originCmpyId,jdbcType=BIGINT},
       name = #{name,jdbcType=CHAR},

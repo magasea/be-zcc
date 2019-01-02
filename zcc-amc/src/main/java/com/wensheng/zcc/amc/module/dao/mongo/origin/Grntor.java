@@ -15,7 +15,7 @@ public class Grntor {
     private long id;
     private long contract;
     private long debtNo;
-    private int type;
+    private String type;
     private String name;
 
 

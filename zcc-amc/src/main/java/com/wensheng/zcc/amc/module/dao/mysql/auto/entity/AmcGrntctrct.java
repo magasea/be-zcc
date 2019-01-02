@@ -7,6 +7,10 @@ public class AmcGrntctrct {
 
     private Long debtId;
 
+    private Long originDebtId;
+
+    private Long originContractId;
+
     private Long amount;
 
     private Integer type;
@@ -31,6 +35,22 @@ public class AmcGrntctrct {
 
     public void setDebtId(Long debtId) {
         this.debtId = debtId;
+    }
+
+    public Long getOriginDebtId() {
+        return originDebtId;
+    }
+
+    public void setOriginDebtId(Long originDebtId) {
+        this.originDebtId = originDebtId;
+    }
+
+    public Long getOriginContractId() {
+        return originContractId;
+    }
+
+    public void setOriginContractId(Long originContractId) {
+        this.originContractId = originContractId;
     }
 
     public Long getAmount() {

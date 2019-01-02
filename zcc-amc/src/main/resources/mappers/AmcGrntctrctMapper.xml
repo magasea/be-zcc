@@ -4,6 +4,8 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
+    <result column="origin_debt_id" jdbcType="BIGINT" property="originDebtId" />
+    <result column="origin_contract_id" jdbcType="BIGINT" property="originContractId" />
     <result column="amount" jdbcType="BIGINT" property="amount" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="notes" jdbcType="CHAR" property="notes" />
@@ -69,7 +71,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, debt_id, amount, type, notes, contract_number, sign_date
+    id, debt_id, origin_debt_id, origin_contract_id, amount, type, notes, contract_number, 
+    sign_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample" resultMap="BaseResultMap">
     select
@@ -105,12 +108,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_GRNTCTRCT (debt_id, amount, type, 
-      notes, contract_number, sign_date
-      )
-    values (#{debtId,jdbcType=BIGINT}, #{amount,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, 
-      #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, #{signDate,jdbcType=TIMESTAMP}
-      )
+    insert into AMC_GRNTCTRCT (debt_id, origin_debt_id, origin_contract_id, 
+      amount, type, notes, contract_number, 
+      sign_date)
+    values (#{debtId,jdbcType=BIGINT}, #{originDebtId,jdbcType=BIGINT}, #{originContractId,jdbcType=BIGINT}, 
+      #{amount,jdbcType=BIGINT}, #{type,jdbcType=INTEGER}, #{notes,jdbcType=CHAR}, #{contractNumber,jdbcType=CHAR}, 
+      #{signDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -120,6 +123,12 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="debtId != null">
         debt_id,
+      </if>
+      <if test="originDebtId != null">
+        origin_debt_id,
+      </if>
+      <if test="originContractId != null">
+        origin_contract_id,
       </if>
       <if test="amount != null">
         amount,
@@ -140,6 +149,12 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="originDebtId != null">
+        #{originDebtId,jdbcType=BIGINT},
+      </if>
+      <if test="originContractId != null">
+        #{originContractId,jdbcType=BIGINT},
       </if>
       <if test="amount != null">
         #{amount,jdbcType=BIGINT},
@@ -173,6 +188,12 @@
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
+      <if test="record.originDebtId != null">
+        origin_debt_id = #{record.originDebtId,jdbcType=BIGINT},
+      </if>
+      <if test="record.originContractId != null">
+        origin_contract_id = #{record.originContractId,jdbcType=BIGINT},
+      </if>
       <if test="record.amount != null">
         amount = #{record.amount,jdbcType=BIGINT},
       </if>
@@ -197,6 +218,8 @@
     update AMC_GRNTCTRCT
     set id = #{record.id,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
+      origin_debt_id = #{record.originDebtId,jdbcType=BIGINT},
+      origin_contract_id = #{record.originContractId,jdbcType=BIGINT},
       amount = #{record.amount,jdbcType=BIGINT},
       type = #{record.type,jdbcType=INTEGER},
       notes = #{record.notes,jdbcType=CHAR},
@@ -211,6 +234,12 @@
     <set>
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="originDebtId != null">
+        origin_debt_id = #{originDebtId,jdbcType=BIGINT},
+      </if>
+      <if test="originContractId != null">
+        origin_contract_id = #{originContractId,jdbcType=BIGINT},
       </if>
       <if test="amount != null">
         amount = #{amount,jdbcType=BIGINT},
@@ -233,6 +262,8 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct">
     update AMC_GRNTCTRCT
     set debt_id = #{debtId,jdbcType=BIGINT},
+      origin_debt_id = #{originDebtId,jdbcType=BIGINT},
+      origin_contract_id = #{originContractId,jdbcType=BIGINT},
       amount = #{amount,jdbcType=BIGINT},
       type = #{type,jdbcType=INTEGER},
       notes = #{notes,jdbcType=CHAR},

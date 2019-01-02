@@ -318,9 +318,12 @@ public class AmcAssetServiceImplTest {
         query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOriginId()));
         List<Grntor> grntors = primaryMongoTemplate.find(query, Grntor.class);
 
+        // origin design combined grantor with grantor contract and debt
+        // current design seperate grantor to grantor , grantor connect with debt by contract
+
         for(Grntor grntor : grntors){
           AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
-          amcGrntorExample.createCriteria().andOriginDebtIdEqualTo(grntor.getDebtNo()).andNameEqualTo(grntor.getName());
+          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
           List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
           AmcGrntor amcGrntor = null;
           if(!CollectionUtils.isEmpty(amcGrntors)){
@@ -335,19 +338,26 @@ public class AmcAssetServiceImplTest {
                 amcGrntor.setDebtId(amcDebt.getId());
                 amcGrntor.setOriginCtrtId(grntor.getContract());
                 //ToDo:need generate contract
-                amcGrntor.setC generateContract(grntor.getContract());
-                amcGrntor.setOriginCmpyId(grntor);
+                amcGrntor.setCtrtId(generateContract(grntor));
+                //Todo: search company by name ? from origin mongodb
+//                amcGrntor.setOriginCmpyId();
             }
           }
         }
 
         amcGrntorMapper.selectByExample()
     }
-
-    private void generateContract(Long contractId) {
+    //Todo: finish coding
+    private Long generateContract(Grntor grntor) {
         //find contract from origin database
+        Query query = new Query();
+        query.addCriteria(Criteria.where("contract").is(contractId));
+        primaryMongoTemplate.find(query, Grntor.class);
 
         // insert into mysql database
+
+
+        return -1L;
     }
 
     private AmcDebt handleAmcDebt(DebtOrigin originItem) {

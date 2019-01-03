@@ -19,7 +19,13 @@ public class AmcDateUtils {
    */
 
   public static Date getDateFromStr(String input) throws ParseException {
-    DateFormat df = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+    DateFormat df = null;
+    if(input.contains("年")){
+      df = new SimpleDateFormat("yyyy'年'MM'月'dd'日'", Locale.CHINA);
+    }else {
+       df = new SimpleDateFormat("yyyy-MM-dd", Locale.CHINA);
+
+    }
     Date result =  df.parse(input);
     return  result;
 //    System.out.println(result);

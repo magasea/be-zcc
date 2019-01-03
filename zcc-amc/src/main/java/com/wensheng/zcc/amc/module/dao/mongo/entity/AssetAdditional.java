@@ -22,12 +22,7 @@ public class AssetAdditional {
 //    Double estimatedPrice;		// 抵押物类别司法评估价
 //    Double initialPrice;				// 拍卖起拍价
     String bidLink;					// 拍卖详情的链接
-//    String restrictions;	        // 是否限购
-//    String province;					// 抵押物所在省
-//    String city;						// 抵押物所在市
-//    String county;					// 抵押物所在县
-//    String street;					// 抵押物地址
-//    String buildingName;             //小区(楼盘)名字 爬取使用
+
     String zipCode;					// 邮政编码
     Float gpsLng;					// 坐标 （只适用于不动产）
     Float gpsLat;					// 坐标  （只适用于不动产）

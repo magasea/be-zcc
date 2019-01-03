@@ -13,6 +13,7 @@ public class AssetImage {
     String path;
     String originalName;
     Boolean mainPic; //是否为主图片
+    int tag; //是否位置图， 其它图片
     Boolean isToOss = false;//是否同步到OSS
     Long originAssetId;
     @Indexed(direction = IndexDirection.ASCENDING)

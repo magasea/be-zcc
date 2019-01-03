@@ -53,6 +53,10 @@ public class AmcAsset {
 
     private String originDebtId;
 
+    private Long createBy;
+
+    private Long amcConactor;
+
     public Long getId() {
         return id;
     }
@@ -251,5 +255,21 @@ public class AmcAsset {
 
     public void setOriginDebtId(String originDebtId) {
         this.originDebtId = originDebtId == null ? null : originDebtId.trim();
+    }
+
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public Long getAmcConactor() {
+        return amcConactor;
+    }
+
+    public void setAmcConactor(Long amcConactor) {
+        this.amcConactor = amcConactor;
     }
 }

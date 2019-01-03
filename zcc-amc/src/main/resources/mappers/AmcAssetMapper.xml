@@ -27,6 +27,8 @@
     <result column="gps_lng" jdbcType="CHAR" property="gpsLng" />
     <result column="gps_lat" jdbcType="CHAR" property="gpsLat" />
     <result column="origin_debt_id" jdbcType="CHAR" property="originDebtId" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="amc_conactor" jdbcType="BIGINT" property="amcConactor" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -89,7 +91,8 @@
   <sql id="Base_Column_List">
     id, title, type, status, state, edit_status, amc_id, amc_asset_code, zcc_asset_code, 
     is_main_asset, estm_price, debt_id, init_price, restrictions, area, land_area, publish_date, 
-    province, city, county, street, building_name, gps_lng, gps_lat, origin_debt_id
+    province, city, county, street, building_name, gps_lng, gps_lat, origin_debt_id, 
+    create_by, amc_conactor
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -132,8 +135,8 @@
       restrictions, area, land_area, 
       publish_date, province, city, 
       county, street, building_name, 
-      gps_lng, gps_lat, origin_debt_id
-      )
+      gps_lng, gps_lat, origin_debt_id, 
+      create_by, amc_conactor)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
       #{state,jdbcType=INTEGER}, #{editStatus,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
       #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{isMainAsset,jdbcType=SMALLINT}, 
@@ -141,8 +144,8 @@
       #{restrictions,jdbcType=INTEGER}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
       #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
       #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
-      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{originDebtId,jdbcType=CHAR}
-      )
+      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{originDebtId,jdbcType=CHAR}, 
+      #{createBy,jdbcType=BIGINT}, #{amcConactor,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -222,6 +225,12 @@
       <if test="originDebtId != null">
         origin_debt_id,
       </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="amcConactor != null">
+        amc_conactor,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
@@ -295,6 +304,12 @@
       </if>
       <if test="originDebtId != null">
         #{originDebtId,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="amcConactor != null">
+        #{amcConactor,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -382,6 +397,12 @@
       <if test="record.originDebtId != null">
         origin_debt_id = #{record.originDebtId,jdbcType=CHAR},
       </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.amcConactor != null">
+        amc_conactor = #{record.amcConactor,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -413,7 +434,9 @@
       building_name = #{record.buildingName,jdbcType=CHAR},
       gps_lng = #{record.gpsLng,jdbcType=CHAR},
       gps_lat = #{record.gpsLat,jdbcType=CHAR},
-      origin_debt_id = #{record.originDebtId,jdbcType=CHAR}
+      origin_debt_id = #{record.originDebtId,jdbcType=CHAR},
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      amc_conactor = #{record.amcConactor,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -493,6 +516,12 @@
       <if test="originDebtId != null">
         origin_debt_id = #{originDebtId,jdbcType=CHAR},
       </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="amcConactor != null">
+        amc_conactor = #{amcConactor,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -521,7 +550,9 @@
       building_name = #{buildingName,jdbcType=CHAR},
       gps_lng = #{gpsLng,jdbcType=CHAR},
       gps_lat = #{gpsLat,jdbcType=CHAR},
-      origin_debt_id = #{originDebtId,jdbcType=CHAR}
+      origin_debt_id = #{originDebtId,jdbcType=CHAR},
+      create_by = #{createBy,jdbcType=BIGINT},
+      amc_conactor = #{amcConactor,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

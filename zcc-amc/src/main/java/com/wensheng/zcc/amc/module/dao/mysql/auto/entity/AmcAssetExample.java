@@ -1741,6 +1741,126 @@ public class AmcAssetExample {
             addCriterion("origin_debt_id not between", value1, value2, "originDebtId");
             return (Criteria) this;
         }
+
+        public Criteria andCreateByIsNull() {
+            addCriterion("create_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByIsNotNull() {
+            addCriterion("create_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByEqualTo(Long value) {
+            addCriterion("create_by =", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByNotEqualTo(Long value) {
+            addCriterion("create_by <>", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByGreaterThan(Long value) {
+            addCriterion("create_by >", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("create_by >=", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByLessThan(Long value) {
+            addCriterion("create_by <", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByLessThanOrEqualTo(Long value) {
+            addCriterion("create_by <=", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByIn(List<Long> values) {
+            addCriterion("create_by in", values, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByNotIn(List<Long> values) {
+            addCriterion("create_by not in", values, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByBetween(Long value1, Long value2) {
+            addCriterion("create_by between", value1, value2, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByNotBetween(Long value1, Long value2) {
+            addCriterion("create_by not between", value1, value2, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorIsNull() {
+            addCriterion("amc_conactor is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorIsNotNull() {
+            addCriterion("amc_conactor is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorEqualTo(Long value) {
+            addCriterion("amc_conactor =", value, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorNotEqualTo(Long value) {
+            addCriterion("amc_conactor <>", value, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorGreaterThan(Long value) {
+            addCriterion("amc_conactor >", value, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorGreaterThanOrEqualTo(Long value) {
+            addCriterion("amc_conactor >=", value, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorLessThan(Long value) {
+            addCriterion("amc_conactor <", value, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorLessThanOrEqualTo(Long value) {
+            addCriterion("amc_conactor <=", value, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorIn(List<Long> values) {
+            addCriterion("amc_conactor in", values, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorNotIn(List<Long> values) {
+            addCriterion("amc_conactor not in", values, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorBetween(Long value1, Long value2) {
+            addCriterion("amc_conactor between", value1, value2, "amcConactor");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcConactorNotBetween(Long value1, Long value2) {
+            addCriterion("amc_conactor not between", value1, value2, "amcConactor");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

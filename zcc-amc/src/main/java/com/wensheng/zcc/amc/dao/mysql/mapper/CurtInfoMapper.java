@@ -10,13 +10,21 @@ public interface CurtInfoMapper {
 
     int deleteByExample(CurtInfoExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(CurtInfo record);
 
     int insertSelective(CurtInfo record);
 
     List<CurtInfo> selectByExample(CurtInfoExample example);
 
+    CurtInfo selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") CurtInfo record, @Param("example") CurtInfoExample example);
 
     int updateByExample(@Param("record") CurtInfo record, @Param("example") CurtInfoExample example);
+
+    int updateByPrimaryKeySelective(CurtInfo record);
+
+    int updateByPrimaryKey(CurtInfo record);
 }

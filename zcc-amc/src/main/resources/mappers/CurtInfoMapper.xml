@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo">
-    <result column="id" jdbcType="BIGINT" property="id" />
+    <id column="id" jdbcType="BIGINT" property="id" />
     <result column="curt_name" jdbcType="CHAR" property="curtName" />
     <result column="curt_province" jdbcType="CHAR" property="curtProvince" />
     <result column="curt_city" jdbcType="CHAR" property="curtCity" />
@@ -83,6 +83,16 @@
       order by ${orderByClause}
     </if>
   </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from CURT_INFO
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from CURT_INFO
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
   <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample">
     delete from CURT_INFO
     <if test="_parameter != null">
@@ -171,5 +181,31 @@
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo">
+    update CURT_INFO
+    <set>
+      <if test="curtName != null">
+        curt_name = #{curtName,jdbcType=CHAR},
+      </if>
+      <if test="curtProvince != null">
+        curt_province = #{curtProvince,jdbcType=CHAR},
+      </if>
+      <if test="curtCity != null">
+        curt_city = #{curtCity,jdbcType=CHAR},
+      </if>
+      <if test="curtCounty != null">
+        curt_county = #{curtCounty,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo">
+    update CURT_INFO
+    set curt_name = #{curtName,jdbcType=CHAR},
+      curt_province = #{curtProvince,jdbcType=CHAR},
+      curt_city = #{curtCity,jdbcType=CHAR},
+      curt_county = #{curtCounty,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
   </update>
 </mapper>

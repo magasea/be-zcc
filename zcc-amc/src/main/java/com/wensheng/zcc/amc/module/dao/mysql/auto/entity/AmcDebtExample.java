@@ -415,6 +415,76 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andBaseAmountDescIsNull() {
+            addCriterion("base_amount_desc is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescIsNotNull() {
+            addCriterion("base_amount_desc is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescEqualTo(String value) {
+            addCriterion("base_amount_desc =", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescNotEqualTo(String value) {
+            addCriterion("base_amount_desc <>", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescGreaterThan(String value) {
+            addCriterion("base_amount_desc >", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescGreaterThanOrEqualTo(String value) {
+            addCriterion("base_amount_desc >=", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescLessThan(String value) {
+            addCriterion("base_amount_desc <", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescLessThanOrEqualTo(String value) {
+            addCriterion("base_amount_desc <=", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescLike(String value) {
+            addCriterion("base_amount_desc like", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescNotLike(String value) {
+            addCriterion("base_amount_desc not like", value, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescIn(List<String> values) {
+            addCriterion("base_amount_desc in", values, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescNotIn(List<String> values) {
+            addCriterion("base_amount_desc not in", values, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescBetween(String value1, String value2) {
+            addCriterion("base_amount_desc between", value1, value2, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andBaseAmountDescNotBetween(String value1, String value2) {
+            addCriterion("base_amount_desc not between", value1, value2, "baseAmountDesc");
+            return (Criteria) this;
+        }
+
         public Criteria andBaseDateIsNull() {
             addCriterion("base_date is null");
             return (Criteria) this;
@@ -532,6 +602,76 @@ public class AmcDebtExample {
 
         public Criteria andTotalAmountNotBetween(Long value1, Long value2) {
             addCriterion("total_amount not between", value1, value2, "totalAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescIsNull() {
+            addCriterion("total_amount_desc is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescIsNotNull() {
+            addCriterion("total_amount_desc is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescEqualTo(String value) {
+            addCriterion("total_amount_desc =", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescNotEqualTo(String value) {
+            addCriterion("total_amount_desc <>", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescGreaterThan(String value) {
+            addCriterion("total_amount_desc >", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescGreaterThanOrEqualTo(String value) {
+            addCriterion("total_amount_desc >=", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescLessThan(String value) {
+            addCriterion("total_amount_desc <", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescLessThanOrEqualTo(String value) {
+            addCriterion("total_amount_desc <=", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescLike(String value) {
+            addCriterion("total_amount_desc like", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescNotLike(String value) {
+            addCriterion("total_amount_desc not like", value, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescIn(List<String> values) {
+            addCriterion("total_amount_desc in", values, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescNotIn(List<String> values) {
+            addCriterion("total_amount_desc not in", values, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescBetween(String value1, String value2) {
+            addCriterion("total_amount_desc between", value1, value2, "totalAmountDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andTotalAmountDescNotBetween(String value1, String value2) {
+            addCriterion("total_amount_desc not between", value1, value2, "totalAmountDesc");
             return (Criteria) this;
         }
 
@@ -975,62 +1115,52 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1EqualTo(String value) {
+        public Criteria andAmcContact1EqualTo(Long value) {
             addCriterion("amc_contact1 =", value, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1NotEqualTo(String value) {
+        public Criteria andAmcContact1NotEqualTo(Long value) {
             addCriterion("amc_contact1 <>", value, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1GreaterThan(String value) {
+        public Criteria andAmcContact1GreaterThan(Long value) {
             addCriterion("amc_contact1 >", value, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1GreaterThanOrEqualTo(String value) {
+        public Criteria andAmcContact1GreaterThanOrEqualTo(Long value) {
             addCriterion("amc_contact1 >=", value, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1LessThan(String value) {
+        public Criteria andAmcContact1LessThan(Long value) {
             addCriterion("amc_contact1 <", value, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1LessThanOrEqualTo(String value) {
+        public Criteria andAmcContact1LessThanOrEqualTo(Long value) {
             addCriterion("amc_contact1 <=", value, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1Like(String value) {
-            addCriterion("amc_contact1 like", value, "amcContact1");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcContact1NotLike(String value) {
-            addCriterion("amc_contact1 not like", value, "amcContact1");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcContact1In(List<String> values) {
+        public Criteria andAmcContact1In(List<Long> values) {
             addCriterion("amc_contact1 in", values, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1NotIn(List<String> values) {
+        public Criteria andAmcContact1NotIn(List<Long> values) {
             addCriterion("amc_contact1 not in", values, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1Between(String value1, String value2) {
+        public Criteria andAmcContact1Between(Long value1, Long value2) {
             addCriterion("amc_contact1 between", value1, value2, "amcContact1");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1NotBetween(String value1, String value2) {
+        public Criteria andAmcContact1NotBetween(Long value1, Long value2) {
             addCriterion("amc_contact1 not between", value1, value2, "amcContact1");
             return (Criteria) this;
         }
@@ -1045,62 +1175,52 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2EqualTo(String value) {
+        public Criteria andAmcContact2EqualTo(Long value) {
             addCriterion("amc_contact2 =", value, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2NotEqualTo(String value) {
+        public Criteria andAmcContact2NotEqualTo(Long value) {
             addCriterion("amc_contact2 <>", value, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2GreaterThan(String value) {
+        public Criteria andAmcContact2GreaterThan(Long value) {
             addCriterion("amc_contact2 >", value, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2GreaterThanOrEqualTo(String value) {
+        public Criteria andAmcContact2GreaterThanOrEqualTo(Long value) {
             addCriterion("amc_contact2 >=", value, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2LessThan(String value) {
+        public Criteria andAmcContact2LessThan(Long value) {
             addCriterion("amc_contact2 <", value, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2LessThanOrEqualTo(String value) {
+        public Criteria andAmcContact2LessThanOrEqualTo(Long value) {
             addCriterion("amc_contact2 <=", value, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2Like(String value) {
-            addCriterion("amc_contact2 like", value, "amcContact2");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcContact2NotLike(String value) {
-            addCriterion("amc_contact2 not like", value, "amcContact2");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcContact2In(List<String> values) {
+        public Criteria andAmcContact2In(List<Long> values) {
             addCriterion("amc_contact2 in", values, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2NotIn(List<String> values) {
+        public Criteria andAmcContact2NotIn(List<Long> values) {
             addCriterion("amc_contact2 not in", values, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2Between(String value1, String value2) {
+        public Criteria andAmcContact2Between(Long value1, Long value2) {
             addCriterion("amc_contact2 between", value1, value2, "amcContact2");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2NotBetween(String value1, String value2) {
+        public Criteria andAmcContact2NotBetween(Long value1, Long value2) {
             addCriterion("amc_contact2 not between", value1, value2, "amcContact2");
             return (Criteria) this;
         }
@@ -1285,63 +1405,63 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdIsNull() {
-            addCriterion("origin_id is null");
+        public Criteria andOrigDebtorIdIsNull() {
+            addCriterion("orig_debtor_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdIsNotNull() {
-            addCriterion("origin_id is not null");
+        public Criteria andOrigDebtorIdIsNotNull() {
+            addCriterion("orig_debtor_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdEqualTo(Long value) {
-            addCriterion("origin_id =", value, "originId");
+        public Criteria andOrigDebtorIdEqualTo(Long value) {
+            addCriterion("orig_debtor_id =", value, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdNotEqualTo(Long value) {
-            addCriterion("origin_id <>", value, "originId");
+        public Criteria andOrigDebtorIdNotEqualTo(Long value) {
+            addCriterion("orig_debtor_id <>", value, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdGreaterThan(Long value) {
-            addCriterion("origin_id >", value, "originId");
+        public Criteria andOrigDebtorIdGreaterThan(Long value) {
+            addCriterion("orig_debtor_id >", value, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("origin_id >=", value, "originId");
+        public Criteria andOrigDebtorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("orig_debtor_id >=", value, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdLessThan(Long value) {
-            addCriterion("origin_id <", value, "originId");
+        public Criteria andOrigDebtorIdLessThan(Long value) {
+            addCriterion("orig_debtor_id <", value, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdLessThanOrEqualTo(Long value) {
-            addCriterion("origin_id <=", value, "originId");
+        public Criteria andOrigDebtorIdLessThanOrEqualTo(Long value) {
+            addCriterion("orig_debtor_id <=", value, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdIn(List<Long> values) {
-            addCriterion("origin_id in", values, "originId");
+        public Criteria andOrigDebtorIdIn(List<Long> values) {
+            addCriterion("orig_debtor_id in", values, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdNotIn(List<Long> values) {
-            addCriterion("origin_id not in", values, "originId");
+        public Criteria andOrigDebtorIdNotIn(List<Long> values) {
+            addCriterion("orig_debtor_id not in", values, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdBetween(Long value1, Long value2) {
-            addCriterion("origin_id between", value1, value2, "originId");
+        public Criteria andOrigDebtorIdBetween(Long value1, Long value2) {
+            addCriterion("orig_debtor_id between", value1, value2, "origDebtorId");
             return (Criteria) this;
         }
 
-        public Criteria andOriginIdNotBetween(Long value1, Long value2) {
-            addCriterion("origin_id not between", value1, value2, "originId");
+        public Criteria andOrigDebtorIdNotBetween(Long value1, Long value2) {
+            addCriterion("orig_debtor_id not between", value1, value2, "origDebtorId");
             return (Criteria) this;
         }
     }

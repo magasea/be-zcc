@@ -7,6 +7,12 @@ public class AmcPerson {
 
     private String firstName;
 
+    private Long deptId;
+
+    private String phoneNumber;
+
+    private String telNumber;
+
     private Integer gender;
 
     private Integer personalDocType;
@@ -43,6 +49,30 @@ public class AmcPerson {
 
     public void setFirstName(String firstName) {
         this.firstName = firstName == null ? null : firstName.trim();
+    }
+
+    public Long getDeptId() {
+        return deptId;
+    }
+
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber == null ? null : phoneNumber.trim();
+    }
+
+    public String getTelNumber() {
+        return telNumber;
+    }
+
+    public void setTelNumber(String telNumber) {
+        this.telNumber = telNumber == null ? null : telNumber.trim();
     }
 
     public Integer getGender() {

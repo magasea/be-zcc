@@ -5,6 +5,9 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="last_name" jdbcType="CHAR" property="lastName" />
     <result column="first_name" jdbcType="CHAR" property="firstName" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
+    <result column="tel_number" jdbcType="CHAR" property="telNumber" />
     <result column="gender" jdbcType="INTEGER" property="gender" />
     <result column="personal_doc_type" jdbcType="INTEGER" property="personalDocType" />
     <result column="personal_doc" jdbcType="CHAR" property="personalDoc" />
@@ -72,8 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, last_name, first_name, gender, personal_doc_type, personal_doc, nation, notes, 
-    address, amc_cmpy_id
+    id, last_name, first_name, dept_id, phone_number, tel_number, gender, personal_doc_type, 
+    personal_doc, nation, notes, address, amc_cmpy_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPersonExample" resultMap="BaseResultMap">
     select
@@ -109,11 +112,13 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_PERSON (last_name, first_name, gender, 
+    insert into AMC_PERSON (last_name, first_name, dept_id, 
+      phone_number, tel_number, gender, 
       personal_doc_type, personal_doc, nation, 
       notes, address, amc_cmpy_id
       )
-    values (#{lastName,jdbcType=CHAR}, #{firstName,jdbcType=CHAR}, #{gender,jdbcType=INTEGER}, 
+    values (#{lastName,jdbcType=CHAR}, #{firstName,jdbcType=CHAR}, #{deptId,jdbcType=BIGINT}, 
+      #{phoneNumber,jdbcType=CHAR}, #{telNumber,jdbcType=CHAR}, #{gender,jdbcType=INTEGER}, 
       #{personalDocType,jdbcType=INTEGER}, #{personalDoc,jdbcType=CHAR}, #{nation,jdbcType=CHAR}, 
       #{notes,jdbcType=VARCHAR}, #{address,jdbcType=VARCHAR}, #{amcCmpyId,jdbcType=BIGINT}
       )
@@ -129,6 +134,15 @@
       </if>
       <if test="firstName != null">
         first_name,
+      </if>
+      <if test="deptId != null">
+        dept_id,
+      </if>
+      <if test="phoneNumber != null">
+        phone_number,
+      </if>
+      <if test="telNumber != null">
+        tel_number,
       </if>
       <if test="gender != null">
         gender,
@@ -158,6 +172,15 @@
       </if>
       <if test="firstName != null">
         #{firstName,jdbcType=CHAR},
+      </if>
+      <if test="deptId != null">
+        #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="phoneNumber != null">
+        #{phoneNumber,jdbcType=CHAR},
+      </if>
+      <if test="telNumber != null">
+        #{telNumber,jdbcType=CHAR},
       </if>
       <if test="gender != null">
         #{gender,jdbcType=INTEGER},
@@ -200,6 +223,15 @@
       <if test="record.firstName != null">
         first_name = #{record.firstName,jdbcType=CHAR},
       </if>
+      <if test="record.deptId != null">
+        dept_id = #{record.deptId,jdbcType=BIGINT},
+      </if>
+      <if test="record.phoneNumber != null">
+        phone_number = #{record.phoneNumber,jdbcType=CHAR},
+      </if>
+      <if test="record.telNumber != null">
+        tel_number = #{record.telNumber,jdbcType=CHAR},
+      </if>
       <if test="record.gender != null">
         gender = #{record.gender,jdbcType=INTEGER},
       </if>
@@ -231,6 +263,9 @@
     set id = #{record.id,jdbcType=BIGINT},
       last_name = #{record.lastName,jdbcType=CHAR},
       first_name = #{record.firstName,jdbcType=CHAR},
+      dept_id = #{record.deptId,jdbcType=BIGINT},
+      phone_number = #{record.phoneNumber,jdbcType=CHAR},
+      tel_number = #{record.telNumber,jdbcType=CHAR},
       gender = #{record.gender,jdbcType=INTEGER},
       personal_doc_type = #{record.personalDocType,jdbcType=INTEGER},
       personal_doc = #{record.personalDoc,jdbcType=CHAR},
@@ -250,6 +285,15 @@
       </if>
       <if test="firstName != null">
         first_name = #{firstName,jdbcType=CHAR},
+      </if>
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=BIGINT},
+      </if>
+      <if test="phoneNumber != null">
+        phone_number = #{phoneNumber,jdbcType=CHAR},
+      </if>
+      <if test="telNumber != null">
+        tel_number = #{telNumber,jdbcType=CHAR},
       </if>
       <if test="gender != null">
         gender = #{gender,jdbcType=INTEGER},
@@ -279,6 +323,9 @@
     update AMC_PERSON
     set last_name = #{lastName,jdbcType=CHAR},
       first_name = #{firstName,jdbcType=CHAR},
+      dept_id = #{deptId,jdbcType=BIGINT},
+      phone_number = #{phoneNumber,jdbcType=CHAR},
+      tel_number = #{telNumber,jdbcType=CHAR},
       gender = #{gender,jdbcType=INTEGER},
       personal_doc_type = #{personalDocType,jdbcType=INTEGER},
       personal_doc = #{personalDoc,jdbcType=CHAR},

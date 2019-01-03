@@ -13,9 +13,13 @@ public class AmcDebt {
 
     private Long baseAmount;
 
+    private String baseAmountDesc;
+
     private Date baseDate;
 
     private Long totalAmount;
+
+    private String totalAmountDesc;
 
     private Date settleDate;
 
@@ -31,9 +35,9 @@ public class AmcDebt {
 
     private Long estimatedPrice;
 
-    private String amcContact1;
+    private Long amcContact1;
 
-    private String amcContact2;
+    private Long amcContact2;
 
     private Integer isRecommanded;
 
@@ -41,7 +45,7 @@ public class AmcDebt {
 
     private Date endDate;
 
-    private Long originId;
+    private Long origDebtorId;
 
     public Long getId() {
         return id;
@@ -83,6 +87,14 @@ public class AmcDebt {
         this.baseAmount = baseAmount;
     }
 
+    public String getBaseAmountDesc() {
+        return baseAmountDesc;
+    }
+
+    public void setBaseAmountDesc(String baseAmountDesc) {
+        this.baseAmountDesc = baseAmountDesc == null ? null : baseAmountDesc.trim();
+    }
+
     public Date getBaseDate() {
         return baseDate;
     }
@@ -97,6 +109,14 @@ public class AmcDebt {
 
     public void setTotalAmount(Long totalAmount) {
         this.totalAmount = totalAmount;
+    }
+
+    public String getTotalAmountDesc() {
+        return totalAmountDesc;
+    }
+
+    public void setTotalAmountDesc(String totalAmountDesc) {
+        this.totalAmountDesc = totalAmountDesc == null ? null : totalAmountDesc.trim();
     }
 
     public Date getSettleDate() {
@@ -155,20 +175,20 @@ public class AmcDebt {
         this.estimatedPrice = estimatedPrice;
     }
 
-    public String getAmcContact1() {
+    public Long getAmcContact1() {
         return amcContact1;
     }
 
-    public void setAmcContact1(String amcContact1) {
-        this.amcContact1 = amcContact1 == null ? null : amcContact1.trim();
+    public void setAmcContact1(Long amcContact1) {
+        this.amcContact1 = amcContact1;
     }
 
-    public String getAmcContact2() {
+    public Long getAmcContact2() {
         return amcContact2;
     }
 
-    public void setAmcContact2(String amcContact2) {
-        this.amcContact2 = amcContact2 == null ? null : amcContact2.trim();
+    public void setAmcContact2(Long amcContact2) {
+        this.amcContact2 = amcContact2;
     }
 
     public Integer getIsRecommanded() {
@@ -195,11 +215,11 @@ public class AmcDebt {
         this.endDate = endDate;
     }
 
-    public Long getOriginId() {
-        return originId;
+    public Long getOrigDebtorId() {
+        return origDebtorId;
     }
 
-    public void setOriginId(Long originId) {
-        this.originId = originId;
+    public void setOrigDebtorId(Long origDebtorId) {
+        this.origDebtorId = origDebtorId;
     }
 }

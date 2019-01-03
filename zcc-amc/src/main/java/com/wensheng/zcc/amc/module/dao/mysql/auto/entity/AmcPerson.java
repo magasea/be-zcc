@@ -3,11 +3,9 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 public class AmcPerson {
     private Long id;
 
-    private String lastName;
-
-    private String firstName;
-
     private Long deptId;
+
+    private String name;
 
     private String phoneNumber;
 
@@ -35,28 +33,20 @@ public class AmcPerson {
         this.id = id;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName == null ? null : lastName.trim();
-    }
-
-    public String getFirstName() {
-        return firstName;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName == null ? null : firstName.trim();
-    }
-
     public Long getDeptId() {
         return deptId;
     }
 
     public void setDeptId(Long deptId) {
         this.deptId = deptId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
     }
 
     public String getPhoneNumber() {

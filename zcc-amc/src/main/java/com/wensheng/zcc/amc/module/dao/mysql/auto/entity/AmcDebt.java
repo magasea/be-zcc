@@ -45,7 +45,7 @@ public class AmcDebt {
 
     private Date endDate;
 
-    private Long origDebtorId;
+    private Long origDebtId;
 
     public Long getId() {
         return id;
@@ -215,11 +215,11 @@ public class AmcDebt {
         this.endDate = endDate;
     }
 
-    public Long getOrigDebtorId() {
-        return origDebtorId;
+    public Long getOrigDebtId() {
+        return origDebtId;
     }
 
-    public void setOrigDebtorId(Long origDebtorId) {
-        this.origDebtorId = origDebtorId;
+    public void setOrigDebtId(Long origDebtId) {
+        this.origDebtId = origDebtId;
     }
 }

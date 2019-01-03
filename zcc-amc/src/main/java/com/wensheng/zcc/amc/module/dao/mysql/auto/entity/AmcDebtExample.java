@@ -1405,63 +1405,63 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdIsNull() {
-            addCriterion("orig_debtor_id is null");
+        public Criteria andOrigDebtIdIsNull() {
+            addCriterion("orig_debt_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdIsNotNull() {
-            addCriterion("orig_debtor_id is not null");
+        public Criteria andOrigDebtIdIsNotNull() {
+            addCriterion("orig_debt_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdEqualTo(Long value) {
-            addCriterion("orig_debtor_id =", value, "origDebtorId");
+        public Criteria andOrigDebtIdEqualTo(Long value) {
+            addCriterion("orig_debt_id =", value, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdNotEqualTo(Long value) {
-            addCriterion("orig_debtor_id <>", value, "origDebtorId");
+        public Criteria andOrigDebtIdNotEqualTo(Long value) {
+            addCriterion("orig_debt_id <>", value, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdGreaterThan(Long value) {
-            addCriterion("orig_debtor_id >", value, "origDebtorId");
+        public Criteria andOrigDebtIdGreaterThan(Long value) {
+            addCriterion("orig_debt_id >", value, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("orig_debtor_id >=", value, "origDebtorId");
+        public Criteria andOrigDebtIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("orig_debt_id >=", value, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdLessThan(Long value) {
-            addCriterion("orig_debtor_id <", value, "origDebtorId");
+        public Criteria andOrigDebtIdLessThan(Long value) {
+            addCriterion("orig_debt_id <", value, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdLessThanOrEqualTo(Long value) {
-            addCriterion("orig_debtor_id <=", value, "origDebtorId");
+        public Criteria andOrigDebtIdLessThanOrEqualTo(Long value) {
+            addCriterion("orig_debt_id <=", value, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdIn(List<Long> values) {
-            addCriterion("orig_debtor_id in", values, "origDebtorId");
+        public Criteria andOrigDebtIdIn(List<Long> values) {
+            addCriterion("orig_debt_id in", values, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdNotIn(List<Long> values) {
-            addCriterion("orig_debtor_id not in", values, "origDebtorId");
+        public Criteria andOrigDebtIdNotIn(List<Long> values) {
+            addCriterion("orig_debt_id not in", values, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdBetween(Long value1, Long value2) {
-            addCriterion("orig_debtor_id between", value1, value2, "origDebtorId");
+        public Criteria andOrigDebtIdBetween(Long value1, Long value2) {
+            addCriterion("orig_debt_id between", value1, value2, "origDebtId");
             return (Criteria) this;
         }
 
-        public Criteria andOrigDebtorIdNotBetween(Long value1, Long value2) {
-            addCriterion("orig_debtor_id not between", value1, value2, "origDebtorId");
+        public Criteria andOrigDebtIdNotBetween(Long value1, Long value2) {
+            addCriterion("orig_debt_id not between", value1, value2, "origDebtId");
             return (Criteria) this;
         }
     }

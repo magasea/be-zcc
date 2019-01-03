@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
@@ -20,6 +21,8 @@ import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.utils.AmcDateUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -79,6 +82,8 @@ public class AmcAssetServiceImplTest {
     @Autowired
     AmcGrntctrctMapper amcGrntctrctMapper;
 
+    @Autowired
+    AmcPersonMapper amcPersonMapper;
 
 //    @Test
 //    public void getAllAmcAssets() {
@@ -322,7 +327,7 @@ public class AmcAssetServiceImplTest {
 
     private void handleDebtGrantor(DebtOrigin debtOriginItem, AmcDebt amcDebt) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOriginId()));
+        query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOrigDebtId()));
         List<Grntor> grntors = primaryMongoTemplate.find(query, Grntor.class);
 
         // origin design combined grantor with grantor contract and debt
@@ -418,10 +423,12 @@ public class AmcAssetServiceImplTest {
             amcDebt = new AmcDebt();
         }
         if (!StringUtils.isEmpty(originItem.getAmcContact1())) {
-            amcDebt.setAmcContact1(originItem.getAmcContact1());
+            Long contactId = createOrUpdateAmcContact(originItem.getAmcContact1());
+            amcDebt.setAmcContact1(contactId);
         }
         if (!StringUtils.isEmpty(originItem.getAmcContact2())) {
-            amcDebt.setAmcContact2(originItem.getAmcContact2());
+            Long contactId = createOrUpdateAmcContact(originItem.getAmcContact2());
+            amcDebt.setAmcContact2(contactId);
         }
         if (!StringUtils.isEmpty(originItem.getAmcDebtCode())) {
             amcDebt.setAmcDebtCode(originItem.getAmcDebtCode());
@@ -457,7 +464,7 @@ public class AmcAssetServiceImplTest {
         }else{
             amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
         }
-        amcDebt.setOriginId(originItem.getId());
+        amcDebt.setOrigDebtId(originItem.getId());
         amcDebt.setPublishDate(originItem.getPublishDate());
         try {
             amcDebt.setSettleDate(AmcDateUtils.getDateFromStr(originItem.getSettleDate()));
@@ -467,6 +474,7 @@ public class AmcAssetServiceImplTest {
         amcDebt.setStartDate(originItem.getStartDate());
         amcDebt.setTitle(originItem.getTitle());
         amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getTotalAmount()));
+        amcDebt.setAmcId(AMCEnum.AMC_WENSHENG.getId());
         Long debtId;
         if( isUpdate ){
             debtId = amcDebt.getId();
@@ -475,6 +483,60 @@ public class AmcAssetServiceImplTest {
             debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
         }
         return amcDebt;
+    }
+
+    private Long createOrUpdateAmcContact(String amcContact1) {
+        List<String> contactInfos = parseContact(amcContact1);
+        AmcPersonExample amcPersonExample = new AmcPersonExample();
+        String name = null;
+        String phone = null;
+        String tel = null;
+        for(String item: contactInfos){
+            if(item.matches(".*\\d+.*") && phone == null){
+                phone = item;
+            }else if(item.matches(".*\\d+.*") && tel == null){
+                tel = item;
+            }else if(!item.matches(".*\\d+.*") && name == null){
+                name = item;
+            }else{
+                logger.error("contact info :" + item +" with origin info:" + amcContact1);
+            }
+        }
+        if(StringUtils.isEmpty(name)){
+            logger.error("cannot record this amc person because no name:" + amcContact1);
+            return -1L;
+        }
+
+        amcPersonExample.createCriteria().andNameEqualTo(name);
+        if(!StringUtils.isEmpty(phone)){
+            amcPersonExample.createCriteria().andPhoneNumberEqualTo(phone);
+        }
+        List<AmcPerson> amcPersonList =  amcPersonMapper.selectByExample(amcPersonExample);
+        AmcPerson amcPerson = null;
+        if(!CollectionUtils.isEmpty(amcPersonList)){
+            amcPerson = amcPersonList.get(0);
+            return amcPerson.getId();
+        }else{
+            amcPerson = new AmcPerson();
+            amcPerson.setName(name);
+            amcPerson.setPhoneNumber(phone);
+            amcPerson.setTelNumber(tel);
+            amcPerson.setAmcCmpyId(AMCEnum.AMC_WENSHENG.getId());
+            Long id = Long.valueOf(amcPersonMapper.insertSelective(amcPerson));
+            return id;
+        }
+    }
+
+    private List<String> parseContact(String amcContact1) {
+       List<String> contactInfos = Arrays.asList(amcContact1.split(" "));
+       List<String> finalList = new ArrayList<>();
+       for(String item: contactInfos){
+           List<String> subInfos = Arrays.asList( item.split("\\-"));
+           for(String subItem: subInfos){
+               finalList.add(subItem);
+           }
+       }
+       return finalList;
     }
 
     private Long handleCourtInfo(DebtOrigin originItem) {

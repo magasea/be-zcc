@@ -6,6 +6,6 @@ package com.wensheng.zcc.amc.service;
  */
 public interface AmcDebtService {
 
-  public int  saveImageInfo(String ossName, String originName, Long debtId, String fileDesc, int imageClass);
+  public int  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass);
 
 }

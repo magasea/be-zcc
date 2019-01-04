@@ -3,7 +3,7 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 
-import com.wensheng.zcc.amc.module.vo
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +72,7 @@ public class AmcDebtController {
   @ResponseBody
   public String createDebt(@RequestBody AmcDebtVo debtVo){
 
+      return "succed";
   }
 
 

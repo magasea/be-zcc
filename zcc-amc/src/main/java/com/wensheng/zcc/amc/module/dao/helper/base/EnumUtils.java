@@ -13,6 +13,7 @@ public class  EnumUtils {
     return lookupMap(EnumSet.allOf(clazz).toArray(emptyArray), mapper);
   }
 
+
   public static <T, E extends Enum<E>> Function<T, E> lookupMap(E[] values, Function<E, T> mapper) {
     Map<T, E> index = Maps.newHashMapWithExpectedSize(values.length);
     for (E value : values) {
@@ -20,5 +21,6 @@ public class  EnumUtils {
     }
     return (T key) -> index.get(key);
   }
+
 
 }

@@ -1,7 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
 import java.util.Date;
 import lombok.Data;
 
@@ -15,8 +14,6 @@ public class AmcDebtVo {
   private Long id;
 
   private Long debtpackId;
-
-  private Long amcId;
 
   private String title;
 
@@ -53,8 +50,6 @@ public class AmcDebtVo {
   private Date startDate;
 
   private Date endDate;
-
-  private Long origDebtId;
 
 
 }

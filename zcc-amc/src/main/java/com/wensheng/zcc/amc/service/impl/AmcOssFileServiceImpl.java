@@ -3,14 +3,13 @@ package com.wensheng.zcc.amc.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.utils.ImageUtils;
 import java.io.File;
 import java.util.UUID;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -47,6 +46,8 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
   OSSClient ossClient;
 
+  String ossFilePathBase;
+
 
 
 
@@ -56,15 +57,24 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     DefaultCredentialProvider defaultCredentialProvider = new DefaultCredentialProvider(ossKeyId, ossKeySecret);
 
     ossClient = new OSSClient(ossEndPoint, defaultCredentialProvider, null);
+    StringBuilder sb = new StringBuilder("http://");
+    ossFilePathBase = sb.append(bucketName).append(".").append(ossEndPoint).append("/").toString();
   }
 
 
   @Override
-  public String handleFile2Oss(String filePath) throws Exception {
-    String fileName = UUID.fromString(filePath).toString();
+  public String handleFile2Oss(String filePath, String prePath) throws Exception {
+    String ext = ImageUtils.getImageType(filePath);
+    if(ext.equals(ImageUtils.UNKNOWNTYPE)){
+      ext = FilenameUtils.getExtension(filePath);
+    }
+    String checkSum = ImageUtils.getCheckSum(filePath);
+    StringBuilder sbOssFileName = new StringBuilder(prePath).append(checkSum);
+    sbOssFileName.append(".").append(ext);
     File fileUpload = new File(filePath);
-    ossClient.putObject(bucketName, fileName, fileUpload);
-    return fileName;
+
+    ossClient.putObject(bucketName, sbOssFileName.toString(), fileUpload);
+    return ossFilePathBase+sbOssFileName;
   }
 
   @Override

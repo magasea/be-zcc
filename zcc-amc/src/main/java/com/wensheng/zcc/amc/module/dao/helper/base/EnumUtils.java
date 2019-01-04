@@ -1,10 +1,10 @@
 package com.wensheng.zcc.amc.module.dao.helper.base;
 
+import com.google.common.collect.Maps;
 import java.lang.reflect.Array;
 import java.util.EnumSet;
 import java.util.Map;
 import java.util.function.Function;
-import com.google.common.collect.Maps;
 
 public class  EnumUtils {
   public static <T, E extends Enum<E>> Function<T, E> lookupMap(Class<E> clazz, Function<E, T> mapper) {

@@ -34,6 +34,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Component;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
@@ -50,7 +51,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration
-
+@ActiveProfiles(value = "dev")
 public class AmcAssetServiceImplTest {
 
     Logger logger = LoggerFactory.getLogger(getClass());

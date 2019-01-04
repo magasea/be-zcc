@@ -8,7 +8,7 @@ import org.springframework.web.multipart.MultipartFile;
  */
 public interface AmcOssFileService {
 
-  public String handleFile2Oss(String filePath) throws Exception;
+  public String handleFile2Oss(String filePath, String prePath) throws Exception;
 
 
   public String handleMultiPartImage(MultipartFile multipartFile, Long id, String type) throws Exception;

@@ -4,11 +4,14 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
+import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -27,7 +30,7 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
-  public List<CurtInfo> getCourt_Info(){
+  public List<CurtInfo> getAllCourtInfo(){
     List<CurtInfo> curtInfos;
     CurtInfoExample curtInfoExample = new CurtInfoExample();
     curtInfoExample.createCriteria().andCurtNameIsNotNull();
@@ -37,12 +40,18 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/court_info", method = RequestMethod.GET)
   @ResponseBody
-  public List<CurtInfo> getCourt_Info(@RequestParam("courtId") Long courtId){
+  public List<CurtInfo> getCourtInfo(@RequestParam("courtId") Long courtId){
     List<CurtInfo> curtInfos ;
     CurtInfoExample curtInfoExample = new CurtInfoExample();
     curtInfoExample.createCriteria().andIdEqualTo(courtId);
     curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
     return curtInfos;
+  }
+
+  @RequestMapping(value = "/court_info/add", method = RequestMethod.POST)
+  @ResponseBody
+  public Long addCourtInfo(@RequestBody AmcCourtInfoVo amcCourtInfoVo){
+    return -1L;
   }
 
   @RequestMapping(value = "/editStatus", method = RequestMethod.GET)

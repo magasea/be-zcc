@@ -32,14 +32,11 @@ public class AmcDebtController {
   @Autowired
   AmcDebtService amcDebtService;
 
-  @RequestMapping(value = "/api/amcid/{id}/debt/image", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
-  public String uploadDebtImage(@PathVariable Integer amcId, @RequestParam("debtId") Long debtId, @RequestParam("desc")
-      String desc, @RequestParam("imageClass") Integer imageClass,
-
+  public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId, @RequestParam("debtId") Long debtId,
+      @RequestParam("desc") String desc, @RequestParam("imageClass") Integer imageClass,
       @RequestParam("uploadingImages") MultipartFile[] uploadingImages){
-
-
 
     List<String> filePaths = new ArrayList<>();
     for(MultipartFile uploadedImage : uploadingImages) {
@@ -51,9 +48,11 @@ public class AmcDebtController {
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
       }
     }
+    String prePath = "debt/"+debtId+"/";
+
     for(String filePath: filePaths){
       try {
-        String ossPath =  amcOssFileService.handleFile2Oss(filePath);
+        String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
         amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, imageClass );
       } catch (Exception e) {
         e.printStackTrace();

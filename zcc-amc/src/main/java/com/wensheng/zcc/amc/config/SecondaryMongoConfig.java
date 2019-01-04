@@ -10,7 +10,7 @@ import static com.wensheng.zcc.amc.config.SecondaryMongoConfig.MONGO_TEMPLATE;
  * @author Marcos Barbero
  */
 @Configuration
-@EnableMongoRepositories(basePackages = "com.wensheng.zcc.amc.module.dao.mongo.origin",
+@EnableMongoRepositories(basePackages = "com.wensheng.zcc.amc.module.dao.mongo.entity",
         mongoTemplateRef = MONGO_TEMPLATE)
 public class SecondaryMongoConfig {
 

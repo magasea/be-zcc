@@ -63,8 +63,8 @@ project:
   params:
     debt_image_path: /disk/temp/debt/images/
     asset_image_path: /disk/temp/asset/images/
-    oss-end-point: oss-cn-beijing.aliyuncs.com
-    oss-key-id: LTAIr4FuhRp7SciF
-    oss-key-secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
-    bucket-name: ws-zcc
+    oss_end_point: oss-cn-beijing.aliyuncs.com
+    oss_key_id: LTAIr4FuhRp7SciF
+    oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
+    bucket_name: ws-zcc
 

@@ -29,9 +29,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
@@ -39,6 +41,7 @@ import org.springframework.util.StringUtils;
 
 import javax.validation.constraints.Email;
 import java.util.List;
+import org.springframework.web.bind.annotation.InitBinder;
 
 /**
  * @author chenwei on 12/5/18
@@ -63,7 +66,6 @@ public class AmcAssetServiceImplTest {
 
     @Autowired
     MongoTemplate secondaryMongoTemplate;
-
 
     @Autowired
     AmcAssetMapper amcAssetMapper;

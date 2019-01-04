@@ -1,20 +1,19 @@
 package com.wensheng.zcc.sso.config;
 
+import static com.wensheng.zcc.sso.model.Constants.ACCESS_TOKEN_VALIDITY_SECONDS;
+import static com.wensheng.zcc.sso.model.Constants.SIGNING_KEY;
+
 import com.wensheng.zcc.sso.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
-
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.function.Function;
-
-import static com.wensheng.zcc.sso.model.Constants.ACCESS_TOKEN_VALIDITY_SECONDS;
-import static com.wensheng.zcc.sso.model.Constants.SIGNING_KEY;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
 @Component
 public class JwtTokenUtil implements Serializable {

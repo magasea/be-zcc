@@ -1,9 +1,11 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
+import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -41,6 +43,13 @@ public class AmcBasicInfoController {
     curtInfoExample.createCriteria().andIdEqualTo(courtId);
     curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
     return curtInfos;
+  }
+
+  @RequestMapping(value = "/editStatus", method = RequestMethod.GET)
+  @ResponseBody
+  public List<EditStatusEnum> getEditStatusList(){
+
+    return Arrays.asList(EditStatusEnum.values());
   }
 
 }

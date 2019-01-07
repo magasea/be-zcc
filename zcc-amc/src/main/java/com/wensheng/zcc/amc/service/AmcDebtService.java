@@ -26,6 +26,6 @@ public interface AmcDebtService {
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
-  List<AmcDebtExt> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy);
+  List<AmcDebtExt> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy) throws Exception;
 
 }

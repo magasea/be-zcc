@@ -18,10 +18,10 @@ public enum OrderByEnum {
     this.name = name;
   }
 
-  private static final Function<String, OrderByEnum> func =
-      EnumUtils.lookupMap(OrderByEnum.class, e -> e.getName());
-  public static OrderByEnum lookupByDisplayNameUtil(String name) {
-    return func.apply(name);
+  private static final Function<Integer, OrderByEnum> func =
+      EnumUtils.lookupMap(OrderByEnum.class, e -> e.getId());
+  public static OrderByEnum lookupByDisplayNameUtil(Integer id) {
+    return func.apply(id);
   }
   public int getId() {
     return id;

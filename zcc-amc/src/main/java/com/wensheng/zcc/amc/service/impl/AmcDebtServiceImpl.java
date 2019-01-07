@@ -5,11 +5,14 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,9 +93,19 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtExt> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy) {
-    amcDebtExtMapper.selectByExampleWithRowboundsExt()
+  public List<AmcDebtExt> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy) throws Exception {
 
-    return null;
+
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    try{
+      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy));
+    }catch (Exception ex){
+      logger.error("there is no orderBy params:" + ex.getMessage());
+    }
+    RowBounds rowBounds = new RowBounds(offset, size);
+
+    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
+
+    return amcDebtExtList;
   }
 }

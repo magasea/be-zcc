@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface CurtInfoMapper {
     long countByExample(CurtInfoExample example);
@@ -15,6 +16,8 @@ public interface CurtInfoMapper {
     int insert(CurtInfo record);
 
     int insertSelective(CurtInfo record);
+
+    List<CurtInfo> selectByExampleWithRowbounds(CurtInfoExample example, RowBounds rowBounds);
 
     List<CurtInfo> selectByExample(CurtInfoExample example);
 

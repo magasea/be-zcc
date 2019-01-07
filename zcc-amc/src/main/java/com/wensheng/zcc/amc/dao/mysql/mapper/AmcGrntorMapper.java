@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface AmcGrntorMapper {
     long countByExample(AmcGrntorExample example);
@@ -15,6 +16,8 @@ public interface AmcGrntorMapper {
     int insert(AmcGrntor record);
 
     int insertSelective(AmcGrntor record);
+
+    List<AmcGrntor> selectByExampleWithRowbounds(AmcGrntorExample example, RowBounds rowBounds);
 
     List<AmcGrntor> selectByExample(AmcGrntorExample example);
 

@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface AmcDebtpackMapper {
     long countByExample(AmcDebtpackExample example);
@@ -15,6 +16,8 @@ public interface AmcDebtpackMapper {
     int insert(AmcDebtpack record);
 
     int insertSelective(AmcDebtpack record);
+
+    List<AmcDebtpack> selectByExampleWithRowbounds(AmcDebtpackExample example, RowBounds rowBounds);
 
     List<AmcDebtpack> selectByExample(AmcDebtpackExample example);
 

@@ -2,6 +2,8 @@ package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import java.util.List;
 
 /**
@@ -10,5 +12,15 @@ import java.util.List;
  */
 public interface AmcAssetService {
 
-    AmcAsset getAllAmcAssets(Long key);
+    public AmcAssetVo create(AmcAsset amcAsset);
+
+    public AmcAssetVo del(AmcAsset amcAsset);
+
+    public AmcAssetVo update(AmcAsset amcAsset);
+
+    public List<AmcAssetVo> queryAll(int offset, int size);
+
+    public AmcAssetVo get(Long amcAssetId);
+
+    public List<AmcAssetVo> query(AmcAsset queryCond, int offset, int size);
 }

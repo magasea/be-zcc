@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholder;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyShareholderExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface AmcCmpyShareholderMapper {
     long countByExample(AmcCmpyShareholderExample example);
@@ -15,6 +16,8 @@ public interface AmcCmpyShareholderMapper {
     int insert(AmcCmpyShareholder record);
 
     int insertSelective(AmcCmpyShareholder record);
+
+    List<AmcCmpyShareholder> selectByExampleWithRowbounds(AmcCmpyShareholderExample example, RowBounds rowBounds);
 
     List<AmcCmpyShareholder> selectByExample(AmcCmpyShareholderExample example);
 

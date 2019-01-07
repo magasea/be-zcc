@@ -2,9 +2,7 @@ package com.wensheng.zcc.amc.utils;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -12,7 +10,6 @@ import java.util.Iterator;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
-import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
 /**
  * @author chenwei on 1/4/19
@@ -21,6 +18,8 @@ import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 public class ImageUtils {
 
   public static final String UNKNOWNTYPE = "unknownType";
+
+  private static MessageDigest md = null;
 
   public static String getImageType(String filePath){
 
@@ -54,20 +53,32 @@ public class ImageUtils {
     }
   }
 
+  public static synchronized MessageDigest getMD() throws NoSuchAlgorithmException {
+    synchronized (md){
+      if(md == null){
+        md = MessageDigest.getInstance("SHA-1");
+      }
+      md.reset();
+      return md;
+    }
+  }
 
   public static String getCheckSum(String filePath) throws NoSuchAlgorithmException, IOException {
-    MessageDigest md = MessageDigest.getInstance("SHA-1");
-    try (DigestInputStream dis = new DigestInputStream(new FileInputStream(filePath), md)) {
+    MessageDigest digest = getMD();
+
+    // file hashing with DigestInputStream
+    try (DigestInputStream dis = new DigestInputStream(new FileInputStream(filePath), digest)) {
       while (dis.read() != -1) ; //empty loop to clear the data
-      md = dis.getMessageDigest();
+      digest = dis.getMessageDigest();
     }
 
     // bytes to hex
     StringBuilder result = new StringBuilder();
-    for (byte b : md.digest()) {
+    for (byte b : digest.digest()) {
       result.append(String.format("%02x", b));
     }
     return result.toString();
+
   }
 
 }

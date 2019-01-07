@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPersonExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface AmcPersonMapper {
     long countByExample(AmcPersonExample example);
@@ -15,6 +16,8 @@ public interface AmcPersonMapper {
     int insert(AmcPerson record);
 
     int insertSelective(AmcPerson record);
+
+    List<AmcPerson> selectByExampleWithRowbounds(AmcPersonExample example, RowBounds rowBounds);
 
     List<AmcPerson> selectByExample(AmcPersonExample example);
 

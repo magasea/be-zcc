@@ -5,6 +5,7 @@
 
 <generatorConfiguration>
     <context id="MySqlContext" targetRuntime="MyBatis3" defaultModelType="flat">
+        <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin"/>
         <commentGenerator>
             <property name="suppressDate" value="true"/>
             <!-- 是否去除自动生成的注释 true：是 ： false:否 -->

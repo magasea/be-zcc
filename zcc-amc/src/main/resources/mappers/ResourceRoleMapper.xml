@@ -193,4 +193,18 @@
       access_role = #{accessRole,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRoleExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from RESOURCE_ROLE
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
 </mapper>

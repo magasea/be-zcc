@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRole;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ResourceRoleExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.session.RowBounds;
 
 public interface ResourceRoleMapper {
     long countByExample(ResourceRoleExample example);
@@ -15,6 +16,8 @@ public interface ResourceRoleMapper {
     int insert(ResourceRole record);
 
     int insertSelective(ResourceRole record);
+
+    List<ResourceRole> selectByExampleWithRowbounds(ResourceRoleExample example, RowBounds rowBounds);
 
     List<ResourceRole> selectByExample(ResourceRoleExample example);
 

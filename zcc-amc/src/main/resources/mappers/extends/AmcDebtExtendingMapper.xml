@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper">
-  <cache-ref namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtMapper"/>
+  <cache-ref namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper"/>
   <resultMap id="BaseResultMapExt" type="com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />

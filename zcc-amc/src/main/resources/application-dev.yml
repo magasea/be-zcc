@@ -58,7 +58,9 @@ spring:
 
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
-  mapper-locations: classpath:mappers/*Mapper.xml
+  mapper-locations:
+    - classpath:mappers/*Mapper.xml
+    - classpath:mappers/extends/*Mapper.xml
 
 project:
   params:

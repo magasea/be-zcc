@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
 
 @SpringBootApplication
-@MapperScan("com.wensheng.zcc.amc.dao.mysql.mapper")
+@MapperScan({"com.wensheng.zcc.amc.dao.mysql.mapper"})
 
 public class Application {
 

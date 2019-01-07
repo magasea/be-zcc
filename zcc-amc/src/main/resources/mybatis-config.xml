@@ -28,7 +28,8 @@
     </environments>
 
     <mappers>
-        <mapper resource="mappers/*.xml" />
+        <!--<mapper resource="mappers/*.xml" />-->
+        <!--<mapper resource="mappers/extends/*.xml" />-->
         <package name="com.wensheng.zcc.amc.dao.mysql.mapper" />
 
     </mappers>

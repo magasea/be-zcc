@@ -52,6 +52,6 @@ public class AmcDebtVo {
 
   private Date endDate;
 
-  List<Long> assetIds;
+  List<AmcAssetVo> assetVos;
 
 }

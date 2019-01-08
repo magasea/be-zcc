@@ -4,9 +4,11 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
@@ -20,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -142,9 +145,32 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt){
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
-    amcDebtVo.setAssetIds(amcDebtExt.getAmcAssetIds());
+    amcDebtVo.setAssetVos(convertDoList2VoList(amcDebtExt.getAmcAssets()));
     return amcDebtVo;
 
+  }
+
+  private AmcAssetVo convertDo2Vo(AmcAsset amcAsset){
+    AmcAssetVo amcAssetVo = new AmcAssetVo();
+    BeanUtils.copyProperties(amcAsset, amcAssetVo);
+    if(amcAsset.getEstmPrice() != null){
+      amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
+    }
+    if(amcAsset.getInitPrice() != null){
+      amcAssetVo.setInitPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getInitPrice()));
+    }
+    if(amcAsset.getEstmPrice() != null){
+      amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
+    }
+
+    return amcAssetVo;
+  }
+  private List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets){
+    List<AmcAssetVo> amcAssetVos = new ArrayList<>();
+    for(AmcAsset amcAsset: amcAssets){
+      amcAssetVos.add(convertDo2Vo(amcAsset));
+    }
+    return amcAssetVos;
   }
 
   @Override

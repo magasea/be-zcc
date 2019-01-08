@@ -25,7 +25,7 @@
     <!--<result column="start_date" jdbcType="TIMESTAMP" property="startDate" />-->
     <!--<result column="end_date" jdbcType="TIMESTAMP" property="endDate" />-->
     <!--<result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />-->
-    <association property="debtInfo" javaType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt"/>
+    <association property="debtInfo" resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap"/>
     <collection property="amcAssetIds" ofType="Long" />
   </resultMap>
   <!--<select id="selectAsset">-->

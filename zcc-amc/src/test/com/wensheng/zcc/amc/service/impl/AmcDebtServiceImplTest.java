@@ -33,10 +33,10 @@ public class AmcDebtServiceImplTest {
   @Test
   public void queryAllExt() throws Exception {
 
-    List<AmcDebtExt> amcDebtExtList =  amcDebtService.queryAllExt(0, 20, null);
-    for(AmcDebtExt amcDebtExt: amcDebtExtList){
-      if(!CollectionUtils.isEmpty(amcDebtExt.getAmcAssetIds())){
-        System.out.println(amcDebtExt.getAmcAssetIds());
+    List<AmcDebtVo> amcDebtVos =  amcDebtService.queryAllExt(0, 20, null);
+    for(AmcDebtVo amcDebtVo: amcDebtVos){
+      if(!CollectionUtils.isEmpty(amcDebtVo.getAssetIds())){
+        System.out.println(amcDebtVo.getAssetIds());
 
       }
 

@@ -11,7 +11,7 @@ import org.springframework.util.CollectionUtils;
  */
 public class SQLUtils {
 
-  public static String getOrderBy(HashMap<String, Integer> orderByParam) throws Exception {
+  public static String getOrderBy(Map<String, Integer> orderByParam) throws Exception {
     if(CollectionUtils.isEmpty(orderByParam)){
       throw new Exception("empty orderByParam");
     }

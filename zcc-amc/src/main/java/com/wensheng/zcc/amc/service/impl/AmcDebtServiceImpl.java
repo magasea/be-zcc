@@ -14,7 +14,7 @@ import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import net.bytebuddy.asm.Advice.Unused;
+import java.util.Map;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +110,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return null;
   }
 
+
+
   private List<AmcDebtVo> doList2VoList(List<AmcDebt> originList){
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
     for(AmcDebt amcDebt: originList){
@@ -141,11 +143,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt){
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
     amcDebtVo.setAssetIds(amcDebtExt.getAmcAssetIds());
+    return amcDebtVo;
 
   }
 
   @Override
-  public List<AmcDebtVo> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy) throws Exception {
+  public List<AmcDebtVo> queryAllExt(int offset, int size, Map<String, Integer> orderBy) throws Exception {
 
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();

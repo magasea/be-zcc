@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
@@ -8,12 +9,16 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import net.bytebuddy.asm.Advice.Unused;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -36,6 +41,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcDebtExtMapper amcDebtExtMapper;
+
+  @Autowired
+  AmcDebtMapper amcDebtMapper;
 
   @Override
   public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass) {
@@ -88,11 +96,56 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size) {
+
+    AmcDebtExample amcDebtExample = null;
+    RowBounds rowBounds = new RowBounds(offset, size);
+
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+
+
+    if(!CollectionUtils.isEmpty(amcDebts)){
+      return doList2VoList(amcDebts);
+    }
+
     return null;
   }
 
+  private List<AmcDebtVo> doList2VoList(List<AmcDebt> originList){
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    for(AmcDebt amcDebt: originList){
+      AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
+      amcDebtVos.add(amcDebtVo);
+    }
+    return amcDebtVos;
+
+  }
+
+  private AmcDebtVo convertDo2Vo(AmcDebt amcDebt) {
+    AmcDebtVo amcDebtVo = new AmcDebtVo();
+    BeanUtils.copyProperties(amcDebt, amcDebtVo);
+    if(amcDebt.getBaseAmount() > 0 ){
+      amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));
+
+    }
+    if(amcDebt.getEstimatedPrice() > 0 ){
+      amcDebtVo.setEstimatedPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getEstimatedPrice()));
+
+    }
+    if(amcDebt.getTotalAmount() > 0 ){
+      amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
+
+    }
+    return amcDebtVo;
+  }
+
+  private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt){
+    AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
+    amcDebtVo.setAssetIds(amcDebtExt.getAmcAssetIds());
+
+  }
+
   @Override
-  public List<AmcDebtExt> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy) throws Exception {
+  public List<AmcDebtVo> queryAllExt(int offset, int size, HashMap<String, Integer> orderBy) throws Exception {
 
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
@@ -105,6 +158,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
 
-    return amcDebtExtList;
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    for(AmcDebtExt amcDebtExt: amcDebtExtList){
+      amcDebtVos.add(convertDoExt2Vo(amcDebtExt));
+    }
+
+    return amcDebtVos;
   }
 }

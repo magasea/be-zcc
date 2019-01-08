@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.utils;
 
+import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
 
@@ -36,6 +37,10 @@ public class AmcNumberUtils {
     String rounded = nf.format(input);
     return getLongFromStringWithMult100(rounded);
 
+  }
+
+  public static BigDecimal getDecimalFromLongDiv100(Long input){
+      return BigDecimal.valueOf(input).divide(BigDecimal.valueOf(100));
   }
 
 }

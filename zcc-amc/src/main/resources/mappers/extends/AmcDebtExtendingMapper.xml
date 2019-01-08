@@ -25,35 +25,35 @@
     <!--<result column="start_date" jdbcType="TIMESTAMP" property="startDate" />-->
     <!--<result column="end_date" jdbcType="TIMESTAMP" property="endDate" />-->
     <!--<result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />-->
-    <result property="debtInfo" column="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap"/>
-    <association property="amcAssetIds" javaType="List" />
+    <association property="debtInfo" javaType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt"/>
+    <collection property="amcAssetIds" ofType="Long" />
   </resultMap>
   <!--<select id="selectAsset">-->
     <!--SELECT  aa.id FROM AMC_ASSET aa WHERE aa.debtId = # {id}-->
   <!--</select>-->
   <sql id="Prefix_Column_List">
-  ${prefix}id,
-  ${prefix}debtpack_id,
-  ${prefix}amc_id,
-  ${prefix}title,
-  ${prefix}base_amount,
-  ${prefix}base_amount_desc,
-  ${prefix}base_date,
-  ${prefix}total_amount,
-  ${prefix}total_amount_desc,
-  ${prefix}settle_date,
-  ${prefix}court_id,
-  ${prefix}amc_debt_code,
-  ${prefix}edit_status,
-  ${prefix}publish_date,
-  ${prefix}law_status,
-  ${prefix}estimated_price,
-  ${prefix}amc_contact1,
-  ${prefix}amc_contact2,
-  ${prefix}is_recommanded,
-  ${prefix}start_date,
-  ${prefix}end_date,
-  ${prefix}orig_debt_id
+  ${prefix}id as id,
+  ${prefix}debtpack_id as debtpack_id,
+  ${prefix}amc_id as amc_id,
+  ${prefix}title as title,
+  ${prefix}base_amount as base_amount,
+  ${prefix}base_amount_desc as base_amount_desc,
+  ${prefix}base_date as base_date,
+  ${prefix}total_amount as total_amount,
+  ${prefix}total_amount_desc as total_amount_desc,
+  ${prefix}settle_date as settle_date,
+  ${prefix}court_id as court_id,
+  ${prefix}amc_debt_code as amc_debt_code,
+  ${prefix}edit_status as edit_status,
+  ${prefix}publish_date as publish_date,
+  ${prefix}law_status as law_status,
+  ${prefix}estimated_price as estimated_price,
+  ${prefix}amc_contact1 as amc_contact1,
+  ${prefix}amc_contact2 as amc_contact2,
+  ${prefix}is_recommanded as is_recommanded,
+  ${prefix}start_date as start_date,
+  ${prefix}end_date as end_date,
+  ${prefix}orig_debt_id as orig_debt_id
   </sql>
   <select id="selectByExampleWithRowboundsExt"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">

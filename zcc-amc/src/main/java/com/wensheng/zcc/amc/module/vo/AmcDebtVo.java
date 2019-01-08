@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.module.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -39,7 +40,7 @@ public class AmcDebtVo {
 
   private Integer lawStatus;
 
-  private Long estimatedPrice;
+  private BigDecimal estimatedPrice;
 
   private Long amcContact1;
 
@@ -51,5 +52,6 @@ public class AmcDebtVo {
 
   private Date endDate;
 
+  List<Long> assetIds;
 
 }

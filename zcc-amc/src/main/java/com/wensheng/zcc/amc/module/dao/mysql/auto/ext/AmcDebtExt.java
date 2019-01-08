@@ -9,7 +9,8 @@ import lombok.Data;
  * @project zcc-backend
  */
 @Data
-public class AmcDebtExt extends AmcDebt {
+public class AmcDebtExt  {
+  AmcDebt debtInfo;
 
   List<Long> amcAssetIds ;
 

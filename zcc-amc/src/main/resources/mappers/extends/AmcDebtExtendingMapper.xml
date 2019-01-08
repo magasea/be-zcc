@@ -27,7 +27,11 @@
     <!--<result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />-->
     <association property="debtInfo" resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap"/>
     <collection property="amcAssets" javaType="ArrayList" ofType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset"
-      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"/>
+      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_">
+      <id property="debtId" column="debtId"/>
+
+    </collection>
+
 
   </resultMap>
   <!--<select id="selectAsset">-->

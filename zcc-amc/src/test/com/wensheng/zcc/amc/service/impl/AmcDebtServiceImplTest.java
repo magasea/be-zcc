@@ -35,8 +35,8 @@ public class AmcDebtServiceImplTest {
 
     List<AmcDebtVo> amcDebtVos =  amcDebtService.queryAllExt(0, 20, null);
     for(AmcDebtVo amcDebtVo: amcDebtVos){
-      if(!CollectionUtils.isEmpty(amcDebtVo.getAssetIds())){
-        System.out.println(amcDebtVo.getAssetIds());
+      if(!CollectionUtils.isEmpty(amcDebtVo.getAssetVos())){
+        System.out.println(amcDebtVo.getAssetVos().size());
 
       }
 

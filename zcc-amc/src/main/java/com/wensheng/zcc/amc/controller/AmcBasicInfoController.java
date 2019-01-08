@@ -5,8 +5,6 @@ import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -26,8 +26,8 @@
     <!--<result column="end_date" jdbcType="TIMESTAMP" property="endDate" />-->
     <!--<result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />-->
     <association property="debtInfo" resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap"/>
-    <collection property="amcAssetIds" javaType="ArrayList" ofType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset"
-      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa."/>
+    <collection property="amcAssets" javaType="ArrayList" ofType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset"
+      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"/>
 
   </resultMap>
   <!--<select id="selectAsset">-->
@@ -58,33 +58,33 @@
   ${prefix}orig_debt_id as orig_debt_id
   </sql>
   <sql id="ASSET_Column_List">
-  ${prefix}id as ${prefix}id,
-  ${prefix}title as ${prefix}title,
-  ${prefix}type as ${prefix}type,
-  ${prefix}status as ${prefix}status,
-  ${prefix}state as ${prefix}state,
-  ${prefix}edit_status as ${prefix}edit_status,
-  ${prefix}amc_id as ${prefix}amc_id,
-  ${prefix}amc_asset_code as ${prefix}amc_asset_code,
-  ${prefix}zcc_asset_code as ${prefix}zcc_asset_code,
-  ${prefix}is_main_asset as ${prefix}is_main_asset,
-  ${prefix}estm_price as ${prefix}estm_price,
-  ${prefix}debt_id as ${prefix}debt_id,
-  ${prefix}init_price as ${prefix}init_price,
-  ${prefix}restrictions as ${prefix}restrictions,
-  ${prefix}area as ${prefix}area,
-  ${prefix}land_area as ${prefix}land_area,
-  ${prefix}publish_date as ${prefix}publish_date,
-  ${prefix}province as ${prefix}province,
-  ${prefix}city as ${prefix}city,
-  ${prefix}county as ${prefix}county,
-  ${prefix}street as ${prefix}street,
-  ${prefix}building_name as ${prefix}building_name,
-  ${prefix}gps_lng as ${prefix}gps_lng,
-  ${prefix}gps_lat as ${prefix}gps_lat,
-  ${prefix}origin_debt_id as ${prefix}origin_debt_id,
-  ${prefix}create_by as ${prefix}create_by,
-  ${prefix}amc_conactor as ${prefix}amc_conactor
+  ${prefix}id as ${alias}id,
+  ${prefix}title as ${alias}title,
+  ${prefix}type as ${alias}type,
+  ${prefix}status as ${alias}status,
+  ${prefix}state as ${alias}state,
+  ${prefix}edit_status as ${alias}edit_status,
+  ${prefix}amc_id as ${alias}amc_id,
+  ${prefix}amc_asset_code as ${alias}amc_asset_code,
+  ${prefix}zcc_asset_code as ${alias}zcc_asset_code,
+  ${prefix}is_main_asset as ${alias}is_main_asset,
+  ${prefix}estm_price as ${alias}estm_price,
+  ${prefix}debt_id as ${alias}debt_id,
+  ${prefix}init_price as ${alias}init_price,
+  ${prefix}restrictions as ${alias}restrictions,
+  ${prefix}area as ${alias}area,
+  ${prefix}land_area as ${alias}land_area,
+  ${prefix}publish_date as ${alias}publish_date,
+  ${prefix}province as ${alias}province,
+  ${prefix}city as ${alias}city,
+  ${prefix}county as ${alias}county,
+  ${prefix}street as ${alias}street,
+  ${prefix}building_name as ${alias}building_name,
+  ${prefix}gps_lng as ${alias}gps_lng,
+  ${prefix}gps_lat as ${alias}gps_lat,
+  ${prefix}origin_debt_id as ${alias}origin_debt_id,
+  ${prefix}create_by as ${alias}create_by,
+  ${prefix}amc_conactor as ${alias}amc_conactor
   </sql>
   <select id="selectByExampleWithRowboundsExt"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">
@@ -93,7 +93,9 @@
       distinct
     </if>
     <include refid="Prefix_Column_List"><property name="prefix" value="ad."></property></include>,
-    <include refid="ASSET_Column_List"><property name="prefix" value="aa."></property></include>
+    <include
+      refid="ASSET_Column_List"><property name="prefix" value="aa."></property><property name="alias"
+      value="aa_"></property></include>
     from AMC_DEBT ad  left join AMC_ASSET aa
     on aa.debt_id = ad.id
     <if test="_parameter != null">

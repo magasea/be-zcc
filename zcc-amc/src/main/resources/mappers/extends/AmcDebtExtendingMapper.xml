@@ -3,41 +3,69 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper">
   <!--< namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper"/>-->
   <resultMap id="BaseResultMapExt" type="com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />
-    <result column="amc_id" jdbcType="BIGINT" property="amcId" />
-    <result column="title" jdbcType="CHAR" property="title" />
-    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
-    <result column="base_amount_desc" jdbcType="VARCHAR" property="baseAmountDesc" />
-    <result column="base_date" jdbcType="TIMESTAMP" property="baseDate" />
-    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
-    <result column="total_amount_desc" jdbcType="VARCHAR" property="totalAmountDesc" />
-    <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
-    <result column="court_id" jdbcType="BIGINT" property="courtId" />
-    <result column="amc_debt_code" jdbcType="VARCHAR" property="amcDebtCode" />
-    <result column="edit_status" jdbcType="INTEGER" property="editStatus" />
-    <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
-    <result column="law_status" jdbcType="INTEGER" property="lawStatus" />
-    <result column="estimated_price" jdbcType="BIGINT" property="estimatedPrice" />
-    <result column="amc_contact1" jdbcType="BIGINT" property="amcContact1" />
-    <result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />
-    <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
-    <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
-    <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
-    <result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />
-    <association property="amcAssetIds" javaType="List" column="id" select="selectAsset"/>
+    <!--<id column="id" jdbcType="BIGINT" property="id" />-->
+    <!--<result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />-->
+    <!--<result column="amc_id" jdbcType="BIGINT" property="amcId" />-->
+    <!--<result column="title" jdbcType="CHAR" property="title" />-->
+    <!--<result column="base_amount" jdbcType="BIGINT" property="baseAmount" />-->
+    <!--<result column="base_amount_desc" jdbcType="VARCHAR" property="baseAmountDesc" />-->
+    <!--<result column="base_date" jdbcType="TIMESTAMP" property="baseDate" />-->
+    <!--<result column="total_amount" jdbcType="BIGINT" property="totalAmount" />-->
+    <!--<result column="total_amount_desc" jdbcType="VARCHAR" property="totalAmountDesc" />-->
+    <!--<result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />-->
+    <!--<result column="court_id" jdbcType="BIGINT" property="courtId" />-->
+    <!--<result column="amc_debt_code" jdbcType="VARCHAR" property="amcDebtCode" />-->
+    <!--<result column="edit_status" jdbcType="INTEGER" property="editStatus" />-->
+    <!--<result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />-->
+    <!--<result column="law_status" jdbcType="INTEGER" property="lawStatus" />-->
+    <!--<result column="estimated_price" jdbcType="BIGINT" property="estimatedPrice" />-->
+    <!--<result column="amc_contact1" jdbcType="BIGINT" property="amcContact1" />-->
+    <!--<result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />-->
+    <!--<result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />-->
+    <!--<result column="start_date" jdbcType="TIMESTAMP" property="startDate" />-->
+    <!--<result column="end_date" jdbcType="TIMESTAMP" property="endDate" />-->
+    <!--<result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />-->
+    <result property="debtInfo" column="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap"/>
+    <association property="amcAssetIds" javaType="List" />
   </resultMap>
-  <select id="selectAsset">
-    SELECT  aa.id FROM AMC_ASSET aa WHERE aa.debtId = # {id}
-  </select>
+  <!--<select id="selectAsset">-->
+    <!--SELECT  aa.id FROM AMC_ASSET aa WHERE aa.debtId = # {id}-->
+  <!--</select>-->
+  <sql id="Prefix_Column_List">
+  ${prefix}id,
+  ${prefix}debtpack_id,
+  ${prefix}amc_id,
+  ${prefix}title,
+  ${prefix}base_amount,
+  ${prefix}base_amount_desc,
+  ${prefix}base_date,
+  ${prefix}total_amount,
+  ${prefix}total_amount_desc,
+  ${prefix}settle_date,
+  ${prefix}court_id,
+  ${prefix}amc_debt_code,
+  ${prefix}edit_status,
+  ${prefix}publish_date,
+  ${prefix}law_status,
+  ${prefix}estimated_price,
+  ${prefix}amc_contact1,
+  ${prefix}amc_contact2,
+  ${prefix}is_recommanded,
+  ${prefix}start_date,
+  ${prefix}end_date,
+  ${prefix}orig_debt_id
+  </sql>
   <select id="selectByExampleWithRowboundsExt"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">
     select
     <if test="distinct">
       distinct
     </if>
-    <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Base_Column_List"/>
-    from AMC_DEBT
+    <include refid="Prefix_Column_List"><property name="prefix" value="ad."></property></include>,
+
+    aa.id as amcAssetIds
+    from AMC_DEBT ad  left join AMC_ASSET aa
+    on aa.debt_id = ad.id
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Example_Where_Clause" />
     </if>

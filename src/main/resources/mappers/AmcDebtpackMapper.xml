@@ -317,4 +317,320 @@
       order by ${orderByClause}
     </if>
   </select>
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="title" jdbcType="CHAR" property="title" />
+    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
+    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
+    <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
+    <result column="creditor" jdbcType="CHAR" property="creditor" />
+    <result column="creditor_branch" jdbcType="CHAR" property="creditorBranch" />
+    <result column="original_creditor" jdbcType="CHAR" property="originalCreditor" />
+    <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="amc_company_id" jdbcType="BIGINT" property="amcCompanyId" />
+    <result column="pack_status" jdbcType="INTEGER" property="packStatus" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, title, base_amount, total_amount, settle_date, creditor, creditor_branch, original_creditor, 
+    notes, amc_company_id, pack_status
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AMC_DEBTPACK
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from AMC_DEBTPACK
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from AMC_DEBTPACK
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample">
+    delete from AMC_DEBTPACK
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_DEBTPACK (title, base_amount, total_amount, 
+      settle_date, creditor, creditor_branch, 
+      original_creditor, notes, amc_company_id, 
+      pack_status)
+    values (#{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
+      #{settleDate,jdbcType=TIMESTAMP}, #{creditor,jdbcType=CHAR}, #{creditorBranch,jdbcType=CHAR}, 
+      #{originalCreditor,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, 
+      #{packStatus,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into AMC_DEBTPACK
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        title,
+      </if>
+      <if test="baseAmount != null">
+        base_amount,
+      </if>
+      <if test="totalAmount != null">
+        total_amount,
+      </if>
+      <if test="settleDate != null">
+        settle_date,
+      </if>
+      <if test="creditor != null">
+        creditor,
+      </if>
+      <if test="creditorBranch != null">
+        creditor_branch,
+      </if>
+      <if test="originalCreditor != null">
+        original_creditor,
+      </if>
+      <if test="notes != null">
+        notes,
+      </if>
+      <if test="amcCompanyId != null">
+        amc_company_id,
+      </if>
+      <if test="packStatus != null">
+        pack_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="title != null">
+        #{title,jdbcType=CHAR},
+      </if>
+      <if test="baseAmount != null">
+        #{baseAmount,jdbcType=BIGINT},
+      </if>
+      <if test="totalAmount != null">
+        #{totalAmount,jdbcType=BIGINT},
+      </if>
+      <if test="settleDate != null">
+        #{settleDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creditor != null">
+        #{creditor,jdbcType=CHAR},
+      </if>
+      <if test="creditorBranch != null">
+        #{creditorBranch,jdbcType=CHAR},
+      </if>
+      <if test="originalCreditor != null">
+        #{originalCreditor,jdbcType=CHAR},
+      </if>
+      <if test="notes != null">
+        #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="amcCompanyId != null">
+        #{amcCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="packStatus != null">
+        #{packStatus,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultType="java.lang.Long">
+    select count(*) from AMC_DEBTPACK
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update AMC_DEBTPACK
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=CHAR},
+      </if>
+      <if test="record.baseAmount != null">
+        base_amount = #{record.baseAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.totalAmount != null">
+        total_amount = #{record.totalAmount,jdbcType=BIGINT},
+      </if>
+      <if test="record.settleDate != null">
+        settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.creditor != null">
+        creditor = #{record.creditor,jdbcType=CHAR},
+      </if>
+      <if test="record.creditorBranch != null">
+        creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
+      </if>
+      <if test="record.originalCreditor != null">
+        original_creditor = #{record.originalCreditor,jdbcType=CHAR},
+      </if>
+      <if test="record.notes != null">
+        notes = #{record.notes,jdbcType=VARCHAR},
+      </if>
+      <if test="record.amcCompanyId != null">
+        amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.packStatus != null">
+        pack_status = #{record.packStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update AMC_DEBTPACK
+    set id = #{record.id,jdbcType=BIGINT},
+      title = #{record.title,jdbcType=CHAR},
+      base_amount = #{record.baseAmount,jdbcType=BIGINT},
+      total_amount = #{record.totalAmount,jdbcType=BIGINT},
+      settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
+      creditor = #{record.creditor,jdbcType=CHAR},
+      creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
+      original_creditor = #{record.originalCreditor,jdbcType=CHAR},
+      notes = #{record.notes,jdbcType=VARCHAR},
+      amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
+      pack_status = #{record.packStatus,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+    update AMC_DEBTPACK
+    <set>
+      <if test="title != null">
+        title = #{title,jdbcType=CHAR},
+      </if>
+      <if test="baseAmount != null">
+        base_amount = #{baseAmount,jdbcType=BIGINT},
+      </if>
+      <if test="totalAmount != null">
+        total_amount = #{totalAmount,jdbcType=BIGINT},
+      </if>
+      <if test="settleDate != null">
+        settle_date = #{settleDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="creditor != null">
+        creditor = #{creditor,jdbcType=CHAR},
+      </if>
+      <if test="creditorBranch != null">
+        creditor_branch = #{creditorBranch,jdbcType=CHAR},
+      </if>
+      <if test="originalCreditor != null">
+        original_creditor = #{originalCreditor,jdbcType=CHAR},
+      </if>
+      <if test="notes != null">
+        notes = #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="amcCompanyId != null">
+        amc_company_id = #{amcCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="packStatus != null">
+        pack_status = #{packStatus,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+    update AMC_DEBTPACK
+    set title = #{title,jdbcType=CHAR},
+      base_amount = #{baseAmount,jdbcType=BIGINT},
+      total_amount = #{totalAmount,jdbcType=BIGINT},
+      settle_date = #{settleDate,jdbcType=TIMESTAMP},
+      creditor = #{creditor,jdbcType=CHAR},
+      creditor_branch = #{creditorBranch,jdbcType=CHAR},
+      original_creditor = #{originalCreditor,jdbcType=CHAR},
+      notes = #{notes,jdbcType=VARCHAR},
+      amc_company_id = #{amcCompanyId,jdbcType=BIGINT},
+      pack_status = #{packStatus,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from AMC_DEBTPACK
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
 </mapper>

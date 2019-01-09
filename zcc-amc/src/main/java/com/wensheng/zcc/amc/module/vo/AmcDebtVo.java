@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -42,9 +43,9 @@ public class AmcDebtVo {
 
   private BigDecimal estimatedPrice;
 
-  private Long amcContact1;
+  private AmcPerson amcContact1;
 
-  private Long amcContact2;
+  private AmcPerson amcContact2;
 
   private Integer isRecommanded;
 

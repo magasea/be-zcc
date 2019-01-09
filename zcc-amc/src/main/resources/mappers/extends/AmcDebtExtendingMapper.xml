@@ -93,6 +93,8 @@
   ${prefix}create_by as ${alias}create_by,
   ${prefix}amc_conactor as ${alias}amc_conactor
   </sql>
+
+
   <select id="selectByExampleWithRowboundsExt"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">
     select

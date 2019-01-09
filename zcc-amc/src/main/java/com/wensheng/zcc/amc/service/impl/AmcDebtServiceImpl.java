@@ -1,22 +1,27 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.WeakHashMap;
 import org.apache.ibatis.session.RowBounds;
+import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -38,6 +43,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   Logger logger = LoggerFactory.getLogger(getClass());
 
   @Autowired
+  AmcHelperService amcHelperService;
+
+  @Autowired
   MongoTemplate secondaryMongoTemplate;
 
   @Autowired
@@ -45,6 +53,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcDebtMapper amcDebtMapper;
+
+  @Autowired
+  AmcPersonMapper amcPersonMapper;
 
   @Override
   public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass) {
@@ -137,6 +148,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
 
+    }
+    if(amcDebt.getAmcContact1() > 0){
+      amcDebtVo.setAmcContact1(amcHelperService.getAmcPerson(amcDebt.getAmcContact1()));
+    }
+
+    if(amcDebt.getAmcContact2() > 0){
+      amcDebtVo.setAmcContact2(amcHelperService.getAmcPerson(amcDebt.getAmcContact2()));
     }
     return amcDebtVo;
   }

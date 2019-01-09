@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.module.vo;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -27,5 +28,7 @@ public class AmcDebtpackVo {
   private Long amcCompanyId;
 
   private Integer packStatus;
+
+  private List<Long> creditors;
 
 }

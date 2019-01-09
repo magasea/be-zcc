@@ -13,9 +13,7 @@ public interface AmcDebtExtMapper extends AmcDebtMapper {
 
     List<AmcDebtExt> selectByExampleWithRowboundsExt(AmcDebtExample example, RowBounds rowBounds);
 
-    List<AmcDebt> selectByExample(AmcDebtExample example);
 
-    AmcDebt selectByPrimaryKey(Long id);
 
 
 }

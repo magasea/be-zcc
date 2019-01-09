@@ -11,6 +11,7 @@ import lombok.Data;
  */
 @Data
 public class AmcDebtExt  {
+  Long id;
   AmcDebt debtInfo;
 
   List<AmcAsset> amcAssets ;

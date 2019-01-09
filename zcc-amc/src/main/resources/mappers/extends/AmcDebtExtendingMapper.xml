@@ -3,7 +3,7 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper">
   <!--< namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper"/>-->
   <resultMap id="BaseResultMapExt" type="com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt">
-    <!--<id column="id" jdbcType="BIGINT" property="id" />-->
+    <id column="id" jdbcType="BIGINT" property="id" />
     <!--<result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />-->
     <!--<result column="amc_id" jdbcType="BIGINT" property="amcId" />-->
     <!--<result column="title" jdbcType="CHAR" property="title" />-->
@@ -26,11 +26,14 @@
     <!--<result column="end_date" jdbcType="TIMESTAMP" property="endDate" />-->
     <!--<result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />-->
     <association property="debtInfo" resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap"/>
-    <collection property="amcAssets" javaType="ArrayList" ofType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset"
-      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_">
-      <id property="debtId" column="debtId"/>
+    <!--<collection property="amcAssets" javaType="ArrayList" ofType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset"-->
+      <!--resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"-->
+      <!--autoMapping="true">-->
+      <!--<id property="debtId" column="aa_debt_id"/>-->
 
-    </collection>
+    <!--</collection>-->
+    <collection property="amcAssets"
+      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"/>
 
 
   </resultMap>
@@ -101,7 +104,7 @@
       refid="ASSET_Column_List"><property name="prefix" value="aa."></property><property name="alias"
       value="aa_"></property></include>
     from AMC_DEBT ad  left join AMC_ASSET aa
-    on aa.debt_id = ad.id
+    on ad.id = aa.debt_id
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Example_Where_Clause" />
     </if>

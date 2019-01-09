@@ -2,12 +2,17 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
+import com.wensheng.zcc.amc.service.AmcHelperService;
 import java.util.Arrays;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +30,9 @@ public class AmcBasicInfoController {
 
   @Autowired
   CurtInfoMapper curtInfoMapper;
+
+  @Autowired
+  AmcHelperService amcHelperService;
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
@@ -57,6 +65,28 @@ public class AmcBasicInfoController {
   public List<EditStatusEnum> getEditStatusList(){
 
     return Arrays.asList(EditStatusEnum.values());
+  }
+
+  @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.GET)
+  @ResponseBody
+  public Page<AmcPerson> getAmcPersons(@RequestBody PageRequest pageRequest){
+
+    List<AmcPerson> amcPersonList = amcHelperService.getAllAmcPerson(pageRequest.getOffset(), pageRequest.getPageSize());
+    Long total = amcHelperService.getPersonTotalCount();
+    PageImpl page = new PageImpl(amcPersonList, pageRequest, total);
+    return page;
+  }
+
+  @RequestMapping(value = "/amcid/{amcId}/amccontactor/add", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcPerson getAmcPersons(@RequestBody AmcPerson amcPerson){
+    return amcHelperService.createPerson(amcPerson);
+  }
+
+  @RequestMapping(value = "/amcid/{amcId}/amccontactor/update", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcPerson updateAmcPersons(@RequestBody AmcPerson amcPerson){
+    return amcHelperService.updatePerson(amcPerson);
   }
 
 }

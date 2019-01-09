@@ -41,8 +41,7 @@
 
         <table tableName="%" selectByExampleQueryId="true" selectByPrimaryKeyQueryId="true">
             <generatedKey column="id" sqlStatement="MySql" identity="true"/>
-            <columnOverride column="UNSIGNED_BIGINT_FIELD" javaType="java.lang.Long"
-              jdbcType="BIGINT" />
+            <columnOverride column="id" javaType="java.lang.Long" jdbcType="BIGINT" />
 
         </table>
 

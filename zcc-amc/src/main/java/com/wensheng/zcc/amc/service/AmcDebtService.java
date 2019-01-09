@@ -1,11 +1,10 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import org.springframework.data.domain.Sort;
 
 /**
  * @author chenwei on 1/4/19
@@ -27,6 +26,8 @@ public interface AmcDebtService {
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
-  List<AmcDebtVo> queryAllExt(int offset, int size, Map<String, Integer> orderBy) throws Exception;
+  List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception;
+
+  Long getTotalCount();
 
 }

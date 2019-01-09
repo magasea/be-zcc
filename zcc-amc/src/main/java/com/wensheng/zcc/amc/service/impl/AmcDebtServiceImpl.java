@@ -8,7 +8,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -19,13 +18,12 @@ import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.WeakHashMap;
 import org.apache.ibatis.session.RowBounds;
-import org.checkerframework.checker.units.qual.A;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -190,7 +188,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> queryAllExt(int offset, int size, Map<String, Integer> orderBy) throws Exception {
+  public List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception {
 
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
@@ -199,7 +197,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }catch (Exception ex){
       logger.error("there is no orderBy params:" + ex.getMessage());
     }
-    RowBounds rowBounds = new RowBounds(offset, size);
+    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
     List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
 
@@ -209,5 +207,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
 
     return amcDebtVos;
+  }
+
+  @Override
+  public Long getTotalCount() {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andIdGreaterThan(0L);
+    return amcDebtMapper.countByExample(amcDebtExample);
   }
 }

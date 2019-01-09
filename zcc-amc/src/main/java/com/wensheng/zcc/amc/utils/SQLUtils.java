@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.utils;
 import com.wensheng.zcc.amc.module.dao.helper.OrderByEnum;
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -11,13 +12,13 @@ import org.springframework.util.CollectionUtils;
  */
 public class SQLUtils {
 
-  public static String getOrderBy(Map<String, Integer> orderByParam) throws Exception {
+  public static String getOrderBy(Map<String, Sort.Direction> orderByParam) throws Exception {
     if(CollectionUtils.isEmpty(orderByParam)){
       throw new Exception("empty orderByParam");
     }
     StringBuilder sb = new StringBuilder();
-    for(Map.Entry<String, Integer> item : orderByParam.entrySet()){
-      sb.append(item.getKey()).append(" ").append(OrderByEnum.lookupByDisplayNameUtil(item.getValue())).append(",");
+    for(Map.Entry<String, Sort.Direction> item : orderByParam.entrySet()){
+      sb.append(item.getKey()).append(" ").append(item.getValue().name()).append(",");
     }
     return sb.substring(0, sb.length() - 1);
   }

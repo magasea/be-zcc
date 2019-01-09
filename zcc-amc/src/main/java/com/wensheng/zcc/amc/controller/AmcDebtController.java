@@ -12,10 +12,17 @@ import io.swagger.models.auth.In;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -86,25 +93,32 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcDebtVo> queryDebts(@RequestBody QueryParam queryParam)
+  public Page<AmcDebtVo> queryDebts(@RequestBody PageRequest pageRequest)
       throws Exception {
-    Map<String, Integer> orderByParam = new HashMap<>();
-    if(queryParam.getSortInfo() != null){
-      for(SortInfo sortInfoItem: queryParam.getSortInfo()){
-        orderByParam.put(sortInfoItem.getFieldName(), sortInfoItem.getDescOrAsc());
+    Map<String, Sort.Direction> orderByParam = new HashMap<>();
+    if(pageRequest.getSort() != null){
+      Iterator<Order> iterator = pageRequest.getSort().iterator();
+      while ( iterator.hasNext()){
+        Order order = iterator.next();
+        orderByParam.put( order.getProperty(), order.getDirection());
       }
     }
 
+
     List<AmcDebtVo> queryResults;
     try{
-      queryResults = amcDebtService.queryAllExt(queryParam.getPageInfo().getOffset(), queryParam.getPageInfo().getSize(), orderByParam);
+      queryResults = amcDebtService.queryAllExt(pageRequest.getOffset(), pageRequest.getPageSize(), orderByParam);
     }catch (Exception ex){
       log.error("got error when query:"+ex.getMessage());
       throw ex;
     }
+    Long totalCount = amcDebtService.getTotalCount();
 
 
-    return queryResults;
+    PageImpl page = new PageImpl<AmcDebtVo>(queryResults, pageRequest, totalCount );
+
+
+    return page;
   }
 
 

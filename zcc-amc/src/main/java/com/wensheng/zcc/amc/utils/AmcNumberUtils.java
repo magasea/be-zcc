@@ -43,4 +43,9 @@ public class AmcNumberUtils {
       return BigDecimal.valueOf(input).divide(BigDecimal.valueOf(100));
   }
 
+  public static Long getLongFromDecimalWithMult100(BigDecimal input){
+    return input.multiply(BigDecimal.valueOf(100)).longValue();
+
+  }
+
 }

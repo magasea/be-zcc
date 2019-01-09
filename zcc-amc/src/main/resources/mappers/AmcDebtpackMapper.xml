@@ -80,6 +80,7 @@
     <if test="distinct">
       distinct
     </if>
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from AMC_DEBTPACK
     <if test="_parameter != null">
@@ -90,7 +91,7 @@
     </if>
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
-    select 
+    select 'true' as QUERYID,
     <include refid="Base_Column_List" />
     from AMC_DEBTPACK
     where id = #{id,jdbcType=BIGINT}
@@ -293,6 +294,7 @@
     <if test="distinct">
       distinct
     </if>
+    'true' as QUERYID,
     <include refid="Base_Column_List" />
     from AMC_DEBTPACK
     <if test="_parameter != null">

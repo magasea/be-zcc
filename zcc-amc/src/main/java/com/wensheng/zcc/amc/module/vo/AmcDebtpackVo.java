@@ -20,11 +20,7 @@ public class AmcDebtpackVo {
 
   private Date settleDate;
 
-  private String creditor;
-
-  private String creditorBranch;
-
-  private String originalCreditor;
+  private Long originalCreditor;
 
   private String notes;
 

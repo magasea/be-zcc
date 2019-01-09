@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import java.util.List;
 
@@ -10,7 +11,7 @@ import java.util.List;
  */
 public interface AmcDebtpackService {
 
-  public AmcDebtpackVo create(AmcDebtpack amcDebtpack);
+  public AmcDebtpackVo create(AmcDebtpackVo amcDebtpackVo);
 
   public AmcDebtpackVo del(AmcDebtpack amcDebtpack);
 
@@ -21,5 +22,10 @@ public interface AmcDebtpackService {
   public AmcDebtpackVo get(Long amcDebtpackId);
 
   public List<AmcDebtpackVo> query(AmcDebtpack queryCond, int offset, int size);
+
+
+  public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
+
+  public List<AmcOrigCreditor> getCreditors();
 
 }

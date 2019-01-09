@@ -7,7 +7,9 @@ public class AmcOrigCreditor {
 
     private String desc;
 
-    private Long debtpackId;
+    private String bankName;
+
+    private String branchName;
 
     public Long getId() {
         return id;
@@ -33,11 +35,19 @@ public class AmcOrigCreditor {
         this.desc = desc == null ? null : desc.trim();
     }
 
-    public Long getDebtpackId() {
-        return debtpackId;
+    public String getBankName() {
+        return bankName;
     }
 
-    public void setDebtpackId(Long debtpackId) {
-        this.debtpackId = debtpackId;
+    public void setBankName(String bankName) {
+        this.bankName = bankName == null ? null : bankName.trim();
+    }
+
+    public String getBranchName() {
+        return branchName;
+    }
+
+    public void setBranchName(String branchName) {
+        this.branchName = branchName == null ? null : branchName.trim();
     }
 }

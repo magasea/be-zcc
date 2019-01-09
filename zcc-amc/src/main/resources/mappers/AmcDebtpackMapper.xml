@@ -9,7 +9,6 @@
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="creditor" jdbcType="CHAR" property="creditor" />
     <result column="creditor_branch" jdbcType="CHAR" property="creditorBranch" />
-    <result column="original_creditor" jdbcType="CHAR" property="originalCreditor" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="amc_company_id" jdbcType="BIGINT" property="amcCompanyId" />
     <result column="pack_status" jdbcType="INTEGER" property="packStatus" />
@@ -73,8 +72,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, base_amount, total_amount, settle_date, creditor, creditor_branch, original_creditor, 
-    notes, amc_company_id, pack_status
+    id, title, base_amount, total_amount, settle_date, creditor, creditor_branch, notes, 
+    amc_company_id, pack_status
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
     select
@@ -112,12 +111,12 @@
     </selectKey>
     insert into AMC_DEBTPACK (title, base_amount, total_amount, 
       settle_date, creditor, creditor_branch, 
-      original_creditor, notes, amc_company_id, 
-      pack_status)
+      notes, amc_company_id, pack_status
+      )
     values (#{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
       #{settleDate,jdbcType=TIMESTAMP}, #{creditor,jdbcType=CHAR}, #{creditorBranch,jdbcType=CHAR}, 
-      #{originalCreditor,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, 
-      #{packStatus,jdbcType=INTEGER})
+      #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, #{packStatus,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -142,9 +141,6 @@
       </if>
       <if test="creditorBranch != null">
         creditor_branch,
-      </if>
-      <if test="originalCreditor != null">
-        original_creditor,
       </if>
       <if test="notes != null">
         notes,
@@ -174,9 +170,6 @@
       </if>
       <if test="creditorBranch != null">
         #{creditorBranch,jdbcType=CHAR},
-      </if>
-      <if test="originalCreditor != null">
-        #{originalCreditor,jdbcType=CHAR},
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
@@ -219,9 +212,6 @@
       <if test="record.creditorBranch != null">
         creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
       </if>
-      <if test="record.originalCreditor != null">
-        original_creditor = #{record.originalCreditor,jdbcType=CHAR},
-      </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
@@ -245,7 +235,6 @@
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       creditor = #{record.creditor,jdbcType=CHAR},
       creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
-      original_creditor = #{record.originalCreditor,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
       pack_status = #{record.packStatus,jdbcType=INTEGER}
@@ -274,9 +263,6 @@
       <if test="creditorBranch != null">
         creditor_branch = #{creditorBranch,jdbcType=CHAR},
       </if>
-      <if test="originalCreditor != null">
-        original_creditor = #{originalCreditor,jdbcType=CHAR},
-      </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
@@ -297,7 +283,6 @@
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
       creditor = #{creditor,jdbcType=CHAR},
       creditor_branch = #{creditorBranch,jdbcType=CHAR},
-      original_creditor = #{originalCreditor,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR},
       amc_company_id = #{amcCompanyId,jdbcType=BIGINT},
       pack_status = #{packStatus,jdbcType=INTEGER}

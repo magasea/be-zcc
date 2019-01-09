@@ -17,8 +17,6 @@ public class AmcDebtpack {
 
     private String creditorBranch;
 
-    private String originalCreditor;
-
     private String notes;
 
     private Long amcCompanyId;
@@ -79,14 +77,6 @@ public class AmcDebtpack {
 
     public void setCreditorBranch(String creditorBranch) {
         this.creditorBranch = creditorBranch == null ? null : creditorBranch.trim();
-    }
-
-    public String getOriginalCreditor() {
-        return originalCreditor;
-    }
-
-    public void setOriginalCreditor(String originalCreditor) {
-        this.originalCreditor = originalCreditor == null ? null : originalCreditor.trim();
     }
 
     public String getNotes() {

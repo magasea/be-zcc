@@ -1,9 +1,11 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 /**
@@ -13,8 +15,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
+  @Autowired
+  AmcDebtpackMapper amcDebtpackMapper;
+
   @Override
   public AmcDebtpackVo create(AmcDebtpack amcDebtpack) {
+
     return null;
   }
 

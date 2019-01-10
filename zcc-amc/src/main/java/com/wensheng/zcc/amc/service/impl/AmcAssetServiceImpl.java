@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.service.impl;
 
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -29,6 +31,9 @@ import org.springframework.util.CollectionUtils;
 public class AmcAssetServiceImpl implements AmcAssetService {
     @Autowired
     AmcAssetMapper amcAssetMapper;
+
+    @Autowired
+    AmcAssetExtMapper amcAssetExtMapper;
 
 
 
@@ -82,6 +87,14 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Override
     public Long getAssetCount(Map<String, Object> queryParam) {
         return null;
+    }
+
+    @Override
+    public List<String> getAllAssetTitles() {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.setDistinct(true);
+        List<String> titles =  amcAssetExtMapper.selectAllTitlesByExample(amcAssetExample);
+        return titles;
     }
 
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){

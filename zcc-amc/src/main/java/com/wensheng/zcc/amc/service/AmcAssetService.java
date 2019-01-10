@@ -32,4 +32,6 @@ public interface AmcAssetService {
         Direction> orderByParam) throws Exception;
 
     Long getAssetCount(Map<String, Object> queryParam);
+
+    List<String> getAllAssetTitles();
 }

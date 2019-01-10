@@ -17,6 +17,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -64,6 +65,12 @@ public class AmcAssetController {
 
     Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageInfo);
     return page;
+  }
+
+  @RequestMapping(value = "/allTitles", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
+    return amcAssetService.getAllAssetTitles();
   }
 
 }

@@ -8,8 +8,10 @@ import lombok.Data;
  * @project zcc-backend
  */
 @Data
-public class QueryParam {
-  PageInfo pageInfo;
-  List<SortInfo> sortInfo;
+public class AssetQueryParam {
+  List<Long> area = null;
+  Integer editStatus = -1;
+  Integer status = -1;
+  String title;
 
 }

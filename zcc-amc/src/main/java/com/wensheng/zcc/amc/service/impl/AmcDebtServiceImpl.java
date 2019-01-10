@@ -13,6 +13,7 @@ import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
+import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
@@ -159,33 +160,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt){
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
-    amcDebtVo.setAssetVos(convertDoList2VoList(amcDebtExt.getAmcAssets()));
+    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
     return amcDebtVo;
 
   }
 
-  private AmcAssetVo convertDo2Vo(AmcAsset amcAsset){
-    AmcAssetVo amcAssetVo = new AmcAssetVo();
-    BeanUtils.copyProperties(amcAsset, amcAssetVo);
-    if(amcAsset.getEstmPrice() != null){
-      amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
-    }
-    if(amcAsset.getInitPrice() != null){
-      amcAssetVo.setInitPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getInitPrice()));
-    }
-    if(amcAsset.getEstmPrice() != null){
-      amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
-    }
 
-    return amcAssetVo;
-  }
-  private List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets){
-    List<AmcAssetVo> amcAssetVos = new ArrayList<>();
-    for(AmcAsset amcAsset: amcAssets){
-      amcAssetVos.add(convertDo2Vo(amcAsset));
-    }
-    return amcAssetVos;
-  }
 
   @Override
   public List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception {
@@ -213,6 +193,6 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   public Long getTotalCount() {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andIdGreaterThan(0L);
-    return amcDebtMapper.countByExample(amcDebtExample);
+    return amcDebtMapper.countByExample(null);
   }
 }

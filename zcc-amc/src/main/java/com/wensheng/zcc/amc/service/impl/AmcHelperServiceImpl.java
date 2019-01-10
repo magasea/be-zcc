@@ -27,6 +27,7 @@ public class AmcHelperServiceImpl implements AmcHelperService {
       return localAmcPersonList.get(id);
     }else{
       AmcPerson amcPerson = amcPersonMapper.selectByPrimaryKey(id);
+      localAmcPersonList.put(id, amcPerson);
       return amcPerson;
     }
 

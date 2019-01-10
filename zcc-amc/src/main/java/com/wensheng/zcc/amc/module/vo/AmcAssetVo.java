@@ -38,9 +38,9 @@ public class AmcAssetVo {
 
   private Integer restrictions;
 
-  private Long area;
+  private BigDecimal area;
 
-  private Long landArea;
+  private BigDecimal landArea;
 
   private Date publishDate;
 

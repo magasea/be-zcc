@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
+import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
@@ -80,7 +82,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @ResponseBody
-  public String createDebt(@RequestBody AmcDebtVo debtVo){
+  public String createDebt(@RequestBody AmcDebtCreateVo createVo){
 
       return "succed";
   }
@@ -90,25 +92,12 @@ public class AmcDebtController {
   @ResponseBody
   public Page<AmcDebtVo> queryDebts(@RequestBody PageInfo pageable)
       throws Exception {
-    Map<String, Sort.Direction> orderByParam = new HashMap<>();
-    if(pageable.getSort() != null && pageable.getSort().length > 0){
-//
-//      Iterator<Order> iterator = pageable.getSort().iterator();
-//      while ( iterator.hasNext()){
-//        Order order = iterator.next();
-//        orderByParam.put( order.getProperty(), order.getDirection());
-//      }
+    Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
 
-      for(String orderBy : pageable.getSort()){
-
-        orderByParam.put( orderBy, pageable.direction());
-      }
-    }
 
 
     List<AmcDebtVo> queryResults;
-    int offset = pageable.getOffset() > 0 ? pageable.getOffset(): pageable.getPage() > 0?
-        (pageable.getPage()-1)*pageable.getSize(): 0;
+    int offset = PageReqRepHelper.getOffset(pageable);
     try{
       queryResults = amcDebtService.queryAllExt(Long.valueOf(offset), pageable.getSize(), orderByParam);
     }catch (Exception ex){
@@ -117,9 +106,7 @@ public class AmcDebtController {
     }
     Long totalCount = amcDebtService.getTotalCount();
 
-    PageRequest pageRequest = PageRequest.of(pageable.page(), pageable.getSize());
-
-    PageImpl page = new PageImpl<AmcDebtVo>(queryResults, pageRequest, totalCount );
+    Page<AmcDebtVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
 
 
     return page;

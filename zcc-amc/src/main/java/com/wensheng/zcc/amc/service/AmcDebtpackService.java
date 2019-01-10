@@ -4,6 +4,9 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * @author chenwei on 1/7/19
@@ -26,6 +29,10 @@ public interface AmcDebtpackService {
 
   public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
 
-  public List<AmcOrigCreditor> getCreditors();
+  public List<AmcOrigCreditor> getAllCreditors(int offset, int pageSize, Map<String, Direction> orderByParam)
+      throws Exception;
+
+  public Long getCreditorsCount();
+
 
 }

@@ -32,6 +32,7 @@
 
         <sqlMapGenerator targetPackage="src/main/resources/mappers"  targetProject="./">
             <property name="enableSubPackages" value="true" />
+            <property name="resultType" value="SCROLL_INSENSITIVE"/>
         </sqlMapGenerator>
 
         <javaClientGenerator type="XMLMAPPER" targetPackage="com.wensheng.zcc.amc.dao.mysql.mapper"  targetProject="/home/chenwei/working/miniapp-backend/zcc-amc/src/main/java">

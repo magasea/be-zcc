@@ -12,12 +12,16 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -108,11 +112,20 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   }
 
   @Override
-  public List<AmcOrigCreditor> getCreditors() {
+  public List<AmcOrigCreditor> getAllCreditors(int offset, int size, Map<String, Direction> orderByParam)
+      throws Exception {
     AmcOrigCreditorExample amcOrigCreditorExample = new AmcOrigCreditorExample();
     amcOrigCreditorExample.createCriteria().andIdGreaterThan(0L);
-    List<AmcOrigCreditor> amcOrigCreditors = amcOrigCreditorMapper.selectByExample(amcOrigCreditorExample);
+    amcOrigCreditorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+    RowBounds rowBounds = new RowBounds(offset, size);
+    List<AmcOrigCreditor> amcOrigCreditors = amcOrigCreditorMapper.selectByExampleWithRowbounds(amcOrigCreditorExample, rowBounds);
     return amcOrigCreditors;
+  }
+
+  @Override
+  public Long getCreditorsCount(){
+
+    return amcOrigCreditorMapper.countByExample(null);
   }
 
 

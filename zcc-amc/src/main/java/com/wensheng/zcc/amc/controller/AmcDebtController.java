@@ -107,8 +107,10 @@ public class AmcDebtController {
 
 
     List<AmcDebtVo> queryResults;
+    int offset = pageable.getOffset() > 0 ? pageable.getOffset(): pageable.getPage() > 0?
+        (pageable.getPage()-1)*pageable.getSize(): 0;
     try{
-      queryResults = amcDebtService.queryAllExt(Long.valueOf(pageable.getOffset()), pageable.getSize(), orderByParam);
+      queryResults = amcDebtService.queryAllExt(Long.valueOf(offset), pageable.getSize(), orderByParam);
     }catch (Exception ex){
       log.error("got error when query:"+ex.getMessage());
       throw ex;

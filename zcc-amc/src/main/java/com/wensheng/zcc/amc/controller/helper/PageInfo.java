@@ -14,6 +14,7 @@ import org.springframework.data.web.PageableDefault;
 public class PageInfo implements PageableDefault {
   int offset;
   int size;
+  int page;
   Direction direction;
   String[] sort;
   int total;
@@ -31,11 +32,7 @@ public class PageInfo implements PageableDefault {
 
   @Override
   public int page() {
-    if(size > 0){
-      int pagePos = offset/size + 1;
-    }
-
-    return 0;
+    return page;
   }
 
   @Override

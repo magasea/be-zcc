@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,7 @@ public class AmcAssetController {
   public Page<AmcAssetVo> getAmcAssets(@RequestBody  PageInfo pageInfo, @RequestBody AssetQueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
     Map<String, Object> queryParam = new HashMap<>();
+
     if(assetQueryParam.getDebtId() > 0){
       queryParam.put("DebtId", assetQueryParam.getDebtId());
     }
@@ -45,6 +47,9 @@ public class AmcAssetController {
     }
     if(assetQueryParam.getStatus() != null && assetQueryParam.getStatus() > -1){
       queryParam.put("Status", assetQueryParam.getStatus());
+    }
+    if(!StringUtils.isEmpty(assetQueryParam.getTitle())){
+      queryParam.put("Title", assetQueryParam.getTitle());
     }
 
     List<AmcAssetVo> queryResults;

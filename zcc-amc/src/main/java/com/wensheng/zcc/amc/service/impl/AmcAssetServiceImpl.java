@@ -103,6 +103,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("Status")){
                     amcAssetExample.createCriteria().andStatusEqualTo((Integer) item.getValue());
                 }
+                if(item.getKey().equals("Title")){
+
+                    amcAssetExample.createCriteria().andTitleLike((String)item.getValue());
+                }
             }
         }
         return amcAssetExample;

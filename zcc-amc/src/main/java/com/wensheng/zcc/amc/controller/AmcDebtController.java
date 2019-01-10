@@ -1,15 +1,9 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
-import com.wensheng.zcc.amc.controller.helper.QueryParam;
-import com.wensheng.zcc.amc.controller.helper.SortInfo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
-
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import io.swagger.annotations.Api;
-import io.swagger.models.auth.In;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -17,10 +11,10 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
@@ -31,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -38,7 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
  * @author chenwei on 1/3/19
  * @project zcc-backend
  */
-@Controller
+@RestController
 @Slf4j
 public class AmcDebtController {
 
@@ -93,27 +88,34 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtVo> queryDebts(@RequestBody PageRequest pageRequest)
+  public Page<AmcDebtVo> queryDebts(@RequestBody PageInfo pageable)
       throws Exception {
     Map<String, Sort.Direction> orderByParam = new HashMap<>();
-    if(pageRequest.getSort() != null){
-      Iterator<Order> iterator = pageRequest.getSort().iterator();
-      while ( iterator.hasNext()){
-        Order order = iterator.next();
-        orderByParam.put( order.getProperty(), order.getDirection());
+    if(pageable.getSort() != null && pageable.getSort().length > 0){
+//
+//      Iterator<Order> iterator = pageable.getSort().iterator();
+//      while ( iterator.hasNext()){
+//        Order order = iterator.next();
+//        orderByParam.put( order.getProperty(), order.getDirection());
+//      }
+
+      for(String orderBy : pageable.getSort()){
+
+        orderByParam.put( orderBy, pageable.direction());
       }
     }
 
 
     List<AmcDebtVo> queryResults;
     try{
-      queryResults = amcDebtService.queryAllExt(pageRequest.getOffset(), pageRequest.getPageSize(), orderByParam);
+      queryResults = amcDebtService.queryAllExt(Long.valueOf(pageable.getOffset()), pageable.getSize(), orderByParam);
     }catch (Exception ex){
       log.error("got error when query:"+ex.getMessage());
       throw ex;
     }
     Long totalCount = amcDebtService.getTotalCount();
 
+    PageRequest pageRequest = PageRequest.of(pageable.page(), pageable.getSize());
 
     PageImpl page = new PageImpl<AmcDebtVo>(queryResults, pageRequest, totalCount );
 

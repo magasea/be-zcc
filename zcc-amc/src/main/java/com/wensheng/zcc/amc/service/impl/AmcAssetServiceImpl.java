@@ -88,6 +88,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         if(CollectionUtils.isEmpty(queryParam)){
             for(Entry<String, Object> item: queryParam.entrySet()){
+                if(item.getKey().equals("DebtId")){
+                    amcAssetExample.createCriteria().andDebtIdEqualTo((Long)item.getValue());
+                }
                 if(item.getKey().equals("EditStatus")){
                     amcAssetExample.createCriteria().andEditStatusEqualTo((Integer) item.getValue());
                 }

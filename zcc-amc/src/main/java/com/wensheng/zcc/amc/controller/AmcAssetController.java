@@ -34,6 +34,9 @@ public class AmcAssetController {
   public Page<AmcAssetVo> getAmcAssets(@RequestBody  PageInfo pageInfo, @RequestBody AssetQueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
     Map<String, Object> queryParam = new HashMap<>();
+    if(assetQueryParam.getDebtId() > 0){
+      queryParam.put("DebtId", assetQueryParam.getDebtId());
+    }
     if(!CollectionUtils.isEmpty(assetQueryParam.getArea()) && assetQueryParam.getArea().size() > 1){
       queryParam.put("Area", assetQueryParam.getArea());
     }

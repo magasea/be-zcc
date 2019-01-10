@@ -1,13 +1,18 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
+import com.wensheng.zcc.amc.module.dao.helper.AssetStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
+import com.wensheng.zcc.amc.module.dao.helper.LawstatusEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
 import com.wensheng.zcc.amc.service.AmcHelperService;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -62,9 +67,68 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/editStatus", method = RequestMethod.GET)
   @ResponseBody
-  public List<EditStatusEnum> getEditStatusList(){
+  public List<String> getEditStatusList(){
 
-    return Arrays.asList(EditStatusEnum.values());
+    List<String> result = new ArrayList<>();
+    for(EditStatusEnum editStatusEnum: EditStatusEnum.values()){
+      result.add(String.format("%d:%s", editStatusEnum.getStatus(), editStatusEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/status", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getStatusList(){
+
+    List<String> result = new ArrayList<>();
+    for(LawstatusEnum lawstatusEnum: LawstatusEnum.values()){
+      result.add(String.format("%d:%s", lawstatusEnum.getStatus(), lawstatusEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/assetStatus", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAssetStatusList(){
+
+    List<String> result = new ArrayList<>();
+    for(AssetStateEnum enumItem: AssetStateEnum.values()){
+      result.add(String.format("%d:%s", enumItem.getStatus(), enumItem.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/isRecommand", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getIsRecommand(){
+
+    List<String> result = new ArrayList<>();
+    for(IsRecommandEnum enumItem: IsRecommandEnum.values()){
+      result.add(String.format("%d:%s", enumItem.getId(), enumItem.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/grantorType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getGrantorType(){
+
+    List<String> result = new ArrayList<>();
+    for(GrantorTypeEnum enumItem: GrantorTypeEnum.values()){
+      result.add(String.format("%d:%s", enumItem.getId(), enumItem.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/assetType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAssetType(){
+
+    List<String> result = new ArrayList<>();
+    for(AssetTypeEnum enumItem: AssetTypeEnum.values()){
+      result.add(String.format("%d:%s", enumItem.getType(), enumItem.getName()));
+    }
+    return result;
   }
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.GET)

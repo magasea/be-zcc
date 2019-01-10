@@ -9,7 +9,6 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
-import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AmcAssetOrigin;
@@ -29,20 +28,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.stereotype.Component;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import javax.validation.constraints.Email;
 import java.util.List;
-import org.springframework.web.bind.annotation.InitBinder;
 
 /**
  * @author chenwei on 12/5/18
@@ -461,7 +456,7 @@ public class AmcAssetServiceImplTest {
         }else{
             amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
         }
-        amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommand.RECOMMAND.getId(): IsRecommand.NOT_RECOMMAND.getId());
+        amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommandEnum.RECOMMAND.getId(): IsRecommandEnum.NOT_RECOMMAND.getId());
         if(StringUtils.isEmpty(originItem.getLawStatus())){
             logger.error("this originItem with title:" + originItem.getTitle() +" lawstatus is empty");
         }else{

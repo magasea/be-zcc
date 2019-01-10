@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
 import java.util.function.Function;
 
@@ -27,6 +28,7 @@ public enum EditStatusEnum {
     public static EditStatusEnum lookupByDisplayNameUtil(String name) {
         return func.apply(name);
     }
+
     public int getStatus() {
         return status;
     }
@@ -34,6 +36,8 @@ public enum EditStatusEnum {
     public String getName() {
         return name;
     }
+
+
 
 
 }

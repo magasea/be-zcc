@@ -178,6 +178,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }catch (Exception ex){
       logger.error("there is no orderBy params:" + ex.getMessage());
     }
+
     RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
     List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);

@@ -10,10 +10,14 @@ import lombok.Data;
 @Data
 public class AssetQueryParam {
   Long debtId = -1L;
+  Long assetId = -1L;
   List<Long> area = null;
   Integer editStatus = -1;
   Integer status = -1;
 
   String title;
+
+
+  PageInfo pageInfo;
 
 }

@@ -89,7 +89,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public Long getAssetCount(Map<String, Object> queryParam) {
-        return null;
+        AmcAssetExample amcAssetExample = getAmcAssetExampleWithQueryParam(queryParam);
+        return amcAssetMapper.countByExample(amcAssetExample);
     }
 
     @Override

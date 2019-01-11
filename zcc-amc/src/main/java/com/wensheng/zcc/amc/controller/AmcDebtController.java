@@ -18,9 +18,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,7 +96,9 @@ public class AmcDebtController {
   public Page<AmcDebtVo> queryDebts(@RequestBody PageInfo pageable)
       throws Exception {
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
-
+    if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("id", Direction.DESC);
+    }
 
 
     List<AmcDebtVo> queryResults;

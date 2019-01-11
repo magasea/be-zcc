@@ -1,0 +1,25 @@
+package com.wensheng.zcc.amc.module.vo;
+
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetWarrantInfo;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+import lombok.Data;
+
+/**
+ * @author chenwei on 1/7/19
+ * @project zcc-backend
+ */
+@Data
+public class AmcAssetDetailVo {
+  AmcAssetVo amcAssetVo;
+  AssetAdditional assetAdditional;
+  List<AssetDocument> assetDocument;
+  List<AssetImage> assetImageList;
+  List<AssetWarrantInfo> assetWarrantInfos;
+
+}

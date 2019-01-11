@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,18 +26,22 @@ import org.springframework.web.bind.annotation.RestController;
  * @author chenwei on 1/3/19
  * @project zcc-backend
  */
-@RestController
+@Controller
 @Slf4j
-@RequestMapping("/api/amcid/{amcid}")
+@RequestMapping("/api")
 public class AmcAssetController {
 
   @Autowired
   AmcAssetService amcAssetService;
 
-  @RequestMapping(value = "/assets", method = RequestMethod.POST)
-  public Page<AmcAssetVo> getAmcAssets(@RequestBody  PageInfo pageInfo,
+  @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
+  @ResponseBody
+  public Page<AmcAssetVo> getAmcAssets(
       @RequestBody(required = false) AssetQueryParam assetQueryParam) throws Exception {
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
+    if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("id", Direction.DESC);
+    }
     Map<String, Object> queryParam = new HashMap<>();
 
     if(assetQueryParam.getDebtId() > 0){
@@ -55,23 +61,33 @@ public class AmcAssetController {
     }
 
     List<AmcAssetVo> queryResults;
-    int offset = PageReqRepHelper.getOffset(pageInfo);
+    int offset = PageReqRepHelper.getOffset(assetQueryParam.getPageInfo());
     try{
-      queryResults = amcAssetService.queryAssetPage(offset, pageInfo.getSize(), queryParam, orderByParam);
+      queryResults = amcAssetService.queryAssetPage(offset, assetQueryParam.getPageInfo().getSize(), queryParam,
+          orderByParam);
     }catch (Exception ex){
       log.error("got error when query:"+ex.getMessage());
       throw ex;
     }
     Long totalCount = amcAssetService.getAssetCount(queryParam);
 
-    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageInfo);
+    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
     return page;
   }
 
-  @RequestMapping(value = "/allTitles", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/allTitles", method = RequestMethod.POST)
   @ResponseBody
   public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
     return amcAssetService.getAllAssetTitles();
+  }
+
+  @RequestMapping(value = "/amcid/{amcid}/asset", method = RequestMethod.POST)
+  @ResponseBody
+  public Page<AmcAssetDetailVo> getAmcAssetDetail( @RequestBody AssetQueryParam assetQueryParam,
+      @RequestBody PageInfo pageInfo) throws Exception{
+
+
+    return null;
   }
 
 }

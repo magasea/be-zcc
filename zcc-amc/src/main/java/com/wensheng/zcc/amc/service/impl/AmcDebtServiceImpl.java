@@ -101,8 +101,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcDebtVo get(Long AmcDebtId) {
-    return null;
+  public AmcDebtVo get(Long amcDebtId) {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
+    return Dao2VoUtils.convertDo2Vo(amcDebt);
   }
 
   @Override

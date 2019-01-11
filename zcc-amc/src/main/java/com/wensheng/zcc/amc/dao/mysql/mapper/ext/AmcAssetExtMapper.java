@@ -10,7 +10,7 @@ import org.apache.ibatis.session.RowBounds;
 public interface AmcAssetExtMapper extends AmcAssetMapper {
 
 
-    List<String> selectAllTitlesByExample(AmcAssetExample example);
+    List<AmcAsset> selectAllTitlesByExample(AmcAssetExample example);
 
 
 }

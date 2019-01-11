@@ -33,5 +33,5 @@ public interface AmcAssetService {
 
     Long getAssetCount(Map<String, Object> queryParam);
 
-    List<String> getAllAssetTitles();
+    Map<String, List<Long>> getAllAssetTitles();
 }

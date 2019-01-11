@@ -47,7 +47,8 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
-  public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId, @RequestParam("debtId") Long debtId,
+  public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId, @RequestParam(value = "debtId",
+      required = true) Long debtId,
       @RequestParam("desc") String desc, @RequestParam("imageClass") Integer imageClass,
       @RequestParam("uploadingImages") MultipartFile[] uploadingImages){
 

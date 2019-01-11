@@ -5,12 +5,12 @@
 
   <select id="selectAllTitlesByExample"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample"
-    resultType="java.lang.String">
+    resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
-    title
+    id, title
     from AMC_ASSET
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.Example_Where_Clause" />

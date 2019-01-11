@@ -15,6 +15,10 @@ public enum EditStatusEnum {
     DELETED(0, "已删除"),
     ABORTED(3, "已放弃"),
     SOLD(4, "已售出"),
+    CHECK_WAIT(5, "待审核"),
+    DRAFT(6, "草稿"),
+    OFF_SHELF(7, "已下架"),
+    CHECK_FAILED(8, "审核未通过"),
     PUBLISHED1(1, "已发布");
 
     private int status;

@@ -11,6 +11,7 @@ import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -41,7 +42,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     public AmcAssetVo create(AmcAsset amcAsset) {
         Long id = Long.valueOf(amcAssetMapper.insertSelective(amcAsset));
 
-        return null;
+         amcAsset.setId(id);
+         return Dao2VoUtils.convertDo2Vo(amcAsset);
+
     }
 
     @Override
@@ -90,11 +93,19 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     @Override
-    public List<String> getAllAssetTitles() {
+    public Map<String, List<Long>> getAllAssetTitles() {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
-        amcAssetExample.setDistinct(true);
-        List<String> titles =  amcAssetExtMapper.selectAllTitlesByExample(amcAssetExample);
-        return titles;
+//        amcAssetExample.setDistinct(true);
+        List<AmcAsset> amcAssets =  amcAssetExtMapper.selectAllTitlesByExample(amcAssetExample);
+        Map<String, List<Long>> titleMap = new HashMap<>();
+        for(AmcAsset amcAsset: amcAssets){
+            if(!titleMap.containsKey(amcAsset.getTitle())){
+                titleMap.put(amcAsset.getTitle(), new ArrayList<Long>());
+            }
+            titleMap.get(amcAsset.getTitle()).add(amcAsset.getId());
+
+        }
+        return titleMap;
     }
 
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){

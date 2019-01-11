@@ -33,7 +33,8 @@ public class AmcAssetController {
   AmcAssetService amcAssetService;
 
   @RequestMapping(value = "/assets", method = RequestMethod.POST)
-  public Page<AmcAssetVo> getAmcAssets(@RequestBody  PageInfo pageInfo, @RequestBody AssetQueryParam assetQueryParam) throws Exception {
+  public Page<AmcAssetVo> getAmcAssets(@RequestBody  PageInfo pageInfo,
+      @RequestBody(required = false) AssetQueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
     Map<String, Object> queryParam = new HashMap<>();
 
@@ -69,7 +70,7 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/allTitles", method = RequestMethod.POST)
   @ResponseBody
-  public List<String> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
+  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
     return amcAssetService.getAllAssetTitles();
   }
 

@@ -13,7 +13,7 @@ public class AssetQueryParam {
   List<Long> area = null;
   Integer editStatus = -1;
   Integer status = -1;
-  @SQLInjectionSafe
+
   String title;
 
 }

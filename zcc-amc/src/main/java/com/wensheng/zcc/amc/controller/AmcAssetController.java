@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -83,11 +84,12 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/asset", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcAssetDetailVo> getAmcAssetDetail( @RequestBody AssetQueryParam assetQueryParam,
-      @RequestBody PageInfo pageInfo) throws Exception{
+  public AmcAssetDetailVo getAmcAssetDetail( @RequestParam("amcAssetId") Long amcAssetId) throws Exception{
 
+    return amcAssetService.queryAssetDetail(amcAssetId);
 
-    return null;
   }
+
+
 
 }

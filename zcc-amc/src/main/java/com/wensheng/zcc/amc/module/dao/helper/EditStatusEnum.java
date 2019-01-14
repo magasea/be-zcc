@@ -19,6 +19,7 @@ public enum EditStatusEnum {
     DRAFT(6, "草稿"),
     OFF_SHELF(7, "已下架"),
     CHECK_FAILED(8, "审核未通过"),
+    INIT(9, "初始化"),
     PUBLISHED1(1, "已发布");
 
     private int status;

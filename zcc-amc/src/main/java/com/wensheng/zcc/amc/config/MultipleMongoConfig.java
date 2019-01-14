@@ -23,24 +23,24 @@ public class MultipleMongoConfig {
 
     @Primary
     @Bean(name = PrimaryMongoConfig.MONGO_TEMPLATE)
-    public MongoTemplate primaryMongoTemplate() throws Exception {
-        return new MongoTemplate(primaryFactory(this.mongoProperties.getPrimary()));
+    public MongoTemplate originalMongoTemplate() throws Exception {
+        return new MongoTemplate(originalFactory(this.mongoProperties.getOriginal()));
     }
 
     @Bean(name = SecondaryMongoConfig.MONGO_TEMPLATE)
-    public MongoTemplate secondaryMongoTemplate() throws Exception {
-        return new MongoTemplate(secondaryFactory(this.mongoProperties.getSecondary()));
+    public MongoTemplate wszccMongoTemplate() throws Exception {
+        return new MongoTemplate(wszccFactory(this.mongoProperties.getWszcc()));
     }
 
     @Bean
     @Primary
-    public MongoDbFactory primaryFactory(final MongoProperties mongo) throws Exception {
+    public MongoDbFactory originalFactory(final MongoProperties mongo) throws Exception {
         return new SimpleMongoDbFactory(new MongoClient(mongo.getHost(), mongo.getPort()),
                 mongo.getDatabase());
     }
 
     @Bean
-    public MongoDbFactory secondaryFactory(final MongoProperties mongo) throws Exception {
+    public MongoDbFactory wszccFactory(final MongoProperties mongo) throws Exception {
         return new SimpleMongoDbFactory(new MongoClient(mongo.getHost(), mongo.getPort()),
                 mongo.getDatabase());
     }

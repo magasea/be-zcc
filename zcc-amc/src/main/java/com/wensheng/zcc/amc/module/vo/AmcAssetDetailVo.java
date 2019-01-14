@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.module.vo;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetWarrantInfo;
@@ -18,6 +19,7 @@ import lombok.Data;
 public class AmcAssetDetailVo {
   AmcAssetVo amcAssetVo;
   AssetAdditional assetAdditional;
+  List<AssetComment> assetComments;
   List<AssetDocument> assetDocument;
   List<AssetImage> assetImageList;
   List<AssetWarrantInfo> assetWarrantInfos;

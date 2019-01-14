@@ -7,6 +7,7 @@ import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
 import com.wensheng.zcc.amc.module.dao.helper.LawstatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
@@ -83,6 +84,19 @@ public class AmcBasicInfoController {
     List<String> result = new ArrayList<>();
     for(LawstatusEnum lawstatusEnum: LawstatusEnum.values()){
       result.add(String.format("%d:%s", lawstatusEnum.getStatus(), lawstatusEnum.getName()));
+    }
+    return result;
+  }
+
+
+  @RequestMapping(value = "/editActions", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getEditActions(){
+
+    List<String> result = new ArrayList<>();
+    for(EditActionEnum editActionEnum: EditActionEnum.values()){
+      result.add(String.format("%d:%s:%s", editActionEnum.getId(), editActionEnum.getName(),
+          editActionEnum.getCname() ));
     }
     return result;
   }

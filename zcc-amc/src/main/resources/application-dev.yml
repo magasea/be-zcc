@@ -7,14 +7,14 @@ logging:
             wensheng: TRACE
         root: WARN
 mongodb:
-  primary:
+  original:
     host: 10.20.100.227
     port: 27017
     database: wensheng
-  secondary:
+  wszcc:
     host: 10.20.100.236
     port: 27017
-    database: second
+    database: wszcc
 
 spring:
   autoconfigure:

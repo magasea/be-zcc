@@ -3,12 +3,16 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
+import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
-import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,11 +20,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
-import org.checkerframework.checker.units.qual.A;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -35,6 +39,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     AmcAssetExtMapper amcAssetExtMapper;
+
+    @Autowired
+    MongoTemplate wszccTemplate;
 
 
 
@@ -72,6 +79,66 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return null;
     }
 
+    @Override
+    public AmcAssetDetailVo queryAssetDetail(Long assetId) {
+        AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(assetId);
+
+
+
+        return queryMongoForAmcAsset(amcAsset);
+    }
+
+    private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset){
+        AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
+        Long assetId = amcAsset.getId();
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(assetId));
+
+        List<AssetAdditional> assetAdditionals =  wszccTemplate.find(query, AssetAdditional.class);
+
+        Query queryComment = new Query();
+        queryComment.addCriteria(Criteria.where("amcAssetId").is(assetId));
+        List<AssetComment> assetComments = wszccTemplate.find(queryComment, AssetComment.class);
+
+        Query queryAssetDocument = new Query();
+        queryAssetDocument.addCriteria(Criteria.where("amcAssetId").is(assetId));
+        List<AssetDocument> assetDocuments = wszccTemplate.find(queryAssetDocument, AssetDocument.class);
+
+        Query queryAssetImage = new Query();
+        queryAssetImage.addCriteria(Criteria.where("amcAssetId").is(assetId));
+        List<AssetImage> assetImages = wszccTemplate.find(queryAssetImage, AssetImage.class);
+
+        AmcAssetDetailVo amcAssetDetailVo = new AmcAssetDetailVo();
+        amcAssetDetailVo.setAmcAssetVo(amcAssetVo);
+        if(!CollectionUtils.isEmpty(assetAdditionals)){
+            amcAssetDetailVo.setAssetAdditional(assetAdditionals.get(0));
+        }
+        if(!CollectionUtils.isEmpty(assetComments)){
+            amcAssetDetailVo.setAssetComments(assetComments);
+        }
+
+        if(!CollectionUtils.isEmpty(assetDocuments)){
+            amcAssetDetailVo.setAssetDocument(assetDocuments);
+        }
+
+        if(!CollectionUtils.isEmpty(assetImages)){
+            amcAssetDetailVo.setAssetImageList(assetImages);
+        }
+        return amcAssetDetailVo;
+
+    }
+
+    @Override
+    public List<AmcAssetDetailVo> queryAssetDetails(Long amcDebtId) {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        List<AmcAssetDetailVo> amcAssetDetailVos = new ArrayList<>();
+        for(AmcAsset amcAsset: amcAssets){
+            amcAssetDetailVos.add(queryMongoForAmcAsset(amcAsset));
+        }
+        return amcAssetDetailVos;
+    }
 
 
     @Override

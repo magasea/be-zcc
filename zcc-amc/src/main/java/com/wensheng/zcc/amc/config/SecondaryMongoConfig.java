@@ -14,5 +14,5 @@ import static com.wensheng.zcc.amc.config.SecondaryMongoConfig.MONGO_TEMPLATE;
         mongoTemplateRef = MONGO_TEMPLATE)
 public class SecondaryMongoConfig {
 
-    protected static final String MONGO_TEMPLATE = "secondaryMongoTemplate";
+    protected static final String MONGO_TEMPLATE = "wszccMongoTemplate";
 }

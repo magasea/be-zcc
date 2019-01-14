@@ -22,7 +22,7 @@ public class AssetDocument {
     Integer publishLevel;
     String      category; //分类,关系到给不给用户观看
     @Indexed( direction = IndexDirection.ASCENDING)
-    Long assetId;
+    Long amcAssetId;
 
     String originAssetId;
 }

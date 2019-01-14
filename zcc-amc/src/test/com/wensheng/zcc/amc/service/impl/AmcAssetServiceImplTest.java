@@ -158,13 +158,13 @@ public class AmcAssetServiceImplTest {
         for (AssetImageOrigin assetImage : assetImages) {
             AssetImage assetImageCur = new AssetImage();
             Query queryCurrImageRepo = new Query();
-            queryCurrImageRepo.addCriteria(Criteria.where("assetId").is(amcAssetId).and("originalName").is(assetImage.getOriginalName()));
+            queryCurrImageRepo.addCriteria(Criteria.where("amcAssetId").is(amcAssetId).and("originalName").is(assetImage.getOriginalName()));
             List<AssetImage> assetImageList = secondaryMongoTemplate.find(queryCurrImageRepo, AssetImage.class);
             if (!CollectionUtils.isEmpty(assetImageList)) {
                 assetImageCur = assetImageList.get(0);
                 removeRundtFromSecondMongo(assetImageList);
             }
-            assetImageCur.setAssetId(amcAssetId);
+            assetImageCur.setAmcAssetId(amcAssetId);
             assetImageCur.setDescription(assetImage.getDescription());
             assetImageCur.setIsToOss(assetImage.getIsToOss());
             assetImageCur.setMainPic(assetImage.getMainPic());
@@ -179,7 +179,7 @@ public class AmcAssetServiceImplTest {
         // 1 query asset comments based on originItem in origin datasource
 //        Query queryAsset = new Query();
 //        queryAsset.addCriteria(Criteria.where())
-//        primaryMongoTemplate.find()
+//        originalMongoTemplate.find()
         // 2 generate asset comments and insert them into current datasource with current amcAssetId
         // and origin
     }

@@ -23,5 +23,5 @@ public class AssetComment {
     Integer dislikeCount = 0;
     String originAssetId;
     @Indexed(direction = IndexDirection.ASCENDING)
-    Long assetId;
+    Long amcAssetId;
 }

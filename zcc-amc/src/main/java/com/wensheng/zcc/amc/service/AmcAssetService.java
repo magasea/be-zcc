@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.service;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,10 @@ public interface AmcAssetService {
     public AmcAssetVo get(Long amcAssetId);
 
     public List<AmcAssetVo> query(AmcAsset queryCond, int offset, int size);
+
+    public AmcAssetDetailVo queryAssetDetail(Long assetId);
+
+    public List<AmcAssetDetailVo> queryAssetDetails(Long amcDebtId);
 
 
     public List<AmcAssetVo> queryAssetPage( int offset, int pageSize, Map<String, Object> queryParam, Map<String,

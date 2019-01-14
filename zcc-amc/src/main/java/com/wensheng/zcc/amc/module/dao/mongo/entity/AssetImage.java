@@ -17,6 +17,6 @@ public class AssetImage {
     Boolean isToOss = false;//是否同步到OSS
     Long originAssetId;
     @Indexed(direction = IndexDirection.ASCENDING)
-    Long assetId;
+    Long amcAssetId;
 
 }

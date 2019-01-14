@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
@@ -9,6 +10,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
@@ -56,6 +58,9 @@ public class AmcDebtController {
   @Autowired
   AmcDebtpackService amcDebtpackService;
 
+
+  @Autowired
+  ZccRulesService zccRulesService;
 
 
 
@@ -147,6 +152,19 @@ public class AmcDebtController {
 
     return page;
   }
+
+
+  @RequestMapping(value = "/api/amcid/{id}/debt", method = RequestMethod.POST)
+  @ResponseBody
+  public Boolean editAble(@RequestParam("amcDebtId") Long amcDebtId,
+      @RequestParam("debtStatus") Integer debtStatus)
+      throws Exception {
+
+   return  zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
+
+  }
+
+
 
 
 }

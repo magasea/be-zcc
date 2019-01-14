@@ -11,4 +11,6 @@ public interface ZccRulesService {
 
   public EditStatusEnum runActionAndStatus(EditActionEnum action, EditStatusEnum status);
 
+  public boolean editAble(EditStatusEnum editStatus);
+
 }

@@ -32,4 +32,20 @@ public class ZccRulesServiceImpl implements ZccRulesService {
     EditStatusEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
     return retVal;
   }
+
+  @Override
+  public boolean editAble(EditStatusEnum editStatus) {
+    NameValueReferableMap facts = new FactMap();
+    facts.setValue("editAction", EditActionEnum.ACT_SAVE);
+    facts.setValue("currentStatus", editStatus);
+    ruleBook4ZccEdit.run(facts);
+//    ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
+    EditStatusEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
+    if(retVal != null){
+      return true;
+    }
+    return false;
+  }
+
+
 }

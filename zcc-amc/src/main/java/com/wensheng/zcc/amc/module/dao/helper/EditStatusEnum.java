@@ -34,6 +34,12 @@ public enum EditStatusEnum {
         return func.apply(name);
     }
 
+    private static final Function<Integer, EditStatusEnum> funcStatus =
+        EnumUtils.lookupMap(EditStatusEnum.class, e -> e.getStatus());
+    public static EditStatusEnum lookupByDisplayStatusUtil(Integer status) {
+        return funcStatus.apply(status);
+    }
+
     public int getStatus() {
         return status;
     }

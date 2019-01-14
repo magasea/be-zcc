@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtpackExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
@@ -20,6 +21,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -96,7 +98,20 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Override
   public AmcDebtpackVo get(Long amcDebtpackId) {
-    return null;
+    AmcDebtpack amcDebtpack = amcDebtpackMapper.selectByPrimaryKey(amcDebtpackId);
+    AmcDebtpackVo amcDebtpackVo = new AmcDebtpackVo();
+    BeanUtils.copyProperties(amcDebtpack, amcDebtpackVo);
+    amcDebtpackVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getBaseAmount()));
+    amcDebtpackVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getTotalAmount()));
+
+    return amcDebtpackVo;
+  }
+
+  @Override
+  public boolean exist(Long amcDebtpackId) {
+    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
+    Long count =  amcDebtpackMapper.countByExample(amcDebtpackExample);
+    return count > 0;
   }
 
   @Override

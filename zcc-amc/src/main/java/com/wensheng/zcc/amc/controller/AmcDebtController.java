@@ -2,16 +2,22 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.utils.ExceptionUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -46,6 +52,12 @@ public class AmcDebtController {
 
   @Autowired
   AmcDebtService amcDebtService;
+
+  @Autowired
+  AmcDebtpackService amcDebtpackService;
+
+
+
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
@@ -85,7 +97,26 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @ResponseBody
-  public String createDebt(@RequestBody AmcDebtCreateVo createVo){
+  public String createDebt(@RequestBody AmcDebtCreateVo createVo) throws Exception {
+
+    AmcDebt amcDebt = new AmcDebt();
+    BeanUtils.copyProperties(createVo, amcDebt);
+
+    //1. check deptpackId exist
+    if(createVo.getDebtpackId() == null || createVo.getDebtpackId() < 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
+    }
+    boolean isExist = amcDebtpackService.exist(createVo.getDebtpackId());
+    if( !isExist ){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
+    }
+
+
+    //2. check contact person exist
+
+    //3. create the debt
+
+
 
       return "succed";
   }

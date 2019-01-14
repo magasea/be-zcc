@@ -24,6 +24,8 @@ public interface AmcDebtpackService {
 
   public AmcDebtpackVo get(Long amcDebtpackId);
 
+  public boolean exist(Long amcDebtpackId);
+
   public List<AmcDebtpackVo> query(AmcDebtpack queryCond, int offset, int size);
 
 

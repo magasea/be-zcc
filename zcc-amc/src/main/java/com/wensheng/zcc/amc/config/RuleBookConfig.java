@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class RuleBookConfig {
 
   @Bean
-  public <T>RuleBook<T> ruleBook() {
-    RuleBook ruleBook = new SpringAwareRuleBookRunner("com.wensheng.zcc.amc.rules");
+  public <T>RuleBook<T> ruleBook4ZccEdit() {
+    RuleBook ruleBook = new SpringAwareRuleBookRunner("com.wensheng.zcc.amc.rules.zccedit");
     return ruleBook;
   }
 

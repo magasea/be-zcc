@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.rules;
+package com.wensheng.zcc.amc.rules.zccedit;
 
 import com.deliveredtechnologies.rulebook.annotation.Given;
 import com.deliveredtechnologies.rulebook.annotation.Result;

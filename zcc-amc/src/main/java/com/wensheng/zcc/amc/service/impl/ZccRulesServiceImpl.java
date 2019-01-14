@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
 public class ZccRulesServiceImpl implements ZccRulesService {
 
   @Autowired
-  RuleBook<EditStatusEnum> ruleBook;
+  RuleBook<EditStatusEnum> ruleBook4ZccEdit;
 
   @Override
   public EditStatusEnum runActionAndStatus(EditActionEnum action, EditStatusEnum status) {
@@ -27,9 +27,9 @@ public class ZccRulesServiceImpl implements ZccRulesService {
     NameValueReferableMap facts = new FactMap();
     facts.setValue("editAction", action);
     facts.setValue("currentStatus", status);
-    ruleBook.run(facts);
-    ruleBook.getResult().ifPresent(result->log.info(result.toString()));
-    EditStatusEnum retVal = ruleBook.getResult().get().getValue();
+    ruleBook4ZccEdit.run(facts);
+    ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
+    EditStatusEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
     return retVal;
   }
 }

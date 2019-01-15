@@ -25,6 +25,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -52,6 +53,27 @@ public class AmcAssetServiceImpl implements AmcAssetService {
          amcAsset.setId(id);
          return Dao2VoUtils.convertDo2Vo(amcAsset);
 
+    }
+
+    @Override
+    public AssetAdditional createAssetAddition(AssetAdditional additional) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(additional.getAmcAssetId()));
+        List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+
+        if(!CollectionUtils.isEmpty(assetAdditionals)){
+            if(assetAdditionals.size() > 1){
+                for(int idx = 1; idx < assetAdditionals.size(); idx ++){
+                    wszccTemplate.remove(assetAdditionals.get(idx));
+                }
+            }
+            Update update = new Update();
+            update.set(assetAdditionals.get(0).get_id(), additional);
+            wszccTemplate.findAndModify(query, update, AssetAdditional.class);
+        }else{
+            wszccTemplate.insert(additional);
+        }
+        return additional;
     }
 
     @Override

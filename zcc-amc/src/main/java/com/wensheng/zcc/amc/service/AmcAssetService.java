@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
@@ -17,6 +18,8 @@ import org.springframework.data.domain.Sort.Direction;
 public interface AmcAssetService {
 
     public AmcAssetVo create(AmcAsset amcAsset);
+
+    public AssetAdditional createAssetAddition(AssetAdditional additional);
 
     public AmcAssetVo del(AmcAsset amcAsset);
 

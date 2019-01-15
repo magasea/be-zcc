@@ -206,9 +206,9 @@ public class AmcAssetServiceImplTest {
 
 
         assetAdditional.setAmcAssetId(amcAssetId);
-        assetAdditional.setAmcContact1(originItem.getAmcContact1());
+//        assetAdditional.setAmcContact1(originItem.getAmcContact1());
         ;
-        assetAdditional.setAmcContact2(originItem.getAmcContact2());
+//        assetAdditional.setAmcContact2(originItem.getAmcContact2());
         ;
         assetAdditional.setAmcNotes(originItem.getAmcNotes());
         ;
@@ -216,15 +216,15 @@ public class AmcAssetServiceImplTest {
         ;
         assetAdditional.setCommentCount(originItem.getCommentCount());
         ;
-        assetAdditional.setCourtCity(originItem.getCourtCity());
-        ;
-        assetAdditional.setCourtCounty(originItem.getCourtCity());
-        ;
-        assetAdditional.setCourtInfo(originItem.getCourtInfo());
-        ;
-        assetAdditional.setCourtName(originItem.getCourtName());
-        ;
-        assetAdditional.setCourtProvince(originItem.getCourtProvince());
+//        assetAdditional.setCourtCity(originItem.getCourtCity());
+//        ;
+//        assetAdditional.setCourtCounty(originItem.getCourtCity());
+//        ;
+//        assetAdditional.setCourtInfo(originItem.getCourtInfo());
+//        ;
+//        assetAdditional.setCourtName(originItem.getCourtName());
+//        ;
+//        assetAdditional.setCourtProvince(originItem.getCourtProvince());
         ;
         assetAdditional.setDescription(originItem.getDescription());
         ;

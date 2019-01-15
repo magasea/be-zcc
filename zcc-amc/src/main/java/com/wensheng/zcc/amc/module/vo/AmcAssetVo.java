@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import java.math.BigDecimal;
 import java.util.Date;
 import lombok.Data;
@@ -61,4 +62,6 @@ public class AmcAssetVo {
   private Long createBy;
 
   private Long amcConactor;
+
+  AssetAdditional assetAdditional;
 }

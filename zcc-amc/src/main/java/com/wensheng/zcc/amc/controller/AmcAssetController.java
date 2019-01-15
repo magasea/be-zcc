@@ -3,14 +3,19 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
@@ -89,6 +94,23 @@ public class AmcAssetController {
     return amcAssetService.queryAssetDetail(amcAssetId);
 
   }
+
+  @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcAssetVo addAmcAsset(
+      @RequestBody AmcAssetVo amcAssetVo) throws Exception {
+    AmcAsset amcAsset = new AmcAsset();
+    BeanUtils.copyProperties(amcAssetVo, amcAsset);
+    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getEstmPrice()));
+    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getInitPrice()));
+    AmcAssetVo assetVo = amcAssetService.create(amcAsset);
+    amcAssetVo.getAssetAdditional().setAmcAssetId(assetVo.getId());
+    AssetAdditional assetAdditional = amcAssetService.createAssetAddition(amcAssetVo.getAssetAdditional());
+    assetVo.setAssetAdditional(assetAdditional);
+    return assetVo;
+  }
+
+
 
 
 

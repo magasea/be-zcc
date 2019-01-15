@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,14 +127,16 @@ public class AmcAssetController {
   @RequestMapping(value = "/amcid/{amcid}/asset/image/add", method = RequestMethod.POST)
   @ResponseBody
   public List<AssetImage> addAmcAssetImage(
-      @RequestBody BaseActionVo<AssetImage> assetImageBaseActionVo, @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
+       @RequestParam("assetId") Long assetId, @RequestParam("isToOss") Boolean isToOss,
+      @RequestParam("actionId") Long actionId,
+      @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
-    if(assetImageBaseActionVo.getContent().getAmcAssetId() == null){
+    if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
     }
     for(MultipartFile uploadedImage : uploadingImages) {
       try {
-        String filePath = amcOssFileService.handleMultiPartImage(uploadedImage, assetImageBaseActionVo.getContent().getAmcAssetId(),
+        String filePath = amcOssFileService.handleMultiPartImage(uploadedImage, assetId,
             ImagePathClassEnum.ASSET.getName());
         filePaths.add(filePath);
       } catch (Exception e) {
@@ -141,15 +144,17 @@ public class AmcAssetController {
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
       }
     }
-    String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetImageBaseActionVo.getContent().getAmcAssetId()+"/";
+    String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetId+"/";
 
     List<AssetImage> assetImages = new ArrayList<>();
     for(String filePath: filePaths){
       try {
         String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
-        assetImageBaseActionVo.getContent().setIsToOss(true);
-        assetImageBaseActionVo.getContent().setPath(ossPath);
-        assetImages.add(amcAssetService.saveImageInfo( assetImageBaseActionVo.getContent() ));
+        AssetImage assetImage = new AssetImage();
+
+        assetImage.setIsToOss(true);
+        assetImage.setPath(ossPath);
+        assetImages.add(amcAssetService.saveImageInfo( assetImage));
 
       } catch (Exception e) {
         e.printStackTrace();

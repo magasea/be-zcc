@@ -70,7 +70,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
   public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
-      @RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo,
+      BaseActionVo<DebtImage> debtImageBaseActionVo,
       @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
 
     if(debtImageBaseActionVo.getContent().getDebtId() == null || debtImageBaseActionVo.getContent().getDebtId() < 0){

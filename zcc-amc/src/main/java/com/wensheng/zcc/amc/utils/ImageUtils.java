@@ -54,13 +54,13 @@ public class ImageUtils {
   }
 
   public static synchronized MessageDigest getMD() throws NoSuchAlgorithmException {
-    synchronized (md){
+
       if(md == null){
         md = MessageDigest.getInstance("SHA-1");
       }
       md.reset();
       return md;
-    }
+
   }
 
   public static String getCheckSum(String filePath) throws NoSuchAlgorithmException, IOException {

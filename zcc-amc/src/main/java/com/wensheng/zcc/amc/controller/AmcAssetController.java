@@ -3,12 +3,19 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -27,6 +35,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.server.ResponseStatusException;
 
 /**
  * @author chenwei on 1/3/19
@@ -39,6 +49,9 @@ public class AmcAssetController {
 
   @Autowired
   AmcAssetService amcAssetService;
+
+  @Autowired
+  AmcOssFileService amcOssFileService;
 
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
@@ -98,17 +111,55 @@ public class AmcAssetController {
   @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
-      @RequestBody AmcAssetVo amcAssetVo) throws Exception {
+      @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
     AmcAsset amcAsset = new AmcAsset();
     BeanUtils.copyProperties(amcAssetVo, amcAsset);
-    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getEstmPrice()));
-    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getInitPrice()));
+    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getContent().getEstmPrice()));
+    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getContent().getInitPrice()));
     AmcAssetVo assetVo = amcAssetService.create(amcAsset);
-    amcAssetVo.getAssetAdditional().setAmcAssetId(assetVo.getId());
-    AssetAdditional assetAdditional = amcAssetService.createAssetAddition(amcAssetVo.getAssetAdditional());
+    amcAssetVo.getContent().getAssetAdditional().setAmcAssetId(assetVo.getId());
+    AssetAdditional assetAdditional = amcAssetService.createAssetAddition(amcAssetVo.getContent().getAssetAdditional());
     assetVo.setAssetAdditional(assetAdditional);
     return assetVo;
   }
+
+  @RequestMapping(value = "/amcid/{amcid}/asset/image/add", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AssetImage> addAmcAssetImage(
+      @RequestBody BaseActionVo<AssetImage> assetImageBaseActionVo, @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
+    List<String> filePaths = new ArrayList<>();
+    if(assetImageBaseActionVo.getContent().getAmcAssetId() == null){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
+    }
+    for(MultipartFile uploadedImage : uploadingImages) {
+      try {
+        String filePath = amcOssFileService.handleMultiPartImage(uploadedImage, assetImageBaseActionVo.getContent().getAmcAssetId(),
+            ImagePathClassEnum.ASSET.getName());
+        filePaths.add(filePath);
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+      }
+    }
+    String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetImageBaseActionVo.getContent().getAmcAssetId()+"/";
+
+    List<AssetImage> assetImages = new ArrayList<>();
+    for(String filePath: filePaths){
+      try {
+        String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
+        assetImageBaseActionVo.getContent().setIsToOss(true);
+        assetImageBaseActionVo.getContent().setPath(ossPath);
+        assetImages.add(amcAssetService.saveImageInfo( assetImageBaseActionVo.getContent() ));
+
+      } catch (Exception e) {
+        e.printStackTrace();
+        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+      }
+    }
+    return assetImages;
+  }
+
+
 
 
 

@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class AssetImage {
     String _id;
     String description;
+    @Indexed
     String path;
     String originalName;
     Boolean mainPic; //是否为主图片

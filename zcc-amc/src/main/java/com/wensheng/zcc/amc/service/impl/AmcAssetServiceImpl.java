@@ -198,6 +198,26 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return titleMap;
     }
 
+    @Override
+    public AssetImage saveImageInfo( AssetImage assetImage) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("path").is(assetImage.getPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
+        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+        if(!CollectionUtils.isEmpty(assetImages)){
+            if(assetImages.size() > 1){
+                for(int idx = 1; idx < assetImages.size(); idx ++){
+                    wszccTemplate.remove(assetImages.get(idx));
+                }
+            }
+            Update update = new Update();
+            update.set(assetImages.get(0).get_id(), assetImage);
+            return wszccTemplate.findAndModify(query, update, AssetImage.class);
+        }else{
+            return wszccTemplate.insert(assetImage);
+        }
+
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         if(CollectionUtils.isEmpty(queryParam)){
@@ -226,5 +246,22 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssetExample;
     }
 
+
+//    private <T>void  removeDuplicatItems(Query query, Object obj){
+//
+//        List<T> listOfT = (List<T>) wszccTemplate.find(query, obj.getClass());
+//        if(!CollectionUtils.isEmpty(listOfT)){
+//            if(listOfT.size() > 1){
+//                for(int idx = 1; idx < listOfT.size(); idx ++){
+//                    wszccTemplate.remove(listOfT.get(idx));
+//                }
+//            }
+//            Update update = new Update();
+//            update.set(listOfT.get(0).get_id(), obj);
+//            wszccTemplate.findAndModify(query, update, AssetImage.class);
+//        }else{
+//            wszccTemplate.insert(assetImage);
+//        }
+//    }
 
 }

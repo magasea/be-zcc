@@ -1,11 +1,13 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
@@ -42,4 +44,6 @@ public interface AmcAssetService {
     Long getAssetCount(Map<String, Object> queryParam);
 
     Map<String, List<Long>> getAllAssetTitles();
+
+  AssetImage saveImageInfo( AssetImage assetImage);
 }

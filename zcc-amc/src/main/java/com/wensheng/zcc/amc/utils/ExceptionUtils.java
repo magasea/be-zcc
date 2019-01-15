@@ -8,7 +8,11 @@ public class ExceptionUtils {
 
   public static Exception getAmcException(AmcExceptions amcExceptions){
     return new Exception(String.format("%d:%s:%s",amcExceptions.code, amcExceptions.name, amcExceptions.reason));
+  }
 
+  public static Exception getAmcException(AmcExceptions amcExceptions, String additional){
+    return new Exception(String.format("%d:%s:%s-%s",amcExceptions.code, amcExceptions.name, amcExceptions.reason,
+        additional));
   }
 
   public static enum AmcExceptions{
@@ -17,7 +21,8 @@ public class ExceptionUtils {
     NO_AMCDEBT_AVAILABLE(1002, "NO_AMCDEBT_AVAILABLE", "no amcdebt available"),
     NO_AMCASSET_AVAILABLE(1003, "NO_AMCASSET_AVAILABLE", "no amcasset available"),
     INVALID_ACTION(1004, "INVALID_ACTION", "violate edit rule"),
-    INVALID_CREDITOR(1005, "INVALID_CREDITOR", "没有该原始债权人");
+    INVALID_CREDITOR(1005, "INVALID_CREDITOR", "没有该原始债权人"),
+    MISSING_MUST_PARAM(1006, "Missing must parameters", "缺少必填参数");
     int code;
     String name;
     String reason;

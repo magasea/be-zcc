@@ -3,6 +3,8 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
@@ -67,27 +69,34 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
-  public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId, @RequestParam(value = "debtId",
-      required = true) Long debtId,
-      @RequestParam("desc") String desc, @RequestParam("imageClass") Integer imageClass,
-      @RequestParam("uploadingImages") MultipartFile[] uploadingImages){
+  public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
+      @RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo,
+      @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
+
+    if(debtImageBaseActionVo.getContent().getDebtId() == null || debtImageBaseActionVo.getContent().getDebtId() < 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,  String.format("debtId %s is not valid",
+          debtImageBaseActionVo.getContent().getDebtId()));
+    }
 
     List<String> filePaths = new ArrayList<>();
     for(MultipartFile uploadedImage : uploadingImages) {
       try {
-        String filePath = amcOssFileService.handleMultiPartImage(uploadedImage, debtId, "debt" );
+        String filePath = amcOssFileService.handleMultiPartImage(uploadedImage,
+            debtImageBaseActionVo.getContent().getDebtId(),
+            ImagePathClassEnum.DEBT.getName());
         filePaths.add(filePath);
       } catch (Exception e) {
         e.printStackTrace();
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
       }
     }
-    String prePath = "debt/"+debtId+"/";
+    String prePath = ImagePathClassEnum.DEBT.getName()+"/"+debtImageBaseActionVo.getContent().getDebtId()+"/";
 
     for(String filePath: filePaths){
       try {
         String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
-        amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, imageClass );
+        amcDebtService.saveImageInfo(ossPath, filePath, debtImageBaseActionVo.getContent().getDebtId(),
+            debtImageBaseActionVo.getContent().getDescription(), debtImageBaseActionVo.getContent().getTag());
       } catch (Exception e) {
         e.printStackTrace();
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());

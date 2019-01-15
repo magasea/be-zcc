@@ -192,6 +192,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  public List<AmcDebt> queryByDebtpackId(Long debtPackId) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andDebtpackIdEqualTo(debtPackId);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
+  }
+
+  @Override
   public Long getTotalCount() {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andIdGreaterThan(0L);

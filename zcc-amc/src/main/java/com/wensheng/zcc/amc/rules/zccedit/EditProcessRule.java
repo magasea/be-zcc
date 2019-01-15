@@ -15,7 +15,6 @@ import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
  * @project zcc-backend
  */
 @Rule
-
 public class EditProcessRule {
   @Result
   EditStatusEnum editStatusResult;
@@ -45,10 +44,7 @@ public class EditProcessRule {
       if(currentStatus == EditStatusEnum.INIT) {
         editStatusResult =  EditStatusEnum.DRAFT;
         return;
-      }else if(currentStatus == EditStatusEnum.CHECK_FAILED){
-        editStatusResult =  EditStatusEnum.CHECK_FAILED;
-        return;
-      }else if(currentStatus == EditStatusEnum.OFF_SHELF || currentStatus == EditStatusEnum.PUBLISHED ||
+      }else if( currentStatus == EditStatusEnum.PUBLISHED ||
           currentStatus == EditStatusEnum.SOLD){
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }else{

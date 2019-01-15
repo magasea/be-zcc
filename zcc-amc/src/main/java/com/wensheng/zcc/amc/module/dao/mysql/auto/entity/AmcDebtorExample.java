@@ -284,6 +284,66 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
+        public Criteria andCompanyBranchIdIsNull() {
+            addCriterion("company_branch_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdIsNotNull() {
+            addCriterion("company_branch_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdEqualTo(Long value) {
+            addCriterion("company_branch_id =", value, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdNotEqualTo(Long value) {
+            addCriterion("company_branch_id <>", value, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdGreaterThan(Long value) {
+            addCriterion("company_branch_id >", value, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("company_branch_id >=", value, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdLessThan(Long value) {
+            addCriterion("company_branch_id <", value, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdLessThanOrEqualTo(Long value) {
+            addCriterion("company_branch_id <=", value, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdIn(List<Long> values) {
+            addCriterion("company_branch_id in", values, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdNotIn(List<Long> values) {
+            addCriterion("company_branch_id not in", values, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdBetween(Long value1, Long value2) {
+            addCriterion("company_branch_id between", value1, value2, "companyBranchId");
+            return (Criteria) this;
+        }
+
+        public Criteria andCompanyBranchIdNotBetween(Long value1, Long value2) {
+            addCriterion("company_branch_id not between", value1, value2, "companyBranchId");
+            return (Criteria) this;
+        }
+
         public Criteria andDebtContractIsNull() {
             addCriterion("debt_contract is null");
             return (Criteria) this;

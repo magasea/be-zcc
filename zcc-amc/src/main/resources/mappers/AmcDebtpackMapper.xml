@@ -7,8 +7,6 @@
     <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
     <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
-    <result column="creditor" jdbcType="CHAR" property="creditor" />
-    <result column="creditor_branch" jdbcType="CHAR" property="creditorBranch" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="amc_company_id" jdbcType="BIGINT" property="amcCompanyId" />
     <result column="pack_status" jdbcType="INTEGER" property="packStatus" />
@@ -72,8 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, base_amount, total_amount, settle_date, creditor, creditor_branch, notes, 
-    amc_company_id, pack_status
+    id, title, base_amount, total_amount, settle_date, notes, amc_company_id, pack_status
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
     select
@@ -111,13 +108,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_DEBTPACK (title, base_amount, total_amount, 
-      settle_date, creditor, creditor_branch, 
-      notes, amc_company_id, pack_status
-      )
+      settle_date, notes, amc_company_id, 
+      pack_status)
     values (#{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
-      #{settleDate,jdbcType=TIMESTAMP}, #{creditor,jdbcType=CHAR}, #{creditorBranch,jdbcType=CHAR}, 
-      #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, #{packStatus,jdbcType=INTEGER}
-      )
+      #{settleDate,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, 
+      #{packStatus,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -136,12 +131,6 @@
       </if>
       <if test="settleDate != null">
         settle_date,
-      </if>
-      <if test="creditor != null">
-        creditor,
-      </if>
-      <if test="creditorBranch != null">
-        creditor_branch,
       </if>
       <if test="notes != null">
         notes,
@@ -165,12 +154,6 @@
       </if>
       <if test="settleDate != null">
         #{settleDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="creditor != null">
-        #{creditor,jdbcType=CHAR},
-      </if>
-      <if test="creditorBranch != null">
-        #{creditorBranch,jdbcType=CHAR},
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
@@ -207,12 +190,6 @@
       <if test="record.settleDate != null">
         settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.creditor != null">
-        creditor = #{record.creditor,jdbcType=CHAR},
-      </if>
-      <if test="record.creditorBranch != null">
-        creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
-      </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
@@ -234,8 +211,6 @@
       base_amount = #{record.baseAmount,jdbcType=BIGINT},
       total_amount = #{record.totalAmount,jdbcType=BIGINT},
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
-      creditor = #{record.creditor,jdbcType=CHAR},
-      creditor_branch = #{record.creditorBranch,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
       pack_status = #{record.packStatus,jdbcType=INTEGER}
@@ -258,12 +233,6 @@
       <if test="settleDate != null">
         settle_date = #{settleDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="creditor != null">
-        creditor = #{creditor,jdbcType=CHAR},
-      </if>
-      <if test="creditorBranch != null">
-        creditor_branch = #{creditorBranch,jdbcType=CHAR},
-      </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
@@ -282,8 +251,6 @@
       base_amount = #{baseAmount,jdbcType=BIGINT},
       total_amount = #{totalAmount,jdbcType=BIGINT},
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
-      creditor = #{creditor,jdbcType=CHAR},
-      creditor_branch = #{creditorBranch,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR},
       amc_company_id = #{amcCompanyId,jdbcType=BIGINT},
       pack_status = #{packStatus,jdbcType=INTEGER}

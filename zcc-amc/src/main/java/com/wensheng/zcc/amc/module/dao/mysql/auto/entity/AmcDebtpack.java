@@ -13,10 +13,6 @@ public class AmcDebtpack {
 
     private Date settleDate;
 
-    private String creditor;
-
-    private String creditorBranch;
-
     private String notes;
 
     private Long amcCompanyId;
@@ -61,22 +57,6 @@ public class AmcDebtpack {
 
     public void setSettleDate(Date settleDate) {
         this.settleDate = settleDate;
-    }
-
-    public String getCreditor() {
-        return creditor;
-    }
-
-    public void setCreditor(String creditor) {
-        this.creditor = creditor == null ? null : creditor.trim();
-    }
-
-    public String getCreditorBranch() {
-        return creditorBranch;
-    }
-
-    public void setCreditorBranch(String creditorBranch) {
-        this.creditorBranch = creditorBranch == null ? null : creditorBranch.trim();
     }
 
     public String getNotes() {

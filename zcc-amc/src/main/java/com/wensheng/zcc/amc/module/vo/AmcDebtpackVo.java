@@ -21,14 +21,11 @@ public class AmcDebtpackVo {
 
   private Date settleDate;
 
-  private Long originalCreditor;
-
   private String notes;
 
   private Long amcCompanyId;
 
   private Integer packStatus;
 
-  private List<Long> creditors;
 
 }

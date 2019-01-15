@@ -9,22 +9,22 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtpackExt;
+import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -45,34 +45,38 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   AmcCreditorDebtpackMapper amcCreditorDebtpackMapper;
 
   @Override
-  public AmcDebtpackVo create(AmcDebtpackVo amcDebtpackVo) {
+  @Transactional
+  public AmcDebtpackExtVo create(AmcDebtpackExtVo amcDebtpackExtVo) throws Exception {
     AmcDebtpack amcDebtpack = new AmcDebtpack();
-    BeanUtils.copyProperties(amcDebtpackVo, amcDebtpack);
-    amcDebtpack.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackVo.getBaseAmount()));
-    amcDebtpack.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackVo.getTotalAmount()));
+    BeanUtils.copyProperties(amcDebtpackExtVo.getAmcDebtpackInfo(), amcDebtpack);
+    amcDebtpack.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getBaseAmount()));
+    amcDebtpack.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getTotalAmount()));
     Long id = Long.valueOf(amcDebtpackMapper.insertSelective(amcDebtpack));
-    if(!CollectionUtils.isEmpty(amcDebtpackVo.getCreditors())){
+    if(!CollectionUtils.isEmpty(amcDebtpackExtVo.getAmcOrigCreditorList())){
       //make relationship between creditor and deptpack
-      for(Long creditorId: amcDebtpackVo.getCreditors()){
-        AmcCreditorDebtpackExample amcCreditorDebtpackExample = new AmcCreditorDebtpackExample();
-        amcCreditorDebtpackExample.createCriteria().andCreditorIdEqualTo(creditorId).andDebtpackIdEqualTo(id);
-        if(amcCreditorDebtpackMapper.countByExample(amcCreditorDebtpackExample) > 0){
-          log.error("The relationship between debtpack id:"+id + " and creditor id:" + creditorId + " is already "
-              + "exists");
-          continue;
-        }else{
+      for(Long amcOrigCreditor: amcDebtpackExtVo.getAmcOrigCreditorList()){
+        AmcOrigCreditorExample amcCreditorExample = new AmcOrigCreditorExample();
+        amcCreditorExample.createCriteria().andIdEqualTo(amcOrigCreditor);
+        if(amcOrigCreditorMapper.countByExample(amcCreditorExample) > 0){
+          //now delete and insert the relationship between amcDebtPack and Creditor in table AMC_CREDITOR_DEBTPACK
+          AmcCreditorDebtpackExample amcCreditorDebtpackExampleDel = new AmcCreditorDebtpackExample();
+          amcCreditorDebtpackExampleDel.createCriteria().andDebtpackIdEqualTo(id);
+          amcCreditorDebtpackMapper.deleteByExample(amcCreditorDebtpackExampleDel);
+
           AmcCreditorDebtpack amcCreditorDebtpack = new AmcCreditorDebtpack();
-          amcCreditorDebtpack.setCreditorId(creditorId);
           amcCreditorDebtpack.setDebtpackId(id);
-          amcCreditorDebtpackMapper.insert(amcCreditorDebtpack);
+          amcCreditorDebtpack.setCreditorId(amcOrigCreditor);
+          amcCreditorDebtpackMapper.insertSelective(amcCreditorDebtpack);
+        }else{
+          throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_CREDITOR);
         }
       }
 
     }
-    amcDebtpackVo.setId(id);
+    amcDebtpackExtVo.setId(id);
 
 
-    return amcDebtpackVo;
+    return amcDebtpackExtVo;
   }
 
   @Override
@@ -82,7 +86,28 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Override
   public AmcDebtpackVo update(AmcDebtpack amcDebtpack) {
-    return null;
+    AmcDebtpackVo amcDebtpackVo = new AmcDebtpackVo();
+
+    amcDebtpackMapper.updateByPrimaryKey(amcDebtpack);
+
+    BeanUtils.copyProperties(amcDebtpack, amcDebtpackVo);
+    amcDebtpackVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getTotalAmount()));
+    amcDebtpackVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getBaseAmount()));
+    return amcDebtpackVo;
+  }
+
+  @Override
+  public void updateDebtpackCreditorRel(Long debtId, List<Long> creditorIds) throws Exception {
+    AmcCreditorDebtpackExample amcCreditorDebtpackExample = new AmcCreditorDebtpackExample();
+    amcCreditorDebtpackExample.createCriteria().andDebtpackIdEqualTo(debtId);
+    amcCreditorDebtpackMapper.deleteByExample(amcCreditorDebtpackExample);
+    AmcCreditorDebtpack amcCreditorDebtpack = new AmcCreditorDebtpack();
+    for(Long creditorId: creditorIds){
+      amcCreditorDebtpack.setCreditorId(creditorId);
+      amcCreditorDebtpack.setDebtpackId(debtId);
+      amcCreditorDebtpackMapper.insertSelective(amcCreditorDebtpack);
+    }
+
   }
 
   @Override

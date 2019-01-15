@@ -1,5 +1,8 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
+import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 1/14/19
  * @project zcc-backend
@@ -22,6 +25,18 @@ public enum EditActionEnum {
     this.id = id;
     this.name = name;
     this.cname = cname;
+  }
+
+  private static final Function<String, EditActionEnum> func =
+      EnumUtils.lookupMap(EditActionEnum.class, e -> e.getName());
+  public static EditActionEnum lookupByDisplayNameUtil(String name) {
+    return func.apply(name);
+  }
+
+  private static final Function<Integer, EditActionEnum> funcId =
+      EnumUtils.lookupMap(EditActionEnum.class, e -> e.getId());
+  public static EditActionEnum lookupByDisplayIdUtil(Integer id) {
+    return funcId.apply(id);
   }
 
   public int getId(){

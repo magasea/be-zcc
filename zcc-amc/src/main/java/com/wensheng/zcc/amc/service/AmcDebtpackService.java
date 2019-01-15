@@ -2,10 +2,10 @@ package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import java.util.List;
 import java.util.Map;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 /**
@@ -14,11 +14,13 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcDebtpackService {
 
-  public AmcDebtpackVo create(AmcDebtpackVo amcDebtpackVo);
+  public AmcDebtpackExtVo create(AmcDebtpackExtVo amcDebtpackExtVo) throws Exception;
 
   public AmcDebtpackVo del(AmcDebtpack amcDebtpack);
 
   public AmcDebtpackVo update(AmcDebtpack amcDebtpack);
+
+  public void updateDebtpackCreditorRel(Long debtId, List<Long> creditorIds) throws Exception;
 
   public List<AmcDebtpackVo> queryAll(int offset, int size);
 

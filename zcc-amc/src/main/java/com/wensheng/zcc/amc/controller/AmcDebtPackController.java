@@ -5,12 +5,16 @@ import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
+import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
+import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -38,10 +42,25 @@ public class AmcDebtPackController {
 
 
   @RequestMapping(value = "amcid/{amcId}/debtpack/add", method = RequestMethod.POST)
-  public AmcDebtpack createAmcDebtPack(AmcDebtpackVo amcDebtpackVo){
-    amcDebtpackService.create(amcDebtpackVo);
-    return null;
+  @ResponseBody
+  public AmcDebtpackExtVo createAmcDebtPack(@RequestBody AmcDebtpackExtVo amcDebtpackExtVo) throws Exception {
+    return  amcDebtpackService.create(amcDebtpackExtVo);
   }
+
+  @RequestMapping(value = "amcid/{amcId}/debtpack/update", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDebtpackVo updateAmcDebtPack(@RequestBody BaseActionVo<AmcDebtpackExtVo>  amcBaseDebtpackVo) throws Exception {
+    AmcDebtpack amcDebtpack = new AmcDebtpack();
+    AmcDebtpackExtVo amcDebtpackExtVo = amcBaseDebtpackVo.getContent();
+    BeanUtils.copyProperties(amcDebtpackExtVo, amcDebtpack);
+    amcDebtpack.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getTotalAmount()));
+    amcDebtpack.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getBaseAmount()));
+    AmcDebtpackVo amcDebtpackVo = amcDebtpackService.update(amcDebtpack);
+
+    amcDebtpackService.updateDebtpackCreditorRel(amcDebtpackExtVo.getAmcDebtpackInfo().getId(), amcDebtpackExtVo.getAmcOrigCreditorList());
+    return amcDebtpackVo;
+  }
+
 
   @RequestMapping(value = "amcid/{amcId}/deptpack/creditor/add", method = RequestMethod.POST)
   @ResponseBody

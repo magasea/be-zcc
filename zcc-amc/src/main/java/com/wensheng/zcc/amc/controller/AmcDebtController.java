@@ -7,6 +7,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
@@ -102,9 +103,10 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @ResponseBody
-  public String createDebt(@RequestBody AmcDebtCreateVo createVo) throws Exception {
+  public String createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo) throws Exception {
 
     AmcDebt amcDebt = new AmcDebt();
+    AmcDebtCreateVo createVo = baseCreateVo.getContent();
     BeanUtils.copyProperties(createVo, amcDebt);
 
     //1. check deptpackId exist

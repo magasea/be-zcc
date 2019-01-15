@@ -13,6 +13,6 @@ import lombok.Data;
 public class AmcDebtpackExtVo {
   Long id;
   AmcDebtpackVo amcDebtpackInfo;
-  List<AmcOrigCreditor> amcOrigCreditorList;
+  List<Long> amcOrigCreditorList;
 
 }

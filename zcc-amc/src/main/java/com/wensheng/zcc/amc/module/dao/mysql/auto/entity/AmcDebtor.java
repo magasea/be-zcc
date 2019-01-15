@@ -7,6 +7,8 @@ public class AmcDebtor {
 
     private Long companyId;
 
+    private Long companyBranchId;
+
     private String debtContract;
 
     private String note;
@@ -33,6 +35,14 @@ public class AmcDebtor {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Long getCompanyBranchId() {
+        return companyBranchId;
+    }
+
+    public void setCompanyBranchId(Long companyBranchId) {
+        this.companyBranchId = companyBranchId;
     }
 
     public String getDebtContract() {

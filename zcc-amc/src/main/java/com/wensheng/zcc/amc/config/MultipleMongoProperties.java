@@ -11,6 +11,10 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "mongodb")
 public class MultipleMongoProperties {
 
+
     private MongoProperties original = new MongoProperties();
+
     private MongoProperties wszcc = new MongoProperties();
+
+
 }

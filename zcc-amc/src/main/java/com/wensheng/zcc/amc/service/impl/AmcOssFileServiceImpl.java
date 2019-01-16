@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.model.PutObjectResult;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import java.io.File;
@@ -73,7 +74,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     sbOssFileName.append(".").append(ext);
     File fileUpload = new File(filePath);
 
-    ossClient.putObject(bucketName, sbOssFileName.toString(), fileUpload);
+    PutObjectResult putObjectResult = ossClient.putObject(bucketName, sbOssFileName.toString(), fileUpload);
     return ossFilePathBase+sbOssFileName;
   }
 

@@ -21,11 +21,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -43,6 +45,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     MongoTemplate wszccTemplate;
+
+    @Autowired
+    MongoTemplate originalMongoTemplate;
 
 
 

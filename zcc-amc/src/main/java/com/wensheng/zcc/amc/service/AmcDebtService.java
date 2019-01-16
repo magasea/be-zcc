@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
 import java.util.Map;
@@ -22,7 +24,7 @@ public interface AmcDebtService {
 
   public List<AmcDebtVo> queryAll(int offset, int size);
 
-  public AmcDebtVo get(Long AmcDebtId);
+  public AmcDebtVo get(Long AmcDebtId) throws Exception;
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
@@ -31,5 +33,13 @@ public interface AmcDebtService {
   List<AmcDebt> queryByDebtpackId(Long debtPackId);
 
   Long getTotalCount();
+
+  Long addGrantContract(AmcGrntctrct amcGrntctrct);
+
+  AmcGrntctrct updateGrantContract(AmcGrntctrct amcGrntctrct);
+
+  Boolean isDebtIdExist(Long debtId);
+
+  Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception;
 
 }

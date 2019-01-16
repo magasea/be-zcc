@@ -26,6 +26,12 @@ public enum GrantorTypeEnum {
   public static GrantorTypeEnum lookupByDisplayNameUtil(String name) {
     return func.apply(name);
   }
+
+  private static final Function<Integer, GrantorTypeEnum> funcId =
+      EnumUtils.lookupMap(GrantorTypeEnum.class, e -> e.getId());
+  public static GrantorTypeEnum lookupByDisplayNameUtil(Integer id) {
+    return funcId.apply(id);
+  }
   public int getId() {
     return id;
   }

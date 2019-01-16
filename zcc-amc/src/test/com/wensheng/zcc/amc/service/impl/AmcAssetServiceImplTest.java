@@ -170,7 +170,7 @@ public class AmcAssetServiceImplTest {
             assetImageCur.setMainPic(assetImage.getMainPic());
             assetImageCur.setOriginalName(assetImage.getOriginalName());
             assetImageCur.setOriginAssetId(assetImage.getAsset());
-            assetImageCur.setPath(assetImage.getPath());
+            assetImageCur.setOssPath(assetImage.getPath());
             secondaryMongoTemplate.save(assetImage);
         }
     }

@@ -6,7 +6,7 @@ import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
@@ -17,22 +17,15 @@ import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -66,6 +59,39 @@ public class AmcDebtController {
   ZccRulesService zccRulesService;
 
 
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
+  @ResponseBody
+  public Long addGrntContract(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
+    checkGrantor(grntctrctBaseActionVo.getContent());
+
+    return amcDebtService.addGrantContract(grntctrctBaseActionVo.getContent());
+  }
+
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/update", method = RequestMethod.POST)
+  @ResponseBody
+  public Long updateGrntContract(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
+    checkGrantor(grntctrctBaseActionVo.getContent());
+
+    return amcDebtService.addGrantContract(grntctrctBaseActionVo.getContent());
+  }
+
+
+  private void checkGrantor(AmcGrntctrct grntctrct) throws Exception {
+    if(amcDebtService.isDebtIdExist(grntctrct.getDebtId())){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE,""+grntctrct
+          .getDebtId() );
+    }
+    if(!amcDebtService.isGrntIdExist(grntctrct.getGrantorId(),
+        grntctrct.getType())){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE, String.format("grantId:%d, "
+          + "grantorType:%d",grntctrct.getGrantorId(), grntctrct.getType() ));
+    }
+  }
+
+
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
@@ -81,7 +107,7 @@ public class AmcDebtController {
     List<String> filePaths = new ArrayList<>();
     for(MultipartFile uploadedImage : uploadingImages) {
       try {
-        String filePath = amcOssFileService.handleMultiPartImage(uploadedImage,
+        String filePath = amcOssFileService.handleMultiPartFile(uploadedImage,
             debtImageBaseActionVo.getContent().getDebtId(),
             ImagePathClassEnum.DEBT.getName());
         filePaths.add(filePath);

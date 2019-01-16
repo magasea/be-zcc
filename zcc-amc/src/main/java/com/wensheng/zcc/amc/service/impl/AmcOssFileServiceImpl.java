@@ -6,7 +6,6 @@ import com.aliyun.oss.model.PutObjectResult;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import java.io.File;
-import java.util.UUID;
 import javax.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
@@ -79,7 +78,17 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
   }
 
   @Override
-  public String handleMultiPartImage(MultipartFile multipartFile, Long id, String type) throws Exception {
+  public void delFileInOss(String ossPath) throws Exception {
+
+    if(ossPath.contains(ossFilePathBase)){
+      ossClient.deleteObject(bucketName, ossPath.substring(ossFilePathBase.length()));
+    }
+
+
+  }
+
+  @Override
+  public String handleMultiPartFile(MultipartFile multipartFile, Long id, String type) throws Exception {
     File targetFile = null;
     switch (type){
       case "debt":
@@ -99,6 +108,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
     return targetFile.getCanonicalPath();
   }
+
 
 
 }

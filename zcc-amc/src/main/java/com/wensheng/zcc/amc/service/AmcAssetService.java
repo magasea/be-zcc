@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
@@ -46,4 +47,5 @@ public interface AmcAssetService {
     Map<String, List<Long>> getAllAssetTitles();
 
   AssetImage saveImageInfo( AssetImage assetImage);
+  AssetDocument saveDoc(AssetDocument assetDocument);
 }

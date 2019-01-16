@@ -145,6 +145,7 @@ public class AmcBasicInfoController {
     return result;
   }
 
+
   @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.GET)
   @ResponseBody
   public Page<AmcPerson> getAmcPersons(@RequestBody PageRequest pageRequest){

@@ -15,10 +15,6 @@ public class AmcDebtpackVo {
 
   private String title;
 
-  private BigDecimal baseAmount;
-
-  private BigDecimal totalAmount;
-
   private Date settleDate;
 
   private String notes;

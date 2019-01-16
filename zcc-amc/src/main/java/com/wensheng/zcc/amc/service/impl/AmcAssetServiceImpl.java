@@ -21,13 +21,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -206,7 +204,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Override
     public AssetImage saveImageInfo( AssetImage assetImage) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("path").is(assetImage.getPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
+        query.addCriteria(Criteria.where("ossPath").is(assetImage.getOssPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
         if(!CollectionUtils.isEmpty(assetImages)){
             if(assetImages.size() > 1){
@@ -219,6 +217,27 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             return wszccTemplate.findAndModify(query, update, AssetImage.class);
         }else{
             return wszccTemplate.insert(assetImage);
+        }
+
+    }
+
+
+    @Override
+    public AssetDocument saveDoc( AssetDocument assetDocument) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("ossPath").is(assetDocument.getOssPath()).and("amcAssetId").is(assetDocument.getAmcAssetId()));
+        List<AssetDocument> assetDocuments = wszccTemplate.find(query, AssetDocument.class);
+        if(!CollectionUtils.isEmpty(assetDocuments)){
+            if(assetDocuments.size() > 1){
+                for(int idx = 1; idx < assetDocuments.size(); idx ++){
+                    wszccTemplate.remove(assetDocuments.get(idx));
+                }
+            }
+            Update update = new Update();
+            update.set(assetDocuments.get(0).get_id(), assetDocuments);
+            return wszccTemplate.findAndModify(query, update, AssetDocument.class);
+        }else{
+            return wszccTemplate.insert(assetDocument);
         }
 
     }

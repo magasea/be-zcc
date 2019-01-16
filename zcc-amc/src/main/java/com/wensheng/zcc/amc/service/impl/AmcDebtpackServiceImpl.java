@@ -49,8 +49,6 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   public AmcDebtpackExtVo create(AmcDebtpackExtVo amcDebtpackExtVo) throws Exception {
     AmcDebtpack amcDebtpack = new AmcDebtpack();
     BeanUtils.copyProperties(amcDebtpackExtVo.getAmcDebtpackInfo(), amcDebtpack);
-    amcDebtpack.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getBaseAmount()));
-    amcDebtpack.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getTotalAmount()));
     Long id = Long.valueOf(amcDebtpackMapper.insertSelective(amcDebtpack));
     if(!CollectionUtils.isEmpty(amcDebtpackExtVo.getAmcOrigCreditorList())){
       //make relationship between creditor and deptpack
@@ -91,8 +89,6 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
     amcDebtpackMapper.updateByPrimaryKey(amcDebtpack);
 
     BeanUtils.copyProperties(amcDebtpack, amcDebtpackVo);
-    amcDebtpackVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getTotalAmount()));
-    amcDebtpackVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getBaseAmount()));
     return amcDebtpackVo;
   }
 
@@ -126,8 +122,6 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
     AmcDebtpack amcDebtpack = amcDebtpackMapper.selectByPrimaryKey(amcDebtpackId);
     AmcDebtpackVo amcDebtpackVo = new AmcDebtpackVo();
     BeanUtils.copyProperties(amcDebtpack, amcDebtpackVo);
-    amcDebtpackVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getBaseAmount()));
-    amcDebtpackVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtpack.getTotalAmount()));
 
     return amcDebtpackVo;
   }

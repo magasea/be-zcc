@@ -1,20 +1,27 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
+import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
-import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +62,15 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcPersonMapper amcPersonMapper;
+
+  @Autowired
+  AmcGrntctrctMapper amcGrntctrctMapper;
+
+  @Autowired
+  AmcGrntorMapper amcGrntorMapper;
+
+  @Autowired
+  AmcCmpyMapper amcCmpyMapper;
 
   @Override
   public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass) {
@@ -101,10 +117,15 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcDebtVo get(Long amcDebtId) {
+  public AmcDebtVo get(Long amcDebtId) throws Exception {
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
+    if(amcDebt == null){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE);
+    }
     return Dao2VoUtils.convertDo2Vo(amcDebt);
   }
+
+
 
   @Override
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size) {
@@ -204,5 +225,56 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andIdGreaterThan(0L);
     return amcDebtMapper.countByExample(null);
+  }
+
+  @Override
+  public Long addGrantContract(AmcGrntctrct amcGrntctrct) {
+    Long id = Long.valueOf(amcGrntctrctMapper.insertSelective(amcGrntctrct));
+    return id;
+  }
+
+  @Override
+  public AmcGrntctrct updateGrantContract(AmcGrntctrct amcGrntctrct) {
+     amcGrntctrctMapper.updateByPrimaryKeySelective(amcGrntctrct);
+    return amcGrntctrct;
+  }
+
+  @Override
+  public Boolean isDebtIdExist(Long debtId) {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
+    if(null == amcDebt){
+      return false;
+    }
+    return true;
+  }
+
+  @Override
+  public Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception {
+    GrantorTypeEnum type = GrantorTypeEnum.lookupByDisplayNameUtil(grantorType);
+
+
+    if( type == null || GrantorTypeEnum.lookupByDisplayNameUtil(grantorType) == GrantorTypeEnum.NO_INFO ){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_GRANTORTYPE);
+    }
+    switch(type){
+      case COMPANY:
+        AmcCmpy amcCmpy = amcCmpyMapper.selectByPrimaryKey(grantorId);
+        if(null != amcCmpy){
+          return true;
+        }else{
+          return false;
+        }
+
+      case PERSONAL:
+        AmcGrntor amcGrntor = amcGrntorMapper.selectByPrimaryKey(grantorId);
+        if(null != amcGrntor){
+          return true;
+        }else{
+          return false;
+        }
+
+      default:
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_GRANTORTYPE);
+    }
   }
 }

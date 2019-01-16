@@ -11,7 +11,9 @@ public interface AmcOssFileService {
   public String handleFile2Oss(String filePath, String prePath) throws Exception;
 
 
-  public String handleMultiPartImage(MultipartFile multipartFile, Long id, String type) throws Exception;
+  public String handleMultiPartFile(MultipartFile multipartFile, Long id, String type) throws Exception;
+
+  public void delFileInOss(String ossPath) throws Exception;
 
 
 }

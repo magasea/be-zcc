@@ -53,8 +53,6 @@ public class AmcDebtPackController {
     AmcDebtpack amcDebtpack = new AmcDebtpack();
     AmcDebtpackExtVo amcDebtpackExtVo = amcBaseDebtpackVo.getContent();
     BeanUtils.copyProperties(amcDebtpackExtVo, amcDebtpack);
-    amcDebtpack.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getTotalAmount()));
-    amcDebtpack.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtpackExtVo.getAmcDebtpackInfo().getBaseAmount()));
     AmcDebtpackVo amcDebtpackVo = amcDebtpackService.update(amcDebtpack);
 
     amcDebtpackService.updateDebtpackCreditorRel(amcDebtpackExtVo.getAmcDebtpackInfo().getId(), amcDebtpackExtVo.getAmcOrigCreditorList());

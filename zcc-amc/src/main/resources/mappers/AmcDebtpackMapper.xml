@@ -4,8 +4,6 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
-    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
-    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="amc_company_id" jdbcType="BIGINT" property="amcCompanyId" />
@@ -70,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, base_amount, total_amount, settle_date, notes, amc_company_id, pack_status
+    id, title, settle_date, notes, amc_company_id, pack_status
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
     select
@@ -107,12 +105,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTPACK (title, base_amount, total_amount, 
-      settle_date, notes, amc_company_id, 
-      pack_status)
-    values (#{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
-      #{settleDate,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, 
-      #{packStatus,jdbcType=INTEGER})
+    insert into AMC_DEBTPACK (title, settle_date, notes, 
+      amc_company_id, pack_status)
+    values (#{title,jdbcType=CHAR}, #{settleDate,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, 
+      #{amcCompanyId,jdbcType=BIGINT}, #{packStatus,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -122,12 +118,6 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="title != null">
         title,
-      </if>
-      <if test="baseAmount != null">
-        base_amount,
-      </if>
-      <if test="totalAmount != null">
-        total_amount,
       </if>
       <if test="settleDate != null">
         settle_date,
@@ -145,12 +135,6 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
         #{title,jdbcType=CHAR},
-      </if>
-      <if test="baseAmount != null">
-        #{baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="totalAmount != null">
-        #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="settleDate != null">
         #{settleDate,jdbcType=TIMESTAMP},
@@ -181,12 +165,6 @@
       <if test="record.title != null">
         title = #{record.title,jdbcType=CHAR},
       </if>
-      <if test="record.baseAmount != null">
-        base_amount = #{record.baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.totalAmount != null">
-        total_amount = #{record.totalAmount,jdbcType=BIGINT},
-      </if>
       <if test="record.settleDate != null">
         settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       </if>
@@ -208,8 +186,6 @@
     update AMC_DEBTPACK
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
-      base_amount = #{record.baseAmount,jdbcType=BIGINT},
-      total_amount = #{record.totalAmount,jdbcType=BIGINT},
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       notes = #{record.notes,jdbcType=VARCHAR},
       amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
@@ -223,12 +199,6 @@
     <set>
       <if test="title != null">
         title = #{title,jdbcType=CHAR},
-      </if>
-      <if test="baseAmount != null">
-        base_amount = #{baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="settleDate != null">
         settle_date = #{settleDate,jdbcType=TIMESTAMP},
@@ -248,8 +218,6 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     update AMC_DEBTPACK
     set title = #{title,jdbcType=CHAR},
-      base_amount = #{baseAmount,jdbcType=BIGINT},
-      total_amount = #{totalAmount,jdbcType=BIGINT},
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
       notes = #{notes,jdbcType=VARCHAR},
       amc_company_id = #{amcCompanyId,jdbcType=BIGINT},

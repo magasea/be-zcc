@@ -107,7 +107,7 @@ public class AmcAssetController {
 
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/assets/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
@@ -164,7 +164,7 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/asset/doc/add", method = RequestMethod.POST)
   @ResponseBody
-  public List<AssetDocument> addAmcAssetImage(
+  public List<AssetDocument> addDoc(
       @RequestPart BaseActionVo<AssetDocument> assetDocumentBaseActionVo,
       @RequestParam("uploadingDocuments") MultipartFile[] uploadingDocuments) throws Exception {
     AssetDocument assetDocument = assetDocumentBaseActionVo.getContent();
@@ -211,18 +211,13 @@ public class AmcAssetController {
     }
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/addition/add", method = RequestMethod.POST)
   @ResponseBody
-  public void addAmcAssetDetail(@RequestBody BaseActionVo<AmcAssetDetailVo> amcAssetDetailVoBaseActionVo) throws Exception{
-    AmcAssetDetailVo amcAssetDetailVo = amcAssetDetailVoBaseActionVo.getContent();
-    AmcAsset amcAsset = new AmcAsset();
-    BeanUtils.copyProperties(amcAssetDetailVo.getAmcAssetVo(), amcAsset);
-    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetDetailVo.getAmcAssetVo().getInitPrice()));
-    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetDetailVo.getAmcAssetVo().getEstmPrice()));
-    amcAssetService.create(amcAsset);
+  public void addAmcAssetDetail(@RequestBody BaseActionVo<AssetAdditional> assetAdditionalBaseActionVo) throws Exception{
 
-    AssetAdditional assetAdditional = amcAssetDetailVo.getAssetAdditional();
+    AssetAdditional assetAdditional = assetAdditionalBaseActionVo.getContent();
     amcAssetService.createAssetAddition(assetAdditional);
+
 
 
   }

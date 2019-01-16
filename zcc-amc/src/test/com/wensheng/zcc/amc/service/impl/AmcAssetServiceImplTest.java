@@ -166,7 +166,6 @@ public class AmcAssetServiceImplTest {
             }
             assetImageCur.setAmcAssetId(amcAssetId);
             assetImageCur.setDescription(assetImage.getDescription());
-            assetImageCur.setIsToOss(assetImage.getIsToOss());
             assetImageCur.setMainPic(assetImage.getMainPic());
             assetImageCur.setOriginalName(assetImage.getOriginalName());
             assetImageCur.setOriginAssetId(assetImage.getAsset());

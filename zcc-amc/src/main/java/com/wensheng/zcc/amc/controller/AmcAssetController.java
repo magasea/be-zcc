@@ -107,7 +107,7 @@ public class AmcAssetController {
 
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/assets/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
@@ -213,7 +213,7 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
-  public void addAmcAssetDetail(BaseActionVo<AmcAssetDetailVo> amcAssetDetailVoBaseActionVo) throws Exception{
+  public void addAmcAssetDetail(@RequestBody BaseActionVo<AmcAssetDetailVo> amcAssetDetailVoBaseActionVo) throws Exception{
     AmcAssetDetailVo amcAssetDetailVo = amcAssetDetailVoBaseActionVo.getContent();
     AmcAsset amcAsset = new AmcAsset();
     BeanUtils.copyProperties(amcAssetDetailVo.getAmcAssetVo(), amcAsset);

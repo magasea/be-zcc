@@ -11,6 +11,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -233,8 +234,11 @@ public class AmcDebtController {
       List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
 
       List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
+
+      List<AmcOrigCreditor> origCreditors = amcDebtService.getOriginCreditor(debtId);
       amcDebtExtVo.setCreditors(creditors);
       amcDebtExtVo.setAmcGrntors(amcGrntors);
+      amcDebtExtVo.setOrigCreditors(origCreditors);
     }catch (Exception ex){
       log.error("failed to get creditor or grantor",ex);
     }

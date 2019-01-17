@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import java.util.List;
 import lombok.Data;
 
@@ -16,4 +17,5 @@ public class AmcDebtExtVo {
   AmcDebtVo amcDebtVo;
   List<AmcCreditor> creditors;
   List<AmcGrntor> amcGrntors;
+  List<AmcOrigCreditor> origCreditors;
 }

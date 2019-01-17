@@ -22,10 +22,12 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
@@ -36,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.security.auth.login.CredentialException;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcCreditorDebtMapper amcCreditorDebtMapper;
+
+  @Autowired
+  AmcDebtpackService amcDebtpackService;
 
   @Override
   public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass) {
@@ -373,5 +377,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcGrntorExample.createCriteria().andIdIn(grantorIds);
     List<AmcGrntor> grntors = amcGrntorMapper.selectByExample(amcGrntorExample);
     return grntors;
+  }
+
+  @Override
+  public List<AmcOrigCreditor> getOriginCreditor(Long amcDebtId) {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
+    List<AmcOrigCreditor> amcOrigCreditors = amcDebtpackService.getCreditorByDebtPackId(amcDebt.getDebtpackId());
+    return amcOrigCreditors;
   }
 }

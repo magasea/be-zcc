@@ -62,7 +62,8 @@
   ${prefix}is_recommanded as is_recommanded,
   ${prefix}start_date as start_date,
   ${prefix}end_date as end_date,
-  ${prefix}orig_debt_id as orig_debt_id
+  ${prefix}orig_debt_id as orig_debt_id,
+  ${prefix}debt_desc as debt_desc
   </sql>
   <sql id="ASSET_Column_List">
   ${prefix}id as ${alias}id,

@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.aop.editaction;
+package com.wensheng.zcc.amc.aop;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

@@ -47,6 +47,8 @@ public class AmcDebt {
 
     private Long origDebtId;
 
+    private String debtDesc;
+
     public Long getId() {
         return id;
     }
@@ -221,5 +223,13 @@ public class AmcDebt {
 
     public void setOrigDebtId(Long origDebtId) {
         this.origDebtId = origDebtId;
+    }
+
+    public String getDebtDesc() {
+        return debtDesc;
+    }
+
+    public void setDebtDesc(String debtDesc) {
+        this.debtDesc = debtDesc == null ? null : debtDesc.trim();
     }
 }

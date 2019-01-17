@@ -24,6 +24,7 @@
     <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
     <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
     <result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />
+    <result column="debt_desc" jdbcType="VARCHAR" property="debtDesc" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -87,7 +88,7 @@
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
     total_amount_desc, settle_date, court_id, amc_debt_code, edit_status, publish_date, 
     law_stat_desc, estimated_price, amc_contact1, amc_contact2, is_recommanded, start_date, 
-    end_date, orig_debt_id
+    end_date, orig_debt_id, debt_desc
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -130,16 +131,16 @@
       court_id, amc_debt_code, edit_status, 
       publish_date, law_stat_desc, estimated_price, 
       amc_contact1, amc_contact2, is_recommanded, 
-      start_date, end_date, orig_debt_id
-      )
+      start_date, end_date, orig_debt_id, 
+      debt_desc)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
       #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=VARCHAR}, #{editStatus,jdbcType=INTEGER}, 
       #{publishDate,jdbcType=TIMESTAMP}, #{lawStatDesc,jdbcType=VARCHAR}, #{estimatedPrice,jdbcType=BIGINT}, 
       #{amcContact1,jdbcType=BIGINT}, #{amcContact2,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
-      #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{origDebtId,jdbcType=BIGINT}
-      )
+      #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{origDebtId,jdbcType=BIGINT}, 
+      #{debtDesc,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -210,6 +211,9 @@
       <if test="origDebtId != null">
         orig_debt_id,
       </if>
+      <if test="debtDesc != null">
+        debt_desc,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="debtpackId != null">
@@ -274,6 +278,9 @@
       </if>
       <if test="origDebtId != null">
         #{origDebtId,jdbcType=BIGINT},
+      </if>
+      <if test="debtDesc != null">
+        #{debtDesc,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -352,6 +359,9 @@
       <if test="record.origDebtId != null">
         orig_debt_id = #{record.origDebtId,jdbcType=BIGINT},
       </if>
+      <if test="record.debtDesc != null">
+        debt_desc = #{record.debtDesc,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -380,7 +390,8 @@
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       start_date = #{record.startDate,jdbcType=TIMESTAMP},
       end_date = #{record.endDate,jdbcType=TIMESTAMP},
-      orig_debt_id = #{record.origDebtId,jdbcType=BIGINT}
+      orig_debt_id = #{record.origDebtId,jdbcType=BIGINT},
+      debt_desc = #{record.debtDesc,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -451,6 +462,9 @@
       <if test="origDebtId != null">
         orig_debt_id = #{origDebtId,jdbcType=BIGINT},
       </if>
+      <if test="debtDesc != null">
+        debt_desc = #{debtDesc,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -476,7 +490,8 @@
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       start_date = #{startDate,jdbcType=TIMESTAMP},
       end_date = #{endDate,jdbcType=TIMESTAMP},
-      orig_debt_id = #{origDebtId,jdbcType=BIGINT}
+      orig_debt_id = #{origDebtId,jdbcType=BIGINT},
+      debt_desc = #{debtDesc,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">

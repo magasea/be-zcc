@@ -1,6 +1,6 @@
 package com.wensheng.zcc.amc.controller;
 
-import com.wensheng.zcc.amc.aop.editaction.LogExecutionTime;
+import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;

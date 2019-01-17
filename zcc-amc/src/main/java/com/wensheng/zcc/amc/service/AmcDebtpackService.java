@@ -35,6 +35,7 @@ public interface AmcDebtpackService {
 
   public List<AmcOrigCreditor> getAllCreditors(int offset, int pageSize, Map<String, Direction> orderByParam)
       throws Exception;
+  public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId);
 
   public Long getCreditorsCount();
 

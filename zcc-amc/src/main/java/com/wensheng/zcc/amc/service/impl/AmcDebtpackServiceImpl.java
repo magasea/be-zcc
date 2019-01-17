@@ -18,6 +18,7 @@ import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
@@ -157,6 +158,19 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
     RowBounds rowBounds = new RowBounds(offset, size);
     List<AmcOrigCreditor> amcOrigCreditors = amcOrigCreditorMapper.selectByExampleWithRowbounds(amcOrigCreditorExample, rowBounds);
     return amcOrigCreditors;
+  }
+
+  @Override
+  public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId) {
+    AmcCreditorDebtpackExample amcCreditorDebtpackExample = new AmcCreditorDebtpackExample();
+    amcCreditorDebtpackExample.createCriteria().andDebtpackIdEqualTo(debtPackId);
+    List<AmcCreditorDebtpack> creditorDebtpacks =  amcCreditorDebtpackMapper.selectByExample(amcCreditorDebtpackExample);
+    List<Long> creditorIds =
+        creditorDebtpacks.stream().map(creditorDebtpack -> creditorDebtpack.getCreditorId()).collect(Collectors.toList());
+    AmcOrigCreditorExample amcOrigCreditorExample = new AmcOrigCreditorExample();
+    amcOrigCreditorExample.createCriteria().andIdIn(creditorIds);
+    List<AmcOrigCreditor> origCreditors = amcOrigCreditorMapper.selectByExample(amcOrigCreditorExample);
+    return origCreditors;
   }
 
   @Override

@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.aop.editaction;
+package com.wensheng.zcc.amc.aop;
 
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
@@ -25,7 +25,7 @@ import org.springframework.context.annotation.Configuration;
 @Aspect
 @Configuration
 @Slf4j
-public class EditActionAspect {
+public class AmcAspect {
   @Autowired
   ZccRulesService zccRulesService;
 

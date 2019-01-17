@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
 import java.util.Map;
@@ -60,5 +61,7 @@ public interface AmcDebtService {
   public List<AmcCreditor> getCreditors(Long amcDebtId) throws Exception;
 
   public List<AmcGrntor> getGrantors(Long amcDebtId);
+
+  public List<AmcOrigCreditor> getOriginCreditor(Long amcDebtId);
 
 }

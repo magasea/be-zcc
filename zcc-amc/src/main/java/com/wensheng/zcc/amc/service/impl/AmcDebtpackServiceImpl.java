@@ -3,12 +3,14 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
@@ -43,6 +45,9 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Autowired
   AmcCreditorDebtpackMapper amcCreditorDebtpackMapper;
+
+  @Autowired
+  AmcPersonMapper amcPersonMapper;
 
   @Override
   @Transactional
@@ -161,6 +166,8 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
     return amcOrigCreditorMapper.countByExample(null);
   }
+
+
 
 
 }

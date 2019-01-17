@@ -59,7 +59,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     @Override
-    public AssetAdditional createAssetAddition(AssetAdditional additional) {
+    public AssetAdditional createOrUpdateAssetAddition(AssetAdditional additional) {
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(additional.getAmcAssetId()));
         List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
@@ -79,6 +79,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return additional;
     }
 
+
+
     @Override
     public AmcAssetVo del(AmcAsset amcAsset) {
         return null;
@@ -86,7 +88,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) {
-        return null;
+        amcAssetMapper.updateByPrimaryKey(amcAsset);
+        return Dao2VoUtils.convertDo2Vo(amcAsset);
     }
 
     @Override

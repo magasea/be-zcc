@@ -157,12 +157,19 @@ public class AmcDebtController {
 
 
     //2. check contact person exist
+    if(createVo.getAmcContact1() == null || createVo.getAmcContact1() < 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
+    }
+    boolean isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact1());
+    if( !isAmcContactExist ){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
+          + "id:%d", createVo.getAmcContact1()));
+    }
+
 
     //3. create the debt
-
-
-
-      return "succed";
+    amcDebtService.create(amcDebt);
+    return "succed";
   }
 
 

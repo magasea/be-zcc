@@ -42,4 +42,6 @@ public interface AmcDebtService {
 
   Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception;
 
+  boolean isAmcContactexist(Long amcContact1);
+
 }

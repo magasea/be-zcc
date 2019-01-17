@@ -22,11 +22,13 @@ public interface AmcAssetService {
 
     public AmcAssetVo create(AmcAsset amcAsset);
 
-    public AssetAdditional createAssetAddition(AssetAdditional additional);
+
 
     public AmcAssetVo del(AmcAsset amcAsset);
 
     public AmcAssetVo update(AmcAsset amcAsset);
+
+    public AssetAdditional createOrUpdateAssetAddition(AssetAdditional additional);
 
     public List<AmcAssetVo> queryAll(int offset, int size);
 

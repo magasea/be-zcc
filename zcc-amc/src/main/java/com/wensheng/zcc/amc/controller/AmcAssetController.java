@@ -112,15 +112,34 @@ public class AmcAssetController {
   @ResponseBody
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
-    AmcAsset amcAsset = new AmcAsset();
-    BeanUtils.copyProperties(amcAssetVo, amcAsset);
-    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getContent().getEstmPrice()));
-    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getContent().getInitPrice()));
+    AmcAsset amcAsset = getAssetFromVo(amcAssetVo.getContent());
     AmcAssetVo assetVo = amcAssetService.create(amcAsset);
     amcAssetVo.getContent().getAssetAdditional().setAmcAssetId(assetVo.getId());
-    AssetAdditional assetAdditional = amcAssetService.createAssetAddition(amcAssetVo.getContent().getAssetAdditional());
+    AssetAdditional assetAdditional =
+        amcAssetService.createOrUpdateAssetAddition(amcAssetVo.getContent().getAssetAdditional());
     assetVo.setAssetAdditional(assetAdditional);
     return assetVo;
+  }
+
+  @RequestMapping(value = "/amcid/{amcid}/asset/update", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcAssetVo updateAmcAsset(
+      @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
+    AmcAsset amcAsset = getAssetFromVo(amcAssetVo.getContent());
+    AmcAssetVo assetVo = amcAssetService.update(amcAsset);
+    amcAssetVo.getContent().getAssetAdditional().setAmcAssetId(assetVo.getId());
+    AssetAdditional assetAdditional =
+        amcAssetService.createOrUpdateAssetAddition(amcAssetVo.getContent().getAssetAdditional());
+    assetVo.setAssetAdditional(assetAdditional);
+    return assetVo;
+  }
+
+  private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo){
+    AmcAsset amcAsset = new AmcAsset();
+    BeanUtils.copyProperties(amcAssetVo, amcAsset);
+    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getEstmPrice()));
+    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getInitPrice()));
+    return amcAsset;
   }
 
   @RequestMapping(value = "/amcid/{amcid}/asset/image/add", method = RequestMethod.POST)
@@ -203,6 +222,15 @@ public class AmcAssetController {
     return assetDocuments;
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/asset/doc/del", method = RequestMethod.POST)
+  @ResponseBody
+  public void delAmcAssetDocument(@RequestBody BaseActionVo<List<AssetDocument>> listBaseActionVo ) throws Exception{
+    for(AssetDocument assetDocument: listBaseActionVo.getContent()){
+
+      amcOssFileService.delFileInOss(assetDocument.getOssPath());
+    }
+  }
+
   @RequestMapping(value = "/amcid/{amcid}/asset/image/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcAssetImage(@RequestBody BaseActionVo<List<AssetImage>> assetImagesVo ) throws Exception{
@@ -212,16 +240,7 @@ public class AmcAssetController {
     }
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/addition/add", method = RequestMethod.POST)
-  @ResponseBody
-  public void addAmcAssetDetail(@RequestBody BaseActionVo<AssetAdditional> assetAdditionalBaseActionVo) throws Exception{
 
-    AssetAdditional assetAdditional = assetAdditionalBaseActionVo.getContent();
-    amcAssetService.createAssetAddition(assetAdditional);
-
-
-
-  }
 
 
 

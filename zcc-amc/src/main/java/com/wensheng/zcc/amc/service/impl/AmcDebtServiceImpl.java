@@ -14,6 +14,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -276,5 +277,15 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       default:
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_GRANTORTYPE);
     }
+  }
+
+  @Override
+  public boolean isAmcContactexist(Long amcContact1) {
+    AmcPerson amcPerson = amcPersonMapper.selectByPrimaryKey(amcContact1);
+    if(amcPerson == null){
+      return false;
+    }
+
+    return true;
   }
 }

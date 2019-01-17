@@ -228,16 +228,17 @@ public class AmcDebtController {
     AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
     AmcDebtVo amcDebtVo =  amcDebtService.get(debtId);
-
-    List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
-
-    List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
-
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
-    amcDebtExtVo.setCreditors(creditors);
-    amcDebtExtVo.setAmcGrntors(amcGrntors);
 
+    try{
+      List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
 
+      List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
+      amcDebtExtVo.setCreditors(creditors);
+      amcDebtExtVo.setAmcGrntors(amcGrntors);
+    }catch (Exception ex){
+      log.error("failed to get creditor or grantor",ex);
+    }
 
 
     return amcDebtExtVo;

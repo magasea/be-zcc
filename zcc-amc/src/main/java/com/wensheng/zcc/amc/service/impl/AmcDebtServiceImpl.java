@@ -347,10 +347,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcCreditor> getCreditors(Long amcDebtId) {
+  public List<AmcCreditor> getCreditors(Long amcDebtId) throws Exception {
     AmcCreditorDebtExample amcCreditorDebtExample = new AmcCreditorDebtExample();
     amcCreditorDebtExample.createCriteria().andDebtIdEqualTo(amcDebtId);
     List<AmcCreditorDebt> creditors = amcCreditorDebtMapper.selectByExample(amcCreditorDebtExample);
+    if(CollectionUtils.isEmpty(creditors)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_CREDITOR);
+    }
     AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
     List<Long> creditorIds =
         creditors.stream().map( creditor  -> creditor.getCreditorId()).collect(Collectors.toList());

@@ -17,7 +17,7 @@
     <!--<result column="amc_debt_code" jdbcType="VARCHAR" property="amcDebtCode" />-->
     <!--<result column="edit_status" jdbcType="INTEGER" property="editStatus" />-->
     <!--<result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />-->
-    <!--<result column="law_status" jdbcType="INTEGER" property="lawStatus" />-->
+    <!--<result column="law_stat_desc" jdbcType="INTEGER" property="lawStatus" />-->
     <!--<result column="estimated_price" jdbcType="BIGINT" property="estimatedPrice" />-->
     <!--<result column="amc_contact1" jdbcType="BIGINT" property="amcContact1" />-->
     <!--<result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />-->
@@ -55,7 +55,7 @@
   ${prefix}amc_debt_code as amc_debt_code,
   ${prefix}edit_status as edit_status,
   ${prefix}publish_date as publish_date,
-  ${prefix}law_status as law_status,
+  ${prefix}law_stat_desc as law_stat_desc,
   ${prefix}estimated_price as estimated_price,
   ${prefix}amc_contact1 as amc_contact1,
   ${prefix}amc_contact2 as amc_contact2,

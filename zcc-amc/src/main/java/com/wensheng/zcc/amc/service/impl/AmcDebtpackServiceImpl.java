@@ -10,11 +10,9 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
-import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
@@ -71,7 +69,7 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
           amcCreditorDebtpack.setCreditorId(amcOrigCreditor);
           amcCreditorDebtpackMapper.insertSelective(amcCreditorDebtpack);
         }else{
-          throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_CREDITOR);
+          throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ORIG_CREDITOR);
         }
       }
 

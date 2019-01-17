@@ -57,7 +57,7 @@ public interface AmcDebtService {
 
   public void connDebt2Creditors(List<Long> creditorIds, Long debtId);
 
-  public List<AmcCreditor> getCreditors(Long amcDebtId) ;
+  public List<AmcCreditor> getCreditors(Long amcDebtId) throws Exception;
 
   public List<AmcGrntor> getGrantors(Long amcDebtId);
 

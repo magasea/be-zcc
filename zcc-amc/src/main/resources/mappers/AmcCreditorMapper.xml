@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtpackMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="creditor_id" jdbcType="BIGINT" property="creditorId" />
-    <result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="person_id" jdbcType="CHAR" property="personId" />
+    <result column="company_id" jdbcType="BIGINT" property="companyId" />
+    <result column="orig_cmpy_id" jdbcType="BIGINT" property="origCmpyId" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,16 +69,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, creditor_id, debtpack_id
+    id, name, type, person_id, company_id, orig_cmpy_id, note
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_CREDITOR_DEBTPACK
+    from AMC_CREDITOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -85,65 +89,105 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_CREDITOR_DEBTPACK
+    from AMC_CREDITOR
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_CREDITOR_DEBTPACK
+    delete from AMC_CREDITOR
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample">
-    delete from AMC_CREDITOR_DEBTPACK
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample">
+    delete from AMC_CREDITOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack">
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_CREDITOR_DEBTPACK (creditor_id, debtpack_id)
-    values (#{creditorId,jdbcType=BIGINT}, #{debtpackId,jdbcType=BIGINT})
+    insert into AMC_CREDITOR (name, type, person_id, 
+      company_id, orig_cmpy_id, note
+      )
+    values (#{name,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{personId,jdbcType=CHAR}, 
+      #{companyId,jdbcType=BIGINT}, #{origCmpyId,jdbcType=BIGINT}, #{note,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_CREDITOR_DEBTPACK
+    insert into AMC_CREDITOR
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="creditorId != null">
-        creditor_id,
+      <if test="name != null">
+        name,
       </if>
-      <if test="debtpackId != null">
-        debtpack_id,
+      <if test="type != null">
+        type,
+      </if>
+      <if test="personId != null">
+        person_id,
+      </if>
+      <if test="companyId != null">
+        company_id,
+      </if>
+      <if test="origCmpyId != null">
+        orig_cmpy_id,
+      </if>
+      <if test="note != null">
+        note,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="creditorId != null">
-        #{creditorId,jdbcType=BIGINT},
+      <if test="name != null">
+        #{name,jdbcType=CHAR},
       </if>
-      <if test="debtpackId != null">
-        #{debtpackId,jdbcType=BIGINT},
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="personId != null">
+        #{personId,jdbcType=CHAR},
+      </if>
+      <if test="companyId != null">
+        #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="origCmpyId != null">
+        #{origCmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample" resultType="java.lang.Long">
-    select count(*) from AMC_CREDITOR_DEBTPACK
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample" resultType="java.lang.Long">
+    select count(*) from AMC_CREDITOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_CREDITOR_DEBTPACK
+    update AMC_CREDITOR
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.creditorId != null">
-        creditor_id = #{record.creditorId,jdbcType=BIGINT},
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=CHAR},
       </if>
-      <if test="record.debtpackId != null">
-        debtpack_id = #{record.debtpackId,jdbcType=BIGINT},
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.personId != null">
+        person_id = #{record.personId,jdbcType=CHAR},
+      </if>
+      <if test="record.companyId != null">
+        company_id = #{record.companyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.origCmpyId != null">
+        orig_cmpy_id = #{record.origCmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -151,40 +195,60 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_CREDITOR_DEBTPACK
+    update AMC_CREDITOR
     set id = #{record.id,jdbcType=BIGINT},
-      creditor_id = #{record.creditorId,jdbcType=BIGINT},
-      debtpack_id = #{record.debtpackId,jdbcType=BIGINT}
+      name = #{record.name,jdbcType=CHAR},
+      type = #{record.type,jdbcType=INTEGER},
+      person_id = #{record.personId,jdbcType=CHAR},
+      company_id = #{record.companyId,jdbcType=BIGINT},
+      orig_cmpy_id = #{record.origCmpyId,jdbcType=BIGINT},
+      note = #{record.note,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack">
-    update AMC_CREDITOR_DEBTPACK
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor">
+    update AMC_CREDITOR
     <set>
-      <if test="creditorId != null">
-        creditor_id = #{creditorId,jdbcType=BIGINT},
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
       </if>
-      <if test="debtpackId != null">
-        debtpack_id = #{debtpackId,jdbcType=BIGINT},
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="personId != null">
+        person_id = #{personId,jdbcType=CHAR},
+      </if>
+      <if test="companyId != null">
+        company_id = #{companyId,jdbcType=BIGINT},
+      </if>
+      <if test="origCmpyId != null">
+        orig_cmpy_id = #{origCmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack">
-    update AMC_CREDITOR_DEBTPACK
-    set creditor_id = #{creditorId,jdbcType=BIGINT},
-      debtpack_id = #{debtpackId,jdbcType=BIGINT}
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor">
+    update AMC_CREDITOR
+    set name = #{name,jdbcType=CHAR},
+      type = #{type,jdbcType=INTEGER},
+      person_id = #{personId,jdbcType=CHAR},
+      company_id = #{companyId,jdbcType=BIGINT},
+      orig_cmpy_id = #{origCmpyId,jdbcType=BIGINT},
+      note = #{note,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_CREDITOR_DEBTPACK
+    from AMC_CREDITOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

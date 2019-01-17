@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.module.vo;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -40,7 +42,7 @@ public class AmcDebtVo {
 
   private Date publishDate;
 
-  private Integer lawStatus;
+  private String lawStatus;
 
   private BigDecimal estimatedPrice;
 
@@ -57,5 +59,7 @@ public class AmcDebtVo {
   List<AmcAssetVo> assetVos;
 
   DebtImage debtImage;
+
+
 
 }

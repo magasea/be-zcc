@@ -1,8 +1,11 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntctrct;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +27,7 @@ public interface AmcDebtService {
 
   public List<AmcDebtVo> queryAll(int offset, int size);
 
-  public AmcDebtVo get(Long AmcDebtId) throws Exception;
+  public AmcDebtVo get(Long amcDebtId) throws Exception;
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
@@ -43,5 +46,19 @@ public interface AmcDebtService {
   Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception;
 
   boolean isAmcContactexist(Long amcContact1);
+
+  public AmcCreditor create(AmcCreditor creditor);
+
+  public AmcCreditor update(AmcCreditor creditor);
+
+  public AmcCmpy create(AmcCmpy amcCmpy);
+
+  public AmcCmpy update(AmcCmpy amcCmpy);
+
+  public void connDebt2Creditors(List<Long> creditorIds, Long debtId);
+
+  public List<AmcCreditor> getCreditors(Long amcDebtId) ;
+
+  public List<AmcGrntor> getGrantors(Long amcDebtId);
 
 }

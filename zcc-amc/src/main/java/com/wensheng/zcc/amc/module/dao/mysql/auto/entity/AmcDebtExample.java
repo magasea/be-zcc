@@ -985,63 +985,73 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusIsNull() {
-            addCriterion("law_status is null");
+        public Criteria andLawStatDescIsNull() {
+            addCriterion("law_stat_desc is null");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusIsNotNull() {
-            addCriterion("law_status is not null");
+        public Criteria andLawStatDescIsNotNull() {
+            addCriterion("law_stat_desc is not null");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusEqualTo(Integer value) {
-            addCriterion("law_status =", value, "lawStatus");
+        public Criteria andLawStatDescEqualTo(String value) {
+            addCriterion("law_stat_desc =", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusNotEqualTo(Integer value) {
-            addCriterion("law_status <>", value, "lawStatus");
+        public Criteria andLawStatDescNotEqualTo(String value) {
+            addCriterion("law_stat_desc <>", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusGreaterThan(Integer value) {
-            addCriterion("law_status >", value, "lawStatus");
+        public Criteria andLawStatDescGreaterThan(String value) {
+            addCriterion("law_stat_desc >", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusGreaterThanOrEqualTo(Integer value) {
-            addCriterion("law_status >=", value, "lawStatus");
+        public Criteria andLawStatDescGreaterThanOrEqualTo(String value) {
+            addCriterion("law_stat_desc >=", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusLessThan(Integer value) {
-            addCriterion("law_status <", value, "lawStatus");
+        public Criteria andLawStatDescLessThan(String value) {
+            addCriterion("law_stat_desc <", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusLessThanOrEqualTo(Integer value) {
-            addCriterion("law_status <=", value, "lawStatus");
+        public Criteria andLawStatDescLessThanOrEqualTo(String value) {
+            addCriterion("law_stat_desc <=", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusIn(List<Integer> values) {
-            addCriterion("law_status in", values, "lawStatus");
+        public Criteria andLawStatDescLike(String value) {
+            addCriterion("law_stat_desc like", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusNotIn(List<Integer> values) {
-            addCriterion("law_status not in", values, "lawStatus");
+        public Criteria andLawStatDescNotLike(String value) {
+            addCriterion("law_stat_desc not like", value, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusBetween(Integer value1, Integer value2) {
-            addCriterion("law_status between", value1, value2, "lawStatus");
+        public Criteria andLawStatDescIn(List<String> values) {
+            addCriterion("law_stat_desc in", values, "lawStatDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatusNotBetween(Integer value1, Integer value2) {
-            addCriterion("law_status not between", value1, value2, "lawStatus");
+        public Criteria andLawStatDescNotIn(List<String> values) {
+            addCriterion("law_stat_desc not in", values, "lawStatDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawStatDescBetween(String value1, String value2) {
+            addCriterion("law_stat_desc between", value1, value2, "lawStatDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawStatDescNotBetween(String value1, String value2) {
+            addCriterion("law_stat_desc not between", value1, value2, "lawStatDesc");
             return (Criteria) this;
         }
 

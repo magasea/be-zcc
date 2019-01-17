@@ -456,11 +456,11 @@ public class AmcAssetServiceImplTest {
             amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
         }
         amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommandEnum.RECOMMAND.getId(): IsRecommandEnum.NOT_RECOMMAND.getId());
-        if(StringUtils.isEmpty(originItem.getLawStatus())){
-            logger.error("this originItem with title:" + originItem.getTitle() +" lawstatus is empty");
-        }else{
-            amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
-        }
+//        if(StringUtils.isEmpty(originItem.getLawStatus())){
+//            logger.error("this originItem with title:" + originItem.getTitle() +" lawstatus is empty");
+//        }else{
+//            amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
+//        }
         amcDebt.setOrigDebtId(originItem.getId());
         amcDebt.setPublishDate(originItem.getPublishDate());
         try {

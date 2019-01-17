@@ -31,7 +31,7 @@ public class AmcDebt {
 
     private Date publishDate;
 
-    private Integer lawStatus;
+    private String lawStatDesc;
 
     private Long estimatedPrice;
 
@@ -159,12 +159,12 @@ public class AmcDebt {
         this.publishDate = publishDate;
     }
 
-    public Integer getLawStatus() {
-        return lawStatus;
+    public String getLawStatDesc() {
+        return lawStatDesc;
     }
 
-    public void setLawStatus(Integer lawStatus) {
-        this.lawStatus = lawStatus;
+    public void setLawStatDesc(String lawStatDesc) {
+        this.lawStatDesc = lawStatDesc == null ? null : lawStatDesc.trim();
     }
 
     public Long getEstimatedPrice() {

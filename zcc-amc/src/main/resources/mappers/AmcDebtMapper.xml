@@ -16,7 +16,7 @@
     <result column="amc_debt_code" jdbcType="VARCHAR" property="amcDebtCode" />
     <result column="edit_status" jdbcType="INTEGER" property="editStatus" />
     <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
-    <result column="law_status" jdbcType="INTEGER" property="lawStatus" />
+    <result column="law_stat_desc" jdbcType="VARCHAR" property="lawStatDesc" />
     <result column="estimated_price" jdbcType="BIGINT" property="estimatedPrice" />
     <result column="amc_contact1" jdbcType="BIGINT" property="amcContact1" />
     <result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />
@@ -86,7 +86,7 @@
   <sql id="Base_Column_List">
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
     total_amount_desc, settle_date, court_id, amc_debt_code, edit_status, publish_date, 
-    law_status, estimated_price, amc_contact1, amc_contact2, is_recommanded, start_date, 
+    law_stat_desc, estimated_price, amc_contact1, amc_contact2, is_recommanded, start_date, 
     end_date, orig_debt_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
@@ -128,7 +128,7 @@
       base_amount, base_amount_desc, base_date, 
       total_amount, total_amount_desc, settle_date, 
       court_id, amc_debt_code, edit_status, 
-      publish_date, law_status, estimated_price, 
+      publish_date, law_stat_desc, estimated_price, 
       amc_contact1, amc_contact2, is_recommanded, 
       start_date, end_date, orig_debt_id
       )
@@ -136,7 +136,7 @@
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
       #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=VARCHAR}, #{editStatus,jdbcType=INTEGER}, 
-      #{publishDate,jdbcType=TIMESTAMP}, #{lawStatus,jdbcType=INTEGER}, #{estimatedPrice,jdbcType=BIGINT}, 
+      #{publishDate,jdbcType=TIMESTAMP}, #{lawStatDesc,jdbcType=VARCHAR}, #{estimatedPrice,jdbcType=BIGINT}, 
       #{amcContact1,jdbcType=BIGINT}, #{amcContact2,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
       #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{origDebtId,jdbcType=BIGINT}
       )
@@ -186,8 +186,8 @@
       <if test="publishDate != null">
         publish_date,
       </if>
-      <if test="lawStatus != null">
-        law_status,
+      <if test="lawStatDesc != null">
+        law_stat_desc,
       </if>
       <if test="estimatedPrice != null">
         estimated_price,
@@ -251,8 +251,8 @@
       <if test="publishDate != null">
         #{publishDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="lawStatus != null">
-        #{lawStatus,jdbcType=INTEGER},
+      <if test="lawStatDesc != null">
+        #{lawStatDesc,jdbcType=VARCHAR},
       </if>
       <if test="estimatedPrice != null">
         #{estimatedPrice,jdbcType=BIGINT},
@@ -328,8 +328,8 @@
       <if test="record.publishDate != null">
         publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.lawStatus != null">
-        law_status = #{record.lawStatus,jdbcType=INTEGER},
+      <if test="record.lawStatDesc != null">
+        law_stat_desc = #{record.lawStatDesc,jdbcType=VARCHAR},
       </if>
       <if test="record.estimatedPrice != null">
         estimated_price = #{record.estimatedPrice,jdbcType=BIGINT},
@@ -373,7 +373,7 @@
       amc_debt_code = #{record.amcDebtCode,jdbcType=VARCHAR},
       edit_status = #{record.editStatus,jdbcType=INTEGER},
       publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
-      law_status = #{record.lawStatus,jdbcType=INTEGER},
+      law_stat_desc = #{record.lawStatDesc,jdbcType=VARCHAR},
       estimated_price = #{record.estimatedPrice,jdbcType=BIGINT},
       amc_contact1 = #{record.amcContact1,jdbcType=BIGINT},
       amc_contact2 = #{record.amcContact2,jdbcType=BIGINT},
@@ -427,8 +427,8 @@
       <if test="publishDate != null">
         publish_date = #{publishDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="lawStatus != null">
-        law_status = #{lawStatus,jdbcType=INTEGER},
+      <if test="lawStatDesc != null">
+        law_stat_desc = #{lawStatDesc,jdbcType=VARCHAR},
       </if>
       <if test="estimatedPrice != null">
         estimated_price = #{estimatedPrice,jdbcType=BIGINT},
@@ -469,7 +469,7 @@
       amc_debt_code = #{amcDebtCode,jdbcType=VARCHAR},
       edit_status = #{editStatus,jdbcType=INTEGER},
       publish_date = #{publishDate,jdbcType=TIMESTAMP},
-      law_status = #{lawStatus,jdbcType=INTEGER},
+      law_stat_desc = #{lawStatDesc,jdbcType=VARCHAR},
       estimated_price = #{estimatedPrice,jdbcType=BIGINT},
       amc_contact1 = #{amcContact1,jdbcType=BIGINT},
       amc_contact2 = #{amcContact2,jdbcType=BIGINT},

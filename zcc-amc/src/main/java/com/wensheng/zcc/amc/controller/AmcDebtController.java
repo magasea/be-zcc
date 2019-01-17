@@ -6,9 +6,14 @@ import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -80,6 +85,8 @@ public class AmcDebtController {
   }
 
 
+
+
   private void checkGrantor(AmcGrntctrct grntctrct) throws Exception {
     if(amcDebtService.isDebtIdExist(grntctrct.getDebtId())){
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE,""+grntctrct
@@ -92,7 +99,41 @@ public class AmcDebtController {
     }
   }
 
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/creditor/add", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcCreditor addAmcCreditor(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcCreditor> amcCreditorBaseActionVo) throws Exception {
 
+
+    return amcDebtService.create(amcCreditorBaseActionVo.getContent());
+  }
+
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/creditor/update", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcCreditor updateAmcCreditor(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcCreditor> amcCreditorBaseActionVo) throws Exception {
+
+    return amcDebtService.create(amcCreditorBaseActionVo.getContent());
+  }
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/company/add", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcCmpy addAmcCompany(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
+
+
+    return amcDebtService.create(amcCmpyBaseActionVo.getContent());
+  }
+
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/company/update", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcCmpy updateAmcCompany(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
+
+    return amcDebtService.create(amcCmpyBaseActionVo.getContent());
+  }
 
   @LogExecutionTime
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
@@ -168,10 +209,39 @@ public class AmcDebtController {
 
 
     //3. create the debt
-    amcDebtService.create(amcDebt);
+    AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
+
+    //4. make relationship between creditors with debt
+    if(CollectionUtils.isEmpty(createVo.getCreditors())){
+      amcDebtService.connDebt2Creditors(createVo.getCreditors(), amcDebtVo.getId());
+    }
+
     return "succed";
   }
 
+
+  @RequestMapping(value = "/api/amcid/{id}/debt", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDebtExtVo queryDebt(@RequestParam("debtId") Long debtId)
+      throws Exception {
+
+    AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
+
+    AmcDebtVo amcDebtVo =  amcDebtService.get(debtId);
+
+    List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
+
+    List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
+
+    amcDebtExtVo.setAmcDebtVo(amcDebtVo);
+    amcDebtExtVo.setCreditors(creditors);
+    amcDebtExtVo.setAmcGrntors(amcGrntors);
+
+
+
+
+    return amcDebtExtVo;
+  }
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody
@@ -200,13 +270,15 @@ public class AmcDebtController {
   }
 
 
-  @RequestMapping(value = "/api/amcid/{id}/debt", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{id}/debt/editAble", method = RequestMethod.POST)
   @ResponseBody
-  public Boolean editAble(@RequestParam("amcDebtId") Long amcDebtId,
+  public Boolean editAble(
       @RequestParam("debtStatus") Integer debtStatus)
-      throws Exception {
+      {
 
-   return  zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
+
+
+    return  zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
 
   }
 

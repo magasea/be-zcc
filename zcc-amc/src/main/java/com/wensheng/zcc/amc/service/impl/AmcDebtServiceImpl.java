@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
@@ -10,10 +12,16 @@ import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -27,6 +35,8 @@ import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import javax.security.auth.login.CredentialException;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +83,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Autowired
   AmcCmpyMapper amcCmpyMapper;
 
+  @Autowired
+  AmcCreditorMapper amcCreditorMapper;
+
+  @Autowired
+  AmcCreditorDebtMapper amcCreditorDebtMapper;
+
   @Override
   public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass) {
     DebtImage debtImage = new DebtImage();
@@ -98,8 +114,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcDebtVo create(AmcDebt AmcDebt) {
-    return null;
+  public AmcDebtVo create(AmcDebt amcDebt) {
+    Long debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
+    amcDebt.setAmcId(debtId);
+    return convertDo2Vo(amcDebt);
   }
 
   @Override
@@ -287,5 +305,70 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
 
     return true;
+  }
+
+  @Override
+  public AmcCreditor create(AmcCreditor creditor) {
+    Long id = Long.valueOf( amcCreditorMapper.insertSelective(creditor));
+    creditor.setId(id);
+    return creditor;
+  }
+
+  @Override
+  public AmcCreditor update(AmcCreditor creditor) {
+    amcCreditorMapper.updateByPrimaryKey(creditor);
+    return creditor;
+  }
+
+  @Override
+  public AmcCmpy create(AmcCmpy amcCmpy) {
+    Long id = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
+    amcCmpy.setId(id);
+    return amcCmpy;
+  }
+
+  @Override
+  public AmcCmpy update(AmcCmpy amcCmpy) {
+    amcCmpyMapper.updateByPrimaryKey(amcCmpy);
+    return amcCmpy;
+  }
+
+  @Override
+  public void connDebt2Creditors(List<Long> creditorIds, Long debtId) {
+    AmcCreditorDebtExample amcCreditorDebtExample = new AmcCreditorDebtExample();
+    amcCreditorDebtExample.createCriteria().andDebtIdEqualTo(debtId);
+    amcCreditorDebtMapper.deleteByExample(amcCreditorDebtExample);
+    AmcCreditorDebt amcCreditorDebt = new AmcCreditorDebt();
+    for(Long creditorId: creditorIds){
+      amcCreditorDebt.setCreditorId(creditorId);
+      amcCreditorDebt.setDebtId(debtId);
+      amcCreditorDebtMapper.insertSelective(amcCreditorDebt);
+    }
+  }
+
+  @Override
+  public List<AmcCreditor> getCreditors(Long amcDebtId) {
+    AmcCreditorDebtExample amcCreditorDebtExample = new AmcCreditorDebtExample();
+    amcCreditorDebtExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+    List<AmcCreditorDebt> creditors = amcCreditorDebtMapper.selectByExample(amcCreditorDebtExample);
+    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
+    List<Long> creditorIds =
+        creditors.stream().map( creditor  -> creditor.getCreditorId()).collect(Collectors.toList());
+    amcCreditorExample.createCriteria().andIdIn(creditorIds);
+    List<AmcCreditor> amcCreditors =
+        amcCreditorMapper.selectByExample(amcCreditorExample);
+    return amcCreditors;
+  }
+
+  @Override
+  public List<AmcGrntor> getGrantors(Long amcDebtId) {
+    AmcGrntctrctExample amcGrntctrctExample = new AmcGrntctrctExample();
+    amcGrntctrctExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+    List<AmcGrntctrct> amcGrntctrcts =  amcGrntctrctMapper.selectByExample(amcGrntctrctExample);
+    List<Long> grantorIds = amcGrntctrcts.stream().map(amcGrntctrct -> amcGrntctrct.getGrantorId()).collect(Collectors.toList());
+    AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
+    amcGrntorExample.createCriteria().andIdIn(grantorIds);
+    List<AmcGrntor> grntors = amcGrntorMapper.selectByExample(amcGrntorExample);
+    return grntors;
   }
 }

@@ -15,6 +15,8 @@ public class AmcDebtCreateVo {
 
   private Long debtpackId;
 
+  private Long amcId;
+
   private String title;
 
   private BigDecimal baseAmount;
@@ -37,9 +39,9 @@ public class AmcDebtCreateVo {
 
   private Date publishDate;
 
-  private Integer lawStatus;
+  private String lawStatDesc;
 
-  private BigDecimal estimatedPrice;
+  private Long estimatedPrice;
 
   private Long amcContact1;
 
@@ -50,5 +52,9 @@ public class AmcDebtCreateVo {
   private Date startDate;
 
   private Date endDate;
+
+  private List<Long> creditors;
+
+
 
 }

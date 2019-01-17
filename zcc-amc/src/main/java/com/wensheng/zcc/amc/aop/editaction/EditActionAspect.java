@@ -11,6 +11,8 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,5 +67,14 @@ public class EditActionAspect {
           baseActionVo.getEditActionId(), baseActionVo.getContent().getEditStatus()));
     }
 
+  }
+
+  @Around("@annotation(LogExecutionTime)")
+  public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{
+    final long start = System.currentTimeMillis();
+    final Object proceed = joinPoint.proceed();
+    final long executime = System.currentTimeMillis() - start;
+    log.info(String.format("%s executed in %d ms", joinPoint.getSignature(), executime));
+    return proceed;
   }
 }

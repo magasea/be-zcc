@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.aop.editaction.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
@@ -161,7 +162,7 @@ public class AmcAssetController {
     return assetImages;
   }
 
-
+  @LogExecutionTime
   @RequestMapping(value = "/amcid/{amcid}/asset/doc/add", method = RequestMethod.POST)
   @ResponseBody
   public List<AssetDocument> addDoc(

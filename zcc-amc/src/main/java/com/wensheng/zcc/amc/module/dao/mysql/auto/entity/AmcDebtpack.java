@@ -15,6 +15,8 @@ public class AmcDebtpack {
 
     private Integer packStatus;
 
+    private Integer amcGroupId;
+
     public Long getId() {
         return id;
     }
@@ -61,5 +63,13 @@ public class AmcDebtpack {
 
     public void setPackStatus(Integer packStatus) {
         this.packStatus = packStatus;
+    }
+
+    public Integer getAmcGroupId() {
+        return amcGroupId;
+    }
+
+    public void setAmcGroupId(Integer amcGroupId) {
+        this.amcGroupId = amcGroupId;
     }
 }

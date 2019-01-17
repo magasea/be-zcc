@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.aop.editaction.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
@@ -93,6 +94,7 @@ public class AmcDebtController {
 
 
 
+  @LogExecutionTime
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
   @ResponseBody
   public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,

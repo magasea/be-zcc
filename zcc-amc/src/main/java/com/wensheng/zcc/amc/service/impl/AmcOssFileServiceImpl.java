@@ -81,7 +81,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
   public void delFileInOss(String ossPath) throws Exception {
 
     if(ossPath.contains(ossFilePathBase)){
-      ossClient.deleteObject(bucketName, ossPath.substring(ossFilePathBase.length()));
+      ossClient.deleteObject(bucketName, ossPath.substring(ossFilePathBase.length() -1));
     }
 
 

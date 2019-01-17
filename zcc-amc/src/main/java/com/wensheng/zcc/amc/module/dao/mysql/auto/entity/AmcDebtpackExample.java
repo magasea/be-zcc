@@ -484,6 +484,66 @@ public class AmcDebtpackExample {
             addCriterion("pack_status not between", value1, value2, "packStatus");
             return (Criteria) this;
         }
+
+        public Criteria andAmcGroupIdIsNull() {
+            addCriterion("amc_group_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdIsNotNull() {
+            addCriterion("amc_group_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdEqualTo(Integer value) {
+            addCriterion("amc_group_id =", value, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdNotEqualTo(Integer value) {
+            addCriterion("amc_group_id <>", value, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdGreaterThan(Integer value) {
+            addCriterion("amc_group_id >", value, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("amc_group_id >=", value, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdLessThan(Integer value) {
+            addCriterion("amc_group_id <", value, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdLessThanOrEqualTo(Integer value) {
+            addCriterion("amc_group_id <=", value, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdIn(List<Integer> values) {
+            addCriterion("amc_group_id in", values, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdNotIn(List<Integer> values) {
+            addCriterion("amc_group_id not in", values, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdBetween(Integer value1, Integer value2) {
+            addCriterion("amc_group_id between", value1, value2, "amcGroupId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcGroupIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("amc_group_id not between", value1, value2, "amcGroupId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

@@ -12,7 +12,7 @@ mongodb:
     port: 27017
     database: wensheng
   wszcc:
-    host: 10.20.100.236
+    host: 10.20.100.227
     port: 27017
     database: wszcc
 

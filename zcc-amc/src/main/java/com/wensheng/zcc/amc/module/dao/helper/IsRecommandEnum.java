@@ -9,8 +9,10 @@ import java.util.function.Function;
  */
 
 public enum IsRecommandEnum {
-  RECOMMAND(1, "推荐"),
-  NOT_RECOMMAND(2, "不推荐"),
+  NOT_RECOMMAND(1, "不推荐"),
+  RECOMMAND_AMC(2, "AMC推荐"),
+  RECOMMAND_GLOBAL(3, "全局推荐"),
+
   NOT_SET(-1, "待定"),
   ;
   int id;

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.config;
 
+import javax.servlet.MultipartConfigElement;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.multipart.commons.CommonsMultipartResolver;
@@ -19,6 +20,8 @@ public class ControllerConfig implements WebMvcConfigurer {
     multipartResolver.setMaxUploadSize(20848820);
     return multipartResolver;
   }
+
+
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {

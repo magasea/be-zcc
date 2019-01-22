@@ -236,7 +236,7 @@ public class AmcAssetServiceImplTest {
         assetAdditional.setLinkUrl(originItem.getLinkUrl());
         assetAdditional.setMainPic(originItem.getMainPic());
         assetAdditional.setOtherCatalog(originItem.getOtherCatalog());
-        assetAdditional.setRecommanded(originItem.isRecommanded());
+//        assetAdditional.setIsRecommanded(originItem.isRecommanded());
         assetAdditional.setReportPath(originItem.getReportPath());
         assetAdditional.setWatchCount(originItem.getWatchCount());
         assetAdditional.setStartDate(originItem.getStartDate());
@@ -455,7 +455,7 @@ public class AmcAssetServiceImplTest {
         }else{
             amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
         }
-        amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommandEnum.RECOMMAND.getId(): IsRecommandEnum.NOT_RECOMMAND.getId());
+//        amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommandEnum.RECOMMAND.getId(): IsRecommandEnum.NOT_RECOMMAND.getId());
 //        if(StringUtils.isEmpty(originItem.getLawStatus())){
 //            logger.error("this originItem with title:" + originItem.getTitle() +" lawstatus is empty");
 //        }else{

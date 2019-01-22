@@ -36,7 +36,7 @@ public class AssetAdditional {
     String amcNotes;
     String linkUrl; //点击查看报告的链接
     Long amcContact2;  //联系人2
-    boolean isRecommanded = false; //是否推荐
+    int isRecommanded = 1; //是否推荐
     Date startDate;      //推荐资产的开始时间
     Date endDate;        //推荐资产的结束时间
 

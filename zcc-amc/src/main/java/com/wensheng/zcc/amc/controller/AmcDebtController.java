@@ -14,6 +14,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtImageVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -33,11 +34,13 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -136,36 +139,35 @@ public class AmcDebtController {
   }
 
   @LogExecutionTime
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST, consumes = {"multipart/form-data"})
   @ResponseBody
   public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<DebtImage> debtImageBaseActionVo,
-      @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
+      @RequestParam("debtId")  Long debtId, @RequestParam("tag")  Integer tag, @RequestParam("desc")  String desc,
+      @RequestPart MultipartFile[] uploadingImages) throws Exception {
 
-    if(debtImageBaseActionVo.getContent().getDebtId() == null || debtImageBaseActionVo.getContent().getDebtId() < 0){
+
+    if(debtId == null || debtId < 0){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,  String.format("debtId %s is not valid",
-          debtImageBaseActionVo.getContent().getDebtId()));
+          debtId));
     }
 
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
     List<String> filePaths = new ArrayList<>();
     for(MultipartFile uploadedImage : uploadingImages) {
       try {
-        String filePath = amcOssFileService.handleMultiPartFile(uploadedImage,
-            debtImageBaseActionVo.getContent().getDebtId(),
-            ImagePathClassEnum.DEBT.getName());
+        String filePath = amcOssFileService.handleMultiPartFile(uploadedImage, debtId, ImagePathClassEnum.DEBT.getName());
         filePaths.add(filePath);
       } catch (Exception e) {
         e.printStackTrace();
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
       }
     }
-    String prePath = ImagePathClassEnum.DEBT.getName()+"/"+debtImageBaseActionVo.getContent().getDebtId()+"/";
+    String prePath = ImagePathClassEnum.DEBT.getName()+"/"+ debtId +"/";
 
     for(String filePath: filePaths){
       try {
         String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
-        amcDebtService.saveImageInfo(ossPath, filePath, debtImageBaseActionVo.getContent().getDebtId(),
-            debtImageBaseActionVo.getContent().getDescription(), debtImageBaseActionVo.getContent().getTag());
+        amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, tag);
       } catch (Exception e) {
         e.printStackTrace();
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());

@@ -60,7 +60,7 @@ public class AmcDebtPackController {
   }
 
 
-  @RequestMapping(value = "amcid/{amcId}/deptpack/creditor/add", method = RequestMethod.POST)
+  @RequestMapping(value = "amcid/{amcId}/debtpack/origcreditor/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcOrigCreditor createAmcCreditor(@RequestBody AmcOrigCreditor amcOrigCreditor){
     AmcOrigCreditor amcOrigCreditorResult = amcDebtpackService.createCreditor(amcOrigCreditor);
@@ -68,7 +68,7 @@ public class AmcDebtPackController {
 
   }
 
-  @RequestMapping(value = "amcid/{amcId}/deptpack/creditors", method = RequestMethod.GET)
+  @RequestMapping(value = "amcid/{amcId}/debtpack/origcreditors", method = RequestMethod.GET)
   @ResponseBody
   public Page<AmcOrigCreditor> getAmcCreditor(@RequestBody PageInfo pageable) throws Exception {
 

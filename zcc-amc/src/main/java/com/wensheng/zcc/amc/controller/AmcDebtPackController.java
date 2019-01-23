@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -74,6 +75,9 @@ public class AmcDebtPackController {
 
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
+    if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("id", Direction.DESC);
+    }
 
     int offset = PageReqRepHelper.getOffset(pageable);
     List<AmcOrigCreditor> amcOrigCreditors ;

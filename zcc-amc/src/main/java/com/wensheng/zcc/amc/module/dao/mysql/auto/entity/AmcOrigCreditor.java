@@ -5,7 +5,7 @@ public class AmcOrigCreditor {
 
     private String creditorName;
 
-    private String desc;
+    private String note;
 
     private String bankName;
 
@@ -27,12 +27,12 @@ public class AmcOrigCreditor {
         this.creditorName = creditorName == null ? null : creditorName.trim();
     }
 
-    public String getDesc() {
-        return desc;
+    public String getNote() {
+        return note;
     }
 
-    public void setDesc(String desc) {
-        this.desc = desc == null ? null : desc.trim();
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 
     public String getBankName() {

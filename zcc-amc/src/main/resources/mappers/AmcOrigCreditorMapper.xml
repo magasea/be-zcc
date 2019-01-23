@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="creditor_name" jdbcType="CHAR" property="creditorName" />
-    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
     <result column="bank_name" jdbcType="VARCHAR" property="bankName" />
     <result column="branch_name" jdbcType="VARCHAR" property="branchName" />
   </resultMap>
@@ -67,7 +67,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, creditor_name, desc, bank_name, branch_name
+    id, creditor_name, note, bank_name, branch_name
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample" resultMap="BaseResultMap">
     select
@@ -104,9 +104,9 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_ORIG_CREDITOR (creditor_name, desc, bank_name, 
+    insert into AMC_ORIG_CREDITOR (creditor_name, note, bank_name, 
       branch_name)
-    values (#{creditorName,jdbcType=CHAR}, #{desc,jdbcType=VARCHAR}, #{bankName,jdbcType=VARCHAR}, 
+    values (#{creditorName,jdbcType=CHAR}, #{note,jdbcType=VARCHAR}, #{bankName,jdbcType=VARCHAR}, 
       #{branchName,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor">
@@ -118,8 +118,8 @@
       <if test="creditorName != null">
         creditor_name,
       </if>
-      <if test="desc != null">
-        desc,
+      <if test="note != null">
+        note,
       </if>
       <if test="bankName != null">
         bank_name,
@@ -132,8 +132,8 @@
       <if test="creditorName != null">
         #{creditorName,jdbcType=CHAR},
       </if>
-      <if test="desc != null">
-        #{desc,jdbcType=VARCHAR},
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
       </if>
       <if test="bankName != null">
         #{bankName,jdbcType=VARCHAR},
@@ -158,8 +158,8 @@
       <if test="record.creditorName != null">
         creditor_name = #{record.creditorName,jdbcType=CHAR},
       </if>
-      <if test="record.desc != null">
-        desc = #{record.desc,jdbcType=VARCHAR},
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=VARCHAR},
       </if>
       <if test="record.bankName != null">
         bank_name = #{record.bankName,jdbcType=VARCHAR},
@@ -176,7 +176,7 @@
     update AMC_ORIG_CREDITOR
     set id = #{record.id,jdbcType=BIGINT},
       creditor_name = #{record.creditorName,jdbcType=CHAR},
-      desc = #{record.desc,jdbcType=VARCHAR},
+      note = #{record.note,jdbcType=VARCHAR},
       bank_name = #{record.bankName,jdbcType=VARCHAR},
       branch_name = #{record.branchName,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -189,8 +189,8 @@
       <if test="creditorName != null">
         creditor_name = #{creditorName,jdbcType=CHAR},
       </if>
-      <if test="desc != null">
-        desc = #{desc,jdbcType=VARCHAR},
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
       </if>
       <if test="bankName != null">
         bank_name = #{bankName,jdbcType=VARCHAR},
@@ -204,7 +204,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor">
     update AMC_ORIG_CREDITOR
     set creditor_name = #{creditorName,jdbcType=CHAR},
-      desc = #{desc,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR},
       bank_name = #{bankName,jdbcType=VARCHAR},
       branch_name = #{branchName,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

@@ -70,9 +70,10 @@ public class AmcDebtPackController {
     if(StringUtils.isEmpty(amcOrigCreditor.getBankName())){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ORIG_CREDITOR, "bankname is empty");
     }
-    AmcOrigCreditor amcOrigCreditorResult = amcDebtpackService.createCreditor(amcOrigCreditor);
-    return amcOrigCreditorResult;
 
+    AmcOrigCreditor amcOrigCreditorResult;
+    amcOrigCreditorResult = amcDebtpackService.createCreditor(amcOrigCreditor);
+    return amcOrigCreditorResult;
   }
 
   @RequestMapping(value = "amcid/{amcId}/debtpack/origcreditors", method = RequestMethod.POST)

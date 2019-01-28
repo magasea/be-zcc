@@ -3,7 +3,6 @@ package com.wensheng.zcc.amc.service;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
@@ -16,25 +15,24 @@ public interface AmcDebtpackService {
 
   public AmcDebtpackExtVo create(AmcDebtpackExtVo amcDebtpackExtVo) throws Exception;
 
-  public AmcDebtpackVo del(AmcDebtpack amcDebtpack);
+  public AmcDebtpack del(AmcDebtpack amcDebtpack);
 
-  public AmcDebtpackVo update(AmcDebtpack amcDebtpack);
+  public AmcDebtpack update(AmcDebtpack amcDebtpack);
 
-  public void updateDebtpackCreditorRel(Long debtId, List<Long> creditorIds) throws Exception;
 
-  public List<AmcDebtpackVo> queryAll(int offset, int size);
+  public List<AmcDebtpack> queryAll(int offset, int size);
 
-  public AmcDebtpackVo get(Long amcDebtpackId);
+  public AmcDebtpack get(Long amcDebtpackId);
 
   public boolean exist(Long amcDebtpackId);
 
-  public List<AmcDebtpackVo> query(AmcDebtpack queryCond, int offset, int size);
+  public List<AmcDebtpack> query(AmcDebtpack queryCond, int offset, int size);
 
 
-  public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
 
   public List<AmcOrigCreditor> getAllCreditors(int offset, int pageSize, Map<String, Direction> orderByParam)
       throws Exception;
+
   public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId);
 
   public Long getCreditorsCount();

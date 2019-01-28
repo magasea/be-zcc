@@ -37,6 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -247,10 +248,10 @@ public class AmcDebtController {
 
       List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
 
-      AmcOrigCreditor origCreditors = amcDebtService.getOriginCreditor(debtId);
+      AmcOrigCreditor origCreditor = amcDebtService.getOriginCreditor(debtId);
       amcDebtExtVo.setCreditors(creditors);
       amcDebtExtVo.setAmcGrntors(amcGrntors);
-      amcDebtExtVo.setOrigCreditor(origCreditors);
+      amcDebtExtVo.setOrigCreditor(origCreditor);
     }catch (Exception ex){
       log.error("failed to get creditor or grantor",ex);
     }
@@ -326,7 +327,17 @@ public class AmcDebtController {
 
   }
 
+  @RequestMapping(value = "amcid/{amcId}/debt/origcreditor/add", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcOrigCreditor createAmcCreditor(@RequestBody AmcOrigCreditor amcOrigCreditor) throws Exception {
+    if(StringUtils.isEmpty(amcOrigCreditor.getBankName())){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ORIG_CREDITOR, "bankname is empty");
+    }
 
+    AmcOrigCreditor amcOrigCreditorResult;
+    amcOrigCreditorResult = amcDebtService.createCreditor(amcOrigCreditor);
+    return amcOrigCreditorResult;
+  }
 
 
 }

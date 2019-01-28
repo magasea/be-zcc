@@ -66,4 +66,6 @@ public interface AmcDebtService {
   public AmcOrigCreditor getOriginCreditor(Long amcDebtId);
 
   void delImage(DebtImage debtImage);
+
+  AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
 }

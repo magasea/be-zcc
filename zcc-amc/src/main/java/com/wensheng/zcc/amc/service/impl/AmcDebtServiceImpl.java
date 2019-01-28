@@ -402,4 +402,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     wszccTemplate.findAllAndRemove(query, DebtImage.class);
 
   }
+
+
+  @Override
+  public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor) {
+    Long id = Long.valueOf(amcOrigCreditorMapper.insertSelective(amcOrigCreditor));
+    amcOrigCreditor.setId(id);
+    return amcOrigCreditor;
+  }
 }

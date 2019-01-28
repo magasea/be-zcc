@@ -5,10 +5,8 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
@@ -16,7 +14,6 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtpackVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
@@ -90,52 +87,36 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   }
 
   @Override
-  public AmcDebtpackVo del(AmcDebtpack amcDebtpack) {
+  public AmcDebtpack del(AmcDebtpack amcDebtpack) {
     return null;
   }
 
   @Override
-  public AmcDebtpackVo update(AmcDebtpack amcDebtpack) {
-    AmcDebtpackVo amcDebtpackVo = new AmcDebtpackVo();
+  public AmcDebtpack update(AmcDebtpack amcDebtpack) {
+    AmcDebtpack amcDebtpackVo = new AmcDebtpack();
 
     amcDebtpackMapper.updateByPrimaryKey(amcDebtpack);
 
-    BeanUtils.copyProperties(amcDebtpack, amcDebtpackVo);
-    return amcDebtpackVo;
+    return amcDebtpack;
   }
 
-  @Override
-  public void updateDebtpackCreditorRel(Long debtId, List<Long> creditorIds) throws Exception {
-    AmcCreditorDebtpackExample amcCreditorDebtpackExample = new AmcCreditorDebtpackExample();
-    amcCreditorDebtpackExample.createCriteria().andDebtpackIdEqualTo(debtId);
-    amcCreditorDebtpackMapper.deleteByExample(amcCreditorDebtpackExample);
-    AmcCreditorDebtpack amcCreditorDebtpack = new AmcCreditorDebtpack();
-    for(Long creditorId: creditorIds){
-      amcCreditorDebtpack.setCreditorId(creditorId);
-      amcCreditorDebtpack.setDebtpackId(debtId);
-      amcCreditorDebtpackMapper.insertSelective(amcCreditorDebtpack);
-    }
 
-  }
 
   @Override
-  public List<AmcDebtpackVo> queryAll(int offset, int size) {
+  public List<AmcDebtpack> queryAll(int offset, int size) {
 
     AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
     amcDebtpackExample.createCriteria().andIdGreaterThan(0L);
     RowBounds rowBounds = new RowBounds(offset, size);
     List<AmcDebtpack> amcDebtpacks = amcDebtpackMapper.selectByExampleWithRowbounds(amcDebtpackExample, rowBounds);
 
-    return null;
+    return amcDebtpacks;
   }
 
   @Override
-  public AmcDebtpackVo get(Long amcDebtpackId) {
+  public AmcDebtpack get(Long amcDebtpackId) {
     AmcDebtpack amcDebtpack = amcDebtpackMapper.selectByPrimaryKey(amcDebtpackId);
-    AmcDebtpackVo amcDebtpackVo = new AmcDebtpackVo();
-    BeanUtils.copyProperties(amcDebtpack, amcDebtpackVo);
-
-    return amcDebtpackVo;
+       return amcDebtpack;
   }
 
   @Override
@@ -146,16 +127,11 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   }
 
   @Override
-  public List<AmcDebtpackVo> query(AmcDebtpack queryCond, int offset, int size) {
+  public List<AmcDebtpack> query(AmcDebtpack queryCond, int offset, int size) {
     return null;
   }
 
-  @Override
-  public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor) {
-    Long id = Long.valueOf(amcOrigCreditorMapper.insertSelective(amcOrigCreditor));
-    amcOrigCreditor.setId(id);
-    return amcOrigCreditor;
-  }
+
 
   @Override
   public List<AmcOrigCreditor> getAllCreditors(int offset, int size, Map<String, Direction> orderByParam)

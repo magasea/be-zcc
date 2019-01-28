@@ -21,14 +21,17 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
+import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -80,11 +83,11 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/update", method = RequestMethod.POST)
   @ResponseBody
-  public Long updateGrntContract(@PathVariable(name = "amcId") Integer amcId,
+  public AmcGrntctrct updateGrntContract(@PathVariable(name = "amcId") Integer amcId,
       BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
     checkGrantor(grntctrctBaseActionVo.getContent());
 
-    return amcDebtService.addGrantContract(grntctrctBaseActionVo.getContent());
+    return amcDebtService.updateGrantContract(grntctrctBaseActionVo.getContent());
   }
 
 
@@ -117,7 +120,7 @@ public class AmcDebtController {
   public AmcCreditor updateAmcCreditor(@PathVariable(name = "amcId") Integer amcId,
       BaseActionVo<AmcCreditor> amcCreditorBaseActionVo) throws Exception {
 
-    return amcDebtService.create(amcCreditorBaseActionVo.getContent());
+    return amcDebtService.update(amcCreditorBaseActionVo.getContent());
   }
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/company/add", method = RequestMethod.POST)
@@ -222,7 +225,7 @@ public class AmcDebtController {
   }
 
 
-  @RequestMapping(value = "/api/amcid/{id}/debt", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{id}/debt/get", method = RequestMethod.POST)
   @ResponseBody
   public AmcDebtExtVo queryDebt(@RequestParam("debtId") Long debtId)
       throws Exception {
@@ -243,6 +246,34 @@ public class AmcDebtController {
       amcDebtExtVo.setOrigCreditors(origCreditors);
     }catch (Exception ex){
       log.error("failed to get creditor or grantor",ex);
+    }
+
+
+    return amcDebtExtVo;
+  }
+
+  @RequestMapping(value = "/api/amcid/{id}/debt/update", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDebtExtVo updateDebt(@RequestBody AmcDebtExtVo amcDebtExtVo)
+      throws Exception {
+
+
+
+
+    try{
+
+      AmcDebt amcDebt = new AmcDebt();
+      BeanUtils.copyProperties(amcDebtExtVo.getAmcDebtVo(), amcDebt);
+      amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getBaseAmount()));
+      amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getEstimatedPrice()));
+      amcDebt.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getTotalAmount()));
+      amcDebtService.update(amcDebt);
+
+      List<Long> creditorIds =
+          amcDebtExtVo.getCreditors().stream().map( amcCreditor -> amcCreditor.getId()).collect(Collectors.toList());
+      amcDebtService.connDebt2Creditors(creditorIds, amcDebtExtVo.getAmcDebtVo().getId());
+    }catch (Exception ex){
+      log.error("failed to update debt",ex);
     }
 
 

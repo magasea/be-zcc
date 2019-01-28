@@ -50,4 +50,7 @@ public interface AmcAssetService {
 
   AssetImage saveImageInfo( AssetImage assetImage);
   AssetDocument saveDoc(AssetDocument assetDocument);
+
+  void delImage(AssetImage assetImage);
+
 }

@@ -4,9 +4,9 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
-    <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="amc_company_id" jdbcType="BIGINT" property="amcCompanyId" />
+    <result column="amc_debtpack_code" jdbcType="CHAR" property="amcDebtpackCode" />
     <result column="pack_status" jdbcType="INTEGER" property="packStatus" />
     <result column="amc_group_id" jdbcType="INTEGER" property="amcGroupId" />
   </resultMap>
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, settle_date, notes, amc_company_id, pack_status, amc_group_id
+    id, title, notes, amc_company_id, amc_debtpack_code, pack_status, amc_group_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
     select
@@ -106,11 +106,11 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTPACK (title, settle_date, notes, 
-      amc_company_id, pack_status, amc_group_id
+    insert into AMC_DEBTPACK (title, notes, amc_company_id, 
+      amc_debtpack_code, pack_status, amc_group_id
       )
-    values (#{title,jdbcType=CHAR}, #{settleDate,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, 
-      #{amcCompanyId,jdbcType=BIGINT}, #{packStatus,jdbcType=INTEGER}, #{amcGroupId,jdbcType=INTEGER}
+    values (#{title,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{amcCompanyId,jdbcType=BIGINT}, 
+      #{amcDebtpackCode,jdbcType=CHAR}, #{packStatus,jdbcType=INTEGER}, #{amcGroupId,jdbcType=INTEGER}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
@@ -122,14 +122,14 @@
       <if test="title != null">
         title,
       </if>
-      <if test="settleDate != null">
-        settle_date,
-      </if>
       <if test="notes != null">
         notes,
       </if>
       <if test="amcCompanyId != null">
         amc_company_id,
+      </if>
+      <if test="amcDebtpackCode != null">
+        amc_debtpack_code,
       </if>
       <if test="packStatus != null">
         pack_status,
@@ -142,14 +142,14 @@
       <if test="title != null">
         #{title,jdbcType=CHAR},
       </if>
-      <if test="settleDate != null">
-        #{settleDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
       </if>
       <if test="amcCompanyId != null">
         #{amcCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="amcDebtpackCode != null">
+        #{amcDebtpackCode,jdbcType=CHAR},
       </if>
       <if test="packStatus != null">
         #{packStatus,jdbcType=INTEGER},
@@ -174,14 +174,14 @@
       <if test="record.title != null">
         title = #{record.title,jdbcType=CHAR},
       </if>
-      <if test="record.settleDate != null">
-        settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
       <if test="record.amcCompanyId != null">
         amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.amcDebtpackCode != null">
+        amc_debtpack_code = #{record.amcDebtpackCode,jdbcType=CHAR},
       </if>
       <if test="record.packStatus != null">
         pack_status = #{record.packStatus,jdbcType=INTEGER},
@@ -198,9 +198,9 @@
     update AMC_DEBTPACK
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
-      settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       notes = #{record.notes,jdbcType=VARCHAR},
       amc_company_id = #{record.amcCompanyId,jdbcType=BIGINT},
+      amc_debtpack_code = #{record.amcDebtpackCode,jdbcType=CHAR},
       pack_status = #{record.packStatus,jdbcType=INTEGER},
       amc_group_id = #{record.amcGroupId,jdbcType=INTEGER}
     <if test="_parameter != null">
@@ -213,14 +213,14 @@
       <if test="title != null">
         title = #{title,jdbcType=CHAR},
       </if>
-      <if test="settleDate != null">
-        settle_date = #{settleDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
       <if test="amcCompanyId != null">
         amc_company_id = #{amcCompanyId,jdbcType=BIGINT},
+      </if>
+      <if test="amcDebtpackCode != null">
+        amc_debtpack_code = #{amcDebtpackCode,jdbcType=CHAR},
       </if>
       <if test="packStatus != null">
         pack_status = #{packStatus,jdbcType=INTEGER},
@@ -234,9 +234,9 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
     update AMC_DEBTPACK
     set title = #{title,jdbcType=CHAR},
-      settle_date = #{settleDate,jdbcType=TIMESTAMP},
       notes = #{notes,jdbcType=VARCHAR},
       amc_company_id = #{amcCompanyId,jdbcType=BIGINT},
+      amc_debtpack_code = #{amcDebtpackCode,jdbcType=CHAR},
       pack_status = #{packStatus,jdbcType=INTEGER},
       amc_group_id = #{amcGroupId,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

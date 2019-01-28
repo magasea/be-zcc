@@ -245,6 +245,13 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     }
 
+    @Override
+    public void delImage(AssetImage assetImage) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(assetImage.getAmcAssetId()).and("ossPath").is(assetImage.getOssPath()));
+        wszccTemplate.findAllAndRemove(query, AssetImage.class);
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         if(CollectionUtils.isEmpty(queryParam)){

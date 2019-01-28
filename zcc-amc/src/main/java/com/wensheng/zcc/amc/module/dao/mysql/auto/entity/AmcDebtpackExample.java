@@ -1,7 +1,6 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class AmcDebtpackExample {
@@ -235,66 +234,6 @@ public class AmcDebtpackExample {
             return (Criteria) this;
         }
 
-        public Criteria andSettleDateIsNull() {
-            addCriterion("settle_date is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateIsNotNull() {
-            addCriterion("settle_date is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateEqualTo(Date value) {
-            addCriterion("settle_date =", value, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateNotEqualTo(Date value) {
-            addCriterion("settle_date <>", value, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateGreaterThan(Date value) {
-            addCriterion("settle_date >", value, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("settle_date >=", value, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateLessThan(Date value) {
-            addCriterion("settle_date <", value, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateLessThanOrEqualTo(Date value) {
-            addCriterion("settle_date <=", value, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateIn(List<Date> values) {
-            addCriterion("settle_date in", values, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateNotIn(List<Date> values) {
-            addCriterion("settle_date not in", values, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateBetween(Date value1, Date value2) {
-            addCriterion("settle_date between", value1, value2, "settleDate");
-            return (Criteria) this;
-        }
-
-        public Criteria andSettleDateNotBetween(Date value1, Date value2) {
-            addCriterion("settle_date not between", value1, value2, "settleDate");
-            return (Criteria) this;
-        }
-
         public Criteria andNotesIsNull() {
             addCriterion("notes is null");
             return (Criteria) this;
@@ -422,6 +361,76 @@ public class AmcDebtpackExample {
 
         public Criteria andAmcCompanyIdNotBetween(Long value1, Long value2) {
             addCriterion("amc_company_id not between", value1, value2, "amcCompanyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeIsNull() {
+            addCriterion("amc_debtpack_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeIsNotNull() {
+            addCriterion("amc_debtpack_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeEqualTo(String value) {
+            addCriterion("amc_debtpack_code =", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeNotEqualTo(String value) {
+            addCriterion("amc_debtpack_code <>", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeGreaterThan(String value) {
+            addCriterion("amc_debtpack_code >", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("amc_debtpack_code >=", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeLessThan(String value) {
+            addCriterion("amc_debtpack_code <", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeLessThanOrEqualTo(String value) {
+            addCriterion("amc_debtpack_code <=", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeLike(String value) {
+            addCriterion("amc_debtpack_code like", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeNotLike(String value) {
+            addCriterion("amc_debtpack_code not like", value, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeIn(List<String> values) {
+            addCriterion("amc_debtpack_code in", values, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeNotIn(List<String> values) {
+            addCriterion("amc_debtpack_code not in", values, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeBetween(String value1, String value2) {
+            addCriterion("amc_debtpack_code between", value1, value2, "amcDebtpackCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtpackCodeNotBetween(String value1, String value2) {
+            addCriterion("amc_debtpack_code not between", value1, value2, "amcDebtpackCode");
             return (Criteria) this;
         }
 

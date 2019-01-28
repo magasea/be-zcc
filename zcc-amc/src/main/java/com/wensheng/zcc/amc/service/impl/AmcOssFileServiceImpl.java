@@ -3,12 +3,15 @@ package com.wensheng.zcc.amc.service.impl;
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.PutObjectResult;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import java.io.File;
 import javax.annotation.PostConstruct;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -86,6 +89,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
 
   }
+
 
   @Override
   public String handleMultiPartFile(MultipartFile multipartFile, Long id, String type) throws Exception {

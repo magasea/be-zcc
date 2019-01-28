@@ -15,7 +15,6 @@ public class AssetImage {
     String originalName;
     Boolean mainPic; //是否为主图片
     int tag; //是否位置图， 其它图片
-    Long originAssetId;
     @Indexed(direction = IndexDirection.ASCENDING)
     Long amcAssetId;
 

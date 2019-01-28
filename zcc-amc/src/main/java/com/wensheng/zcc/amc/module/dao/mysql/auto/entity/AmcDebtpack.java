@@ -1,17 +1,15 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
-import java.util.Date;
-
 public class AmcDebtpack {
     private Long id;
 
     private String title;
 
-    private Date settleDate;
-
     private String notes;
 
     private Long amcCompanyId;
+
+    private String amcDebtpackCode;
 
     private Integer packStatus;
 
@@ -33,14 +31,6 @@ public class AmcDebtpack {
         this.title = title == null ? null : title.trim();
     }
 
-    public Date getSettleDate() {
-        return settleDate;
-    }
-
-    public void setSettleDate(Date settleDate) {
-        this.settleDate = settleDate;
-    }
-
     public String getNotes() {
         return notes;
     }
@@ -55,6 +45,14 @@ public class AmcDebtpack {
 
     public void setAmcCompanyId(Long amcCompanyId) {
         this.amcCompanyId = amcCompanyId;
+    }
+
+    public String getAmcDebtpackCode() {
+        return amcDebtpackCode;
+    }
+
+    public void setAmcDebtpackCode(String amcDebtpackCode) {
+        this.amcDebtpackCode = amcDebtpackCode == null ? null : amcDebtpackCode.trim();
     }
 
     public Integer getPackStatus() {

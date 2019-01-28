@@ -45,7 +45,7 @@ public class AmcDebt {
 
     private Date endDate;
 
-    private Long origDebtId;
+    private Long origCreditorId;
 
     private String debtDesc;
 
@@ -217,12 +217,12 @@ public class AmcDebt {
         this.endDate = endDate;
     }
 
-    public Long getOrigDebtId() {
-        return origDebtId;
+    public Long getOrigCreditorId() {
+        return origCreditorId;
     }
 
-    public void setOrigDebtId(Long origDebtId) {
-        this.origDebtId = origDebtId;
+    public void setOrigCreditorId(Long origCreditorId) {
+        this.origCreditorId = origCreditorId;
     }
 
     public String getDebtDesc() {

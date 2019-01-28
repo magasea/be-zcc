@@ -142,7 +142,8 @@ public class AmcDebtController {
   }
 
   @LogExecutionTime
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/image", method = RequestMethod.POST, consumes = {"multipart/form-data"})
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", method = RequestMethod.POST, consumes = {"multipart"
+      + "/form-data"})
   @ResponseBody
   public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
       @RequestParam("debtId")  Long debtId, @RequestParam("tag")  Integer tag, @RequestParam("desc")  String desc,
@@ -183,6 +184,12 @@ public class AmcDebtController {
 
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/asset/image/del", method = RequestMethod.POST)
+  @ResponseBody
+  public void delAmcAssetImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo ) throws Exception{
+    amcOssFileService.delFileInOss(debtImageBaseActionVo.getContent().getOssPath());
+    amcDebtService.delImage(debtImageBaseActionVo.getContent());
+  }
 
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @ResponseBody

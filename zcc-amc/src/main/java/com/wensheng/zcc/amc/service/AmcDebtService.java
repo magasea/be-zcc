@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
@@ -64,4 +65,5 @@ public interface AmcDebtService {
 
   public List<AmcOrigCreditor> getOriginCreditor(Long amcDebtId);
 
+  void delImage(DebtImage debtImage);
 }

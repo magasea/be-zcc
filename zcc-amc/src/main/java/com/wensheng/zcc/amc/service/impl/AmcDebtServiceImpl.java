@@ -65,7 +65,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcHelperService amcHelperService;
 
   @Autowired
-  MongoTemplate secondaryMongoTemplate;
+  MongoTemplate wszccTemplate;
 
   @Autowired
   AmcDebtExtMapper amcDebtExtMapper;
@@ -105,16 +105,16 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Query query = new Query();
     if(imageClass == ImageClassEnum.MAIN.getId()){
       query.addCriteria(Criteria.where("debtId").is(debtId).and("imageClass").is(ImageClassEnum.MAIN.getId()));
-      List<DebtImage> debtImageList =  secondaryMongoTemplate.find(query, DebtImage.class);
+      List<DebtImage> debtImageList =  wszccTemplate.find(query, DebtImage.class);
       if(!CollectionUtils.isEmpty(debtImageList)){
         logger.info("now need update main pic to class other");
         for(DebtImage debtImageItem: debtImageList){
           debtImageItem.setTag(ImageClassEnum.OTHER.getId());
-          secondaryMongoTemplate.save(debtImageItem);
+          wszccTemplate.save(debtImageItem);
         }
       }
     }
-    secondaryMongoTemplate.save(debtImage);
+    wszccTemplate.save(debtImage);
     return 0;
   }
 
@@ -386,5 +386,15 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
     List<AmcOrigCreditor> amcOrigCreditors = amcDebtpackService.getCreditorByDebtPackId(amcDebt.getDebtpackId());
     return amcOrigCreditors;
+  }
+
+  @Override
+  public void delImage(DebtImage debtImage) {
+
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("debtId").is(debtImage.getDebtId()).and("ossPath").is(debtImage.getOssPath()));
+    wszccTemplate.findAllAndRemove(query, DebtImage.class);
+
   }
 }

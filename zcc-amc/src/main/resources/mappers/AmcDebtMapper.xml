@@ -23,7 +23,7 @@
     <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
     <result column="start_date" jdbcType="TIMESTAMP" property="startDate" />
     <result column="end_date" jdbcType="TIMESTAMP" property="endDate" />
-    <result column="orig_debt_id" jdbcType="BIGINT" property="origDebtId" />
+    <result column="orig_creditor_id" jdbcType="BIGINT" property="origCreditorId" />
     <result column="debt_desc" jdbcType="VARCHAR" property="debtDesc" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -88,7 +88,7 @@
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
     total_amount_desc, settle_date, court_id, amc_debt_code, edit_status, publish_date, 
     law_stat_desc, estimated_price, amc_contact1, amc_contact2, is_recommanded, start_date, 
-    end_date, orig_debt_id, debt_desc
+    end_date, orig_creditor_id, debt_desc
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -131,7 +131,7 @@
       court_id, amc_debt_code, edit_status, 
       publish_date, law_stat_desc, estimated_price, 
       amc_contact1, amc_contact2, is_recommanded, 
-      start_date, end_date, orig_debt_id, 
+      start_date, end_date, orig_creditor_id, 
       debt_desc)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
@@ -139,7 +139,7 @@
       #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=VARCHAR}, #{editStatus,jdbcType=INTEGER}, 
       #{publishDate,jdbcType=TIMESTAMP}, #{lawStatDesc,jdbcType=VARCHAR}, #{estimatedPrice,jdbcType=BIGINT}, 
       #{amcContact1,jdbcType=BIGINT}, #{amcContact2,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
-      #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{origDebtId,jdbcType=BIGINT}, 
+      #{startDate,jdbcType=TIMESTAMP}, #{endDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, 
       #{debtDesc,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
@@ -208,8 +208,8 @@
       <if test="endDate != null">
         end_date,
       </if>
-      <if test="origDebtId != null">
-        orig_debt_id,
+      <if test="origCreditorId != null">
+        orig_creditor_id,
       </if>
       <if test="debtDesc != null">
         debt_desc,
@@ -276,8 +276,8 @@
       <if test="endDate != null">
         #{endDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="origDebtId != null">
-        #{origDebtId,jdbcType=BIGINT},
+      <if test="origCreditorId != null">
+        #{origCreditorId,jdbcType=BIGINT},
       </if>
       <if test="debtDesc != null">
         #{debtDesc,jdbcType=VARCHAR},
@@ -356,8 +356,8 @@
       <if test="record.endDate != null">
         end_date = #{record.endDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.origDebtId != null">
-        orig_debt_id = #{record.origDebtId,jdbcType=BIGINT},
+      <if test="record.origCreditorId != null">
+        orig_creditor_id = #{record.origCreditorId,jdbcType=BIGINT},
       </if>
       <if test="record.debtDesc != null">
         debt_desc = #{record.debtDesc,jdbcType=VARCHAR},
@@ -390,7 +390,7 @@
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       start_date = #{record.startDate,jdbcType=TIMESTAMP},
       end_date = #{record.endDate,jdbcType=TIMESTAMP},
-      orig_debt_id = #{record.origDebtId,jdbcType=BIGINT},
+      orig_creditor_id = #{record.origCreditorId,jdbcType=BIGINT},
       debt_desc = #{record.debtDesc,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -459,8 +459,8 @@
       <if test="endDate != null">
         end_date = #{endDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="origDebtId != null">
-        orig_debt_id = #{origDebtId,jdbcType=BIGINT},
+      <if test="origCreditorId != null">
+        orig_creditor_id = #{origCreditorId,jdbcType=BIGINT},
       </if>
       <if test="debtDesc != null">
         debt_desc = #{debtDesc,jdbcType=VARCHAR},
@@ -490,7 +490,7 @@
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       start_date = #{startDate,jdbcType=TIMESTAMP},
       end_date = #{endDate,jdbcType=TIMESTAMP},
-      orig_debt_id = #{origDebtId,jdbcType=BIGINT},
+      orig_creditor_id = #{origCreditorId,jdbcType=BIGINT},
       debt_desc = #{debtDesc,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

@@ -237,6 +237,7 @@ public class AmcAssetController {
     for(AssetImage assetImage: assetImagesVo.getContent()){
 
       amcOssFileService.delFileInOss(assetImage.getOssPath());
+      amcAssetService.delImage(assetImage);
     }
   }
 

@@ -168,7 +168,6 @@ public class AmcAssetServiceImplTest {
             assetImageCur.setDescription(assetImage.getDescription());
             assetImageCur.setMainPic(assetImage.getMainPic());
             assetImageCur.setOriginalName(assetImage.getOriginalName());
-            assetImageCur.setOriginAssetId(assetImage.getAsset());
             assetImageCur.setOssPath(assetImage.getPath());
             secondaryMongoTemplate.save(assetImage);
         }
@@ -324,78 +323,78 @@ public class AmcAssetServiceImplTest {
 
     private void handleDebtGrantor(DebtOrigin debtOriginItem, AmcDebt amcDebt) {
         Query query = new Query();
-        query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOrigDebtId()));
-        List<Grntor> grntors = primaryMongoTemplate.find(query, Grntor.class);
-
-        // origin design combined grantor with grantor contract and debt
-        // current design seperate grantor to grantor , grantor connect with debt by contract
-
-        for(Grntor grntor : grntors){
-          AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
-          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(GrantorTypeEnum.
-              lookupByDisplayNameUtil(grntor.getType()).getId());
-          List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
-          AmcGrntor amcGrntor = null;
-          Long newGrntorId = null;
-          if(!CollectionUtils.isEmpty(amcGrntors)){
-            if(amcGrntors.size() >= 2){
-                logger.error(" there is redundent item for "+ grntor.getDebtNo() + " and "+ grntor.getName() );
-                for(int idx = 1; idx < amcGrntors.size() - 1; idx ++){
-                    amcGrntorMapper.deleteByPrimaryKey(amcGrntors.get(idx).getId());
-                }
-            }else{
-                amcGrntor = amcGrntors.get(0);
-                amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
-                amcGrntor.setName(grntor.getName());
-                amcGrntorMapper.updateByPrimaryKeySelective(amcGrntor);
-                newGrntorId = amcGrntor.getId();
-            }
-          }else{
-              amcGrntor = new AmcGrntor();
-              amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
-              amcGrntor.setName(grntor.getName());
-              newGrntorId = Long.valueOf(amcGrntorMapper.insertSelective(amcGrntor));
-          }
-            // generate contract
-          AmcGrntctrctExample amcGrntctrctExample = new AmcGrntctrctExample();
-          amcGrntctrctExample.createCriteria().andOriginDebtIdEqualTo(grntor.getDebtNo()).andOriginContractIdEqualTo(grntor.getContract());
-
-          List<AmcGrntctrct> amcGrntctrcts =  amcGrntctrctMapper.selectByExample(amcGrntctrctExample);
-          AmcGrntctrct amcGrntctrctNew = null;
-          if(!CollectionUtils.isEmpty(amcGrntctrcts)){
-              if(amcGrntctrcts.size() >= 2){
-                  logger.error("there is redundent grant contract itme for debt:"+ grntor.getDebtNo() + " and "
-                      + "contractId:" + grntor.getContract());
-                  for(int idx = 1; idx < amcGrntctrcts.size() - 1; idx ++){
-                      amcGrntctrctMapper.deleteByPrimaryKey(amcGrntctrcts.get(idx).getId());
-                  }
-              }else{
-                  amcGrntctrctNew = amcGrntctrcts.get(0);
-                  amcGrntctrctNew.setDebtId(amcDebt.getId());
-                  amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
-                  amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
-                  amcGrntctrctNew.setOriginContractId(grntor.getContract());
-                  amcGrntctrctNew.setOriginGrantorId(grntor.getId());
-                  amcGrntctrctNew.setGrantorId(newGrntorId);
-                  amcGrntctrctMapper.updateByPrimaryKey(amcGrntctrctNew);
-              }
-
-          }else{
-              amcGrntctrctNew = new AmcGrntctrct();
-              amcGrntctrctNew.setDebtId(amcDebt.getId());
-              amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
-              amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
-              amcGrntctrctNew.setOriginContractId(grntor.getContract());
-              amcGrntctrctNew.setOriginGrantorId(grntor.getId());
-              amcGrntctrctNew.setGrantorId(newGrntorId);
-              amcGrntctrctMapper.insertSelective(amcGrntctrctNew);
-
-          }
-            //Todo: search company by name ? from origin mongodb
-            //                amcGrntor.setOriginCmpyId();
-
-
-        }
+//        query.addCriteria(Criteria.where("debtNo").is(amcDebt.getOrigDebtId()));
+//        List<Grntor> grntors = primaryMongoTemplate.find(query, Grntor.class);
+//
+//        // origin design combined grantor with grantor contract and debt
+//        // current design seperate grantor to grantor , grantor connect with debt by contract
+//
+//        for(Grntor grntor : grntors){
+//          AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
+//          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(GrantorTypeEnum.
+//              lookupByDisplayNameUtil(grntor.getType()).getId());
+//          List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
+//          AmcGrntor amcGrntor = null;
+//          Long newGrntorId = null;
+//          if(!CollectionUtils.isEmpty(amcGrntors)){
+//            if(amcGrntors.size() >= 2){
+//                logger.error(" there is redundent item for "+ grntor.getDebtNo() + " and "+ grntor.getName() );
+//                for(int idx = 1; idx < amcGrntors.size() - 1; idx ++){
+//                    amcGrntorMapper.deleteByPrimaryKey(amcGrntors.get(idx).getId());
+//                }
+//            }else{
+//                amcGrntor = amcGrntors.get(0);
+//                amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+//                amcGrntor.setName(grntor.getName());
+//                amcGrntorMapper.updateByPrimaryKeySelective(amcGrntor);
+//                newGrntorId = amcGrntor.getId();
+//            }
+//          }else{
+//              amcGrntor = new AmcGrntor();
+//              amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+//              amcGrntor.setName(grntor.getName());
+//              newGrntorId = Long.valueOf(amcGrntorMapper.insertSelective(amcGrntor));
+//          }
+//            // generate contract
+//          AmcGrntctrctExample amcGrntctrctExample = new AmcGrntctrctExample();
+//          amcGrntctrctExample.createCriteria().andOriginDebtIdEqualTo(grntor.getDebtNo()).andOriginContractIdEqualTo(grntor.getContract());
+//
+//          List<AmcGrntctrct> amcGrntctrcts =  amcGrntctrctMapper.selectByExample(amcGrntctrctExample);
+//          AmcGrntctrct amcGrntctrctNew = null;
+//          if(!CollectionUtils.isEmpty(amcGrntctrcts)){
+//              if(amcGrntctrcts.size() >= 2){
+//                  logger.error("there is redundent grant contract itme for debt:"+ grntor.getDebtNo() + " and "
+//                      + "contractId:" + grntor.getContract());
+//                  for(int idx = 1; idx < amcGrntctrcts.size() - 1; idx ++){
+//                      amcGrntctrctMapper.deleteByPrimaryKey(amcGrntctrcts.get(idx).getId());
+//                  }
+//              }else{
+//                  amcGrntctrctNew = amcGrntctrcts.get(0);
+//                  amcGrntctrctNew.setDebtId(amcDebt.getId());
+//                  amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
+//                  amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
+//                  amcGrntctrctNew.setOriginContractId(grntor.getContract());
+//                  amcGrntctrctNew.setOriginGrantorId(grntor.getId());
+//                  amcGrntctrctNew.setGrantorId(newGrntorId);
+//                  amcGrntctrctMapper.updateByPrimaryKey(amcGrntctrctNew);
+//              }
+//
+//          }else{
+//              amcGrntctrctNew = new AmcGrntctrct();
+//              amcGrntctrctNew.setDebtId(amcDebt.getId());
+//              amcGrntctrctNew.setAmount(AmcNumberUtils.getLongFromDoubleWithMult100(grntor.getAmount()));
+//              amcGrntctrctNew.setOriginDebtId(grntor.getDebtNo());
+//              amcGrntctrctNew.setOriginContractId(grntor.getContract());
+//              amcGrntctrctNew.setOriginGrantorId(grntor.getId());
+//              amcGrntctrctNew.setGrantorId(newGrntorId);
+//              amcGrntctrctMapper.insertSelective(amcGrntctrctNew);
+//
+//          }
+//            //Todo: search company by name ? from origin mongodb
+//            //                amcGrntor.setOriginCmpyId();
+//
+//
+//        }
 
     }
 
@@ -461,7 +460,7 @@ public class AmcAssetServiceImplTest {
 //        }else{
 //            amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
 //        }
-        amcDebt.setOrigDebtId(originItem.getId());
+//        amcDebt.setOrigDebtId(originItem.getId());
         amcDebt.setPublishDate(originItem.getPublishDate());
         try {
             amcDebt.setSettleDate(AmcDateUtils.getDateFromStr(originItem.getSettleDate()));

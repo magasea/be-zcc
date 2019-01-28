@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -14,6 +15,5 @@ public interface AmcOssFileService {
   public String handleMultiPartFile(MultipartFile multipartFile, Long id, String type) throws Exception;
 
   public void delFileInOss(String ossPath) throws Exception;
-
 
 }

@@ -247,10 +247,10 @@ public class AmcDebtController {
 
       List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
 
-      List<AmcOrigCreditor> origCreditors = amcDebtService.getOriginCreditor(debtId);
+      AmcOrigCreditor origCreditors = amcDebtService.getOriginCreditor(debtId);
       amcDebtExtVo.setCreditors(creditors);
       amcDebtExtVo.setAmcGrntors(amcGrntors);
-      amcDebtExtVo.setOrigCreditors(origCreditors);
+      amcDebtExtVo.setOrigCreditor(origCreditors);
     }catch (Exception ex){
       log.error("failed to get creditor or grantor",ex);
     }

@@ -1,11 +1,16 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtpackMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
@@ -47,6 +52,9 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Autowired
   AmcPersonMapper amcPersonMapper;
+
+  @Autowired
+  AmcDebtMapper amcDebtMapper;
 
   @Override
   @Transactional
@@ -162,13 +170,13 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Override
   public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId) {
-    AmcCreditorDebtpackExample amcCreditorDebtpackExample = new AmcCreditorDebtpackExample();
-    amcCreditorDebtpackExample.createCriteria().andDebtpackIdEqualTo(debtPackId);
-    List<AmcCreditorDebtpack> creditorDebtpacks =  amcCreditorDebtpackMapper.selectByExample(amcCreditorDebtpackExample);
-    List<Long> creditorIds =
-        creditorDebtpacks.stream().map(creditorDebtpack -> creditorDebtpack.getCreditorId()).collect(Collectors.toList());
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andDebtpackIdEqualTo(debtPackId);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    List<Long> origCreditorIds = amcDebts.stream().map(amcDebt -> amcDebt.getOrigCreditorId()).collect(Collectors.toList());
     AmcOrigCreditorExample amcOrigCreditorExample = new AmcOrigCreditorExample();
-    amcOrigCreditorExample.createCriteria().andIdIn(creditorIds);
+    amcOrigCreditorExample.createCriteria().andIdIn(origCreditorIds);
+
     List<AmcOrigCreditor> origCreditors = amcOrigCreditorMapper.selectByExample(amcOrigCreditorExample);
     return origCreditors;
   }

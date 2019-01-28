@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
@@ -90,6 +91,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcCreditorDebtMapper amcCreditorDebtMapper;
+
+  @Autowired
+  AmcOrigCreditorMapper amcOrigCreditorMapper;
 
   @Autowired
   AmcDebtpackService amcDebtpackService;
@@ -382,10 +386,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcOrigCreditor> getOriginCreditor(Long amcDebtId) {
+  public AmcOrigCreditor getOriginCreditor(Long amcDebtId) {
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
-    List<AmcOrigCreditor> amcOrigCreditors = amcDebtpackService.getCreditorByDebtPackId(amcDebt.getDebtpackId());
-    return amcOrigCreditors;
+    AmcOrigCreditor amcOrigCreditor = amcOrigCreditorMapper.selectByPrimaryKey(amcDebt.getOrigCreditorId());
+
+    return amcOrigCreditor;
   }
 
   @Override

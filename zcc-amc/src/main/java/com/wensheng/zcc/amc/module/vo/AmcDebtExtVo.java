@@ -17,5 +17,5 @@ public class AmcDebtExtVo {
   AmcDebtVo amcDebtVo;
   List<AmcCreditor> creditors;
   List<AmcGrntor> amcGrntors;
-  List<AmcOrigCreditor> origCreditors;
+  AmcOrigCreditor origCreditor;
 }

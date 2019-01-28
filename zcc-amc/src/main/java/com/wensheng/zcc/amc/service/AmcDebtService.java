@@ -63,7 +63,7 @@ public interface AmcDebtService {
 
   public List<AmcGrntor> getGrantors(Long amcDebtId);
 
-  public List<AmcOrigCreditor> getOriginCreditor(Long amcDebtId);
+  public AmcOrigCreditor getOriginCreditor(Long amcDebtId);
 
   void delImage(DebtImage debtImage);
 }

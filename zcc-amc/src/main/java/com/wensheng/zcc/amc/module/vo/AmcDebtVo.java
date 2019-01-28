@@ -20,6 +20,8 @@ public class AmcDebtVo {
 
   private Long debtpackId;
 
+  private Long amcId;
+
   private String title;
 
   private BigDecimal baseAmount;
@@ -42,7 +44,7 @@ public class AmcDebtVo {
 
   private Date publishDate;
 
-  private String lawStatus;
+  private String lawStatDesc;
 
   private BigDecimal estimatedPrice;
 
@@ -55,6 +57,10 @@ public class AmcDebtVo {
   private Date startDate;
 
   private Date endDate;
+
+  private Long origCreditorId;
+
+  private String debtDesc;
 
   List<AmcAssetVo> assetVos;
 

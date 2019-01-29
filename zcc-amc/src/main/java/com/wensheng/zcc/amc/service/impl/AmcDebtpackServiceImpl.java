@@ -55,35 +55,13 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Override
   @Transactional
-  public AmcDebtpackExtVo create(AmcDebtpackExtVo amcDebtpackExtVo) throws Exception {
-    AmcDebtpack amcDebtpack = new AmcDebtpack();
-    BeanUtils.copyProperties(amcDebtpackExtVo.getAmcDebtpackInfo(), amcDebtpack);
+  public AmcDebtpack create(AmcDebtpack amcDebtpack) throws Exception {
     Long id = Long.valueOf(amcDebtpackMapper.insertSelective(amcDebtpack));
-    if(!CollectionUtils.isEmpty(amcDebtpackExtVo.getAmcOrigCreditorList())){
-      //make relationship between creditor and deptpack
-      for(Long amcOrigCreditor: amcDebtpackExtVo.getAmcOrigCreditorList()){
-        AmcOrigCreditorExample amcCreditorExample = new AmcOrigCreditorExample();
-        amcCreditorExample.createCriteria().andIdEqualTo(amcOrigCreditor);
-        if(amcOrigCreditorMapper.countByExample(amcCreditorExample) > 0){
-          //now delete and insert the relationship between amcDebtPack and Creditor in table AMC_CREDITOR_DEBTPACK
-          AmcCreditorDebtpackExample amcCreditorDebtpackExampleDel = new AmcCreditorDebtpackExample();
-          amcCreditorDebtpackExampleDel.createCriteria().andDebtpackIdEqualTo(id);
-          amcCreditorDebtpackMapper.deleteByExample(amcCreditorDebtpackExampleDel);
 
-          AmcCreditorDebtpack amcCreditorDebtpack = new AmcCreditorDebtpack();
-          amcCreditorDebtpack.setDebtpackId(id);
-          amcCreditorDebtpack.setCreditorId(amcOrigCreditor);
-          amcCreditorDebtpackMapper.insertSelective(amcCreditorDebtpack);
-        }else{
-          throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ORIG_CREDITOR);
-        }
-      }
-
-    }
-    amcDebtpackExtVo.setId(id);
+    amcDebtpack.setId(id);
 
 
-    return amcDebtpackExtVo;
+    return amcDebtpack;
   }
 
   @Override
@@ -133,16 +111,7 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
 
 
-  @Override
-  public List<AmcOrigCreditor> getAllCreditors(int offset, int size, Map<String, Direction> orderByParam)
-      throws Exception {
-    AmcOrigCreditorExample amcOrigCreditorExample = new AmcOrigCreditorExample();
-    amcOrigCreditorExample.createCriteria().andIdGreaterThan(0L);
-    amcOrigCreditorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
-    RowBounds rowBounds = new RowBounds(offset, size);
-    List<AmcOrigCreditor> amcOrigCreditors = amcOrigCreditorMapper.selectByExampleWithRowbounds(amcOrigCreditorExample, rowBounds);
-    return amcOrigCreditors;
-  }
+
 
   @Override
   public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId) {
@@ -157,13 +126,27 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
     return origCreditors;
   }
 
-  @Override
-  public Long getCreditorsCount(){
 
-    return amcOrigCreditorMapper.countByExample(null);
+
+  @Override
+  public List<AmcDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception {
+
+      AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
+      amcDebtpackExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+      RowBounds rowBounds = new RowBounds(offset, size);
+      List<AmcDebtpack> amcDebtpacks = amcDebtpackMapper.selectByExampleWithRowbounds(amcDebtpackExample,
+          rowBounds);
+      return amcDebtpacks;
+
+
   }
 
-
+  @Override
+  public Long getTotalCnt4Debtpacks() {
+    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
+    Long count = amcDebtpackMapper.countByExample(amcDebtpackExample);
+    return count;
+  }
 
 
 }

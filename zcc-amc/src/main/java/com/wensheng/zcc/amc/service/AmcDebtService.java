@@ -12,6 +12,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * @author chenwei on 1/4/19
@@ -64,6 +65,11 @@ public interface AmcDebtService {
   public List<AmcGrntor> getGrantors(Long amcDebtId);
 
   public AmcOrigCreditor getOriginCreditor(Long amcDebtId);
+
+  public Long getCreditorsCount();
+
+  public List<AmcOrigCreditor> getAllOrigCreditors(int offset, int size, Map<String, Direction> orderByParam)
+      throws Exception;
 
   void delImage(DebtImage debtImage);
 

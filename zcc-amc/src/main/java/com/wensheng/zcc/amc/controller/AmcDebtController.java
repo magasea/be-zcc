@@ -317,11 +317,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/editAble", method = RequestMethod.POST)
   @ResponseBody
-  public Boolean editAble(
-      @RequestParam("debtStatus") Integer debtStatus)
-      {
-
-
+  public Boolean editAble(@RequestParam("debtStatus") Integer debtStatus) {
 
     return  zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
 
@@ -337,6 +333,32 @@ public class AmcDebtController {
     AmcOrigCreditor amcOrigCreditorResult;
     amcOrigCreditorResult = amcDebtService.createCreditor(amcOrigCreditor);
     return amcOrigCreditorResult;
+  }
+
+  @RequestMapping(value = "amcid/{amcId}/debtpack/origcreditors", method = RequestMethod.POST)
+  @ResponseBody
+  public Page<AmcOrigCreditor> getAmcCreditor(@RequestBody PageInfo pageable) throws Exception {
+
+
+    Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
+    if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("id", Direction.DESC);
+    }
+
+    int offset = PageReqRepHelper.getOffset(pageable);
+    List<AmcOrigCreditor> amcOrigCreditors ;
+    try{
+      amcOrigCreditors = amcDebtService.getAllOrigCreditors(offset, pageable.getSize(), orderByParam);
+
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = amcDebtService.getCreditorsCount();
+    Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
+
+
+    return amcOrigCreditorPage;
   }
 
 

@@ -13,7 +13,7 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcDebtpackService {
 
-  public AmcDebtpackExtVo create(AmcDebtpackExtVo amcDebtpackExtVo) throws Exception;
+  public AmcDebtpack create(AmcDebtpack amcDebtpack) throws Exception;
 
   public AmcDebtpack del(AmcDebtpack amcDebtpack);
 
@@ -30,13 +30,15 @@ public interface AmcDebtpackService {
 
 
 
-  public List<AmcOrigCreditor> getAllCreditors(int offset, int pageSize, Map<String, Direction> orderByParam)
-      throws Exception;
+
 
   public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId);
 
-  public Long getCreditorsCount();
 
 
+
+  List<AmcDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception;
+
+  Long getTotalCnt4Debtpacks();
 
 }

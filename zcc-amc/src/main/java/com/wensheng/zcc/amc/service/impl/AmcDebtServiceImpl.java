@@ -24,6 +24,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -45,6 +46,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -391,6 +393,23 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcOrigCreditor amcOrigCreditor = amcOrigCreditorMapper.selectByPrimaryKey(amcDebt.getOrigCreditorId());
 
     return amcOrigCreditor;
+  }
+
+  @Override
+  public List<AmcOrigCreditor> getAllOrigCreditors(int offset, int size, Map<String, Direction> orderByParam)
+      throws Exception {
+    AmcOrigCreditorExample amcOrigCreditorExample = new AmcOrigCreditorExample();
+    amcOrigCreditorExample.createCriteria().andIdGreaterThan(0L);
+    amcOrigCreditorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+    RowBounds rowBounds = new RowBounds(offset, size);
+    List<AmcOrigCreditor> amcOrigCreditors = amcOrigCreditorMapper.selectByExampleWithRowbounds(amcOrigCreditorExample, rowBounds);
+    return amcOrigCreditors;
+  }
+
+  @Override
+  public Long getCreditorsCount(){
+
+    return amcOrigCreditorMapper.countByExample(null);
   }
 
   @Override

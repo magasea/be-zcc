@@ -74,4 +74,12 @@ public interface AmcDebtService {
   void delImage(DebtImage debtImage);
 
   AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
+
+  List<AmcCreditor> getAllCreditors(Long offset, int size, Map<String, Direction> orderByParam) throws Exception;
+
+  Long getTotalCreditorCount();
+
+  List<AmcCmpy> getAllCompanies(Long offset, int size, Map<String, Direction> orderByParam) throws Exception;
+
+  Long getTotalCompanyCount();
 }

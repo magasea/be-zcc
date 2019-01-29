@@ -115,6 +115,33 @@ public class AmcDebtController {
     return amcDebtService.create(amcCreditorBaseActionVo.getContent());
   }
 
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/creditors", method = RequestMethod.POST)
+  @ResponseBody
+  public Page<AmcCreditor> getAmcCreditors(@RequestBody PageInfo pageable) throws Exception {
+
+
+    Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
+    if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("id", Direction.DESC);
+    }
+
+
+    List<AmcCreditor> queryResults;
+    int offset = PageReqRepHelper.getOffset(pageable);
+    try{
+      queryResults = amcDebtService.getAllCreditors(Long.valueOf(offset), pageable.getSize(), orderByParam);
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = amcDebtService.getTotalCreditorCount();
+
+    Page<AmcCreditor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
+
+
+    return page;
+  }
+
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/creditor/update", method = RequestMethod.POST)
   @ResponseBody
@@ -140,6 +167,33 @@ public class AmcDebtController {
       BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
 
     return amcDebtService.create(amcCmpyBaseActionVo.getContent());
+  }
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/companies", method = RequestMethod.POST)
+  @ResponseBody
+  public Page<AmcCmpy> getAmcCompanies(@RequestBody PageInfo pageable) throws Exception {
+
+
+    Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
+    if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("id", Direction.DESC);
+    }
+
+
+    List<AmcCmpy> queryResults;
+    int offset = PageReqRepHelper.getOffset(pageable);
+    try{
+      queryResults = amcDebtService.getAllCompanies(Long.valueOf(offset), pageable.getSize(), orderByParam);
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = amcDebtService.getTotalCompanyCount();
+
+    Page<AmcCmpy> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
+
+
+    return page;
   }
 
   @LogExecutionTime
@@ -185,9 +239,9 @@ public class AmcDebtController {
 
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/image/del", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
-  public void delAmcAssetImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo ) throws Exception{
+  public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo ) throws Exception{
     amcOssFileService.delFileInOss(debtImageBaseActionVo.getContent().getOssPath());
     amcDebtService.delImage(debtImageBaseActionVo.getContent());
   }
@@ -264,9 +318,6 @@ public class AmcDebtController {
   @ResponseBody
   public AmcDebtExtVo updateDebt(@RequestBody AmcDebtExtVo amcDebtExtVo)
       throws Exception {
-
-
-
 
     try{
 

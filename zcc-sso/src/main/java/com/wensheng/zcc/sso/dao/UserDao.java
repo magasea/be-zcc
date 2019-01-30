@@ -1,6 +1,5 @@
 package com.wensheng.zcc.sso.dao;
 
-import com.wensheng.zcc.sso.model.User;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

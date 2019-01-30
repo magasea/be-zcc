@@ -1,7 +1,6 @@
-package com.baeldung.config;
+package com.wensheng.zcc.sso.config;
 
 import java.util.Arrays;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;

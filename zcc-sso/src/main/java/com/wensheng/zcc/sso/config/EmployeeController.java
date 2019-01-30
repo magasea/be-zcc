@@ -1,21 +1,19 @@
-package com.baeldung.config;
+package com.wensheng.zcc.sso.config;
 
+
+import com.wensheng.zcc.sso.model.Employee;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.Optional;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
-
-import com.baeldung.model.Employee;
-
-import java.util.Optional;
 
 @Controller
 public class EmployeeController {

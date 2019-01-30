@@ -272,8 +272,20 @@ public class AmcDebtController {
     if( !isAmcContactExist ){
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
           + "id:%d", createVo.getAmcContact1()));
+    }else{
+      amcDebt.setAmcContact1(createVo.getAmcContact1());
     }
 
+    if(createVo.getAmcContact2() == null || createVo.getAmcContact2() < 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
+    }
+    isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact2());
+    if( !isAmcContactExist ){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
+          + "id:%d", createVo.getAmcContact2()));
+    }else{
+      amcDebt.setAmcContact2(createVo.getAmcContact2());
+    }
 
     //3. create the debt
     AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);

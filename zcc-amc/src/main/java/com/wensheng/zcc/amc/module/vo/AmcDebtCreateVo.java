@@ -49,6 +49,8 @@ public class AmcDebtCreateVo {
 
   private Integer isRecommanded;
 
+  private Long origCreditorId;
+
   private Date startDate;
 
   private Date endDate;

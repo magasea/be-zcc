@@ -19,12 +19,12 @@ public class UserController {
 
   @RequestMapping(value = "/user/verifycode")
   public boolean verifyVCode(String vcode){
-
+    return false;
   }
 
   @RequestMapping(value = "user/getvc")
   public Image getVC(){
-
+    return null;
   }
 
 }

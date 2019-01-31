@@ -10,11 +10,15 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class UserUtils {
 
   @Autowired
-  private static BCryptPasswordEncoder passwordEncoder;
+  private static BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
   public static String getEncode(String password){
     return passwordEncoder.encode("123");
+  }
+
+  public static boolean match( String rawPw, String encodedPw){
+    return passwordEncoder.matches(rawPw, encodedPw);
   }
 
 }

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import java.awt.Image;
 import org.hibernate.validator.constraints.pl.REGON.List;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -10,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller
 
-public class UserControll {
+public class UserController {
 
   private static final String VERIFY_CODE = "verify_code";
   private static final String VERIFY_CODE_IMAGE = "verify_code_image";
@@ -22,6 +23,8 @@ public class UserControll {
   }
 
   @RequestMapping(value = "user/getvc")
-  public
+  public Image getVC(){
+
+  }
 
 }

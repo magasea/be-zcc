@@ -36,7 +36,19 @@ spring:
                 hbm2ddl:
                     auto: none
         show-sql: true
-
+    security:
+        oauth2:
+            client:
+                registration:
+                    sample:
+                        client-id: sampleClientId
+                        authorizedGrantTypes: implicit
+                        scops: read,write
+                        accessTokenValiditySeconds: 3600
+                    amc-client:
+                        client-id: amcClientId
+                        secret: secret
+                        authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
 mybatis:
     type-aliases-package: com.wensheng.zcc.sso.module
@@ -45,7 +57,16 @@ mybatis:
         - classpath:mappers/extends/*Mapper.xml
 
 weixin:
-    accessUrl: https://api.weixin.qq.com/sns/oauth2/access_token
-    appId: wx0b3ccac3723da62d
-    appSec: e1fb60842affad010ecff2ee9a495fdf
-    loginUrl: https://api.weixin.qq.com/sns/jscode2session
+    appId: wxdb885be2c95a5b32
+    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+
+
+
+
+auth-server:
+    - client:
+        - clientId: sampleClientId
+        -
+

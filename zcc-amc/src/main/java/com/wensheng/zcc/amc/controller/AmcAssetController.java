@@ -94,7 +94,7 @@ public class AmcAssetController {
     return page;
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/allTitles", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/allTitles", method = RequestMethod.POST)
   @ResponseBody
   public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
     return amcAssetService.getAllAssetTitles();

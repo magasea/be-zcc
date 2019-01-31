@@ -38,6 +38,7 @@ import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -455,5 +456,21 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public Long getTotalCompanyCount() {
     return amcCmpyMapper.countByExample(null);
+  }
+
+  @Override
+  public Map<String, List<Long>> getAllTitles() {
+    List<AmcDebt> amcDebts = amcDebtExtMapper.selectAllTitlesByExample(null);
+    Map<String, List<Long>> result = new HashMap<>();
+    for(AmcDebt amcDebt: amcDebts){
+
+      if(!result.containsKey(amcDebt.getTitle())){
+
+        result.put(amcDebt.getTitle(), new ArrayList<Long>());
+      }
+      result.get(amcDebt.getTitle()).add(amcDebt.getId());
+
+    }
+    return result;
   }
 }

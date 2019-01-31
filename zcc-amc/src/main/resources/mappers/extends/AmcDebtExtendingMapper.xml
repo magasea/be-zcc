@@ -115,15 +115,17 @@
     </if>
   </select>
 
-  <select id="selectAllTitles"
-    parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">
+
+
+  <select id="selectAllTitlesByExample"
+    parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample"
+    resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
-    title
-    from AMC_DEBT ad  left join AMC_ASSET aa
-    on ad.id = aa.debt_id
+    id, title
+    from AMC_DEBT
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Example_Where_Clause" />
     </if>

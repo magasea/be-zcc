@@ -92,17 +92,15 @@ public class AmcDebtController {
   }
 
 
-
-
   private void checkGrantor(AmcGrntctrct grntctrct) throws Exception {
-    if(amcDebtService.isDebtIdExist(grntctrct.getDebtId())){
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE,""+grntctrct
-          .getDebtId() );
+    if (amcDebtService.isDebtIdExist(grntctrct.getDebtId())) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE, "" + grntctrct
+          .getDebtId());
     }
-    if(!amcDebtService.isGrntIdExist(grntctrct.getGrantorId(),
-        grntctrct.getType())){
+    if (!amcDebtService.isGrntIdExist(grntctrct.getGrantorId(),
+        grntctrct.getType())) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE, String.format("grantId:%d, "
-          + "grantorType:%d",grntctrct.getGrantorId(), grntctrct.getType() ));
+          + "grantorType:%d", grntctrct.getGrantorId(), grntctrct.getType()));
     }
   }
 
@@ -111,7 +109,6 @@ public class AmcDebtController {
   public AmcCreditor addAmcCreditor(@PathVariable(name = "amcId") Integer amcId,
       BaseActionVo<AmcCreditor> amcCreditorBaseActionVo) throws Exception {
 
-
     return amcDebtService.create(amcCreditorBaseActionVo.getContent());
   }
 
@@ -119,25 +116,22 @@ public class AmcDebtController {
   @ResponseBody
   public Page<AmcCreditor> getAmcCreditors(@RequestBody PageInfo pageable) throws Exception {
 
-
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
-    if(CollectionUtils.isEmpty(orderByParam)){
+    if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
-
     List<AmcCreditor> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
-    try{
+    try {
       queryResults = amcDebtService.getAllCreditors(Long.valueOf(offset), pageable.getSize(), orderByParam);
-    }catch (Exception ex){
-      log.error("got error when query:"+ex.getMessage());
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
     Long totalCount = amcDebtService.getTotalCreditorCount();
 
     Page<AmcCreditor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
-
 
     return page;
   }
@@ -156,7 +150,6 @@ public class AmcDebtController {
   public AmcCmpy addAmcCompany(@PathVariable(name = "amcId") Integer amcId,
       BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
 
-
     return amcDebtService.create(amcCmpyBaseActionVo.getContent());
   }
 
@@ -173,25 +166,22 @@ public class AmcDebtController {
   @ResponseBody
   public Page<AmcCmpy> getAmcCompanies(@RequestBody PageInfo pageable) throws Exception {
 
-
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
-    if(CollectionUtils.isEmpty(orderByParam)){
+    if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
-
     List<AmcCmpy> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
-    try{
+    try {
       queryResults = amcDebtService.getAllCompanies(Long.valueOf(offset), pageable.getSize(), orderByParam);
-    }catch (Exception ex){
-      log.error("got error when query:"+ex.getMessage());
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
     Long totalCount = amcDebtService.getTotalCompanyCount();
 
     Page<AmcCmpy> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
-
 
     return page;
   }
@@ -201,39 +191,38 @@ public class AmcDebtController {
       + "/form-data"})
   @ResponseBody
   public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
-      @RequestParam("debtId")  Long debtId, @RequestParam("tag")  Integer tag, @RequestParam("desc")  String desc,
+      @RequestParam("debtId") Long debtId, @RequestParam("tag") Integer tag, @RequestParam("desc") String desc,
       @RequestPart MultipartFile[] uploadingImages) throws Exception {
 
-
-    if(debtId == null || debtId < 0){
-      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,  String.format("debtId %s is not valid",
+    if (debtId == null || debtId < 0) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("debtId %s is not valid",
           debtId));
     }
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
     List<String> filePaths = new ArrayList<>();
-    for(MultipartFile uploadedImage : uploadingImages) {
+    for (MultipartFile uploadedImage : uploadingImages) {
       try {
-        String filePath = amcOssFileService.handleMultiPartFile(uploadedImage, debtId, ImagePathClassEnum.DEBT.getName());
+        String filePath = amcOssFileService
+            .handleMultiPartFile(uploadedImage, debtId, ImagePathClassEnum.DEBT.getName());
         filePaths.add(filePath);
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+        throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
       }
     }
-    String prePath = ImagePathClassEnum.DEBT.getName()+"/"+ debtId +"/";
+    String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
 
-    for(String filePath: filePaths){
+    for (String filePath : filePaths) {
       try {
-        String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
+        String ossPath = amcOssFileService.handleFile2Oss(filePath, prePath);
         amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, tag);
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+        throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
       }
 
     }
-
 
     return "successed";
 
@@ -241,7 +230,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
-  public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo ) throws Exception{
+  public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo) throws Exception {
     amcOssFileService.delFileInOss(debtImageBaseActionVo.getContent().getOssPath());
     amcDebtService.delImage(debtImageBaseActionVo.getContent());
   }
@@ -255,35 +244,34 @@ public class AmcDebtController {
     BeanUtils.copyProperties(createVo, amcDebt);
 
     //1. check deptpackId exist
-    if(createVo.getDebtpackId() == null || createVo.getDebtpackId() < 0){
+    if (createVo.getDebtpackId() == null || createVo.getDebtpackId() < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
     }
     boolean isExist = amcDebtpackService.exist(createVo.getDebtpackId());
-    if( !isExist ){
+    if (!isExist) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
     }
 
-
     //2. check contact person exist
-    if(createVo.getAmcContact1() == null || createVo.getAmcContact1() < 0){
+    if (createVo.getAmcContact1() == null || createVo.getAmcContact1() < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
     }
     boolean isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact1());
-    if( !isAmcContactExist ){
+    if (!isAmcContactExist) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
           + "id:%d", createVo.getAmcContact1()));
-    }else{
+    } else {
       amcDebt.setAmcContact1(createVo.getAmcContact1());
     }
 
-    if(createVo.getAmcContact2() == null || createVo.getAmcContact2() < 0){
+    if (createVo.getAmcContact2() == null || createVo.getAmcContact2() < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
     }
     isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact2());
-    if( !isAmcContactExist ){
+    if (!isAmcContactExist) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
           + "id:%d", createVo.getAmcContact2()));
-    }else{
+    } else {
       amcDebt.setAmcContact2(createVo.getAmcContact2());
     }
 
@@ -291,7 +279,7 @@ public class AmcDebtController {
     AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
 
     //4. make relationship between creditors with debt
-    if(CollectionUtils.isEmpty(createVo.getCreditors())){
+    if (CollectionUtils.isEmpty(createVo.getCreditors())) {
       amcDebtService.connDebt2Creditors(createVo.getCreditors(), amcDebtVo.getId());
     }
 
@@ -306,10 +294,10 @@ public class AmcDebtController {
 
     AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
-    AmcDebtVo amcDebtVo =  amcDebtService.get(debtId);
+    AmcDebtVo amcDebtVo = amcDebtService.get(debtId);
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
 
-    try{
+    try {
       List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
 
       List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
@@ -318,10 +306,9 @@ public class AmcDebtController {
       amcDebtExtVo.setCreditors(creditors);
       amcDebtExtVo.setAmcGrntors(amcGrntors);
       amcDebtExtVo.setOrigCreditor(origCreditor);
-    }catch (Exception ex){
-      log.error("failed to get creditor or grantor",ex);
+    } catch (Exception ex) {
+      log.error("failed to get creditor or grantor", ex);
     }
-
 
     return amcDebtExtVo;
   }
@@ -331,22 +318,23 @@ public class AmcDebtController {
   public AmcDebtExtVo updateDebt(@RequestBody AmcDebtExtVo amcDebtExtVo)
       throws Exception {
 
-    try{
+    try {
 
       AmcDebt amcDebt = new AmcDebt();
       BeanUtils.copyProperties(amcDebtExtVo.getAmcDebtVo(), amcDebt);
       amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getBaseAmount()));
-      amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getEstimatedPrice()));
-      amcDebt.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getTotalAmount()));
+      amcDebt.setEstimatedPrice(
+          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getEstimatedPrice()));
+      amcDebt
+          .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getTotalAmount()));
       amcDebtService.update(amcDebt);
 
       List<Long> creditorIds =
-          amcDebtExtVo.getCreditors().stream().map( amcCreditor -> amcCreditor.getId()).collect(Collectors.toList());
+          amcDebtExtVo.getCreditors().stream().map(amcCreditor -> amcCreditor.getId()).collect(Collectors.toList());
       amcDebtService.connDebt2Creditors(creditorIds, amcDebtExtVo.getAmcDebtVo().getId());
-    }catch (Exception ex){
-      log.error("failed to update debt",ex);
+    } catch (Exception ex) {
+      log.error("failed to update debt", ex);
     }
-
 
     return amcDebtExtVo;
   }
@@ -356,23 +344,21 @@ public class AmcDebtController {
   public Page<AmcDebtVo> queryDebts(@RequestBody PageInfo pageable)
       throws Exception {
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
-    if(CollectionUtils.isEmpty(orderByParam)){
+    if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
-
     List<AmcDebtVo> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
-    try{
+    try {
       queryResults = amcDebtService.queryAllExt(Long.valueOf(offset), pageable.getSize(), orderByParam);
-    }catch (Exception ex){
-      log.error("got error when query:"+ex.getMessage());
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
     Long totalCount = amcDebtService.getTotalCount();
 
     Page<AmcDebtVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
-
 
     return page;
   }
@@ -382,14 +368,14 @@ public class AmcDebtController {
   @ResponseBody
   public Boolean editAble(@RequestParam("debtStatus") Integer debtStatus) {
 
-    return  zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
+    return zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
 
   }
 
   @RequestMapping(value = "amcid/{amcId}/debt/origcreditor/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcOrigCreditor createAmcCreditor(@RequestBody AmcOrigCreditor amcOrigCreditor) throws Exception {
-    if(StringUtils.isEmpty(amcOrigCreditor.getBankName())){
+    if (StringUtils.isEmpty(amcOrigCreditor.getBankName())) {
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ORIG_CREDITOR, "bankname is empty");
     }
 
@@ -398,31 +384,35 @@ public class AmcDebtController {
     return amcOrigCreditorResult;
   }
 
-  @RequestMapping(value = "amcid/{amcId}/debtpack/origcreditors", method = RequestMethod.POST)
+  @RequestMapping(value = "amcid/{amcId}/debt/origcreditors", method = RequestMethod.POST)
   @ResponseBody
   public Page<AmcOrigCreditor> getAmcCreditor(@RequestBody PageInfo pageable) throws Exception {
 
-
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
-    if(CollectionUtils.isEmpty(orderByParam)){
+    if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
     int offset = PageReqRepHelper.getOffset(pageable);
-    List<AmcOrigCreditor> amcOrigCreditors ;
-    try{
+    List<AmcOrigCreditor> amcOrigCreditors;
+    try {
       amcOrigCreditors = amcDebtService.getAllOrigCreditors(offset, pageable.getSize(), orderByParam);
 
-    }catch (Exception ex){
-      log.error("got error when query:"+ex.getMessage());
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
     Long totalCount = amcDebtService.getCreditorsCount();
     Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
 
-
     return amcOrigCreditorPage;
   }
 
+  @RequestMapping(value = "amcid/{amcId}/debt/allTitles", method = RequestMethod.POST)
+  @ResponseBody
+  public Map<String, List<Long>> getAllDebtTitles() throws Exception {
 
+    return amcDebtService.getAllTitles();
+
+  }
 }

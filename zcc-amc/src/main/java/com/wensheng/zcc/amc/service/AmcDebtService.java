@@ -82,4 +82,6 @@ public interface AmcDebtService {
   List<AmcCmpy> getAllCompanies(Long offset, int size, Map<String, Direction> orderByParam) throws Exception;
 
   Long getTotalCompanyCount();
+
+  Map<String, List<Long>> getAllTitles();
 }

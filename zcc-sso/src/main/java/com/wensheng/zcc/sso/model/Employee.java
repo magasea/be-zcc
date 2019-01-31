@@ -1,4 +1,4 @@
-package com.baeldung.model;
+package com.wensheng.zcc.sso.model;
 
 public class Employee {
     private String email;

@@ -40,21 +40,6 @@ spring:
       maxOpenPreparedStatements: 20
 
 
-#  jpa:
-#      generate-ddl: false
-#      hibernate:
-#          ddl-auto: 'none'
-#          naming:
-#              physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#      properties:
-#          hibernate:
-#              hbm2ddl:
-#                  auto: none
-#      show-sql: true
-  user:
-      datasource:
-          driver-class-name: com.mysql.cj.jdbc.Driver
-
 
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module

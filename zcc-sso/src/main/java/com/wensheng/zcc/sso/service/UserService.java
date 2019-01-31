@@ -1,19 +1,10 @@
 package com.wensheng.zcc.sso.service;
 
-import com.wensheng.zcc.sso.model.User;
-import com.wensheng.zcc.sso.model.UserDto;
-
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import java.util.List;
 
 public interface UserService {
 
-    User save(UserDto user);
-    List<User> findAll();
-    void delete(int id);
+  List<AmcUser> getUserByPhone(String phoneNum);
 
-    User findOne(String username);
-
-    User findById(int id);
-
-    UserDto update(UserDto userDto);
 }

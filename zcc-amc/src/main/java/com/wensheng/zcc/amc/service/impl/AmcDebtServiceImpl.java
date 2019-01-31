@@ -13,6 +13,7 @@ import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtExample;
@@ -428,5 +429,31 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Long id = Long.valueOf(amcOrigCreditorMapper.insertSelective(amcOrigCreditor));
     amcOrigCreditor.setId(id);
     return amcOrigCreditor;
+  }
+
+  @Override
+  public List<AmcCreditor> getAllCreditors(Long offset, int size, Map<String, Direction> orderByParam)
+      throws Exception {
+    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
+    amcCreditorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+    return amcCreditorMapper.selectByExample(amcCreditorExample);
+  }
+
+  @Override
+  public Long getTotalCreditorCount() {
+    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
+    return amcCreditorMapper.countByExample(amcCreditorExample);
+  }
+
+  @Override
+  public List<AmcCmpy> getAllCompanies(Long offset, int size, Map<String, Direction> orderByParam) throws Exception {
+    AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
+    amcCmpyExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+    return amcCmpyMapper.selectByExample(amcCmpyExample);
+  }
+
+  @Override
+  public Long getTotalCompanyCount() {
+    return amcCmpyMapper.countByExample(null);
   }
 }

@@ -1,0 +1,51 @@
+logging:
+    level:
+        com:
+            wensheng: TRACE
+        root: WARN
+spring:
+    autoconfigure:
+        exclude:
+            - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+        datasource:
+            password: wensheng
+            url: jdbc:mysql://10.20.100.70:3306/ZCC_SSO?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+            username: root
+            driverClassName: com.mysql.cj.jdbc.Driver
+            filters: stat
+            maxActive: 20
+            initialSize: 1
+            maxWait: 60000
+            minIdle: 1
+            timeBetweenEvictionRunsMillis: 60000
+            minEvictableIdleTimeMillis: 300000
+            validationQuery: select 'x'
+            testWhileIdle: true
+            testOnBorrow: false
+            testOnReturn: false
+            poolPreparedStatements: true
+            maxOpenPreparedStatements: 20
+    jpa:
+        generate-ddl: false
+        hibernate:
+            ddl-auto: 'none '
+            naming:
+                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        properties:
+            hibernate:
+                hbm2ddl:
+                    auto: none
+        show-sql: true
+
+
+mybatis:
+    type-aliases-package: com.wensheng.zcc.sso.module
+    mapper-locations:
+        - classpath:mappers/*Mapper.xml
+        - classpath:mappers/extends/*Mapper.xml
+
+weixin:
+    accessUrl: https://api.weixin.qq.com/sns/oauth2/access_token
+    appId: wx0b3ccac3723da62d
+    appSec: e1fb60842affad010ecff2ee9a495fdf
+    loginUrl: https://api.weixin.qq.com/sns/jscode2session

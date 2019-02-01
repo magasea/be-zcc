@@ -8,7 +8,7 @@
     <collection property="amcRoles" resultMap="com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper.BaseResultMap"
       columnPrefix="role_"/>
     <collection property="amcPermissions"
-      resultMap="com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper.BaseResultMap" columnPrefix="perm_"/>
+      resultMap="com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper.BaseResultMap" columnPrefix="perm_"/>
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>

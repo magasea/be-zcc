@@ -63,11 +63,12 @@ public class UserServiceImpl implements UserService, UserDetailsService {
 
     AmcUserExt amcUserExt = amcUserExtMapper.selectByExtExample(amcUser.getId());
     List<String> authorities = new ArrayList<>();
-    for(AmcRole amcRole: amcUserExt.getAmcRoles()){
-      authorities.add(amcRole.getName());
-    }
+
     for(AmcPermission amcPermission: amcUserExt.getAmcPermissions()){
       authorities.add(amcPermission.getName());
+    }
+    for(AmcRole amcRole: amcUserExt.getAmcRoles()){
+      authorities.add(amcRole.getName());
     }
     return authorities;
 

@@ -7,4 +7,6 @@ public interface UserService {
 
   List<AmcUser> getUserByPhone(String phoneNum);
 
+  List<String> getPermissions(AmcUser amcUser);
+
 }

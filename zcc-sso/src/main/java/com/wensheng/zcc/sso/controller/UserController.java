@@ -5,6 +5,7 @@ import java.awt.Image;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chenwei on 1/31/19
@@ -30,8 +31,10 @@ public class UserController {
 
 
   @RequestMapping(value = "/login")
-  public void login(@RequestBody LoginVo loginVo){
-
+  @ResponseBody
+  public String login(@RequestBody LoginVo loginVo){
+    System.out.println("loginVo:" + loginVo.getUserName());
+    return "wensheng";
   }
 
 }

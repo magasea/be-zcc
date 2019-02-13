@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import com.wensheng.zcc.sso.module.vo.LoginVo;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -34,19 +35,23 @@ public class BasicConfigurationIntegrationTest {
   @Before
   public void setUp() throws MalformedURLException {
     restTemplate = new TestRestTemplate("chenwei", "wensheng");
-    base = new URL("http://localhost:" + port);
+    base = new URL("http://localhost:" + port+
+        "/login");
   }
 
   @Test
   public void whenLoggedUserRequestsHomePage_ThenSuccess()
       throws IllegalStateException, IOException {
+    LoginVo loginVo = new LoginVo();
+    loginVo.setUserName("chenwei");
+    loginVo.setPassword("wensheng");
     ResponseEntity<String> response
-        = restTemplate.getForEntity(base.toString(), String.class);
+        = restTemplate.postForEntity(base.toString(), loginVo, String.class);
 
     assertEquals(HttpStatus.OK, response.getStatusCode());
     assertTrue(response
         .getBody()
-        .contains("Baeldung"));
+        .contains("wensheng"));
   }
 
   @Test

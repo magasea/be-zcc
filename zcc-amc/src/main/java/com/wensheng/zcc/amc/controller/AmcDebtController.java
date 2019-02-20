@@ -228,7 +228,7 @@ public class AmcDebtController {
 
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo) throws Exception {
     amcOssFileService.delFileInOss(debtImageBaseActionVo.getContent().getOssPath());
@@ -372,7 +372,7 @@ public class AmcDebtController {
 
   }
 
-  @RequestMapping(value = "amcid/{amcId}/debt/origcreditor/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/origcreditor/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcOrigCreditor createAmcCreditor(@RequestBody AmcOrigCreditor amcOrigCreditor) throws Exception {
     if (StringUtils.isEmpty(amcOrigCreditor.getBankName())) {
@@ -384,7 +384,7 @@ public class AmcDebtController {
     return amcOrigCreditorResult;
   }
 
-  @RequestMapping(value = "amcid/{amcId}/debt/origcreditors", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/origcreditors", method = RequestMethod.POST)
   @ResponseBody
   public Page<AmcOrigCreditor> getAmcCreditor(@RequestBody PageInfo pageable) throws Exception {
 
@@ -408,7 +408,7 @@ public class AmcDebtController {
     return amcOrigCreditorPage;
   }
 
-  @RequestMapping(value = "amcid/{amcId}/debt/allTitles", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/allTitles", method = RequestMethod.POST)
   @ResponseBody
   public Map<String, List<Long>> getAllDebtTitles() throws Exception {
 

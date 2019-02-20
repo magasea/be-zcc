@@ -30,7 +30,27 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
-    @Value("${spring.security.oauth2.client.registration.}")
+    private int accessTokenValidSeconds = 3600;
+
+    private int refreshTokenValidSeconds = 2592000;
+
+    @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
+    private String amcAdminClientId;
+
+
+    @Value("${spring.security.oauth2.client.registration.amc-admin.secret}")
+    private String amcAdminSecret;
+
+
+    @Value("${spring.security.oauth2.client.registration.amc-admin.scopes}")
+    private String amcAdminScopes;
+
+    @Value("${spring.security.oauth2.client.registration.amc-admin.authorizedGrantTypes}")
+    private String amcAdminAuthorizedGrantTypes;
+
+    @Value("${spring.security.oauth2.client.registration.amc-admin.redirectUris}")
+    private String amcAdminRedirectUris;
+
 
     @Override
     public void configure(final AuthorizationServerSecurityConfigurer oauthServer) throws Exception {
@@ -51,7 +71,10 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
                 // 1 hour
                 .refreshTokenValiditySeconds(2592000) // 30 days
 
-                .and().withClient("testImplicitClientId").authorizedGrantTypes("implicit").scopes("read", "write", "foo", "bar").autoApprove(true).redirectUris("xxx");
+                .and().withClient("testImplicitClientId").authorizedGrantTypes("implicit").scopes("read", "write", "foo", "bar").autoApprove(true).redirectUris("xxx")
+
+                .and().withClient(amcAdminClientId).secret(amcAdminSecret).authorizedGrantTypes(amcAdminAuthorizedGrantTypes.split(",")).scopes(amcAdminScopes.split(",")).autoApprove(false).redirectUris(amcAdminRedirectUris.split(",")).accessTokenValiditySeconds(accessTokenValidSeconds).refreshTokenValiditySeconds(refreshTokenValidSeconds)
+        ;
 
     }
 

@@ -33,7 +33,7 @@ import org.springframework.util.CollectionUtils;
  * @author chenwei on 1/30/19
  * @project zcc-backend
  */
-@Service
+@Service("userService")
 public class UserServiceImpl implements UserService {
 
   @Autowired

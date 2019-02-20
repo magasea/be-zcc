@@ -2,6 +2,7 @@ package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.sso.module.vo.LoginVo;
 import java.awt.Image;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,5 +37,10 @@ public class UserController {
     System.out.println("loginVo:" + loginVo.getUserName());
     return "wensheng";
   }
+
+  @PreAuthorize("#oauth2.hasScope('admin') and #oauth2.hasScope('write')")
+  @RequestMapping(value="/amc/user/create")
+  @ResponseBody
+  public String createUser(@RequestBody )
 
 }

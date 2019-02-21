@@ -49,20 +49,13 @@ public class MiniAppUserController {
 
 
 
-    UriComponentsBuilder tokenBuilder = UriComponentsBuilder.fromHttpUrl(tokenUrl)
-        .queryParam("appid", appId)
-        .queryParam("secret", appSecret)
-
-        .queryParam("grant_type", "client_credential");
+    UriComponentsBuilder tokenBuilder = UriComponentsBuilder.fromHttpUrl(tokenUrl).queryParam("appid", appId)
+        .queryParam("secret", appSecret).queryParam("grant_type", "client_credential");
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     HttpEntity<?> entity = new HttpEntity<>(headers);
 
-    ResponseEntity response = restTemplate.exchange(
-        tokenBuilder.toUriString(),
-        HttpMethod.GET,
-        entity,
-        Map.class);
+    ResponseEntity response = restTemplate.exchange(tokenBuilder.toUriString(), HttpMethod.GET, entity, Map.class);
     System.out.println(((ResponseEntity<Map>) response).getBody().toString());
     String token =(String) ((Map)response.getBody()).get("access_token");
 

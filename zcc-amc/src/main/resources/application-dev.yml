@@ -56,3 +56,13 @@ project:
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
     bucket_name: ws-zcc
 
+---
+# tag::wechatConfig
+wechat:
+  miniapp:
+    appId: wxdb885be2c95a5b32
+    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+
+# end::wechatConfig

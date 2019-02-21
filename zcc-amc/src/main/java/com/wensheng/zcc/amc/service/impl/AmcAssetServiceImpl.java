@@ -263,10 +263,25 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     amcAssetExample.createCriteria().andEditStatusEqualTo((Integer) item.getValue());
                 }
                 if(item.getKey().equals("Area")){
-                    if(item.getValue() instanceof List && !CollectionUtils.isEmpty((List)item.getValue())){
-                        amcAssetExample.createCriteria().andAreaBetween((Long)(((List) item.getValue()).get(0)),
-                            (Long)(((List) item.getValue()).get(1)));
+                    if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
+                        amcAssetExample.createCriteria().andAreaLessThan((Long)((List)item.getValue()).get(1));
+                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
+                        amcAssetExample.createCriteria().andAreaGreaterThan((Long)((List)item.getValue()).get(0));
+                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
+                        amcAssetExample.createCriteria().andAreaBetween((Long)((List)item.getValue()).get(0), (Long)((List)item.getValue()).get(1));
                     }
+
+                }
+                if(item.getKey().equals("LandArea")){
+                    if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
+                        amcAssetExample.createCriteria().andLandAreaLessThan((Long)((List)item.getValue()).get(1));
+                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
+                        amcAssetExample.createCriteria().andLandAreaGreaterThan((Long)((List)item.getValue()).get(0));
+                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
+                        amcAssetExample.createCriteria().andLandAreaBetween((Long)((List)item.getValue()).get(0),
+                            (Long)((List)item.getValue()).get(1));
+                    }
+
                 }
                 if(item.getKey().equals("Status")){
                     amcAssetExample.createCriteria().andStatusEqualTo((Integer) item.getValue());

@@ -26,7 +26,13 @@ public class Dao2VoUtils {
     if(amcAsset.getEstmPrice() > 0){
       amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
     }
+    if(amcAsset.getLandArea() > 0){
+      amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
+    }
 
+    if(amcAsset.getArea() > 0){
+      amcAssetVo.setArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getArea()));
+    }
     return amcAssetVo;
   }
   public static List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets){

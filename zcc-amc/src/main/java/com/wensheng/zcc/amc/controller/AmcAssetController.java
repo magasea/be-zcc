@@ -69,6 +69,9 @@ public class AmcAssetController {
     if(!CollectionUtils.isEmpty(assetQueryParam.getArea()) && assetQueryParam.getArea().size() > 1){
       queryParam.put("Area", assetQueryParam.getArea());
     }
+    if(!CollectionUtils.isEmpty(assetQueryParam.getLandArea()) && assetQueryParam.getLandArea().size() > 1){
+      queryParam.put("LandArea", assetQueryParam.getLandArea());
+    }
     if(assetQueryParam.getEditStatus() != null && assetQueryParam.getEditStatus() > -1){
       queryParam.put("EditStatus", assetQueryParam.getEditStatus());
     }
@@ -139,6 +142,8 @@ public class AmcAssetController {
     BeanUtils.copyProperties(amcAssetVo, amcAsset);
     amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getEstmPrice()));
     amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getInitPrice()));
+    amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
+    amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
     return amcAsset;
   }
 

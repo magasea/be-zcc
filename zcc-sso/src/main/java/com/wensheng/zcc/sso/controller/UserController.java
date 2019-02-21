@@ -7,6 +7,7 @@ import java.awt.Image;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -58,6 +59,33 @@ public class UserController {
 
     return "success";
   }
+
+  @RequestMapping(value="/send-phone-verifycode",method=RequestMethod.GET)
+  public String sendPhoneVerifyCode(HttpServletRequest request,HttpSession session){
+    String code = request.getParameter("code");
+    Object verCode = session.getAttribute("verCode");
+    if (null == verCode) {
+      request.setAttribute("errmsg", "验证码已失效，请重新输入");
+      return "验证码已失效，请重新输入";
+    }
+    String verCodeStr = verCode.toString();
+    LocalDateTime localDateTime = (LocalDateTime)session.getAttribute("codeTime");
+    long past = localDateTime.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    long now = LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    if(verCodeStr == null || code == null || code.isEmpty() || !verCodeStr.equalsIgnoreCase(code)){
+      request.setAttribute("errmsg", "验证码错误");
+      return "验证码错误";
+    } else if((now-past)/1000/60>5){
+      request.setAttribute("errmsg", "验证码已过期，重新获取");
+      return "验证码已过期，重新获取";
+    } else {
+      //验证成功，删除存储的验证码可以发送手机验证码
+
+      session.removeAttribute("verCode");
+      return "200";
+    }
+  }
+
 
   @RequestMapping(value="/getImage",method= RequestMethod.GET)
   public void authImage(HttpServletRequest request, HttpServletResponse response) throws IOException {

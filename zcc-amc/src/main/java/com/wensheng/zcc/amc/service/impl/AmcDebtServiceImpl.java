@@ -42,6 +42,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -62,6 +63,7 @@ import org.springframework.util.StringUtils;
  * @project zcc-backend
  */
 @Service
+@Slf4j
 public class AmcDebtServiceImpl implements AmcDebtService {
 
   Logger logger = LoggerFactory.getLogger(getClass());
@@ -321,7 +323,26 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcCreditor create(AmcCreditor creditor) {
+  public AmcCreditor create(AmcCreditor creditor) throws Exception {
+    //if the creditor is company, need check if company exists
+    if( creditor.getType() == GrantorTypeEnum.COMPANY.getId() && (creditor.getCompanyId() == null || creditor.getCompanyId() <= 0)){
+      //need create company
+      if (StringUtils.isEmpty(creditor.getName())){
+        throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");
+      }
+      AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
+      amcCmpyExample.createCriteria().andNameEqualTo(creditor.getName());
+      List<AmcCmpy> amcCmpies = amcCmpyMapper.selectByExample(amcCmpyExample);
+      if(!CollectionUtils.isEmpty(amcCmpies)){
+        log.error(String.format("the company to create already exists:%s", creditor.getName()));
+        creditor.setCompanyId(amcCmpies.get(0).getId());
+      }else{
+        AmcCmpy amcCmpy = new AmcCmpy();
+        amcCmpy.setName(creditor.getName());
+        Long companyId = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
+        creditor.setCompanyId(companyId);
+      }
+    }
     Long id = Long.valueOf( amcCreditorMapper.insertSelective(creditor));
     creditor.setId(id);
     return creditor;
@@ -433,9 +454,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcCreditor> getAllCreditors(Long offset, int size, Map<String, Direction> orderByParam)
+  public List<AmcCreditor> getAllCreditors(Long offset, int size, int type, Map<String, Direction> orderByParam)
       throws Exception {
     AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
+    if(type > 0 ){
+      amcCreditorExample.createCriteria().andTypeEqualTo(type);
+    }
     amcCreditorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
     return amcCreditorMapper.selectByExample(amcCreditorExample);
   }

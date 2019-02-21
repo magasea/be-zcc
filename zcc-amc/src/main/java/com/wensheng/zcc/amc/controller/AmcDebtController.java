@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
@@ -114,7 +115,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/creditors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcCreditor> getAmcCreditors(@RequestBody PageInfo pageable) throws Exception {
+  public Page<AmcCreditor> getAmcCreditors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
@@ -124,7 +125,8 @@ public class AmcDebtController {
     List<AmcCreditor> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
     try {
-      queryResults = amcDebtService.getAllCreditors(Long.valueOf(offset), pageable.getSize(), orderByParam);
+      queryResults = amcDebtService.getAllCreditors(Long.valueOf(offset), pageable.getSize(), typeEnum.getId(),
+          orderByParam);
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
       throw ex;

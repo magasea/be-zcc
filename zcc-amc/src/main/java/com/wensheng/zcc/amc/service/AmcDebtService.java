@@ -50,7 +50,7 @@ public interface AmcDebtService {
 
   boolean isAmcContactexist(Long amcContact1);
 
-  public AmcCreditor create(AmcCreditor creditor);
+  public AmcCreditor create(AmcCreditor creditor) throws Exception;
 
   public AmcCreditor update(AmcCreditor creditor);
 
@@ -75,7 +75,7 @@ public interface AmcDebtService {
 
   AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
 
-  List<AmcCreditor> getAllCreditors(Long offset, int size, Map<String, Direction> orderByParam) throws Exception;
+  List<AmcCreditor> getAllCreditors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
 
   Long getTotalCreditorCount();
 

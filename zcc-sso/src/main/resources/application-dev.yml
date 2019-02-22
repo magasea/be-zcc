@@ -7,7 +7,7 @@ spring:
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
         password: wensheng
-        url: jdbc:mysql://localhost:3306/ZCC_SSO?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+        url: jdbc:mysql://10.20.100.70:3306/ZCC_SSO?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
         username: wenshengsso
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
@@ -73,13 +73,14 @@ weixin:
     get_token_url: https://api.weixin.qq.com/cgi-bin/token
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 
+message:
+    url: http://esms100.10690007.net/sms/mt
+    spid: 9346
+    sppassword: xuKh9a8u
+    commond: MT_REQUEST
+    multiCommond: MULTI_MT_REQUEST
 
 
-
-auth-server:
-    - client:
-        - clientId: sampleClientId
-        -
 
 logging:
     level:

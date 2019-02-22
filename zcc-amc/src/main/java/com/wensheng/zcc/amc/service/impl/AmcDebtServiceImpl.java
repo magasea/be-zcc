@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
@@ -20,6 +21,8 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
@@ -79,6 +82,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcDebtMapper amcDebtMapper;
+
+  @Autowired
+  AmcDebtorMapper amcDebtorMapper;
 
   @Autowired
   AmcPersonMapper amcPersonMapper;
@@ -323,29 +329,29 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcCreditor create(AmcCreditor creditor) throws Exception {
+  public AmcDebtor create(AmcDebtor amcDebtor) throws Exception {
     //if the creditor is company, need check if company exists
-    if( creditor.getType() == GrantorTypeEnum.COMPANY.getId() && (creditor.getCompanyId() == null || creditor.getCompanyId() <= 0)){
+    if( amcDebtor.getType() == GrantorTypeEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
       //need create company
-      if (StringUtils.isEmpty(creditor.getName())){
+      if (StringUtils.isEmpty(amcDebtor.getName())){
         throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");
       }
       AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
-      amcCmpyExample.createCriteria().andNameEqualTo(creditor.getName());
+      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getName());
       List<AmcCmpy> amcCmpies = amcCmpyMapper.selectByExample(amcCmpyExample);
       if(!CollectionUtils.isEmpty(amcCmpies)){
-        log.error(String.format("the company to create already exists:%s", creditor.getName()));
-        creditor.setCompanyId(amcCmpies.get(0).getId());
+        log.error(String.format("the company to create already exists:%s", amcDebtor.getName()));
+        amcDebtor.setCompanyId(amcCmpies.get(0).getId());
       }else{
         AmcCmpy amcCmpy = new AmcCmpy();
-        amcCmpy.setName(creditor.getName());
+        amcCmpy.setName(amcDebtor.getName());
         Long companyId = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
-        creditor.setCompanyId(companyId);
+        amcDebtor.setCompanyId(companyId);
       }
     }
-    Long id = Long.valueOf( amcCreditorMapper.insertSelective(creditor));
-    creditor.setId(id);
-    return creditor;
+    Long id = Long.valueOf( amcDebtorMapper.insertSelective(amcDebtor));
+    amcDebtor.setId(id);
+    return amcDebtor;
   }
 
   @Override
@@ -454,14 +460,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcCreditor> getAllCreditors(Long offset, int size, int type, Map<String, Direction> orderByParam)
+  public List<AmcDebtor> getAllDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam)
       throws Exception {
-    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
+    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
     if(type > 0 ){
-      amcCreditorExample.createCriteria().andTypeEqualTo(type);
+      amcDebtorExample.createCriteria().andTypeEqualTo(type);
     }
-    amcCreditorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
-    return amcCreditorMapper.selectByExample(amcCreditorExample);
+    amcDebtorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+    return amcDebtorMapper.selectByExample(amcDebtorExample);
   }
 
   @Override

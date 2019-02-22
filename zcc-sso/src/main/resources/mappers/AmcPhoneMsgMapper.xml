@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole">
+<mapper namespace="com.wensheng.zcc.sso.dao.mysql.mapper.AmcPhoneMsgMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="user_id" jdbcType="BIGINT" property="userId" />
-    <result column="role_id" jdbcType="BIGINT" property="roleId" />
+    <result column="phone_num" jdbcType="CHAR" property="phoneNum" />
+    <result column="message" jdbcType="VARCHAR" property="message" />
+    <result column="check_code" jdbcType="CHAR" property="checkCode" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
-    <result column="create_by" jdbcType="BIGINT" property="createBy" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -67,16 +67,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, role_id, create_date, create_by
+    id, phone_num, message, check_code, create_date
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsgExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_USER_ROLE
+    from AMC_PHONE_MSG
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -87,85 +87,85 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_USER_ROLE
+    from AMC_PHONE_MSG
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_USER_ROLE
+    delete from AMC_PHONE_MSG
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample">
-    delete from AMC_USER_ROLE
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsgExample">
+    delete from AMC_PHONE_MSG
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole">
+  <insert id="insert" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_USER_ROLE (user_id, role_id, create_date, 
-      create_by)
-    values (#{userId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=BIGINT})
+    insert into AMC_PHONE_MSG (phone_num, message, check_code, 
+      create_date)
+    values (#{phoneNum,jdbcType=CHAR}, #{message,jdbcType=VARCHAR}, #{checkCode,jdbcType=CHAR}, 
+      #{createDate,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_USER_ROLE
+    insert into AMC_PHONE_MSG
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        user_id,
+      <if test="phoneNum != null">
+        phone_num,
       </if>
-      <if test="roleId != null">
-        role_id,
+      <if test="message != null">
+        message,
+      </if>
+      <if test="checkCode != null">
+        check_code,
       </if>
       <if test="createDate != null">
         create_date,
       </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="userId != null">
-        #{userId,jdbcType=BIGINT},
+      <if test="phoneNum != null">
+        #{phoneNum,jdbcType=CHAR},
       </if>
-      <if test="roleId != null">
-        #{roleId,jdbcType=BIGINT},
+      <if test="message != null">
+        #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="checkCode != null">
+        #{checkCode,jdbcType=CHAR},
       </if>
       <if test="createDate != null">
         #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=BIGINT},
-      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample" resultType="java.lang.Long">
-    select count(*) from AMC_USER_ROLE
+  <select id="countByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsgExample" resultType="java.lang.Long">
+    select count(*) from AMC_PHONE_MSG
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_USER_ROLE
+    update AMC_PHONE_MSG
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.userId != null">
-        user_id = #{record.userId,jdbcType=BIGINT},
+      <if test="record.phoneNum != null">
+        phone_num = #{record.phoneNum,jdbcType=CHAR},
       </if>
-      <if test="record.roleId != null">
-        role_id = #{record.roleId,jdbcType=BIGINT},
+      <if test="record.message != null">
+        message = #{record.message,jdbcType=VARCHAR},
+      </if>
+      <if test="record.checkCode != null">
+        check_code = #{record.checkCode,jdbcType=CHAR},
       </if>
       <if test="record.createDate != null">
         create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.createBy != null">
-        create_by = #{record.createBy,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -173,50 +173,50 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_USER_ROLE
+    update AMC_PHONE_MSG
     set id = #{record.id,jdbcType=BIGINT},
-      user_id = #{record.userId,jdbcType=BIGINT},
-      role_id = #{record.roleId,jdbcType=BIGINT},
-      create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      create_by = #{record.createBy,jdbcType=BIGINT}
+      phone_num = #{record.phoneNum,jdbcType=CHAR},
+      message = #{record.message,jdbcType=VARCHAR},
+      check_code = #{record.checkCode,jdbcType=CHAR},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole">
-    update AMC_USER_ROLE
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg">
+    update AMC_PHONE_MSG
     <set>
-      <if test="userId != null">
-        user_id = #{userId,jdbcType=BIGINT},
+      <if test="phoneNum != null">
+        phone_num = #{phoneNum,jdbcType=CHAR},
       </if>
-      <if test="roleId != null">
-        role_id = #{roleId,jdbcType=BIGINT},
+      <if test="message != null">
+        message = #{message,jdbcType=VARCHAR},
+      </if>
+      <if test="checkCode != null">
+        check_code = #{checkCode,jdbcType=CHAR},
       </if>
       <if test="createDate != null">
         create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=BIGINT},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole">
-    update AMC_USER_ROLE
-    set user_id = #{userId,jdbcType=BIGINT},
-      role_id = #{roleId,jdbcType=BIGINT},
-      create_date = #{createDate,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=BIGINT}
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg">
+    update AMC_PHONE_MSG
+    set phone_num = #{phoneNum,jdbcType=CHAR},
+      message = #{message,jdbcType=VARCHAR},
+      check_code = #{checkCode,jdbcType=CHAR},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsgExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_USER_ROLE
+    from AMC_PHONE_MSG
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

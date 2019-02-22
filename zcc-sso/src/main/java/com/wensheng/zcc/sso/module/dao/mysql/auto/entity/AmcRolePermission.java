@@ -3,6 +3,8 @@ package com.wensheng.zcc.sso.module.dao.mysql.auto.entity;
 import java.util.Date;
 
 public class AmcRolePermission {
+    private Long id;
+
     private Long roleId;
 
     private Long permissionId;
@@ -10,6 +12,14 @@ public class AmcRolePermission {
     private Date createDate;
 
     private Long createBy;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getRoleId() {
         return roleId;

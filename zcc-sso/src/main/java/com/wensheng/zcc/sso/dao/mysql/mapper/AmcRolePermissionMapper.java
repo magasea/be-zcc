@@ -11,6 +11,8 @@ public interface AmcRolePermissionMapper {
 
     int deleteByExample(AmcRolePermissionExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcRolePermission record);
 
     int insertSelective(AmcRolePermission record);
@@ -19,7 +21,13 @@ public interface AmcRolePermissionMapper {
 
     List<AmcRolePermission> selectByExample(AmcRolePermissionExample example);
 
+    AmcRolePermission selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcRolePermission record, @Param("example") AmcRolePermissionExample example);
 
     int updateByExample(@Param("record") AmcRolePermission record, @Param("example") AmcRolePermissionExample example);
+
+    int updateByPrimaryKeySelective(AmcRolePermission record);
+
+    int updateByPrimaryKey(AmcRolePermission record);
 }

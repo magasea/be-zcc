@@ -164,63 +164,203 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdIsNull() {
-            addCriterion("debt_id is null");
+        public Criteria andNameIsNull() {
+            addCriterion("name is null");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdIsNotNull() {
-            addCriterion("debt_id is not null");
+        public Criteria andNameIsNotNull() {
+            addCriterion("name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdEqualTo(Long value) {
-            addCriterion("debt_id =", value, "debtId");
+        public Criteria andNameEqualTo(String value) {
+            addCriterion("name =", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdNotEqualTo(Long value) {
-            addCriterion("debt_id <>", value, "debtId");
+        public Criteria andNameNotEqualTo(String value) {
+            addCriterion("name <>", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdGreaterThan(Long value) {
-            addCriterion("debt_id >", value, "debtId");
+        public Criteria andNameGreaterThan(String value) {
+            addCriterion("name >", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("debt_id >=", value, "debtId");
+        public Criteria andNameGreaterThanOrEqualTo(String value) {
+            addCriterion("name >=", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdLessThan(Long value) {
-            addCriterion("debt_id <", value, "debtId");
+        public Criteria andNameLessThan(String value) {
+            addCriterion("name <", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdLessThanOrEqualTo(Long value) {
-            addCriterion("debt_id <=", value, "debtId");
+        public Criteria andNameLessThanOrEqualTo(String value) {
+            addCriterion("name <=", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdIn(List<Long> values) {
-            addCriterion("debt_id in", values, "debtId");
+        public Criteria andNameLike(String value) {
+            addCriterion("name like", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdNotIn(List<Long> values) {
-            addCriterion("debt_id not in", values, "debtId");
+        public Criteria andNameNotLike(String value) {
+            addCriterion("name not like", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdBetween(Long value1, Long value2) {
-            addCriterion("debt_id between", value1, value2, "debtId");
+        public Criteria andNameIn(List<String> values) {
+            addCriterion("name in", values, "name");
             return (Criteria) this;
         }
 
-        public Criteria andDebtIdNotBetween(Long value1, Long value2) {
-            addCriterion("debt_id not between", value1, value2, "debtId");
+        public Criteria andNameNotIn(List<String> values) {
+            addCriterion("name not in", values, "name");
+            return (Criteria) this;
+        }
+
+        public Criteria andNameBetween(String value1, String value2) {
+            addCriterion("name between", value1, value2, "name");
+            return (Criteria) this;
+        }
+
+        public Criteria andNameNotBetween(String value1, String value2) {
+            addCriterion("name not between", value1, value2, "name");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNull() {
+            addCriterion("type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIsNotNull() {
+            addCriterion("type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeEqualTo(Integer value) {
+            addCriterion("type =", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotEqualTo(Integer value) {
+            addCriterion("type <>", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThan(Integer value) {
+            addCriterion("type >", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("type >=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThan(Integer value) {
+            addCriterion("type <", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("type <=", value, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeIn(List<Integer> values) {
+            addCriterion("type in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotIn(List<Integer> values) {
+            addCriterion("type not in", values, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeBetween(Integer value1, Integer value2) {
+            addCriterion("type between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("type not between", value1, value2, "type");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdIsNull() {
+            addCriterion("person_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdIsNotNull() {
+            addCriterion("person_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdEqualTo(String value) {
+            addCriterion("person_id =", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdNotEqualTo(String value) {
+            addCriterion("person_id <>", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdGreaterThan(String value) {
+            addCriterion("person_id >", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdGreaterThanOrEqualTo(String value) {
+            addCriterion("person_id >=", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdLessThan(String value) {
+            addCriterion("person_id <", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdLessThanOrEqualTo(String value) {
+            addCriterion("person_id <=", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdLike(String value) {
+            addCriterion("person_id like", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdNotLike(String value) {
+            addCriterion("person_id not like", value, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdIn(List<String> values) {
+            addCriterion("person_id in", values, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdNotIn(List<String> values) {
+            addCriterion("person_id not in", values, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdBetween(String value1, String value2) {
+            addCriterion("person_id between", value1, value2, "personId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonIdNotBetween(String value1, String value2) {
+            addCriterion("person_id not between", value1, value2, "personId");
             return (Criteria) this;
         }
 
@@ -284,133 +424,63 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdIsNull() {
-            addCriterion("company_branch_id is null");
+        public Criteria andOrigCmpyIdIsNull() {
+            addCriterion("orig_cmpy_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdIsNotNull() {
-            addCriterion("company_branch_id is not null");
+        public Criteria andOrigCmpyIdIsNotNull() {
+            addCriterion("orig_cmpy_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdEqualTo(Long value) {
-            addCriterion("company_branch_id =", value, "companyBranchId");
+        public Criteria andOrigCmpyIdEqualTo(Long value) {
+            addCriterion("orig_cmpy_id =", value, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdNotEqualTo(Long value) {
-            addCriterion("company_branch_id <>", value, "companyBranchId");
+        public Criteria andOrigCmpyIdNotEqualTo(Long value) {
+            addCriterion("orig_cmpy_id <>", value, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdGreaterThan(Long value) {
-            addCriterion("company_branch_id >", value, "companyBranchId");
+        public Criteria andOrigCmpyIdGreaterThan(Long value) {
+            addCriterion("orig_cmpy_id >", value, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("company_branch_id >=", value, "companyBranchId");
+        public Criteria andOrigCmpyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("orig_cmpy_id >=", value, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdLessThan(Long value) {
-            addCriterion("company_branch_id <", value, "companyBranchId");
+        public Criteria andOrigCmpyIdLessThan(Long value) {
+            addCriterion("orig_cmpy_id <", value, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdLessThanOrEqualTo(Long value) {
-            addCriterion("company_branch_id <=", value, "companyBranchId");
+        public Criteria andOrigCmpyIdLessThanOrEqualTo(Long value) {
+            addCriterion("orig_cmpy_id <=", value, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdIn(List<Long> values) {
-            addCriterion("company_branch_id in", values, "companyBranchId");
+        public Criteria andOrigCmpyIdIn(List<Long> values) {
+            addCriterion("orig_cmpy_id in", values, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdNotIn(List<Long> values) {
-            addCriterion("company_branch_id not in", values, "companyBranchId");
+        public Criteria andOrigCmpyIdNotIn(List<Long> values) {
+            addCriterion("orig_cmpy_id not in", values, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdBetween(Long value1, Long value2) {
-            addCriterion("company_branch_id between", value1, value2, "companyBranchId");
+        public Criteria andOrigCmpyIdBetween(Long value1, Long value2) {
+            addCriterion("orig_cmpy_id between", value1, value2, "origCmpyId");
             return (Criteria) this;
         }
 
-        public Criteria andCompanyBranchIdNotBetween(Long value1, Long value2) {
-            addCriterion("company_branch_id not between", value1, value2, "companyBranchId");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractIsNull() {
-            addCriterion("debt_contract is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractIsNotNull() {
-            addCriterion("debt_contract is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractEqualTo(String value) {
-            addCriterion("debt_contract =", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractNotEqualTo(String value) {
-            addCriterion("debt_contract <>", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractGreaterThan(String value) {
-            addCriterion("debt_contract >", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractGreaterThanOrEqualTo(String value) {
-            addCriterion("debt_contract >=", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractLessThan(String value) {
-            addCriterion("debt_contract <", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractLessThanOrEqualTo(String value) {
-            addCriterion("debt_contract <=", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractLike(String value) {
-            addCriterion("debt_contract like", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractNotLike(String value) {
-            addCriterion("debt_contract not like", value, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractIn(List<String> values) {
-            addCriterion("debt_contract in", values, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractNotIn(List<String> values) {
-            addCriterion("debt_contract not in", values, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractBetween(String value1, String value2) {
-            addCriterion("debt_contract between", value1, value2, "debtContract");
-            return (Criteria) this;
-        }
-
-        public Criteria andDebtContractNotBetween(String value1, String value2) {
-            addCriterion("debt_contract not between", value1, value2, "debtContract");
+        public Criteria andOrigCmpyIdNotBetween(Long value1, Long value2) {
+            addCriterion("orig_cmpy_id not between", value1, value2, "origCmpyId");
             return (Criteria) this;
         }
 

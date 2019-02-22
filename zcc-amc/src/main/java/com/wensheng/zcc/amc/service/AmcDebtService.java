@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
@@ -50,7 +51,7 @@ public interface AmcDebtService {
 
   boolean isAmcContactexist(Long amcContact1);
 
-  public AmcCreditor create(AmcCreditor creditor) throws Exception;
+  public AmcDebtor create(AmcDebtor amcDebtor) throws Exception;
 
   public AmcCreditor update(AmcCreditor creditor);
 
@@ -75,7 +76,7 @@ public interface AmcDebtService {
 
   AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
 
-  List<AmcCreditor> getAllCreditors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
+  List<AmcDebtor> getAllDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
 
   Long getTotalCreditorCount();
 

@@ -3,13 +3,15 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 public class AmcDebtor {
     private Long id;
 
-    private Long debtId;
+    private String name;
+
+    private Integer type;
+
+    private String personId;
 
     private Long companyId;
 
-    private Long companyBranchId;
-
-    private String debtContract;
+    private Long origCmpyId;
 
     private String note;
 
@@ -21,12 +23,28 @@ public class AmcDebtor {
         this.id = id;
     }
 
-    public Long getDebtId() {
-        return debtId;
+    public String getName() {
+        return name;
     }
 
-    public void setDebtId(Long debtId) {
-        this.debtId = debtId;
+    public void setName(String name) {
+        this.name = name == null ? null : name.trim();
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
+    }
+
+    public String getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(String personId) {
+        this.personId = personId == null ? null : personId.trim();
     }
 
     public Long getCompanyId() {
@@ -37,20 +55,12 @@ public class AmcDebtor {
         this.companyId = companyId;
     }
 
-    public Long getCompanyBranchId() {
-        return companyBranchId;
+    public Long getOrigCmpyId() {
+        return origCmpyId;
     }
 
-    public void setCompanyBranchId(Long companyBranchId) {
-        this.companyBranchId = companyBranchId;
-    }
-
-    public String getDebtContract() {
-        return debtContract;
-    }
-
-    public void setDebtContract(String debtContract) {
-        this.debtContract = debtContract == null ? null : debtContract.trim();
+    public void setOrigCmpyId(Long origCmpyId) {
+        this.origCmpyId = origCmpyId;
     }
 
     public String getNote() {

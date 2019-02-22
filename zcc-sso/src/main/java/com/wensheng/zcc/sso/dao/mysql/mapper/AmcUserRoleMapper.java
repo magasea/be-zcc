@@ -11,6 +11,8 @@ public interface AmcUserRoleMapper {
 
     int deleteByExample(AmcUserRoleExample example);
 
+    int deleteByPrimaryKey(Long id);
+
     int insert(AmcUserRole record);
 
     int insertSelective(AmcUserRole record);
@@ -19,7 +21,13 @@ public interface AmcUserRoleMapper {
 
     List<AmcUserRole> selectByExample(AmcUserRoleExample example);
 
+    AmcUserRole selectByPrimaryKey(Long id);
+
     int updateByExampleSelective(@Param("record") AmcUserRole record, @Param("example") AmcUserRoleExample example);
 
     int updateByExample(@Param("record") AmcUserRole record, @Param("example") AmcUserRoleExample example);
+
+    int updateByPrimaryKeySelective(AmcUserRole record);
+
+    int updateByPrimaryKey(AmcUserRole record);
 }

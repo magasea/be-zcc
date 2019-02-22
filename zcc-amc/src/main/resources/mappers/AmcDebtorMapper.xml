@@ -3,10 +3,11 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="debt_id" jdbcType="BIGINT" property="debtId" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="person_id" jdbcType="CHAR" property="personId" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
-    <result column="company_branch_id" jdbcType="BIGINT" property="companyBranchId" />
-    <result column="debt_contract" jdbcType="CHAR" property="debtContract" />
+    <result column="orig_cmpy_id" jdbcType="BIGINT" property="origCmpyId" />
     <result column="note" jdbcType="VARCHAR" property="note" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, debt_id, company_id, company_branch_id, debt_contract, note
+    id, name, type, person_id, company_id, orig_cmpy_id, note
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample" resultMap="BaseResultMap">
     select
@@ -105,10 +106,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTOR (debt_id, company_id, company_branch_id, 
-      debt_contract, note)
-    values (#{debtId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, #{companyBranchId,jdbcType=BIGINT}, 
-      #{debtContract,jdbcType=CHAR}, #{note,jdbcType=VARCHAR})
+    insert into AMC_DEBTOR (name, type, person_id, 
+      company_id, orig_cmpy_id, note
+      )
+    values (#{name,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{personId,jdbcType=CHAR}, 
+      #{companyId,jdbcType=BIGINT}, #{origCmpyId,jdbcType=BIGINT}, #{note,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -116,34 +119,40 @@
     </selectKey>
     insert into AMC_DEBTOR
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="debtId != null">
-        debt_id,
+      <if test="name != null">
+        name,
+      </if>
+      <if test="type != null">
+        type,
+      </if>
+      <if test="personId != null">
+        person_id,
       </if>
       <if test="companyId != null">
         company_id,
       </if>
-      <if test="companyBranchId != null">
-        company_branch_id,
-      </if>
-      <if test="debtContract != null">
-        debt_contract,
+      <if test="origCmpyId != null">
+        orig_cmpy_id,
       </if>
       <if test="note != null">
         note,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="debtId != null">
-        #{debtId,jdbcType=BIGINT},
+      <if test="name != null">
+        #{name,jdbcType=CHAR},
+      </if>
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="personId != null">
+        #{personId,jdbcType=CHAR},
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=BIGINT},
       </if>
-      <if test="companyBranchId != null">
-        #{companyBranchId,jdbcType=BIGINT},
-      </if>
-      <if test="debtContract != null">
-        #{debtContract,jdbcType=CHAR},
+      <if test="origCmpyId != null">
+        #{origCmpyId,jdbcType=BIGINT},
       </if>
       <if test="note != null">
         #{note,jdbcType=VARCHAR},
@@ -162,17 +171,20 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.debtId != null">
-        debt_id = #{record.debtId,jdbcType=BIGINT},
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=CHAR},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.personId != null">
+        person_id = #{record.personId,jdbcType=CHAR},
       </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=BIGINT},
       </if>
-      <if test="record.companyBranchId != null">
-        company_branch_id = #{record.companyBranchId,jdbcType=BIGINT},
-      </if>
-      <if test="record.debtContract != null">
-        debt_contract = #{record.debtContract,jdbcType=CHAR},
+      <if test="record.origCmpyId != null">
+        orig_cmpy_id = #{record.origCmpyId,jdbcType=BIGINT},
       </if>
       <if test="record.note != null">
         note = #{record.note,jdbcType=VARCHAR},
@@ -185,10 +197,11 @@
   <update id="updateByExample" parameterType="map">
     update AMC_DEBTOR
     set id = #{record.id,jdbcType=BIGINT},
-      debt_id = #{record.debtId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=CHAR},
+      type = #{record.type,jdbcType=INTEGER},
+      person_id = #{record.personId,jdbcType=CHAR},
       company_id = #{record.companyId,jdbcType=BIGINT},
-      company_branch_id = #{record.companyBranchId,jdbcType=BIGINT},
-      debt_contract = #{record.debtContract,jdbcType=CHAR},
+      orig_cmpy_id = #{record.origCmpyId,jdbcType=BIGINT},
       note = #{record.note,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -197,17 +210,20 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     update AMC_DEBTOR
     <set>
-      <if test="debtId != null">
-        debt_id = #{debtId,jdbcType=BIGINT},
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="personId != null">
+        person_id = #{personId,jdbcType=CHAR},
       </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=BIGINT},
       </if>
-      <if test="companyBranchId != null">
-        company_branch_id = #{companyBranchId,jdbcType=BIGINT},
-      </if>
-      <if test="debtContract != null">
-        debt_contract = #{debtContract,jdbcType=CHAR},
+      <if test="origCmpyId != null">
+        orig_cmpy_id = #{origCmpyId,jdbcType=BIGINT},
       </if>
       <if test="note != null">
         note = #{note,jdbcType=VARCHAR},
@@ -217,10 +233,11 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     update AMC_DEBTOR
-    set debt_id = #{debtId,jdbcType=BIGINT},
+    set name = #{name,jdbcType=CHAR},
+      type = #{type,jdbcType=INTEGER},
+      person_id = #{personId,jdbcType=CHAR},
       company_id = #{companyId,jdbcType=BIGINT},
-      company_branch_id = #{companyBranchId,jdbcType=BIGINT},
-      debt_contract = #{debtContract,jdbcType=CHAR},
+      orig_cmpy_id = #{origCmpyId,jdbcType=BIGINT},
       note = #{note,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

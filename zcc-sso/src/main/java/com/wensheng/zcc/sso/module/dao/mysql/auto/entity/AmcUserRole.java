@@ -3,6 +3,8 @@ package com.wensheng.zcc.sso.module.dao.mysql.auto.entity;
 import java.util.Date;
 
 public class AmcUserRole {
+    private Long id;
+
     private Long userId;
 
     private Long roleId;
@@ -10,6 +12,14 @@ public class AmcUserRole {
     private Date createDate;
 
     private Long createBy;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
 
     public Long getUserId() {
         return userId;

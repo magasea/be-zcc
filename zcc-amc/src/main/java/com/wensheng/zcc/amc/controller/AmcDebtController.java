@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
@@ -105,27 +106,27 @@ public class AmcDebtController {
     }
   }
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/creditor/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
   @ResponseBody
-  public AmcCreditor addAmcCreditor(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcCreditor> amcCreditorBaseActionVo) throws Exception {
+  public AmcDebtor addAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
+      BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
 
-    return amcDebtService.create(amcCreditorBaseActionVo.getContent());
+    return amcDebtService.create(amcDebtorBaseActionVo.getContent());
   }
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/creditors", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcCreditor> getAmcCreditors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
+  public Page<AmcDebtor> getAmcCreditors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
-    List<AmcCreditor> queryResults;
+    List<AmcDebtor> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
     try {
-      queryResults = amcDebtService.getAllCreditors(Long.valueOf(offset), pageable.getSize(), typeEnum.getId(),
+      queryResults = amcDebtService.getAllDebtors(Long.valueOf(offset), pageable.getSize(), typeEnum.getId(),
           orderByParam);
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
@@ -133,7 +134,7 @@ public class AmcDebtController {
     }
     Long totalCount = amcDebtService.getTotalCreditorCount();
 
-    Page<AmcCreditor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
+    Page<AmcDebtor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
 
     return page;
   }

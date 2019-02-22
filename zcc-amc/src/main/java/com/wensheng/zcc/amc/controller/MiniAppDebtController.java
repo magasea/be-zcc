@@ -52,29 +52,6 @@ public class MiniAppDebtController {
 
 
 
-  @RequestMapping(value = "/creditors", method = RequestMethod.POST)
-  @ResponseBody
-  public Page<AmcCreditor> getAmcCreditors(@RequestBody PageInfo pageable) throws Exception {
-
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
-    if (CollectionUtils.isEmpty(orderByParam)) {
-      orderByParam.put("id", Direction.DESC);
-    }
-
-    List<AmcCreditor> queryResults;
-    int offset = PageReqRepHelper.getOffset(pageable);
-    try {
-      queryResults = amcDebtService.getAllCreditors(Long.valueOf(offset), pageable.getSize(), orderByParam);
-    } catch (Exception ex) {
-      log.error("got error when query:" + ex.getMessage());
-      throw ex;
-    }
-    Long totalCount = amcDebtService.getTotalCreditorCount();
-
-    Page<AmcCreditor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
-
-    return page;
-  }
 
 
   @RequestMapping(value = "/companies", method = RequestMethod.POST)

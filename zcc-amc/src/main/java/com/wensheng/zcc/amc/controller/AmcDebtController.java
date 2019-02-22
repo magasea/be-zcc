@@ -77,7 +77,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
   @ResponseBody
   public Long addGrntContract(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
+      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
     checkGrantor(grntctrctBaseActionVo.getContent());
 
     return amcDebtService.addGrantContract(grntctrctBaseActionVo.getContent());
@@ -87,7 +87,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcGrntctrct updateGrntContract(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
+      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
     checkGrantor(grntctrctBaseActionVo.getContent());
 
     return amcDebtService.updateGrantContract(grntctrctBaseActionVo.getContent());
@@ -109,7 +109,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcDebtor addAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
+      @RequestBody BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
 
     return amcDebtService.create(amcDebtorBaseActionVo.getContent());
   }
@@ -140,18 +140,18 @@ public class AmcDebtController {
   }
 
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/creditor/update", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcCreditor updateAmcCreditor(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcCreditor> amcCreditorBaseActionVo) throws Exception {
+  public AmcDebtor updateAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
+      @RequestBody BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
 
-    return amcDebtService.update(amcCreditorBaseActionVo.getContent());
+    return amcDebtService.update(amcDebtorBaseActionVo.getContent());
   }
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/company/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcCmpy addAmcCompany(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
+      @RequestBody BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
 
     return amcDebtService.create(amcCmpyBaseActionVo.getContent());
   }
@@ -160,7 +160,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcId}/debt/company/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcCmpy updateAmcCompany(@PathVariable(name = "amcId") Integer amcId,
-      BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
+      @RequestBody BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
 
     return amcDebtService.create(amcCmpyBaseActionVo.getContent());
   }

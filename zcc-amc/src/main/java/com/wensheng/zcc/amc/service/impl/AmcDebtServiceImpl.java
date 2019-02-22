@@ -355,9 +355,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcCreditor update(AmcCreditor creditor) {
-    amcCreditorMapper.updateByPrimaryKey(creditor);
-    return creditor;
+  public AmcDebtor update(AmcDebtor debtor) {
+    amcDebtorMapper.updateByPrimaryKey(debtor);
+    return debtor;
   }
 
   @Override

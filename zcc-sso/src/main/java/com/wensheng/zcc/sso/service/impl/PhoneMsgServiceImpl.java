@@ -4,9 +4,11 @@ import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPhoneMsgMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsgExample;
 import com.wensheng.zcc.sso.service.PhoneMsgService;
+import com.wensheng.zcc.sso.service.util.AmcBeanUtils;
 import com.wensheng.zcc.sso.service.util.VerifyCodeUtil;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -86,7 +88,8 @@ public class PhoneMsgServiceImpl implements PhoneMsgService {
     }else{
       AmcPhoneMsg histryMsg = amcPhoneMsgs.get(0);
       long currentTimeInSeconds = System.currentTimeMillis()/1000;
-      long executime = currentTimeInSeconds - histryMsg.getCreateDate().getTime()/1000;
+      Instant now = Instant.now();
+      long executime = now.getEpochSecond() - histryMsg.getCreateDate().getTime()/1000;
       if(executime - timeOut > 10){
         log.error(String.format("the message is outof time, create-time:%s current time:%s",
             histryMsg.getCreateDate().getTime(), currentTimeInSeconds));
@@ -109,9 +112,9 @@ public class PhoneMsgServiceImpl implements PhoneMsgService {
     if(CollectionUtils.isEmpty(amcPhoneMsgList)){
       amcPhoneMsgMapper.insertSelective(amcPhoneMsg);
     }else{
-      amcPhoneMsg.setCreateDate(new Date());
-      BeanUtils.copyProperties(amcPhoneMsg, amcPhoneMsgList.get(0));
-      amcPhoneMsgMapper.updateByPrimaryKeySelective(amcPhoneMsg);
+      amcPhoneMsg.setCreateDate(Date.from(Instant.now()));
+      AmcBeanUtils.copyProperties(amcPhoneMsg, amcPhoneMsgList.get(0));
+      amcPhoneMsgMapper.updateByPrimaryKeySelective(amcPhoneMsgList.get(0));
     }
 
   }

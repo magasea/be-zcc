@@ -53,7 +53,7 @@ public interface AmcDebtService {
 
   public AmcDebtor create(AmcDebtor amcDebtor) throws Exception;
 
-  public AmcCreditor update(AmcCreditor creditor);
+  public AmcDebtor update(AmcDebtor debtor);
 
   public AmcCmpy create(AmcCmpy amcCmpy);
 

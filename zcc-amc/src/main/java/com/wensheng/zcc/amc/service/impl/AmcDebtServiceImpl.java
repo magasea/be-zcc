@@ -453,7 +453,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
   @Override
-  public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor) {
+  public AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor) {
     Long id = Long.valueOf(amcOrigCreditorMapper.insertSelective(amcOrigCreditor));
     amcOrigCreditor.setId(id);
     return amcOrigCreditor;

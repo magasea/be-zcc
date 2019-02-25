@@ -74,7 +74,7 @@ public interface AmcDebtService {
 
   void delImage(DebtImage debtImage);
 
-  AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor);
+  AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor);
 
   List<AmcDebtor> getAllDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
 

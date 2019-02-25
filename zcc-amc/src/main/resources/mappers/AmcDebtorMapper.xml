@@ -7,7 +7,6 @@
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="person_id" jdbcType="CHAR" property="personId" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
-    <result column="orig_cmpy_id" jdbcType="BIGINT" property="origCmpyId" />
     <result column="note" jdbcType="VARCHAR" property="note" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -69,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, type, person_id, company_id, orig_cmpy_id, note
+    id, name, type, person_id, company_id, note
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample" resultMap="BaseResultMap">
     select
@@ -107,11 +106,9 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_DEBTOR (name, type, person_id, 
-      company_id, orig_cmpy_id, note
-      )
+      company_id, note)
     values (#{name,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{personId,jdbcType=CHAR}, 
-      #{companyId,jdbcType=BIGINT}, #{origCmpyId,jdbcType=BIGINT}, #{note,jdbcType=VARCHAR}
-      )
+      #{companyId,jdbcType=BIGINT}, #{note,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -131,9 +128,6 @@
       <if test="companyId != null">
         company_id,
       </if>
-      <if test="origCmpyId != null">
-        orig_cmpy_id,
-      </if>
       <if test="note != null">
         note,
       </if>
@@ -150,9 +144,6 @@
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=BIGINT},
-      </if>
-      <if test="origCmpyId != null">
-        #{origCmpyId,jdbcType=BIGINT},
       </if>
       <if test="note != null">
         #{note,jdbcType=VARCHAR},
@@ -183,9 +174,6 @@
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=BIGINT},
       </if>
-      <if test="record.origCmpyId != null">
-        orig_cmpy_id = #{record.origCmpyId,jdbcType=BIGINT},
-      </if>
       <if test="record.note != null">
         note = #{record.note,jdbcType=VARCHAR},
       </if>
@@ -201,7 +189,6 @@
       type = #{record.type,jdbcType=INTEGER},
       person_id = #{record.personId,jdbcType=CHAR},
       company_id = #{record.companyId,jdbcType=BIGINT},
-      orig_cmpy_id = #{record.origCmpyId,jdbcType=BIGINT},
       note = #{record.note,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -222,9 +209,6 @@
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=BIGINT},
       </if>
-      <if test="origCmpyId != null">
-        orig_cmpy_id = #{origCmpyId,jdbcType=BIGINT},
-      </if>
       <if test="note != null">
         note = #{note,jdbcType=VARCHAR},
       </if>
@@ -237,7 +221,6 @@
       type = #{type,jdbcType=INTEGER},
       person_id = #{personId,jdbcType=CHAR},
       company_id = #{companyId,jdbcType=BIGINT},
-      orig_cmpy_id = #{origCmpyId,jdbcType=BIGINT},
       note = #{note,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

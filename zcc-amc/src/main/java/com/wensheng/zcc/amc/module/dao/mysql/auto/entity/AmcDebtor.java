@@ -11,8 +11,6 @@ public class AmcDebtor {
 
     private Long companyId;
 
-    private Long origCmpyId;
-
     private String note;
 
     public Long getId() {
@@ -53,14 +51,6 @@ public class AmcDebtor {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
-    }
-
-    public Long getOrigCmpyId() {
-        return origCmpyId;
-    }
-
-    public void setOrigCmpyId(Long origCmpyId) {
-        this.origCmpyId = origCmpyId;
     }
 
     public String getNote() {

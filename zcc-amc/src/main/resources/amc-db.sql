@@ -13,12 +13,10 @@
 
 
 -- Dumping database structure for ZCC_AMC
-DROP DATABASE IF EXISTS `ZCC_AMC`;
 CREATE DATABASE IF NOT EXISTS `ZCC_AMC` /*!40100 DEFAULT CHARACTER SET utf8mb4 */;
 USE `ZCC_AMC`;
 
 -- Dumping structure for table ZCC_AMC.AMC_ASSET
-DROP TABLE IF EXISTS `AMC_ASSET`;
 CREATE TABLE IF NOT EXISTS `AMC_ASSET` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` char(100) NOT NULL DEFAULT '-1' COMMENT '抵押物名称',
@@ -53,7 +51,6 @@ CREATE TABLE IF NOT EXISTS `AMC_ASSET` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CMPY
-DROP TABLE IF EXISTS `AMC_CMPY`;
 CREATE TABLE IF NOT EXISTS `AMC_CMPY` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` char(50) NOT NULL DEFAULT '-1' COMMENT '公司名称',
@@ -61,11 +58,10 @@ CREATE TABLE IF NOT EXISTS `AMC_CMPY` (
   `social_creditid` char(45) NOT NULL DEFAULT '-1' COMMENT '统一社会信用代码',
   `related_url` char(150) NOT NULL DEFAULT '-1' COMMENT '查看报告的url',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CMPY_SHAREHOLDER
-DROP TABLE IF EXISTS `AMC_CMPY_SHAREHOLDER`;
 CREATE TABLE IF NOT EXISTS `AMC_CMPY_SHAREHOLDER` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `amount` char(20) NOT NULL,
@@ -85,31 +81,27 @@ CREATE TABLE IF NOT EXISTS `AMC_CMPY_SHAREHOLDER` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CREDITOR
-DROP TABLE IF EXISTS `AMC_CREDITOR`;
 CREATE TABLE IF NOT EXISTS `AMC_CREDITOR` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` char(50) DEFAULT NULL COMMENT '名称',
-  `type` int(2) DEFAULT NULL COMMENT '借款人类型',
-  `person_id` char(50) DEFAULT NULL COMMENT '借款人身份证ID',
-  `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID',
-  `orig_cmpy_id` bigint(20) DEFAULT NULL COMMENT '原始公司ID',
-  `note` varchar(20) DEFAULT NULL COMMENT '备注',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `debt_id` bigint(20) NOT NULL DEFAULT '-1',
+  `company_id` bigint(20) unsigned NOT NULL COMMENT '公司ID',
+  `company_branch_id` bigint(20) unsigned NOT NULL COMMENT '分公司ID',
+  `debt_contract` char(30) NOT NULL DEFAULT '-1' COMMENT '借款合同编号',
+  `note` varchar(50) NOT NULL DEFAULT '-1' COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债务人';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CREDITOR_DEBT
-DROP TABLE IF EXISTS `AMC_CREDITOR_DEBT`;
 CREATE TABLE IF NOT EXISTS `AMC_CREDITOR_DEBT` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `debt_id` bigint(20) NOT NULL DEFAULT '0',
   `creditor_id` bigint(20) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债务人债权人关系';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBT
-DROP TABLE IF EXISTS `AMC_DEBT`;
 CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `debtpack_id` bigint(20) unsigned NOT NULL COMMENT '债权包Id',
@@ -139,20 +131,18 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBTOR
-DROP TABLE IF EXISTS `AMC_DEBTOR`;
 CREATE TABLE IF NOT EXISTS `AMC_DEBTOR` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `debt_id` bigint(20) NOT NULL DEFAULT '-1',
-  `company_id` bigint(20) unsigned NOT NULL COMMENT '公司ID',
-  `company_branch_id` bigint(20) unsigned NOT NULL COMMENT '分公司ID',
-  `debt_contract` char(30) NOT NULL DEFAULT '-1' COMMENT '借款合同编号',
-  `note` varchar(50) NOT NULL DEFAULT '-1' COMMENT '备注',
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `name` char(50) DEFAULT NULL COMMENT '名称',
+  `type` int(2) DEFAULT NULL COMMENT '借款人类型',
+  `person_id` char(50) DEFAULT NULL COMMENT '借款人身份证ID',
+  `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID',
+  `note` varchar(20) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债权人';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='债权人';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBTPACK
-DROP TABLE IF EXISTS `AMC_DEBTPACK`;
 CREATE TABLE IF NOT EXISTS `AMC_DEBTPACK` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` char(150) NOT NULL COMMENT '资产包名称',
@@ -166,7 +156,6 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBTPACK` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_GRNTCTRCT
-DROP TABLE IF EXISTS `AMC_GRNTCTRCT`;
 CREATE TABLE IF NOT EXISTS `AMC_GRNTCTRCT` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `debt_id` bigint(20) unsigned NOT NULL COMMENT '债权Id',
@@ -184,7 +173,6 @@ CREATE TABLE IF NOT EXISTS `AMC_GRNTCTRCT` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_GRNTOR
-DROP TABLE IF EXISTS `AMC_GRNTOR`;
 CREATE TABLE IF NOT EXISTS `AMC_GRNTOR` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `type` int(2) NOT NULL DEFAULT '-1' COMMENT '担保人类型 自然人 公司法人',
@@ -198,7 +186,6 @@ CREATE TABLE IF NOT EXISTS `AMC_GRNTOR` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_ORGCREDITOR_DEBTPACK
-DROP TABLE IF EXISTS `AMC_ORGCREDITOR_DEBTPACK`;
 CREATE TABLE IF NOT EXISTS `AMC_ORGCREDITOR_DEBTPACK` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creditor_id` bigint(20) NOT NULL DEFAULT '-1',
@@ -208,7 +195,6 @@ CREATE TABLE IF NOT EXISTS `AMC_ORGCREDITOR_DEBTPACK` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_ORIG_CREDITOR
-DROP TABLE IF EXISTS `AMC_ORIG_CREDITOR`;
 CREATE TABLE IF NOT EXISTS `AMC_ORIG_CREDITOR` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creditor_name` char(20) NOT NULL COMMENT '原始债权人名称',
@@ -221,7 +207,6 @@ CREATE TABLE IF NOT EXISTS `AMC_ORIG_CREDITOR` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_PERSON
-DROP TABLE IF EXISTS `AMC_PERSON`;
 CREATE TABLE IF NOT EXISTS `AMC_PERSON` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'mongodb contacts 关联',
   `dept_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '部门Id',
@@ -240,7 +225,6 @@ CREATE TABLE IF NOT EXISTS `AMC_PERSON` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.CURT_INFO
-DROP TABLE IF EXISTS `CURT_INFO`;
 CREATE TABLE IF NOT EXISTS `CURT_INFO` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `curt_name` char(50) DEFAULT NULL COMMENT '法院名称',
@@ -252,7 +236,6 @@ CREATE TABLE IF NOT EXISTS `CURT_INFO` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.RESOURCE_ROLE
-DROP TABLE IF EXISTS `RESOURCE_ROLE`;
 CREATE TABLE IF NOT EXISTS `RESOURCE_ROLE` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `asset_type` int(2) unsigned NOT NULL,

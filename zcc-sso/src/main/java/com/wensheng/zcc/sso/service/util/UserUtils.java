@@ -14,7 +14,7 @@ public class UserUtils {
 
 
   public static String getEncode(String password){
-    return passwordEncoder.encode("123");
+    return passwordEncoder.encode(password);
   }
 
   public static boolean match( String rawPw, String encodedPw){

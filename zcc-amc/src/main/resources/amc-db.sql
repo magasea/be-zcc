@@ -57,7 +57,8 @@ CREATE TABLE IF NOT EXISTS `AMC_CMPY` (
   `reg_id` char(45) NOT NULL DEFAULT '-1' COMMENT '工商注册号',
   `social_creditid` char(45) NOT NULL DEFAULT '-1' COMMENT '统一社会信用代码',
   `related_url` char(150) NOT NULL DEFAULT '-1' COMMENT '查看报告的url',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `u_name_idx` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
 
 -- Data exporting was unselected.
@@ -89,7 +90,7 @@ CREATE TABLE IF NOT EXISTS `AMC_CREDITOR` (
   `debt_contract` char(30) NOT NULL DEFAULT '-1' COMMENT '借款合同编号',
   `note` varchar(50) NOT NULL DEFAULT '-1' COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债务人';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债权人';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CREDITOR_DEBT
@@ -134,12 +135,12 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
 CREATE TABLE IF NOT EXISTS `AMC_DEBTOR` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `name` char(50) DEFAULT NULL COMMENT '名称',
-  `type` int(2) DEFAULT NULL COMMENT '借款人类型',
-  `person_id` char(50) DEFAULT NULL COMMENT '借款人身份证ID',
+  `type` int(2) DEFAULT NULL COMMENT '债务人类型',
+  `person_id` char(50) DEFAULT NULL COMMENT '债务人身份证ID',
   `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID',
   `note` varchar(20) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='债权人';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='债务人';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBTPACK
@@ -203,7 +204,7 @@ CREATE TABLE IF NOT EXISTS `AMC_ORIG_CREDITOR` (
   `branch_name` varchar(20) DEFAULT NULL COMMENT '分行名称',
   PRIMARY KEY (`id`),
   UNIQUE KEY `bank_name` (`bank_name`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COMMENT='原始债权人';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_PERSON

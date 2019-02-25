@@ -424,66 +424,6 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrigCmpyIdIsNull() {
-            addCriterion("orig_cmpy_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdIsNotNull() {
-            addCriterion("orig_cmpy_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdEqualTo(Long value) {
-            addCriterion("orig_cmpy_id =", value, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdNotEqualTo(Long value) {
-            addCriterion("orig_cmpy_id <>", value, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdGreaterThan(Long value) {
-            addCriterion("orig_cmpy_id >", value, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("orig_cmpy_id >=", value, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdLessThan(Long value) {
-            addCriterion("orig_cmpy_id <", value, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdLessThanOrEqualTo(Long value) {
-            addCriterion("orig_cmpy_id <=", value, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdIn(List<Long> values) {
-            addCriterion("orig_cmpy_id in", values, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdNotIn(List<Long> values) {
-            addCriterion("orig_cmpy_id not in", values, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdBetween(Long value1, Long value2) {
-            addCriterion("orig_cmpy_id between", value1, value2, "origCmpyId");
-            return (Criteria) this;
-        }
-
-        public Criteria andOrigCmpyIdNotBetween(Long value1, Long value2) {
-            addCriterion("orig_cmpy_id not between", value1, value2, "origCmpyId");
-            return (Criteria) this;
-        }
-
         public Criteria andNoteIsNull() {
             addCriterion("note is null");
             return (Criteria) this;

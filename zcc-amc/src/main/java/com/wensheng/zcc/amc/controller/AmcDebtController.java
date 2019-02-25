@@ -113,7 +113,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtor> getAmcCreditors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
+  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
@@ -129,7 +129,7 @@ public class AmcDebtController {
       log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
-    Long totalCount = amcDebtService.getTotalCreditorCount();
+    Long totalCount = amcDebtService.getDebtorCount();
 
     Page<AmcDebtor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
 

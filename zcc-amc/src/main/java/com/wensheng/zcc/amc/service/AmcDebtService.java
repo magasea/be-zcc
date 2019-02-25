@@ -78,7 +78,7 @@ public interface AmcDebtService {
 
   List<AmcDebtor> getAllDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
 
-  Long getTotalCreditorCount();
+  Long getDebtorCount();
 
   List<AmcCmpy> getAllCompanies(Long offset, int size, Map<String, Direction> orderByParam) throws Exception;
 

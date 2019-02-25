@@ -1,5 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.controller.helper.PageInfo;
+import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AssetStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
@@ -8,6 +10,7 @@ import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
 import com.wensheng.zcc.amc.module.dao.helper.LawstatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
@@ -15,11 +18,16 @@ import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,6 +40,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(value = "/api/basic")
+@Slf4j
 public class AmcBasicInfoController {
 
   @Autowired
@@ -146,14 +155,30 @@ public class AmcBasicInfoController {
   }
 
 
-  @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.GET)
+  @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcPerson> getAmcPersons(@RequestBody PageRequest pageRequest){
+  public Page<AmcPerson> getAmcPersons( @RequestBody PageInfo pageable) throws Exception {
 
-    List<AmcPerson> amcPersonList = amcHelperService.getAllAmcPerson(pageRequest.getOffset(), pageRequest.getPageSize());
-    Long total = amcHelperService.getPersonTotalCount();
-    PageImpl page = new PageImpl(amcPersonList, pageRequest, total);
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
+    if (CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("id", Direction.DESC);
+    }
+
+    List<AmcPerson> queryResults;
+    int offset = PageReqRepHelper.getOffset(pageable);
+    try {
+      queryResults = amcHelperService.getAllAmcPerson(Long.valueOf(offset), pageable.getSize(),
+          orderByParam);
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = amcHelperService.getPersonTotalCount();
+
+    Page<AmcPerson> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
+
     return page;
+
   }
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactor/add", method = RequestMethod.POST)

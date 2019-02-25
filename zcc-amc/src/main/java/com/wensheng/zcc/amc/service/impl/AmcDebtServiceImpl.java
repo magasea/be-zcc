@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -349,9 +350,26 @@ public class AmcDebtServiceImpl implements AmcDebtService {
         amcDebtor.setCompanyId(companyId);
       }
     }
-    Long id = Long.valueOf( amcDebtorMapper.insertSelective(amcDebtor));
-    amcDebtor.setId(id);
-    return amcDebtor;
+    Long id = -1L;
+    boolean gotDuplicate = false;
+    try {
+      id = Long.valueOf( amcDebtorMapper.insertSelective(amcDebtor));
+      amcDebtor.setId(id);
+      return amcDebtor;
+    }
+    catch (DataIntegrityViolationException e) {
+      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()));
+      gotDuplicate = true;
+    }
+    if(gotDuplicate){
+      AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+      amcDebtorExample.createCriteria().andNameEqualTo(amcDebtor.getName());
+      List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+      return amcDebtors.get(0);
+    }else{
+      throw ExceptionUtils.getAmcException(AmcExceptions.INSERT_DB_ERROR);
+    }
+
   }
 
   @Override
@@ -471,9 +489,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public Long getTotalCreditorCount() {
-    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
-    return amcCreditorMapper.countByExample(amcCreditorExample);
+  public Long getDebtorCount() {
+    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    return amcDebtorMapper.countByExample(amcDebtorExample);
   }
 
   @Override

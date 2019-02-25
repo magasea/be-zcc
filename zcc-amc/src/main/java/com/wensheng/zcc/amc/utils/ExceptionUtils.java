@@ -31,6 +31,8 @@ public class ExceptionUtils {
     NO_AMCCONTACT_AVAILABLE(1010, "no amc contact available ", "担保人不存在"),
 
     NO_CREDITOR(1011, "no creditor", "没有借款人"),
+    INSERT_DB_ERROR(1012, "failed to insert db", "数据插入失败"),
+
     ;
     int code;
     String name;

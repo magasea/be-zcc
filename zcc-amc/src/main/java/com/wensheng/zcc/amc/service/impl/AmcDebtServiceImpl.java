@@ -350,11 +350,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
         amcDebtor.setCompanyId(companyId);
       }
     }
-    Long id = -1L;
     boolean gotDuplicate = false;
     try {
-      id = Long.valueOf( amcDebtorMapper.insertSelective(amcDebtor));
-      amcDebtor.setId(id);
+      amcDebtor.setId(null);
+      amcDebtorMapper.insertSelective(amcDebtor);
+
       return amcDebtor;
     }
     catch (DataIntegrityViolationException e) {

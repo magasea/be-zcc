@@ -137,8 +137,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcDebtVo create(AmcDebt amcDebt) {
-    Long debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
-    amcDebt.setAmcId(debtId);
+    amcDebtMapper.insertSelective(amcDebt);
     return convertDo2Vo(amcDebt);
   }
 
@@ -270,8 +269,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public Long addGrantContract(AmcGrntctrct amcGrntctrct) {
-    Long id = Long.valueOf(amcGrntctrctMapper.insertSelective(amcGrntctrct));
-    return id;
+    amcGrntctrctMapper.insertSelective(amcGrntctrct);
+    return amcGrntctrct.getId();
   }
 
   @Override
@@ -346,8 +345,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       }else{
         AmcCmpy amcCmpy = new AmcCmpy();
         amcCmpy.setName(amcDebtor.getName());
-        Long companyId = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
-        amcDebtor.setCompanyId(companyId);
+        amcCmpyMapper.insertSelective(amcCmpy);
+        amcDebtor.setCompanyId(amcCmpy.getId());
       }
     }
     boolean gotDuplicate = false;
@@ -380,8 +379,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcCmpy create(AmcCmpy amcCmpy) {
-    Long id = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
-    amcCmpy.setId(id);
+    amcCmpyMapper.insertSelective(amcCmpy);
     return amcCmpy;
   }
 
@@ -472,8 +470,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor) {
-    Long id = Long.valueOf(amcOrigCreditorMapper.insertSelective(amcOrigCreditor));
-    amcOrigCreditor.setId(id);
+    amcOrigCreditorMapper.insertSelective(amcOrigCreditor);
     return amcOrigCreditor;
   }
 

@@ -51,9 +51,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public AmcAssetVo create(AmcAsset amcAsset) {
-        Long id = Long.valueOf(amcAssetMapper.insertSelective(amcAsset));
 
-         amcAsset.setId(id);
          return Dao2VoUtils.convertDo2Vo(amcAsset);
 
     }

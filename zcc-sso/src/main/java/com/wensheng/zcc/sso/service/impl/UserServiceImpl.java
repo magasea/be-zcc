@@ -30,6 +30,7 @@ import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -78,6 +79,9 @@ public class UserServiceImpl implements UserService {
   @Autowired
   DefaultTokenServices tokenServices;
 
+  @Autowired
+  DaoAuthenticationProvider daoAuthenticationProvider;
+
   @Override
   public List<AmcUser> getUserByPhone(String phoneNum) {
     AmcUserExample amcUserExample = new AmcUserExample();
@@ -119,7 +123,8 @@ public class UserServiceImpl implements UserService {
   @Override
   public AmcUser createDefaultAmcUser(AmcUser amcUser) {
     amcUser.setPassword(passwordEncoder.encode(amcUser.getPassword()));
-    Long userId = Long.valueOf(amcUserExtMapper.insertSelective(amcUser));
+    amcUserExtMapper.insertSelective(amcUser);
+    Long userId = amcUser.getId();
     AmcUserRole amcUserRole = new AmcUserRole();
     amcUserRole.setCreateBy(userId);
     amcUserRole.setCreateDate(Date.from(Instant.now()));
@@ -141,6 +146,7 @@ public class UserServiceImpl implements UserService {
     authenticationManagerBean;
     Authentication authentication = new UsernamePasswordAuthenticationToken(amcUser.getMobilePhone(),
         amcUser.getPassword());
+
     tokenServices.createAccessToken( authenticationManagerBean.authenticate(authentication) )
     return null;
   }

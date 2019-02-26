@@ -476,7 +476,7 @@ public class AmcAssetServiceImplTest {
             debtId = amcDebt.getId();
             amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
         }else{
-            debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
+            amcDebtMapper.insertSelective(amcDebt);
         }
         return amcDebt;
     }
@@ -518,8 +518,7 @@ public class AmcAssetServiceImplTest {
             amcPerson.setPhoneNumber(phone);
             amcPerson.setTelNumber(tel);
             amcPerson.setAmcCmpyId(AMCEnum.AMC_WENSHENG.getId());
-            Long id = Long.valueOf(amcPersonMapper.insertSelective(amcPerson));
-            return id;
+            return amcPerson.getId();
         }
     }
 
@@ -552,8 +551,7 @@ public class AmcAssetServiceImplTest {
             curtInfo.setCurtCity(originItem.getCourtCity());
             curtInfo.setCurtName(originItem.getCourtName());
             curtInfo.setCurtProvince(originItem.getCourtProvince());
-            Long curtId = Long.valueOf(curtInfoMapper.insertSelective(curtInfo));
-            return curtId;
+            return curtInfo.getId();
         } else {
             return curtInfos.get(0).getId();
         }

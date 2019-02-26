@@ -37,9 +37,8 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   }
 
   public AmcPerson createPerson(AmcPerson amcPerson){
-    Long id = Long.valueOf(amcPersonMapper.insertSelective(amcPerson));
-    amcPerson.setId(id);
-    localAmcPersonList.put(id, amcPerson);
+    amcPersonMapper.insertSelective(amcPerson);
+    localAmcPersonList.put(amcPerson.getId(), amcPerson);
     return amcPerson;
   }
 

@@ -73,7 +73,7 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
 
                 .and().withClient("testImplicitClientId").authorizedGrantTypes("implicit").scopes("read", "write", "foo", "bar").autoApprove(true).redirectUris("xxx")
 
-                .and().withClient(amcAdminClientId).secret(amcAdminSecret).authorizedGrantTypes(amcAdminAuthorizedGrantTypes.split(",")).scopes(amcAdminScopes.split(",")).autoApprove(false).redirectUris(amcAdminRedirectUris.split(",")).accessTokenValiditySeconds(accessTokenValidSeconds).refreshTokenValiditySeconds(refreshTokenValidSeconds)
+                .and().withClient(amcAdminClientId).secret(passwordEncoder().encode(amcAdminSecret)).authorizedGrantTypes(amcAdminAuthorizedGrantTypes.split(",")).scopes(amcAdminScopes.split(",")).autoApprove(false).redirectUris(amcAdminRedirectUris.split(",")).accessTokenValiditySeconds(accessTokenValidSeconds).refreshTokenValiditySeconds(refreshTokenValidSeconds)
         ;
 
     }

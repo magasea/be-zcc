@@ -2,30 +2,45 @@ package com.wensheng.zcc.sso.service.impl;
 
 import com.google.common.collect.Lists;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.ext.AmcUserExtMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRoleExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermissionExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
+import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.service.UserService;
 import com.wensheng.zcc.sso.service.util.ExceptionUtils;
 import com.wensheng.zcc.sso.service.util.ExceptionUtils.AmcExceptions;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.token.TokenService;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -51,6 +66,17 @@ public class UserServiceImpl implements UserService {
   @Autowired
   AmcUserExtMapper amcUserExtMapper;
 
+  @Autowired
+  AmcRoleMapper amcRoleMapper;
+
+  @Autowired
+  PasswordEncoder passwordEncoder;
+
+  @Autowired
+  AuthenticationManager authenticationManagerBean;
+
+  @Autowired
+  DefaultTokenServices tokenServices;
 
   @Override
   public List<AmcUser> getUserByPhone(String phoneNum) {
@@ -89,4 +115,35 @@ public class UserServiceImpl implements UserService {
     return authorities;
 
   }
+
+  @Override
+  public AmcUser createDefaultAmcUser(AmcUser amcUser) {
+    amcUser.setPassword(passwordEncoder.encode(amcUser.getPassword()));
+    Long userId = Long.valueOf(amcUserExtMapper.insertSelective(amcUser));
+    AmcUserRole amcUserRole = new AmcUserRole();
+    amcUserRole.setCreateBy(userId);
+    amcUserRole.setCreateDate(Date.from(Instant.now()));
+    amcUserRole.setUserId(userId);
+    AmcRoleExample amcRoleExample = new AmcRoleExample();
+    amcRoleExample.createCriteria().andNameEqualTo(AmcRolesEnum.ROLE_AMC_USER.name());
+    List<AmcRole> amcRoles = amcRoleMapper.selectByExample(amcRoleExample);
+    Long roleId = amcRoles.get(0).getId();
+    amcUserRole.setRoleId(roleId);
+
+    amcUserRoleMapper.insert(amcUserRole);
+    amcUser.setId(userId);
+    return amcUser;
+
+  }
+
+  @Override
+  public Map<String, String> getTokens(AmcUser amcUser) {
+    authenticationManagerBean;
+    Authentication authentication = new UsernamePasswordAuthenticationToken(amcUser.getMobilePhone(),
+        amcUser.getPassword());
+    tokenServices.createAccessToken( authenticationManagerBean.authenticate(authentication) )
+    return null;
+  }
+
+
 }

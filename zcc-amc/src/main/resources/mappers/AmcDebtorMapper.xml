@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="person_name" jdbcType="CHAR" property="personName" />
+    <result column="name" jdbcType="CHAR" property="name" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="role" jdbcType="INTEGER" property="role" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, debt_id, person_name, type, role, company_id, note
+    id, debt_id, name, type, role, company_id, note
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample" resultMap="BaseResultMap">
     select
@@ -106,10 +106,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTOR (debt_id, person_name, type, 
+    insert into AMC_DEBTOR (debt_id, name, type, 
       role, company_id, note
       )
-    values (#{debtId,jdbcType=BIGINT}, #{personName,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, 
+    values (#{debtId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, 
       #{role,jdbcType=INTEGER}, #{companyId,jdbcType=BIGINT}, #{note,jdbcType=VARCHAR}
       )
   </insert>
@@ -122,8 +122,8 @@
       <if test="debtId != null">
         debt_id,
       </if>
-      <if test="personName != null">
-        person_name,
+      <if test="name != null">
+        name,
       </if>
       <if test="type != null">
         type,
@@ -142,8 +142,8 @@
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="personName != null">
-        #{personName,jdbcType=CHAR},
+      <if test="name != null">
+        #{name,jdbcType=CHAR},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -174,8 +174,8 @@
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
-      <if test="record.personName != null">
-        person_name = #{record.personName,jdbcType=CHAR},
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=CHAR},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
@@ -198,7 +198,7 @@
     update AMC_DEBTOR
     set id = #{record.id,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      person_name = #{record.personName,jdbcType=CHAR},
+      name = #{record.name,jdbcType=CHAR},
       type = #{record.type,jdbcType=INTEGER},
       role = #{record.role,jdbcType=INTEGER},
       company_id = #{record.companyId,jdbcType=BIGINT},
@@ -213,8 +213,8 @@
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="personName != null">
-        person_name = #{personName,jdbcType=CHAR},
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
@@ -234,7 +234,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     update AMC_DEBTOR
     set debt_id = #{debtId,jdbcType=BIGINT},
-      person_name = #{personName,jdbcType=CHAR},
+      name = #{name,jdbcType=CHAR},
       type = #{type,jdbcType=INTEGER},
       role = #{role,jdbcType=INTEGER},
       company_id = #{companyId,jdbcType=BIGINT},

@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrgcreditorDebtpackMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpack">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="creditor_id" jdbcType="BIGINT" property="creditorId" />
-    <result column="debtpack_id" jdbcType="BIGINT" property="debtpackId" />
+    <result column="branch_id" jdbcType="BIGINT" property="branchId" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
+    <result column="notes" jdbcType="VARCHAR" property="notes" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,16 +67,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, creditor_id, debtpack_id
+    id, branch_id, name, phone_number, notes
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpackExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_ORGCREDITOR_DEBTPACK
+    from AMC_DEBT_CONTACTOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -85,65 +87,85 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_ORGCREDITOR_DEBTPACK
+    from AMC_DEBT_CONTACTOR
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_ORGCREDITOR_DEBTPACK
+    delete from AMC_DEBT_CONTACTOR
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpackExample">
-    delete from AMC_ORGCREDITOR_DEBTPACK
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample">
+    delete from AMC_DEBT_CONTACTOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpack">
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_ORGCREDITOR_DEBTPACK (creditor_id, debtpack_id)
-    values (#{creditorId,jdbcType=BIGINT}, #{debtpackId,jdbcType=BIGINT})
+    insert into AMC_DEBT_CONTACTOR (branch_id, name, phone_number, 
+      notes)
+    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{phoneNumber,jdbcType=CHAR}, 
+      #{notes,jdbcType=VARCHAR})
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpack">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_ORGCREDITOR_DEBTPACK
+    insert into AMC_DEBT_CONTACTOR
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="creditorId != null">
-        creditor_id,
+      <if test="branchId != null">
+        branch_id,
       </if>
-      <if test="debtpackId != null">
-        debtpack_id,
+      <if test="name != null">
+        name,
+      </if>
+      <if test="phoneNumber != null">
+        phone_number,
+      </if>
+      <if test="notes != null">
+        notes,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="creditorId != null">
-        #{creditorId,jdbcType=BIGINT},
+      <if test="branchId != null">
+        #{branchId,jdbcType=BIGINT},
       </if>
-      <if test="debtpackId != null">
-        #{debtpackId,jdbcType=BIGINT},
+      <if test="name != null">
+        #{name,jdbcType=CHAR},
+      </if>
+      <if test="phoneNumber != null">
+        #{phoneNumber,jdbcType=CHAR},
+      </if>
+      <if test="notes != null">
+        #{notes,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpackExample" resultType="java.lang.Long">
-    select count(*) from AMC_ORGCREDITOR_DEBTPACK
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultType="java.lang.Long">
+    select count(*) from AMC_DEBT_CONTACTOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_ORGCREDITOR_DEBTPACK
+    update AMC_DEBT_CONTACTOR
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.creditorId != null">
-        creditor_id = #{record.creditorId,jdbcType=BIGINT},
+      <if test="record.branchId != null">
+        branch_id = #{record.branchId,jdbcType=BIGINT},
       </if>
-      <if test="record.debtpackId != null">
-        debtpack_id = #{record.debtpackId,jdbcType=BIGINT},
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=CHAR},
+      </if>
+      <if test="record.phoneNumber != null">
+        phone_number = #{record.phoneNumber,jdbcType=CHAR},
+      </if>
+      <if test="record.notes != null">
+        notes = #{record.notes,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -151,40 +173,50 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_ORGCREDITOR_DEBTPACK
+    update AMC_DEBT_CONTACTOR
     set id = #{record.id,jdbcType=BIGINT},
-      creditor_id = #{record.creditorId,jdbcType=BIGINT},
-      debtpack_id = #{record.debtpackId,jdbcType=BIGINT}
+      branch_id = #{record.branchId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=CHAR},
+      phone_number = #{record.phoneNumber,jdbcType=CHAR},
+      notes = #{record.notes,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpack">
-    update AMC_ORGCREDITOR_DEBTPACK
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
+    update AMC_DEBT_CONTACTOR
     <set>
-      <if test="creditorId != null">
-        creditor_id = #{creditorId,jdbcType=BIGINT},
+      <if test="branchId != null">
+        branch_id = #{branchId,jdbcType=BIGINT},
       </if>
-      <if test="debtpackId != null">
-        debtpack_id = #{debtpackId,jdbcType=BIGINT},
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="phoneNumber != null">
+        phone_number = #{phoneNumber,jdbcType=CHAR},
+      </if>
+      <if test="notes != null">
+        notes = #{notes,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpack">
-    update AMC_ORGCREDITOR_DEBTPACK
-    set creditor_id = #{creditorId,jdbcType=BIGINT},
-      debtpack_id = #{debtpackId,jdbcType=BIGINT}
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
+    update AMC_DEBT_CONTACTOR
+    set branch_id = #{branchId,jdbcType=BIGINT},
+      name = #{name,jdbcType=CHAR},
+      phone_number = #{phoneNumber,jdbcType=CHAR},
+      notes = #{notes,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrgcreditorDebtpackExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_ORGCREDITOR_DEBTPACK
+    from AMC_DEBT_CONTACTOR
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

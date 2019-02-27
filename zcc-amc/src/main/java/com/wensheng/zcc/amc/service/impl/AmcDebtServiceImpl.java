@@ -289,18 +289,18 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     //if the creditor is company, need check if company exists
     if( amcDebtor.getType() == DebtorRoleEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
       //need create company
-      if (StringUtils.isEmpty(amcDebtor.getPersonName())){
+      if (StringUtils.isEmpty(amcDebtor.getName())){
         throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");
       }
       AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
-      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getPersonName());
+      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getName());
       List<AmcCmpy> amcCmpies = amcCmpyMapper.selectByExample(amcCmpyExample);
       if(!CollectionUtils.isEmpty(amcCmpies)){
-        log.error(String.format("the company to create already exists:%s", amcDebtor.getPersonName()));
+        log.error(String.format("the company to create already exists:%s", amcDebtor.getName()));
         amcDebtor.setCompanyId(amcCmpies.get(0).getId());
       }else{
         AmcCmpy amcCmpy = new AmcCmpy();
-        amcCmpy.setName(amcDebtor.getPersonName());
+        amcCmpy.setName(amcDebtor.getName());
         amcCmpyMapper.insertSelective(amcCmpy);
         amcDebtor.setCompanyId(amcCmpy.getId());
       }
@@ -313,12 +313,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       return amcDebtor;
     }
     catch (DataIntegrityViolationException e) {
-      log.error(String.format("got duplicate insert for :%s", amcDebtor.getPersonName()));
+      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()));
       gotDuplicate = true;
     }
     if(gotDuplicate){
       AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
-      amcDebtorExample.createCriteria().andPersonNameEqualTo(amcDebtor.getPersonName());
+      amcDebtorExample.createCriteria().andNameEqualTo(amcDebtor.getName());
       List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
       return amcDebtors.get(0);
     }else{

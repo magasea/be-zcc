@@ -224,73 +224,73 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameIsNull() {
-            addCriterion("person_name is null");
+        public Criteria andNameIsNull() {
+            addCriterion("name is null");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameIsNotNull() {
-            addCriterion("person_name is not null");
+        public Criteria andNameIsNotNull() {
+            addCriterion("name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameEqualTo(String value) {
-            addCriterion("person_name =", value, "personName");
+        public Criteria andNameEqualTo(String value) {
+            addCriterion("name =", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameNotEqualTo(String value) {
-            addCriterion("person_name <>", value, "personName");
+        public Criteria andNameNotEqualTo(String value) {
+            addCriterion("name <>", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameGreaterThan(String value) {
-            addCriterion("person_name >", value, "personName");
+        public Criteria andNameGreaterThan(String value) {
+            addCriterion("name >", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameGreaterThanOrEqualTo(String value) {
-            addCriterion("person_name >=", value, "personName");
+        public Criteria andNameGreaterThanOrEqualTo(String value) {
+            addCriterion("name >=", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameLessThan(String value) {
-            addCriterion("person_name <", value, "personName");
+        public Criteria andNameLessThan(String value) {
+            addCriterion("name <", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameLessThanOrEqualTo(String value) {
-            addCriterion("person_name <=", value, "personName");
+        public Criteria andNameLessThanOrEqualTo(String value) {
+            addCriterion("name <=", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameLike(String value) {
-            addCriterion("person_name like", value, "personName");
+        public Criteria andNameLike(String value) {
+            addCriterion("name like", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameNotLike(String value) {
-            addCriterion("person_name not like", value, "personName");
+        public Criteria andNameNotLike(String value) {
+            addCriterion("name not like", value, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameIn(List<String> values) {
-            addCriterion("person_name in", values, "personName");
+        public Criteria andNameIn(List<String> values) {
+            addCriterion("name in", values, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameNotIn(List<String> values) {
-            addCriterion("person_name not in", values, "personName");
+        public Criteria andNameNotIn(List<String> values) {
+            addCriterion("name not in", values, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameBetween(String value1, String value2) {
-            addCriterion("person_name between", value1, value2, "personName");
+        public Criteria andNameBetween(String value1, String value2) {
+            addCriterion("name between", value1, value2, "name");
             return (Criteria) this;
         }
 
-        public Criteria andPersonNameNotBetween(String value1, String value2) {
-            addCriterion("person_name not between", value1, value2, "personName");
+        public Criteria andNameNotBetween(String value1, String value2) {
+            addCriterion("name not between", value1, value2, "name");
             return (Criteria) this;
         }
 

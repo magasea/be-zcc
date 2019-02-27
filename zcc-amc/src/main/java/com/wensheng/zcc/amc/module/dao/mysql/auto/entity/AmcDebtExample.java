@@ -1295,6 +1295,66 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andGuarantTypeIsNull() {
+            addCriterion("guarant_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeIsNotNull() {
+            addCriterion("guarant_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeEqualTo(Integer value) {
+            addCriterion("guarant_type =", value, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeNotEqualTo(Integer value) {
+            addCriterion("guarant_type <>", value, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeGreaterThan(Integer value) {
+            addCriterion("guarant_type >", value, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("guarant_type >=", value, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeLessThan(Integer value) {
+            addCriterion("guarant_type <", value, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("guarant_type <=", value, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeIn(List<Integer> values) {
+            addCriterion("guarant_type in", values, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeNotIn(List<Integer> values) {
+            addCriterion("guarant_type not in", values, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeBetween(Integer value1, Integer value2) {
+            addCriterion("guarant_type between", value1, value2, "guarantType");
+            return (Criteria) this;
+        }
+
+        public Criteria andGuarantTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("guarant_type not between", value1, value2, "guarantType");
+            return (Criteria) this;
+        }
+
         public Criteria andRecommStartDateIsNull() {
             addCriterion("recomm_start_date is null");
             return (Criteria) this;
@@ -1542,6 +1602,126 @@ public class AmcDebtExample {
 
         public Criteria andDebtDescNotBetween(String value1, String value2) {
             addCriterion("debt_desc not between", value1, value2, "debtDesc");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByIsNull() {
+            addCriterion("created_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByIsNotNull() {
+            addCriterion("created_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByEqualTo(Long value) {
+            addCriterion("created_by =", value, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByNotEqualTo(Long value) {
+            addCriterion("created_by <>", value, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByGreaterThan(Long value) {
+            addCriterion("created_by >", value, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByGreaterThanOrEqualTo(Long value) {
+            addCriterion("created_by >=", value, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByLessThan(Long value) {
+            addCriterion("created_by <", value, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByLessThanOrEqualTo(Long value) {
+            addCriterion("created_by <=", value, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByIn(List<Long> values) {
+            addCriterion("created_by in", values, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByNotIn(List<Long> values) {
+            addCriterion("created_by not in", values, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByBetween(Long value1, Long value2) {
+            addCriterion("created_by between", value1, value2, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedByNotBetween(Long value1, Long value2) {
+            addCriterion("created_by not between", value1, value2, "createdBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateIsNull() {
+            addCriterion("created_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateIsNotNull() {
+            addCriterion("created_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateEqualTo(Date value) {
+            addCriterion("created_date =", value, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateNotEqualTo(Date value) {
+            addCriterion("created_date <>", value, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateGreaterThan(Date value) {
+            addCriterion("created_date >", value, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("created_date >=", value, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateLessThan(Date value) {
+            addCriterion("created_date <", value, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateLessThanOrEqualTo(Date value) {
+            addCriterion("created_date <=", value, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateIn(List<Date> values) {
+            addCriterion("created_date in", values, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateNotIn(List<Date> values) {
+            addCriterion("created_date not in", values, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateBetween(Date value1, Date value2) {
+            addCriterion("created_date between", value1, value2, "createdDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreatedDateNotBetween(Date value1, Date value2) {
+            addCriterion("created_date not between", value1, value2, "createdDate");
             return (Criteria) this;
         }
     }

@@ -41,6 +41,8 @@ public class AmcDebt {
 
     private Integer isRecommanded;
 
+    private Integer guarantType;
+
     private Date recommStartDate;
 
     private Date recommEndDate;
@@ -48,6 +50,10 @@ public class AmcDebt {
     private Long origCreditorId;
 
     private String debtDesc;
+
+    private Long createdBy;
+
+    private Date createdDate;
 
     public Long getId() {
         return id;
@@ -201,6 +207,14 @@ public class AmcDebt {
         this.isRecommanded = isRecommanded;
     }
 
+    public Integer getGuarantType() {
+        return guarantType;
+    }
+
+    public void setGuarantType(Integer guarantType) {
+        this.guarantType = guarantType;
+    }
+
     public Date getRecommStartDate() {
         return recommStartDate;
     }
@@ -231,5 +245,21 @@ public class AmcDebt {
 
     public void setDebtDesc(String debtDesc) {
         this.debtDesc = debtDesc == null ? null : debtDesc.trim();
+    }
+
+    public Long getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
+    }
+
+    public Date getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 }

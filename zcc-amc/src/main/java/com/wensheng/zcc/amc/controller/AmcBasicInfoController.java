@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
@@ -71,9 +72,9 @@ public class AmcBasicInfoController {
     return -1L;
   }
 
-  @RequestMapping(value = "/editStatus", method = RequestMethod.GET)
+  @RequestMapping(value = "/publishStates", method = RequestMethod.GET)
   @ResponseBody
-  public List<String> getEditStatusList(){
+  public List<String> getPublishStateList(){
 
     List<String> result = new ArrayList<>();
     for(PublishStateEnum publishStateEnum : PublishStateEnum.values()){
@@ -106,9 +107,9 @@ public class AmcBasicInfoController {
     return result;
   }
 
-  @RequestMapping(value = "/assetStatus", method = RequestMethod.GET)
+  @RequestMapping(value = "/assetSealedStates", method = RequestMethod.GET)
   @ResponseBody
-  public List<String> getAssetStatusList(){
+  public List<String> getAssetSealedStatesList(){
 
     List<String> result = new ArrayList<>();
     for(SealStateEnum enumItem: SealStateEnum.values()){
@@ -146,6 +147,18 @@ public class AmcBasicInfoController {
     List<String> result = new ArrayList<>();
     for(AssetTypeEnum enumItem: AssetTypeEnum.values()){
       result.add(String.format("%d:%s", enumItem.getType(), enumItem.getName()));
+    }
+    return result;
+  }
+
+
+  @RequestMapping(value = "/guarantType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getGuarantType(){
+
+    List<String> result = new ArrayList<>();
+    for(GuarantTypeEnum guarantTypeEnum: GuarantTypeEnum.values()){
+      result.add(String.format("%d:%s", guarantTypeEnum.getType(), guarantTypeEnum.getName()));
     }
     return result;
   }

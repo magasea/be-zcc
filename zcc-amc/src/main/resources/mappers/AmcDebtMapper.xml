@@ -21,10 +21,13 @@
     <result column="amc_contact" jdbcType="BIGINT" property="amcContact" />
     <result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />
     <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
+    <result column="guarant_type" jdbcType="INTEGER" property="guarantType" />
     <result column="recomm_start_date" jdbcType="TIMESTAMP" property="recommStartDate" />
     <result column="recomm_end_date" jdbcType="TIMESTAMP" property="recommEndDate" />
     <result column="orig_creditor_id" jdbcType="BIGINT" property="origCreditorId" />
     <result column="debt_desc" jdbcType="VARCHAR" property="debtDesc" />
+    <result column="created_by" jdbcType="BIGINT" property="createdBy" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -87,8 +90,8 @@
   <sql id="Base_Column_List">
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
     total_amount_desc, settle_date, court_id, amc_debt_code, publish_state, publish_date, 
-    lawsuit_state_desc, valuation, amc_contact, amc_contact2, is_recommanded, recomm_start_date, 
-    recomm_end_date, orig_creditor_id, debt_desc
+    lawsuit_state_desc, valuation, amc_contact, amc_contact2, is_recommanded, guarant_type, 
+    recomm_start_date, recomm_end_date, orig_creditor_id, debt_desc, created_by, created_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -131,16 +134,18 @@
       court_id, amc_debt_code, publish_state, 
       publish_date, lawsuit_state_desc, valuation, 
       amc_contact, amc_contact2, is_recommanded, 
-      recomm_start_date, recomm_end_date, orig_creditor_id, 
-      debt_desc)
+      guarant_type, recomm_start_date, recomm_end_date, 
+      orig_creditor_id, debt_desc, created_by, 
+      created_date)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
       #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, 
       #{publishDate,jdbcType=TIMESTAMP}, #{lawsuitStateDesc,jdbcType=VARCHAR}, #{valuation,jdbcType=BIGINT}, 
       #{amcContact,jdbcType=BIGINT}, #{amcContact2,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
-      #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, 
-      #{debtDesc,jdbcType=VARCHAR})
+      #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, 
+      #{origCreditorId,jdbcType=BIGINT}, #{debtDesc,jdbcType=VARCHAR}, #{createdBy,jdbcType=BIGINT}, 
+      #{createdDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -202,6 +207,9 @@
       <if test="isRecommanded != null">
         is_recommanded,
       </if>
+      <if test="guarantType != null">
+        guarant_type,
+      </if>
       <if test="recommStartDate != null">
         recomm_start_date,
       </if>
@@ -213,6 +221,12 @@
       </if>
       <if test="debtDesc != null">
         debt_desc,
+      </if>
+      <if test="createdBy != null">
+        created_by,
+      </if>
+      <if test="createdDate != null">
+        created_date,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -270,6 +284,9 @@
       <if test="isRecommanded != null">
         #{isRecommanded,jdbcType=INTEGER},
       </if>
+      <if test="guarantType != null">
+        #{guarantType,jdbcType=INTEGER},
+      </if>
       <if test="recommStartDate != null">
         #{recommStartDate,jdbcType=TIMESTAMP},
       </if>
@@ -281,6 +298,12 @@
       </if>
       <if test="debtDesc != null">
         #{debtDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=BIGINT},
+      </if>
+      <if test="createdDate != null">
+        #{createdDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -350,6 +373,9 @@
       <if test="record.isRecommanded != null">
         is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       </if>
+      <if test="record.guarantType != null">
+        guarant_type = #{record.guarantType,jdbcType=INTEGER},
+      </if>
       <if test="record.recommStartDate != null">
         recomm_start_date = #{record.recommStartDate,jdbcType=TIMESTAMP},
       </if>
@@ -361,6 +387,12 @@
       </if>
       <if test="record.debtDesc != null">
         debt_desc = #{record.debtDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="record.createdBy != null">
+        created_by = #{record.createdBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createdDate != null">
+        created_date = #{record.createdDate,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -388,10 +420,13 @@
       amc_contact = #{record.amcContact,jdbcType=BIGINT},
       amc_contact2 = #{record.amcContact2,jdbcType=BIGINT},
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
+      guarant_type = #{record.guarantType,jdbcType=INTEGER},
       recomm_start_date = #{record.recommStartDate,jdbcType=TIMESTAMP},
       recomm_end_date = #{record.recommEndDate,jdbcType=TIMESTAMP},
       orig_creditor_id = #{record.origCreditorId,jdbcType=BIGINT},
-      debt_desc = #{record.debtDesc,jdbcType=VARCHAR}
+      debt_desc = #{record.debtDesc,jdbcType=VARCHAR},
+      created_by = #{record.createdBy,jdbcType=BIGINT},
+      created_date = #{record.createdDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -453,6 +488,9 @@
       <if test="isRecommanded != null">
         is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       </if>
+      <if test="guarantType != null">
+        guarant_type = #{guarantType,jdbcType=INTEGER},
+      </if>
       <if test="recommStartDate != null">
         recomm_start_date = #{recommStartDate,jdbcType=TIMESTAMP},
       </if>
@@ -464,6 +502,12 @@
       </if>
       <if test="debtDesc != null">
         debt_desc = #{debtDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=BIGINT},
+      </if>
+      <if test="createdDate != null">
+        created_date = #{createdDate,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -488,10 +532,13 @@
       amc_contact = #{amcContact,jdbcType=BIGINT},
       amc_contact2 = #{amcContact2,jdbcType=BIGINT},
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
+      guarant_type = #{guarantType,jdbcType=INTEGER},
       recomm_start_date = #{recommStartDate,jdbcType=TIMESTAMP},
       recomm_end_date = #{recommEndDate,jdbcType=TIMESTAMP},
       orig_creditor_id = #{origCreditorId,jdbcType=BIGINT},
-      debt_desc = #{debtDesc,jdbcType=VARCHAR}
+      debt_desc = #{debtDesc,jdbcType=VARCHAR},
+      created_by = #{createdBy,jdbcType=BIGINT},
+      created_date = #{createdDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">

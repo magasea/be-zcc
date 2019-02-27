@@ -7,13 +7,11 @@ public class AmcDebtpack {
 
     private String notes;
 
-    private Long amcCompanyId;
+    private Long amcId;
 
     private String amcDebtpackCode;
 
     private Integer packStatus;
-
-    private Integer amcGroupId;
 
     public Long getId() {
         return id;
@@ -39,12 +37,12 @@ public class AmcDebtpack {
         this.notes = notes == null ? null : notes.trim();
     }
 
-    public Long getAmcCompanyId() {
-        return amcCompanyId;
+    public Long getAmcId() {
+        return amcId;
     }
 
-    public void setAmcCompanyId(Long amcCompanyId) {
-        this.amcCompanyId = amcCompanyId;
+    public void setAmcId(Long amcId) {
+        this.amcId = amcId;
     }
 
     public String getAmcDebtpackCode() {
@@ -61,13 +59,5 @@ public class AmcDebtpack {
 
     public void setPackStatus(Integer packStatus) {
         this.packStatus = packStatus;
-    }
-
-    public Integer getAmcGroupId() {
-        return amcGroupId;
-    }
-
-    public void setAmcGroupId(Integer amcGroupId) {
-        this.amcGroupId = amcGroupId;
     }
 }

@@ -163,6 +163,16 @@ public class AmcBasicInfoController {
     return result;
   }
 
+  @RequestMapping(value = "/debtorRoles", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getDebtorRoles(){
+
+    List<String> result = new ArrayList<>();
+    for(DebtorRoleEnum debtorRoleEnum: DebtorRoleEnum.values()){
+      result.add(String.format("%d:%s", debtorRoleEnum.getId(), debtorRoleEnum.getName()));
+    }
+    return result;
+  }
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.POST)
   @ResponseBody

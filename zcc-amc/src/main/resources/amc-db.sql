@@ -59,7 +59,7 @@ CREATE TABLE IF NOT EXISTS `AMC_CMPY` (
   `related_url` char(150) NOT NULL DEFAULT '-1' COMMENT '查看报告的url',
   PRIMARY KEY (`id`),
   UNIQUE KEY `u_name_idx` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CMPY_SHAREHOLDER
@@ -133,14 +133,15 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBTOR
 CREATE TABLE IF NOT EXISTS `AMC_DEBTOR` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `name` char(50) DEFAULT NULL COMMENT '名称',
-  `type` int(2) DEFAULT NULL COMMENT '债务人类型',
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `name` char(50) NOT NULL COMMENT '名称',
+  `type` int(2) NOT NULL COMMENT '债务人类型',
   `person_id` char(50) DEFAULT NULL COMMENT '债务人身份证ID',
   `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID',
   `note` varchar(20) DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COMMENT='债务人';
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `u_name_idx` (`name`,`person_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='债务人';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBTPACK
@@ -153,7 +154,7 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBTPACK` (
   `pack_status` int(2) NOT NULL DEFAULT '-1' COMMENT '状态 可能的状态有:新引进包 打包卖出',
   `amc_group_id` int(6) NOT NULL DEFAULT '-1' COMMENT 'AMC内部所属组ID',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='资产包';
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COMMENT='资产包';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_GRNTCTRCT

@@ -11,23 +11,17 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
-import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
@@ -46,7 +40,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
@@ -287,7 +280,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   public AmcDebtor create(AmcDebtor amcDebtor) throws Exception {
 
     //if the creditor is company, need check if company exists
-    if( amcDebtor.getType() == DebtorRoleEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
+    if( amcDebtor.getType() == DebtorTypeEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
       //need create company
       if (StringUtils.isEmpty(amcDebtor.getName())){
         throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");
@@ -313,8 +306,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       return amcDebtor;
     }
     catch (DataIntegrityViolationException e) {
-      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()));
-      gotDuplicate = true;
+      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()), e);
+      if(e.toString().contains("duplicate")){
+        gotDuplicate = true;
+      }
     }
     if(gotDuplicate){
       AmcDebtorExample amcDebtorExample = new AmcDebtorExample();

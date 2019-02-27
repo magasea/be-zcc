@@ -48,13 +48,13 @@ CREATE TABLE IF NOT EXISTS `AMC_ASSET` (
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CMPY
-CREATE TABLE IF NOT EXISTS `AMC_CMPY` ( '债务人公司信息'
+CREATE TABLE IF NOT EXISTS `AMC_CMPY` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` char(50) NOT NULL DEFAULT '-1' COMMENT '公司名称',
   `related_url` char(150) NOT NULL DEFAULT '-1' COMMENT '查看报告的url',
   PRIMARY KEY (`id`),
   UNIQUE KEY `u_name_idx` (`name`)
-) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='债务人公司信息';
 
 
 -- Data exporting was unselected.

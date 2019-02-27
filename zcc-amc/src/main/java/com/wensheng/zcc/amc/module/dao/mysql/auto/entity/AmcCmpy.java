@@ -5,10 +5,6 @@ public class AmcCmpy {
 
     private String name;
 
-    private String regId;
-
-    private String socialCreditid;
-
     private String relatedUrl;
 
     public Long getId() {
@@ -25,22 +21,6 @@ public class AmcCmpy {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
-    }
-
-    public String getRegId() {
-        return regId;
-    }
-
-    public void setRegId(String regId) {
-        this.regId = regId == null ? null : regId.trim();
-    }
-
-    public String getSocialCreditid() {
-        return socialCreditid;
-    }
-
-    public void setSocialCreditid(String socialCreditid) {
-        this.socialCreditid = socialCreditid == null ? null : socialCreditid.trim();
     }
 
     public String getRelatedUrl() {

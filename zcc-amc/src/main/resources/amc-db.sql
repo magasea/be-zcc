@@ -92,8 +92,8 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
   `publish_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '发布时间',
   `lawsuit_state_desc` varchar(50) NOT NULL DEFAULT '-1' COMMENT '法律状态描述',
   `valuation` bigint(20) NOT NULL DEFAULT '-1' COMMENT '债权评估价',
-  `amc_contact` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人1',
-  `amc_contact2` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人2',
+  `amc_contactor_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人1',
+  `amc_contactor2_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人2',
   `is_recommanded` int(2) NOT NULL DEFAULT '-1' COMMENT '推荐 不推荐',
   `guarant_type` int(2) NOT NULL DEFAULT '-1' COMMENT '担保方式 抵押 保证 混合',
   `recomm_start_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '推荐开始日期',
@@ -175,7 +175,12 @@ CREATE TABLE IF NOT EXISTS `RESOURCE_ROLE` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
--- Data exporting was unselected.
-/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
-/*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+
+CREATE TABLE IF NOT EXISTS `AMC_DEBT_CONTACTOR` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT COMMENT 'ID',
+  `branch_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '分公司Id',
+  `name` char(20) NOT NULL COMMENT '姓名',
+  `phone_number` char(25) NOT NULL DEFAULT '-1' COMMENT '联系电话',
+  `notes` varchar(200) NOT NULL DEFAULT '-1',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=70 DEFAULT CHARSET=utf8mb4;

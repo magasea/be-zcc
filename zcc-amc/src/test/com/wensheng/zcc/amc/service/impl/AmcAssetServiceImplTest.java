@@ -3,24 +3,35 @@ package com.wensheng.zcc.amc.service.impl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
-import com.wensheng.zcc.amc.module.dao.helper.*;
+import com.wensheng.zcc.amc.module.dao.helper.AMCEnum;
+import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AmcAssetOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AssetImageOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.DebtOrigin;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.utils.AmcDateUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -35,8 +46,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import java.util.List;
 
 /**
  * @author chenwei on 12/5/18
@@ -80,7 +89,7 @@ public class AmcAssetServiceImplTest {
     AmcGrntctrctMapper amcGrntctrctMapper;
 
     @Autowired
-    AmcPersonMapper amcPersonMapper;
+    AmcDebtContactorMapper amcDebtContactorMapper;
 
 //    @Test
 //    public void getAllAmcAssets() {
@@ -481,7 +490,7 @@ public class AmcAssetServiceImplTest {
 
     private Long createOrUpdateAmcContact(String amcContact1) {
         List<String> contactInfos = parseContact(amcContact1);
-        AmcPersonExample amcPersonExample = new AmcPersonExample();
+        AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
         String name = null;
         String phone = null;
         String tel = null;
@@ -501,22 +510,22 @@ public class AmcAssetServiceImplTest {
             return -1L;
         }
 
-        amcPersonExample.createCriteria().andNameEqualTo(name);
+        amcDebtContactorExample.createCriteria().andNameEqualTo(name);
         if(!StringUtils.isEmpty(phone)){
-            amcPersonExample.createCriteria().andPhoneNumberEqualTo(phone);
+            amcDebtContactorExample.createCriteria().andPhoneNumberEqualTo(phone);
         }
-        List<AmcPerson> amcPersonList =  amcPersonMapper.selectByExample(amcPersonExample);
-        AmcPerson amcPerson = null;
-        if(!CollectionUtils.isEmpty(amcPersonList)){
-            amcPerson = amcPersonList.get(0);
-            return amcPerson.getId();
+        List<AmcDebtContactor> AmcDebtContactorList =  amcDebtContactorMapper.selectByExample(amcDebtContactorExample);
+        AmcDebtContactor AmcDebtContactor = null;
+        if(!CollectionUtils.isEmpty(AmcDebtContactorList)){
+            AmcDebtContactor = AmcDebtContactorList.get(0);
+            return AmcDebtContactor.getId();
         }else{
-            amcPerson = new AmcPerson();
-            amcPerson.setName(name);
-            amcPerson.setPhoneNumber(phone);
-            amcPerson.setTelNumber(tel);
-            amcPerson.setAmcCmpyId(AMCEnum.AMC_WENSHENG.getId());
-            return amcPerson.getId();
+            AmcDebtContactor = new AmcDebtContactor();
+            AmcDebtContactor.setName(name);
+            AmcDebtContactor.setPhoneNumber(phone);
+            AmcDebtContactor.setPhoneNumber(tel);
+            AmcDebtContactor.setBranchId(AMCEnum.AMC_WENSHENG.getId());
+            return AmcDebtContactor.getId();
         }
     }
 

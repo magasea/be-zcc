@@ -3,13 +3,13 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
@@ -19,13 +19,13 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -83,7 +83,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcDebtorMapper amcDebtorMapper;
 
   @Autowired
-  AmcPersonMapper amcPersonMapper;
+  AmcDebtContactorMapper amcDebtContactorMapper;
 
   @Autowired
   AmcGrntctrctMapper amcGrntctrctMapper;
@@ -209,11 +209,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     }
     if(amcDebt.getAmcContact() > 0){
-      amcDebtVo.setAmcContact1(amcHelperService.getAmcPerson(amcDebt.getAmcContact()));
+      amcDebtVo.setAmcContact1(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContact()));
     }
 
     if(amcDebt.getAmcContact2() > 0){
-      amcDebtVo.setAmcContact2(amcHelperService.getAmcPerson(amcDebt.getAmcContact2()));
+      amcDebtVo.setAmcContact2(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContact2()));
     }
     return amcDebtVo;
   }
@@ -268,8 +268,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public boolean isAmcContactexist(Long amcContact1) {
-    AmcPerson amcPerson = amcPersonMapper.selectByPrimaryKey(amcContact1);
-    if(amcPerson == null){
+    AmcDebtContactor AmcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcContact1);
+    if(AmcDebtContactor == null){
       return false;
     }
 

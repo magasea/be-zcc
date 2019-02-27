@@ -1,6 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
@@ -11,13 +11,13 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcHelperService {
 
-  public AmcPerson getAmcPerson(Long id);
+  public AmcDebtContactor getAmcDebtContactor(Long id);
 
-  public AmcPerson createPerson(AmcPerson amcPerson);
+  public AmcDebtContactor createPerson(AmcDebtContactor AmcDebtContactor);
 
-  public AmcPerson updatePerson(AmcPerson amcPerson);
+  public AmcDebtContactor updatePerson(AmcDebtContactor AmcDebtContactor);
 
-  public List<AmcPerson> getAllAmcPerson(Long offset, int size,  Map<String, Direction> orderByParam) throws Exception;
+  public List<AmcDebtContactor> getAllAmcDebtContactor(Long offset, int size,  Map<String, Direction> orderByParam) throws Exception;
 
   Long getPersonTotalCount();
 

@@ -11,7 +11,7 @@ import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
 import com.wensheng.zcc.amc.module.dao.helper.LawstatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
@@ -176,17 +176,17 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcPerson> getAmcPersons( @RequestBody PageInfo pageable) throws Exception {
+  public Page<AmcDebtContactor> getAmcDebtContactors( @RequestBody PageInfo pageable) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
-    List<AmcPerson> queryResults;
+    List<AmcDebtContactor> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
     try {
-      queryResults = amcHelperService.getAllAmcPerson(Long.valueOf(offset), pageable.getSize(),
+      queryResults = amcHelperService.getAllAmcDebtContactor(Long.valueOf(offset), pageable.getSize(),
           orderByParam);
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
@@ -194,7 +194,7 @@ public class AmcBasicInfoController {
     }
     Long totalCount = amcHelperService.getPersonTotalCount();
 
-    Page<AmcPerson> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
+    Page<AmcDebtContactor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
 
     return page;
 
@@ -202,13 +202,13 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactor/add", method = RequestMethod.POST)
   @ResponseBody
-  public AmcPerson getAmcPersons(@RequestBody AmcPerson amcPerson){
+  public AmcDebtContactor getAmcDebtContactors(@RequestBody AmcDebtContactor amcPerson){
     return amcHelperService.createPerson(amcPerson);
   }
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactor/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcPerson updateAmcPersons(@RequestBody AmcPerson amcPerson){
+  public AmcDebtContactor updateAmcDebtContactors(@RequestBody AmcDebtContactor amcPerson){
     return amcHelperService.updatePerson(amcPerson);
   }
 

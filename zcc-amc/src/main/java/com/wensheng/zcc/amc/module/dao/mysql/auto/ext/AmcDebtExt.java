@@ -4,8 +4,6 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import java.util.List;
 import lombok.Data;
 

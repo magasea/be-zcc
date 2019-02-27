@@ -1,8 +1,8 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPersonExample;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.List;
@@ -21,44 +21,44 @@ import org.springframework.stereotype.Service;
 public class AmcHelperServiceImpl implements AmcHelperService {
 
   @Autowired
-  AmcPersonMapper amcPersonMapper;
+  AmcDebtContactorMapper amcDebtContactorMapper;
 
-  private static final Map<Long, AmcPerson> localAmcPersonList = new WeakHashMap<Long, AmcPerson>();
+  private static final Map<Long, AmcDebtContactor> localAmcDebtContactorList = new WeakHashMap<Long, AmcDebtContactor>();
 
-  public AmcPerson getAmcPerson(Long id){
-    if (localAmcPersonList.containsKey(id)){
-      return localAmcPersonList.get(id);
+  public AmcDebtContactor getAmcDebtContactor(Long id){
+    if (localAmcDebtContactorList.containsKey(id)){
+      return localAmcDebtContactorList.get(id);
     }else{
-      AmcPerson amcPerson = amcPersonMapper.selectByPrimaryKey(id);
-      localAmcPersonList.put(id, amcPerson);
-      return amcPerson;
+      AmcDebtContactor AmcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(id);
+      localAmcDebtContactorList.put(id, AmcDebtContactor);
+      return AmcDebtContactor;
     }
 
   }
 
-  public AmcPerson createPerson(AmcPerson amcPerson){
-    amcPersonMapper.insertSelective(amcPerson);
-    localAmcPersonList.put(amcPerson.getId(), amcPerson);
-    return amcPerson;
+  public AmcDebtContactor createPerson(AmcDebtContactor AmcDebtContactor){
+    amcDebtContactorMapper.insertSelective(AmcDebtContactor);
+    localAmcDebtContactorList.put(AmcDebtContactor.getId(), AmcDebtContactor);
+    return AmcDebtContactor;
   }
 
-  public AmcPerson updatePerson(AmcPerson amcPerson){
-    amcPersonMapper.updateByPrimaryKeySelective(amcPerson);
-    localAmcPersonList.put(amcPerson.getId(), amcPerson);
-    return amcPerson;
+  public AmcDebtContactor updatePerson(AmcDebtContactor AmcDebtContactor){
+    amcDebtContactorMapper.updateByPrimaryKeySelective(AmcDebtContactor);
+    localAmcDebtContactorList.put(AmcDebtContactor.getId(), AmcDebtContactor);
+    return AmcDebtContactor;
   }
 
   @Override
-  public List<AmcPerson> getAllAmcPerson(Long offset, int size, Map<String, Direction> orderByParam) throws Exception {
+  public List<AmcDebtContactor> getAllAmcDebtContactor(Long offset, int size, Map<String, Direction> orderByParam) throws Exception {
     RowBounds rowBounds = new RowBounds(offset.intValue(), size);
-    AmcPersonExample amcPersonExample = new AmcPersonExample();
-    amcPersonExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
-    return amcPersonMapper.selectByExampleWithRowbounds(amcPersonExample, rowBounds);
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+    return amcDebtContactorMapper.selectByExampleWithRowbounds(amcDebtContactorExample, rowBounds);
   }
 
   @Override
   public Long getPersonTotalCount() {
-    return amcPersonMapper.countByExample(null);
+    return amcDebtContactorMapper.countByExample(null);
   }
 
 

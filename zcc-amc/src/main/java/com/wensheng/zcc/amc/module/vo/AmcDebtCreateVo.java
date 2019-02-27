@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.module.vo;
 
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

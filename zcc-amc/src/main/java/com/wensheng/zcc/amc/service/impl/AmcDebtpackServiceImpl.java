@@ -1,34 +1,27 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtpackMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpack;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
-import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
-import com.wensheng.zcc.amc.utils.ExceptionUtils;
-import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author chenwei on 1/7/19
@@ -48,7 +41,7 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   AmcCreditorDebtpackMapper amcCreditorDebtpackMapper;
 
   @Autowired
-  AmcPersonMapper amcPersonMapper;
+  AmcDebtContactorMapper amcDebtContactorMapper;
 
   @Autowired
   AmcDebtMapper amcDebtMapper;

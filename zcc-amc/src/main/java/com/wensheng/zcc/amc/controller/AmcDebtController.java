@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
@@ -112,7 +113,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam DebtorRoleEnum typeEnum) throws Exception {
+  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam DebtorTypeEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {

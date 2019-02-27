@@ -1,7 +1,7 @@
 package com.wensheng.zcc.amc.aop;
 
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -39,14 +39,14 @@ public class AmcAspect {
     log.info("now get the point cut");
     List<AmcDebt> amcDebts = amcDebtService.queryByDebtpackId(baseActionVo.getContent().getAmcDebtpackInfo().getId());
     for(AmcDebt amcDebt: amcDebts){
-      EditStatusEnum editStatusEnum =
+      PublishStateEnum publishStateEnum =
           zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
-          EditStatusEnum.lookupByDisplayStatusUtil(amcDebt.getEditStatus() ));
-      if(editStatusEnum == null){
-        log.error(String.format("actionId:%s with current editStatus:%s is not applicable",
-            baseActionVo.getEditActionId(), amcDebt.getEditStatus() ));
-        throw new Exception(String.format("actionId:%s with current editStatus:%s is not applicable",
-            baseActionVo.getEditActionId(), amcDebt.getEditStatus() ));
+          PublishStateEnum.lookupByDisplayStatusUtil(amcDebt.getPublishState() ));
+      if(publishStateEnum == null){
+        log.error(String.format("actionId:%s with current publishState:%s is not applicable",
+            baseActionVo.getEditActionId(), amcDebt.getPublishState() ));
+        throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
+            baseActionVo.getEditActionId(), amcDebt.getPublishState() ));
       }
     }
   }
@@ -57,14 +57,14 @@ public class AmcAspect {
     log.info("now get the point cut");
     AmcDebtVo amcDebtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
 
-    EditStatusEnum editStatusEnum =
+    PublishStateEnum publishStateEnum =
         zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
-            EditStatusEnum.lookupByDisplayStatusUtil(baseActionVo.getContent().getEditStatus() ));
-    if(editStatusEnum == null) {
-      log.error(String.format("actionId:%s with current editStatus:%s is not applicable",
-          baseActionVo.getEditActionId(), baseActionVo.getContent().getEditStatus()));
-      throw new Exception(String.format("actionId:%s with current editStatus:%s is not applicable",
-          baseActionVo.getEditActionId(), baseActionVo.getContent().getEditStatus()));
+            PublishStateEnum.lookupByDisplayStatusUtil(baseActionVo.getContent().getPublishState() ));
+    if(publishStateEnum == null) {
+      log.error(String.format("actionId:%s with current publishState:%s is not applicable",
+          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
+      throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
+          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
     }
 
   }

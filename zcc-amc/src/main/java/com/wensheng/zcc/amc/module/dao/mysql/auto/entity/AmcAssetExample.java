@@ -322,183 +322,123 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatusIsNull() {
-            addCriterion("status is null");
+        public Criteria andSealedStateIsNull() {
+            addCriterion("sealed_state is null");
             return (Criteria) this;
         }
 
-        public Criteria andStatusIsNotNull() {
-            addCriterion("status is not null");
+        public Criteria andSealedStateIsNotNull() {
+            addCriterion("sealed_state is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStatusEqualTo(Integer value) {
-            addCriterion("status =", value, "status");
+        public Criteria andSealedStateEqualTo(Integer value) {
+            addCriterion("sealed_state =", value, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotEqualTo(Integer value) {
-            addCriterion("status <>", value, "status");
+        public Criteria andSealedStateNotEqualTo(Integer value) {
+            addCriterion("sealed_state <>", value, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThan(Integer value) {
-            addCriterion("status >", value, "status");
+        public Criteria andSealedStateGreaterThan(Integer value) {
+            addCriterion("sealed_state >", value, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
-            addCriterion("status >=", value, "status");
+        public Criteria andSealedStateGreaterThanOrEqualTo(Integer value) {
+            addCriterion("sealed_state >=", value, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThan(Integer value) {
-            addCriterion("status <", value, "status");
+        public Criteria andSealedStateLessThan(Integer value) {
+            addCriterion("sealed_state <", value, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThanOrEqualTo(Integer value) {
-            addCriterion("status <=", value, "status");
+        public Criteria andSealedStateLessThanOrEqualTo(Integer value) {
+            addCriterion("sealed_state <=", value, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusIn(List<Integer> values) {
-            addCriterion("status in", values, "status");
+        public Criteria andSealedStateIn(List<Integer> values) {
+            addCriterion("sealed_state in", values, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotIn(List<Integer> values) {
-            addCriterion("status not in", values, "status");
+        public Criteria andSealedStateNotIn(List<Integer> values) {
+            addCriterion("sealed_state not in", values, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusBetween(Integer value1, Integer value2) {
-            addCriterion("status between", value1, value2, "status");
+        public Criteria andSealedStateBetween(Integer value1, Integer value2) {
+            addCriterion("sealed_state between", value1, value2, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
-            addCriterion("status not between", value1, value2, "status");
+        public Criteria andSealedStateNotBetween(Integer value1, Integer value2) {
+            addCriterion("sealed_state not between", value1, value2, "sealedState");
             return (Criteria) this;
         }
 
-        public Criteria andStateIsNull() {
-            addCriterion("state is null");
+        public Criteria andPublishStateIsNull() {
+            addCriterion("publish_state is null");
             return (Criteria) this;
         }
 
-        public Criteria andStateIsNotNull() {
-            addCriterion("state is not null");
+        public Criteria andPublishStateIsNotNull() {
+            addCriterion("publish_state is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStateEqualTo(Integer value) {
-            addCriterion("state =", value, "state");
+        public Criteria andPublishStateEqualTo(Integer value) {
+            addCriterion("publish_state =", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotEqualTo(Integer value) {
-            addCriterion("state <>", value, "state");
+        public Criteria andPublishStateNotEqualTo(Integer value) {
+            addCriterion("publish_state <>", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateGreaterThan(Integer value) {
-            addCriterion("state >", value, "state");
+        public Criteria andPublishStateGreaterThan(Integer value) {
+            addCriterion("publish_state >", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateGreaterThanOrEqualTo(Integer value) {
-            addCriterion("state >=", value, "state");
+        public Criteria andPublishStateGreaterThanOrEqualTo(Integer value) {
+            addCriterion("publish_state >=", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateLessThan(Integer value) {
-            addCriterion("state <", value, "state");
+        public Criteria andPublishStateLessThan(Integer value) {
+            addCriterion("publish_state <", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateLessThanOrEqualTo(Integer value) {
-            addCriterion("state <=", value, "state");
+        public Criteria andPublishStateLessThanOrEqualTo(Integer value) {
+            addCriterion("publish_state <=", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateIn(List<Integer> values) {
-            addCriterion("state in", values, "state");
+        public Criteria andPublishStateIn(List<Integer> values) {
+            addCriterion("publish_state in", values, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotIn(List<Integer> values) {
-            addCriterion("state not in", values, "state");
+        public Criteria andPublishStateNotIn(List<Integer> values) {
+            addCriterion("publish_state not in", values, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateBetween(Integer value1, Integer value2) {
-            addCriterion("state between", value1, value2, "state");
+        public Criteria andPublishStateBetween(Integer value1, Integer value2) {
+            addCriterion("publish_state between", value1, value2, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andStateNotBetween(Integer value1, Integer value2) {
-            addCriterion("state not between", value1, value2, "state");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusIsNull() {
-            addCriterion("edit_status is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusIsNotNull() {
-            addCriterion("edit_status is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusEqualTo(Integer value) {
-            addCriterion("edit_status =", value, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusNotEqualTo(Integer value) {
-            addCriterion("edit_status <>", value, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusGreaterThan(Integer value) {
-            addCriterion("edit_status >", value, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusGreaterThanOrEqualTo(Integer value) {
-            addCriterion("edit_status >=", value, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusLessThan(Integer value) {
-            addCriterion("edit_status <", value, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusLessThanOrEqualTo(Integer value) {
-            addCriterion("edit_status <=", value, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusIn(List<Integer> values) {
-            addCriterion("edit_status in", values, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusNotIn(List<Integer> values) {
-            addCriterion("edit_status not in", values, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusBetween(Integer value1, Integer value2) {
-            addCriterion("edit_status between", value1, value2, "editStatus");
-            return (Criteria) this;
-        }
-
-        public Criteria andEditStatusNotBetween(Integer value1, Integer value2) {
-            addCriterion("edit_status not between", value1, value2, "editStatus");
+        public Criteria andPublishStateNotBetween(Integer value1, Integer value2) {
+            addCriterion("publish_state not between", value1, value2, "publishState");
             return (Criteria) this;
         }
 
@@ -702,123 +642,63 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetIsNull() {
-            addCriterion("is_main_asset is null");
+        public Criteria andValuationIsNull() {
+            addCriterion("valuation is null");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetIsNotNull() {
-            addCriterion("is_main_asset is not null");
+        public Criteria andValuationIsNotNull() {
+            addCriterion("valuation is not null");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetEqualTo(Short value) {
-            addCriterion("is_main_asset =", value, "isMainAsset");
+        public Criteria andValuationEqualTo(Long value) {
+            addCriterion("valuation =", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetNotEqualTo(Short value) {
-            addCriterion("is_main_asset <>", value, "isMainAsset");
+        public Criteria andValuationNotEqualTo(Long value) {
+            addCriterion("valuation <>", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetGreaterThan(Short value) {
-            addCriterion("is_main_asset >", value, "isMainAsset");
+        public Criteria andValuationGreaterThan(Long value) {
+            addCriterion("valuation >", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetGreaterThanOrEqualTo(Short value) {
-            addCriterion("is_main_asset >=", value, "isMainAsset");
+        public Criteria andValuationGreaterThanOrEqualTo(Long value) {
+            addCriterion("valuation >=", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetLessThan(Short value) {
-            addCriterion("is_main_asset <", value, "isMainAsset");
+        public Criteria andValuationLessThan(Long value) {
+            addCriterion("valuation <", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetLessThanOrEqualTo(Short value) {
-            addCriterion("is_main_asset <=", value, "isMainAsset");
+        public Criteria andValuationLessThanOrEqualTo(Long value) {
+            addCriterion("valuation <=", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetIn(List<Short> values) {
-            addCriterion("is_main_asset in", values, "isMainAsset");
+        public Criteria andValuationIn(List<Long> values) {
+            addCriterion("valuation in", values, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetNotIn(List<Short> values) {
-            addCriterion("is_main_asset not in", values, "isMainAsset");
+        public Criteria andValuationNotIn(List<Long> values) {
+            addCriterion("valuation not in", values, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetBetween(Short value1, Short value2) {
-            addCriterion("is_main_asset between", value1, value2, "isMainAsset");
+        public Criteria andValuationBetween(Long value1, Long value2) {
+            addCriterion("valuation between", value1, value2, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andIsMainAssetNotBetween(Short value1, Short value2) {
-            addCriterion("is_main_asset not between", value1, value2, "isMainAsset");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceIsNull() {
-            addCriterion("estm_price is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceIsNotNull() {
-            addCriterion("estm_price is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceEqualTo(Long value) {
-            addCriterion("estm_price =", value, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceNotEqualTo(Long value) {
-            addCriterion("estm_price <>", value, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceGreaterThan(Long value) {
-            addCriterion("estm_price >", value, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceGreaterThanOrEqualTo(Long value) {
-            addCriterion("estm_price >=", value, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceLessThan(Long value) {
-            addCriterion("estm_price <", value, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceLessThanOrEqualTo(Long value) {
-            addCriterion("estm_price <=", value, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceIn(List<Long> values) {
-            addCriterion("estm_price in", values, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceNotIn(List<Long> values) {
-            addCriterion("estm_price not in", values, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceBetween(Long value1, Long value2) {
-            addCriterion("estm_price between", value1, value2, "estmPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andEstmPriceNotBetween(Long value1, Long value2) {
-            addCriterion("estm_price not between", value1, value2, "estmPrice");
+        public Criteria andValuationNotBetween(Long value1, Long value2) {
+            addCriterion("valuation not between", value1, value2, "valuation");
             return (Criteria) this;
         }
 
@@ -882,123 +762,63 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceIsNull() {
-            addCriterion("init_price is null");
+        public Criteria andStartPriceIsNull() {
+            addCriterion("start_price is null");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceIsNotNull() {
-            addCriterion("init_price is not null");
+        public Criteria andStartPriceIsNotNull() {
+            addCriterion("start_price is not null");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceEqualTo(Long value) {
-            addCriterion("init_price =", value, "initPrice");
+        public Criteria andStartPriceEqualTo(Long value) {
+            addCriterion("start_price =", value, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceNotEqualTo(Long value) {
-            addCriterion("init_price <>", value, "initPrice");
+        public Criteria andStartPriceNotEqualTo(Long value) {
+            addCriterion("start_price <>", value, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceGreaterThan(Long value) {
-            addCriterion("init_price >", value, "initPrice");
+        public Criteria andStartPriceGreaterThan(Long value) {
+            addCriterion("start_price >", value, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceGreaterThanOrEqualTo(Long value) {
-            addCriterion("init_price >=", value, "initPrice");
+        public Criteria andStartPriceGreaterThanOrEqualTo(Long value) {
+            addCriterion("start_price >=", value, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceLessThan(Long value) {
-            addCriterion("init_price <", value, "initPrice");
+        public Criteria andStartPriceLessThan(Long value) {
+            addCriterion("start_price <", value, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceLessThanOrEqualTo(Long value) {
-            addCriterion("init_price <=", value, "initPrice");
+        public Criteria andStartPriceLessThanOrEqualTo(Long value) {
+            addCriterion("start_price <=", value, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceIn(List<Long> values) {
-            addCriterion("init_price in", values, "initPrice");
+        public Criteria andStartPriceIn(List<Long> values) {
+            addCriterion("start_price in", values, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceNotIn(List<Long> values) {
-            addCriterion("init_price not in", values, "initPrice");
+        public Criteria andStartPriceNotIn(List<Long> values) {
+            addCriterion("start_price not in", values, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceBetween(Long value1, Long value2) {
-            addCriterion("init_price between", value1, value2, "initPrice");
+        public Criteria andStartPriceBetween(Long value1, Long value2) {
+            addCriterion("start_price between", value1, value2, "startPrice");
             return (Criteria) this;
         }
 
-        public Criteria andInitPriceNotBetween(Long value1, Long value2) {
-            addCriterion("init_price not between", value1, value2, "initPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsIsNull() {
-            addCriterion("restrictions is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsIsNotNull() {
-            addCriterion("restrictions is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsEqualTo(Integer value) {
-            addCriterion("restrictions =", value, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsNotEqualTo(Integer value) {
-            addCriterion("restrictions <>", value, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsGreaterThan(Integer value) {
-            addCriterion("restrictions >", value, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsGreaterThanOrEqualTo(Integer value) {
-            addCriterion("restrictions >=", value, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsLessThan(Integer value) {
-            addCriterion("restrictions <", value, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsLessThanOrEqualTo(Integer value) {
-            addCriterion("restrictions <=", value, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsIn(List<Integer> values) {
-            addCriterion("restrictions in", values, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsNotIn(List<Integer> values) {
-            addCriterion("restrictions not in", values, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsBetween(Integer value1, Integer value2) {
-            addCriterion("restrictions between", value1, value2, "restrictions");
-            return (Criteria) this;
-        }
-
-        public Criteria andRestrictionsNotBetween(Integer value1, Integer value2) {
-            addCriterion("restrictions not between", value1, value2, "restrictions");
+        public Criteria andStartPriceNotBetween(Long value1, Long value2) {
+            addCriterion("start_price not between", value1, value2, "startPrice");
             return (Criteria) this;
         }
 
@@ -1672,193 +1492,183 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdIsNull() {
-            addCriterion("origin_debt_id is null");
+        public Criteria andCreatedByIsNull() {
+            addCriterion("created_by is null");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdIsNotNull() {
-            addCriterion("origin_debt_id is not null");
+        public Criteria andCreatedByIsNotNull() {
+            addCriterion("created_by is not null");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdEqualTo(String value) {
-            addCriterion("origin_debt_id =", value, "originDebtId");
+        public Criteria andCreatedByEqualTo(Long value) {
+            addCriterion("created_by =", value, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdNotEqualTo(String value) {
-            addCriterion("origin_debt_id <>", value, "originDebtId");
+        public Criteria andCreatedByNotEqualTo(Long value) {
+            addCriterion("created_by <>", value, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdGreaterThan(String value) {
-            addCriterion("origin_debt_id >", value, "originDebtId");
+        public Criteria andCreatedByGreaterThan(Long value) {
+            addCriterion("created_by >", value, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdGreaterThanOrEqualTo(String value) {
-            addCriterion("origin_debt_id >=", value, "originDebtId");
+        public Criteria andCreatedByGreaterThanOrEqualTo(Long value) {
+            addCriterion("created_by >=", value, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdLessThan(String value) {
-            addCriterion("origin_debt_id <", value, "originDebtId");
+        public Criteria andCreatedByLessThan(Long value) {
+            addCriterion("created_by <", value, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdLessThanOrEqualTo(String value) {
-            addCriterion("origin_debt_id <=", value, "originDebtId");
+        public Criteria andCreatedByLessThanOrEqualTo(Long value) {
+            addCriterion("created_by <=", value, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdLike(String value) {
-            addCriterion("origin_debt_id like", value, "originDebtId");
+        public Criteria andCreatedByIn(List<Long> values) {
+            addCriterion("created_by in", values, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdNotLike(String value) {
-            addCriterion("origin_debt_id not like", value, "originDebtId");
+        public Criteria andCreatedByNotIn(List<Long> values) {
+            addCriterion("created_by not in", values, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdIn(List<String> values) {
-            addCriterion("origin_debt_id in", values, "originDebtId");
+        public Criteria andCreatedByBetween(Long value1, Long value2) {
+            addCriterion("created_by between", value1, value2, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdNotIn(List<String> values) {
-            addCriterion("origin_debt_id not in", values, "originDebtId");
+        public Criteria andCreatedByNotBetween(Long value1, Long value2) {
+            addCriterion("created_by not between", value1, value2, "createdBy");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdBetween(String value1, String value2) {
-            addCriterion("origin_debt_id between", value1, value2, "originDebtId");
+        public Criteria andCreatedDateIsNull() {
+            addCriterion("created_date is null");
             return (Criteria) this;
         }
 
-        public Criteria andOriginDebtIdNotBetween(String value1, String value2) {
-            addCriterion("origin_debt_id not between", value1, value2, "originDebtId");
+        public Criteria andCreatedDateIsNotNull() {
+            addCriterion("created_date is not null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByIsNull() {
-            addCriterion("create_by is null");
+        public Criteria andCreatedDateEqualTo(Date value) {
+            addCriterion("created_date =", value, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByIsNotNull() {
-            addCriterion("create_by is not null");
+        public Criteria andCreatedDateNotEqualTo(Date value) {
+            addCriterion("created_date <>", value, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByEqualTo(Long value) {
-            addCriterion("create_by =", value, "createBy");
+        public Criteria andCreatedDateGreaterThan(Date value) {
+            addCriterion("created_date >", value, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByNotEqualTo(Long value) {
-            addCriterion("create_by <>", value, "createBy");
+        public Criteria andCreatedDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("created_date >=", value, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByGreaterThan(Long value) {
-            addCriterion("create_by >", value, "createBy");
+        public Criteria andCreatedDateLessThan(Date value) {
+            addCriterion("created_date <", value, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByGreaterThanOrEqualTo(Long value) {
-            addCriterion("create_by >=", value, "createBy");
+        public Criteria andCreatedDateLessThanOrEqualTo(Date value) {
+            addCriterion("created_date <=", value, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByLessThan(Long value) {
-            addCriterion("create_by <", value, "createBy");
+        public Criteria andCreatedDateIn(List<Date> values) {
+            addCriterion("created_date in", values, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByLessThanOrEqualTo(Long value) {
-            addCriterion("create_by <=", value, "createBy");
+        public Criteria andCreatedDateNotIn(List<Date> values) {
+            addCriterion("created_date not in", values, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByIn(List<Long> values) {
-            addCriterion("create_by in", values, "createBy");
+        public Criteria andCreatedDateBetween(Date value1, Date value2) {
+            addCriterion("created_date between", value1, value2, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByNotIn(List<Long> values) {
-            addCriterion("create_by not in", values, "createBy");
+        public Criteria andCreatedDateNotBetween(Date value1, Date value2) {
+            addCriterion("created_date not between", value1, value2, "createdDate");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByBetween(Long value1, Long value2) {
-            addCriterion("create_by between", value1, value2, "createBy");
+        public Criteria andAmcContactorIdIsNull() {
+            addCriterion("amc_contactor_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andCreateByNotBetween(Long value1, Long value2) {
-            addCriterion("create_by not between", value1, value2, "createBy");
+        public Criteria andAmcContactorIdIsNotNull() {
+            addCriterion("amc_contactor_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorIsNull() {
-            addCriterion("amc_conactor is null");
+        public Criteria andAmcContactorIdEqualTo(Long value) {
+            addCriterion("amc_contactor_id =", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorIsNotNull() {
-            addCriterion("amc_conactor is not null");
+        public Criteria andAmcContactorIdNotEqualTo(Long value) {
+            addCriterion("amc_contactor_id <>", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorEqualTo(Long value) {
-            addCriterion("amc_conactor =", value, "amcConactor");
+        public Criteria andAmcContactorIdGreaterThan(Long value) {
+            addCriterion("amc_contactor_id >", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorNotEqualTo(Long value) {
-            addCriterion("amc_conactor <>", value, "amcConactor");
+        public Criteria andAmcContactorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("amc_contactor_id >=", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorGreaterThan(Long value) {
-            addCriterion("amc_conactor >", value, "amcConactor");
+        public Criteria andAmcContactorIdLessThan(Long value) {
+            addCriterion("amc_contactor_id <", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorGreaterThanOrEqualTo(Long value) {
-            addCriterion("amc_conactor >=", value, "amcConactor");
+        public Criteria andAmcContactorIdLessThanOrEqualTo(Long value) {
+            addCriterion("amc_contactor_id <=", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorLessThan(Long value) {
-            addCriterion("amc_conactor <", value, "amcConactor");
+        public Criteria andAmcContactorIdIn(List<Long> values) {
+            addCriterion("amc_contactor_id in", values, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorLessThanOrEqualTo(Long value) {
-            addCriterion("amc_conactor <=", value, "amcConactor");
+        public Criteria andAmcContactorIdNotIn(List<Long> values) {
+            addCriterion("amc_contactor_id not in", values, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorIn(List<Long> values) {
-            addCriterion("amc_conactor in", values, "amcConactor");
+        public Criteria andAmcContactorIdBetween(Long value1, Long value2) {
+            addCriterion("amc_contactor_id between", value1, value2, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcConactorNotIn(List<Long> values) {
-            addCriterion("amc_conactor not in", values, "amcConactor");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcConactorBetween(Long value1, Long value2) {
-            addCriterion("amc_conactor between", value1, value2, "amcConactor");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcConactorNotBetween(Long value1, Long value2) {
-            addCriterion("amc_conactor not between", value1, value2, "amcConactor");
+        public Criteria andAmcContactorIdNotBetween(Long value1, Long value2) {
+            addCriterion("amc_contactor_id not between", value1, value2, "amcContactorId");
             return (Criteria) this;
         }
     }

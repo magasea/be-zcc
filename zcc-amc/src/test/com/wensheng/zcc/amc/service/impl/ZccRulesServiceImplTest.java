@@ -1,9 +1,7 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import static org.junit.Assert.*;
-
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import org.junit.Assert;
 import org.junit.Test;
@@ -29,7 +27,7 @@ public class ZccRulesServiceImplTest {
   @Test
   public void runActionAndStatus() {
 
-    EditStatusEnum editStatusEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_CREATE, EditStatusEnum.INIT);
-    Assert.assertEquals(editStatusEnum, EditStatusEnum.DRAFT);
+    PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_CREATE, PublishStateEnum.INIT);
+    Assert.assertEquals(publishStateEnum, PublishStateEnum.DRAFT);
   }
 }

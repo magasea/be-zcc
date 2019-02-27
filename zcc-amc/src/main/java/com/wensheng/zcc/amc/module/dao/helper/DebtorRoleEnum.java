@@ -7,7 +7,7 @@ import java.util.function.Function;
  * @author chenwei on 1/2/19
  * @project zcc-backend
  */
-public enum GrantorTypeEnum {
+public enum DebtorRoleEnum {
 
   NO_INFO(-1, "不确定"),
   PERSONAL(1, "个人"),
@@ -16,20 +16,20 @@ public enum GrantorTypeEnum {
 
   private int id;
   private String name;
-  GrantorTypeEnum(int id, String name){
+  DebtorRoleEnum(int id, String name){
     this.id = id;
     this.name = name;
   }
 
-  private static final Function<String, GrantorTypeEnum> func =
-      EnumUtils.lookupMap(GrantorTypeEnum.class, e -> e.getName());
-  public static GrantorTypeEnum lookupByDisplayNameUtil(String name) {
+  private static final Function<String, DebtorRoleEnum> func =
+      EnumUtils.lookupMap(DebtorRoleEnum.class, e -> e.getName());
+  public static DebtorRoleEnum lookupByDisplayNameUtil(String name) {
     return func.apply(name);
   }
 
-  private static final Function<Integer, GrantorTypeEnum> funcId =
-      EnumUtils.lookupMap(GrantorTypeEnum.class, e -> e.getId());
-  public static GrantorTypeEnum lookupByDisplayNameUtil(Integer id) {
+  private static final Function<Integer, DebtorRoleEnum> funcId =
+      EnumUtils.lookupMap(DebtorRoleEnum.class, e -> e.getId());
+  public static DebtorRoleEnum lookupByDisplayNameUtil(Integer id) {
     return funcId.apply(id);
   }
   public int getId() {

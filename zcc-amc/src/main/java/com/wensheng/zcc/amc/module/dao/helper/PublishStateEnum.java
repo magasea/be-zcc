@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
 import java.util.function.Function;
 
@@ -8,7 +7,7 @@ import java.util.function.Function;
  * @author chenwei on 12/7/18
  * @project zcc-backend
  */
-public enum EditStatusEnum {
+public enum PublishStateEnum {
     NOTCLEAR(-1, "不确定"),
     PUBLISHED(1, "发布"),
     NOTPUBLISHED(2, "未发布"),
@@ -24,19 +23,19 @@ public enum EditStatusEnum {
 
     private int status;
     private String name;
-    EditStatusEnum(int status, String name){
+    PublishStateEnum(int status, String name){
         this.status = status;
         this.name = name;
     }
-    private static final Function<String, EditStatusEnum> func =
-        EnumUtils.lookupMap(EditStatusEnum.class, e -> e.getName());
-    public static EditStatusEnum lookupByDisplayNameUtil(String name) {
+    private static final Function<String, PublishStateEnum> func =
+        EnumUtils.lookupMap(PublishStateEnum.class, e -> e.getName());
+    public static PublishStateEnum lookupByDisplayNameUtil(String name) {
         return func.apply(name);
     }
 
-    private static final Function<Integer, EditStatusEnum> funcStatus =
-        EnumUtils.lookupMap(EditStatusEnum.class, e -> e.getStatus());
-    public static EditStatusEnum lookupByDisplayStatusUtil(Integer status) {
+    private static final Function<Integer, PublishStateEnum> funcStatus =
+        EnumUtils.lookupMap(PublishStateEnum.class, e -> e.getStatus());
+    public static PublishStateEnum lookupByDisplayStatusUtil(Integer status) {
         return funcStatus.apply(status);
     }
 

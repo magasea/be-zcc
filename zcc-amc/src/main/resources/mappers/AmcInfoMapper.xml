@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="CHAR" property="name" />
-    <result column="reg_id" jdbcType="CHAR" property="regId" />
-    <result column="social_creditid" jdbcType="CHAR" property="socialCreditid" />
-    <result column="related_url" jdbcType="CHAR" property="relatedUrl" />
+    <result column="amc_id" jdbcType="BIGINT" property="amcId" />
+    <result column="name" jdbcType="VARCHAR" property="name" />
+    <result column="branch_name" jdbcType="BIGINT" property="branchName" />
+    <result column="address" jdbcType="VARCHAR" property="address" />
+    <result column="phone_num" jdbcType="VARCHAR" property="phoneNum" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -67,16 +69,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, reg_id, social_creditid, related_url
+    id, amc_id, name, branch_name, address, phone_num, note
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_CMPY
+    from AMC_INFO
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -87,85 +89,105 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_CMPY
+    from AMC_INFO
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_CMPY
+    delete from AMC_INFO
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample">
-    delete from AMC_CMPY
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfoExample">
+    delete from AMC_INFO
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_CMPY (name, reg_id, social_creditid, 
-      related_url)
-    values (#{name,jdbcType=CHAR}, #{regId,jdbcType=CHAR}, #{socialCreditid,jdbcType=CHAR}, 
-      #{relatedUrl,jdbcType=CHAR})
+    insert into AMC_INFO (amc_id, name, branch_name, 
+      address, phone_num, note
+      )
+    values (#{amcId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{branchName,jdbcType=BIGINT}, 
+      #{address,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_CMPY
+    insert into AMC_INFO
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="amcId != null">
+        amc_id,
+      </if>
       <if test="name != null">
         name,
       </if>
-      <if test="regId != null">
-        reg_id,
+      <if test="branchName != null">
+        branch_name,
       </if>
-      <if test="socialCreditid != null">
-        social_creditid,
+      <if test="address != null">
+        address,
       </if>
-      <if test="relatedUrl != null">
-        related_url,
+      <if test="phoneNum != null">
+        phone_num,
+      </if>
+      <if test="note != null">
+        note,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="amcId != null">
+        #{amcId,jdbcType=BIGINT},
+      </if>
       <if test="name != null">
-        #{name,jdbcType=CHAR},
+        #{name,jdbcType=VARCHAR},
       </if>
-      <if test="regId != null">
-        #{regId,jdbcType=CHAR},
+      <if test="branchName != null">
+        #{branchName,jdbcType=BIGINT},
       </if>
-      <if test="socialCreditid != null">
-        #{socialCreditid,jdbcType=CHAR},
+      <if test="address != null">
+        #{address,jdbcType=VARCHAR},
       </if>
-      <if test="relatedUrl != null">
-        #{relatedUrl,jdbcType=CHAR},
+      <if test="phoneNum != null">
+        #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample" resultType="java.lang.Long">
-    select count(*) from AMC_CMPY
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfoExample" resultType="java.lang.Long">
+    select count(*) from AMC_INFO
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_CMPY
+    update AMC_INFO
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.amcId != null">
+        amc_id = #{record.amcId,jdbcType=BIGINT},
+      </if>
       <if test="record.name != null">
-        name = #{record.name,jdbcType=CHAR},
+        name = #{record.name,jdbcType=VARCHAR},
       </if>
-      <if test="record.regId != null">
-        reg_id = #{record.regId,jdbcType=CHAR},
+      <if test="record.branchName != null">
+        branch_name = #{record.branchName,jdbcType=BIGINT},
       </if>
-      <if test="record.socialCreditid != null">
-        social_creditid = #{record.socialCreditid,jdbcType=CHAR},
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=VARCHAR},
       </if>
-      <if test="record.relatedUrl != null">
-        related_url = #{record.relatedUrl,jdbcType=CHAR},
+      <if test="record.phoneNum != null">
+        phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -173,50 +195,60 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_CMPY
+    update AMC_INFO
     set id = #{record.id,jdbcType=BIGINT},
-      name = #{record.name,jdbcType=CHAR},
-      reg_id = #{record.regId,jdbcType=CHAR},
-      social_creditid = #{record.socialCreditid,jdbcType=CHAR},
-      related_url = #{record.relatedUrl,jdbcType=CHAR}
+      amc_id = #{record.amcId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=VARCHAR},
+      branch_name = #{record.branchName,jdbcType=BIGINT},
+      address = #{record.address,jdbcType=VARCHAR},
+      phone_num = #{record.phoneNum,jdbcType=VARCHAR},
+      note = #{record.note,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
-    update AMC_CMPY
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
+    update AMC_INFO
     <set>
+      <if test="amcId != null">
+        amc_id = #{amcId,jdbcType=BIGINT},
+      </if>
       <if test="name != null">
-        name = #{name,jdbcType=CHAR},
+        name = #{name,jdbcType=VARCHAR},
       </if>
-      <if test="regId != null">
-        reg_id = #{regId,jdbcType=CHAR},
+      <if test="branchName != null">
+        branch_name = #{branchName,jdbcType=BIGINT},
       </if>
-      <if test="socialCreditid != null">
-        social_creditid = #{socialCreditid,jdbcType=CHAR},
+      <if test="address != null">
+        address = #{address,jdbcType=VARCHAR},
       </if>
-      <if test="relatedUrl != null">
-        related_url = #{relatedUrl,jdbcType=CHAR},
+      <if test="phoneNum != null">
+        phone_num = #{phoneNum,jdbcType=VARCHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy">
-    update AMC_CMPY
-    set name = #{name,jdbcType=CHAR},
-      reg_id = #{regId,jdbcType=CHAR},
-      social_creditid = #{socialCreditid,jdbcType=CHAR},
-      related_url = #{relatedUrl,jdbcType=CHAR}
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
+    update AMC_INFO
+    set amc_id = #{amcId,jdbcType=BIGINT},
+      name = #{name,jdbcType=VARCHAR},
+      branch_name = #{branchName,jdbcType=BIGINT},
+      address = #{address,jdbcType=VARCHAR},
+      phone_num = #{phoneNum,jdbcType=VARCHAR},
+      note = #{note,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_CMPY
+    from AMC_INFO
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

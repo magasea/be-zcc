@@ -1,7 +1,7 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 
 /**
  * @author chenwei on 1/14/19
@@ -9,8 +9,8 @@ import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
  */
 public interface ZccRulesService {
 
-  public EditStatusEnum runActionAndStatus(EditActionEnum action, EditStatusEnum status);
+  public PublishStateEnum runActionAndStatus(EditActionEnum action, PublishStateEnum status);
 
-  public boolean editAble(EditStatusEnum editStatus);
+  public boolean editAble(PublishStateEnum editStatus);
 
 }

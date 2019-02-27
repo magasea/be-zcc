@@ -46,7 +46,7 @@ public class AmcDebtVo {
 
   private String lawStatDesc;
 
-  private BigDecimal estimatedPrice;
+  private BigDecimal valuation;
 
   private AmcPerson amcContact1;
 

@@ -3,8 +3,8 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
-import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
@@ -113,7 +113,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
+  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam DebtorRoleEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
@@ -261,19 +261,21 @@ public class AmcDebtController {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
           + "id:%d", createVo.getAmcContact1()));
     } else {
-      amcDebt.setAmcContact1(createVo.getAmcContact1());
+      amcDebt.setAmcContact(createVo.getAmcContact1());
     }
 
     if (createVo.getAmcContact2() == null || createVo.getAmcContact2() < 0) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
+      log.info("no amc contactor2");
+    }else{
+      isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact2());
+      if (!isAmcContactExist) {
+        throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
+            + "id:%d", createVo.getAmcContact2()));
+      } else {
+        amcDebt.setAmcContact2(createVo.getAmcContact2());
+      }
     }
-    isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact2());
-    if (!isAmcContactExist) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-          + "id:%d", createVo.getAmcContact2()));
-    } else {
-      amcDebt.setAmcContact2(createVo.getAmcContact2());
-    }
+
 
     //3. create the debt
     AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
@@ -323,8 +325,8 @@ public class AmcDebtController {
       AmcDebt amcDebt = new AmcDebt();
       BeanUtils.copyProperties(amcDebtExtVo.getAmcDebtVo(), amcDebt);
       amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getBaseAmount()));
-      amcDebt.setEstimatedPrice(
-          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getEstimatedPrice()));
+      amcDebt.setValuation(
+          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getValuation()));
       amcDebt
           .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getTotalAmount()));
       amcDebtService.update(amcDebt);
@@ -368,7 +370,7 @@ public class AmcDebtController {
   @ResponseBody
   public Boolean editAble(@RequestParam("debtStatus") Integer debtStatus) {
 
-    return zccRulesService.editAble(EditStatusEnum.lookupByDisplayStatusUtil(debtStatus));
+    return zccRulesService.editAble(PublishStateEnum.lookupByDisplayStatusUtil(debtStatus));
 
   }
 

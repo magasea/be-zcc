@@ -9,11 +9,9 @@ public class AmcAsset {
 
     private Integer type;
 
-    private Integer status;
+    private Integer sealedState;
 
-    private Integer state;
-
-    private Integer editStatus;
+    private Integer publishState;
 
     private Long amcId;
 
@@ -21,15 +19,11 @@ public class AmcAsset {
 
     private String zccAssetCode;
 
-    private Short isMainAsset;
-
-    private Long estmPrice;
+    private Long valuation;
 
     private Long debtId;
 
-    private Long initPrice;
-
-    private Integer restrictions;
+    private Long startPrice;
 
     private Long area;
 
@@ -51,11 +45,11 @@ public class AmcAsset {
 
     private String gpsLat;
 
-    private String originDebtId;
+    private Long createdBy;
 
-    private Long createBy;
+    private Date createdDate;
 
-    private Long amcConactor;
+    private Long amcContactorId;
 
     public Long getId() {
         return id;
@@ -81,28 +75,20 @@ public class AmcAsset {
         this.type = type;
     }
 
-    public Integer getStatus() {
-        return status;
+    public Integer getSealedState() {
+        return sealedState;
     }
 
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setSealedState(Integer sealedState) {
+        this.sealedState = sealedState;
     }
 
-    public Integer getState() {
-        return state;
+    public Integer getPublishState() {
+        return publishState;
     }
 
-    public void setState(Integer state) {
-        this.state = state;
-    }
-
-    public Integer getEditStatus() {
-        return editStatus;
-    }
-
-    public void setEditStatus(Integer editStatus) {
-        this.editStatus = editStatus;
+    public void setPublishState(Integer publishState) {
+        this.publishState = publishState;
     }
 
     public Long getAmcId() {
@@ -129,20 +115,12 @@ public class AmcAsset {
         this.zccAssetCode = zccAssetCode == null ? null : zccAssetCode.trim();
     }
 
-    public Short getIsMainAsset() {
-        return isMainAsset;
+    public Long getValuation() {
+        return valuation;
     }
 
-    public void setIsMainAsset(Short isMainAsset) {
-        this.isMainAsset = isMainAsset;
-    }
-
-    public Long getEstmPrice() {
-        return estmPrice;
-    }
-
-    public void setEstmPrice(Long estmPrice) {
-        this.estmPrice = estmPrice;
+    public void setValuation(Long valuation) {
+        this.valuation = valuation;
     }
 
     public Long getDebtId() {
@@ -153,20 +131,12 @@ public class AmcAsset {
         this.debtId = debtId;
     }
 
-    public Long getInitPrice() {
-        return initPrice;
+    public Long getStartPrice() {
+        return startPrice;
     }
 
-    public void setInitPrice(Long initPrice) {
-        this.initPrice = initPrice;
-    }
-
-    public Integer getRestrictions() {
-        return restrictions;
-    }
-
-    public void setRestrictions(Integer restrictions) {
-        this.restrictions = restrictions;
+    public void setStartPrice(Long startPrice) {
+        this.startPrice = startPrice;
     }
 
     public Long getArea() {
@@ -249,27 +219,27 @@ public class AmcAsset {
         this.gpsLat = gpsLat == null ? null : gpsLat.trim();
     }
 
-    public String getOriginDebtId() {
-        return originDebtId;
+    public Long getCreatedBy() {
+        return createdBy;
     }
 
-    public void setOriginDebtId(String originDebtId) {
-        this.originDebtId = originDebtId == null ? null : originDebtId.trim();
+    public void setCreatedBy(Long createdBy) {
+        this.createdBy = createdBy;
     }
 
-    public Long getCreateBy() {
-        return createBy;
+    public Date getCreatedDate() {
+        return createdDate;
     }
 
-    public void setCreateBy(Long createBy) {
-        this.createBy = createBy;
+    public void setCreatedDate(Date createdDate) {
+        this.createdDate = createdDate;
     }
 
-    public Long getAmcConactor() {
-        return amcConactor;
+    public Long getAmcContactorId() {
+        return amcContactorId;
     }
 
-    public void setAmcConactor(Long amcConactor) {
-        this.amcConactor = amcConactor;
+    public void setAmcContactorId(Long amcContactorId) {
+        this.amcContactorId = amcContactorId;
     }
 }

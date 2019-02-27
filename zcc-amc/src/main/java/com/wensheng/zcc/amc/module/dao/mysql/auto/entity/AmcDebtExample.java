@@ -865,63 +865,63 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusIsNull() {
-            addCriterion("edit_status is null");
+        public Criteria andPublishStateIsNull() {
+            addCriterion("publish_state is null");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusIsNotNull() {
-            addCriterion("edit_status is not null");
+        public Criteria andPublishStateIsNotNull() {
+            addCriterion("publish_state is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusEqualTo(Integer value) {
-            addCriterion("edit_status =", value, "editStatus");
+        public Criteria andPublishStateEqualTo(Integer value) {
+            addCriterion("publish_state =", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusNotEqualTo(Integer value) {
-            addCriterion("edit_status <>", value, "editStatus");
+        public Criteria andPublishStateNotEqualTo(Integer value) {
+            addCriterion("publish_state <>", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusGreaterThan(Integer value) {
-            addCriterion("edit_status >", value, "editStatus");
+        public Criteria andPublishStateGreaterThan(Integer value) {
+            addCriterion("publish_state >", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusGreaterThanOrEqualTo(Integer value) {
-            addCriterion("edit_status >=", value, "editStatus");
+        public Criteria andPublishStateGreaterThanOrEqualTo(Integer value) {
+            addCriterion("publish_state >=", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusLessThan(Integer value) {
-            addCriterion("edit_status <", value, "editStatus");
+        public Criteria andPublishStateLessThan(Integer value) {
+            addCriterion("publish_state <", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusLessThanOrEqualTo(Integer value) {
-            addCriterion("edit_status <=", value, "editStatus");
+        public Criteria andPublishStateLessThanOrEqualTo(Integer value) {
+            addCriterion("publish_state <=", value, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusIn(List<Integer> values) {
-            addCriterion("edit_status in", values, "editStatus");
+        public Criteria andPublishStateIn(List<Integer> values) {
+            addCriterion("publish_state in", values, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusNotIn(List<Integer> values) {
-            addCriterion("edit_status not in", values, "editStatus");
+        public Criteria andPublishStateNotIn(List<Integer> values) {
+            addCriterion("publish_state not in", values, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusBetween(Integer value1, Integer value2) {
-            addCriterion("edit_status between", value1, value2, "editStatus");
+        public Criteria andPublishStateBetween(Integer value1, Integer value2) {
+            addCriterion("publish_state between", value1, value2, "publishState");
             return (Criteria) this;
         }
 
-        public Criteria andEditStatusNotBetween(Integer value1, Integer value2) {
-            addCriterion("edit_status not between", value1, value2, "editStatus");
+        public Criteria andPublishStateNotBetween(Integer value1, Integer value2) {
+            addCriterion("publish_state not between", value1, value2, "publishState");
             return (Criteria) this;
         }
 
@@ -985,193 +985,193 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescIsNull() {
-            addCriterion("law_stat_desc is null");
+        public Criteria andLawsuitStateDescIsNull() {
+            addCriterion("lawsuit_state_desc is null");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescIsNotNull() {
-            addCriterion("law_stat_desc is not null");
+        public Criteria andLawsuitStateDescIsNotNull() {
+            addCriterion("lawsuit_state_desc is not null");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescEqualTo(String value) {
-            addCriterion("law_stat_desc =", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescEqualTo(String value) {
+            addCriterion("lawsuit_state_desc =", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescNotEqualTo(String value) {
-            addCriterion("law_stat_desc <>", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescNotEqualTo(String value) {
+            addCriterion("lawsuit_state_desc <>", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescGreaterThan(String value) {
-            addCriterion("law_stat_desc >", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescGreaterThan(String value) {
+            addCriterion("lawsuit_state_desc >", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescGreaterThanOrEqualTo(String value) {
-            addCriterion("law_stat_desc >=", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescGreaterThanOrEqualTo(String value) {
+            addCriterion("lawsuit_state_desc >=", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescLessThan(String value) {
-            addCriterion("law_stat_desc <", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescLessThan(String value) {
+            addCriterion("lawsuit_state_desc <", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescLessThanOrEqualTo(String value) {
-            addCriterion("law_stat_desc <=", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescLessThanOrEqualTo(String value) {
+            addCriterion("lawsuit_state_desc <=", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescLike(String value) {
-            addCriterion("law_stat_desc like", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescLike(String value) {
+            addCriterion("lawsuit_state_desc like", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescNotLike(String value) {
-            addCriterion("law_stat_desc not like", value, "lawStatDesc");
+        public Criteria andLawsuitStateDescNotLike(String value) {
+            addCriterion("lawsuit_state_desc not like", value, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescIn(List<String> values) {
-            addCriterion("law_stat_desc in", values, "lawStatDesc");
+        public Criteria andLawsuitStateDescIn(List<String> values) {
+            addCriterion("lawsuit_state_desc in", values, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescNotIn(List<String> values) {
-            addCriterion("law_stat_desc not in", values, "lawStatDesc");
+        public Criteria andLawsuitStateDescNotIn(List<String> values) {
+            addCriterion("lawsuit_state_desc not in", values, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescBetween(String value1, String value2) {
-            addCriterion("law_stat_desc between", value1, value2, "lawStatDesc");
+        public Criteria andLawsuitStateDescBetween(String value1, String value2) {
+            addCriterion("lawsuit_state_desc between", value1, value2, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andLawStatDescNotBetween(String value1, String value2) {
-            addCriterion("law_stat_desc not between", value1, value2, "lawStatDesc");
+        public Criteria andLawsuitStateDescNotBetween(String value1, String value2) {
+            addCriterion("lawsuit_state_desc not between", value1, value2, "lawsuitStateDesc");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceIsNull() {
-            addCriterion("estimated_price is null");
+        public Criteria andValuationIsNull() {
+            addCriterion("valuation is null");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceIsNotNull() {
-            addCriterion("estimated_price is not null");
+        public Criteria andValuationIsNotNull() {
+            addCriterion("valuation is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceEqualTo(Long value) {
-            addCriterion("estimated_price =", value, "estimatedPrice");
+        public Criteria andValuationEqualTo(Long value) {
+            addCriterion("valuation =", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceNotEqualTo(Long value) {
-            addCriterion("estimated_price <>", value, "estimatedPrice");
+        public Criteria andValuationNotEqualTo(Long value) {
+            addCriterion("valuation <>", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceGreaterThan(Long value) {
-            addCriterion("estimated_price >", value, "estimatedPrice");
+        public Criteria andValuationGreaterThan(Long value) {
+            addCriterion("valuation >", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceGreaterThanOrEqualTo(Long value) {
-            addCriterion("estimated_price >=", value, "estimatedPrice");
+        public Criteria andValuationGreaterThanOrEqualTo(Long value) {
+            addCriterion("valuation >=", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceLessThan(Long value) {
-            addCriterion("estimated_price <", value, "estimatedPrice");
+        public Criteria andValuationLessThan(Long value) {
+            addCriterion("valuation <", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceLessThanOrEqualTo(Long value) {
-            addCriterion("estimated_price <=", value, "estimatedPrice");
+        public Criteria andValuationLessThanOrEqualTo(Long value) {
+            addCriterion("valuation <=", value, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceIn(List<Long> values) {
-            addCriterion("estimated_price in", values, "estimatedPrice");
+        public Criteria andValuationIn(List<Long> values) {
+            addCriterion("valuation in", values, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceNotIn(List<Long> values) {
-            addCriterion("estimated_price not in", values, "estimatedPrice");
+        public Criteria andValuationNotIn(List<Long> values) {
+            addCriterion("valuation not in", values, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceBetween(Long value1, Long value2) {
-            addCriterion("estimated_price between", value1, value2, "estimatedPrice");
+        public Criteria andValuationBetween(Long value1, Long value2) {
+            addCriterion("valuation between", value1, value2, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andEstimatedPriceNotBetween(Long value1, Long value2) {
-            addCriterion("estimated_price not between", value1, value2, "estimatedPrice");
+        public Criteria andValuationNotBetween(Long value1, Long value2) {
+            addCriterion("valuation not between", value1, value2, "valuation");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1IsNull() {
-            addCriterion("amc_contact1 is null");
+        public Criteria andAmcContactIsNull() {
+            addCriterion("amc_contact is null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1IsNotNull() {
-            addCriterion("amc_contact1 is not null");
+        public Criteria andAmcContactIsNotNull() {
+            addCriterion("amc_contact is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1EqualTo(Long value) {
-            addCriterion("amc_contact1 =", value, "amcContact1");
+        public Criteria andAmcContactEqualTo(Long value) {
+            addCriterion("amc_contact =", value, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1NotEqualTo(Long value) {
-            addCriterion("amc_contact1 <>", value, "amcContact1");
+        public Criteria andAmcContactNotEqualTo(Long value) {
+            addCriterion("amc_contact <>", value, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1GreaterThan(Long value) {
-            addCriterion("amc_contact1 >", value, "amcContact1");
+        public Criteria andAmcContactGreaterThan(Long value) {
+            addCriterion("amc_contact >", value, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1GreaterThanOrEqualTo(Long value) {
-            addCriterion("amc_contact1 >=", value, "amcContact1");
+        public Criteria andAmcContactGreaterThanOrEqualTo(Long value) {
+            addCriterion("amc_contact >=", value, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1LessThan(Long value) {
-            addCriterion("amc_contact1 <", value, "amcContact1");
+        public Criteria andAmcContactLessThan(Long value) {
+            addCriterion("amc_contact <", value, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1LessThanOrEqualTo(Long value) {
-            addCriterion("amc_contact1 <=", value, "amcContact1");
+        public Criteria andAmcContactLessThanOrEqualTo(Long value) {
+            addCriterion("amc_contact <=", value, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1In(List<Long> values) {
-            addCriterion("amc_contact1 in", values, "amcContact1");
+        public Criteria andAmcContactIn(List<Long> values) {
+            addCriterion("amc_contact in", values, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1NotIn(List<Long> values) {
-            addCriterion("amc_contact1 not in", values, "amcContact1");
+        public Criteria andAmcContactNotIn(List<Long> values) {
+            addCriterion("amc_contact not in", values, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1Between(Long value1, Long value2) {
-            addCriterion("amc_contact1 between", value1, value2, "amcContact1");
+        public Criteria andAmcContactBetween(Long value1, Long value2) {
+            addCriterion("amc_contact between", value1, value2, "amcContact");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact1NotBetween(Long value1, Long value2) {
-            addCriterion("amc_contact1 not between", value1, value2, "amcContact1");
+        public Criteria andAmcContactNotBetween(Long value1, Long value2) {
+            addCriterion("amc_contact not between", value1, value2, "amcContact");
             return (Criteria) this;
         }
 
@@ -1295,123 +1295,123 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andStartDateIsNull() {
-            addCriterion("start_date is null");
+        public Criteria andRecommStartDateIsNull() {
+            addCriterion("recomm_start_date is null");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateIsNotNull() {
-            addCriterion("start_date is not null");
+        public Criteria andRecommStartDateIsNotNull() {
+            addCriterion("recomm_start_date is not null");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateEqualTo(Date value) {
-            addCriterion("start_date =", value, "startDate");
+        public Criteria andRecommStartDateEqualTo(Date value) {
+            addCriterion("recomm_start_date =", value, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateNotEqualTo(Date value) {
-            addCriterion("start_date <>", value, "startDate");
+        public Criteria andRecommStartDateNotEqualTo(Date value) {
+            addCriterion("recomm_start_date <>", value, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateGreaterThan(Date value) {
-            addCriterion("start_date >", value, "startDate");
+        public Criteria andRecommStartDateGreaterThan(Date value) {
+            addCriterion("recomm_start_date >", value, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("start_date >=", value, "startDate");
+        public Criteria andRecommStartDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("recomm_start_date >=", value, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateLessThan(Date value) {
-            addCriterion("start_date <", value, "startDate");
+        public Criteria andRecommStartDateLessThan(Date value) {
+            addCriterion("recomm_start_date <", value, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateLessThanOrEqualTo(Date value) {
-            addCriterion("start_date <=", value, "startDate");
+        public Criteria andRecommStartDateLessThanOrEqualTo(Date value) {
+            addCriterion("recomm_start_date <=", value, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateIn(List<Date> values) {
-            addCriterion("start_date in", values, "startDate");
+        public Criteria andRecommStartDateIn(List<Date> values) {
+            addCriterion("recomm_start_date in", values, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateNotIn(List<Date> values) {
-            addCriterion("start_date not in", values, "startDate");
+        public Criteria andRecommStartDateNotIn(List<Date> values) {
+            addCriterion("recomm_start_date not in", values, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateBetween(Date value1, Date value2) {
-            addCriterion("start_date between", value1, value2, "startDate");
+        public Criteria andRecommStartDateBetween(Date value1, Date value2) {
+            addCriterion("recomm_start_date between", value1, value2, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andStartDateNotBetween(Date value1, Date value2) {
-            addCriterion("start_date not between", value1, value2, "startDate");
+        public Criteria andRecommStartDateNotBetween(Date value1, Date value2) {
+            addCriterion("recomm_start_date not between", value1, value2, "recommStartDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateIsNull() {
-            addCriterion("end_date is null");
+        public Criteria andRecommEndDateIsNull() {
+            addCriterion("recomm_end_date is null");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateIsNotNull() {
-            addCriterion("end_date is not null");
+        public Criteria andRecommEndDateIsNotNull() {
+            addCriterion("recomm_end_date is not null");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateEqualTo(Date value) {
-            addCriterion("end_date =", value, "endDate");
+        public Criteria andRecommEndDateEqualTo(Date value) {
+            addCriterion("recomm_end_date =", value, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateNotEqualTo(Date value) {
-            addCriterion("end_date <>", value, "endDate");
+        public Criteria andRecommEndDateNotEqualTo(Date value) {
+            addCriterion("recomm_end_date <>", value, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateGreaterThan(Date value) {
-            addCriterion("end_date >", value, "endDate");
+        public Criteria andRecommEndDateGreaterThan(Date value) {
+            addCriterion("recomm_end_date >", value, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("end_date >=", value, "endDate");
+        public Criteria andRecommEndDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("recomm_end_date >=", value, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateLessThan(Date value) {
-            addCriterion("end_date <", value, "endDate");
+        public Criteria andRecommEndDateLessThan(Date value) {
+            addCriterion("recomm_end_date <", value, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateLessThanOrEqualTo(Date value) {
-            addCriterion("end_date <=", value, "endDate");
+        public Criteria andRecommEndDateLessThanOrEqualTo(Date value) {
+            addCriterion("recomm_end_date <=", value, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateIn(List<Date> values) {
-            addCriterion("end_date in", values, "endDate");
+        public Criteria andRecommEndDateIn(List<Date> values) {
+            addCriterion("recomm_end_date in", values, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateNotIn(List<Date> values) {
-            addCriterion("end_date not in", values, "endDate");
+        public Criteria andRecommEndDateNotIn(List<Date> values) {
+            addCriterion("recomm_end_date not in", values, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateBetween(Date value1, Date value2) {
-            addCriterion("end_date between", value1, value2, "endDate");
+        public Criteria andRecommEndDateBetween(Date value1, Date value2) {
+            addCriterion("recomm_end_date between", value1, value2, "recommEndDate");
             return (Criteria) this;
         }
 
-        public Criteria andEndDateNotBetween(Date value1, Date value2) {
-            addCriterion("end_date not between", value1, value2, "endDate");
+        public Criteria andRecommEndDateNotBetween(Date value1, Date value2) {
+            addCriterion("recomm_end_date not between", value1, value2, "recommEndDate");
             return (Criteria) this;
         }
 

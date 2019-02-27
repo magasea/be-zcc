@@ -4,7 +4,7 @@ import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,28 +19,28 @@ import org.springframework.stereotype.Service;
 public class ZccRulesServiceImpl implements ZccRulesService {
 
   @Autowired
-  RuleBook<EditStatusEnum> ruleBook4ZccEdit;
+  RuleBook<PublishStateEnum> ruleBook4ZccEdit;
 
   @Override
-  public EditStatusEnum runActionAndStatus(EditActionEnum action, EditStatusEnum status) {
+  public PublishStateEnum runActionAndStatus(EditActionEnum action, PublishStateEnum status) {
 
     NameValueReferableMap facts = new FactMap();
     facts.setValue("editAction", action);
     facts.setValue("currentStatus", status);
     ruleBook4ZccEdit.run(facts);
     ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
-    EditStatusEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
+    PublishStateEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
     return retVal;
   }
 
   @Override
-  public boolean editAble(EditStatusEnum editStatus) {
+  public boolean editAble(PublishStateEnum editStatus) {
     NameValueReferableMap facts = new FactMap();
     facts.setValue("editAction", EditActionEnum.ACT_SAVE);
     facts.setValue("currentStatus", editStatus);
     ruleBook4ZccEdit.run(facts);
 //    ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
-    EditStatusEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
+    PublishStateEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
     if(retVal != null){
       return true;
     }

@@ -6,7 +6,7 @@ import com.deliveredtechnologies.rulebook.annotation.Rule;
 import com.deliveredtechnologies.rulebook.annotation.Then;
 import com.deliveredtechnologies.rulebook.annotation.When;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 
@@ -17,14 +17,14 @@ import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 @Rule
 public class EditProcessRule {
   @Result
-  EditStatusEnum editStatusResult;
+  PublishStateEnum editStatusResult;
 
 
   @Given("editAction")
   EditActionEnum editAction;
 
   @Given("currentStatus")
-  EditStatusEnum currentStatus;
+  PublishStateEnum currentStatus;
 
   @When
   public boolean when(){
@@ -36,16 +36,16 @@ public class EditProcessRule {
 
   @Then
   public void then() throws Exception {
-    if(editAction == EditActionEnum.ACT_CREATE && currentStatus == EditStatusEnum.INIT ){
-      editStatusResult = EditStatusEnum.DRAFT;
+    if(editAction == EditActionEnum.ACT_CREATE && currentStatus == PublishStateEnum.INIT ){
+      editStatusResult = PublishStateEnum.DRAFT;
       return;
     }
     if(editAction == EditActionEnum.ACT_SAVE){
-      if(currentStatus == EditStatusEnum.INIT) {
-        editStatusResult =  EditStatusEnum.DRAFT;
+      if(currentStatus == PublishStateEnum.INIT) {
+        editStatusResult =  PublishStateEnum.DRAFT;
         return;
-      }else if( currentStatus == EditStatusEnum.PUBLISHED ||
-          currentStatus == EditStatusEnum.SOLD){
+      }else if( currentStatus == PublishStateEnum.PUBLISHED ||
+          currentStatus == PublishStateEnum.SOLD){
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }else{
         editStatusResult =  currentStatus;
@@ -53,41 +53,41 @@ public class EditProcessRule {
       }
     }
     if(editAction == EditActionEnum.ACT_REVIEW_FAIL ){
-      if( currentStatus == EditStatusEnum.DRAFT ||
-          currentStatus == EditStatusEnum.CHECK_FAILED || currentStatus == EditStatusEnum.CHECK_WAIT ) {
-        editStatusResult =  EditStatusEnum.CHECK_FAILED;
+      if( currentStatus == PublishStateEnum.DRAFT ||
+          currentStatus == PublishStateEnum.CHECK_FAILED || currentStatus == PublishStateEnum.CHECK_WAIT ) {
+        editStatusResult =  PublishStateEnum.CHECK_FAILED;
         return;
       }else{
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }
     }
     if(editAction == EditActionEnum.ACT_REVIEW_PASS){
-      if(currentStatus == EditStatusEnum.CHECK_FAILED || currentStatus == EditStatusEnum.CHECK_WAIT){
-        editStatusResult =  EditStatusEnum.PUBLISHED;
+      if(currentStatus == PublishStateEnum.CHECK_FAILED || currentStatus == PublishStateEnum.CHECK_WAIT){
+        editStatusResult =  PublishStateEnum.PUBLISHED;
         return;
       }else{
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }
     }
     if(editAction == EditActionEnum.ACT_SUBMIT4PUB){
-      if(currentStatus == EditStatusEnum.DRAFT || currentStatus == EditStatusEnum.CHECK_FAILED){
-        editStatusResult =  EditStatusEnum.CHECK_WAIT;
+      if(currentStatus == PublishStateEnum.DRAFT || currentStatus == PublishStateEnum.CHECK_FAILED){
+        editStatusResult =  PublishStateEnum.CHECK_WAIT;
         return;
       }else{
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }
     }
     if(editAction == EditActionEnum.ACT_OFF_SHELF){
-      if(currentStatus == EditStatusEnum.PUBLISHED ){
-        editStatusResult =  EditStatusEnum.CHECK_WAIT;
+      if(currentStatus == PublishStateEnum.PUBLISHED ){
+        editStatusResult =  PublishStateEnum.CHECK_WAIT;
         return;
       }else{
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }
     }
     if(editAction == EditActionEnum.ACT_SOLD){
-      if(currentStatus == EditStatusEnum.PUBLISHED){
-        editStatusResult =  EditStatusEnum.SOLD;
+      if(currentStatus == PublishStateEnum.PUBLISHED){
+        editStatusResult =  PublishStateEnum.SOLD;
         return;
       }else{
         throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);

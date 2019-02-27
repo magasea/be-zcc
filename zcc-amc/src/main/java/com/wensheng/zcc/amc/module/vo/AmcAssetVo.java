@@ -19,9 +19,9 @@ public class AmcAssetVo {
 
   private Integer status;
 
-  private Integer state;
+  private Integer sealedState;
 
-  private Integer editStatus;
+  private Integer publishState;
 
   private Long amcId;
 
@@ -29,13 +29,12 @@ public class AmcAssetVo {
 
   private String zccAssetCode;
 
-  private Short isMainAsset;
 
-  private BigDecimal estmPrice;
+  private BigDecimal valuation;
 
   private Long debtId;
 
-  private BigDecimal initPrice;
+  private BigDecimal startPrice;
 
   private Integer restrictions;
 

@@ -140,8 +140,8 @@ public class AmcAssetController {
   private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo){
     AmcAsset amcAsset = new AmcAsset();
     BeanUtils.copyProperties(amcAssetVo, amcAsset);
-    amcAsset.setEstmPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getEstmPrice()));
-    amcAsset.setInitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getInitPrice()));
+    amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
+    amcAsset.setStartPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getStartPrice()));
     amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
     amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
     return amcAsset;

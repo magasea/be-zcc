@@ -3,14 +3,13 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
-import com.wensheng.zcc.amc.module.dao.helper.AssetStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
-import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
 import com.wensheng.zcc.amc.module.dao.helper.LawstatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
@@ -22,9 +21,6 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -80,8 +76,8 @@ public class AmcBasicInfoController {
   public List<String> getEditStatusList(){
 
     List<String> result = new ArrayList<>();
-    for(EditStatusEnum editStatusEnum: EditStatusEnum.values()){
-      result.add(String.format("%d:%s", editStatusEnum.getStatus(), editStatusEnum.getName()));
+    for(PublishStateEnum publishStateEnum : PublishStateEnum.values()){
+      result.add(String.format("%d:%s", publishStateEnum.getStatus(), publishStateEnum.getName()));
     }
     return result;
   }
@@ -115,7 +111,7 @@ public class AmcBasicInfoController {
   public List<String> getAssetStatusList(){
 
     List<String> result = new ArrayList<>();
-    for(AssetStateEnum enumItem: AssetStateEnum.values()){
+    for(SealStateEnum enumItem: SealStateEnum.values()){
       result.add(String.format("%d:%s", enumItem.getStatus(), enumItem.getName()));
     }
     return result;
@@ -137,7 +133,7 @@ public class AmcBasicInfoController {
   public List<String> getGrantorType(){
 
     List<String> result = new ArrayList<>();
-    for(GrantorTypeEnum enumItem: GrantorTypeEnum.values()){
+    for(DebtorRoleEnum enumItem: DebtorRoleEnum.values()){
       result.add(String.format("%d:%s", enumItem.getId(), enumItem.getName()));
     }
     return result;

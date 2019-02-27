@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.module.vo.base;
 
-import com.wensheng.zcc.amc.module.dao.helper.EditStatusEnum;
 import lombok.Data;
 
 /**

@@ -27,23 +27,23 @@ public class AmcDebt {
 
     private String amcDebtCode;
 
-    private Integer editStatus;
+    private Integer publishState;
 
     private Date publishDate;
 
-    private String lawStatDesc;
+    private String lawsuitStateDesc;
 
-    private Long estimatedPrice;
+    private Long valuation;
 
-    private Long amcContact1;
+    private Long amcContact;
 
     private Long amcContact2;
 
     private Integer isRecommanded;
 
-    private Date startDate;
+    private Date recommStartDate;
 
-    private Date endDate;
+    private Date recommEndDate;
 
     private Long origCreditorId;
 
@@ -145,12 +145,12 @@ public class AmcDebt {
         this.amcDebtCode = amcDebtCode == null ? null : amcDebtCode.trim();
     }
 
-    public Integer getEditStatus() {
-        return editStatus;
+    public Integer getPublishState() {
+        return publishState;
     }
 
-    public void setEditStatus(Integer editStatus) {
-        this.editStatus = editStatus;
+    public void setPublishState(Integer publishState) {
+        this.publishState = publishState;
     }
 
     public Date getPublishDate() {
@@ -161,28 +161,28 @@ public class AmcDebt {
         this.publishDate = publishDate;
     }
 
-    public String getLawStatDesc() {
-        return lawStatDesc;
+    public String getLawsuitStateDesc() {
+        return lawsuitStateDesc;
     }
 
-    public void setLawStatDesc(String lawStatDesc) {
-        this.lawStatDesc = lawStatDesc == null ? null : lawStatDesc.trim();
+    public void setLawsuitStateDesc(String lawsuitStateDesc) {
+        this.lawsuitStateDesc = lawsuitStateDesc == null ? null : lawsuitStateDesc.trim();
     }
 
-    public Long getEstimatedPrice() {
-        return estimatedPrice;
+    public Long getValuation() {
+        return valuation;
     }
 
-    public void setEstimatedPrice(Long estimatedPrice) {
-        this.estimatedPrice = estimatedPrice;
+    public void setValuation(Long valuation) {
+        this.valuation = valuation;
     }
 
-    public Long getAmcContact1() {
-        return amcContact1;
+    public Long getAmcContact() {
+        return amcContact;
     }
 
-    public void setAmcContact1(Long amcContact1) {
-        this.amcContact1 = amcContact1;
+    public void setAmcContact(Long amcContact) {
+        this.amcContact = amcContact;
     }
 
     public Long getAmcContact2() {
@@ -201,20 +201,20 @@ public class AmcDebt {
         this.isRecommanded = isRecommanded;
     }
 
-    public Date getStartDate() {
-        return startDate;
+    public Date getRecommStartDate() {
+        return recommStartDate;
     }
 
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
+    public void setRecommStartDate(Date recommStartDate) {
+        this.recommStartDate = recommStartDate;
     }
 
-    public Date getEndDate() {
-        return endDate;
+    public Date getRecommEndDate() {
+        return recommEndDate;
     }
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
+    public void setRecommEndDate(Date recommEndDate) {
+        this.recommEndDate = recommEndDate;
     }
 
     public Long getOrigCreditorId() {

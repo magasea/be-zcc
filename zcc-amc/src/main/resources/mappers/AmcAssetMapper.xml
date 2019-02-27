@@ -5,17 +5,14 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
     <result column="type" jdbcType="INTEGER" property="type" />
-    <result column="status" jdbcType="INTEGER" property="status" />
-    <result column="state" jdbcType="INTEGER" property="state" />
-    <result column="edit_status" jdbcType="INTEGER" property="editStatus" />
+    <result column="sealed_state" jdbcType="INTEGER" property="sealedState" />
+    <result column="publish_state" jdbcType="INTEGER" property="publishState" />
     <result column="amc_id" jdbcType="BIGINT" property="amcId" />
     <result column="amc_asset_code" jdbcType="CHAR" property="amcAssetCode" />
     <result column="zcc_asset_code" jdbcType="CHAR" property="zccAssetCode" />
-    <result column="is_main_asset" jdbcType="SMALLINT" property="isMainAsset" />
-    <result column="estm_price" jdbcType="BIGINT" property="estmPrice" />
+    <result column="valuation" jdbcType="BIGINT" property="valuation" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="init_price" jdbcType="BIGINT" property="initPrice" />
-    <result column="restrictions" jdbcType="INTEGER" property="restrictions" />
+    <result column="start_price" jdbcType="BIGINT" property="startPrice" />
     <result column="area" jdbcType="BIGINT" property="area" />
     <result column="land_area" jdbcType="BIGINT" property="landArea" />
     <result column="publish_date" jdbcType="DATE" property="publishDate" />
@@ -26,9 +23,9 @@
     <result column="building_name" jdbcType="CHAR" property="buildingName" />
     <result column="gps_lng" jdbcType="CHAR" property="gpsLng" />
     <result column="gps_lat" jdbcType="CHAR" property="gpsLat" />
-    <result column="origin_debt_id" jdbcType="CHAR" property="originDebtId" />
-    <result column="create_by" jdbcType="BIGINT" property="createBy" />
-    <result column="amc_conactor" jdbcType="BIGINT" property="amcConactor" />
+    <result column="created_by" jdbcType="BIGINT" property="createdBy" />
+    <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -89,10 +86,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, type, status, state, edit_status, amc_id, amc_asset_code, zcc_asset_code, 
-    is_main_asset, estm_price, debt_id, init_price, restrictions, area, land_area, publish_date, 
-    province, city, county, street, building_name, gps_lng, gps_lat, origin_debt_id, 
-    create_by, amc_conactor
+    id, title, type, sealed_state, publish_state, amc_id, amc_asset_code, zcc_asset_code, 
+    valuation, debt_id, start_price, area, land_area, publish_date, province, city, county, 
+    street, building_name, gps_lng, gps_lat, created_by, created_date, amc_contactor_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -129,24 +125,22 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_ASSET (title, type, status, 
-      state, edit_status, amc_id, 
-      amc_asset_code, zcc_asset_code, is_main_asset, 
-      estm_price, debt_id, init_price, 
-      restrictions, area, land_area, 
+    insert into AMC_ASSET (title, type, sealed_state, 
+      publish_state, amc_id, amc_asset_code, 
+      zcc_asset_code, valuation, debt_id, 
+      start_price, area, land_area, 
       publish_date, province, city, 
       county, street, building_name, 
-      gps_lng, gps_lat, origin_debt_id, 
-      create_by, amc_conactor)
-    values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{status,jdbcType=INTEGER}, 
-      #{state,jdbcType=INTEGER}, #{editStatus,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
-      #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{isMainAsset,jdbcType=SMALLINT}, 
-      #{estmPrice,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, #{initPrice,jdbcType=BIGINT}, 
-      #{restrictions,jdbcType=INTEGER}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
+      gps_lng, gps_lat, created_by, 
+      created_date, amc_contactor_id)
+    values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
+      #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, 
+      #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
+      #{startPrice,jdbcType=BIGINT}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
       #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
       #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
-      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{originDebtId,jdbcType=CHAR}, 
-      #{createBy,jdbcType=BIGINT}, #{amcConactor,jdbcType=BIGINT})
+      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{createdBy,jdbcType=BIGINT}, 
+      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -160,14 +154,11 @@
       <if test="type != null">
         type,
       </if>
-      <if test="status != null">
-        status,
+      <if test="sealedState != null">
+        sealed_state,
       </if>
-      <if test="state != null">
-        state,
-      </if>
-      <if test="editStatus != null">
-        edit_status,
+      <if test="publishState != null">
+        publish_state,
       </if>
       <if test="amcId != null">
         amc_id,
@@ -178,20 +169,14 @@
       <if test="zccAssetCode != null">
         zcc_asset_code,
       </if>
-      <if test="isMainAsset != null">
-        is_main_asset,
-      </if>
-      <if test="estmPrice != null">
-        estm_price,
+      <if test="valuation != null">
+        valuation,
       </if>
       <if test="debtId != null">
         debt_id,
       </if>
-      <if test="initPrice != null">
-        init_price,
-      </if>
-      <if test="restrictions != null">
-        restrictions,
+      <if test="startPrice != null">
+        start_price,
       </if>
       <if test="area != null">
         area,
@@ -223,14 +208,14 @@
       <if test="gpsLat != null">
         gps_lat,
       </if>
-      <if test="originDebtId != null">
-        origin_debt_id,
+      <if test="createdBy != null">
+        created_by,
       </if>
-      <if test="createBy != null">
-        create_by,
+      <if test="createdDate != null">
+        created_date,
       </if>
-      <if test="amcConactor != null">
-        amc_conactor,
+      <if test="amcContactorId != null">
+        amc_contactor_id,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -240,14 +225,11 @@
       <if test="type != null">
         #{type,jdbcType=INTEGER},
       </if>
-      <if test="status != null">
-        #{status,jdbcType=INTEGER},
+      <if test="sealedState != null">
+        #{sealedState,jdbcType=INTEGER},
       </if>
-      <if test="state != null">
-        #{state,jdbcType=INTEGER},
-      </if>
-      <if test="editStatus != null">
-        #{editStatus,jdbcType=INTEGER},
+      <if test="publishState != null">
+        #{publishState,jdbcType=INTEGER},
       </if>
       <if test="amcId != null">
         #{amcId,jdbcType=BIGINT},
@@ -258,20 +240,14 @@
       <if test="zccAssetCode != null">
         #{zccAssetCode,jdbcType=CHAR},
       </if>
-      <if test="isMainAsset != null">
-        #{isMainAsset,jdbcType=SMALLINT},
-      </if>
-      <if test="estmPrice != null">
-        #{estmPrice,jdbcType=BIGINT},
+      <if test="valuation != null">
+        #{valuation,jdbcType=BIGINT},
       </if>
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="initPrice != null">
-        #{initPrice,jdbcType=BIGINT},
-      </if>
-      <if test="restrictions != null">
-        #{restrictions,jdbcType=INTEGER},
+      <if test="startPrice != null">
+        #{startPrice,jdbcType=BIGINT},
       </if>
       <if test="area != null">
         #{area,jdbcType=BIGINT},
@@ -303,14 +279,14 @@
       <if test="gpsLat != null">
         #{gpsLat,jdbcType=CHAR},
       </if>
-      <if test="originDebtId != null">
-        #{originDebtId,jdbcType=CHAR},
+      <if test="createdBy != null">
+        #{createdBy,jdbcType=BIGINT},
       </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=BIGINT},
+      <if test="createdDate != null">
+        #{createdDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="amcConactor != null">
-        #{amcConactor,jdbcType=BIGINT},
+      <if test="amcContactorId != null">
+        #{amcContactorId,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -332,14 +308,11 @@
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
       </if>
-      <if test="record.status != null">
-        status = #{record.status,jdbcType=INTEGER},
+      <if test="record.sealedState != null">
+        sealed_state = #{record.sealedState,jdbcType=INTEGER},
       </if>
-      <if test="record.state != null">
-        state = #{record.state,jdbcType=INTEGER},
-      </if>
-      <if test="record.editStatus != null">
-        edit_status = #{record.editStatus,jdbcType=INTEGER},
+      <if test="record.publishState != null">
+        publish_state = #{record.publishState,jdbcType=INTEGER},
       </if>
       <if test="record.amcId != null">
         amc_id = #{record.amcId,jdbcType=BIGINT},
@@ -350,20 +323,14 @@
       <if test="record.zccAssetCode != null">
         zcc_asset_code = #{record.zccAssetCode,jdbcType=CHAR},
       </if>
-      <if test="record.isMainAsset != null">
-        is_main_asset = #{record.isMainAsset,jdbcType=SMALLINT},
-      </if>
-      <if test="record.estmPrice != null">
-        estm_price = #{record.estmPrice,jdbcType=BIGINT},
+      <if test="record.valuation != null">
+        valuation = #{record.valuation,jdbcType=BIGINT},
       </if>
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
-      <if test="record.initPrice != null">
-        init_price = #{record.initPrice,jdbcType=BIGINT},
-      </if>
-      <if test="record.restrictions != null">
-        restrictions = #{record.restrictions,jdbcType=INTEGER},
+      <if test="record.startPrice != null">
+        start_price = #{record.startPrice,jdbcType=BIGINT},
       </if>
       <if test="record.area != null">
         area = #{record.area,jdbcType=BIGINT},
@@ -395,14 +362,14 @@
       <if test="record.gpsLat != null">
         gps_lat = #{record.gpsLat,jdbcType=CHAR},
       </if>
-      <if test="record.originDebtId != null">
-        origin_debt_id = #{record.originDebtId,jdbcType=CHAR},
+      <if test="record.createdBy != null">
+        created_by = #{record.createdBy,jdbcType=BIGINT},
       </if>
-      <if test="record.createBy != null">
-        create_by = #{record.createBy,jdbcType=BIGINT},
+      <if test="record.createdDate != null">
+        created_date = #{record.createdDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.amcConactor != null">
-        amc_conactor = #{record.amcConactor,jdbcType=BIGINT},
+      <if test="record.amcContactorId != null">
+        amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -414,17 +381,14 @@
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
       type = #{record.type,jdbcType=INTEGER},
-      status = #{record.status,jdbcType=INTEGER},
-      state = #{record.state,jdbcType=INTEGER},
-      edit_status = #{record.editStatus,jdbcType=INTEGER},
+      sealed_state = #{record.sealedState,jdbcType=INTEGER},
+      publish_state = #{record.publishState,jdbcType=INTEGER},
       amc_id = #{record.amcId,jdbcType=BIGINT},
       amc_asset_code = #{record.amcAssetCode,jdbcType=CHAR},
       zcc_asset_code = #{record.zccAssetCode,jdbcType=CHAR},
-      is_main_asset = #{record.isMainAsset,jdbcType=SMALLINT},
-      estm_price = #{record.estmPrice,jdbcType=BIGINT},
+      valuation = #{record.valuation,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      init_price = #{record.initPrice,jdbcType=BIGINT},
-      restrictions = #{record.restrictions,jdbcType=INTEGER},
+      start_price = #{record.startPrice,jdbcType=BIGINT},
       area = #{record.area,jdbcType=BIGINT},
       land_area = #{record.landArea,jdbcType=BIGINT},
       publish_date = #{record.publishDate,jdbcType=DATE},
@@ -435,9 +399,9 @@
       building_name = #{record.buildingName,jdbcType=CHAR},
       gps_lng = #{record.gpsLng,jdbcType=CHAR},
       gps_lat = #{record.gpsLat,jdbcType=CHAR},
-      origin_debt_id = #{record.originDebtId,jdbcType=CHAR},
-      create_by = #{record.createBy,jdbcType=BIGINT},
-      amc_conactor = #{record.amcConactor,jdbcType=BIGINT}
+      created_by = #{record.createdBy,jdbcType=BIGINT},
+      created_date = #{record.createdDate,jdbcType=TIMESTAMP},
+      amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -451,14 +415,11 @@
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
       </if>
-      <if test="status != null">
-        status = #{status,jdbcType=INTEGER},
+      <if test="sealedState != null">
+        sealed_state = #{sealedState,jdbcType=INTEGER},
       </if>
-      <if test="state != null">
-        state = #{state,jdbcType=INTEGER},
-      </if>
-      <if test="editStatus != null">
-        edit_status = #{editStatus,jdbcType=INTEGER},
+      <if test="publishState != null">
+        publish_state = #{publishState,jdbcType=INTEGER},
       </if>
       <if test="amcId != null">
         amc_id = #{amcId,jdbcType=BIGINT},
@@ -469,20 +430,14 @@
       <if test="zccAssetCode != null">
         zcc_asset_code = #{zccAssetCode,jdbcType=CHAR},
       </if>
-      <if test="isMainAsset != null">
-        is_main_asset = #{isMainAsset,jdbcType=SMALLINT},
-      </if>
-      <if test="estmPrice != null">
-        estm_price = #{estmPrice,jdbcType=BIGINT},
+      <if test="valuation != null">
+        valuation = #{valuation,jdbcType=BIGINT},
       </if>
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="initPrice != null">
-        init_price = #{initPrice,jdbcType=BIGINT},
-      </if>
-      <if test="restrictions != null">
-        restrictions = #{restrictions,jdbcType=INTEGER},
+      <if test="startPrice != null">
+        start_price = #{startPrice,jdbcType=BIGINT},
       </if>
       <if test="area != null">
         area = #{area,jdbcType=BIGINT},
@@ -514,14 +469,14 @@
       <if test="gpsLat != null">
         gps_lat = #{gpsLat,jdbcType=CHAR},
       </if>
-      <if test="originDebtId != null">
-        origin_debt_id = #{originDebtId,jdbcType=CHAR},
+      <if test="createdBy != null">
+        created_by = #{createdBy,jdbcType=BIGINT},
       </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=BIGINT},
+      <if test="createdDate != null">
+        created_date = #{createdDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="amcConactor != null">
-        amc_conactor = #{amcConactor,jdbcType=BIGINT},
+      <if test="amcContactorId != null">
+        amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -530,17 +485,14 @@
     update AMC_ASSET
     set title = #{title,jdbcType=CHAR},
       type = #{type,jdbcType=INTEGER},
-      status = #{status,jdbcType=INTEGER},
-      state = #{state,jdbcType=INTEGER},
-      edit_status = #{editStatus,jdbcType=INTEGER},
+      sealed_state = #{sealedState,jdbcType=INTEGER},
+      publish_state = #{publishState,jdbcType=INTEGER},
       amc_id = #{amcId,jdbcType=BIGINT},
       amc_asset_code = #{amcAssetCode,jdbcType=CHAR},
       zcc_asset_code = #{zccAssetCode,jdbcType=CHAR},
-      is_main_asset = #{isMainAsset,jdbcType=SMALLINT},
-      estm_price = #{estmPrice,jdbcType=BIGINT},
+      valuation = #{valuation,jdbcType=BIGINT},
       debt_id = #{debtId,jdbcType=BIGINT},
-      init_price = #{initPrice,jdbcType=BIGINT},
-      restrictions = #{restrictions,jdbcType=INTEGER},
+      start_price = #{startPrice,jdbcType=BIGINT},
       area = #{area,jdbcType=BIGINT},
       land_area = #{landArea,jdbcType=BIGINT},
       publish_date = #{publishDate,jdbcType=DATE},
@@ -551,9 +503,9 @@
       building_name = #{buildingName,jdbcType=CHAR},
       gps_lng = #{gpsLng,jdbcType=CHAR},
       gps_lat = #{gpsLat,jdbcType=CHAR},
-      origin_debt_id = #{originDebtId,jdbcType=CHAR},
-      create_by = #{createBy,jdbcType=BIGINT},
-      amc_conactor = #{amcConactor,jdbcType=BIGINT}
+      created_by = #{createdBy,jdbcType=BIGINT},
+      created_date = #{createdDate,jdbcType=TIMESTAMP},
+      amc_contactor_id = #{amcContactorId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">

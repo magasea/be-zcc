@@ -14,7 +14,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AmcAssetOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AssetImageOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.DebtOrigin;
-import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.utils.AmcDateUtils;
@@ -204,7 +203,7 @@ public class AmcAssetServiceImplTest {
 
 
         assetAdditional.setAmcAssetId(amcAssetId);
-//        assetAdditional.setAmcContact1(originItem.getAmcContact1());
+//        assetAdditional.setAmcContact(originItem.getAmcContact1());
         ;
 //        assetAdditional.setAmcContact2(originItem.getAmcContact2());
         ;
@@ -257,10 +256,10 @@ public class AmcAssetServiceImplTest {
         amcAssetMysql.setCounty(originItem.getCounty());
         //debts default only one item
         amcAssetMysql.setDebtId(CollectionUtils.isEmpty(originItem.getDebts()) ? -1L : (Long) originItem.getDebts().get(0));
-        amcAssetMysql.setEditStatus(EditStatusEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
+        amcAssetMysql.setPublishState(PublishStateEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
         amcAssetMysql.setBuildingName(originItem.getBuildingName());
         if (originItem.getEstimatedPrice() != null) {
-            amcAssetMysql.setEstmPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice().toString()));
+            amcAssetMysql.setValuation(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice().toString()));
         }
         if (!StringUtils.isEmpty(originItem.getGpsLat())) {
             amcAssetMysql.setGpsLat(originItem.getGpsLat().toString());
@@ -270,16 +269,15 @@ public class AmcAssetServiceImplTest {
         }
 
         if (originItem.getInitialPrice() != null) {
-            amcAssetMysql.setInitPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getInitialPrice().toString()));
+            amcAssetMysql.setStartPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getInitialPrice().toString()));
         }
         if (originItem.getLandArea() != null) {
             amcAssetMysql.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getLandArea()));
         }
         amcAssetMysql.setProvince(originItem.getProvince());
         amcAssetMysql.setPublishDate(originItem.getPublishDate());
-        amcAssetMysql.setRestrictions(StringUtils.isEmpty(originItem.getRestrictions()) ? -1 : RestrictionsEnum.valueOf(originItem.getRestrictions()).getStatus());
         if (!StringUtils.isEmpty(originItem.getState())) {
-            amcAssetMysql.setState(AssetStateEnum.lookupByDisplayNameUtil(originItem.getState()).getStatus());
+            amcAssetMysql.setSealedState(SealStateEnum.lookupByDisplayNameUtil(originItem.getState()).getStatus());
         }
         amcAssetMysql.setStreet(originItem.getStreet());
         amcAssetMysql.setTitle(originItem.getTitle());
@@ -331,7 +329,7 @@ public class AmcAssetServiceImplTest {
 //
 //        for(Grntor grntor : grntors){
 //          AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
-//          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(GrantorTypeEnum.
+//          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(DebtorRoleEnum.
 //              lookupByDisplayNameUtil(grntor.getType()).getId());
 //          List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
 //          AmcGrntor amcGrntor = null;
@@ -344,14 +342,14 @@ public class AmcAssetServiceImplTest {
 //                }
 //            }else{
 //                amcGrntor = amcGrntors.get(0);
-//                amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+//                amcGrntor.setType(DebtorRoleEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
 //                amcGrntor.setName(grntor.getName());
 //                amcGrntorMapper.updateByPrimaryKeySelective(amcGrntor);
 //                newGrntorId = amcGrntor.getId();
 //            }
 //          }else{
 //              amcGrntor = new AmcGrntor();
-//              amcGrntor.setType(GrantorTypeEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
+//              amcGrntor.setType(DebtorRoleEnum.lookupByDisplayNameUtil(grntor.getType()).getId());
 //              amcGrntor.setName(grntor.getName());
 //              newGrntorId = Long.valueOf(amcGrntorMapper.insertSelective(amcGrntor));
 //          }
@@ -420,7 +418,7 @@ public class AmcAssetServiceImplTest {
         }
         if (!StringUtils.isEmpty(originItem.getAmcContact1())) {
             Long contactId = createOrUpdateAmcContact(originItem.getAmcContact1());
-            amcDebt.setAmcContact1(contactId);
+            amcDebt.setAmcContact(contactId);
         }
         if (!StringUtils.isEmpty(originItem.getAmcContact2())) {
             Long contactId = createOrUpdateAmcContact(originItem.getAmcContact2());
@@ -442,17 +440,17 @@ public class AmcAssetServiceImplTest {
         amcDebt.setCourtId(courtId);
         amcDebt.setDebtpackId(originItem.getDebtpackId());
         if(StringUtils.isEmpty(originItem.getEditStatus())){
-            logger.error("cannot handle editStatus because originItem is empty in this field:" + originItem.getEditStatus());
+            logger.error("cannot handle publishState because originItem is empty in this field:" + originItem.getEditStatus());
         }else{
-            amcDebt.setEditStatus(EditStatusEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
+            amcDebt.setPublishState(PublishStateEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
         }
         if(originItem.getEndDate() != null){
-            amcDebt.setEndDate(originItem.getEndDate());
+            amcDebt.setRecommEndDate(originItem.getEndDate());
         }
         if(StringUtils.isEmpty(originItem.getEstimatedPrice())){
             logger.error("this originItem with:" + originItem.getTitle() + " estimate price is empty");
         }else{
-            amcDebt.setEstimatedPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
+            amcDebt.setValuation(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice()));
         }
 //        amcDebt.setIsRecommanded(originItem.isRecommanded()? IsRecommandEnum.RECOMMAND.getId(): IsRecommandEnum.NOT_RECOMMAND.getId());
 //        if(StringUtils.isEmpty(originItem.getLawStatus())){
@@ -467,7 +465,7 @@ public class AmcAssetServiceImplTest {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        amcDebt.setStartDate(originItem.getStartDate());
+        amcDebt.setRecommStartDate(originItem.getStartDate());
         amcDebt.setTitle(originItem.getTitle());
         amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getTotalAmount()));
         amcDebt.setAmcId(AMCEnum.AMC_WENSHENG.getId());

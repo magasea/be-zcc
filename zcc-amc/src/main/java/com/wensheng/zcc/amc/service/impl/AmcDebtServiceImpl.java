@@ -10,7 +10,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
-import com.wensheng.zcc.amc.module.dao.helper.GrantorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
@@ -202,16 +202,16 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));
 
     }
-    if(amcDebt.getEstimatedPrice() > 0 ){
-      amcDebtVo.setEstimatedPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getEstimatedPrice()));
+    if(amcDebt.getValuation() > 0 ){
+      amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
     }
     if(amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
 
     }
-    if(amcDebt.getAmcContact1() > 0){
-      amcDebtVo.setAmcContact1(amcHelperService.getAmcPerson(amcDebt.getAmcContact1()));
+    if(amcDebt.getAmcContact() > 0){
+      amcDebtVo.setAmcContact1(amcHelperService.getAmcPerson(amcDebt.getAmcContact()));
     }
 
     if(amcDebt.getAmcContact2() > 0){
@@ -290,10 +290,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception {
-    GrantorTypeEnum type = GrantorTypeEnum.lookupByDisplayNameUtil(grantorType);
+    DebtorRoleEnum type = DebtorRoleEnum.lookupByDisplayNameUtil(grantorType);
 
 
-    if( type == null || GrantorTypeEnum.lookupByDisplayNameUtil(grantorType) == GrantorTypeEnum.NO_INFO ){
+    if( type == null || DebtorRoleEnum.lookupByDisplayNameUtil(grantorType) == DebtorRoleEnum.NO_INFO ){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_GRANTORTYPE);
     }
     switch(type){
@@ -331,7 +331,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public AmcDebtor create(AmcDebtor amcDebtor) throws Exception {
     //if the creditor is company, need check if company exists
-    if( amcDebtor.getType() == GrantorTypeEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
+    if( amcDebtor.getType() == DebtorRoleEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
       //need create company
       if (StringUtils.isEmpty(amcDebtor.getName())){
         throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");

@@ -258,7 +258,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     amcAssetExample.createCriteria().andDebtIdEqualTo((Long)item.getValue());
                 }
                 if(item.getKey().equals("EditStatus")){
-                    amcAssetExample.createCriteria().andEditStatusEqualTo((Integer) item.getValue());
+                    amcAssetExample.createCriteria().andPublishStateEqualTo((Integer) item.getValue());
                 }
                 if(item.getKey().equals("Area")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
@@ -281,8 +281,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     }
 
                 }
-                if(item.getKey().equals("Status")){
-                    amcAssetExample.createCriteria().andStatusEqualTo((Integer) item.getValue());
+                if(item.getKey().equals("SealedState")){
+                    amcAssetExample.createCriteria().andSealedStateEqualTo((Integer) item.getValue());
                 }
                 if(item.getKey().equals("Title")){
 

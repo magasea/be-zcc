@@ -17,15 +17,13 @@ public class Dao2VoUtils {
   public static AmcAssetVo convertDo2Vo(AmcAsset amcAsset){
     AmcAssetVo amcAssetVo = new AmcAssetVo();
     BeanUtils.copyProperties(amcAsset, amcAssetVo);
-    if(amcAsset.getEstmPrice() > 0){
-      amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
+    if(amcAsset.getValuation() > 0){
+      amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
     }
-    if(amcAsset.getInitPrice() > 0){
-      amcAssetVo.setInitPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getInitPrice()));
+    if(amcAsset.getStartPrice() > 0){
+      amcAssetVo.setStartPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getStartPrice()));
     }
-    if(amcAsset.getEstmPrice() > 0){
-      amcAssetVo.setEstmPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getEstmPrice()));
-    }
+
     if(amcAsset.getLandArea() > 0){
       amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
     }
@@ -49,8 +47,8 @@ public class Dao2VoUtils {
     if(amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
     }
-    if(amcDebt.getEstimatedPrice() > 0 ){
-      amcDebtVo.setEstimatedPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getEstimatedPrice()));
+    if(amcDebt.getValuation() > 0 ){
+      amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
     }
     if(amcDebt.getBaseAmount() > 0 ){
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));

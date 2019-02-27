@@ -21,19 +21,16 @@ CREATE TABLE IF NOT EXISTS `AMC_ASSET` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `title` char(100) NOT NULL DEFAULT '-1' COMMENT '抵押物名称',
   `type` int(2) NOT NULL DEFAULT '-1' COMMENT '抵押物类别',
-  `status` int(2) NOT NULL DEFAULT '-1' COMMENT '抵押物处置状态',
-  `state` int(2) NOT NULL DEFAULT '-1' COMMENT '抵押状态 质押 1、冻结 2、抵押 3、查封 4',
-  `edit_status` int(2) NOT NULL DEFAULT '-1' COMMENT '1-发布， 2-未发布， 0-已删除， 3-已放弃， 4-已售出',
+  `sealed_state` int(2) NOT NULL DEFAULT '-1' COMMENT '抵押查封状态 未查封 首封 轮候第一顺位 轮候第二顺位 轮候其他顺位',
+  `publish_state` int(2) NOT NULL DEFAULT '-1' COMMENT '1-发布， 2-未发布， 0-已删除， 3-已放弃， 4-已售出',
   `amc_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '抵押物所属AMC ID',
   `amc_asset_code` char(15) NOT NULL DEFAULT '-1' COMMENT 'AMC内部业务编码',
-  `zcc_asset_code` char(15) NOT NULL DEFAULT '-1' COMMENT '平台编码',
-  `is_main_asset` smallint(2) NOT NULL DEFAULT '-1' COMMENT '1- 是主资产 -1 - 非主资产',
-  `estm_price` bigint(20) NOT NULL DEFAULT '-1' COMMENT '抵押物类别司法评估价精确到分',
+  `zcc_asset_code` char(15) NOT NULL DEFAULT '-1' COMMENT '债查查内部编码',
+  `valuation` bigint(20) NOT NULL DEFAULT '-1' COMMENT '抵押物司法评估价，精确到分',
   `debt_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '资产关联债权ID',
-  `init_price` bigint(20) NOT NULL DEFAULT '-1' COMMENT '拍卖起拍价',
-  `restrictions` int(2) NOT NULL DEFAULT '-1' COMMENT '是否限购',
-  `area` bigint(20) NOT NULL DEFAULT '-1' COMMENT '面积(只适用不动产)精确到平方米后2位',
-  `land_area` bigint(20) NOT NULL DEFAULT '-1' COMMENT '土地面积精确到平方米后2位',
+  `start_price` bigint(20) NOT NULL DEFAULT '-1' COMMENT '拍卖起拍价',
+  `area` bigint(20) NOT NULL DEFAULT '-1' COMMENT '建筑面积(只适用不动产)精确到平方米后2位',
+  `land_area` bigint(20) NOT NULL DEFAULT '-1' COMMENT '土地面积精确到亩后2位',
   `publish_date` date NOT NULL DEFAULT '1900-01-01' COMMENT '发布时间',
   `province` char(20) NOT NULL DEFAULT '-1' COMMENT '抵押物所在省',
   `city` char(20) NOT NULL DEFAULT '-1' COMMENT '抵押物所在市',
@@ -42,24 +39,23 @@ CREATE TABLE IF NOT EXISTS `AMC_ASSET` (
   `building_name` char(50) NOT NULL DEFAULT '-1' COMMENT '小区(楼盘)名字 爬取使用',
   `gps_lng` char(15) NOT NULL DEFAULT '0' COMMENT 'gps 坐标经度',
   `gps_lat` char(15) NOT NULL DEFAULT '0' COMMENT 'gps 坐标纬度',
-  `origin_debt_id` char(20) NOT NULL DEFAULT '-1',
-  `create_by` bigint(20) NOT NULL DEFAULT '-1' COMMENT 'Amc创建人Id',
-  `amc_conactor` bigint(20) NOT NULL DEFAULT '-1' COMMENT 'AMC 承办人ID',
+  `created_by` bigint(20) NOT NULL DEFAULT '-1' COMMENT 'Amc创建人Id 需要添加创建时间',
+  `created_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00',
+  `amc_contactor_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT 'AMC 联系人ID',
   PRIMARY KEY (`id`),
   KEY `title` (`title`)
-) ENGINE=InnoDB AUTO_INCREMENT=272 DEFAULT CHARSET=utf8mb4 COMMENT='债权';
+) ENGINE=InnoDB AUTO_INCREMENT=272 DEFAULT CHARSET=utf8mb4 COMMENT='抵押物';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CMPY
-CREATE TABLE IF NOT EXISTS `AMC_CMPY` (
+CREATE TABLE IF NOT EXISTS `AMC_CMPY` ( '债务人公司信息'
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `name` char(50) NOT NULL DEFAULT '-1' COMMENT '公司名称',
-  `reg_id` char(45) NOT NULL DEFAULT '-1' COMMENT '工商注册号',
-  `social_creditid` char(45) NOT NULL DEFAULT '-1' COMMENT '统一社会信用代码',
   `related_url` char(150) NOT NULL DEFAULT '-1' COMMENT '查看报告的url',
   PRIMARY KEY (`id`),
   UNIQUE KEY `u_name_idx` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COMMENT='公司信息';
+
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CMPY_SHAREHOLDER
@@ -78,28 +74,22 @@ CREATE TABLE IF NOT EXISTS `AMC_CMPY_SHAREHOLDER` (
   `type` int(2) NOT NULL DEFAULT '-1',
   `link` varchar(50) NOT NULL DEFAULT '-1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司股份持有信息\r\n';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='公司股份持有信息目前未使用';
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_CREDITOR
-CREATE TABLE IF NOT EXISTS `AMC_CREDITOR` (
+CREATE TABLE IF NOT EXISTS `AMC_INFO` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `debt_id` bigint(20) NOT NULL DEFAULT '-1',
-  `company_id` bigint(20) unsigned NOT NULL COMMENT '公司ID',
-  `company_branch_id` bigint(20) unsigned NOT NULL COMMENT '分公司ID',
-  `debt_contract` char(30) NOT NULL DEFAULT '-1' COMMENT '借款合同编号',
+  `amc_id` bigint(20) unsigned NOT NULL COMMENT 'AMC公司ID',
+  `name` varchar(30) NOT NULL DEFAULT '-1' COMMENT 'AMC公司名称',
+  `branch_name` bigint(20) unsigned NOT NULL COMMENT 'AMC分公司名称',
+  `address` varchar(50) NOT NULL DEFAULT '-1' COMMENT '地址',
+  `phone_num` varchar(50) NOT NULL DEFAULT '-1' COMMENT '电话',
   `note` varchar(50) NOT NULL DEFAULT '-1' COMMENT '备注',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债权人';
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='资产管理公司的信息';
 
--- Data exporting was unselected.
--- Dumping structure for table ZCC_AMC.AMC_CREDITOR_DEBT
-CREATE TABLE IF NOT EXISTS `AMC_CREDITOR_DEBT` (
-  `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `debt_id` bigint(20) NOT NULL DEFAULT '0',
-  `creditor_id` bigint(20) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COMMENT='债务人债权人关系';
+
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_DEBT
@@ -116,15 +106,16 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
   `settle_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '基准日期',
   `court_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '法院id',
   `amc_debt_code` varchar(30) NOT NULL DEFAULT '-1' COMMENT 'amc债权编号',
-  `edit_status` int(2) NOT NULL DEFAULT '-1' COMMENT '编辑状态	0-已删除， 1-发布， 2-未发布， 3-已放弃，4-已售出，5-待审核，6-草稿，7-已下架，8-审核未通过。',
+  `publish_state` int(2) NOT NULL DEFAULT '-1' COMMENT '编辑状态	0-已删除， 1-发布， 2-未发布，
+  3-已放弃，4-已售出，5-待审核，6-草稿，7-已下架，8-审核未通过。',
   `publish_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '发布时间',
-  `law_stat_desc` varchar(50) NOT NULL DEFAULT '-1' COMMENT '法律状态描述',
-  `estimated_price` bigint(20) NOT NULL DEFAULT '-1' COMMENT '债权评估价',
-  `amc_contact1` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人1',
+  `lawsuit_state_desc` varchar(50) NOT NULL DEFAULT '-1' COMMENT '法律状态描述',
+  `valuation` bigint(20) NOT NULL DEFAULT '-1' COMMENT '债权评估价',
+  `amc_contact` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人1',
   `amc_contact2` bigint(20) NOT NULL DEFAULT '-1' COMMENT '联系人2',
   `is_recommanded` int(2) NOT NULL DEFAULT '-1' COMMENT '推荐 不推荐',
-  `start_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '推荐开始日期',
-  `end_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '推荐截至日期',
+  `recomm_start_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '推荐开始日期',
+  `recomm_end_date` datetime NOT NULL DEFAULT '1900-01-01 00:00:00' COMMENT '推荐截至日期',
   `orig_creditor_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '原始债权人ID',
   `debt_desc` varchar(50) NOT NULL DEFAULT '-1' COMMENT '债权描述',
   PRIMARY KEY (`id`)
@@ -134,10 +125,11 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBT` (
 -- Dumping structure for table ZCC_AMC.AMC_DEBTOR
 CREATE TABLE IF NOT EXISTS `AMC_DEBTOR` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `name` char(50) NOT NULL COMMENT '名称',
-  `type` int(2) NOT NULL COMMENT '债务人类型',
-  `person_id` char(50) DEFAULT NULL COMMENT '债务人身份证ID',
-  `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID',
+  `debt_id` bigint(20) unsigned NOT NULL COMMENT '债权ID amc_debt',
+  `person_name` char(50) NOT NULL COMMENT '自然人名称',
+  `type` int(2) NOT NULL COMMENT '债务人类型 公司 自然人',
+  `role` int(2) NOT NULL COMMENT '债务人角色 借款人,担保人',
+  `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID amc_cmpy',
   `note` varchar(20) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
   UNIQUE KEY `u_name_idx` (`name`,`person_id`)
@@ -173,18 +165,7 @@ CREATE TABLE IF NOT EXISTS `AMC_GRNTCTRCT` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=57 DEFAULT CHARSET=utf8mb4 COMMENT='债权担保合同';
 
--- Data exporting was unselected.
--- Dumping structure for table ZCC_AMC.AMC_GRNTOR
-CREATE TABLE IF NOT EXISTS `AMC_GRNTOR` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `type` int(2) NOT NULL DEFAULT '-1' COMMENT '担保人类型 自然人 公司法人',
-  `cmpy_id` bigint(20) NOT NULL DEFAULT '-1',
-  `origin_cmpy_id` bigint(20) NOT NULL DEFAULT '-1' COMMENT '原先的company id',
-  `person_id` char(50) NOT NULL DEFAULT '-1',
-  `name` char(30) DEFAULT '0',
-  `notes` char(150) DEFAULT '0',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1484 DEFAULT CHARSET=utf8mb4 COMMENT='债权担保人';
+
 
 -- Data exporting was unselected.
 -- Dumping structure for table ZCC_AMC.AMC_ORGCREDITOR_DEBTPACK
@@ -201,7 +182,6 @@ CREATE TABLE IF NOT EXISTS `AMC_ORIG_CREDITOR` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `creditor_name` char(20) NOT NULL COMMENT '原始债权人名称',
   `note` varchar(20) DEFAULT NULL COMMENT '原始债权人描述信息',
-  `bank_name` varchar(20) DEFAULT NULL COMMENT '银行名称',
   `branch_name` varchar(20) DEFAULT NULL COMMENT '分行名称',
   PRIMARY KEY (`id`),
   UNIQUE KEY `bank_name` (`bank_name`)

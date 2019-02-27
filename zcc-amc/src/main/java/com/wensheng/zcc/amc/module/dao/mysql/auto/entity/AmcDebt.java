@@ -35,9 +35,9 @@ public class AmcDebt {
 
     private Long valuation;
 
-    private Long amcContact;
+    private Long amcContactorId;
 
-    private Long amcContact2;
+    private Long amcContactor2Id;
 
     private Integer isRecommanded;
 
@@ -183,20 +183,20 @@ public class AmcDebt {
         this.valuation = valuation;
     }
 
-    public Long getAmcContact() {
-        return amcContact;
+    public Long getAmcContactorId() {
+        return amcContactorId;
     }
 
-    public void setAmcContact(Long amcContact) {
-        this.amcContact = amcContact;
+    public void setAmcContactorId(Long amcContactorId) {
+        this.amcContactorId = amcContactorId;
     }
 
-    public Long getAmcContact2() {
-        return amcContact2;
+    public Long getAmcContactor2Id() {
+        return amcContactor2Id;
     }
 
-    public void setAmcContact2(Long amcContact2) {
-        this.amcContact2 = amcContact2;
+    public void setAmcContactor2Id(Long amcContactor2Id) {
+        this.amcContactor2Id = amcContactor2Id;
     }
 
     public Integer getIsRecommanded() {

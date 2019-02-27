@@ -18,8 +18,8 @@
     <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
     <result column="lawsuit_state_desc" jdbcType="VARCHAR" property="lawsuitStateDesc" />
     <result column="valuation" jdbcType="BIGINT" property="valuation" />
-    <result column="amc_contact" jdbcType="BIGINT" property="amcContact" />
-    <result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />
+    <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
+    <result column="amc_contactor2_id" jdbcType="BIGINT" property="amcContactor2Id" />
     <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
     <result column="guarant_type" jdbcType="INTEGER" property="guarantType" />
     <result column="recomm_start_date" jdbcType="TIMESTAMP" property="recommStartDate" />
@@ -90,8 +90,9 @@
   <sql id="Base_Column_List">
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
     total_amount_desc, settle_date, court_id, amc_debt_code, publish_state, publish_date, 
-    lawsuit_state_desc, valuation, amc_contact, amc_contact2, is_recommanded, guarant_type, 
-    recomm_start_date, recomm_end_date, orig_creditor_id, debt_desc, created_by, created_date
+    lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor2_id, is_recommanded, 
+    guarant_type, recomm_start_date, recomm_end_date, orig_creditor_id, debt_desc, created_by, 
+    created_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -133,7 +134,7 @@
       total_amount, total_amount_desc, settle_date, 
       court_id, amc_debt_code, publish_state, 
       publish_date, lawsuit_state_desc, valuation, 
-      amc_contact, amc_contact2, is_recommanded, 
+      amc_contactor_id, amc_contactor2_id, is_recommanded, 
       guarant_type, recomm_start_date, recomm_end_date, 
       orig_creditor_id, debt_desc, created_by, 
       created_date)
@@ -142,7 +143,7 @@
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
       #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, 
       #{publishDate,jdbcType=TIMESTAMP}, #{lawsuitStateDesc,jdbcType=VARCHAR}, #{valuation,jdbcType=BIGINT}, 
-      #{amcContact,jdbcType=BIGINT}, #{amcContact2,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
+      #{amcContactorId,jdbcType=BIGINT}, #{amcContactor2Id,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
       #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, 
       #{origCreditorId,jdbcType=BIGINT}, #{debtDesc,jdbcType=VARCHAR}, #{createdBy,jdbcType=BIGINT}, 
       #{createdDate,jdbcType=TIMESTAMP})
@@ -198,11 +199,11 @@
       <if test="valuation != null">
         valuation,
       </if>
-      <if test="amcContact != null">
-        amc_contact,
+      <if test="amcContactorId != null">
+        amc_contactor_id,
       </if>
-      <if test="amcContact2 != null">
-        amc_contact2,
+      <if test="amcContactor2Id != null">
+        amc_contactor2_id,
       </if>
       <if test="isRecommanded != null">
         is_recommanded,
@@ -275,11 +276,11 @@
       <if test="valuation != null">
         #{valuation,jdbcType=BIGINT},
       </if>
-      <if test="amcContact != null">
-        #{amcContact,jdbcType=BIGINT},
+      <if test="amcContactorId != null">
+        #{amcContactorId,jdbcType=BIGINT},
       </if>
-      <if test="amcContact2 != null">
-        #{amcContact2,jdbcType=BIGINT},
+      <if test="amcContactor2Id != null">
+        #{amcContactor2Id,jdbcType=BIGINT},
       </if>
       <if test="isRecommanded != null">
         #{isRecommanded,jdbcType=INTEGER},
@@ -364,11 +365,11 @@
       <if test="record.valuation != null">
         valuation = #{record.valuation,jdbcType=BIGINT},
       </if>
-      <if test="record.amcContact != null">
-        amc_contact = #{record.amcContact,jdbcType=BIGINT},
+      <if test="record.amcContactorId != null">
+        amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       </if>
-      <if test="record.amcContact2 != null">
-        amc_contact2 = #{record.amcContact2,jdbcType=BIGINT},
+      <if test="record.amcContactor2Id != null">
+        amc_contactor2_id = #{record.amcContactor2Id,jdbcType=BIGINT},
       </if>
       <if test="record.isRecommanded != null">
         is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
@@ -417,8 +418,8 @@
       publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
       lawsuit_state_desc = #{record.lawsuitStateDesc,jdbcType=VARCHAR},
       valuation = #{record.valuation,jdbcType=BIGINT},
-      amc_contact = #{record.amcContact,jdbcType=BIGINT},
-      amc_contact2 = #{record.amcContact2,jdbcType=BIGINT},
+      amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
+      amc_contactor2_id = #{record.amcContactor2Id,jdbcType=BIGINT},
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       guarant_type = #{record.guarantType,jdbcType=INTEGER},
       recomm_start_date = #{record.recommStartDate,jdbcType=TIMESTAMP},
@@ -479,11 +480,11 @@
       <if test="valuation != null">
         valuation = #{valuation,jdbcType=BIGINT},
       </if>
-      <if test="amcContact != null">
-        amc_contact = #{amcContact,jdbcType=BIGINT},
+      <if test="amcContactorId != null">
+        amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       </if>
-      <if test="amcContact2 != null">
-        amc_contact2 = #{amcContact2,jdbcType=BIGINT},
+      <if test="amcContactor2Id != null">
+        amc_contactor2_id = #{amcContactor2Id,jdbcType=BIGINT},
       </if>
       <if test="isRecommanded != null">
         is_recommanded = #{isRecommanded,jdbcType=INTEGER},
@@ -529,8 +530,8 @@
       publish_date = #{publishDate,jdbcType=TIMESTAMP},
       lawsuit_state_desc = #{lawsuitStateDesc,jdbcType=VARCHAR},
       valuation = #{valuation,jdbcType=BIGINT},
-      amc_contact = #{amcContact,jdbcType=BIGINT},
-      amc_contact2 = #{amcContact2,jdbcType=BIGINT},
+      amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
+      amc_contactor2_id = #{amcContactor2Id,jdbcType=BIGINT},
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       guarant_type = #{guarantType,jdbcType=INTEGER},
       recomm_start_date = #{recommStartDate,jdbcType=TIMESTAMP},

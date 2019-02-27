@@ -1115,123 +1115,123 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactIsNull() {
-            addCriterion("amc_contact is null");
+        public Criteria andAmcContactorIdIsNull() {
+            addCriterion("amc_contactor_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactIsNotNull() {
-            addCriterion("amc_contact is not null");
+        public Criteria andAmcContactorIdIsNotNull() {
+            addCriterion("amc_contactor_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactEqualTo(Long value) {
-            addCriterion("amc_contact =", value, "amcContact");
+        public Criteria andAmcContactorIdEqualTo(Long value) {
+            addCriterion("amc_contactor_id =", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactNotEqualTo(Long value) {
-            addCriterion("amc_contact <>", value, "amcContact");
+        public Criteria andAmcContactorIdNotEqualTo(Long value) {
+            addCriterion("amc_contactor_id <>", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactGreaterThan(Long value) {
-            addCriterion("amc_contact >", value, "amcContact");
+        public Criteria andAmcContactorIdGreaterThan(Long value) {
+            addCriterion("amc_contactor_id >", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactGreaterThanOrEqualTo(Long value) {
-            addCriterion("amc_contact >=", value, "amcContact");
+        public Criteria andAmcContactorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("amc_contactor_id >=", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactLessThan(Long value) {
-            addCriterion("amc_contact <", value, "amcContact");
+        public Criteria andAmcContactorIdLessThan(Long value) {
+            addCriterion("amc_contactor_id <", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactLessThanOrEqualTo(Long value) {
-            addCriterion("amc_contact <=", value, "amcContact");
+        public Criteria andAmcContactorIdLessThanOrEqualTo(Long value) {
+            addCriterion("amc_contactor_id <=", value, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactIn(List<Long> values) {
-            addCriterion("amc_contact in", values, "amcContact");
+        public Criteria andAmcContactorIdIn(List<Long> values) {
+            addCriterion("amc_contactor_id in", values, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactNotIn(List<Long> values) {
-            addCriterion("amc_contact not in", values, "amcContact");
+        public Criteria andAmcContactorIdNotIn(List<Long> values) {
+            addCriterion("amc_contactor_id not in", values, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactBetween(Long value1, Long value2) {
-            addCriterion("amc_contact between", value1, value2, "amcContact");
+        public Criteria andAmcContactorIdBetween(Long value1, Long value2) {
+            addCriterion("amc_contactor_id between", value1, value2, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContactNotBetween(Long value1, Long value2) {
-            addCriterion("amc_contact not between", value1, value2, "amcContact");
+        public Criteria andAmcContactorIdNotBetween(Long value1, Long value2) {
+            addCriterion("amc_contactor_id not between", value1, value2, "amcContactorId");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2IsNull() {
-            addCriterion("amc_contact2 is null");
+        public Criteria andAmcContactor2IdIsNull() {
+            addCriterion("amc_contactor2_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2IsNotNull() {
-            addCriterion("amc_contact2 is not null");
+        public Criteria andAmcContactor2IdIsNotNull() {
+            addCriterion("amc_contactor2_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2EqualTo(Long value) {
-            addCriterion("amc_contact2 =", value, "amcContact2");
+        public Criteria andAmcContactor2IdEqualTo(Long value) {
+            addCriterion("amc_contactor2_id =", value, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2NotEqualTo(Long value) {
-            addCriterion("amc_contact2 <>", value, "amcContact2");
+        public Criteria andAmcContactor2IdNotEqualTo(Long value) {
+            addCriterion("amc_contactor2_id <>", value, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2GreaterThan(Long value) {
-            addCriterion("amc_contact2 >", value, "amcContact2");
+        public Criteria andAmcContactor2IdGreaterThan(Long value) {
+            addCriterion("amc_contactor2_id >", value, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2GreaterThanOrEqualTo(Long value) {
-            addCriterion("amc_contact2 >=", value, "amcContact2");
+        public Criteria andAmcContactor2IdGreaterThanOrEqualTo(Long value) {
+            addCriterion("amc_contactor2_id >=", value, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2LessThan(Long value) {
-            addCriterion("amc_contact2 <", value, "amcContact2");
+        public Criteria andAmcContactor2IdLessThan(Long value) {
+            addCriterion("amc_contactor2_id <", value, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2LessThanOrEqualTo(Long value) {
-            addCriterion("amc_contact2 <=", value, "amcContact2");
+        public Criteria andAmcContactor2IdLessThanOrEqualTo(Long value) {
+            addCriterion("amc_contactor2_id <=", value, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2In(List<Long> values) {
-            addCriterion("amc_contact2 in", values, "amcContact2");
+        public Criteria andAmcContactor2IdIn(List<Long> values) {
+            addCriterion("amc_contactor2_id in", values, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2NotIn(List<Long> values) {
-            addCriterion("amc_contact2 not in", values, "amcContact2");
+        public Criteria andAmcContactor2IdNotIn(List<Long> values) {
+            addCriterion("amc_contactor2_id not in", values, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2Between(Long value1, Long value2) {
-            addCriterion("amc_contact2 between", value1, value2, "amcContact2");
+        public Criteria andAmcContactor2IdBetween(Long value1, Long value2) {
+            addCriterion("amc_contactor2_id between", value1, value2, "amcContactor2Id");
             return (Criteria) this;
         }
 
-        public Criteria andAmcContact2NotBetween(Long value1, Long value2) {
-            addCriterion("amc_contact2 not between", value1, value2, "amcContact2");
+        public Criteria andAmcContactor2IdNotBetween(Long value1, Long value2) {
+            addCriterion("amc_contactor2_id not between", value1, value2, "amcContactor2Id");
             return (Criteria) this;
         }
 

@@ -200,7 +200,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));
 
     }
-    if(amcDebt.getValuation() > 0 ){
+    if(amcDebt.getValuation() !=null && amcDebt.getValuation() > 0 ){
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
     }
@@ -208,12 +208,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
 
     }
-    if(amcDebt.getAmcContact() > 0){
-      amcDebtVo.setAmcContact1(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContact()));
+    if(amcDebt.getAmcContactorId() > 0){
+      amcDebtVo.setAmcContact1(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
     }
 
-    if(amcDebt.getAmcContact2() > 0){
-      amcDebtVo.setAmcContact2(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContact2()));
+    if(amcDebt.getAmcContactor2Id() != null && amcDebt.getAmcContactor2Id() > 0){
+      amcDebtVo.setAmcContact2(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactor2Id()));
     }
     return amcDebtVo;
   }

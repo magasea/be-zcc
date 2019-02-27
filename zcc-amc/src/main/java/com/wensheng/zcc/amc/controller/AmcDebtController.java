@@ -3,7 +3,6 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
-import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
@@ -11,7 +10,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
@@ -22,13 +20,13 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
+import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -241,7 +239,7 @@ public class AmcDebtController {
 
     AmcDebt amcDebt = new AmcDebt();
     AmcDebtCreateVo createVo = baseCreateVo.getContent();
-    BeanUtils.copyProperties(createVo, amcDebt);
+    AmcBeanUtils.copyProperties(createVo, amcDebt);
 
     //1. check deptpackId exist
     if (createVo.getDebtpackId() == null || createVo.getDebtpackId() < 0) {
@@ -253,36 +251,44 @@ public class AmcDebtController {
     }
 
     //2. check contact person exist
-    if (createVo.getAmcContact1() == null || createVo.getAmcContact1() < 0) {
+    if (createVo.getAmcContactorId() == null || createVo.getAmcContactorId() < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
     }
-    boolean isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact1());
+    boolean isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContactorId());
     if (!isAmcContactExist) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-          + "id:%d", createVo.getAmcContact1()));
+          + "id:%d", createVo.getAmcContactorId()));
     } else {
-      amcDebt.setAmcContact(createVo.getAmcContact1());
+      amcDebt.setAmcContactorId(createVo.getAmcContactorId());
     }
 
-    if (createVo.getAmcContact2() == null || createVo.getAmcContact2() < 0) {
+    if (createVo.getAmcContactor2Id() == null || createVo.getAmcContactor2Id() < 0) {
       log.info("no amc contactor2");
     }else{
-      isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContact2());
+      isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContactor2Id());
       if (!isAmcContactExist) {
         throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-            + "id:%d", createVo.getAmcContact2()));
+            + "id:%d", createVo.getAmcContactor2Id()));
       } else {
-        amcDebt.setAmcContact2(createVo.getAmcContact2());
+        amcDebt.setAmcContactor2Id(createVo.getAmcContactor2Id());
       }
     }
-
+    if(createVo.getTotalAmount() != null){
+      amcDebt.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getTotalAmount()));
+    }
+    if(createVo.getBaseAmount() != null){
+      amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getBaseAmount()));
+    }
+    if(createVo.getValuation() != null){
+      amcDebt.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getValuation()));
+    }
 
     //3. create the debt
-    AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
+      AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
 
-    //4. make relationship between creditors with debt
-    if (CollectionUtils.isEmpty(createVo.getCreditors())) {
-      amcDebtService.connDebt2Creditors(createVo.getCreditors(), amcDebtVo.getId());
+    //4. make relationship between debtors with debt
+    if (CollectionUtils.isEmpty(createVo.getDebtors())) {
+      amcDebtService.connDebt2Creditors(createVo.getDebtors(), amcDebtVo.getId());
     }
 
     return "succed";

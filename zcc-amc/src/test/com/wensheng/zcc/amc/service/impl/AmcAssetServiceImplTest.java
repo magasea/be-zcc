@@ -427,11 +427,11 @@ public class AmcAssetServiceImplTest {
         }
         if (!StringUtils.isEmpty(originItem.getAmcContact1())) {
             Long contactId = createOrUpdateAmcContact(originItem.getAmcContact1());
-            amcDebt.setAmcContact(contactId);
+            amcDebt.setAmcContactorId(contactId);
         }
         if (!StringUtils.isEmpty(originItem.getAmcContact2())) {
             Long contactId = createOrUpdateAmcContact(originItem.getAmcContact2());
-            amcDebt.setAmcContact2(contactId);
+            amcDebt.setAmcContactor2Id(contactId);
         }
         if (!StringUtils.isEmpty(originItem.getAmcDebtCode())) {
             amcDebt.setAmcDebtCode(originItem.getAmcDebtCode());

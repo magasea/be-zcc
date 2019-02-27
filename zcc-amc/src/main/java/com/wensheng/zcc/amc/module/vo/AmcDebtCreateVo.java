@@ -12,6 +12,8 @@ import lombok.Data;
 @Data
 public class AmcDebtCreateVo {
 
+  private Long id;
+
   private Long debtpackId;
 
   private Long amcId;
@@ -34,27 +36,36 @@ public class AmcDebtCreateVo {
 
   private String amcDebtCode;
 
-  private Integer editStatus;
+  private Integer publishState;
 
   private Date publishDate;
 
-  private String lawStatDesc;
+  private String lawsuitStateDesc;
 
-  private Long estimatedPrice;
+  private BigDecimal valuation;
 
-  private Long amcContact1;
+  private Long amcContactorId;
 
-  private Long amcContact2;
+  private Long amcContactor2Id;
 
   private Integer isRecommanded;
 
+  private Integer guarantType;
+
+  private Date recommStartDate;
+
+  private Date recommEndDate;
+
   private Long origCreditorId;
 
-  private Date startDate;
+  private String debtDesc;
 
-  private Date endDate;
+  private Long createdBy;
 
-  private List<Long> creditors;
+  private Date createdDate;
+
+
+  private List<Long> debtors;
 
 
 

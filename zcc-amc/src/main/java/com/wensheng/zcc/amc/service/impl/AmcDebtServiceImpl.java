@@ -307,7 +307,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     catch (DataIntegrityViolationException e) {
       log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()), e);
-      if(e.toString().contains("duplicate")){
+      if(e.toString().contains("Duplicate")){
         gotDuplicate = true;
       }
     }

@@ -10,8 +10,8 @@ import java.util.function.Function;
 public enum DebtorRoleEnum {
 
   NO_INFO(-1, "不确定"),
-  PERSONAL(1, "个人"),
-  COMPANY(2, "公司"),
+  BROWWER(1, "借款人"),
+  GUARANTOR(2, "担保人"),
   ;
 
   private int id;

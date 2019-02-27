@@ -331,7 +331,7 @@ public class AmcAssetServiceImplTest {
 //          AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
 //          amcGrntorExample.createCriteria().andNameEqualTo(grntor.getName()).andTypeEqualTo(DebtorRoleEnum.
 //              lookupByDisplayNameUtil(grntor.getType()).getId());
-//          List<AmcGrntor> amcGrntors =  amcGrntorMapper.selectByExample(amcGrntorExample);
+//          List<AmcDebtor> amcDebtors =  amcGrntorMapper.selectByExample(amcGrntorExample);
 //          AmcGrntor amcGrntor = null;
 //          Long newGrntorId = null;
 //          if(!CollectionUtils.isEmpty(amcGrntors)){

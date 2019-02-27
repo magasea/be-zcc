@@ -7,6 +7,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcPersonMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
@@ -27,6 +28,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrctExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
@@ -107,6 +109,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcOrigCreditorMapper amcOrigCreditorMapper;
+
+  @Autowired
+  AmcInfoMapper amcInfoMapper;
 
   @Autowired
   AmcDebtpackService amcDebtpackService;
@@ -267,56 +272,6 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtMapper.countByExample(null);
   }
 
-  @Override
-  public Long addGrantContract(AmcGrntctrct amcGrntctrct) {
-    amcGrntctrctMapper.insertSelective(amcGrntctrct);
-    return amcGrntctrct.getId();
-  }
-
-  @Override
-  public AmcGrntctrct updateGrantContract(AmcGrntctrct amcGrntctrct) {
-     amcGrntctrctMapper.updateByPrimaryKeySelective(amcGrntctrct);
-    return amcGrntctrct;
-  }
-
-  @Override
-  public Boolean isDebtIdExist(Long debtId) {
-    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
-    if(null == amcDebt){
-      return false;
-    }
-    return true;
-  }
-
-  @Override
-  public Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception {
-    DebtorRoleEnum type = DebtorRoleEnum.lookupByDisplayNameUtil(grantorType);
-
-
-    if( type == null || DebtorRoleEnum.lookupByDisplayNameUtil(grantorType) == DebtorRoleEnum.NO_INFO ){
-      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_GRANTORTYPE);
-    }
-    switch(type){
-      case COMPANY:
-        AmcCmpy amcCmpy = amcCmpyMapper.selectByPrimaryKey(grantorId);
-        if(null != amcCmpy){
-          return true;
-        }else{
-          return false;
-        }
-
-      case PERSONAL:
-        AmcGrntor amcGrntor = amcGrntorMapper.selectByPrimaryKey(grantorId);
-        if(null != amcGrntor){
-          return true;
-        }else{
-          return false;
-        }
-
-      default:
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_GRANTORTYPE);
-    }
-  }
 
   @Override
   public boolean isAmcContactexist(Long amcContact1) {
@@ -330,21 +285,22 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcDebtor create(AmcDebtor amcDebtor) throws Exception {
+
     //if the creditor is company, need check if company exists
     if( amcDebtor.getType() == DebtorRoleEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
       //need create company
-      if (StringUtils.isEmpty(amcDebtor.getName())){
+      if (StringUtils.isEmpty(amcDebtor.getPersonName())){
         throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");
       }
       AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
-      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getName());
+      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getPersonName());
       List<AmcCmpy> amcCmpies = amcCmpyMapper.selectByExample(amcCmpyExample);
       if(!CollectionUtils.isEmpty(amcCmpies)){
-        log.error(String.format("the company to create already exists:%s", amcDebtor.getName()));
+        log.error(String.format("the company to create already exists:%s", amcDebtor.getPersonName()));
         amcDebtor.setCompanyId(amcCmpies.get(0).getId());
       }else{
         AmcCmpy amcCmpy = new AmcCmpy();
-        amcCmpy.setName(amcDebtor.getName());
+        amcCmpy.setName(amcDebtor.getPersonName());
         amcCmpyMapper.insertSelective(amcCmpy);
         amcDebtor.setCompanyId(amcCmpy.getId());
       }
@@ -357,12 +313,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       return amcDebtor;
     }
     catch (DataIntegrityViolationException e) {
-      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()));
+      log.error(String.format("got duplicate insert for :%s", amcDebtor.getPersonName()));
       gotDuplicate = true;
     }
     if(gotDuplicate){
       AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
-      amcDebtorExample.createCriteria().andNameEqualTo(amcDebtor.getName());
+      amcDebtorExample.createCriteria().andPersonNameEqualTo(amcDebtor.getPersonName());
       List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
       return amcDebtors.get(0);
     }else{
@@ -404,32 +360,24 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcCreditor> getCreditors(Long amcDebtId) throws Exception {
-    AmcCreditorDebtExample amcCreditorDebtExample = new AmcCreditorDebtExample();
-    amcCreditorDebtExample.createCriteria().andDebtIdEqualTo(amcDebtId);
-    List<AmcCreditorDebt> creditors = amcCreditorDebtMapper.selectByExample(amcCreditorDebtExample);
-    if(CollectionUtils.isEmpty(creditors)){
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_CREDITOR);
+  public AmcInfo getAmcInfo(Long amcDebtId) throws Exception {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
+    if(null == amcDebt){
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE, amcDebtId.toString());
     }
-    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
-    List<Long> creditorIds =
-        creditors.stream().map( creditor  -> creditor.getCreditorId()).collect(Collectors.toList());
-    amcCreditorExample.createCriteria().andIdIn(creditorIds);
-    List<AmcCreditor> amcCreditors =
-        amcCreditorMapper.selectByExample(amcCreditorExample);
-    return amcCreditors;
+    AmcInfo amcInfo = amcInfoMapper.selectByPrimaryKey(amcDebt.getAmcId());
+
+    return amcInfo;
   }
 
   @Override
-  public List<AmcGrntor> getGrantors(Long amcDebtId) {
-    AmcGrntctrctExample amcGrntctrctExample = new AmcGrntctrctExample();
-    amcGrntctrctExample.createCriteria().andDebtIdEqualTo(amcDebtId);
-    List<AmcGrntctrct> amcGrntctrcts =  amcGrntctrctMapper.selectByExample(amcGrntctrctExample);
-    List<Long> grantorIds = amcGrntctrcts.stream().map(amcGrntctrct -> amcGrntctrct.getGrantorId()).collect(Collectors.toList());
-    AmcGrntorExample amcGrntorExample = new AmcGrntorExample();
-    amcGrntorExample.createCriteria().andIdIn(grantorIds);
-    List<AmcGrntor> grntors = amcGrntorMapper.selectByExample(amcGrntorExample);
-    return grntors;
+  public List<AmcDebtor> getDebtors(Long amcDebtId) {
+    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    amcDebtorExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+    List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+
+
+    return amcDebtors;
   }
 
   @Override

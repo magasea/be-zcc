@@ -132,7 +132,7 @@ CREATE TABLE IF NOT EXISTS `AMC_DEBTOR` (
   `company_id` bigint(20) DEFAULT NULL COMMENT '公司ID amc_cmpy',
   `note` varchar(20) DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `u_name_idx` (`name`,`person_id`)
+  UNIQUE KEY `u_name_idx` (`person_name`,`debt_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COMMENT='债务人';
 
 -- Data exporting was unselected.
@@ -180,11 +180,12 @@ CREATE TABLE IF NOT EXISTS `AMC_ORGCREDITOR_DEBTPACK` (
 -- Dumping structure for table ZCC_AMC.AMC_ORIG_CREDITOR
 CREATE TABLE IF NOT EXISTS `AMC_ORIG_CREDITOR` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `creditor_name` char(20) NOT NULL COMMENT '原始债权人名称',
-  `note` varchar(20) DEFAULT NULL COMMENT '原始债权人描述信息',
+  `bank_name` char(20) NOT NULL COMMENT '原始债权人名称',
   `branch_name` varchar(20) DEFAULT NULL COMMENT '分行名称',
+  `note` varchar(20) DEFAULT NULL COMMENT '原始债权人描述信息',
   PRIMARY KEY (`id`),
-  UNIQUE KEY `bank_name` (`bank_name`)
+  UNIQUE KEY `bank_name` (`bank_name`),
+  UNIQUE KEY `branch_name` (`branch_name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COMMENT='原始债权人';
 
 -- Data exporting was unselected.

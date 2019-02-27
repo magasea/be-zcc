@@ -8,6 +8,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
@@ -41,13 +42,7 @@ public interface AmcDebtService {
 
   Long getTotalCount();
 
-  Long addGrantContract(AmcGrntctrct amcGrntctrct);
 
-  AmcGrntctrct updateGrantContract(AmcGrntctrct amcGrntctrct);
-
-  Boolean isDebtIdExist(Long debtId);
-
-  Boolean isGrntIdExist(Long grantorId, int grantorType) throws Exception;
 
   boolean isAmcContactexist(Long amcContact1);
 
@@ -61,9 +56,9 @@ public interface AmcDebtService {
 
   public void connDebt2Creditors(List<Long> creditorIds, Long debtId);
 
-  public List<AmcCreditor> getCreditors(Long amcDebtId) throws Exception;
+  public AmcInfo getAmcInfo(Long amcDebtId) throws Exception;
 
-  public List<AmcGrntor> getGrantors(Long amcDebtId);
+  public List<AmcDebtor> getDebtors(Long amcDebtId);
 
   public AmcOrigCreditor getOriginCreditor(Long amcDebtId);
 

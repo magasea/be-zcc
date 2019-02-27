@@ -3,11 +3,13 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 public class AmcDebtor {
     private Long id;
 
-    private String name;
+    private Long debtId;
+
+    private String personName;
 
     private Integer type;
 
-    private String personId;
+    private Integer role;
 
     private Long companyId;
 
@@ -21,12 +23,20 @@ public class AmcDebtor {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public Long getDebtId() {
+        return debtId;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setDebtId(Long debtId) {
+        this.debtId = debtId;
+    }
+
+    public String getPersonName() {
+        return personName;
+    }
+
+    public void setPersonName(String personName) {
+        this.personName = personName == null ? null : personName.trim();
     }
 
     public Integer getType() {
@@ -37,12 +47,12 @@ public class AmcDebtor {
         this.type = type;
     }
 
-    public String getPersonId() {
-        return personId;
+    public Integer getRole() {
+        return role;
     }
 
-    public void setPersonId(String personId) {
-        this.personId = personId == null ? null : personId.trim();
+    public void setRole(Integer role) {
+        this.role = role;
     }
 
     public Long getCompanyId() {

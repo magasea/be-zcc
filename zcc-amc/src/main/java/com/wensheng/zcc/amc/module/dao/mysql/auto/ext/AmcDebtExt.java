@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.ext;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcPerson;
 import java.util.List;
@@ -20,5 +21,5 @@ public class AmcDebtExt  {
   List<AmcAsset> amcAssets ;
   List<AmcCreditor> creditors;
 
-  List<AmcGrntor> amcGrntors;
+  List<AmcDebtor> amcDebtors;
 }

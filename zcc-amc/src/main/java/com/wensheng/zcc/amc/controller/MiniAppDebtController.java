@@ -3,8 +3,9 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -92,13 +93,13 @@ public class MiniAppDebtController {
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
 
     try {
-      List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
+      AmcInfo amcInfo = amcDebtService.getAmcInfo(debtId);
 
-      List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
+      List<AmcDebtor> amcDebtors = amcDebtService.getDebtors(debtId);
 
       AmcOrigCreditor origCreditor = amcDebtService.getOriginCreditor(debtId);
-      amcDebtExtVo.setCreditors(creditors);
-      amcDebtExtVo.setAmcGrntors(amcGrntors);
+      amcDebtExtVo.setAmcInfos(amcInfo);
+      amcDebtExtVo.setAmcDebtors(amcDebtors);
       amcDebtExtVo.setOrigCreditor(origCreditor);
     } catch (Exception ex) {
       log.error("failed to get creditor or grantor", ex);

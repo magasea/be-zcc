@@ -8,11 +8,10 @@ import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
@@ -71,37 +70,37 @@ public class AmcDebtController {
   ZccRulesService zccRulesService;
 
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
-  @ResponseBody
-  public Long addGrntContract(@PathVariable(name = "amcId") Integer amcId,
-      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
-    checkGrantor(grntctrctBaseActionVo.getContent());
-
-    return amcDebtService.addGrantContract(grntctrctBaseActionVo.getContent());
-  }
-
-
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/update", method = RequestMethod.POST)
-  @ResponseBody
-  public AmcGrntctrct updateGrntContract(@PathVariable(name = "amcId") Integer amcId,
-      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
-    checkGrantor(grntctrctBaseActionVo.getContent());
-
-    return amcDebtService.updateGrantContract(grntctrctBaseActionVo.getContent());
-  }
+//  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
+//  @ResponseBody
+//  public Long addGrntContract(@PathVariable(name = "amcId") Integer amcId,
+//      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
+//    checkGrantor(grntctrctBaseActionVo.getContent());
+//
+//    return amcDebtService.addGrantContract(grntctrctBaseActionVo.getContent());
+//  }
 
 
-  private void checkGrantor(AmcGrntctrct grntctrct) throws Exception {
-    if (amcDebtService.isDebtIdExist(grntctrct.getDebtId())) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE, "" + grntctrct
-          .getDebtId());
-    }
-    if (!amcDebtService.isGrntIdExist(grntctrct.getGrantorId(),
-        grntctrct.getType())) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE, String.format("grantId:%d, "
-          + "grantorType:%d", grntctrct.getGrantorId(), grntctrct.getType()));
-    }
-  }
+//  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/update", method = RequestMethod.POST)
+//  @ResponseBody
+//  public AmcGrntctrct updateGrntContract(@PathVariable(name = "amcId") Integer amcId,
+//      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
+//    checkGrantor(grntctrctBaseActionVo.getContent());
+//
+//    return amcDebtService.updateGrantContract(grntctrctBaseActionVo.getContent());
+//  }
+
+
+//  private void checkGrantor(AmcGrntctrct grntctrct) throws Exception {
+//    if (amcDebtService.isDebtIdExist(grntctrct.getDebtId())) {
+//      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE, "" + grntctrct
+//          .getDebtId());
+//    }
+//    if (!amcDebtService.isGrntIdExist(grntctrct.getGrantorId(),
+//        grntctrct.getType())) {
+//      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE, String.format("grantId:%d, "
+//          + "grantorType:%d", grntctrct.getGrantorId(), grntctrct.getType()));
+//    }
+//  }
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
   @ResponseBody
@@ -300,13 +299,13 @@ public class AmcDebtController {
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
 
     try {
-      List<AmcCreditor> creditors = amcDebtService.getCreditors(debtId);
+      AmcInfo amcInfo = amcDebtService.getAmcInfo(debtId);
 
-      List<AmcGrntor> amcGrntors = amcDebtService.getGrantors(debtId);
+      List<AmcDebtor> amcDebtors = amcDebtService.getDebtors(debtId);
 
       AmcOrigCreditor origCreditor = amcDebtService.getOriginCreditor(debtId);
-      amcDebtExtVo.setCreditors(creditors);
-      amcDebtExtVo.setAmcGrntors(amcGrntors);
+      amcDebtExtVo.setAmcInfos(amcInfo);
+      amcDebtExtVo.setAmcDebtors(amcDebtors);
       amcDebtExtVo.setOrigCreditor(origCreditor);
     } catch (Exception ex) {
       log.error("failed to get creditor or grantor", ex);
@@ -331,9 +330,6 @@ public class AmcDebtController {
           .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getTotalAmount()));
       amcDebtService.update(amcDebt);
 
-      List<Long> creditorIds =
-          amcDebtExtVo.getCreditors().stream().map(amcCreditor -> amcCreditor.getId()).collect(Collectors.toList());
-      amcDebtService.connDebt2Creditors(creditorIds, amcDebtExtVo.getAmcDebtVo().getId());
     } catch (Exception ex) {
       log.error("failed to update debt", ex);
     }

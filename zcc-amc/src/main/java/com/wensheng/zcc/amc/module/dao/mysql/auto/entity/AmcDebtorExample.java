@@ -164,73 +164,133 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNull() {
-            addCriterion("name is null");
+        public Criteria andDebtIdIsNull() {
+            addCriterion("debt_id is null");
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNotNull() {
-            addCriterion("name is not null");
+        public Criteria andDebtIdIsNotNull() {
+            addCriterion("debt_id is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNameEqualTo(String value) {
-            addCriterion("name =", value, "name");
+        public Criteria andDebtIdEqualTo(Long value) {
+            addCriterion("debt_id =", value, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotEqualTo(String value) {
-            addCriterion("name <>", value, "name");
+        public Criteria andDebtIdNotEqualTo(Long value) {
+            addCriterion("debt_id <>", value, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThan(String value) {
-            addCriterion("name >", value, "name");
+        public Criteria andDebtIdGreaterThan(Long value) {
+            addCriterion("debt_id >", value, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThanOrEqualTo(String value) {
-            addCriterion("name >=", value, "name");
+        public Criteria andDebtIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("debt_id >=", value, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThan(String value) {
-            addCriterion("name <", value, "name");
+        public Criteria andDebtIdLessThan(Long value) {
+            addCriterion("debt_id <", value, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThanOrEqualTo(String value) {
-            addCriterion("name <=", value, "name");
+        public Criteria andDebtIdLessThanOrEqualTo(Long value) {
+            addCriterion("debt_id <=", value, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameLike(String value) {
-            addCriterion("name like", value, "name");
+        public Criteria andDebtIdIn(List<Long> values) {
+            addCriterion("debt_id in", values, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotLike(String value) {
-            addCriterion("name not like", value, "name");
+        public Criteria andDebtIdNotIn(List<Long> values) {
+            addCriterion("debt_id not in", values, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameIn(List<String> values) {
-            addCriterion("name in", values, "name");
+        public Criteria andDebtIdBetween(Long value1, Long value2) {
+            addCriterion("debt_id between", value1, value2, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotIn(List<String> values) {
-            addCriterion("name not in", values, "name");
+        public Criteria andDebtIdNotBetween(Long value1, Long value2) {
+            addCriterion("debt_id not between", value1, value2, "debtId");
             return (Criteria) this;
         }
 
-        public Criteria andNameBetween(String value1, String value2) {
-            addCriterion("name between", value1, value2, "name");
+        public Criteria andPersonNameIsNull() {
+            addCriterion("person_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotBetween(String value1, String value2) {
-            addCriterion("name not between", value1, value2, "name");
+        public Criteria andPersonNameIsNotNull() {
+            addCriterion("person_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameEqualTo(String value) {
+            addCriterion("person_name =", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameNotEqualTo(String value) {
+            addCriterion("person_name <>", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameGreaterThan(String value) {
+            addCriterion("person_name >", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameGreaterThanOrEqualTo(String value) {
+            addCriterion("person_name >=", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameLessThan(String value) {
+            addCriterion("person_name <", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameLessThanOrEqualTo(String value) {
+            addCriterion("person_name <=", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameLike(String value) {
+            addCriterion("person_name like", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameNotLike(String value) {
+            addCriterion("person_name not like", value, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameIn(List<String> values) {
+            addCriterion("person_name in", values, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameNotIn(List<String> values) {
+            addCriterion("person_name not in", values, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameBetween(String value1, String value2) {
+            addCriterion("person_name between", value1, value2, "personName");
+            return (Criteria) this;
+        }
+
+        public Criteria andPersonNameNotBetween(String value1, String value2) {
+            addCriterion("person_name not between", value1, value2, "personName");
             return (Criteria) this;
         }
 
@@ -294,73 +354,63 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdIsNull() {
-            addCriterion("person_id is null");
+        public Criteria andRoleIsNull() {
+            addCriterion("role is null");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdIsNotNull() {
-            addCriterion("person_id is not null");
+        public Criteria andRoleIsNotNull() {
+            addCriterion("role is not null");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdEqualTo(String value) {
-            addCriterion("person_id =", value, "personId");
+        public Criteria andRoleEqualTo(Integer value) {
+            addCriterion("role =", value, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdNotEqualTo(String value) {
-            addCriterion("person_id <>", value, "personId");
+        public Criteria andRoleNotEqualTo(Integer value) {
+            addCriterion("role <>", value, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdGreaterThan(String value) {
-            addCriterion("person_id >", value, "personId");
+        public Criteria andRoleGreaterThan(Integer value) {
+            addCriterion("role >", value, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdGreaterThanOrEqualTo(String value) {
-            addCriterion("person_id >=", value, "personId");
+        public Criteria andRoleGreaterThanOrEqualTo(Integer value) {
+            addCriterion("role >=", value, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdLessThan(String value) {
-            addCriterion("person_id <", value, "personId");
+        public Criteria andRoleLessThan(Integer value) {
+            addCriterion("role <", value, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdLessThanOrEqualTo(String value) {
-            addCriterion("person_id <=", value, "personId");
+        public Criteria andRoleLessThanOrEqualTo(Integer value) {
+            addCriterion("role <=", value, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdLike(String value) {
-            addCriterion("person_id like", value, "personId");
+        public Criteria andRoleIn(List<Integer> values) {
+            addCriterion("role in", values, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdNotLike(String value) {
-            addCriterion("person_id not like", value, "personId");
+        public Criteria andRoleNotIn(List<Integer> values) {
+            addCriterion("role not in", values, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdIn(List<String> values) {
-            addCriterion("person_id in", values, "personId");
+        public Criteria andRoleBetween(Integer value1, Integer value2) {
+            addCriterion("role between", value1, value2, "role");
             return (Criteria) this;
         }
 
-        public Criteria andPersonIdNotIn(List<String> values) {
-            addCriterion("person_id not in", values, "personId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPersonIdBetween(String value1, String value2) {
-            addCriterion("person_id between", value1, value2, "personId");
-            return (Criteria) this;
-        }
-
-        public Criteria andPersonIdNotBetween(String value1, String value2) {
-            addCriterion("person_id not between", value1, value2, "personId");
+        public Criteria andRoleNotBetween(Integer value1, Integer value2) {
+            addCriterion("role not between", value1, value2, "role");
             return (Criteria) this;
         }
 

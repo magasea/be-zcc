@@ -51,6 +51,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -136,8 +137,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcDebtVo create(AmcDebt amcDebt) {
-    Long debtId = Long.valueOf(amcDebtMapper.insertSelective(amcDebt));
-    amcDebt.setAmcId(debtId);
+    amcDebtMapper.insertSelective(amcDebt);
     return convertDo2Vo(amcDebt);
   }
 
@@ -269,8 +269,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public Long addGrantContract(AmcGrntctrct amcGrntctrct) {
-    Long id = Long.valueOf(amcGrntctrctMapper.insertSelective(amcGrntctrct));
-    return id;
+    amcGrntctrctMapper.insertSelective(amcGrntctrct);
+    return amcGrntctrct.getId();
   }
 
   @Override
@@ -345,13 +345,30 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       }else{
         AmcCmpy amcCmpy = new AmcCmpy();
         amcCmpy.setName(amcDebtor.getName());
-        Long companyId = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
-        amcDebtor.setCompanyId(companyId);
+        amcCmpyMapper.insertSelective(amcCmpy);
+        amcDebtor.setCompanyId(amcCmpy.getId());
       }
     }
-    Long id = Long.valueOf( amcDebtorMapper.insertSelective(amcDebtor));
-    amcDebtor.setId(id);
-    return amcDebtor;
+    boolean gotDuplicate = false;
+    try {
+      amcDebtor.setId(null);
+      amcDebtorMapper.insertSelective(amcDebtor);
+
+      return amcDebtor;
+    }
+    catch (DataIntegrityViolationException e) {
+      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()));
+      gotDuplicate = true;
+    }
+    if(gotDuplicate){
+      AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+      amcDebtorExample.createCriteria().andNameEqualTo(amcDebtor.getName());
+      List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+      return amcDebtors.get(0);
+    }else{
+      throw ExceptionUtils.getAmcException(AmcExceptions.INSERT_DB_ERROR);
+    }
+
   }
 
   @Override
@@ -362,8 +379,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcCmpy create(AmcCmpy amcCmpy) {
-    Long id = Long.valueOf(amcCmpyMapper.insertSelective(amcCmpy));
-    amcCmpy.setId(id);
+    amcCmpyMapper.insertSelective(amcCmpy);
     return amcCmpy;
   }
 
@@ -453,9 +469,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
   @Override
-  public AmcOrigCreditor createCreditor(AmcOrigCreditor amcOrigCreditor) {
-    Long id = Long.valueOf(amcOrigCreditorMapper.insertSelective(amcOrigCreditor));
-    amcOrigCreditor.setId(id);
+  public AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor) {
+    amcOrigCreditorMapper.insertSelective(amcOrigCreditor);
     return amcOrigCreditor;
   }
 
@@ -471,9 +486,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public Long getTotalCreditorCount() {
-    AmcCreditorExample amcCreditorExample = new AmcCreditorExample();
-    return amcCreditorMapper.countByExample(amcCreditorExample);
+  public Long getDebtorCount() {
+    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    return amcDebtorMapper.countByExample(amcDebtorExample);
   }
 
   @Override

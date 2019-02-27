@@ -16,6 +16,6 @@ public class UserCreateVo {
   String verificationCode;
   String department;
   String group;
-  String role_name;
+  String email;
 
 }

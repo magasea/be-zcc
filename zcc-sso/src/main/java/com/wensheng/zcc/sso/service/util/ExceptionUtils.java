@@ -18,7 +18,9 @@ public class ExceptionUtils {
   public static enum AmcExceptions{
 
     NO_SUCHUSER(1001, "No such user", "not fund such user"),
-
+    NO_REQUIRED_PHONEINFO(1002, "No phone info", "没有手机信息"),
+    INVALID_PASSWORD(1003, "Invalid Password", "密码不匹配或者为空"),
+    INVALID_PHONE_VERCODE(1004, "Invalid vercode", "验证码不匹配或者验证码过期"),
     ;
     int code;
     String name;

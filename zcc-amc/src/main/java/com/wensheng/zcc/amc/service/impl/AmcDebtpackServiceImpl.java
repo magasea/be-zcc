@@ -56,10 +56,7 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   @Override
   @Transactional
   public AmcDebtpack create(AmcDebtpack amcDebtpack) throws Exception {
-    Long id = Long.valueOf(amcDebtpackMapper.insertSelective(amcDebtpack));
-
-    amcDebtpack.setId(id);
-
+    amcDebtpackMapper.insertSelective(amcDebtpack);
 
     return amcDebtpack;
   }

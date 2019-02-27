@@ -16,7 +16,6 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtImageVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -33,14 +32,12 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -116,7 +113,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtor> getAmcCreditors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
+  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam GrantorTypeEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
@@ -132,7 +129,7 @@ public class AmcDebtController {
       log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
-    Long totalCount = amcDebtService.getTotalCreditorCount();
+    Long totalCount = amcDebtService.getDebtorCount();
 
     Page<AmcDebtor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
 
@@ -383,7 +380,7 @@ public class AmcDebtController {
     }
 
     AmcOrigCreditor amcOrigCreditorResult;
-    amcOrigCreditorResult = amcDebtService.createCreditor(amcOrigCreditor);
+    amcOrigCreditorResult = amcDebtService.createOrigCreditor(amcOrigCreditor);
     return amcOrigCreditorResult;
   }
 

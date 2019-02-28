@@ -71,7 +71,7 @@ public interface AmcDebtService {
 
   AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor);
 
-  List<AmcDebtor> getAllDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
+  List<AmcDebtor> getAllUnasignedDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam) throws Exception;
 
   Long getDebtorCount();
 

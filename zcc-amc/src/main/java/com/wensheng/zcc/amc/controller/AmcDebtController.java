@@ -109,9 +109,10 @@ public class AmcDebtController {
     return amcDebtService.create(amcDebtorBaseActionVo.getContent());
   }
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors-unasigned", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtor> getAmcDebtors(@RequestBody PageInfo pageable, @RequestParam DebtorTypeEnum typeEnum) throws Exception {
+  public Page<AmcDebtor> getAmcUnasignedDebtors(@RequestBody PageInfo pageable,
+      @RequestParam DebtorTypeEnum typeEnum) throws Exception {
 
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
@@ -121,7 +122,8 @@ public class AmcDebtController {
     List<AmcDebtor> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
     try {
-      queryResults = amcDebtService.getAllDebtors(Long.valueOf(offset), pageable.getSize(), typeEnum.getId(),
+
+      queryResults = amcDebtService.getAllUnasignedDebtors(Long.valueOf(offset), pageable.getSize(), typeEnum.getId(),
           orderByParam);
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());

@@ -17,8 +17,6 @@ public class AmcAssetVo {
 
   private Integer type;
 
-  private Integer status;
-
   private Integer sealedState;
 
   private Integer publishState;
@@ -29,14 +27,11 @@ public class AmcAssetVo {
 
   private String zccAssetCode;
 
-
   private BigDecimal valuation;
 
   private Long debtId;
 
   private BigDecimal startPrice;
-
-  private Integer restrictions;
 
   private BigDecimal area;
 
@@ -58,9 +53,11 @@ public class AmcAssetVo {
 
   private String gpsLat;
 
-  private Long createBy;
+  private Long createdBy;
 
-  private Long amcConactor;
+  private Date createdDate;
+
+  private Long amcContactorId;
 
   AssetAdditional assetAdditional;
 }

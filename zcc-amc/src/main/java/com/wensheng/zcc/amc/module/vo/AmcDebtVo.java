@@ -40,28 +40,33 @@ public class AmcDebtVo {
 
   private String amcDebtCode;
 
-  private Integer editStatus;
+  private Integer publishState;
 
   private Date publishDate;
 
-  private String lawStatDesc;
+  private String lawsuitStateDesc;
 
   private BigDecimal valuation;
 
-  private AmcDebtContactor amcContact1;
+  private AmcDebtContactor amcContactorId;
 
-  private AmcDebtContactor amcContact2;
+  private AmcDebtContactor amcContactor2Id;
 
   private Integer isRecommanded;
 
-  private Date startDate;
+  private Integer guarantType;
 
-  private Date endDate;
+  private Date recommStartDate;
+
+  private Date recommEndDate;
 
   private Long origCreditorId;
 
   private String debtDesc;
 
+  private Long createdBy;
+
+  private Date createdDate;
   List<AmcAssetVo> assetVos;
 
   DebtImage debtImage;

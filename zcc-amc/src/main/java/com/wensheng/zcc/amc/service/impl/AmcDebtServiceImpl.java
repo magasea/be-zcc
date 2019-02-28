@@ -209,11 +209,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     }
     if(amcDebt.getAmcContactorId() > 0){
-      amcDebtVo.setAmcContact1(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
+      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
     }
 
     if(amcDebt.getAmcContactor2Id() != null && amcDebt.getAmcContactor2Id() > 0){
-      amcDebtVo.setAmcContact2(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactor2Id()));
+      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactor2Id()));
     }
     return amcDebtVo;
   }
@@ -418,11 +418,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtor> getAllDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam)
+  public List<AmcDebtor> getAllUnasignedDebtors(Long offset, int size, int type, Map<String, Direction> orderByParam)
       throws Exception {
     AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
     if(type > 0 ){
-      amcDebtorExample.createCriteria().andTypeEqualTo(type);
+      //unasigned Debtor is assigned with debtId as 0L
+      amcDebtorExample.createCriteria().andTypeEqualTo(type).andDebtIdEqualTo(0L);
     }
     amcDebtorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
     return amcDebtorMapper.selectByExample(amcDebtorExample);

@@ -143,11 +143,11 @@ public class UserServiceImpl implements UserService {
 
   @Override
   public Map<String, String> getTokens(AmcUser amcUser) {
-    authenticationManagerBean;
-    Authentication authentication = new UsernamePasswordAuthenticationToken(amcUser.getMobilePhone(),
-        amcUser.getPassword());
-
-    tokenServices.createAccessToken( authenticationManagerBean.authenticate(authentication) )
+//    authenticationManagerBean;
+//    Authentication authentication = new UsernamePasswordAuthenticationToken(amcUser.getMobilePhone(),
+//        amcUser.getPassword());
+//
+//    tokenServices.createAccessToken( authenticationManagerBean.authenticate(authentication) )
     return null;
   }
 

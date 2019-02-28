@@ -101,7 +101,6 @@ public class AmcDebtController {
 //          + "grantorType:%d", grntctrct.getGrantorId(), grntctrct.getType()));
 //    }
 //  }
-@PreAuthorize("#oauth2.hasScope('write') and hasRole('SYSTEM_ADMIN')")
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
   @ResponseBody
@@ -291,8 +290,8 @@ public class AmcDebtController {
       AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
 
     //4. make relationship between debtors with debt
-    if (CollectionUtils.isEmpty(createVo.getDebtors())) {
-      amcDebtService.connDebt2Creditors(createVo.getDebtors(), amcDebtVo.getId());
+    if (!CollectionUtils.isEmpty(createVo.getDebtors())) {
+      amcDebtService.connDebt2Debtors(createVo.getDebtors(), amcDebtVo.getId());
     }
 
     return "succed";

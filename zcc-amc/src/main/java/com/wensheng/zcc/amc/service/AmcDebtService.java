@@ -54,7 +54,7 @@ public interface AmcDebtService {
 
   public AmcCmpy update(AmcCmpy amcCmpy);
 
-  public void connDebt2Creditors(List<Long> creditorIds, Long debtId);
+  public void connDebt2Debtors(List<Long> creditorIds, Long debtId);
 
   public AmcInfo getAmcInfo(Long amcDebtId) throws Exception;
 

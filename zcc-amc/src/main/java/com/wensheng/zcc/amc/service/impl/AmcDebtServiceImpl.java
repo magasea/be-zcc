@@ -1,5 +1,7 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import static org.reflections.Reflections.collect;
+
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
@@ -40,6 +42,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
@@ -342,16 +345,17 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Transactional
-  public void connDebt2Creditors(List<Long> creditorIds, Long debtId) {
-    AmcCreditorDebtExample amcCreditorDebtExample = new AmcCreditorDebtExample();
-    amcCreditorDebtExample.createCriteria().andDebtIdEqualTo(debtId);
-    amcCreditorDebtMapper.deleteByExample(amcCreditorDebtExample);
-    AmcCreditorDebt amcCreditorDebt = new AmcCreditorDebt();
-    for(Long creditorId: creditorIds){
-      amcCreditorDebt.setCreditorId(creditorId);
-      amcCreditorDebt.setDebtId(debtId);
-      amcCreditorDebtMapper.insertSelective(amcCreditorDebt);
+  public void connDebt2Debtors(List<Long> debtorIds, Long debtId) {
+    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    amcDebtorExample.createCriteria().andIdIn(debtorIds);
+    AmcDebtor amcDebtor = new AmcDebtor();
+    amcDebtor.setDebtId(debtId);
+    int count = amcDebtorMapper.updateByExampleSelective(amcDebtor, amcDebtorExample);
+    if(count <= 0){
+      log.error(String.format("Failed to update debtors by %s", debtorIds.stream().map(Object::toString).collect(
+          Collectors.joining(", "))));
     }
+
   }
 
   @Override

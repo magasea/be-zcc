@@ -26,3 +26,7 @@ Pseudo-terminal will not be allocated because stdin is not a terminal.
 ssh: Could not resolve hostname 10.20.100.236:/home/sunht/working/zcc/startup.sh: Name or service not known
 Pseudo-terminal will not be allocated because stdin is not a terminal.
 ssh: Could not resolve hostname 10.20.100.236:/home/sunht/working/zcc/startup.sh: Name or service not known
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+ssh: Could not resolve hostname 10.20.100.236:/home/sunht/working/zcc/startup.sh: Name or service not known
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+ssh: Could not resolve hostname 10.20.100.236:/home/sunht/working/zcc/startup.sh: Name or service not known

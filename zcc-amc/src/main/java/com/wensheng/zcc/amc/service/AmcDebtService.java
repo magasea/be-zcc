@@ -40,6 +40,8 @@ public interface AmcDebtService {
 
   List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception;
 
+  List<AmcDebtVo> queryAllDebt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception;
+
   List<AmcDebt> queryByDebtpackId(Long debtPackId);
 
   Long getTotalCount();

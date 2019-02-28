@@ -36,7 +36,7 @@
       resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"/>
 
     <collection property="amcDebtors"
-      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="adr_"/>
+      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper.BaseResultMap" columnPrefix="adr_"/>
   </resultMap>
   <!--<select id="selectAsset">-->
     <!--SELECT  aa.id FROM AMC_ASSET aa WHERE aa.debtId = # {id}-->

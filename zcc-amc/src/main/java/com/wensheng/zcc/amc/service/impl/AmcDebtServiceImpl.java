@@ -276,6 +276,29 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtVos;
   }
 
+
+  @Override
+  public List<AmcDebtVo> queryAllDebt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception {
+
+
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    try{
+      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy));
+    }catch (Exception ex){
+      logger.error("there is no orderBy params:" + ex.getMessage());
+    }
+
+    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
+
+    List<AmcDebt> amcDebtList = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    for(AmcDebt amcDebt: amcDebtList){
+      amcDebtVos.add(convertDo2Vo(amcDebt));
+    }
+
+    return amcDebtVos;
+  }
   @Override
   public List<AmcDebt> queryByDebtpackId(Long debtPackId) {
     AmcDebtExample amcDebtExample = new AmcDebtExample();

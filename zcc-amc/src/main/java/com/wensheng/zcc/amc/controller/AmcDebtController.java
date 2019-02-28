@@ -359,7 +359,7 @@ public class AmcDebtController {
     List<AmcDebtVo> queryResults;
     int offset = PageReqRepHelper.getOffset(pageable);
     try {
-      queryResults = amcDebtService.queryAllExt(Long.valueOf(offset), pageable.getSize(), orderByParam);
+      queryResults = amcDebtService.queryAllDebt(Long.valueOf(offset), pageable.getSize(), orderByParam);
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
       throw ex;

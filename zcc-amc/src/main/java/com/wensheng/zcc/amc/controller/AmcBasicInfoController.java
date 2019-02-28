@@ -130,9 +130,9 @@ public class AmcBasicInfoController {
     return result;
   }
 
-  @RequestMapping(value = "/grantorType", method = RequestMethod.GET)
+  @RequestMapping(value = "/debtorRoleType", method = RequestMethod.GET)
   @ResponseBody
-  public List<String> getGrantorType(){
+  public List<String> getDebtorRoleType(){
 
     List<String> result = new ArrayList<>();
     for(DebtorRoleEnum enumItem: DebtorRoleEnum.values()){

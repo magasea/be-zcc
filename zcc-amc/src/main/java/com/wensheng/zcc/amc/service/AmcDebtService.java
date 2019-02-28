@@ -5,11 +5,13 @@ import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
 import java.util.Map;
@@ -32,7 +34,7 @@ public interface AmcDebtService {
 
   public List<AmcDebtVo> queryAll(int offset, int size);
 
-  public AmcDebtVo get(Long amcDebtId) throws Exception;
+  public AmcDebtExtVo get(Long amcDebtId) throws Exception;
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
@@ -55,6 +57,8 @@ public interface AmcDebtService {
   public AmcCmpy update(AmcCmpy amcCmpy);
 
   public void connDebt2Debtors(List<Long> creditorIds, Long debtId);
+
+  public void saveDebtDesc(String debtDesc, Long debtId);
 
   public AmcInfo getAmcInfo(Long amcDebtId) throws Exception;
 
@@ -80,4 +84,5 @@ public interface AmcDebtService {
   Long getTotalCompanyCount();
 
   Map<String, List<Long>> getAllTitles();
+
 }

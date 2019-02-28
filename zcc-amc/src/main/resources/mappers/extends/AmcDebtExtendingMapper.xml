@@ -35,7 +35,8 @@
     <collection property="amcAssets"
       resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"/>
 
-
+    <collection property="amcDebtors"
+      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="adr_"/>
   </resultMap>
   <!--<select id="selectAsset">-->
     <!--SELECT  aa.id FROM AMC_ASSET aa WHERE aa.debtId = # {id}-->
@@ -95,7 +96,15 @@
   ${prefix}amc_contactor_id as ${alias}amc_contactor_id
   </sql>
 
-
+  <sql id="DEBTOR_Column_List">
+  ${prefix}id as ${alias}id,
+  ${prefix}debt_id as ${alias}debt_id,
+  ${prefix}debtor_name as ${alias}debtor_name,
+  ${prefix}debtor_type as ${alias}debtor_type,
+  ${prefix}role as ${alias}role,
+  ${prefix}company_id as ${alias}company_id,
+  ${prefix}note as ${alias}note
+  </sql>
   <select id="selectByExampleWithRowboundsExt"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">
     select
@@ -105,9 +114,13 @@
     <include refid="Prefix_Column_List"><property name="prefix" value="ad."></property></include>,
     <include
       refid="ASSET_Column_List"><property name="prefix" value="aa."></property><property name="alias"
-      value="aa_"></property></include>
-    from AMC_DEBT ad  left join AMC_ASSET aa
-    on ad.id = aa.debt_id
+      value="aa_"></property></include>,
+    <include
+      refid="DEBTOR_Column_List"><property name="prefix" value="adr."></property><property name="alias"
+      value="adr_"></property></include>
+    from AMC_DEBT ad
+    left join AMC_ASSET aa on ad.id = aa.debt_id
+    left join AMC_DEBTOR adr on ad.id = adr.debt_id
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Example_Where_Clause" />
     </if>
@@ -116,7 +129,21 @@
     </if>
   </select>
 
-
+  <select id="selectByPrimaryKeyExt"
+    parameterType="Long" resultMap="BaseResultMapExt">
+    select
+    <include refid="Prefix_Column_List"><property name="prefix" value="ad."></property></include>,
+    <include
+      refid="ASSET_Column_List"><property name="prefix" value="aa."></property><property name="alias"
+      value="aa_"></property></include>,
+    <include
+      refid="DEBTOR_Column_List"><property name="prefix" value="adr."></property><property name="alias"
+      value="adr_"></property></include>
+    from AMC_DEBT ad
+    left join AMC_ASSET aa on ad.id = aa.debt_id
+    left join AMC_DEBTOR adr on ad.id = adr.debt_id
+    where ad.id = #{id}
+  </select>
 
   <select id="selectAllTitlesByExample"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample"

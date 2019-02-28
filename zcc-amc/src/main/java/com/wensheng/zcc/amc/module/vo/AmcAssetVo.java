@@ -37,6 +37,8 @@ public class AmcAssetVo {
 
   private BigDecimal landArea;
 
+  private Integer landAreaUnit;
+
   private Date publishDate;
 
   private String province;

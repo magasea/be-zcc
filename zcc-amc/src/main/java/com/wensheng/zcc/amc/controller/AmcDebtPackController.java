@@ -22,6 +22,7 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -59,6 +60,15 @@ public class AmcDebtPackController {
 
 
     return page;
+  }
+
+  @RequestMapping(value = "amcid/{amcId}/debtpack", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDebtpack getDebtPack(@RequestParam("debtPackId") Long debtPackId) throws Exception {
+
+
+    return amcDebtpackService.get(debtPackId);
+
   }
 
   @RequestMapping(value = "amcid/{amcId}/debtpack/update", method = RequestMethod.POST)

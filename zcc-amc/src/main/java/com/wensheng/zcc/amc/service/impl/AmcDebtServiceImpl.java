@@ -15,6 +15,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
@@ -29,6 +30,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
+import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
@@ -55,6 +57,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -158,12 +161,32 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcDebtVo get(Long amcDebtId) throws Exception {
-    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
-    if(amcDebt == null){
+  public AmcDebtExtVo get(Long amcDebtId) throws Exception {
+
+    List<AmcDebtExt> amcDebtExts = amcDebtExtMapper.selectByPrimaryKeyExt(amcDebtId);
+    if(CollectionUtils.isEmpty(amcDebtExts )){
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE);
     }
-    return Dao2VoUtils.convertDo2Vo(amcDebt);
+    AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
+
+    AmcDebtVo amcDebtVo = Dao2VoUtils.convertDo2Vo(amcDebtExts.get(0).getDebtInfo());
+    AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
+    AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
+
+    amcDebtVo.setAmcContactorId(amcDebtContactor);
+    amcDebtVo.setAmcContactor2Id(amcDebtContactor2);
+
+
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("debtId").is(amcDebtId));
+
+    List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
+    if(!CollectionUtils.isEmpty(debtAdditionals)){
+      amcDebtVo.setDebtDesc(debtAdditionals.get(0).getDesc());
+    }
+    amcDebtExtVo.setAmcDebtVo(amcDebtVo);
+    return amcDebtExtVo;
   }
 
 
@@ -283,20 +306,20 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   public AmcDebtor create(AmcDebtor amcDebtor) throws Exception {
 
     //if the creditor is company, need check if company exists
-    if( amcDebtor.getType() == DebtorTypeEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
+    if( amcDebtor.getDebtorType() == DebtorTypeEnum.COMPANY.getId() && (amcDebtor.getCompanyId() == null || amcDebtor.getCompanyId() <= 0)){
       //need create company
-      if (StringUtils.isEmpty(amcDebtor.getName())){
+      if (StringUtils.isEmpty(amcDebtor.getDebtorName())){
         throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"company name is must");
       }
       AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
-      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getName());
+      amcCmpyExample.createCriteria().andNameEqualTo(amcDebtor.getDebtorName());
       List<AmcCmpy> amcCmpies = amcCmpyMapper.selectByExample(amcCmpyExample);
       if(!CollectionUtils.isEmpty(amcCmpies)){
-        log.error(String.format("the company to create already exists:%s", amcDebtor.getName()));
+        log.error(String.format("the company to create already exists:%s", amcDebtor.getDebtorName()));
         amcDebtor.setCompanyId(amcCmpies.get(0).getId());
       }else{
         AmcCmpy amcCmpy = new AmcCmpy();
-        amcCmpy.setName(amcDebtor.getName());
+        amcCmpy.setName(amcDebtor.getDebtorName());
         amcCmpyMapper.insertSelective(amcCmpy);
         amcDebtor.setCompanyId(amcCmpy.getId());
       }
@@ -309,14 +332,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       return amcDebtor;
     }
     catch (DataIntegrityViolationException e) {
-      log.error(String.format("got duplicate insert for :%s", amcDebtor.getName()), e);
+      log.error(String.format("got duplicate insert for :%s", amcDebtor.getDebtorName()), e);
       if(e.toString().contains("Duplicate")){
         gotDuplicate = true;
       }
     }
     if(gotDuplicate){
       AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
-      amcDebtorExample.createCriteria().andNameEqualTo(amcDebtor.getName());
+      amcDebtorExample.createCriteria().andDebtorNameEqualTo(amcDebtor.getDebtorName());
       List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
       return amcDebtors.get(0);
     }else{
@@ -355,6 +378,21 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       log.error(String.format("Failed to update debtors by %s", debtorIds.stream().map(Object::toString).collect(
           Collectors.joining(", "))));
     }
+
+  }
+
+  @Override
+  public void saveDebtDesc(String debtDesc, Long debtId) {
+    DebtAdditional debtAdditional = new DebtAdditional();
+    debtAdditional.setAmcDebtId(debtId);
+    debtAdditional.setDesc(debtDesc);
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    Update update = new Update();
+    update.set("desc", debtDesc);
+    wszccTemplate.upsert(query, update, DebtAdditional.class);
+
+    return;
 
   }
 
@@ -427,7 +465,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
     if(type > 0 ){
       //unasigned Debtor is assigned with debtId as 0L
-      amcDebtorExample.createCriteria().andTypeEqualTo(type).andDebtIdEqualTo(0L);
+      amcDebtorExample.createCriteria().andDebtorTypeEqualTo(type).andDebtIdEqualTo(0L);
     }
     amcDebtorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
     return amcDebtorMapper.selectByExample(amcDebtorExample);
@@ -466,4 +504,5 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     return result;
   }
+
 }

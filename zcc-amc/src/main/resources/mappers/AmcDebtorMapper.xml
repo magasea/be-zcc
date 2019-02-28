@@ -4,8 +4,8 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="name" jdbcType="CHAR" property="name" />
-    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="debtor_name" jdbcType="CHAR" property="debtorName" />
+    <result column="debtor_type" jdbcType="INTEGER" property="debtorType" />
     <result column="role" jdbcType="INTEGER" property="role" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="note" jdbcType="VARCHAR" property="note" />
@@ -69,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, debt_id, name, type, role, company_id, note
+    id, debt_id, debtor_name, debtor_type, role, company_id, note
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample" resultMap="BaseResultMap">
     select
@@ -106,10 +106,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTOR (debt_id, name, type, 
+    insert into AMC_DEBTOR (debt_id, debtor_name, debtor_type, 
       role, company_id, note
       )
-    values (#{debtId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, 
+    values (#{debtId,jdbcType=BIGINT}, #{debtorName,jdbcType=CHAR}, #{debtorType,jdbcType=INTEGER}, 
       #{role,jdbcType=INTEGER}, #{companyId,jdbcType=BIGINT}, #{note,jdbcType=VARCHAR}
       )
   </insert>
@@ -122,11 +122,11 @@
       <if test="debtId != null">
         debt_id,
       </if>
-      <if test="name != null">
-        name,
+      <if test="debtorName != null">
+        debtor_name,
       </if>
-      <if test="type != null">
-        type,
+      <if test="debtorType != null">
+        debtor_type,
       </if>
       <if test="role != null">
         role,
@@ -142,11 +142,11 @@
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="name != null">
-        #{name,jdbcType=CHAR},
+      <if test="debtorName != null">
+        #{debtorName,jdbcType=CHAR},
       </if>
-      <if test="type != null">
-        #{type,jdbcType=INTEGER},
+      <if test="debtorType != null">
+        #{debtorType,jdbcType=INTEGER},
       </if>
       <if test="role != null">
         #{role,jdbcType=INTEGER},
@@ -174,11 +174,11 @@
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
-      <if test="record.name != null">
-        name = #{record.name,jdbcType=CHAR},
+      <if test="record.debtorName != null">
+        debtor_name = #{record.debtorName,jdbcType=CHAR},
       </if>
-      <if test="record.type != null">
-        type = #{record.type,jdbcType=INTEGER},
+      <if test="record.debtorType != null">
+        debtor_type = #{record.debtorType,jdbcType=INTEGER},
       </if>
       <if test="record.role != null">
         role = #{record.role,jdbcType=INTEGER},
@@ -198,8 +198,8 @@
     update AMC_DEBTOR
     set id = #{record.id,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      name = #{record.name,jdbcType=CHAR},
-      type = #{record.type,jdbcType=INTEGER},
+      debtor_name = #{record.debtorName,jdbcType=CHAR},
+      debtor_type = #{record.debtorType,jdbcType=INTEGER},
       role = #{record.role,jdbcType=INTEGER},
       company_id = #{record.companyId,jdbcType=BIGINT},
       note = #{record.note,jdbcType=VARCHAR}
@@ -213,11 +213,11 @@
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="name != null">
-        name = #{name,jdbcType=CHAR},
+      <if test="debtorName != null">
+        debtor_name = #{debtorName,jdbcType=CHAR},
       </if>
-      <if test="type != null">
-        type = #{type,jdbcType=INTEGER},
+      <if test="debtorType != null">
+        debtor_type = #{debtorType,jdbcType=INTEGER},
       </if>
       <if test="role != null">
         role = #{role,jdbcType=INTEGER},
@@ -234,8 +234,8 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor">
     update AMC_DEBTOR
     set debt_id = #{debtId,jdbcType=BIGINT},
-      name = #{name,jdbcType=CHAR},
-      type = #{type,jdbcType=INTEGER},
+      debtor_name = #{debtorName,jdbcType=CHAR},
+      debtor_type = #{debtorType,jdbcType=INTEGER},
       role = #{role,jdbcType=INTEGER},
       company_id = #{companyId,jdbcType=BIGINT},
       note = #{note,jdbcType=VARCHAR}

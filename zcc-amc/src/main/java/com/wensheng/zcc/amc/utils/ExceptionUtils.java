@@ -32,6 +32,7 @@ public class ExceptionUtils {
 
     NO_CREDITOR(1011, "no creditor", "没有借款人"),
     INSERT_DB_ERROR(1012, "failed to insert db", "数据插入失败"),
+    INVALID_LANDAREA_NUMBER(1013, "invalid landarea number", "非法的土地面积")
 
     ;
     int code;

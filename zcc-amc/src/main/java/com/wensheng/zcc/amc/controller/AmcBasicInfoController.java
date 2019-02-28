@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
+import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
@@ -152,6 +153,17 @@ public class AmcBasicInfoController {
   }
 
 
+  @RequestMapping(value = "/areaUnit", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAreaUnit(){
+
+    List<String> result = new ArrayList<>();
+    for(AreaUnitEnum enumItem: AreaUnitEnum.values()){
+      result.add(String.format("%d:%s", enumItem.getType(), enumItem.getName()));
+    }
+    return result;
+  }
+
   @RequestMapping(value = "/guarantType", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getGuarantType(){
@@ -162,6 +174,8 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+
+
 
   @RequestMapping(value = "/debtorRoles", method = RequestMethod.GET)
   @ResponseBody

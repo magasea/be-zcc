@@ -224,133 +224,133 @@ public class AmcDebtorExample {
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNull() {
-            addCriterion("name is null");
+        public Criteria andDebtorNameIsNull() {
+            addCriterion("debtor_name is null");
             return (Criteria) this;
         }
 
-        public Criteria andNameIsNotNull() {
-            addCriterion("name is not null");
+        public Criteria andDebtorNameIsNotNull() {
+            addCriterion("debtor_name is not null");
             return (Criteria) this;
         }
 
-        public Criteria andNameEqualTo(String value) {
-            addCriterion("name =", value, "name");
+        public Criteria andDebtorNameEqualTo(String value) {
+            addCriterion("debtor_name =", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotEqualTo(String value) {
-            addCriterion("name <>", value, "name");
+        public Criteria andDebtorNameNotEqualTo(String value) {
+            addCriterion("debtor_name <>", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThan(String value) {
-            addCriterion("name >", value, "name");
+        public Criteria andDebtorNameGreaterThan(String value) {
+            addCriterion("debtor_name >", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameGreaterThanOrEqualTo(String value) {
-            addCriterion("name >=", value, "name");
+        public Criteria andDebtorNameGreaterThanOrEqualTo(String value) {
+            addCriterion("debtor_name >=", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThan(String value) {
-            addCriterion("name <", value, "name");
+        public Criteria andDebtorNameLessThan(String value) {
+            addCriterion("debtor_name <", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLessThanOrEqualTo(String value) {
-            addCriterion("name <=", value, "name");
+        public Criteria andDebtorNameLessThanOrEqualTo(String value) {
+            addCriterion("debtor_name <=", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameLike(String value) {
-            addCriterion("name like", value, "name");
+        public Criteria andDebtorNameLike(String value) {
+            addCriterion("debtor_name like", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotLike(String value) {
-            addCriterion("name not like", value, "name");
+        public Criteria andDebtorNameNotLike(String value) {
+            addCriterion("debtor_name not like", value, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameIn(List<String> values) {
-            addCriterion("name in", values, "name");
+        public Criteria andDebtorNameIn(List<String> values) {
+            addCriterion("debtor_name in", values, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotIn(List<String> values) {
-            addCriterion("name not in", values, "name");
+        public Criteria andDebtorNameNotIn(List<String> values) {
+            addCriterion("debtor_name not in", values, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameBetween(String value1, String value2) {
-            addCriterion("name between", value1, value2, "name");
+        public Criteria andDebtorNameBetween(String value1, String value2) {
+            addCriterion("debtor_name between", value1, value2, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andNameNotBetween(String value1, String value2) {
-            addCriterion("name not between", value1, value2, "name");
+        public Criteria andDebtorNameNotBetween(String value1, String value2) {
+            addCriterion("debtor_name not between", value1, value2, "debtorName");
             return (Criteria) this;
         }
 
-        public Criteria andTypeIsNull() {
-            addCriterion("type is null");
+        public Criteria andDebtorTypeIsNull() {
+            addCriterion("debtor_type is null");
             return (Criteria) this;
         }
 
-        public Criteria andTypeIsNotNull() {
-            addCriterion("type is not null");
+        public Criteria andDebtorTypeIsNotNull() {
+            addCriterion("debtor_type is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTypeEqualTo(Integer value) {
-            addCriterion("type =", value, "type");
+        public Criteria andDebtorTypeEqualTo(Integer value) {
+            addCriterion("debtor_type =", value, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotEqualTo(Integer value) {
-            addCriterion("type <>", value, "type");
+        public Criteria andDebtorTypeNotEqualTo(Integer value) {
+            addCriterion("debtor_type <>", value, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThan(Integer value) {
-            addCriterion("type >", value, "type");
+        public Criteria andDebtorTypeGreaterThan(Integer value) {
+            addCriterion("debtor_type >", value, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeGreaterThanOrEqualTo(Integer value) {
-            addCriterion("type >=", value, "type");
+        public Criteria andDebtorTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("debtor_type >=", value, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThan(Integer value) {
-            addCriterion("type <", value, "type");
+        public Criteria andDebtorTypeLessThan(Integer value) {
+            addCriterion("debtor_type <", value, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeLessThanOrEqualTo(Integer value) {
-            addCriterion("type <=", value, "type");
+        public Criteria andDebtorTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("debtor_type <=", value, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeIn(List<Integer> values) {
-            addCriterion("type in", values, "type");
+        public Criteria andDebtorTypeIn(List<Integer> values) {
+            addCriterion("debtor_type in", values, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotIn(List<Integer> values) {
-            addCriterion("type not in", values, "type");
+        public Criteria andDebtorTypeNotIn(List<Integer> values) {
+            addCriterion("debtor_type not in", values, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeBetween(Integer value1, Integer value2) {
-            addCriterion("type between", value1, value2, "type");
+        public Criteria andDebtorTypeBetween(Integer value1, Integer value2) {
+            addCriterion("debtor_type between", value1, value2, "debtorType");
             return (Criteria) this;
         }
 
-        public Criteria andTypeNotBetween(Integer value1, Integer value2) {
-            addCriterion("type not between", value1, value2, "type");
+        public Criteria andDebtorTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("debtor_type not between", value1, value2, "debtorType");
             return (Criteria) this;
         }
 

@@ -942,6 +942,66 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
+        public Criteria andLandAreaUnitIsNull() {
+            addCriterion("land_area_unit is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitIsNotNull() {
+            addCriterion("land_area_unit is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitEqualTo(Integer value) {
+            addCriterion("land_area_unit =", value, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitNotEqualTo(Integer value) {
+            addCriterion("land_area_unit <>", value, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitGreaterThan(Integer value) {
+            addCriterion("land_area_unit >", value, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitGreaterThanOrEqualTo(Integer value) {
+            addCriterion("land_area_unit >=", value, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitLessThan(Integer value) {
+            addCriterion("land_area_unit <", value, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitLessThanOrEqualTo(Integer value) {
+            addCriterion("land_area_unit <=", value, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitIn(List<Integer> values) {
+            addCriterion("land_area_unit in", values, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitNotIn(List<Integer> values) {
+            addCriterion("land_area_unit not in", values, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitBetween(Integer value1, Integer value2) {
+            addCriterion("land_area_unit between", value1, value2, "landAreaUnit");
+            return (Criteria) this;
+        }
+
+        public Criteria andLandAreaUnitNotBetween(Integer value1, Integer value2) {
+            addCriterion("land_area_unit not between", value1, value2, "landAreaUnit");
+            return (Criteria) this;
+        }
+
         public Criteria andPublishDateIsNull() {
             addCriterion("publish_date is null");
             return (Criteria) this;

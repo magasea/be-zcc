@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
@@ -303,15 +304,14 @@ public class AmcDebtController {
   public AmcDebtExtVo queryDebt(@RequestParam("debtId") Long debtId)
       throws Exception {
 
-    AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
-    AmcDebtVo amcDebtVo = amcDebtService.get(debtId);
-    amcDebtExtVo.setAmcDebtVo(amcDebtVo);
+    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(debtId);
 
     try {
       AmcInfo amcInfo = amcDebtService.getAmcInfo(debtId);
 
       List<AmcDebtor> amcDebtors = amcDebtService.getDebtors(debtId);
+
 
       AmcOrigCreditor origCreditor = amcDebtService.getOriginCreditor(debtId);
       amcDebtExtVo.setAmcInfos(amcInfo);

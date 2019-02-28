@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.utils;
 
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
@@ -45,7 +46,24 @@ public class AmcNumberUtils {
 
   public static Long getLongFromDecimalWithMult100(BigDecimal input){
     return input.multiply(BigDecimal.valueOf(100)).longValue();
+  }
 
+  /**
+   * get squre meter from mu unit
+   */
+  public static Long getSQMFromMu(BigDecimal mu) throws Exception {
+//    mu.multiply(BigDecimal.)
+    if( mu.compareTo(BigDecimal.ZERO) < 0 ){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_NUMBER, mu.toString());
+    }
+    BigDecimal result = mu.multiply(new BigDecimal("666.6667")).setScale(2, RoundingMode.HALF_UP);
+    return result.multiply(BigDecimal.valueOf(100)).longValue();
+  }
+
+  public static BigDecimal getMuFromSQM(Long sqm){
+    BigDecimal result =
+        BigDecimal.valueOf(sqm).divide(new BigDecimal("66666.67"),2, RoundingMode.HALF_UP);
+    return result;
   }
 
 }

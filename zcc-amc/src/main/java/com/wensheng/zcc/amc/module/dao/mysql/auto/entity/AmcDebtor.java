@@ -5,9 +5,9 @@ public class AmcDebtor {
 
     private Long debtId;
 
-    private String name;
+    private String debtorName;
 
-    private Integer type;
+    private Integer debtorType;
 
     private Integer role;
 
@@ -31,20 +31,20 @@ public class AmcDebtor {
         this.debtId = debtId;
     }
 
-    public String getName() {
-        return name;
+    public String getDebtorName() {
+        return debtorName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setDebtorName(String debtorName) {
+        this.debtorName = debtorName == null ? null : debtorName.trim();
     }
 
-    public Integer getType() {
-        return type;
+    public Integer getDebtorType() {
+        return debtorType;
     }
 
-    public void setType(Integer type) {
-        this.type = type;
+    public void setDebtorType(Integer debtorType) {
+        this.debtorType = debtorType;
     }
 
     public Integer getRole() {

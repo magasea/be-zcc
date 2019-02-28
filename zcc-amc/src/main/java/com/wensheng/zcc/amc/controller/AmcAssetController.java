@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -142,7 +143,19 @@ public class AmcAssetController {
     BeanUtils.copyProperties(amcAssetVo, amcAsset);
     amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
     amcAsset.setStartPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getStartPrice()));
-    amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
+    if(amcAssetVo.getLandArea() != null ){
+      if(amcAssetVo.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
+        switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit())){
+          case SQUAREMETER:
+            amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
+            break;
+          case MU:
+
+
+        }
+      }
+    }
+
     amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
     return amcAsset;
   }

@@ -29,6 +29,8 @@ public class AmcAsset {
 
     private Long landArea;
 
+    private Integer landAreaUnit;
+
     private Date publishDate;
 
     private String province;
@@ -153,6 +155,14 @@ public class AmcAsset {
 
     public void setLandArea(Long landArea) {
         this.landArea = landArea;
+    }
+
+    public Integer getLandAreaUnit() {
+        return landAreaUnit;
+    }
+
+    public void setLandAreaUnit(Integer landAreaUnit) {
+        this.landAreaUnit = landAreaUnit;
     }
 
     public Date getPublishDate() {

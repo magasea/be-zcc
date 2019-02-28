@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
@@ -55,7 +56,7 @@ public class AmcAspect {
       + ".wensheng.zcc.amc.module.vo.AmcAssetVo>, ..)) && args(baseActionVo)")
   public void beforeDoDebtAction(BaseActionVo<AmcAssetVo> baseActionVo) throws Exception {
     log.info("now get the point cut");
-    AmcDebtVo amcDebtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
+    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
 
     PublishStateEnum publishStateEnum =
         zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),

@@ -17,7 +17,7 @@ public class AmcDebtExt  {
   AmcDebt debtInfo;
 
   List<AmcAsset> amcAssets ;
-  List<AmcCreditor> creditors;
+
 
   List<AmcDebtor> amcDebtors;
 }

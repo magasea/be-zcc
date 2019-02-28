@@ -15,6 +15,7 @@
     <result column="start_price" jdbcType="BIGINT" property="startPrice" />
     <result column="area" jdbcType="BIGINT" property="area" />
     <result column="land_area" jdbcType="BIGINT" property="landArea" />
+    <result column="land_area_unit" jdbcType="INTEGER" property="landAreaUnit" />
     <result column="publish_date" jdbcType="DATE" property="publishDate" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
@@ -87,8 +88,9 @@
   </sql>
   <sql id="Base_Column_List">
     id, title, type, sealed_state, publish_state, amc_id, amc_asset_code, zcc_asset_code, 
-    valuation, debt_id, start_price, area, land_area, publish_date, province, city, county, 
-    street, building_name, gps_lng, gps_lat, created_by, created_date, amc_contactor_id
+    valuation, debt_id, start_price, area, land_area, land_area_unit, publish_date, province, 
+    city, county, street, building_name, gps_lng, gps_lat, created_by, created_date, 
+    amc_contactor_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -129,16 +131,16 @@
       publish_state, amc_id, amc_asset_code, 
       zcc_asset_code, valuation, debt_id, 
       start_price, area, land_area, 
-      publish_date, province, city, 
-      county, street, building_name, 
+      land_area_unit, publish_date, province, 
+      city, county, street, building_name, 
       gps_lng, gps_lat, created_by, 
       created_date, amc_contactor_id)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, 
       #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
       #{startPrice,jdbcType=BIGINT}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
-      #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
-      #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
+      #{landAreaUnit,jdbcType=INTEGER}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{createdBy,jdbcType=BIGINT}, 
       #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
   </insert>
@@ -183,6 +185,9 @@
       </if>
       <if test="landArea != null">
         land_area,
+      </if>
+      <if test="landAreaUnit != null">
+        land_area_unit,
       </if>
       <if test="publishDate != null">
         publish_date,
@@ -254,6 +259,9 @@
       </if>
       <if test="landArea != null">
         #{landArea,jdbcType=BIGINT},
+      </if>
+      <if test="landAreaUnit != null">
+        #{landAreaUnit,jdbcType=INTEGER},
       </if>
       <if test="publishDate != null">
         #{publishDate,jdbcType=DATE},
@@ -338,6 +346,9 @@
       <if test="record.landArea != null">
         land_area = #{record.landArea,jdbcType=BIGINT},
       </if>
+      <if test="record.landAreaUnit != null">
+        land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
+      </if>
       <if test="record.publishDate != null">
         publish_date = #{record.publishDate,jdbcType=DATE},
       </if>
@@ -391,6 +402,7 @@
       start_price = #{record.startPrice,jdbcType=BIGINT},
       area = #{record.area,jdbcType=BIGINT},
       land_area = #{record.landArea,jdbcType=BIGINT},
+      land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
       publish_date = #{record.publishDate,jdbcType=DATE},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
@@ -445,6 +457,9 @@
       <if test="landArea != null">
         land_area = #{landArea,jdbcType=BIGINT},
       </if>
+      <if test="landAreaUnit != null">
+        land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
+      </if>
       <if test="publishDate != null">
         publish_date = #{publishDate,jdbcType=DATE},
       </if>
@@ -495,6 +510,7 @@
       start_price = #{startPrice,jdbcType=BIGINT},
       area = #{area,jdbcType=BIGINT},
       land_area = #{landArea,jdbcType=BIGINT},
+      land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
       publish_date = #{publishDate,jdbcType=DATE},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},

@@ -34,6 +34,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -100,6 +101,7 @@ public class AmcDebtController {
 //          + "grantorType:%d", grntctrct.getGrantorId(), grntctrct.getType()));
 //    }
 //  }
+@PreAuthorize("#oauth2.hasScope('write') and hasRole('SYSTEM_ADMIN')")
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
   @ResponseBody

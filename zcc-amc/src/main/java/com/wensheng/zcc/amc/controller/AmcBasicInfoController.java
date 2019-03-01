@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
+import com.wensheng.zcc.amc.module.dao.helper.AssetNatureEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
@@ -189,6 +190,17 @@ public class AmcBasicInfoController {
     return result;
   }
 
+
+  @RequestMapping(value = "/assetNature", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAssetNature(){
+
+    List<String> result = new ArrayList<>();
+    for(AssetNatureEnum assetNatureEnum: AssetNatureEnum.values()){
+      result.add(String.format("%d:%s", assetNatureEnum.getType(), assetNatureEnum.getName()));
+    }
+    return result;
+  }
 
 
   @RequestMapping(value = "/debtorRoles", method = RequestMethod.GET)

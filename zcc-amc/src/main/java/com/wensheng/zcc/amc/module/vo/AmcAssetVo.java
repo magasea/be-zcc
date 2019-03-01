@@ -19,6 +19,8 @@ public class AmcAssetVo {
 
   private Integer sealedState;
 
+  private Integer assetNature;
+
   private Integer publishState;
 
   private Long amcId;

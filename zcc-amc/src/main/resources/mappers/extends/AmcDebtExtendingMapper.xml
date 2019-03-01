@@ -56,6 +56,7 @@
   ${prefix}amc_debt_code as amc_debt_code,
   ${prefix}publish_state as publish_state,
   ${prefix}publish_date as publish_date,
+  ${prefix}lawsuit_state as lawsuit_state,
   ${prefix}lawsuit_state_desc as lawsuit_state_desc,
   ${prefix}valuation as valuation,
   ${prefix}amc_contactor_id as amc_contactor_id,

@@ -20,13 +20,13 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcAssetService {
 
-    public AmcAssetVo create(AmcAsset amcAsset);
+    public AmcAssetVo create(AmcAsset amcAsset) throws Exception;
 
 
 
     public AmcAssetVo del(AmcAsset amcAsset);
 
-    public AmcAssetVo update(AmcAsset amcAsset);
+    public AmcAssetVo update(AmcAsset amcAsset) throws Exception;
 
     public AssetAdditional createOrUpdateAssetAddition(AssetAdditional additional);
 
@@ -36,9 +36,9 @@ public interface AmcAssetService {
 
     public List<AmcAssetVo> query(AmcAsset queryCond, int offset, int size);
 
-    public AmcAssetDetailVo queryAssetDetail(Long assetId);
+    public AmcAssetDetailVo queryAssetDetail(Long assetId) throws Exception;
 
-    public List<AmcAssetDetailVo> queryAssetDetails(Long amcDebtId);
+    public List<AmcAssetDetailVo> queryAssetDetails(Long amcDebtId) throws Exception;
 
 
     public List<AmcAssetVo> queryAssetPage( int offset, int pageSize, Map<String, Object> queryParam, Map<String,

@@ -1,20 +1,25 @@
 package com.wensheng.zcc.amc.service.impl.helper;
 
+import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 
 /**
  * @author chenwei on 1/10/19
  * @project zcc-backend
  */
+@Slf4j
 public class Dao2VoUtils {
-  public static AmcAssetVo convertDo2Vo(AmcAsset amcAsset){
+  public static AmcAssetVo convertDo2Vo(AmcAsset amcAsset) throws Exception {
     AmcAssetVo amcAssetVo = new AmcAssetVo();
     BeanUtils.copyProperties(amcAsset, amcAssetVo);
     if(amcAsset.getValuation() > 0){
@@ -22,16 +27,36 @@ public class Dao2VoUtils {
     }
 
 
-    if(amcAsset.getLandArea() > 0){
+    if(amcAsset.getLandArea() != null && amcAsset.getLandArea() > 0){
       amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
+      if(amcAsset.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAsset.getLandAreaUnit()) != null){
+        switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAsset.getLandAreaUnit())){
+          case SQUAREMETER:
+            amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
+            break;
+          case MU:
+            amcAssetVo.setLandArea(AmcNumberUtils.getMuFromSQM(amcAsset.getLandArea()));
+            break;
+          case TENTHOUNDSQUM:
+            amcAssetVo.setLandArea(AmcNumberUtils.getBigDecimalFromLongDiv1000000(amcAsset.getLandArea()));
+            break;
+          default:
+            log.error("amcAssetVo.getLandAreaUnit():" + amcAssetVo.getLandAreaUnit());
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT);
+
+        }
+      }
     }
 
     if(amcAsset.getArea() > 0){
       amcAssetVo.setArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getArea()));
+
     }
+
+
     return amcAssetVo;
   }
-  public static List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets){
+  public static List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets) throws Exception {
     List<AmcAssetVo> amcAssetVos = new ArrayList<>();
     for(AmcAsset amcAsset: amcAssets){
       amcAssetVos.add(convertDo2Vo(amcAsset));

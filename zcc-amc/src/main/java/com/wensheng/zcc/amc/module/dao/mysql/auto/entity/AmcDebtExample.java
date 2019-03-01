@@ -985,6 +985,66 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andLawsuitStateIsNull() {
+            addCriterion("lawsuit_state is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateIsNotNull() {
+            addCriterion("lawsuit_state is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateEqualTo(Integer value) {
+            addCriterion("lawsuit_state =", value, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateNotEqualTo(Integer value) {
+            addCriterion("lawsuit_state <>", value, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateGreaterThan(Integer value) {
+            addCriterion("lawsuit_state >", value, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateGreaterThanOrEqualTo(Integer value) {
+            addCriterion("lawsuit_state >=", value, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateLessThan(Integer value) {
+            addCriterion("lawsuit_state <", value, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateLessThanOrEqualTo(Integer value) {
+            addCriterion("lawsuit_state <=", value, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateIn(List<Integer> values) {
+            addCriterion("lawsuit_state in", values, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateNotIn(List<Integer> values) {
+            addCriterion("lawsuit_state not in", values, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateBetween(Integer value1, Integer value2) {
+            addCriterion("lawsuit_state between", value1, value2, "lawsuitState");
+            return (Criteria) this;
+        }
+
+        public Criteria andLawsuitStateNotBetween(Integer value1, Integer value2) {
+            addCriterion("lawsuit_state not between", value1, value2, "lawsuitState");
+            return (Criteria) this;
+        }
+
         public Criteria andLawsuitStateDescIsNull() {
             addCriterion("lawsuit_state_desc is null");
             return (Criteria) this;

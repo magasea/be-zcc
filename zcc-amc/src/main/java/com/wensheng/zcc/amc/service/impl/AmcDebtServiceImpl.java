@@ -40,9 +40,13 @@ import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -164,7 +168,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcDebtVo update(AmcDebt AmcDebt) {
+  public AmcDebtVo update(AmcDebt amcDebt) {
+    int result = amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
     return null;
   }
 
@@ -188,6 +193,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     amcDebtVo.setAmcContactorId(amcDebtContactor);
     amcDebtVo.setAmcContactor2Id(amcDebtContactor2);
+
 
 
 
@@ -272,7 +278,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtVo;
   }
 
-  private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt){
+  private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt) throws Exception {
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
     amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
     return amcDebtVo;
@@ -420,16 +426,40 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   @Transactional
   public void connDebt2Debtors(List<Long> debtorIds, Long debtId) {
-    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
-    amcDebtorExample.createCriteria().andIdIn(debtorIds);
-    AmcDebtor amcDebtor = new AmcDebtor();
-    amcDebtor.setDebtId(debtId);
-    int count = amcDebtorMapper.updateByExampleSelective(amcDebtor, amcDebtorExample);
-    if(count <= 0){
-      log.error(String.format("Failed to update debtors by %s", debtorIds.stream().map(Object::toString).collect(
-          Collectors.joining(", "))));
-    }
 
+
+    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    amcDebtorExample.createCriteria().andDebtIdEqualTo(debtId);
+    List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+
+    Set<Long> updateList = new HashSet<>();
+    Set<Long> historyList = new HashSet<>();
+    debtorIds.forEach(item -> updateList.add(item));
+    amcDebtors.forEach(item -> historyList.add(item.getId()));
+    List<Long> delList = new ArrayList<>();
+    List<Long> addList = new ArrayList<>();
+    if(!CollectionUtils.isEmpty(historyList)){
+      historyList.forEach(historyItem ->{if(!updateList.contains(historyItem)){  delList.add(historyItem);}});
+    }
+    if(!CollectionUtils.isEmpty(updateList)){
+      updateList.forEach(updateItem ->{if(!historyList.contains(updateItem)){  addList.add(updateItem);}});
+    }
+    updateDebtId4Debtors(addList, debtId);
+    updateDebtId4Debtors(delList, 0L);
+  }
+
+  private void updateDebtId4Debtors(List<Long> debtorIds, Long debtId){
+    if(!CollectionUtils.isEmpty(debtorIds)){
+      AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+      amcDebtorExample.createCriteria().andIdIn(debtorIds);
+      AmcDebtor amcDebtor = new AmcDebtor();
+      amcDebtor.setDebtId(debtId);
+      int count = amcDebtorMapper.updateByExampleSelective(amcDebtor, amcDebtorExample);
+      if(count <= 0){
+        log.error(String.format("Failed to update debtors by %s", debtorIds.stream().map(Object::toString).collect(
+            Collectors.joining(", "))));
+      }
+    }
   }
 
   @Override

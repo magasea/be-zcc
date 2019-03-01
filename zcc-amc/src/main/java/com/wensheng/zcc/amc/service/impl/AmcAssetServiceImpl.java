@@ -3,22 +3,26 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
+import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
@@ -28,12 +32,14 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author chenwei on 12/5/18
  * @project zcc-backend
  */
 @Service
+@Slf4j
 public class AmcAssetServiceImpl implements AmcAssetService {
     @Autowired
     AmcAssetMapper amcAssetMapper;
@@ -50,7 +56,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     @Override
-    public AmcAssetVo create(AmcAsset amcAsset) {
+    public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
 
          return Dao2VoUtils.convertDo2Vo(amcAsset);
 
@@ -85,7 +91,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     @Override
-    public AmcAssetVo update(AmcAsset amcAsset) {
+    public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.updateByPrimaryKey(amcAsset);
         return Dao2VoUtils.convertDo2Vo(amcAsset);
     }
@@ -106,7 +112,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     @Override
-    public AmcAssetDetailVo queryAssetDetail(Long assetId) {
+    public AmcAssetDetailVo queryAssetDetail(Long assetId) throws Exception {
         AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(assetId);
 
 
@@ -114,7 +120,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return queryMongoForAmcAsset(amcAsset);
     }
 
-    private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset){
+    private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset) throws Exception {
         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
         Long assetId = amcAsset.getId();
         Query query = new Query();
@@ -155,7 +161,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     @Override
-    public List<AmcAssetDetailVo> queryAssetDetails(Long amcDebtId) {
+    public List<AmcAssetDetailVo> queryAssetDetails(Long amcDebtId) throws Exception {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebtId);
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
@@ -204,21 +210,38 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public AssetImage saveImageInfo( AssetImage assetImage) {
+
         Query query = new Query();
-        query.addCriteria(Criteria.where("ossPath").is(assetImage.getOssPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
-        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
-        if(!CollectionUtils.isEmpty(assetImages)){
-            if(assetImages.size() > 1){
-                for(int idx = 1; idx < assetImages.size(); idx ++){
-                    wszccTemplate.remove(assetImages.get(idx));
+        if(assetImage.getTag() == ImageClassEnum.MAIN.getId()){
+            query.addCriteria(Criteria.where("amcAssetId").is(assetImage.getAmcAssetId()).and("tag").is(ImageClassEnum.MAIN.getId()));
+            List<AssetImage> assetImages =  wszccTemplate.find(query, AssetImage.class);
+            if(!CollectionUtils.isEmpty(assetImages)){
+                log.info("now need delete history main image");
+                for(AssetImage assetImageItem: assetImages){
+
+                    wszccTemplate.remove(assetImageItem);
                 }
             }
-            Update update = new Update();
-            update.set(assetImages.get(0).get_id(), assetImage);
-            return wszccTemplate.findAndModify(query, update, AssetImage.class);
+            wszccTemplate.save(assetImage);
+
         }else{
-            return wszccTemplate.insert(assetImage);
+            query = new Query();
+            query.addCriteria(Criteria.where("ossPath").is(assetImage.getOssPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
+            List<AssetImage> assetImages =  wszccTemplate.find(query, AssetImage.class);
+
+            if(!CollectionUtils.isEmpty(assetImages)){
+                log.info("there is duplicate image, just update it");
+                AmcBeanUtils.copyProperties(assetImage, assetImages.get(0));
+                wszccTemplate.save(assetImages.get(0));
+            }else{
+                log.info("there is no image, just insert it");
+                wszccTemplate.save(assetImage);
+            }
+
+
         }
+
+        return assetImage;
 
     }
 

@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -14,9 +15,11 @@ import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -138,9 +141,9 @@ public class AmcAssetController {
     return assetVo;
   }
 
-  private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo){
+  private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo) throws Exception {
     AmcAsset amcAsset = new AmcAsset();
-    BeanUtils.copyProperties(amcAssetVo, amcAsset);
+    AmcBeanUtils.copyProperties(amcAssetVo, amcAsset);
     amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
     if(amcAssetVo.getLandArea() != null ){
       if(amcAssetVo.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
@@ -149,7 +152,14 @@ public class AmcAssetController {
             amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
             break;
           case MU:
-
+            amcAsset.setLandArea(AmcNumberUtils.getSQMFromMu(amcAssetVo.getLandArea()));
+            break;
+          case TENTHOUNDSQUM:
+            amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult1000000(amcAssetVo.getLandArea()));
+            break;
+          default:
+            log.error("amcAssetVo.getLandAreaUnit():" + amcAssetVo.getLandAreaUnit());
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT);
 
         }
       }
@@ -163,7 +173,7 @@ public class AmcAssetController {
   @ResponseBody
   public List<AssetImage> addAmcAssetImage(
        @RequestParam("assetId") Long assetId, @RequestParam("isToOss") Boolean isToOss,
-      @RequestParam("actionId") Long actionId,
+      @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId,
       @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
     if(assetId == null){
@@ -188,6 +198,8 @@ public class AmcAssetController {
         AssetImage assetImage = new AssetImage();
 
         assetImage.setOssPath(ossPath);
+        assetImage.setTag(tag);
+        assetImage.setOriginalName(filePath);
         assetImages.add(amcAssetService.saveImageInfo( assetImage));
 
       } catch (Exception e) {

@@ -66,4 +66,12 @@ public class AmcNumberUtils {
     return result;
   }
 
+  public static Long getLongFromDecimalWithMult1000000(BigDecimal input){
+    return input.multiply(BigDecimal.valueOf(1000000)).longValue();
+  }
+
+  public static BigDecimal getBigDecimalFromLongDiv1000000(Long input){
+    return BigDecimal.valueOf(input).divide(BigDecimal.valueOf(1000000));
+  }
+
 }

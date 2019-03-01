@@ -341,20 +341,37 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtVo updateDebt(@RequestBody AmcDebtVo amcDebtVo)
+  public AmcDebtCreateVo updateDebt(@RequestBody AmcDebtCreateVo amcDebtVo)
       throws Exception {
 
     try {
 
       AmcDebt amcDebt = new AmcDebt();
-      BeanUtils.copyProperties(amcDebtVo, amcDebt);
-      amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getBaseAmount()));
-      amcDebt.setValuation(
-          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
-      amcDebt
-          .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getTotalAmount()));
-      amcDebtService.update(amcDebt);
+      AmcBeanUtils.copyProperties(amcDebtVo, amcDebt);
+      log.info("amcDebtVo.getBaseAmount()"+ amcDebtVo.getBaseAmount());
+      if( null != amcDebtVo.getBaseAmount()){
+        amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getBaseAmount()));
 
+      }else{
+        log.error("baseAmount empty"+amcDebtVo.getBaseAmount());
+      }
+      if(null != amcDebtVo.getValuation()){
+        amcDebt.setValuation(
+            AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
+      }else{
+        log.error("amcDebtVo.getValuation()"+ amcDebtVo.getValuation());
+      }
+      if(null != amcDebtVo.getTotalAmount()){
+        amcDebt
+            .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getTotalAmount()));
+      }else{
+        log.error("amcDebtVo.getTotalAmount()"+ amcDebtVo.getTotalAmount());
+      }
+
+      amcDebtService.update(amcDebt);
+      if (!CollectionUtils.isEmpty(amcDebtVo.getDebtors())) {
+        amcDebtService.connDebt2Debtors(amcDebtVo.getDebtors(), amcDebtVo.getId());
+      }
     } catch (Exception ex) {
       log.error("failed to update debt", ex);
     }

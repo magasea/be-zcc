@@ -31,6 +31,8 @@ public class AmcDebt {
 
     private Date publishDate;
 
+    private Integer lawsuitState;
+
     private String lawsuitStateDesc;
 
     private Long valuation;
@@ -165,6 +167,14 @@ public class AmcDebt {
 
     public void setPublishDate(Date publishDate) {
         this.publishDate = publishDate;
+    }
+
+    public Integer getLawsuitState() {
+        return lawsuitState;
+    }
+
+    public void setLawsuitState(Integer lawsuitState) {
+        this.lawsuitState = lawsuitState;
     }
 
     public String getLawsuitStateDesc() {

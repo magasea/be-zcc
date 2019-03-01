@@ -40,6 +40,8 @@ public class AmcDebtCreateVo {
 
   private Date publishDate;
 
+  private String lawsuitState;
+
   private String lawsuitStateDesc;
 
   private BigDecimal valuation;

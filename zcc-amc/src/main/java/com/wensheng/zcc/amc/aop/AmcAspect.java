@@ -52,23 +52,23 @@ public class AmcAspect {
     }
   }
 
-  @Before("execution(* com.wensheng.zcc.amc.controller.*.* (com.wensheng.zcc.amc.module.vo.base.BaseActionVo<com"
-      + ".wensheng.zcc.amc.module.vo.AmcAssetVo>, ..)) && args(baseActionVo)")
-  public void beforeDoDebtAction(BaseActionVo<AmcAssetVo> baseActionVo) throws Exception {
-    log.info("now get the point cut");
-    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
-
-    PublishStateEnum publishStateEnum =
-        zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
-            PublishStateEnum.lookupByDisplayStatusUtil(baseActionVo.getContent().getPublishState() ));
-    if(publishStateEnum == null) {
-      log.error(String.format("actionId:%s with current publishState:%s is not applicable",
-          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
-      throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
-          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
-    }
-
-  }
+//  @Before("execution(* com.wensheng.zcc.amc.controller.*.* (com.wensheng.zcc.amc.module.vo.base.BaseActionVo<com"
+//      + ".wensheng.zcc.amc.module.vo.AmcAssetVo>, ..)) && args(baseActionVo)")
+//  public void beforeDoDebtAction(BaseActionVo<AmcAssetVo> baseActionVo) throws Exception {
+//    log.info("now get the point cut");
+//    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
+//
+//    PublishStateEnum publishStateEnum =
+//        zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
+//            PublishStateEnum.lookupByDisplayStatusUtil(baseActionVo.getContent().getPublishState() ));
+//    if(publishStateEnum == null) {
+//      log.error(String.format("actionId:%s with current publishState:%s is not applicable",
+//          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
+//      throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
+//          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
+//    }
+//
+//  }
 
   @Around("@annotation(LogExecutionTime)")
   public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{

@@ -57,6 +57,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
+        amcAssetMapper.insertSelective(amcAsset);
 
          return Dao2VoUtils.convertDo2Vo(amcAsset);
 
@@ -69,16 +70,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
 
         if(!CollectionUtils.isEmpty(assetAdditionals)){
-            if(assetAdditionals.size() > 1){
-                for(int idx = 1; idx < assetAdditionals.size(); idx ++){
-                    wszccTemplate.remove(assetAdditionals.get(idx));
-                }
-            }
-            Update update = new Update();
-            update.set(assetAdditionals.get(0).get_id(), additional);
-            wszccTemplate.findAndModify(query, update, AssetAdditional.class);
+            AmcBeanUtils.copyProperties(additional, assetAdditionals.get(0));
+            wszccTemplate.save(assetAdditionals.get(0));
         }else{
-            wszccTemplate.insert(additional);
+            wszccTemplate.save(additional);
         }
         return additional;
     }

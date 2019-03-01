@@ -463,7 +463,7 @@ public class AmcAssetServiceImplTest {
 //        if(StringUtils.isEmpty(originItem.getLawStatus())){
 //            logger.error("this originItem with title:" + originItem.getTitle() +" lawstatus is empty");
 //        }else{
-//            amcDebt.setLawStatus(LawstatusEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
+//            amcDebt.setLawStatus(LawstateEnum.lookupByDisplayNameUtil(originItem.getLawStatus()).getStatus());
 //        }
 //        amcDebt.setOrigDebtId(originItem.getId());
         amcDebt.setPublishDate(originItem.getPublishDate());

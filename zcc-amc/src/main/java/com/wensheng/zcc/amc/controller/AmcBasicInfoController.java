@@ -7,11 +7,11 @@ import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.LawstateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
-import com.wensheng.zcc.amc.module.dao.helper.LawstatusEnum;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
@@ -90,8 +90,8 @@ public class AmcBasicInfoController {
   public List<String> getStatusList(){
 
     List<String> result = new ArrayList<>();
-    for(LawstatusEnum lawstatusEnum: LawstatusEnum.values()){
-      result.add(String.format("%d:%s", lawstatusEnum.getStatus(), lawstatusEnum.getName()));
+    for(LawstateEnum lawstateEnum : LawstateEnum.values()){
+      result.add(String.format("%d:%s", lawstateEnum.getStatus(), lawstateEnum.getName()));
     }
     return result;
   }
@@ -152,6 +152,7 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+
 
 
   @RequestMapping(value = "/imageClass", method = RequestMethod.GET)

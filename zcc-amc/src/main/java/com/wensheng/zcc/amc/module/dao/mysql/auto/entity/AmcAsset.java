@@ -11,6 +11,8 @@ public class AmcAsset {
 
     private Integer sealedState;
 
+    private Integer assetNature;
+
     private Integer publishState;
 
     private Long amcId;
@@ -81,6 +83,14 @@ public class AmcAsset {
 
     public void setSealedState(Integer sealedState) {
         this.sealedState = sealedState;
+    }
+
+    public Integer getAssetNature() {
+        return assetNature;
+    }
+
+    public void setAssetNature(Integer assetNature) {
+        this.assetNature = assetNature;
     }
 
     public Integer getPublishState() {

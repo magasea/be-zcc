@@ -44,7 +44,7 @@ public class AmcDebtVo {
 
   private Date publishDate;
 
-  private String lawsuitState;
+  private Integer lawsuitState;
 
   private String lawsuitStateDesc;
 

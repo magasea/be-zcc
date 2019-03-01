@@ -115,7 +115,8 @@ public class AmcAssetController {
 
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/add", headers = "Content-Type= multipart/form-data", method =
+      RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {

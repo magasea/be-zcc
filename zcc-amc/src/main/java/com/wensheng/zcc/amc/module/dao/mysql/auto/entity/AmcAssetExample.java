@@ -382,6 +382,66 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
+        public Criteria andAssetNatureIsNull() {
+            addCriterion("asset_nature is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureIsNotNull() {
+            addCriterion("asset_nature is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureEqualTo(Integer value) {
+            addCriterion("asset_nature =", value, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureNotEqualTo(Integer value) {
+            addCriterion("asset_nature <>", value, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureGreaterThan(Integer value) {
+            addCriterion("asset_nature >", value, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureGreaterThanOrEqualTo(Integer value) {
+            addCriterion("asset_nature >=", value, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureLessThan(Integer value) {
+            addCriterion("asset_nature <", value, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureLessThanOrEqualTo(Integer value) {
+            addCriterion("asset_nature <=", value, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureIn(List<Integer> values) {
+            addCriterion("asset_nature in", values, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureNotIn(List<Integer> values) {
+            addCriterion("asset_nature not in", values, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureBetween(Integer value1, Integer value2) {
+            addCriterion("asset_nature between", value1, value2, "assetNature");
+            return (Criteria) this;
+        }
+
+        public Criteria andAssetNatureNotBetween(Integer value1, Integer value2) {
+            addCriterion("asset_nature not between", value1, value2, "assetNature");
+            return (Criteria) this;
+        }
+
         public Criteria andPublishStateIsNull() {
             addCriterion("publish_state is null");
             return (Criteria) this;

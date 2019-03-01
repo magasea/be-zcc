@@ -10,7 +10,10 @@ import java.util.function.Function;
 public enum GuarantTypeEnum {
   MORTGAGE(1, "抵押"),
   WARRANTY(2, "保证"),
-  COMBINED(3, "混合");
+  COMBINED(3, "混合"),
+  COMBINED1(4, "抵押+保证+质押"),
+  CHIBOR(5, "拆借"),
+  ;
 
   GuarantTypeEnum(int type, String name){
     this.type = type;

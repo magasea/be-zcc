@@ -193,16 +193,14 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", headers = "Content-Type= multipart/form-data",method =
       RequestMethod.POST)
   @ResponseBody
-  public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
-      @RequestParam("debtId") Long debtId, @RequestParam("ImageClassEnum") Integer imageClass,
+  public List<DebtImage> uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
+      @RequestParam("debtId") Long debtId,
       @RequestParam("desc") String desc,
       @RequestParam("images") MultipartFile[] uploadingImages) throws Exception {
-    log.info("begin handle upload files");
     if (debtId == null || debtId < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("debtId %s is not valid",
           debtId));
     }
-    log.info("begin handle upload files 1");
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
     List<String> filePaths = new ArrayList<>();
@@ -217,23 +215,32 @@ public class AmcDebtController {
       }
     }
     String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
-    log.info("begin handle upload files 2");
-
+    List<DebtImage> debtImages = new ArrayList<>();
+    String ossPath;
     for (String filePath : filePaths) {
       try {
+        ossPath = amcOssFileService.handleFile2Oss(filePath, prePath);
 
-        String ossPath = amcOssFileService.handleFile2Oss(filePath, prePath);
-        amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, ImageClassEnum.lookupByDisplayNameUtil(imageClass));
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
+        throw e;
+      }
+      try{
+        debtImages.add(amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc,
+            ImageClassEnum.MAIN));
+      }catch (Exception e) {
+        e.printStackTrace();
+        if(e.getMessage().contains("duplicate")){
+          throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_IMAGE_ERROR, ossPath);
+        }
+        throw e;
       }
 
     }
     log.info("begin handle upload files 3");
 
 
-    return "successed";
+    return debtImages;
 
   }
 

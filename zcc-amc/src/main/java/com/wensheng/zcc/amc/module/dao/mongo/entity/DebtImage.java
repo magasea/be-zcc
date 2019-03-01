@@ -10,7 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class DebtImage {
     String _id;
     String description;
-    @Indexed
+    @Indexed(unique = true)
     String ossPath;
     String originalName;
     int tag; //是否位置图， 其它图片

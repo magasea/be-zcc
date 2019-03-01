@@ -34,6 +34,7 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
+import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
@@ -114,7 +115,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcDebtpackService amcDebtpackService;
 
   @Override
-  public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass) {
+  public DebtImage saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass) {
     DebtImage debtImage = new DebtImage();
     debtImage.setDebtId(debtId);
     debtImage.setOriginalName(originName);
@@ -124,21 +125,31 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     debtImage.setTag(imageClass.getId());
     Query query = new Query();
     if(imageClass == ImageClassEnum.MAIN){
-      query.addCriteria(Criteria.where("debtId").is(debtId).and("imageClass").is(ImageClassEnum.MAIN.getId()));
+      query.addCriteria(Criteria.where("debtId").is(debtId).and("tag").is(ImageClassEnum.MAIN.getId()));
       List<DebtImage> debtImageList =  wszccTemplate.find(query, DebtImage.class);
       if(!CollectionUtils.isEmpty(debtImageList)){
-        logger.info("now need update main pic to class other");
+        logger.info("now need delete history main image");
         for(DebtImage debtImageItem: debtImageList){
-          Update update = new Update();
-          update.set("tag", ImageClassEnum.OTHER.getId());
-          debtImageItem.setTag(ImageClassEnum.OTHER.getId());
-          wszccTemplate.upsert(query, update, DebtImage.class);
+
+          wszccTemplate.remove(debtImageItem);
         }
       }
     }
+    query = new Query();
+    query.addCriteria(Criteria.where("ossPath").is(ossPath).and("debtId").is(debtId));
+    List<DebtImage> debtImageList =  wszccTemplate.find(query, DebtImage.class);
+    Update update = new Update();
 
-    wszccTemplate.insert(debtImage);
-    return 0;
+    if(!CollectionUtils.isEmpty(debtImageList)){
+      log.info("there is duplicate image, just update it");
+      AmcBeanUtils.copyProperties(debtImage, debtImageList.get(0));
+      wszccTemplate.save(debtImageList.get(0));
+    }else{
+      log.info("there is no image, just insert it");
+      wszccTemplate.save(debtImage);
+    }
+
+    return debtImage;
   }
 
   @Override
@@ -188,7 +199,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setDebtDesc(debtAdditionals.get(0).getDesc());
     }
     query = new Query();
-    query.addCriteria(Criteria.where("debtId").is(amcDebtId));
+    query.addCriteria(Criteria.where("debtId").is(amcDebtId).and("tag").is(ImageClassEnum.MAIN.getId()));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
     if(!CollectionUtils.isEmpty(debtImages)){
       amcDebtVo.setDebtImage(debtImages.get(0));

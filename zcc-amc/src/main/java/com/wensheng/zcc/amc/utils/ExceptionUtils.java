@@ -34,7 +34,7 @@ public class ExceptionUtils {
     INSERT_DB_ERROR(1012, "failed to insert db", "数据插入失败"),
     INVALID_LANDAREA_NUMBER(1013, "invalid landarea number", "非法的土地面积"),
     DIRECTORY_OPER_FAILED(1014, "directory failed to oper", "目录操作失败"),
-
+    DUPLICATE_IMAGE_ERROR(1015, "duplicate image upload ", "重复上传图片文件, 已有同样的图片或文件"),
     ;
     int code;
     String name;

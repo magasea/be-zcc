@@ -20,7 +20,7 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcDebtService {
 
-  public int  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass);
+  public DebtImage  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass);
 
   public AmcDebtVo create(AmcDebt AmcDebt);
 

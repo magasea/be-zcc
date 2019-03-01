@@ -19,8 +19,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditorDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
@@ -116,26 +114,30 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcDebtpackService amcDebtpackService;
 
   @Override
-  public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass) {
+  public int saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass) {
     DebtImage debtImage = new DebtImage();
     debtImage.setDebtId(debtId);
     debtImage.setOriginalName(originName);
     debtImage.setDescription(fileDesc);
     debtImage.setOssPath(ossPath);
     debtImage.setIsToOss(!StringUtils.isEmpty(ossPath));
+    debtImage.setTag(imageClass.getId());
     Query query = new Query();
-    if(imageClass == ImageClassEnum.MAIN.getId()){
+    if(imageClass == ImageClassEnum.MAIN){
       query.addCriteria(Criteria.where("debtId").is(debtId).and("imageClass").is(ImageClassEnum.MAIN.getId()));
       List<DebtImage> debtImageList =  wszccTemplate.find(query, DebtImage.class);
       if(!CollectionUtils.isEmpty(debtImageList)){
         logger.info("now need update main pic to class other");
         for(DebtImage debtImageItem: debtImageList){
+          Update update = new Update();
+          update.set("tag", ImageClassEnum.OTHER.getId());
           debtImageItem.setTag(ImageClassEnum.OTHER.getId());
-          wszccTemplate.save(debtImageItem);
+          wszccTemplate.upsert(query, update, DebtImage.class);
         }
       }
     }
-    wszccTemplate.save(debtImage);
+
+    wszccTemplate.insert(debtImage);
     return 0;
   }
 
@@ -185,6 +187,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(!CollectionUtils.isEmpty(debtAdditionals)){
       amcDebtVo.setDebtDesc(debtAdditionals.get(0).getDesc());
     }
+    query = new Query();
+    query.addCriteria(Criteria.where("debtId").is(amcDebtId));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    if(!CollectionUtils.isEmpty(debtImages)){
+      amcDebtVo.setDebtImage(debtImages.get(0));
+    }
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
     return amcDebtExtVo;
   }
@@ -200,6 +208,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
 
 
+
     if(!CollectionUtils.isEmpty(amcDebts)){
       return doList2VoList(amcDebts);
     }
@@ -211,8 +220,16 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   private List<AmcDebtVo> doList2VoList(List<AmcDebt> originList){
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+
+    Query query;
     for(AmcDebt amcDebt: originList){
       AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
+      query = new Query();
+      query.addCriteria(Criteria.where("debtId").is(amcDebt.getId()));
+      List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+      if(!CollectionUtils.isEmpty(debtImages)){
+        amcDebtVo.setDebtImage(debtImages.get(0));
+      }
       amcDebtVos.add(amcDebtVo);
     }
     return amcDebtVos;

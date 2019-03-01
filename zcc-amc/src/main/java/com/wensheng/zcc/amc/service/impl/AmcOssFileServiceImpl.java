@@ -5,9 +5,12 @@ import com.aliyun.oss.common.auth.DefaultCredentialProvider;
 import com.aliyun.oss.model.PutObjectResult;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.utils.ExceptionUtils;
+import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import java.io.File;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -20,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @project zcc-backend
  */
 @Service
+@Slf4j
 public class AmcOssFileServiceImpl implements AmcOssFileService {
 
   @Value("${project.params.debt_image_path}")
@@ -96,10 +100,12 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     File targetFile = null;
     switch (type){
       case "debt":
+        checkAndMakeDir(debtImageRepo+File.separator + id);
         targetFile =
             new File(debtImageRepo+File.separator + id+ File.pathSeparator +multipartFile.getOriginalFilename());
         break;
       case "asset":
+        checkAndMakeDir(assetImageRepo+File.separator + id);
         targetFile =
             new File(assetImageRepo+File.separator + id+ File.pathSeparator +multipartFile.getOriginalFilename());
         break;
@@ -113,6 +119,19 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     return targetFile.getCanonicalPath();
   }
 
+
+  private boolean checkAndMakeDir(String path) throws Exception {
+    File directory = new File(path);
+    try{
+      if (! directory.exists()){
+        directory.mkdir();
+      }
+    }catch (Exception ex){
+      log.error("Make dir exception:", ex);
+      throw ExceptionUtils.getAmcException(AmcExceptions.DIRECTORY_OPER_FAILED);
+    }
+    return true;
+  }
 
 
 }

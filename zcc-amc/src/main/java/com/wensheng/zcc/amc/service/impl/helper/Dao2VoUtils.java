@@ -20,9 +20,7 @@ public class Dao2VoUtils {
     if(amcAsset.getValuation() > 0){
       amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
     }
-    if(amcAsset.getStartPrice() > 0){
-      amcAssetVo.setStartPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getStartPrice()));
-    }
+
 
     if(amcAsset.getLandArea() > 0){
       amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));

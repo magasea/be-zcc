@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
@@ -148,6 +149,18 @@ public class AmcBasicInfoController {
     List<String> result = new ArrayList<>();
     for(AssetTypeEnum enumItem: AssetTypeEnum.values()){
       result.add(String.format("%d:%s", enumItem.getType(), enumItem.getName()));
+    }
+    return result;
+  }
+
+
+  @RequestMapping(value = "/imageClass", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getImageClass(){
+
+    List<String> result = new ArrayList<>();
+    for(ImageClassEnum enumItem: ImageClassEnum.values()){
+      result.add(String.format("%d:%s", enumItem.getId(), enumItem.getName()));
     }
     return result;
   }

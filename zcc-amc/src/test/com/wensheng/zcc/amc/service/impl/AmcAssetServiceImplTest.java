@@ -277,9 +277,7 @@ public class AmcAssetServiceImplTest {
             amcAssetMysql.setGpsLng(originItem.getGpsLng().toString());
         }
 
-        if (originItem.getInitialPrice() != null) {
-            amcAssetMysql.setStartPrice(AmcNumberUtils.getLongFromStringWithMult100(originItem.getInitialPrice().toString()));
-        }
+
         if (originItem.getLandArea() != null) {
             amcAssetMysql.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getLandArea()));
         }

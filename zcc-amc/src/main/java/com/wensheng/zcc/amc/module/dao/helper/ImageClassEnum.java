@@ -24,6 +24,12 @@ public enum ImageClassEnum {
   public static ImageClassEnum lookupByDisplayNameUtil(String name) {
     return func.apply(name);
   }
+
+  private static final Function<Integer, ImageClassEnum> funcId =
+      EnumUtils.lookupMap(ImageClassEnum.class, e -> e.getId());
+  public static ImageClassEnum lookupByDisplayNameUtil(Integer id) {
+    return funcId.apply(id);
+  }
   public int getId() {
     return id;
   }

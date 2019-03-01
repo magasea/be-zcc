@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
@@ -189,24 +190,26 @@ public class AmcDebtController {
   }
 
   @LogExecutionTime
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", method = RequestMethod.POST, consumes = {"multipart"
-      + "/form-data"})
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
   @ResponseBody
   public String uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
-      @RequestParam("debtId") Long debtId, @RequestParam("tag") Integer tag, @RequestParam("desc") String desc,
-      @RequestPart MultipartFile[] uploadingImages) throws Exception {
-
+      @RequestParam("debtId") Long debtId, @RequestParam("ImageClassEnum") Integer imageClass,
+      @RequestParam("desc") String desc,
+      @RequestParam("images") MultipartFile[] uploadingImages) throws Exception {
+    log.info("begin handle upload files");
     if (debtId == null || debtId < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("debtId %s is not valid",
           debtId));
     }
+    log.info("begin handle upload files 1");
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
     List<String> filePaths = new ArrayList<>();
-    for (MultipartFile uploadedImage : uploadingImages) {
+    for (MultipartFile uploadingImage : uploadingImages) {
       try {
         String filePath = amcOssFileService
-            .handleMultiPartFile(uploadedImage, debtId, ImagePathClassEnum.DEBT.getName());
+            .handleMultiPartFile(uploadingImage, debtId, ImagePathClassEnum.DEBT.getName());
         filePaths.add(filePath);
       } catch (Exception e) {
         e.printStackTrace();
@@ -214,17 +217,21 @@ public class AmcDebtController {
       }
     }
     String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
+    log.info("begin handle upload files 2");
 
     for (String filePath : filePaths) {
       try {
+
         String ossPath = amcOssFileService.handleFile2Oss(filePath, prePath);
-        amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, tag);
+        amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc, ImageClassEnum.lookupByDisplayNameUtil(imageClass));
       } catch (Exception e) {
         e.printStackTrace();
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
       }
 
     }
+    log.info("begin handle upload files 3");
+
 
     return "successed";
 
@@ -317,6 +324,7 @@ public class AmcDebtController {
       amcDebtExtVo.setAmcInfos(amcInfo);
       amcDebtExtVo.setAmcDebtors(amcDebtors);
       amcDebtExtVo.setOrigCreditor(origCreditor);
+
     } catch (Exception ex) {
       log.error("failed to get creditor or grantor", ex);
     }
@@ -326,25 +334,25 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtExtVo updateDebt(@RequestBody AmcDebtExtVo amcDebtExtVo)
+  public AmcDebtVo updateDebt(@RequestBody AmcDebtVo amcDebtVo)
       throws Exception {
 
     try {
 
       AmcDebt amcDebt = new AmcDebt();
-      BeanUtils.copyProperties(amcDebtExtVo.getAmcDebtVo(), amcDebt);
-      amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getBaseAmount()));
+      BeanUtils.copyProperties(amcDebtVo, amcDebt);
+      amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getBaseAmount()));
       amcDebt.setValuation(
-          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getValuation()));
+          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
       amcDebt
-          .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtExtVo.getAmcDebtVo().getTotalAmount()));
+          .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getTotalAmount()));
       amcDebtService.update(amcDebt);
 
     } catch (Exception ex) {
       log.error("failed to update debt", ex);
     }
 
-    return amcDebtExtVo;
+    return amcDebtVo;
   }
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)

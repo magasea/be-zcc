@@ -164,66 +164,6 @@ public class AmcInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmcIdIsNull() {
-            addCriterion("amc_id is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdIsNotNull() {
-            addCriterion("amc_id is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdEqualTo(Long value) {
-            addCriterion("amc_id =", value, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdNotEqualTo(Long value) {
-            addCriterion("amc_id <>", value, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdGreaterThan(Long value) {
-            addCriterion("amc_id >", value, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdGreaterThanOrEqualTo(Long value) {
-            addCriterion("amc_id >=", value, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdLessThan(Long value) {
-            addCriterion("amc_id <", value, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdLessThanOrEqualTo(Long value) {
-            addCriterion("amc_id <=", value, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdIn(List<Long> values) {
-            addCriterion("amc_id in", values, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdNotIn(List<Long> values) {
-            addCriterion("amc_id not in", values, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdBetween(Long value1, Long value2) {
-            addCriterion("amc_id between", value1, value2, "amcId");
-            return (Criteria) this;
-        }
-
-        public Criteria andAmcIdNotBetween(Long value1, Long value2) {
-            addCriterion("amc_id not between", value1, value2, "amcId");
-            return (Criteria) this;
-        }
-
         public Criteria andNameIsNull() {
             addCriterion("name is null");
             return (Criteria) this;

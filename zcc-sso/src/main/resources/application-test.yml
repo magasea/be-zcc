@@ -75,12 +75,6 @@ weixin:
 
 
 
-
-auth-server:
-    - client:
-        - clientId: sampleClientId
-        -
-
 logging:
     level:
         com:

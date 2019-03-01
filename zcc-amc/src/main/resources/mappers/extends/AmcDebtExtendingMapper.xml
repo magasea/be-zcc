@@ -80,7 +80,6 @@
   ${prefix}zcc_asset_code as ${alias}zcc_asset_code,
   ${prefix}valuation as ${alias}valuation,
   ${prefix}debt_id as ${alias}debt_id,
-  ${prefix}start_price as ${alias}start_price,
   ${prefix}area as ${alias}area,
   ${prefix}land_area as ${alias}land_area,
   ${prefix}publish_date as ${alias}publish_date,

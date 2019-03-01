@@ -23,8 +23,6 @@ public class AmcAsset {
 
     private Long debtId;
 
-    private Long startPrice;
-
     private Long area;
 
     private Long landArea;
@@ -131,14 +129,6 @@ public class AmcAsset {
 
     public void setDebtId(Long debtId) {
         this.debtId = debtId;
-    }
-
-    public Long getStartPrice() {
-        return startPrice;
-    }
-
-    public void setStartPrice(Long startPrice) {
-        this.startPrice = startPrice;
     }
 
     public Long getArea() {

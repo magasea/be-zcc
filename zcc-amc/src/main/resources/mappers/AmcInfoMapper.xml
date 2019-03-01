@@ -3,7 +3,6 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="amc_id" jdbcType="BIGINT" property="amcId" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="branch_name" jdbcType="BIGINT" property="branchName" />
     <result column="address" jdbcType="VARCHAR" property="address" />
@@ -69,7 +68,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, amc_id, name, branch_name, address, phone_num, note
+    id, name, branch_name, address, phone_num, note
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfoExample" resultMap="BaseResultMap">
     select
@@ -106,12 +105,10 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_INFO (amc_id, name, branch_name, 
-      address, phone_num, note
-      )
-    values (#{amcId,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{branchName,jdbcType=BIGINT}, 
-      #{address,jdbcType=VARCHAR}, #{phoneNum,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR}
-      )
+    insert into AMC_INFO (name, branch_name, address, 
+      phone_num, note)
+    values (#{name,jdbcType=VARCHAR}, #{branchName,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, 
+      #{phoneNum,jdbcType=VARCHAR}, #{note,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -119,9 +116,6 @@
     </selectKey>
     insert into AMC_INFO
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="amcId != null">
-        amc_id,
-      </if>
       <if test="name != null">
         name,
       </if>
@@ -139,9 +133,6 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="amcId != null">
-        #{amcId,jdbcType=BIGINT},
-      </if>
       <if test="name != null">
         #{name,jdbcType=VARCHAR},
       </if>
@@ -171,9 +162,6 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.amcId != null">
-        amc_id = #{record.amcId,jdbcType=BIGINT},
-      </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=VARCHAR},
       </if>
@@ -197,7 +185,6 @@
   <update id="updateByExample" parameterType="map">
     update AMC_INFO
     set id = #{record.id,jdbcType=BIGINT},
-      amc_id = #{record.amcId,jdbcType=BIGINT},
       name = #{record.name,jdbcType=VARCHAR},
       branch_name = #{record.branchName,jdbcType=BIGINT},
       address = #{record.address,jdbcType=VARCHAR},
@@ -210,9 +197,6 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     update AMC_INFO
     <set>
-      <if test="amcId != null">
-        amc_id = #{amcId,jdbcType=BIGINT},
-      </if>
       <if test="name != null">
         name = #{name,jdbcType=VARCHAR},
       </if>
@@ -233,8 +217,7 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo">
     update AMC_INFO
-    set amc_id = #{amcId,jdbcType=BIGINT},
-      name = #{name,jdbcType=VARCHAR},
+    set name = #{name,jdbcType=VARCHAR},
       branch_name = #{branchName,jdbcType=BIGINT},
       address = #{address,jdbcType=VARCHAR},
       phone_num = #{phoneNum,jdbcType=VARCHAR},

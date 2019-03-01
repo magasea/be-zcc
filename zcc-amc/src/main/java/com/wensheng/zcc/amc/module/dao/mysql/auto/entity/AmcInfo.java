@@ -3,8 +3,6 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 public class AmcInfo {
     private Long id;
 
-    private Long amcId;
-
     private String name;
 
     private Long branchName;
@@ -21,14 +19,6 @@ public class AmcInfo {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public Long getAmcId() {
-        return amcId;
-    }
-
-    public void setAmcId(Long amcId) {
-        this.amcId = amcId;
     }
 
     public String getName() {

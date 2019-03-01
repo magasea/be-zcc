@@ -12,7 +12,6 @@
     <result column="zcc_asset_code" jdbcType="CHAR" property="zccAssetCode" />
     <result column="valuation" jdbcType="BIGINT" property="valuation" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="start_price" jdbcType="BIGINT" property="startPrice" />
     <result column="area" jdbcType="BIGINT" property="area" />
     <result column="land_area" jdbcType="BIGINT" property="landArea" />
     <result column="land_area_unit" jdbcType="INTEGER" property="landAreaUnit" />
@@ -88,9 +87,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, title, type, sealed_state, publish_state, amc_id, amc_asset_code, zcc_asset_code, 
-    valuation, debt_id, start_price, area, land_area, land_area_unit, publish_date, province, 
-    city, county, street, building_name, gps_lng, gps_lat, created_by, created_date, 
-    amc_contactor_id
+    valuation, debt_id, area, land_area, land_area_unit, publish_date, province, city, 
+    county, street, building_name, gps_lng, gps_lat, created_by, created_date, amc_contactor_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -130,17 +128,17 @@
     insert into AMC_ASSET (title, type, sealed_state, 
       publish_state, amc_id, amc_asset_code, 
       zcc_asset_code, valuation, debt_id, 
-      start_price, area, land_area, 
-      land_area_unit, publish_date, province, 
-      city, county, street, building_name, 
+      area, land_area, land_area_unit, 
+      publish_date, province, city, 
+      county, street, building_name, 
       gps_lng, gps_lat, created_by, 
       created_date, amc_contactor_id)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, 
       #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, 
-      #{startPrice,jdbcType=BIGINT}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
-      #{landAreaUnit,jdbcType=INTEGER}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
+      #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, 
+      #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
+      #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{createdBy,jdbcType=BIGINT}, 
       #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
   </insert>
@@ -176,9 +174,6 @@
       </if>
       <if test="debtId != null">
         debt_id,
-      </if>
-      <if test="startPrice != null">
-        start_price,
       </if>
       <if test="area != null">
         area,
@@ -250,9 +245,6 @@
       </if>
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
-      </if>
-      <if test="startPrice != null">
-        #{startPrice,jdbcType=BIGINT},
       </if>
       <if test="area != null">
         #{area,jdbcType=BIGINT},
@@ -337,9 +329,6 @@
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
-      <if test="record.startPrice != null">
-        start_price = #{record.startPrice,jdbcType=BIGINT},
-      </if>
       <if test="record.area != null">
         area = #{record.area,jdbcType=BIGINT},
       </if>
@@ -399,7 +388,6 @@
       zcc_asset_code = #{record.zccAssetCode,jdbcType=CHAR},
       valuation = #{record.valuation,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      start_price = #{record.startPrice,jdbcType=BIGINT},
       area = #{record.area,jdbcType=BIGINT},
       land_area = #{record.landArea,jdbcType=BIGINT},
       land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
@@ -447,9 +435,6 @@
       </if>
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
-      </if>
-      <if test="startPrice != null">
-        start_price = #{startPrice,jdbcType=BIGINT},
       </if>
       <if test="area != null">
         area = #{area,jdbcType=BIGINT},
@@ -507,7 +492,6 @@
       zcc_asset_code = #{zccAssetCode,jdbcType=CHAR},
       valuation = #{valuation,jdbcType=BIGINT},
       debt_id = #{debtId,jdbcType=BIGINT},
-      start_price = #{startPrice,jdbcType=BIGINT},
       area = #{area,jdbcType=BIGINT},
       land_area = #{landArea,jdbcType=BIGINT},
       land_area_unit = #{landAreaUnit,jdbcType=INTEGER},

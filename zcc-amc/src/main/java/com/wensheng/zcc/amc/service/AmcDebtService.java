@@ -1,14 +1,10 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
-import com.wensheng.zcc.amc.module.dao.mongo.origin.Grntctrct;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntctrct;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
@@ -24,7 +20,7 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcDebtService {
 
-  public int  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, int imageClass);
+  public int  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass);
 
   public AmcDebtVo create(AmcDebt AmcDebt);
 

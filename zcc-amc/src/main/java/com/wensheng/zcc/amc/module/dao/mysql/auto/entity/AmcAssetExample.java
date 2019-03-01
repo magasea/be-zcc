@@ -762,66 +762,6 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andStartPriceIsNull() {
-            addCriterion("start_price is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceIsNotNull() {
-            addCriterion("start_price is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceEqualTo(Long value) {
-            addCriterion("start_price =", value, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceNotEqualTo(Long value) {
-            addCriterion("start_price <>", value, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceGreaterThan(Long value) {
-            addCriterion("start_price >", value, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceGreaterThanOrEqualTo(Long value) {
-            addCriterion("start_price >=", value, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceLessThan(Long value) {
-            addCriterion("start_price <", value, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceLessThanOrEqualTo(Long value) {
-            addCriterion("start_price <=", value, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceIn(List<Long> values) {
-            addCriterion("start_price in", values, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceNotIn(List<Long> values) {
-            addCriterion("start_price not in", values, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceBetween(Long value1, Long value2) {
-            addCriterion("start_price between", value1, value2, "startPrice");
-            return (Criteria) this;
-        }
-
-        public Criteria andStartPriceNotBetween(Long value1, Long value2) {
-            addCriterion("start_price not between", value1, value2, "startPrice");
-            return (Criteria) this;
-        }
-
         public Criteria andAreaIsNull() {
             addCriterion("area is null");
             return (Criteria) this;

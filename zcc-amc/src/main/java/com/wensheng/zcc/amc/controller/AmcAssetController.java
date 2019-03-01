@@ -170,12 +170,12 @@ public class AmcAssetController {
     return amcAsset;
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/image/add", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/image/add", headers = "Content-Type= multipart/form-data",method = RequestMethod.POST)
   @ResponseBody
   public List<AssetImage> addAmcAssetImage(
        @RequestParam("assetId") Long assetId, @RequestParam("isToOss") Boolean isToOss,
       @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId,
-      @RequestParam("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
+      @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
     if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");

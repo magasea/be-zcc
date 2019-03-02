@@ -76,6 +76,13 @@ public class AmcBasicInfoController {
     return curtInfo;
   }
 
+  @RequestMapping(value = "/court_info/update", method = RequestMethod.POST)
+  @ResponseBody
+  public CurtInfo updateCourtInfo(@RequestBody CurtInfo curtInfo){
+    curtInfoMapper.updateByPrimaryKeySelective(curtInfo);
+    return curtInfo;
+  }
+
   @RequestMapping(value = "/publishStates", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getPublishStateList(){

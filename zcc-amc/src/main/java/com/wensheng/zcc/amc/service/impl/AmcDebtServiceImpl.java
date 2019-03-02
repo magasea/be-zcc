@@ -39,6 +39,7 @@ import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -46,6 +47,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -117,6 +119,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcDebtpackService amcDebtpackService;
+
+
 
   @Override
   public DebtImage saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass) {
@@ -538,7 +542,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor) {
+    if (StringUtils.isEmpty(amcOrigCreditor.getBranchName() )){
+      amcOrigCreditor.setBranchName(Instant.now().toString());
+    }
     amcOrigCreditorMapper.insertSelective(amcOrigCreditor);
+
     return amcOrigCreditor;
   }
 

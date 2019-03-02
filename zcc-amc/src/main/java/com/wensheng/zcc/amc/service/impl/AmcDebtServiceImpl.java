@@ -543,7 +543,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public AmcOrigCreditor createOrigCreditor(AmcOrigCreditor amcOrigCreditor) {
     if (StringUtils.isEmpty(amcOrigCreditor.getBranchName() )){
-      amcOrigCreditor.setBranchName(Instant.now().toString());
+      String instant = Instant.now().toString();
+      String rand = instant.substring(instant.length() - 19);
+      amcOrigCreditor.setBranchName(rand);
     }
     amcOrigCreditorMapper.insertSelective(amcOrigCreditor);
 

@@ -19,6 +19,7 @@ public class AssetAdditional {
     String mainPic;					// 抵押物主图片路径
     String keywords;					// 关键词f
     String description;				// 抵押物描述
+    String warrant;         //权证信息
     String bidLink;					// 拍卖详情的链接
     Long courtId;           //法院id
     String zipCode;					// 邮政编码

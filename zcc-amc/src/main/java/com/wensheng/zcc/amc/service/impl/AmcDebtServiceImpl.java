@@ -445,11 +445,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       updateList.forEach(updateItem ->{if(!historyList.contains(updateItem)){  addList.add(updateItem);}});
     }
     updateDebtId4Debtors(addList, debtId);
-    updateDebtId4Debtors(delList, 0L);
+    amcDebtorExample = new AmcDebtorExample();
+    amcDebtorExample.createCriteria().andIdIn(delList).andDebtIdEqualTo(debtId);
+    amcDebtorMapper.deleteByExample(amcDebtorExample);
   }
 
   private void updateDebtId4Debtors(List<Long> debtorIds, Long debtId){
-    if(!CollectionUtils.isEmpty(debtorIds)){
+    if(!CollectionUtils.isEmpty(debtorIds) && debtId > 0){
       AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
       amcDebtorExample.createCriteria().andIdIn(debtorIds);
       AmcDebtor amcDebtor = new AmcDebtor();

@@ -22,7 +22,7 @@ public class Dao2VoUtils {
   public static AmcAssetVo convertDo2Vo(AmcAsset amcAsset) throws Exception {
     AmcAssetVo amcAssetVo = new AmcAssetVo();
     BeanUtils.copyProperties(amcAsset, amcAssetVo);
-    if(amcAsset.getValuation() > 0){
+    if(amcAsset.getValuation() != null && amcAsset.getValuation() > 0){
       amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
     }
 
@@ -48,7 +48,7 @@ public class Dao2VoUtils {
       }
     }
 
-    if(amcAsset.getArea() > 0){
+    if(amcAsset.getArea()  != null && amcAsset.getArea() > 0){
       amcAssetVo.setArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getArea()));
 
     }

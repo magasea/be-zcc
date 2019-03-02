@@ -71,8 +71,9 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/court_info/add", method = RequestMethod.POST)
   @ResponseBody
-  public Long addCourtInfo(@RequestBody AmcCourtInfoVo amcCourtInfoVo){
-    return -1L;
+  public CurtInfo addCourtInfo(@RequestBody CurtInfo curtInfo){
+    curtInfoMapper.insert(curtInfo);
+    return curtInfo;
   }
 
   @RequestMapping(value = "/publishStates", method = RequestMethod.GET)

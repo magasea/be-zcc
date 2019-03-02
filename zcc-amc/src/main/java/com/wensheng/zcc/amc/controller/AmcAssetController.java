@@ -115,8 +115,7 @@ public class AmcAssetController {
 
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/add", headers = "Content-Type= multipart/form-data", method =
-      RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
@@ -145,7 +144,9 @@ public class AmcAssetController {
   private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo) throws Exception {
     AmcAsset amcAsset = new AmcAsset();
     AmcBeanUtils.copyProperties(amcAssetVo, amcAsset);
-    amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
+    if(amcAssetVo.getValuation() != null ){
+      amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
+    }
     if(amcAssetVo.getLandArea() != null ){
       if(amcAssetVo.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
         switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit())){
@@ -165,8 +166,9 @@ public class AmcAssetController {
         }
       }
     }
-
-    amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
+    if(amcAssetVo.getArea() != null){
+      amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
+    }
     return amcAsset;
   }
 

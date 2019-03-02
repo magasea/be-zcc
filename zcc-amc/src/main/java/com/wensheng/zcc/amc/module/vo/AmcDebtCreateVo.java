@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import io.swagger.models.auth.In;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -40,7 +41,7 @@ public class AmcDebtCreateVo {
 
   private Date publishDate;
 
-  private String lawsuitState;
+  private Integer lawsuitState;
 
   private String lawsuitStateDesc;
 

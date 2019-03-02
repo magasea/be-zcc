@@ -201,6 +201,7 @@ public class AmcAssetController {
         assetImage.setOssPath(ossPath);
         assetImage.setTag(tag);
         assetImage.setOriginalName(filePath);
+        assetImage.setAmcAssetId(assetId);
         assetImages.add(amcAssetService.saveImageInfo( assetImage));
 
       } catch (Exception e) {

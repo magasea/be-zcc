@@ -100,7 +100,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
-        amcAssetMapper.updateByPrimaryKey(amcAsset);
+        amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
         AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();

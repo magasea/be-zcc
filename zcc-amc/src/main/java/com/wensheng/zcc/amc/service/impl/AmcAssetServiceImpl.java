@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.service.impl;
 
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
@@ -11,6 +12,8 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
@@ -48,6 +51,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     AmcAssetExtMapper amcAssetExtMapper;
 
     @Autowired
+    AmcDebtContactorMapper amcDebtContactorMapper;
+
+    @Autowired
     MongoTemplate wszccTemplate;
 
     @Autowired
@@ -59,8 +65,15 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
 
-         return Dao2VoUtils.convertDo2Vo(amcAsset);
+         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
+        if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
+            AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+            amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
+            AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
+            amcAssetVo.setAmcContactorId(amcDebtContactor);
+        }
 
+        return amcAssetVo;
     }
 
     @Override
@@ -88,7 +101,14 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.updateByPrimaryKey(amcAsset);
-        return Dao2VoUtils.convertDo2Vo(amcAsset);
+        AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset);
+        if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
+            AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+            amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
+            AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
+            amcAssetVo.setAmcContactorId(amcDebtContactor);
+        }
+        return amcAssetVo;
     }
 
     @Override
@@ -110,9 +130,16 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     public AmcAssetDetailVo queryAssetDetail(Long assetId) throws Exception {
         AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(assetId);
 
+        AmcAssetDetailVo amcAssetDetailVo = queryMongoForAmcAsset(amcAsset);
+        if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
+            AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+            amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
+            AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
+            amcAssetDetailVo.getAmcAssetVo().setAmcContactorId(amcDebtContactor);
+        }
 
 
-        return queryMongoForAmcAsset(amcAsset);
+        return amcAssetDetailVo;
     }
 
     private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset) throws Exception {

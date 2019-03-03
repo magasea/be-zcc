@@ -450,7 +450,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     updateDebtId4Debtors(addList, debtId);
     amcDebtorExample = new AmcDebtorExample();
-    amcDebtorExample.createCriteria().andIdIn(delList).andDebtIdEqualTo(debtId);
+    if(!CollectionUtils.isEmpty(delList)){
+      amcDebtorExample.createCriteria().andIdIn(delList).andDebtIdEqualTo(debtId);
+    }
     amcDebtorMapper.deleteByExample(amcDebtorExample);
   }
 

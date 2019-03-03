@@ -50,9 +50,7 @@ public class Dao2VoUtils {
 
     if(amcAsset.getArea()  != null && amcAsset.getArea() > 0){
       amcAssetVo.setArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getArea()));
-
     }
-
 
     return amcAssetVo;
   }

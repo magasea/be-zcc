@@ -101,9 +101,9 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
   }
 
   @Override
-  public void listFilesOnOss() {
+  public void listFilesOnOss(ImagePathClassEnum imagePathClassEnum) {
 
-    ObjectListing objectListing = ossClient.listObjects(bucketName, ImagePathClassEnum.ASSET.getName());
+    ObjectListing objectListing = ossClient.listObjects(bucketName, imagePathClassEnum.getName());
     List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
     for (OSSObjectSummary s : sums) {
       System.out.println("\t" + s.getKey());

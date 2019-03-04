@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -16,6 +17,6 @@ public interface AmcOssFileService {
 
   public void delFileInOss(String ossPath) throws Exception;
 
-  public void listFilesOnOss();
+  public void listFilesOnOss(ImagePathClassEnum imagePathClassEnum);
 
 }

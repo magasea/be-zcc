@@ -284,7 +284,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt) throws Exception {
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
-    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
+    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets(), wszccTemplate));
     return amcDebtVo;
 
   }

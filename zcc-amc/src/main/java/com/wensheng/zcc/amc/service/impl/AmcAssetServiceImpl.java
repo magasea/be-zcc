@@ -65,7 +65,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
 
-         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
+         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset, wszccTemplate);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
             amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
@@ -101,7 +101,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
-        AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset);
+        AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset, wszccTemplate);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
             amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
@@ -143,7 +143,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset) throws Exception {
-        AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
+        AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset, wszccTemplate);
         Long assetId = amcAsset.getId();
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(assetId));
@@ -204,7 +204,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         amcAssetExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
         RowBounds rowBounds = new RowBounds(offset, pageSize);
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
-        List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+        List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets, wszccTemplate);
         return amcAssetVos;
     }
 

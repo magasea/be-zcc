@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import io.swagger.models.auth.In;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -69,6 +70,8 @@ public class AmcDebtCreateVo {
 
 
   private List<Long> debtors;
+
+  private DebtAdditional debtAdditional;
 
 
 

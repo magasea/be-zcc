@@ -206,7 +206,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
     if(!CollectionUtils.isEmpty(debtAdditionals)){
-      amcDebtVo.setDebtDesc(debtAdditionals.get(0).getDesc());
+      amcDebtVo.setDebtAdditional(debtAdditionals.get(0));
     }
     query = new Query();
     query.addCriteria(Criteria.where("debtId").is(amcDebtId).and("tag").is(ImageClassEnum.MAIN.getId()));

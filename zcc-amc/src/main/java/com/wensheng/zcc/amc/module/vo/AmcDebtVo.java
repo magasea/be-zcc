@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
@@ -70,6 +71,8 @@ public class AmcDebtVo {
 
   private Date createdDate;
   List<AmcAssetVo> assetVos;
+
+  private DebtAdditional debtAdditional;
 
   DebtImage debtImage;
 

@@ -309,6 +309,8 @@ public class AmcDebtController {
       amcDebtService.connDebt2Debtors(createVo.getDebtors(), amcDebtVo.getId());
     }
 
+    amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
+
     return "succed";
   }
 
@@ -371,6 +373,9 @@ public class AmcDebtController {
       amcDebtService.update(amcDebt);
       if (!CollectionUtils.isEmpty(amcDebtVo.getDebtors())) {
         amcDebtService.connDebt2Debtors(amcDebtVo.getDebtors(), amcDebtVo.getId());
+      }
+      if(amcDebtVo.getDebtAdditional() != null  && amcDebtVo.getDebtAdditional().getDesc() != null && !StringUtils.isEmpty(amcDebtVo.getDebtAdditional().getDesc())){
+        amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
       }
     } catch (Exception ex) {
       log.error("failed to update debt", ex);

@@ -202,7 +202,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
     Query query = new Query();
-    query.addCriteria(Criteria.where("debtId").is(amcDebtId));
+    query.addCriteria(Criteria.where("amcDebtId").is(amcDebtId));
 
     List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
     if(!CollectionUtils.isEmpty(debtAdditionals)){

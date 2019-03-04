@@ -2,13 +2,17 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.model.OSSObjectSummary;
+import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import java.io.File;
+import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
@@ -88,9 +92,22 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
   public void delFileInOss(String ossPath) throws Exception {
 
     if(ossPath.contains(ossFilePathBase)){
-      ossClient.deleteObject(bucketName, ossPath.substring(ossFilePathBase.length() -1));
+      String key = ossPath.substring(ossFilePathBase.length());
+      log.info(String.format("delete file with key:%s", key));
+      ossClient.deleteObject(bucketName, key);
     }
 
+
+  }
+
+  @Override
+  public void listFilesOnOss() {
+
+    ObjectListing objectListing = ossClient.listObjects(bucketName, ImagePathClassEnum.ASSET.getName());
+    List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
+    for (OSSObjectSummary s : sums) {
+      System.out.println("\t" + s.getKey());
+    }
 
   }
 

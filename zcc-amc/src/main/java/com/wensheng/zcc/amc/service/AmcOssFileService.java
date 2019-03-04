@@ -16,4 +16,6 @@ public interface AmcOssFileService {
 
   public void delFileInOss(String ossPath) throws Exception;
 
+  public void listFilesOnOss();
+
 }

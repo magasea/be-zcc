@@ -51,7 +51,7 @@ public class AmcDebt {
 
     private Long origCreditorId;
 
-    private String debtDesc;
+    private String briefDesc;
 
     private Long createdBy;
 
@@ -249,12 +249,12 @@ public class AmcDebt {
         this.origCreditorId = origCreditorId;
     }
 
-    public String getDebtDesc() {
-        return debtDesc;
+    public String getBriefDesc() {
+        return briefDesc;
     }
 
-    public void setDebtDesc(String debtDesc) {
-        this.debtDesc = debtDesc == null ? null : debtDesc.trim();
+    public void setBriefDesc(String briefDesc) {
+        this.briefDesc = briefDesc == null ? null : briefDesc.trim();
     }
 
     public Long getCreatedBy() {

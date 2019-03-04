@@ -1595,73 +1595,73 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescIsNull() {
-            addCriterion("debt_desc is null");
+        public Criteria andBriefDescIsNull() {
+            addCriterion("brief_desc is null");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescIsNotNull() {
-            addCriterion("debt_desc is not null");
+        public Criteria andBriefDescIsNotNull() {
+            addCriterion("brief_desc is not null");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescEqualTo(String value) {
-            addCriterion("debt_desc =", value, "debtDesc");
+        public Criteria andBriefDescEqualTo(String value) {
+            addCriterion("brief_desc =", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescNotEqualTo(String value) {
-            addCriterion("debt_desc <>", value, "debtDesc");
+        public Criteria andBriefDescNotEqualTo(String value) {
+            addCriterion("brief_desc <>", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescGreaterThan(String value) {
-            addCriterion("debt_desc >", value, "debtDesc");
+        public Criteria andBriefDescGreaterThan(String value) {
+            addCriterion("brief_desc >", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescGreaterThanOrEqualTo(String value) {
-            addCriterion("debt_desc >=", value, "debtDesc");
+        public Criteria andBriefDescGreaterThanOrEqualTo(String value) {
+            addCriterion("brief_desc >=", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescLessThan(String value) {
-            addCriterion("debt_desc <", value, "debtDesc");
+        public Criteria andBriefDescLessThan(String value) {
+            addCriterion("brief_desc <", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescLessThanOrEqualTo(String value) {
-            addCriterion("debt_desc <=", value, "debtDesc");
+        public Criteria andBriefDescLessThanOrEqualTo(String value) {
+            addCriterion("brief_desc <=", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescLike(String value) {
-            addCriterion("debt_desc like", value, "debtDesc");
+        public Criteria andBriefDescLike(String value) {
+            addCriterion("brief_desc like", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescNotLike(String value) {
-            addCriterion("debt_desc not like", value, "debtDesc");
+        public Criteria andBriefDescNotLike(String value) {
+            addCriterion("brief_desc not like", value, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescIn(List<String> values) {
-            addCriterion("debt_desc in", values, "debtDesc");
+        public Criteria andBriefDescIn(List<String> values) {
+            addCriterion("brief_desc in", values, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescNotIn(List<String> values) {
-            addCriterion("debt_desc not in", values, "debtDesc");
+        public Criteria andBriefDescNotIn(List<String> values) {
+            addCriterion("brief_desc not in", values, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescBetween(String value1, String value2) {
-            addCriterion("debt_desc between", value1, value2, "debtDesc");
+        public Criteria andBriefDescBetween(String value1, String value2) {
+            addCriterion("brief_desc between", value1, value2, "briefDesc");
             return (Criteria) this;
         }
 
-        public Criteria andDebtDescNotBetween(String value1, String value2) {
-            addCriterion("debt_desc not between", value1, value2, "debtDesc");
+        public Criteria andBriefDescNotBetween(String value1, String value2) {
+            addCriterion("brief_desc not between", value1, value2, "briefDesc");
             return (Criteria) this;
         }
 

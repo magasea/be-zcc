@@ -62,7 +62,7 @@ public class AmcDebtCreateVo {
 
   private Long origCreditorId;
 
-  private String debtDesc;
+  private String briefDesc;
 
   private Long createdBy;
 

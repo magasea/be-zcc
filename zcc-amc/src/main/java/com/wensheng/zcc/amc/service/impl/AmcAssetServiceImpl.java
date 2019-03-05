@@ -21,10 +21,7 @@ import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.awt.Image;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -83,7 +80,11 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()));
         List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
-        return assetAdditionals.get(0);
+        if(!CollectionUtils.isEmpty(assetAdditionals)){
+            return assetAdditionals.get(0);
+        }else{
+            return null;
+        }
     }
 
 

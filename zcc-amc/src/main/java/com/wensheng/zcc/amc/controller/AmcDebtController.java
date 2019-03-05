@@ -310,8 +310,9 @@ public class AmcDebtController {
     if (!CollectionUtils.isEmpty(createVo.getDebtors())) {
       amcDebtService.connDebt2Debtors(createVo.getDebtors(), amcDebtVo.getId());
     }
-
-    amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
+    if(amcDebtVo.getDebtAdditional() != null && amcDebtVo.getDebtAdditional().getDesc() != null){
+      amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
+    }
 
     return "succed";
   }

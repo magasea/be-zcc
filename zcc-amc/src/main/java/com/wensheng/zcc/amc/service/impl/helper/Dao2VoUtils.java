@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
@@ -34,7 +35,7 @@ public class Dao2VoUtils {
 
 
     AmcAssetVo amcAssetVo = new AmcAssetVo();
-    BeanUtils.copyProperties(amcAsset, amcAssetVo);
+    AmcBeanUtils.copyProperties(amcAsset, amcAssetVo);
     if(amcAsset.getValuation() != null && amcAsset.getValuation() > 0){
       amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
     }

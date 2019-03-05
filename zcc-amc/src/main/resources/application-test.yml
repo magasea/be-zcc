@@ -82,6 +82,7 @@ project:
   params:
     debt_image_path: /backup/temp/debt/images/
     asset_image_path: /backup/temp/asset/images/
+    qrcode_image_path: /backup/temp/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC

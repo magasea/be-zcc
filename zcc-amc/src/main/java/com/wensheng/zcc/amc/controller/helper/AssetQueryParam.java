@@ -13,9 +13,10 @@ public class AssetQueryParam {
   Long assetId = -1L;
   List<Long> area = null;
   List<Long> landArea = null;
+  List<String> location = null;
   Integer editStatus = -1;
   Integer status = -1;
-
+  Integer assetType = -1;
   String title;
 
 

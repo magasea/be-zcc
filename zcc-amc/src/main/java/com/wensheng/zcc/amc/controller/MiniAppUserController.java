@@ -1,7 +1,11 @@
 package com.wensheng.zcc.amc.controller;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Map;
+import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -78,6 +82,13 @@ public class MiniAppUserController {
 
 
     ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(in, headers, HttpStatus.OK);
+
+    try {
+      BufferedImage img = ImageIO.read(new ByteArrayInputStream(in));
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
     return responseEntity;
   }
 

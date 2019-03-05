@@ -82,6 +82,13 @@ public class AmcAssetController {
     if(assetQueryParam.getStatus() != null && assetQueryParam.getStatus() > -1){
       queryParam.put("Status", assetQueryParam.getStatus());
     }
+    if(assetQueryParam.getAssetType() != null && assetQueryParam.getAssetType() > -1){
+      queryParam.put("AssetType", assetQueryParam.getAssetType());
+    }
+    if(assetQueryParam.getLocation() != null && !CollectionUtils.isEmpty(assetQueryParam.getLocation()) ){
+      queryParam.put("Location", assetQueryParam.getLocation());
+    }
+
     if(!StringUtils.isEmpty(assetQueryParam.getTitle())){
       queryParam.put("Title", assetQueryParam.getTitle());
     }

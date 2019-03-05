@@ -406,6 +406,21 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
                     amcAssetExample.createCriteria().andTitleLike((String)item.getValue());
                 }
+                if(item.getKey().equals("AssetType")){
+                    amcAssetExample.createCriteria().andTypeEqualTo((Integer) item.getValue());
+                }
+                if(item.getKey().equals("Location")){
+                    List<String> locations = (List<String>) item.getValue();
+                    if(!StringUtils.isEmpty(locations.get(0))){
+                        amcAssetExample.createCriteria().andProvinceEqualTo(StringUtils.trimWhitespace(locations.get(0)));
+                    }
+                    if(!StringUtils.isEmpty(locations.get(1))){
+                        amcAssetExample.createCriteria().andCityEqualTo(StringUtils.trimWhitespace(locations.get(1)));
+                    }
+                    if(!StringUtils.isEmpty(locations.get(2))){
+                        amcAssetExample.createCriteria().andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
+                    }
+                }
             }
         }
         return amcAssetExample;

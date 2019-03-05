@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.WechatQrImage;
+import com.wensheng.zcc.amc.service.MiniAppService;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,107 +43,22 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 @RequestMapping("/api/client/miniapp/user")
 public class MiniAppUserController {
-  @Value("${wechat.miniapp.appId}")
-  String appId;
-
-  @Value("${wechat.miniapp.appSecret}")
-  String appSecret;
-
-  @Value("${wechat.miniapp.get_qrcode_url}")
-  String qrCodeUrl;
-
-  @Value("${wechat.miniapp.get_token_url}")
-  String tokenUrl;
-
-  @Value("${project.params.qrcode_image_path}")
-  String qrcodeImagePath;
 
   @Autowired
-  MongoTemplate wszccTemplate;
+  MiniAppService miniAppService;
 
-
-  private RestTemplate restTemplate = new RestTemplate();
 
   @RequestMapping(value = "/miniapp-qrcode-image", method = RequestMethod.GET)
   public ResponseEntity<byte[]> getMiniappQrImage(@RequestParam("scene") String scene,
       @RequestParam("page") String page) {
-    if(StringUtils.isEmpty(scene)){
-      scene = "default";
-    }
 
-    Query query = new Query();
-    query.addCriteria(Criteria.where("fileName").is(scene));
-    List<WechatQrImage> wechatQrImageList = wszccTemplate.find(query, WechatQrImage.class);
-    if(!CollectionUtils.isEmpty(wechatQrImageList)){
-      if(Paths.get(qrcodeImagePath, scene).toFile().exists()){
-        InputStream in = getClass()
-            .getResourceAsStream(Paths.get(qrcodeImagePath, scene).toString());
-        HttpHeaders headers = new HttpHeaders();
-
-        headers.setContentType(MediaType.IMAGE_JPEG);
-        ResponseEntity<byte[]> responseEntity = null;
-        try {
-          responseEntity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers, HttpStatus.OK);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-        return responseEntity;
-      }
-    }
-
-
-    UriComponentsBuilder tokenBuilder = UriComponentsBuilder.fromHttpUrl(tokenUrl).queryParam("appid", appId)
-        .queryParam("secret", appSecret).queryParam("grant_type", "client_credential");
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-    HttpEntity<?> entity = new HttpEntity<>(headers);
-
-    ResponseEntity response = restTemplate.exchange(tokenBuilder.toUriString(), HttpMethod.GET, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
-    String token =(String) ((Map)response.getBody()).get("access_token");
-
-
-    String input = "{\"scene\":\""+scene+"\",\"page\":\""+page+"\"}";
-
-    UriComponentsBuilder qrBuilder = UriComponentsBuilder.fromHttpUrl(qrCodeUrl).queryParam("access_token",
-        token.toString());
-
-    headers = new HttpHeaders();
-    headers.setContentType(MediaType.APPLICATION_JSON);
-
-    HttpEntity<String> requestEntity= new HttpEntity<String>( input, headers);
-
-    response = restTemplate.exchange(qrBuilder.toUriString(), HttpMethod.POST, requestEntity,
-        byte[].class);
-
-    headers = new HttpHeaders();
-    byte[] in = (byte[])response.getBody();
-    headers.setContentType(MediaType.IMAGE_JPEG);
-
-    ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(in, headers, HttpStatus.OK);
-
-    try {
-      if (!Files.exists(Paths.get(qrcodeImagePath))){
-        Files.createDirectories(Paths.get(qrcodeImagePath));
-      }
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    try {
-      Files.write(Paths.get(qrcodeImagePath, scene), in);
-
-      if(Paths.get(qrcodeImagePath, scene).toFile().exists()){
-        WechatQrImage wechatQrImage = new WechatQrImage();
-        wechatQrImage.setFileName(scene);
-        wszccTemplate.save(wechatQrImage);
-      }
-
-
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    HttpHeaders httpHeaders = new HttpHeaders();
+    httpHeaders.setContentType(MediaType.IMAGE_JPEG);
+    byte[] in = miniAppService.getImageBytes4QRCode(scene, page);
+    ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(in, httpHeaders, HttpStatus.OK);
     return responseEntity;
+
+
   }
 
 

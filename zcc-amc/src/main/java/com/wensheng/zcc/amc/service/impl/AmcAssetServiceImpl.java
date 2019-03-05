@@ -412,13 +412,13 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 }
                 if(item.getKey().equals("Location")){
                     List<String> locations = (List<String>) item.getValue();
-                    if(!StringUtils.isEmpty(locations.get(0))){
+                    if(locations.size() >=1 &&!StringUtils.isEmpty(locations.get(0))){
                         criteria.andProvinceEqualTo(StringUtils.trimWhitespace(locations.get(0)));
                     }
-                    if(!StringUtils.isEmpty(locations.get(1))){
+                    if(locations.size() >=2 && !StringUtils.isEmpty(locations.get(1))){
                         criteria.andCityEqualTo(StringUtils.trimWhitespace(locations.get(1)));
                     }
-                    if(!StringUtils.isEmpty(locations.get(2))){
+                    if(locations.size() >= 3 && !StringUtils.isEmpty(locations.get(2))){
                         criteria.andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
                     }
                 }

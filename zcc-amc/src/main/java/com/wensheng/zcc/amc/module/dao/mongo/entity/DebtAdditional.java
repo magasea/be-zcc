@@ -14,4 +14,9 @@ public class DebtAdditional {
     @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     Long amcDebtId;
     String desc;					// 抵押物主图片路径
+
+    Integer viewCount	=0;			// 浏览次数
+    Integer likeCount	=0;			// 点赞次数
+    Integer watchCount	=0;			// 关注次数
+    Integer commentCount =0;			// 评论次数
 }

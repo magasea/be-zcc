@@ -15,8 +15,10 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -182,6 +184,20 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return null;
   }
 
+  private DebtAdditional queryAddtional(Long debtId){
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
+    return debtAdditionals.get(0);
+  }
+
+  private DebtImage queryImage(Long debtId){
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    return debtImages.get(0);
+  }
+
   @Override
   public AmcDebtExtVo get(Long amcDebtId) throws Exception {
 
@@ -247,19 +263,19 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
       query = new Query();
       query.addCriteria(Criteria.where("debtId").is(amcDebt.getId()));
-      List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
-      if(!CollectionUtils.isEmpty(debtImages)){
-        amcDebtVo.setDebtImage(debtImages.get(0));
-      }
+
       amcDebtVos.add(amcDebtVo);
     }
+
+    updateDebtVosWithMongo(amcDebtVos);
+
     return amcDebtVos;
 
   }
 
   private AmcDebtVo convertDo2Vo(AmcDebt amcDebt) {
     AmcDebtVo amcDebtVo = new AmcDebtVo();
-    BeanUtils.copyProperties(amcDebt, amcDebtVo);
+    AmcBeanUtils.copyProperties(amcDebt, amcDebtVo);
     if(amcDebt.getBaseAmount() > 0 ){
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));
 
@@ -284,7 +300,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt) throws Exception {
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
-    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets(), wszccTemplate));
+    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
+    amcDebtVo.setDebtImage(queryImage(amcDebtVo.getId()));
+    amcDebtVo.setDebtAdditional(queryAddtional(amcDebtVo.getId()));
     return amcDebtVo;
 
   }
@@ -334,9 +352,35 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     for(AmcDebt amcDebt: amcDebtList){
       amcDebtVos.add(convertDo2Vo(amcDebt));
     }
-
+    if(CollectionUtils.isEmpty(amcDebtVos)){
+      return amcDebtVos;
+    }
+    updateDebtVosWithMongo(amcDebtVos);
     return amcDebtVos;
   }
+
+
+  private void updateDebtVosWithMongo(List<AmcDebtVo> amcDebtVos){
+    Map<Long, AmcDebtVo> amcDebtVosMap = amcDebtVos.stream().collect(
+        Collectors.toMap(item-> item.getId(), item -> item));
+//    Set<Long> debtIds = amcDebtVos.stream().map(item -> item.getId()).collect(Collectors.toSet());
+    Query query = new Query();
+    query.addCriteria(Criteria.where("debtId").in(amcDebtVosMap.keySet()));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    for(DebtImage debtImage: debtImages){
+      if(amcDebtVosMap.containsKey(debtImage.getDebtId())){
+        amcDebtVosMap.get(debtImage.getDebtId()).setDebtImage(debtImage);
+      }
+    }
+
+    List<DebtAdditional> additionals = wszccTemplate.find(query, DebtAdditional.class);
+    for(DebtAdditional additional: additionals){
+      if(amcDebtVosMap.containsKey(additional.getAmcDebtId())){
+        amcDebtVosMap.get(additional.getAmcDebtId()).setDebtAdditional(additional);
+      }
+    }
+  }
+
   @Override
   public List<AmcDebt> queryByDebtpackId(Long debtPackId) {
     AmcDebtExample amcDebtExample = new AmcDebtExample();

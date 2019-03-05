@@ -37,6 +37,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -246,6 +247,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
+  @Transactional
   public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo) throws Exception {
     amcOssFileService.delFileInOss(debtImageBaseActionVo.getContent().getOssPath());
     amcDebtService.delImage(debtImageBaseActionVo.getContent());

@@ -67,4 +67,6 @@ public class AmcAssetVo {
 
   AssetAdditional assetAdditional;
 
+  AssetImage assetImage;
+
 }

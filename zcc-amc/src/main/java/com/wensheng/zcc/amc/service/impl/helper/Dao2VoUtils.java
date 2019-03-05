@@ -29,7 +29,7 @@ public class Dao2VoUtils {
 
 
 
-  public static AmcAssetVo convertDo2Vo(AmcAsset amcAsset, MongoTemplate wszccTemplate) throws Exception {
+  public static AmcAssetVo convertDo2Vo(AmcAsset amcAsset) throws Exception {
 
 
 
@@ -64,20 +64,15 @@ public class Dao2VoUtils {
       amcAssetVo.setArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getArea()));
     }
 
-    Query query = new Query();
-    query.addCriteria(Criteria.where("amcAssetId").is(amcAsset.getId()));
-    List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
-    if(!CollectionUtils.isEmpty(assetAdditionals)){
-      amcAssetVo.setAssetAdditional(assetAdditionals.get(0));
-    }
+
     return amcAssetVo;
 
 
   }
-  public static List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets, MongoTemplate wszccTemplate) throws Exception {
+  public static List<AmcAssetVo> convertDoList2VoList(List<AmcAsset> amcAssets) throws Exception {
     List<AmcAssetVo> amcAssetVos = new ArrayList<>();
     for(AmcAsset amcAsset: amcAssets){
-      amcAssetVos.add(convertDo2Vo(amcAsset, wszccTemplate));
+      amcAssetVos.add(convertDo2Vo(amcAsset));
     }
     return amcAssetVos;
   }

@@ -20,11 +20,13 @@ import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import java.awt.Image;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,15 +67,63 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
 
-         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset, wszccTemplate);
+         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
             amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
             AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
             amcAssetVo.setAmcContactorId(amcDebtContactor);
         }
-
+        amcAssetVo.setAssetAdditional(queryAddtional(amcAsset));
+        amcAssetVo.setAssetImage(queryImage(amcAsset));
         return amcAssetVo;
+    }
+
+    private AssetAdditional queryAddtional(AmcAsset asset){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()));
+        List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+        return assetAdditionals.get(0);
+    }
+
+
+    private AssetAdditional updateAddtional(AmcAsset asset, AssetAdditional assetAdditional){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()));
+        List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+        if(CollectionUtils.isEmpty(assetAdditionals)){
+            //just insert it
+            assetAdditional.setAmcAssetId(asset.getId());
+            wszccTemplate.save(assetAdditional);
+            return assetAdditional;
+        }else{
+            AmcBeanUtils.copyProperties(assetAdditional, assetAdditionals.get(0));
+            wszccTemplate.save(assetAdditionals.get(0));
+            return assetAdditionals.get(0);
+        }
+    }
+
+    private AssetImage updateImage(AmcAsset asset, AssetImage assetImage){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()));
+        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+        if(CollectionUtils.isEmpty(assetImages)){
+            //just insert it
+            assetImage.setAmcAssetId(asset.getId());
+            wszccTemplate.save(assetImage);
+            return assetImage;
+        }else{
+            AmcBeanUtils.copyProperties(assetImage, assetImages.get(0));
+            wszccTemplate.save(assetImages.get(0));
+            return assetImages.get(0);
+        }
+    }
+
+    private AssetImage queryImage(AmcAsset asset){
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()).and("tag").is(ImageClassEnum.MAIN.getId()));
+        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+        return assetImages.get(0);
     }
 
     @Override
@@ -101,7 +151,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
-        AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset, wszccTemplate);
+        AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
             amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
@@ -143,7 +193,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset) throws Exception {
-        AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset, wszccTemplate);
+        AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
         Long assetId = amcAsset.getId();
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(assetId));
@@ -204,8 +254,31 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         amcAssetExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
         RowBounds rowBounds = new RowBounds(offset, pageSize);
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
-        List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets, wszccTemplate);
-        return amcAssetVos;
+        List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+        if(CollectionUtils.isEmpty(amcAssetVos)){
+            return amcAssetVos;
+        }
+        Map<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
+            item->item));
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()));
+        List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+        query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
+        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+
+        for(AssetAdditional additional: assetAdditionals){
+            if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
+                amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+            }
+        }
+        for(AssetImage assetImage: assetImages){
+            if(amcAssetVoMap.containsKey(assetImage.getAmcAssetId())){
+                amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
+            }
+        }
+        return new ArrayList<>(amcAssetVoMap.values());
+
     }
 
     @Override
@@ -339,21 +412,6 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
 
-//    private <T>void  removeDuplicatItems(Query query, Object obj){
-//
-//        List<T> listOfT = (List<T>) wszccTemplate.find(query, obj.getClass());
-//        if(!CollectionUtils.isEmpty(listOfT)){
-//            if(listOfT.size() > 1){
-//                for(int idx = 1; idx < listOfT.size(); idx ++){
-//                    wszccTemplate.remove(listOfT.get(idx));
-//                }
-//            }
-//            Update update = new Update();
-//            update.set(listOfT.get(0).get_id(), obj);
-//            wszccTemplate.findAndModify(query, update, AssetImage.class);
-//        }else{
-//            wszccTemplate.insert(assetImage);
-//        }
-//    }
+
 
 }

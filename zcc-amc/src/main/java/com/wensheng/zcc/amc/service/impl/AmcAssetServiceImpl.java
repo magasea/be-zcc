@@ -370,55 +370,56 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
+        AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
         if(CollectionUtils.isEmpty(queryParam)){
             for(Entry<String, Object> item: queryParam.entrySet()){
                 if(item.getKey().equals("DebtId")){
-                    amcAssetExample.createCriteria().andDebtIdEqualTo((Long)item.getValue());
+                    criteria.andDebtIdEqualTo((Long)item.getValue());
                 }
                 if(item.getKey().equals("EditStatus")){
-                    amcAssetExample.createCriteria().andPublishStateEqualTo((Integer) item.getValue());
+                    criteria.andPublishStateEqualTo((Integer) item.getValue());
                 }
                 if(item.getKey().equals("Area")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        amcAssetExample.createCriteria().andAreaLessThan((Long)((List)item.getValue()).get(1));
+                        criteria.andAreaLessThan((Long)((List)item.getValue()).get(1));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
-                        amcAssetExample.createCriteria().andAreaGreaterThan((Long)((List)item.getValue()).get(0));
+                        criteria.andAreaGreaterThan((Long)((List)item.getValue()).get(0));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        amcAssetExample.createCriteria().andAreaBetween((Long)((List)item.getValue()).get(0), (Long)((List)item.getValue()).get(1));
+                        criteria.andAreaBetween((Long)((List)item.getValue()).get(0), (Long)((List)item.getValue()).get(1));
                     }
 
                 }
                 if(item.getKey().equals("LandArea")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        amcAssetExample.createCriteria().andLandAreaLessThan((Long)((List)item.getValue()).get(1));
+                        criteria.andLandAreaLessThan((Long)((List)item.getValue()).get(1));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
-                        amcAssetExample.createCriteria().andLandAreaGreaterThan((Long)((List)item.getValue()).get(0));
+                        criteria.andLandAreaGreaterThan((Long)((List)item.getValue()).get(0));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        amcAssetExample.createCriteria().andLandAreaBetween((Long)((List)item.getValue()).get(0),
+                        criteria.andLandAreaBetween((Long)((List)item.getValue()).get(0),
                             (Long)((List)item.getValue()).get(1));
                     }
 
                 }
                 if(item.getKey().equals("SealedState")){
-                    amcAssetExample.createCriteria().andSealedStateEqualTo((Integer) item.getValue());
+                    criteria.andSealedStateEqualTo((Integer) item.getValue());
                 }
                 if(item.getKey().equals("Title")){
 
-                    amcAssetExample.createCriteria().andTitleLike((String)item.getValue());
+                    criteria.andTitleLike((String)item.getValue());
                 }
                 if(item.getKey().equals("AssetType")){
-                    amcAssetExample.createCriteria().andTypeEqualTo((Integer) item.getValue());
+                    criteria.andTypeEqualTo((Integer) item.getValue());
                 }
                 if(item.getKey().equals("Location")){
                     List<String> locations = (List<String>) item.getValue();
                     if(!StringUtils.isEmpty(locations.get(0))){
-                        amcAssetExample.createCriteria().andProvinceEqualTo(StringUtils.trimWhitespace(locations.get(0)));
+                        criteria.andProvinceEqualTo(StringUtils.trimWhitespace(locations.get(0)));
                     }
                     if(!StringUtils.isEmpty(locations.get(1))){
-                        amcAssetExample.createCriteria().andCityEqualTo(StringUtils.trimWhitespace(locations.get(1)));
+                        criteria.andCityEqualTo(StringUtils.trimWhitespace(locations.get(1)));
                     }
                     if(!StringUtils.isEmpty(locations.get(2))){
-                        amcAssetExample.createCriteria().andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
+                        criteria.andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
                     }
                 }
             }

@@ -15,9 +15,10 @@ public enum LawstateEnum {
     INTRIAL(3, "已诉未判"),
     JUDGEMENT(4, "已判"),
     EXECNOTAPPLIED(5, "未申请执行"),
-    INENFORCEENT(6, "执行中"),
-    BANKRUPTED(7, "破产"),
-    MIXED(8, "混合"),
+    EXECAPPLIED(6, "已申请执行"),
+    INENFORCEENT(7, "执行中"),
+    BANKRUPTED(8, "破产"),
+    MIXED(9, "混合"),
     ;
 
     private int status;

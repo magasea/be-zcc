@@ -1,13 +1,24 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.WechatQrImage;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -15,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -42,6 +54,13 @@ public class MiniAppUserController {
   @Value("${wechat.miniapp.get_token_url}")
   String tokenUrl;
 
+  @Value("${project.params.qrcode_image_path}")
+  String qrcodeImagePath;
+
+  @Autowired
+  MongoTemplate wszccTemplate;
+
+
   private RestTemplate restTemplate = new RestTemplate();
 
   @RequestMapping(value = "/miniapp-qrcode-image", method = RequestMethod.GET)
@@ -51,6 +70,25 @@ public class MiniAppUserController {
       scene = "default";
     }
 
+    Query query = new Query();
+    query.addCriteria(Criteria.where("fileName").is(scene));
+    List<WechatQrImage> wechatQrImageList = wszccTemplate.find(query, WechatQrImage.class);
+    if(!CollectionUtils.isEmpty(wechatQrImageList)){
+      if(Paths.get(qrcodeImagePath, scene).toFile().exists()){
+        InputStream in = getClass()
+            .getResourceAsStream(Paths.get(qrcodeImagePath, scene).toString());
+        HttpHeaders headers = new HttpHeaders();
+
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        ResponseEntity<byte[]> responseEntity = null;
+        try {
+          responseEntity = new ResponseEntity<byte[]>(IOUtils.toByteArray(in), headers, HttpStatus.OK);
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+        return responseEntity;
+      }
+    }
 
 
     UriComponentsBuilder tokenBuilder = UriComponentsBuilder.fromHttpUrl(tokenUrl).queryParam("appid", appId)
@@ -79,12 +117,27 @@ public class MiniAppUserController {
 
     headers = new HttpHeaders();
     byte[] in = (byte[])response.getBody();
-
+    headers.setContentType(MediaType.IMAGE_JPEG);
 
     ResponseEntity<byte[]> responseEntity = new ResponseEntity<byte[]>(in, headers, HttpStatus.OK);
 
     try {
-      BufferedImage img = ImageIO.read(new ByteArrayInputStream(in));
+      if (!Files.exists(Paths.get(qrcodeImagePath))){
+        Files.createDirectories(Paths.get(qrcodeImagePath));
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    try {
+      Files.write(Paths.get(qrcodeImagePath, scene), in);
+
+      if(Paths.get(qrcodeImagePath, scene).toFile().exists()){
+        WechatQrImage wechatQrImage = new WechatQrImage();
+        wechatQrImage.setFileName(scene);
+        wszccTemplate.save(wechatQrImage);
+      }
+
+
 
     } catch (IOException e) {
       e.printStackTrace();

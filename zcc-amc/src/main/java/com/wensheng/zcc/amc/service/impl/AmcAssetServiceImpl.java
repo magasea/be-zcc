@@ -72,7 +72,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             amcAssetVo.setAmcContactorId(amcDebtContactor);
         }
         amcAssetVo.setAssetAdditional(queryAddtional(amcAsset));
-        amcAssetVo.setAssetImage(queryImage(amcAsset));
+//        amcAssetVo.setAssetImage(queryImage(amcAsset));
         return amcAssetVo;
     }
 
@@ -124,6 +124,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+
         return assetImages.get(0);
     }
 

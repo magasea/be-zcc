@@ -269,11 +269,13 @@ public class AmcDebtController {
 
     //1. check deptpackId exist
     if (createVo.getDebtpackId() == null || createVo.getDebtpackId() < 0) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
+//      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
+      log.error("there is no debtpack info for create the debt:" + createVo.getTitle());
     }
     boolean isExist = amcDebtpackService.exist(createVo.getDebtpackId());
     if (!isExist) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
+//      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBTPACK_AVAILABLE);
+      log.error("deptpackId:"+createVo.getDebtpackId()+" not exist");
     }
 
     //2. check contact person exist

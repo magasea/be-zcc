@@ -108,6 +108,21 @@ public class AmcAssetController {
     return page;
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/assets/recommand", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcAssetVo> getAmcAssets(
+      @RequestBody(required = false) Integer size) throws Exception {
+//    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
+
+
+
+    List<AmcAssetVo> amcAssetVos = amcAssetService.queryForHomePage(size);
+
+    return amcAssetVos;
+  }
+
+
+
   @RequestMapping(value = "/amcid/{amcid}/asset/allTitles", method = RequestMethod.POST)
   @ResponseBody
   public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{

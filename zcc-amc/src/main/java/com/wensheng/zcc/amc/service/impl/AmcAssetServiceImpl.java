@@ -362,6 +362,20 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     @Override
+    public List<AmcAssetVo> queryForHomePage(int size) {
+        //query AssetImage to get top sizes images containing asset ids
+        Query query = new Query();
+//        query.addCriteria(Criteria.where("amcAssetId").is())
+
+        //query amcAssetMapper to get top size amcAssets which is not deleted
+
+
+        //join them
+
+        return null;
+    }
+
+    @Override
     public Map<String, List<Long>> getAllAssetTitles() {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
 //        amcAssetExample.setDistinct(true);

@@ -48,6 +48,8 @@ public interface AmcAssetService {
 
     Long getAssetCount(Map<String, Object> queryParam);
 
+    public List<AmcAssetVo> queryForHomePage(int size);
+
     Map<String, List<Long>> getAllAssetTitles();
 
   AssetImage saveImageInfo( AssetImage assetImage);

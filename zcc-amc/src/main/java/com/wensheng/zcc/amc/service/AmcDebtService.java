@@ -24,7 +24,7 @@ public interface AmcDebtService {
 
   public AmcDebtVo create(AmcDebt AmcDebt);
 
-  public AmcDebtVo del(AmcDebt AmcDebt);
+  public int del(Long amcDebtId);
 
   public AmcDebtVo update(AmcDebt AmcDebt);
 

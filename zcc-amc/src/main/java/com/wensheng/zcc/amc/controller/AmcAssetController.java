@@ -274,6 +274,12 @@ public class AmcAssetController {
     }
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/asset/del", method = RequestMethod.POST)
+  @ResponseBody
+  public void delAmcAsset(@RequestBody BaseActionVo<Long> delAssetBaseActionVo ) throws Exception{
+    amcAssetService.delAsset(delAssetBaseActionVo.getContent());
+  }
+
   @RequestMapping(value = "/amcid/{amcid}/asset/image/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcAssetImage(@RequestBody BaseActionVo<List<AssetImage>> assetImagesVo ) throws Exception{

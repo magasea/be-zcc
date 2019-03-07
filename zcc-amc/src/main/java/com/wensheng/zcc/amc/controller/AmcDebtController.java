@@ -253,6 +253,12 @@ public class AmcDebtController {
     amcDebtService.delImage(debtImageBaseActionVo.getContent());
   }
 
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/del", method = RequestMethod.POST)
+  @ResponseBody
+  public void delAmcDebt(@RequestBody BaseActionVo<Long> debtIdBaseActionVo) throws Exception {
+    amcDebtService.del(debtIdBaseActionVo.getContent());
+  }
+
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @ResponseBody
   public String createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo) throws Exception {

@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -14,9 +15,11 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
@@ -33,6 +36,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -58,9 +62,12 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Autowired
     MongoTemplate originalMongoTemplate;
 
+    @Autowired
+    AmcOssFileService amcOssFileService;
 
 
     @Override
+    @Transactional
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
 
@@ -146,9 +153,56 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     @Override
-    public AmcAssetVo del(AmcAsset amcAsset) {
-        return null;
+    @Transactional
+    public int delAsset(Long amcAssetId) {
+        AmcAsset amcAsset = amcAssetMapper.selectByPrimaryKey(amcAssetId);
+        del(amcAsset);
+        return 1;
     }
+
+  @Override
+  public int del(Long amcDebtId) {
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+      int count = 0;
+      for(AmcAsset amcAsset: amcAssets){
+        del(amcAsset);
+        count++;
+      }
+      return count;
+  }
+
+    private void del(AmcAsset amcAsset) {
+
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        Query query= new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(amcAsset.getId()));
+
+        if(amcAsset.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
+            amcAssetMapper.deleteByExample(amcAssetExample);
+            wszccTemplate.remove(query, AssetAdditional.class);
+            List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+            for(AssetImage assetImage: assetImages){
+
+                try {
+                    amcOssFileService.delFileInOss(assetImage.getOssPath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("Failed to del file on oss with osspath:"+ assetImage.getOssPath(), e);
+                }
+            }
+            wszccTemplate.remove(query, AssetImage.class);
+        }else{
+            AmcAsset amcAssetUpdate = new AmcAsset();
+            amcAssetUpdate.setPublishState(PublishStateEnum.DELETED.getStatus());
+            amcAssetUpdate.setId(amcAsset.getId());
+            amcAssetMapper.updateByPrimaryKeySelective(amcAssetUpdate);
+        }
+
+
+    }
+
 
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {

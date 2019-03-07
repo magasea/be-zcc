@@ -15,6 +15,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
@@ -32,9 +33,11 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
@@ -122,6 +125,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Autowired
   AmcDebtpackService amcDebtpackService;
 
+  @Autowired
+  AmcAssetService amcAssetService;
+
+  @Autowired
+  AmcOssFileService amcOssFileService;
+
 
 
   @Override
@@ -163,14 +172,41 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  @Transactional
   public AmcDebtVo create(AmcDebt amcDebt) {
     amcDebtMapper.insertSelective(amcDebt);
     return convertDo2Vo(amcDebt);
   }
 
   @Override
-  public AmcDebtVo del(AmcDebt AmcDebt) {
-    return null;
+  @Transactional
+  public int del(Long amcDebtId) {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
+    if(amcDebt != null && amcDebt.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
+      amcAssetService.del(amcDebtId);
+      AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+      amcDebtorExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+      amcDebtorMapper.deleteByExample(amcDebtorExample);
+      Query queryNormal = new Query();
+      queryNormal.addCriteria(Criteria.where("amcDebtId").is(amcDebtId));
+      wszccTemplate.remove(queryNormal, DebtAdditional.class);
+      Query queryImage = new Query();
+      queryImage.addCriteria(Criteria.where("debtId").is(amcDebtId));
+      List<DebtImage> debtImages = wszccTemplate.find(queryImage, DebtImage.class);
+      for(DebtImage debtImage: debtImages){
+        try {
+          amcOssFileService.delFileInOss(debtImage.getOssPath());
+        } catch (Exception e) {
+          e.printStackTrace();
+          log.error("Failed to del ossFile with osspath:"+ debtImage.getOssPath(), e);
+        }
+      }
+      wszccTemplate.remove(queryNormal, DebtImage.class);
+    }else{
+      log.error("Cannot del not draft debt with id:"+ amcDebtId);
+    }
+
+    return 1;
   }
 
   @Override

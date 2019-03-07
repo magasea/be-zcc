@@ -427,6 +427,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
+        criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
         if(!CollectionUtils.isEmpty(queryParam)){
             for(Entry<String, Object> item: queryParam.entrySet()){
                 if(item.getKey().equals("DebtId")){

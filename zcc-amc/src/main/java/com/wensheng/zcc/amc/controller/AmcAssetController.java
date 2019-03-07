@@ -204,6 +204,10 @@ public class AmcAssetController {
       @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId,
       @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
+    if(uploadingImages != null && uploadingImages.length > 3){
+      throw ExceptionUtils.getAmcException(AmcExceptions.LIMTEXCEED_UPLOADFILENUMBER,
+          "upload "+uploadingImages.length + " files at same time");
+    }
     if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
     }
@@ -214,7 +218,7 @@ public class AmcAssetController {
         filePaths.add(filePath);
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+        throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2SERVER, e.getMessage());
       }
     }
     String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetId+"/";
@@ -233,7 +237,8 @@ public class AmcAssetController {
 
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+        throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2OSS, e.getMessage());
+
       }
     }
     return assetImages;

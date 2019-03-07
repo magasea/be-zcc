@@ -331,9 +331,29 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
             }
         }
-        return new ArrayList<>(amcAssetVoMap.values());
+        List <AmcAssetVo> amcAssetVosList = new ArrayList<>(amcAssetVoMap.values());
+            Collections.sort(amcAssetVosList, amcAssetVoComparator);
+            return amcAssetVosList;
 
     }
+
+    Comparator<AmcAssetVo> amcAssetVoComparator = new Comparator<AmcAssetVo>() {
+        @Override
+        public int compare(AmcAssetVo e1, AmcAssetVo e2) {
+            if( e1.getAssetImage() == null && e2.getAssetImage() == null){
+                return 0;
+            }else if( e1.getAssetImage() != null && e2.getAssetImage() == null){
+                return 1;
+            }else if( e1.getAssetImage() != null && e2.getAssetImage() != null && e1.getAssetImage().getOssPath() != null && e2.getAssetImage().getOssPath() == null ) {
+                return 1;
+            }else if( e1.getAssetImage() != null && e2.getAssetImage() != null && e1.getAssetImage().getOssPath() != null && e2.getAssetImage().getOssPath() != null ){
+                return 0;
+            }else{
+                return -1;
+            }
+
+        }
+    };
 
     @Override
     public Long getAssetCount(Map<String, Object> queryParam) {

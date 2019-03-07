@@ -180,7 +180,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         query.addCriteria(Criteria.where("amcAssetId").is(amcAsset.getId()));
 
         if(amcAsset.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
-            amcAssetMapper.deleteByExample(amcAssetExample);
+            amcAssetMapper.deleteByPrimaryKey(amcAsset.getId());
             wszccTemplate.remove(query, AssetAdditional.class);
             List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
             for(AssetImage assetImage: assetImages){

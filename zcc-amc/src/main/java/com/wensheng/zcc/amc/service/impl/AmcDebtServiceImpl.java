@@ -275,7 +275,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size) {
 
-    AmcDebtExample amcDebtExample = null;
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
     RowBounds rowBounds = new RowBounds(offset, size);
 
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);

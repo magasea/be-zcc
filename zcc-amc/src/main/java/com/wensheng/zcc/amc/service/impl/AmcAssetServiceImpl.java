@@ -243,8 +243,6 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
             amcAssetDetailVo.getAmcAssetVo().setAmcContactorId(amcDebtContactor);
         }
-
-
         return amcAssetDetailVo;
     }
 

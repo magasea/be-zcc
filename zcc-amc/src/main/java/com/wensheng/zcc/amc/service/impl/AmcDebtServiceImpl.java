@@ -202,6 +202,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
         }
       }
       wszccTemplate.remove(queryNormal, DebtImage.class);
+      amcDebtMapper.deleteByPrimaryKey(amcDebtId);
     }else{
       log.error("Cannot del not draft debt with id:"+ amcDebtId);
     }

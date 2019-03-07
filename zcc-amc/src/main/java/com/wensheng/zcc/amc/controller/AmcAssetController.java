@@ -204,7 +204,7 @@ public class AmcAssetController {
       @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId,
       @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
-    if(uploadingImages != null && uploadingImages.length > 3){
+    if(uploadingImages != null && uploadingImages.length >= 3){
       throw ExceptionUtils.getAmcException(AmcExceptions.LIMTEXCEED_UPLOADFILENUMBER,
           "upload "+uploadingImages.length + " files at same time");
     }

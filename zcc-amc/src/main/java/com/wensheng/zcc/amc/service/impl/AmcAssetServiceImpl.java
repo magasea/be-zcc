@@ -320,10 +320,20 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+        boolean queryRecom = false;
+        Integer recomFilterVal = 0;
+        if(queryParam.containsKey("Recommand") && queryParam.get("Recommand") != null){
+            try {
+                recomFilterVal = Integer.parseInt(queryParam.get("Recommand").toString());
+                queryRecom = true;
+            } catch (NumberFormatException e) {
+                queryRecom = false;
+            }
+        }
 
         for(AssetAdditional additional: assetAdditionals){
             if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
-                if(queryParam.containsKey("Recommand") && queryParam.get("Recommand") != null && additional.getIsRecommanded() != (Integer) queryParam.get("Recommand")){
+                if(queryRecom && recomFilterVal != additional.getIsRecommanded()){
                     amcAssetVoMap.remove(additional.getAmcAssetId());
                     log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
                 }else{

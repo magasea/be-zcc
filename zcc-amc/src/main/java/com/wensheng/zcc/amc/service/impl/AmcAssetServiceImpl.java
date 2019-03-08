@@ -323,7 +323,13 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
         for(AssetAdditional additional: assetAdditionals){
             if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
-                amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+                if(queryParam.containsKey("Recommand") && additional.getIsRecommanded() != (Integer) queryParam.get(
+                    "Recommand")){
+                    amcAssetVoMap.remove(additional.getAmcAssetId());
+                    log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
+                }else{
+                    amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+                }
             }
         }
         for(AssetImage assetImage: assetImages){
@@ -468,6 +474,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("EditStatus")){
                     criteria.andPublishStateEqualTo((Integer) item.getValue());
                 }
+
                 if(item.getKey().equals("Area")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
                         criteria.andAreaLessThan((Long)((List)item.getValue()).get(1));

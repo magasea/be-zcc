@@ -93,6 +93,10 @@ public class AmcAssetController {
       queryParam.put("Title", assetQueryParam.getTitle());
     }
 
+    if(!StringUtils.isEmpty(assetQueryParam.getRecommand())){
+      queryParam.put("Recommand", assetQueryParam.getTitle());
+    }
+
     List<AmcAssetVo> queryResults;
     int offset = PageReqRepHelper.getOffset(assetQueryParam.getPageInfo());
     try{

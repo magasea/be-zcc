@@ -18,6 +18,7 @@ public class AssetQueryParam {
   Integer status = -1;
   Integer assetType = -1;
   String title;
+  Integer recommand = -1;
 
 
   PageInfo pageInfo;

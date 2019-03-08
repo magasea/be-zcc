@@ -57,4 +57,5 @@ public interface AmcAssetService {
 
   void delImage(AssetImage assetImage);
 
+  Long getAssetCountWithDebtIds(List<Long> amcDebtIds);
 }

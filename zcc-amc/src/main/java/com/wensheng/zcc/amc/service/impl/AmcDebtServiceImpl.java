@@ -32,6 +32,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -44,6 +45,7 @@ import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -681,6 +683,30 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     }
     return result;
+  }
+
+  @Override
+  public AmcDebtSummary getSummaryInfo() {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus()).andBaseAmountIsNotNull();
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    Long totalBaseAmount = 0L;
+    for(AmcDebt amcDebt: amcDebts){
+        totalBaseAmount += amcDebt.getBaseAmount();
+    }
+    BigDecimal totalBaseAmountBigDecimal = AmcNumberUtils.getDecimalFromLongDiv100(totalBaseAmount);
+    AmcDebtSummary amcDebtSummary = new AmcDebtSummary();
+    amcDebtSummary.setDebtTotalAmount(totalBaseAmountBigDecimal);
+    amcDebtSummary.setDebtTotalCount(Long.valueOf(amcDebts.size()));
+    if(CollectionUtils.isEmpty(amcDebts)){
+      amcDebtSummary.setAssetTotalCount(0L);
+      return amcDebtSummary;
+    }
+
+    List<Long> amcDebtIds = amcDebts.stream().map(iitem -> iitem.getId()).collect(Collectors.toList());
+    Long assetCount = amcAssetService.getAssetCountWithDebtIds(amcDebtIds);
+    amcDebtSummary.setAssetTotalCount(assetCount);
+    return amcDebtSummary;
   }
 
 }

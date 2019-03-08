@@ -471,6 +471,16 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         wszccTemplate.findAllAndRemove(query, AssetImage.class);
     }
 
+    @Override
+    public Long getAssetCountWithDebtIds(List<Long> amcDebtIds) {
+        if(CollectionUtils.isEmpty(amcDebtIds)){
+            return 0L;
+        }
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdIn(amcDebtIds);
+        return amcAssetMapper.countByExample(amcAssetExample);
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();

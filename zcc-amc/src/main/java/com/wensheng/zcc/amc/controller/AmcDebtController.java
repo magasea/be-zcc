@@ -16,6 +16,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -394,6 +395,18 @@ public class AmcDebtController {
 
     return amcDebtVo;
   }
+
+
+  @RequestMapping(value = "/api/amcid/{id}/debts/total", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDebtSummary queryDebtsSummary()
+      throws Exception {
+
+    AmcDebtSummary amcDebtSummary = amcDebtService.getSummaryInfo();
+    return amcDebtSummary;
+  }
+
+
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody

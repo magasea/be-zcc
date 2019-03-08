@@ -8,6 +8,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.List;
 import java.util.Map;
@@ -82,5 +83,7 @@ public interface AmcDebtService {
   Long getTotalCompanyCount();
 
   Map<String, List<Long>> getAllTitles();
+
+  AmcDebtSummary getSummaryInfo();
 
 }

@@ -323,8 +323,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
         for(AssetAdditional additional: assetAdditionals){
             if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
-                if(queryParam.containsKey("Recommand") && additional.getIsRecommanded() != (Integer) queryParam.get(
-                    "Recommand")){
+                if(queryParam.containsKey("Recommand") && queryParam.get("Recommand") != null && additional.getIsRecommanded() != (Integer) queryParam.get("Recommand")){
                     amcAssetVoMap.remove(additional.getAmcAssetId());
                     log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
                 }else{

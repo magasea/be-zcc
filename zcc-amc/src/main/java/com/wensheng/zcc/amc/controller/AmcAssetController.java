@@ -174,7 +174,10 @@ public class AmcAssetController {
       amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
     }
     if(amcAssetVo.getLandArea() != null ){
-      if(amcAssetVo.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
+      if(amcAssetVo.getLandAreaUnit() == null){
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT, "" +amcAssetVo.getLandAreaUnit());
+      }
+      if(amcAssetVo.getLandAreaUnit() != null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
         switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit())){
           case SQUAREMETER:
             amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));

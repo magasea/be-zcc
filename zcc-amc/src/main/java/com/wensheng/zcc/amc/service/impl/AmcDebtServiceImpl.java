@@ -361,6 +361,16 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebtExt.getDebtInfo().getAmcContactor2Id() != null && amcDebtExt.getDebtInfo().getAmcContactor2Id() > 0){
       amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactor2Id()));
     }
+
+    if(CollectionUtils.isEmpty(amcDebtExt.getAmcAssets())){
+      return amcDebtVo;
+    }
+    try {
+      amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
+    } catch (Exception e) {
+      log.error("convert asset to assetVo met exception:", e);
+    }
+
     return amcDebtVo;
   }
 
@@ -418,9 +428,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     for(AmcDebtExt amcDebtExt: amcDebtExtList){
       amcDebtVos.add(convertDo2Vo(amcDebtExt));
     }
-    if(CollectionUtils.isEmpty(amcDebtVos)){
-      return amcDebtVos;
-    }
+
     updateDebtVosWithMongo(amcDebtVos);
     return amcDebtVos;
   }

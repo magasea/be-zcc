@@ -83,6 +83,7 @@
   ${prefix}debt_id as ${alias}debt_id,
   ${prefix}area as ${alias}area,
   ${prefix}land_area as ${alias}land_area,
+  ${prefix}land_area_unit as ${alias}land_area_unit,
   ${prefix}publish_date as ${alias}publish_date,
   ${prefix}province as ${alias}province,
   ${prefix}city as ${alias}city,

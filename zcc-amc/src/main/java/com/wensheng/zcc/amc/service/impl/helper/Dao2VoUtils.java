@@ -43,10 +43,11 @@ public class Dao2VoUtils {
 
     if(amcAsset.getLandArea() != null && amcAsset.getLandArea() > 0){
       amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
-      if(amcAsset.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAsset.getLandAreaUnit()) != null){
+      if(amcAsset.getLandAreaUnit() != null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAsset.getLandAreaUnit()) != null){
         switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAsset.getLandAreaUnit())){
           case SQUAREMETER:
             amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
+
             break;
           case MU:
             amcAssetVo.setLandArea(AmcNumberUtils.getMuFromSQM(amcAsset.getLandArea()));
@@ -59,6 +60,10 @@ public class Dao2VoUtils {
             throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT);
 
         }
+      }else{
+        log.error("asset with id:"+amcAsset.getId() +" landAreaUnit is:" + amcAsset.getLandAreaUnit() + " use default"
+            + " squremeter to handle it");
+        amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
       }
     }
     if(amcAsset.getArea()  != null && amcAsset.getArea() > 0){

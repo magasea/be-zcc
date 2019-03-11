@@ -338,6 +338,32 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtVo;
   }
 
+
+  private AmcDebtVo convertDo2Vo(AmcDebtExt amcDebtExt) {
+    AmcDebtVo amcDebtVo = new AmcDebtVo();
+    AmcBeanUtils.copyProperties(amcDebtExt.getDebtInfo(), amcDebtVo);
+    if(amcDebtExt.getDebtInfo().getBaseAmount() > 0 ){
+      amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getBaseAmount()));
+
+    }
+    if(amcDebtExt.getDebtInfo().getValuation() !=null && amcDebtExt.getDebtInfo().getValuation() > 0 ){
+      amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getValuation()));
+
+    }
+    if(amcDebtExt.getDebtInfo().getTotalAmount() > 0 ){
+      amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getTotalAmount()));
+
+    }
+    if(amcDebtExt.getDebtInfo().getAmcContactorId() > 0){
+      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactorId()));
+    }
+
+    if(amcDebtExt.getDebtInfo().getAmcContactor2Id() != null && amcDebtExt.getDebtInfo().getAmcContactor2Id() > 0){
+      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactor2Id()));
+    }
+    return amcDebtVo;
+  }
+
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt) throws Exception {
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
     amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
@@ -386,11 +412,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
-    List<AmcDebt> amcDebtList = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
-    for(AmcDebt amcDebt: amcDebtList){
-      amcDebtVos.add(convertDo2Vo(amcDebt));
+    for(AmcDebtExt amcDebtExt: amcDebtExtList){
+      amcDebtVos.add(convertDo2Vo(amcDebtExt));
     }
     if(CollectionUtils.isEmpty(amcDebtVos)){
       return amcDebtVos;

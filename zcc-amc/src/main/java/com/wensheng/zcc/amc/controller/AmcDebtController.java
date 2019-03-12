@@ -362,6 +362,7 @@ public class AmcDebtController {
 
       AmcDebt amcDebt = new AmcDebt();
       AmcBeanUtils.copyProperties(amcDebtVo, amcDebt);
+      AmcBeanUtils.fillNullObjects(amcDebt);
       log.info("amcDebtVo.getBaseAmount()"+ amcDebtVo.getBaseAmount());
       if( null != amcDebtVo.getBaseAmount()){
         amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getBaseAmount()));

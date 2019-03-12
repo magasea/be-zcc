@@ -70,11 +70,15 @@ public class AmcAssetController {
     if(assetQueryParam.getDebtId() > 0){
       queryParam.put("DebtId", assetQueryParam.getDebtId());
     }
+
     if(!CollectionUtils.isEmpty(assetQueryParam.getArea()) && assetQueryParam.getArea().size() > 1){
-      queryParam.put("Area", assetQueryParam.getArea());
+      List<Long> areas = AssetQueryParam.areaFilterUpdate4DB(assetQueryParam.getArea());
+      queryParam.put("Area", areas);
     }
     if(!CollectionUtils.isEmpty(assetQueryParam.getLandArea()) && assetQueryParam.getLandArea().size() > 1){
-      queryParam.put("LandArea", assetQueryParam.getLandArea());
+      List<Long> landAreas = AssetQueryParam.areaFilterUpdate4DB(assetQueryParam.getLandArea());
+
+      queryParam.put("LandArea", landAreas);
     }
     if(assetQueryParam.getEditStatus() != null && assetQueryParam.getEditStatus() > -1){
       queryParam.put("EditStatus", assetQueryParam.getEditStatus());
@@ -170,6 +174,7 @@ public class AmcAssetController {
   private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo) throws Exception {
     AmcAsset amcAsset = new AmcAsset();
     AmcBeanUtils.copyProperties(amcAssetVo, amcAsset);
+    AmcBeanUtils.fillNullObjects(amcAsset);
     if(amcAssetVo.getValuation() != null ){
       amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
     }

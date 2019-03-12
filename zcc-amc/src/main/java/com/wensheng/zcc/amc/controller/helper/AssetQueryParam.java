@@ -1,7 +1,10 @@
 package com.wensheng.zcc.amc.controller.helper;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.Data;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author chenwei on 1/8/19
@@ -22,5 +25,12 @@ public class AssetQueryParam {
 
 
   PageInfo pageInfo;
+
+  public static List<Long> areaFilterUpdate4DB(List<Long> origArea){
+    List<Long> result = origArea.stream().map(item -> item*100).collect(Collectors.toList());
+
+
+    return result;
+  }
 
 }

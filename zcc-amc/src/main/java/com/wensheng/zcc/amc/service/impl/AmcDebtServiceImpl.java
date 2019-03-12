@@ -214,7 +214,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcDebtVo update(AmcDebt amcDebt) {
-    int result = amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    int result = amcDebtMapper.updateByPrimaryKey(amcDebt);
     return null;
   }
 

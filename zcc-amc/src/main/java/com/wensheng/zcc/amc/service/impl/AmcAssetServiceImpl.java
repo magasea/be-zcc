@@ -496,7 +496,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
                 if(item.getKey().equals("Area")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andAreaLessThan((Long)((List)item.getValue()).get(1));
+                        criteria.andAreaBetween(0L, (Long)((List)item.getValue()).get(1));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
                         criteria.andAreaGreaterThan((Long)((List)item.getValue()).get(0));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
@@ -506,7 +506,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 }
                 if(item.getKey().equals("LandArea")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andLandAreaLessThan((Long)((List)item.getValue()).get(1));
+                        criteria.andLandAreaBetween(0L, (Long)((List)item.getValue()).get(1));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
                         criteria.andLandAreaGreaterThan((Long)((List)item.getValue()).get(0));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){

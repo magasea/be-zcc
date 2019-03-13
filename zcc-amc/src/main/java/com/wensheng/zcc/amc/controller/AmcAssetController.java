@@ -1,10 +1,10 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
-import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
+import com.wensheng.zcc.amc.controller.helper.AmcPage;
+import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
-import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -19,15 +19,13 @@ import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
-import java.awt.Image;
+import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -59,39 +57,13 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcAssetVo> getAmcAssets(
-      @RequestBody(required = false) AssetQueryParam assetQueryParam) throws Exception {
+  public AmcPage<AmcAssetVo> getAmcAssets(
+      @RequestBody(required = false) QueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
       orderByParam.put("id", Direction.DESC);
     }
-    Map<String, Object> queryParam = new HashMap<>();
-
-    if(assetQueryParam.getDebtId() > 0){
-      queryParam.put("DebtId", assetQueryParam.getDebtId());
-    }
-    if(!CollectionUtils.isEmpty(assetQueryParam.getArea()) && assetQueryParam.getArea().size() > 1){
-      queryParam.put("Area", assetQueryParam.getArea());
-    }
-    if(!CollectionUtils.isEmpty(assetQueryParam.getLandArea()) && assetQueryParam.getLandArea().size() > 1){
-      queryParam.put("LandArea", assetQueryParam.getLandArea());
-    }
-    if(assetQueryParam.getEditStatus() != null && assetQueryParam.getEditStatus() > -1){
-      queryParam.put("EditStatus", assetQueryParam.getEditStatus());
-    }
-    if(assetQueryParam.getStatus() != null && assetQueryParam.getStatus() > -1){
-      queryParam.put("Status", assetQueryParam.getStatus());
-    }
-    if(assetQueryParam.getAssetType() != null && assetQueryParam.getAssetType() > -1){
-      queryParam.put("AssetType", assetQueryParam.getAssetType());
-    }
-    if(assetQueryParam.getLocation() != null && !CollectionUtils.isEmpty(assetQueryParam.getLocation()) ){
-      queryParam.put("Location", assetQueryParam.getLocation());
-    }
-
-    if(!StringUtils.isEmpty(assetQueryParam.getTitle())){
-      queryParam.put("Title", assetQueryParam.getTitle());
-    }
+    Map<String, Object> queryParam = SQLUtils.getQueryParams(assetQueryParam);
 
     List<AmcAssetVo> queryResults;
     int offset = PageReqRepHelper.getOffset(assetQueryParam.getPageInfo());
@@ -104,13 +76,29 @@ public class AmcAssetController {
     }
     Long totalCount = amcAssetService.getAssetCount(queryParam);
 
-    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
-    return page;
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(queryResults, totalCount );
+//    return queryResults;
   }
+
+  @RequestMapping(value = "/amcid/{amcid}/assets/recommand", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcAssetVo> getAmcAssets(
+      @RequestBody(required = false) Integer size) throws Exception {
+//    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
+
+
+
+    List<AmcAssetVo> amcAssetVos = amcAssetService.queryForHomePage(size);
+
+    return amcAssetVos;
+  }
+
+
 
   @RequestMapping(value = "/amcid/{amcid}/asset/allTitles", method = RequestMethod.POST)
   @ResponseBody
-  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
+  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody QueryParam queryParam) throws Exception{
     return amcAssetService.getAllAssetTitles();
   }
 
@@ -151,11 +139,15 @@ public class AmcAssetController {
   private AmcAsset getAssetFromVo(AmcAssetVo amcAssetVo) throws Exception {
     AmcAsset amcAsset = new AmcAsset();
     AmcBeanUtils.copyProperties(amcAssetVo, amcAsset);
+    AmcBeanUtils.fillNullObjects(amcAsset);
     if(amcAssetVo.getValuation() != null ){
       amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
     }
     if(amcAssetVo.getLandArea() != null ){
-      if(amcAssetVo.getLandAreaUnit() == null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
+      if(amcAssetVo.getLandAreaUnit() == null){
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT, "" +amcAssetVo.getLandAreaUnit());
+      }
+      if(amcAssetVo.getLandAreaUnit() != null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
         switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit())){
           case SQUAREMETER:
             amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
@@ -189,6 +181,10 @@ public class AmcAssetController {
       @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId,
       @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
+    if(uploadingImages != null && uploadingImages.length >= 3){
+      throw ExceptionUtils.getAmcException(AmcExceptions.LIMTEXCEED_UPLOADFILENUMBER,
+          "upload "+uploadingImages.length + " files at same time");
+    }
     if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
     }
@@ -199,7 +195,7 @@ public class AmcAssetController {
         filePaths.add(filePath);
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+        throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2SERVER, e.getMessage());
       }
     }
     String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetId+"/";
@@ -218,7 +214,8 @@ public class AmcAssetController {
 
       } catch (Exception e) {
         e.printStackTrace();
-        throw new ResponseStatusException(HttpStatus.MULTI_STATUS,e.getStackTrace().toString());
+        throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2OSS, e.getMessage());
+
       }
     }
     return assetImages;
@@ -272,6 +269,12 @@ public class AmcAssetController {
 
       amcOssFileService.delFileInOss(assetDocument.getOssPath());
     }
+  }
+
+  @RequestMapping(value = "/amcid/{amcid}/asset/del", method = RequestMethod.POST)
+  @ResponseBody
+  public void delAmcAsset(@RequestBody BaseActionVo<Long> delAssetBaseActionVo ) throws Exception{
+    amcAssetService.delAsset(delAssetBaseActionVo.getContent());
   }
 
   @RequestMapping(value = "/amcid/{amcid}/asset/image/del", method = RequestMethod.POST)

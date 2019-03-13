@@ -5,11 +5,11 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
@@ -17,11 +17,14 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
-import java.awt.Image;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +36,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -58,9 +62,12 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Autowired
     MongoTemplate originalMongoTemplate;
 
+    @Autowired
+    AmcOssFileService amcOssFileService;
 
 
     @Override
+    @Transactional
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
 
@@ -72,7 +79,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             amcAssetVo.setAmcContactorId(amcDebtContactor);
         }
         amcAssetVo.setAssetAdditional(queryAddtional(amcAsset));
-        amcAssetVo.setAssetImage(queryImage(amcAsset));
+//        amcAssetVo.setAssetImage(queryImage(amcAsset));
         return amcAssetVo;
     }
 
@@ -124,6 +131,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(asset.getId()).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+
         return assetImages.get(0);
     }
 
@@ -145,13 +153,60 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     @Override
-    public AmcAssetVo del(AmcAsset amcAsset) {
-        return null;
+    @Transactional
+    public int delAsset(Long amcAssetId) {
+        AmcAsset amcAsset = amcAssetMapper.selectByPrimaryKey(amcAssetId);
+        del(amcAsset);
+        return 1;
     }
+
+  @Override
+  public int del(Long amcDebtId) {
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+      int count = 0;
+      for(AmcAsset amcAsset: amcAssets){
+        del(amcAsset);
+        count++;
+      }
+      return count;
+  }
+
+    private void del(AmcAsset amcAsset) {
+
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        Query query= new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(amcAsset.getId()));
+
+        if(amcAsset.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
+            amcAssetMapper.deleteByPrimaryKey(amcAsset.getId());
+            wszccTemplate.remove(query, AssetAdditional.class);
+            List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+            for(AssetImage assetImage: assetImages){
+
+                try {
+                    amcOssFileService.delFileInOss(assetImage.getOssPath());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.error("Failed to del file on oss with osspath:"+ assetImage.getOssPath(), e);
+                }
+            }
+            wszccTemplate.remove(query, AssetImage.class);
+        }else{
+            AmcAsset amcAssetUpdate = new AmcAsset();
+            amcAssetUpdate.setPublishState(PublishStateEnum.DELETED.getStatus());
+            amcAssetUpdate.setId(amcAsset.getId());
+            amcAssetMapper.updateByPrimaryKeySelective(amcAssetUpdate);
+        }
+
+
+    }
+
 
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
-        amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+        amcAssetMapper.updateByPrimaryKey(amcAsset);
         AmcAssetVo amcAssetVo =  Dao2VoUtils.convertDo2Vo(amcAsset);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
@@ -188,8 +243,6 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
             amcAssetDetailVo.getAmcAssetVo().setAmcContactorId(amcDebtContactor);
         }
-
-
         return amcAssetDetailVo;
     }
 
@@ -267,10 +320,25 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+        boolean queryRecom = false;
+        Integer recomFilterVal = 0;
+        if(queryParam.containsKey("Recommand") && queryParam.get("Recommand") != null){
+            try {
+                recomFilterVal = Integer.parseInt(queryParam.get("Recommand").toString());
+                queryRecom = true;
+            } catch (NumberFormatException e) {
+                queryRecom = false;
+            }
+        }
 
         for(AssetAdditional additional: assetAdditionals){
             if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
-                amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+                if(queryRecom && recomFilterVal != additional.getIsRecommanded()){
+                    amcAssetVoMap.remove(additional.getAmcAssetId());
+                    log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
+                }else{
+                    amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+                }
             }
         }
         for(AssetImage assetImage: assetImages){
@@ -278,14 +346,48 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
             }
         }
-        return new ArrayList<>(amcAssetVoMap.values());
+        List <AmcAssetVo> amcAssetVosList = new ArrayList<>(amcAssetVoMap.values());
+//            Collections.sort(amcAssetVosList, amcAssetVoComparator);
+            return amcAssetVosList;
 
     }
+
+//    Comparator<AmcAssetVo> amcAssetVoComparator = new Comparator<AmcAssetVo>() {
+//        @Override
+//        public int compare(AmcAssetVo e1, AmcAssetVo e2) {
+//            if( e1.getAssetImage() == null && e2.getAssetImage() == null){
+//                return 0;
+//            }else if( e1.getAssetImage() != null && e2.getAssetImage() == null){
+//                return 1;
+//            }else if( e1.getAssetImage() != null && e2.getAssetImage() != null && e1.getAssetImage().getOssPath() != null && e2.getAssetImage().getOssPath() == null ) {
+//                return 1;
+//            }else if( e1.getAssetImage() != null && e2.getAssetImage() != null && e1.getAssetImage().getOssPath() != null && e2.getAssetImage().getOssPath() != null ){
+//                return 0;
+//            }else{
+//                return -1;
+//            }
+//
+//        }
+//    };
 
     @Override
     public Long getAssetCount(Map<String, Object> queryParam) {
         AmcAssetExample amcAssetExample = getAmcAssetExampleWithQueryParam(queryParam);
         return amcAssetMapper.countByExample(amcAssetExample);
+    }
+
+    @Override
+    public List<AmcAssetVo> queryForHomePage(int size) {
+        //query AssetImage to get top sizes images containing asset ids
+        Query query = new Query();
+//        query.addCriteria(Criteria.where("amcAssetId").is())
+
+        //query amcAssetMapper to get top size amcAssets which is not deleted
+
+
+        //join them
+
+        return null;
     }
 
     @Override
@@ -369,9 +471,20 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         wszccTemplate.findAllAndRemove(query, AssetImage.class);
     }
 
+    @Override
+    public Long getAssetCountWithDebtIds(List<Long> amcDebtIds) {
+        if(CollectionUtils.isEmpty(amcDebtIds)){
+            return 0L;
+        }
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdIn(amcDebtIds);
+        return amcAssetMapper.countByExample(amcAssetExample);
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
+        criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
         if(!CollectionUtils.isEmpty(queryParam)){
             for(Entry<String, Object> item: queryParam.entrySet()){
                 if(item.getKey().equals("DebtId")){
@@ -380,9 +493,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("EditStatus")){
                     criteria.andPublishStateEqualTo((Integer) item.getValue());
                 }
+
                 if(item.getKey().equals("Area")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andAreaLessThan((Long)((List)item.getValue()).get(1));
+                        criteria.andAreaBetween(0L, (Long)((List)item.getValue()).get(1));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
                         criteria.andAreaGreaterThan((Long)((List)item.getValue()).get(0));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
@@ -392,7 +506,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 }
                 if(item.getKey().equals("LandArea")){
                     if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andLandAreaLessThan((Long)((List)item.getValue()).get(1));
+                        criteria.andLandAreaBetween(0L, (Long)((List)item.getValue()).get(1));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
                         criteria.andLandAreaGreaterThan((Long)((List)item.getValue()).get(0));
                     }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
@@ -422,6 +536,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     if(locations.size() >= 3 && !StringUtils.isEmpty(locations.get(2))){
                         criteria.andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
                     }
+                }
+                if(item.getKey().equals("AmcContactorId")){
+                    criteria.andAmcContactorIdEqualTo((Long)item.getValue());
                 }
             }
         }

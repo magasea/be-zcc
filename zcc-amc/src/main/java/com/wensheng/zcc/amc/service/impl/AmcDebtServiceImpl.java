@@ -15,10 +15,9 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -31,32 +30,32 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
@@ -122,6 +121,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Autowired
   AmcDebtpackService amcDebtpackService;
 
+  @Autowired
+  AmcAssetService amcAssetService;
+
+  @Autowired
+  AmcOssFileService amcOssFileService;
+
 
 
   @Override
@@ -163,19 +168,47 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  @Transactional
   public AmcDebtVo create(AmcDebt amcDebt) {
     amcDebtMapper.insertSelective(amcDebt);
     return convertDo2Vo(amcDebt);
   }
 
   @Override
-  public AmcDebtVo del(AmcDebt AmcDebt) {
-    return null;
+  @Transactional
+  public int del(Long amcDebtId) {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
+    if(amcDebt != null && amcDebt.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
+      amcAssetService.del(amcDebtId);
+      AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+      amcDebtorExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+      amcDebtorMapper.deleteByExample(amcDebtorExample);
+      Query queryNormal = new Query();
+      queryNormal.addCriteria(Criteria.where("amcDebtId").is(amcDebtId));
+      wszccTemplate.remove(queryNormal, DebtAdditional.class);
+      Query queryImage = new Query();
+      queryImage.addCriteria(Criteria.where("debtId").is(amcDebtId));
+      List<DebtImage> debtImages = wszccTemplate.find(queryImage, DebtImage.class);
+      for(DebtImage debtImage: debtImages){
+        try {
+          amcOssFileService.delFileInOss(debtImage.getOssPath());
+        } catch (Exception e) {
+          e.printStackTrace();
+          log.error("Failed to del ossFile with osspath:"+ debtImage.getOssPath(), e);
+        }
+      }
+      wszccTemplate.remove(queryNormal, DebtImage.class);
+      amcDebtMapper.deleteByPrimaryKey(amcDebtId);
+    }else{
+      log.error("Cannot del not draft debt with id:"+ amcDebtId);
+    }
+
+    return 1;
   }
 
   @Override
   public AmcDebtVo update(AmcDebt amcDebt) {
-    int result = amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    int result = amcDebtMapper.updateByPrimaryKey(amcDebt);
     return null;
   }
 
@@ -208,6 +241,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
     AmcDebtVo amcDebtVo = Dao2VoUtils.convertDo2Vo(amcDebtExts.get(0).getDebtInfo());
+    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExts.get(0).getAmcAssets()));
     AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
     AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
 
@@ -239,7 +273,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size) {
 
-    AmcDebtExample amcDebtExample = null;
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
     RowBounds rowBounds = new RowBounds(offset, size);
 
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
@@ -298,6 +333,44 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtVo;
   }
 
+
+
+
+  private AmcDebtVo convertDo2Vo(AmcDebtExt amcDebtExt) {
+    AmcDebtVo amcDebtVo = new AmcDebtVo();
+    AmcBeanUtils.copyProperties(amcDebtExt.getDebtInfo(), amcDebtVo);
+    if(amcDebtExt.getDebtInfo().getBaseAmount() > 0 ){
+      amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getBaseAmount()));
+
+    }
+    if(amcDebtExt.getDebtInfo().getValuation() !=null && amcDebtExt.getDebtInfo().getValuation() > 0 ){
+      amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getValuation()));
+
+    }
+    if(amcDebtExt.getDebtInfo().getTotalAmount() > 0 ){
+      amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getTotalAmount()));
+
+    }
+    if(amcDebtExt.getDebtInfo().getAmcContactorId() > 0){
+      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactorId()));
+    }
+
+    if(amcDebtExt.getDebtInfo().getAmcContactor2Id() != null && amcDebtExt.getDebtInfo().getAmcContactor2Id() > 0){
+      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactor2Id()));
+    }
+
+    if(CollectionUtils.isEmpty(amcDebtExt.getAmcAssets())){
+      return amcDebtVo;
+    }
+    try {
+      amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
+    } catch (Exception e) {
+      log.error("convert asset to assetVo met exception:", e);
+    }
+
+    return amcDebtVo;
+  }
+
   private AmcDebtVo convertDoExt2Vo(AmcDebtExt amcDebtExt) throws Exception {
     AmcDebtVo amcDebtVo = convertDo2Vo(amcDebtExt.getDebtInfo());
     amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExt.getAmcAssets()));
@@ -310,25 +383,56 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
   @Override
-  public List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception {
+  public List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy,
+      Map<String, Object> queryParam) throws Exception {
 
 
-    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    AmcDebtExample amcDebtExample = SQLUtils.getAmcDebtExampleWithQueryParam(queryParam);
+    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     try{
-      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy));
+      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy, rowBounds));
     }catch (Exception ex){
       logger.error("there is no orderBy params:" + ex.getMessage());
     }
 
-    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
-    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
+
+    List<AmcDebt> amcDebtList = amcDebtMapper.selectByExample(amcDebtExample);
+//    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    List<Long> debtIds = amcDebtList.stream().map(item -> item.getId()).collect(Collectors.toList());
+//    amcDebtorExample.createCriteria().andDebtIdIn(debtIds);
+//    List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+//
+//    Map<Long , List<AmcDebtor>> debtId2Debtor = new HashMap<>();
+//    for(AmcDebtor amcDebtor: amcDebtors){
+//      if(debtId2Debtor.containsKey(amcDebtor.getDebtId())){
+//        debtId2Debtor.get(amcDebtor.getDebtId()).add(amcDebtor);
+//      }else{
+//        debtId2Debtor.put(amcDebtor.getDebtId(), new ArrayList<AmcDebtor>());
+//      }
+//    }
+    Query query = new Query();
+//    query.addCriteria(Criteria.where("amcDebtId").in(debtIds));
+
+//    List<DebtAdditional> debtAdditionals =  wszccTemplate.find(query, DebtAdditional.class);
+//    Map<Long, DebtAdditional> debtAdditionalMap =
+//        debtAdditionals.stream().collect(Collectors.toMap(item->item.getAmcDebtId(), item -> item));
+
+    query.addCriteria(Criteria.where("debtId").in(debtIds));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    Map<Long, DebtImage> debtImageMap = debtImages.stream().collect(Collectors.toMap(item->item.getDebtId(),
+        item-> item));
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
-    for(AmcDebtExt amcDebtExt: amcDebtExtList){
-      amcDebtVos.add(convertDoExt2Vo(amcDebtExt));
-    }
+    for(AmcDebt amcDebt: amcDebtList){
+      AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
+      if(debtImageMap.containsKey(amcDebt.getId())){
+        amcDebtVo.setDebtImage(debtImageMap.get(amcDebt.getId()));
+      }
 
+
+      amcDebtVos.add(amcDebtVo);
+    }
     return amcDebtVos;
   }
 
@@ -338,23 +442,23 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
+    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     try{
-      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy));
+      String orderByStr = SQLUtils.getOrderBy(orderBy, rowBounds);
+      amcDebtExample.setOrderByClause(orderByStr);
     }catch (Exception ex){
       logger.error("there is no orderBy params:" + ex.getMessage());
     }
 
-    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
-    List<AmcDebt> amcDebtList = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+
+    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample);
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
-    for(AmcDebt amcDebt: amcDebtList){
-      amcDebtVos.add(convertDo2Vo(amcDebt));
+    for(AmcDebtExt amcDebtExt: amcDebtExtList){
+      amcDebtVos.add(convertDo2Vo(amcDebtExt));
     }
-    if(CollectionUtils.isEmpty(amcDebtVos)){
-      return amcDebtVos;
-    }
+
     updateDebtVosWithMongo(amcDebtVos);
     return amcDebtVos;
   }
@@ -390,10 +494,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public Long getTotalCount() {
-    AmcDebtExample amcDebtExample = new AmcDebtExample();
-    amcDebtExample.createCriteria().andIdGreaterThan(0L);
-    return amcDebtMapper.countByExample(null);
+  public Long getTotalCount(Map<String, Object> queryParamMap) {
+    AmcDebtExample amcDebtExample = SQLUtils.getAmcDebtExampleWithQueryParam(queryParamMap);
+    return amcDebtMapper.countByExample(amcDebtExample);
   }
 
 
@@ -643,6 +746,30 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     }
     return result;
+  }
+
+  @Override
+  public AmcDebtSummary getSummaryInfo() {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus()).andBaseAmountIsNotNull();
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    Long totalBaseAmount = 0L;
+    for(AmcDebt amcDebt: amcDebts){
+        totalBaseAmount += amcDebt.getBaseAmount();
+    }
+    BigDecimal totalBaseAmountBigDecimal = AmcNumberUtils.getDecimalFromLongDiv100(totalBaseAmount);
+    AmcDebtSummary amcDebtSummary = new AmcDebtSummary();
+    amcDebtSummary.setDebtTotalAmount(totalBaseAmountBigDecimal);
+    amcDebtSummary.setDebtTotalCount(Long.valueOf(amcDebts.size()));
+    if(CollectionUtils.isEmpty(amcDebts)){
+      amcDebtSummary.setAssetTotalCount(0L);
+      return amcDebtSummary;
+    }
+
+    List<Long> amcDebtIds = amcDebts.stream().map(iitem -> iitem.getId()).collect(Collectors.toList());
+    Long assetCount = amcAssetService.getAssetCountWithDebtIds(amcDebtIds);
+    amcDebtSummary.setAssetTotalCount(assetCount);
+    return amcDebtSummary;
   }
 
 }

@@ -21,7 +21,7 @@ public class ImageUtils {
 
   private static MessageDigest md = null;
 
-  public static String getImageType(String filePath){
+  public synchronized static String getImageType(String filePath){
 
     try{
       File fileLocal = new File(filePath);

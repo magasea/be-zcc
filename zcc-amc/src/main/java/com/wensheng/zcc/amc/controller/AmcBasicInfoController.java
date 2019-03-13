@@ -1,30 +1,29 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetNatureEnum;
+import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
-import com.wensheng.zcc.amc.module.dao.helper.LawstateEnum;
-import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
-import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
+import com.wensheng.zcc.amc.module.dao.helper.LawstateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
-import com.wensheng.zcc.amc.module.vo.AmcCourtInfoVo;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -224,7 +223,7 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtContactor> getAmcDebtContactors( @RequestBody PageInfo pageable) throws Exception {
+  public AmcPage<AmcDebtContactor> getAmcDebtContactors( @RequestBody PageInfo pageable) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if (CollectionUtils.isEmpty(orderByParam)) {
@@ -241,10 +240,10 @@ public class AmcBasicInfoController {
       throw ex;
     }
     Long totalCount = amcHelperService.getPersonTotalCount();
-
-    Page<AmcDebtContactor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
-
-    return page;
+//
+//    Page<AmcDebtContactor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
+    return PageReqRepHelper.getAmcPage(queryResults, totalCount);
+//    return queryResults;
 
   }
 

@@ -36,6 +36,10 @@ public class ExceptionUtils {
     DIRECTORY_OPER_FAILED(1014, "directory failed to oper", "目录操作失败"),
     DUPLICATE_IMAGE_ERROR(1015, "duplicate image upload ", "重复上传图片文件, 已有同样的图片或文件"),
     INVALID_LANDAREA_UNIT(1016, "invalid landarea unit", "非法的土地面积单位"),
+    FAILED_UPLOADFILE2OSS(1017, "failed to upload file to oss", "上传文件到OSS失败"),
+    FAILED_UPLOADFILE2SERVER(1018, "failed to upload file to server", "上传文件到Server失败"),
+    LIMTEXCEED_UPLOADFILENUMBER(1019, "exceed limit when upload files to server at the same time ", "同时上传文件的数量不能超过2"
+        + "个，否则服务器要超时， 敬请谅解"),
     ;
     int code;
     String name;

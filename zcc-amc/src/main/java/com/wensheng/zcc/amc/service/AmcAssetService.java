@@ -24,7 +24,9 @@ public interface AmcAssetService {
 
 
 
-    public AmcAssetVo del(AmcAsset amcAsset);
+    public int delAsset(Long amcAssetId) throws Exception;
+
+    public int del(Long amcDebtId);
 
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception;
 
@@ -46,6 +48,8 @@ public interface AmcAssetService {
 
     Long getAssetCount(Map<String, Object> queryParam);
 
+    public List<AmcAssetVo> queryForHomePage(int size);
+
     Map<String, List<Long>> getAllAssetTitles();
 
   AssetImage saveImageInfo( AssetImage assetImage);
@@ -53,4 +57,5 @@ public interface AmcAssetService {
 
   void delImage(AssetImage assetImage);
 
+  Long getAssetCountWithDebtIds(List<Long> amcDebtIds);
 }

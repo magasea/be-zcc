@@ -14,7 +14,7 @@ public enum SealStateEnum {
     FIRST_LIEN(2, "首封"),
     SECOND_LIEN(3, "轮候第一顺位"),
     THIRD_LIEN(4, "轮候第二顺位"),
-    OTHER_LIEN(5, "其它轮候"),
+    OTHER_LIEN(5, "轮候"),
 
     ;
 

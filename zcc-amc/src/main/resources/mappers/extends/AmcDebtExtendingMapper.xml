@@ -83,6 +83,7 @@
   ${prefix}debt_id as ${alias}debt_id,
   ${prefix}area as ${alias}area,
   ${prefix}land_area as ${alias}land_area,
+  ${prefix}land_area_unit as ${alias}land_area_unit,
   ${prefix}publish_date as ${alias}publish_date,
   ${prefix}province as ${alias}province,
   ${prefix}city as ${alias}city,
@@ -112,14 +113,14 @@
       distinct
     </if>
     <include refid="Prefix_Column_List"><property name="prefix" value="ad."></property></include>,
-    <include
-      refid="ASSET_Column_List"><property name="prefix" value="aa."></property><property name="alias"
-      value="aa_"></property></include>,
+    <!--<include-->
+      <!--refid="ASSET_Column_List"><property name="prefix" value="aa."></property><property name="alias"-->
+      <!--value="aa_"></property></include>,-->
     <include
       refid="DEBTOR_Column_List"><property name="prefix" value="adr."></property><property name="alias"
       value="adr_"></property></include>
     from AMC_DEBT ad
-    left join AMC_ASSET aa on ad.id = aa.debt_id
+--     left join AMC_ASSET aa on ad.id = aa.debt_id
     left join AMC_DEBTOR adr on ad.id = adr.debt_id
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Example_Where_Clause" />

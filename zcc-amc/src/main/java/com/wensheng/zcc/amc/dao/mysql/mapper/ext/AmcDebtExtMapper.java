@@ -12,7 +12,7 @@ import org.apache.ibatis.session.RowBounds;
 public interface AmcDebtExtMapper extends AmcDebtMapper {
 
 
-    List<AmcDebtExt> selectByExampleWithRowboundsExt(AmcDebtExample example, RowBounds rowBounds);
+    List<AmcDebtExt> selectByExampleWithRowboundsExt(AmcDebtExample example);
 
     List<AmcDebtExt> selectByPrimaryKeyExt(Long id);
 

@@ -7,6 +7,8 @@
     <result column="role_id" jdbcType="BIGINT" property="roleId" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -67,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_id, role_id, create_date, create_by
+    id, user_id, role_id, create_date, create_by, update_date, update_by
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample" resultMap="BaseResultMap">
     select
@@ -105,9 +107,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_USER_ROLE (user_id, role_id, create_date, 
-      create_by)
+      create_by, update_date, update_by
+      )
     values (#{userId,jdbcType=BIGINT}, #{roleId,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=BIGINT})
+      #{createBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -127,6 +131,12 @@
       <if test="createBy != null">
         create_by,
       </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
@@ -140,6 +150,12 @@
       </if>
       <if test="createBy != null">
         #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -167,6 +183,12 @@
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=BIGINT},
       </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -178,7 +200,9 @@
       user_id = #{record.userId,jdbcType=BIGINT},
       role_id = #{record.roleId,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      create_by = #{record.createBy,jdbcType=BIGINT}
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -198,6 +222,12 @@
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=BIGINT},
       </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -206,7 +236,9 @@
     set user_id = #{userId,jdbcType=BIGINT},
       role_id = #{roleId,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
-      create_by = #{createBy,jdbcType=BIGINT}
+      create_by = #{createBy,jdbcType=BIGINT},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample" resultMap="BaseResultMap">

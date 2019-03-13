@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
@@ -28,6 +29,7 @@ import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -412,17 +414,19 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody
-  public AmcPage<AmcDebtVo> queryDebts(@RequestBody PageInfo pageable)
+  public AmcPage<AmcDebtVo> queryDebts( @RequestBody  QueryParam queryParam)
       throws Exception {
-    Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
+    Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
     if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
+    Map<String, Object> queryParamMap =  SQLUtils.getQueryParams(queryParam);
 
     List<AmcDebtVo> queryResults;
-    int offset = PageReqRepHelper.getOffset(pageable);
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     try {
-      queryResults = amcDebtService.queryAllExt(Long.valueOf(offset), pageable.getSize(), orderByParam);
+      queryResults = amcDebtService.queryAllExt(Long.valueOf(offset), queryParam.getPageInfo().getSize(), orderByParam,
+          queryParamMap);
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
       throw ex;

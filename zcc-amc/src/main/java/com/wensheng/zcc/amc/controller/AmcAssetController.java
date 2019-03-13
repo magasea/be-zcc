@@ -2,10 +2,9 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AmcPage;
-import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
+import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
-import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -20,15 +19,13 @@ import com.wensheng.zcc.amc.utils.AmcBeanUtils;
 import com.wensheng.zcc.amc.utils.AmcNumberUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils;
 import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
-import java.awt.Image;
+import com.wensheng.zcc.amc.utils.SQLUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -61,50 +58,12 @@ public class AmcAssetController {
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
   public AmcPage<AmcAssetVo> getAmcAssets(
-      @RequestBody(required = false) AssetQueryParam assetQueryParam) throws Exception {
+      @RequestBody(required = false) QueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
       orderByParam.put("id", Direction.DESC);
     }
-    Map<String, Object> queryParam = new HashMap<>();
-
-    if(assetQueryParam.getDebtId() > 0){
-      queryParam.put("DebtId", assetQueryParam.getDebtId());
-    }
-
-    if(!CollectionUtils.isEmpty(assetQueryParam.getArea()) && assetQueryParam.getArea().size() > 1){
-      List<Long> areas = AssetQueryParam.areaFilterUpdate4DB(assetQueryParam.getArea());
-      queryParam.put("Area", areas);
-    }
-    if(!CollectionUtils.isEmpty(assetQueryParam.getLandArea()) && assetQueryParam.getLandArea().size() > 1){
-      List<Long> landAreas = AssetQueryParam.areaFilterUpdate4DB(assetQueryParam.getLandArea());
-
-      queryParam.put("LandArea", landAreas);
-    }
-    if(assetQueryParam.getEditStatus() != null && assetQueryParam.getEditStatus() > -1){
-      queryParam.put("EditStatus", assetQueryParam.getEditStatus());
-    }
-    if(assetQueryParam.getStatus() != null && assetQueryParam.getStatus() > -1){
-      queryParam.put("Status", assetQueryParam.getStatus());
-    }
-    if(assetQueryParam.getAssetType() != null && assetQueryParam.getAssetType() > -1){
-      queryParam.put("AssetType", assetQueryParam.getAssetType());
-    }
-    if(assetQueryParam.getLocation() != null && !CollectionUtils.isEmpty(assetQueryParam.getLocation()) ){
-      queryParam.put("Location", assetQueryParam.getLocation());
-    }
-
-    if(!StringUtils.isEmpty(assetQueryParam.getTitle())){
-      queryParam.put("Title", assetQueryParam.getTitle());
-    }
-
-    if(!StringUtils.isEmpty(assetQueryParam.getRecommand())){
-      queryParam.put("Recommand", assetQueryParam.getTitle());
-    }
-
-    if(assetQueryParam.getAmcContactorId() > 0){
-      queryParam.put("AmcContactorId", assetQueryParam.getAmcContactorId());
-    }
+    Map<String, Object> queryParam = SQLUtils.getQueryParams(assetQueryParam);
 
     List<AmcAssetVo> queryResults;
     int offset = PageReqRepHelper.getOffset(assetQueryParam.getPageInfo());
@@ -139,7 +98,7 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/asset/allTitles", method = RequestMethod.POST)
   @ResponseBody
-  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody AssetQueryParam assetQueryParam) throws Exception{
+  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody QueryParam queryParam) throws Exception{
     return amcAssetService.getAllAssetTitles();
   }
 

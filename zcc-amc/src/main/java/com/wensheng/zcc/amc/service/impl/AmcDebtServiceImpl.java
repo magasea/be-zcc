@@ -390,10 +390,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
   @Override
-  public List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy) throws Exception {
+  public List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy,
+      Map<String, Object> queryParam) throws Exception {
 
 
-    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    AmcDebtExample amcDebtExample = SQLUtils.getAmcDebtExampleWithQueryParam(queryParam);
     RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     try{
       amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy, rowBounds));

@@ -537,6 +537,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                         criteria.andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
                     }
                 }
+                if(item.getKey().equals("AmcContactorId")){
+                    criteria.andAmcContactorIdEqualTo((Long)item.getValue());
+                }
             }
         }
         return amcAssetExample;

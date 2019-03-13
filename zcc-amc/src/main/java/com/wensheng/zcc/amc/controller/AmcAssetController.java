@@ -102,6 +102,10 @@ public class AmcAssetController {
       queryParam.put("Recommand", assetQueryParam.getTitle());
     }
 
+    if(assetQueryParam.getAmcContactorId() > 0){
+      queryParam.put("AmcContactorId", assetQueryParam.getAmcContactorId());
+    }
+
     List<AmcAssetVo> queryResults;
     int offset = PageReqRepHelper.getOffset(assetQueryParam.getPageInfo());
     try{

@@ -29,19 +29,19 @@ public class AmcDebtServiceImplTest {
 
   @Autowired
   AmcDebtService amcDebtService;
-
-  @Test
-  public void queryAllExt() throws Exception {
-
-    List<AmcDebtVo> amcDebtVos =  amcDebtService.queryAllExt(0L, 20, null);
-    for(AmcDebtVo amcDebtVo: amcDebtVos){
-      if(!CollectionUtils.isEmpty(amcDebtVo.getAssetVos())){
-        System.out.println(amcDebtVo.getAssetVos().size());
-
-      }
-
-    }
-  }
+//
+//  @Test
+//  public void queryAllExt() throws Exception {
+//
+//    List<AmcDebtVo> amcDebtVos =  amcDebtService.queryAllExt(0L, 20, null);
+//    for(AmcDebtVo amcDebtVo: amcDebtVos){
+//      if(!CollectionUtils.isEmpty(amcDebtVo.getAssetVos())){
+//        System.out.println(amcDebtVo.getAssetVos().size());
+//
+//      }
+//
+//    }
+//  }
 
   @Test
   public void query(){

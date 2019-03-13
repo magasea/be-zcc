@@ -62,6 +62,10 @@ public class SQLUtils {
         if(item.getKey().equals(QueryParamEnum.AmcContactorId.name())){
           criteria.andAmcContactorIdEqualTo((Long)item.getValue());
         }
+
+        if(item.getKey().equals(QueryParamEnum.Title.name())){
+          criteria.andTitleLike((String)item.getValue());
+        }
       }
     }
     return amcDebtExample;
@@ -102,10 +106,10 @@ public class SQLUtils {
     }
 
     if (!StringUtils.isEmpty(queryParam.getRecommand())) {
-      queryParamMap.put(QueryParamEnum.Recommand.name(), queryParam.getTitle());
+      queryParamMap.put(QueryParamEnum.Recommand.name(), queryParam.getRecommand());
     }
 
-    if (queryParam.getAmcContactorId() > 0) {
+    if (queryParam.getAmcContactorId() != null && queryParam.getAmcContactorId() > 0) {
       queryParamMap.put("AmcContactorId", queryParam.getAmcContactorId());
     }
     return queryParamMap;

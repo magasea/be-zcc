@@ -32,11 +32,18 @@ public class PageReqRepHelper {
         (pageable.getPage()-1)*pageable.getSize(): 0;
   }
 
-  public static <T> Page<T> getPageResp(Long total, List<T> list, PageInfo pageable){
+  public static <T> Page<T> getPageRespdep(Long total, List<T> list, PageInfo pageable){
     PageRequest pageRequest = PageRequest.of(pageable.page(), pageable.getSize());
 
     PageImpl page = new PageImpl<T>(list, pageRequest, total );
     return page;
 
+  }
+
+  public static <T> AmcPage <T> getAmcPage(List<T> queryResults, Long total){
+    AmcPage<T> amcPage = new AmcPage<>();
+    amcPage.setContent(queryResults);
+    amcPage.setTotal(total);
+    return amcPage;
   }
 }

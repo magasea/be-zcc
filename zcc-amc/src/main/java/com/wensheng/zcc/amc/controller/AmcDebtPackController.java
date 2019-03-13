@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.Debtpack;
@@ -47,7 +48,7 @@ public class AmcDebtPackController {
 
   @RequestMapping(value = "amcid/{amcId}/debtpacks", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcDebtpack> getAllDebtPacks(@RequestBody PageInfo pageable) throws Exception {
+  public AmcPage<AmcDebtpack> getAllDebtPacks(@RequestBody PageInfo pageable) throws Exception {
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if(CollectionUtils.isEmpty(orderByParam)){
       orderByParam.put("id", Direction.DESC);
@@ -56,8 +57,10 @@ public class AmcDebtPackController {
     int offset = PageReqRepHelper.getOffset(pageable);
     List<AmcDebtpack> debtpacks =  amcDebtpackService.queryAllDebtPacks(offset, pageable.getSize(), orderByParam);
     Long count = amcDebtpackService.getTotalCnt4Debtpacks();
-    Page<AmcDebtpack> page = PageReqRepHelper.getPageResp(count, debtpacks, pageable);
-
+//    Page<AmcDebtpack> page = PageReqRepHelper.getPageResp(count, debtpacks, pageable);
+    AmcPage<AmcDebtpack> page = new AmcPage<>();
+    page.setContent(debtpacks);
+    page.setTotal(count);
 
     return page;
   }

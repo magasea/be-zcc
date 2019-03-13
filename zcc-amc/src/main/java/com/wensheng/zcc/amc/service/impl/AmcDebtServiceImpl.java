@@ -31,6 +31,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExtExample;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -247,6 +248,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
     AmcDebtVo amcDebtVo = Dao2VoUtils.convertDo2Vo(amcDebtExts.get(0).getDebtInfo());
+    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExts.get(0).getAmcAssets()));
     AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
     AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
 
@@ -339,6 +341,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
 
+
+
   private AmcDebtVo convertDo2Vo(AmcDebtExt amcDebtExt) {
     AmcDebtVo amcDebtVo = new AmcDebtVo();
     AmcBeanUtils.copyProperties(amcDebtExt.getDebtInfo(), amcDebtVo);
@@ -390,21 +394,51 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
+    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     try{
-      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy));
+      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy, rowBounds));
     }catch (Exception ex){
       logger.error("there is no orderBy params:" + ex.getMessage());
     }
 
-    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
-    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
+
+    List<AmcDebt> amcDebtList = amcDebtMapper.selectByExample(amcDebtExample);
+//    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+    List<Long> debtIds = amcDebtList.stream().map(item -> item.getId()).collect(Collectors.toList());
+//    amcDebtorExample.createCriteria().andDebtIdIn(debtIds);
+//    List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+//
+//    Map<Long , List<AmcDebtor>> debtId2Debtor = new HashMap<>();
+//    for(AmcDebtor amcDebtor: amcDebtors){
+//      if(debtId2Debtor.containsKey(amcDebtor.getDebtId())){
+//        debtId2Debtor.get(amcDebtor.getDebtId()).add(amcDebtor);
+//      }else{
+//        debtId2Debtor.put(amcDebtor.getDebtId(), new ArrayList<AmcDebtor>());
+//      }
+//    }
+    Query query = new Query();
+//    query.addCriteria(Criteria.where("amcDebtId").in(debtIds));
+
+//    List<DebtAdditional> debtAdditionals =  wszccTemplate.find(query, DebtAdditional.class);
+//    Map<Long, DebtAdditional> debtAdditionalMap =
+//        debtAdditionals.stream().collect(Collectors.toMap(item->item.getAmcDebtId(), item -> item));
+
+    query.addCriteria(Criteria.where("debtId").in(debtIds));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    Map<Long, DebtImage> debtImageMap = debtImages.stream().collect(Collectors.toMap(item->item.getDebtId(),
+        item-> item));
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
-    for(AmcDebtExt amcDebtExt: amcDebtExtList){
-      amcDebtVos.add(convertDoExt2Vo(amcDebtExt));
-    }
+    for(AmcDebt amcDebt: amcDebtList){
+      AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
+      if(debtImageMap.containsKey(amcDebt.getId())){
+        amcDebtVo.setDebtImage(debtImageMap.get(amcDebt.getId()));
+      }
 
+
+      amcDebtVos.add(amcDebtVo);
+    }
     return amcDebtVos;
   }
 
@@ -414,15 +448,17 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
+    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     try{
-      amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy));
+      String orderByStr = SQLUtils.getOrderBy(orderBy, rowBounds);
+      amcDebtExample.setOrderByClause(orderByStr);
     }catch (Exception ex){
       logger.error("there is no orderBy params:" + ex.getMessage());
     }
 
-    RowBounds rowBounds = new RowBounds(offset.intValue(), size);
 
-    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample, rowBounds);
+
+    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample);
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
     for(AmcDebtExt amcDebtExt: amcDebtExtList){

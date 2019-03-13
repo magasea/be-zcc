@@ -36,49 +36,6 @@ public class MiniAppAssetController {
   @Autowired
   AmcOssFileService amcOssFileService;
 
-  @RequestMapping(value = "/assets", method = RequestMethod.POST)
-  @ResponseBody
-  public Page<AmcAssetVo> getAmcAssets(
-      @RequestBody(required = false) AssetQueryParam assetQueryParam) throws Exception {
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
-    if(CollectionUtils.isEmpty(orderByParam)){
-      orderByParam.put("id", Direction.DESC);
-    }
-    Map<String, Object> queryParam = new HashMap<>();
-
-    if(assetQueryParam.getDebtId() > 0){
-      queryParam.put("DebtId", assetQueryParam.getDebtId());
-    }
-    if(!CollectionUtils.isEmpty(assetQueryParam.getArea()) && assetQueryParam.getArea().size() > 1){
-      queryParam.put("Area", assetQueryParam.getArea());
-    }
-    if(!CollectionUtils.isEmpty(assetQueryParam.getLandArea()) && assetQueryParam.getLandArea().size() > 1){
-      queryParam.put("LandArea", assetQueryParam.getLandArea());
-    }
-    if(assetQueryParam.getEditStatus() != null && assetQueryParam.getEditStatus() > -1){
-      queryParam.put("EditStatus", assetQueryParam.getEditStatus());
-    }
-    if(assetQueryParam.getStatus() != null && assetQueryParam.getStatus() > -1){
-      queryParam.put("Status", assetQueryParam.getStatus());
-    }
-    if(!StringUtils.isEmpty(assetQueryParam.getTitle())){
-      queryParam.put("Title", assetQueryParam.getTitle());
-    }
-
-    List<AmcAssetVo> queryResults;
-    int offset = PageReqRepHelper.getOffset(assetQueryParam.getPageInfo());
-    try{
-      queryResults = amcAssetService.queryAssetPage(offset, assetQueryParam.getPageInfo().getSize(), queryParam,
-          orderByParam);
-    }catch (Exception ex){
-      log.error("got error when query:"+ex.getMessage());
-      throw ex;
-    }
-    Long totalCount = amcAssetService.getAssetCount(queryParam);
-
-    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
-    return page;
-  }
 
   @RequestMapping(value = "/asset/allTitles", method = RequestMethod.POST)
   @ResponseBody

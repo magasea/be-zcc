@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
+import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.AssetQueryParam;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
@@ -59,7 +60,7 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
-  public Page<AmcAssetVo> getAmcAssets(
+  public AmcPage<AmcAssetVo> getAmcAssets(
       @RequestBody(required = false) AssetQueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
@@ -112,8 +113,9 @@ public class AmcAssetController {
     }
     Long totalCount = amcAssetService.getAssetCount(queryParam);
 
-    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
-    return page;
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(queryResults, totalCount );
+//    return queryResults;
   }
 
   @RequestMapping(value = "/amcid/{amcid}/assets/recommand", method = RequestMethod.POST)

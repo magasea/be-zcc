@@ -64,7 +64,8 @@ public class SQLUtils {
         }
 
         if(item.getKey().equals(QueryParamEnum.Title.name())){
-          criteria.andTitleLike((String)item.getValue());
+          StringBuilder sb = new StringBuilder().append("%").append(item.getValue()).append("%");
+          criteria.andTitleLike(sb.toString());
         }
       }
     }

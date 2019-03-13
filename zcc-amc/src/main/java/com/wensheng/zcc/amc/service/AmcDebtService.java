@@ -42,7 +42,7 @@ public interface AmcDebtService {
 
   List<AmcDebt> queryByDebtpackId(Long debtPackId);
 
-  Long getTotalCount();
+  Long getTotalCount(Map<String, Object> queryParamMap);
 
 
 

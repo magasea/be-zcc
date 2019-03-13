@@ -431,7 +431,7 @@ public class AmcDebtController {
       log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
-    Long totalCount = amcDebtService.getTotalCount();
+    Long totalCount = amcDebtService.getTotalCount(queryParamMap);
     return PageReqRepHelper.getAmcPage(queryResults, totalCount);
 //
 //    Page<AmcDebtVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);

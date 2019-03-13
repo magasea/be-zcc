@@ -20,6 +20,7 @@ public class QueryParam {
   Integer editStatus = -1;
   Integer sealStatus = -1;
   Integer assetType = -1;
+  @SQLInjectionSafe
   String title;
   Integer recommand = -1;
   Long amcContactorId = -1L;

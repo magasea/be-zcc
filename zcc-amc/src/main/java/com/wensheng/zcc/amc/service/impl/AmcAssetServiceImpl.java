@@ -331,9 +331,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             }
         }
 
+
         for(AssetAdditional additional: assetAdditionals){
             if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
-                if(queryRecom && recomFilterVal != additional.getIsRecommanded()){
+                if(queryRecom && recomFilterVal > -1 && recomFilterVal != additional.getIsRecommanded()){
                     amcAssetVoMap.remove(additional.getAmcAssetId());
                     log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
                 }else{

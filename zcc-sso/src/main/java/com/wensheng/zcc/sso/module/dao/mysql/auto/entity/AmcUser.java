@@ -1,5 +1,7 @@
 package com.wensheng.zcc.sso.module.dao.mysql.auto.entity;
 
+import java.util.Date;
+
 public class AmcUser {
     private Long id;
 
@@ -17,7 +19,15 @@ public class AmcUser {
 
     private Integer valid;
 
-    private String wxid;
+    private Integer title;
+
+    private Long createBy;
+
+    private Date createDate;
+
+    private Long updateBy;
+
+    private Date updateDate;
 
     public Long getId() {
         return id;
@@ -83,11 +93,43 @@ public class AmcUser {
         this.valid = valid;
     }
 
-    public String getWxid() {
-        return wxid;
+    public Integer getTitle() {
+        return title;
     }
 
-    public void setWxid(String wxid) {
-        this.wxid = wxid == null ? null : wxid.trim();
+    public void setTitle(Integer title) {
+        this.title = title;
+    }
+
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

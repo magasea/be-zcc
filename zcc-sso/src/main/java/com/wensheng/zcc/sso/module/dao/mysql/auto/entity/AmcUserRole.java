@@ -13,6 +13,10 @@ public class AmcUserRole {
 
     private Long createBy;
 
+    private Date updateDate;
+
+    private Long updateBy;
+
     public Long getId() {
         return id;
     }
@@ -51,5 +55,21 @@ public class AmcUserRole {
 
     public void setCreateBy(Long createBy) {
         this.createBy = createBy;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
     }
 }

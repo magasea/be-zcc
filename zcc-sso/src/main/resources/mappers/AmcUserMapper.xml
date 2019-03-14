@@ -10,7 +10,11 @@
     <result column="group_id" jdbcType="BIGINT" property="groupId" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="valid" jdbcType="INTEGER" property="valid" />
-    <result column="wxid" jdbcType="VARCHAR" property="wxid" />
+    <result column="title" jdbcType="INTEGER" property="title" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -71,7 +75,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, password, mobile_phone, email, group_id, company_id, valid, wxid
+    id, name, password, mobile_phone, email, group_id, company_id, valid, title, create_by, 
+    create_date, update_by, update_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultMap="BaseResultMap">
     select
@@ -110,10 +115,14 @@
     </selectKey>
     insert into AMC_USER (name, password, mobile_phone, 
       email, group_id, company_id, 
-      valid, wxid)
+      valid, title, create_by, 
+      create_date, update_by, update_date
+      )
     values (#{name,jdbcType=CHAR}, #{password,jdbcType=VARCHAR}, #{mobilePhone,jdbcType=CHAR}, 
       #{email,jdbcType=VARCHAR}, #{groupId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{valid,jdbcType=INTEGER}, #{wxid,jdbcType=VARCHAR})
+      #{valid,jdbcType=INTEGER}, #{title,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -142,8 +151,20 @@
       <if test="valid != null">
         valid,
       </if>
-      <if test="wxid != null">
-        wxid,
+      <if test="title != null">
+        title,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDate != null">
+        update_date,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -168,8 +189,20 @@
       <if test="valid != null">
         #{valid,jdbcType=INTEGER},
       </if>
-      <if test="wxid != null">
-        #{wxid,jdbcType=VARCHAR},
+      <if test="title != null">
+        #{title,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -206,8 +239,20 @@
       <if test="record.valid != null">
         valid = #{record.valid,jdbcType=INTEGER},
       </if>
-      <if test="record.wxid != null">
-        wxid = #{record.wxid,jdbcType=VARCHAR},
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=INTEGER},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -224,7 +269,11 @@
       group_id = #{record.groupId,jdbcType=BIGINT},
       company_id = #{record.companyId,jdbcType=BIGINT},
       valid = #{record.valid,jdbcType=INTEGER},
-      wxid = #{record.wxid,jdbcType=VARCHAR}
+      title = #{record.title,jdbcType=INTEGER},
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -253,8 +302,20 @@
       <if test="valid != null">
         valid = #{valid,jdbcType=INTEGER},
       </if>
-      <if test="wxid != null">
-        wxid = #{wxid,jdbcType=VARCHAR},
+      <if test="title != null">
+        title = #{title,jdbcType=INTEGER},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -268,7 +329,11 @@
       group_id = #{groupId,jdbcType=BIGINT},
       company_id = #{companyId,jdbcType=BIGINT},
       valid = #{valid,jdbcType=INTEGER},
-      wxid = #{wxid,jdbcType=VARCHAR}
+      title = #{title,jdbcType=INTEGER},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultMap="BaseResultMap">

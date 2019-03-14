@@ -28,7 +28,7 @@ public class ExceptionUtils {
     INVALID_GRANTORTYPE(1007, "invalid grantor type", "不是合法的担保人类型"),
     NO_AMCGRANTOR_AVAILABLE(1008, "no grantor available", "担保人不存在"),
     INVALID_AMCCONTACTID(1009, "invalid amc contact ", "担保人id非法"),
-    NO_AMCCONTACT_AVAILABLE(1010, "no amc contact available ", "担保人不存在"),
+    NO_AMCCONTACT_AVAILABLE(1010, "no amc contact available ", "amc聯係人不存在"),
 
     NO_CREDITOR(1011, "no creditor", "没有借款人"),
     INSERT_DB_ERROR(1012, "failed to insert db", "数据插入失败"),

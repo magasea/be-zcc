@@ -22,5 +22,5 @@ killProcess ${pattern_sso}
 echo ${execJarName_amc}
 echo ${execJarName_sso}
 sleep 5
-nohup java -jar -Dspring.profiles.active=dev ${execJarName_amc} &>amc.log &
-nohup java -jar -Dspring.profiles.active=dev ${execJarName_sso} &>sso.log &
+nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
+nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &

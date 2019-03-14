@@ -7,7 +7,7 @@
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="mobile_phone" jdbcType="CHAR" property="mobilePhone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
-    <result column="group_id" jdbcType="BIGINT" property="groupId" />
+    <result column="dept_id" jdbcType="BIGINT" property="deptId" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="valid" jdbcType="INTEGER" property="valid" />
     <result column="title" jdbcType="INTEGER" property="title" />
@@ -75,7 +75,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, password, mobile_phone, email, group_id, company_id, valid, title, create_by, 
+    id, name, password, mobile_phone, email, dept_id, company_id, valid, title, create_by, 
     create_date, update_by, update_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultMap="BaseResultMap">
@@ -114,12 +114,12 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_USER (name, password, mobile_phone, 
-      email, group_id, company_id, 
+      email, dept_id, company_id, 
       valid, title, create_by, 
       create_date, update_by, update_date
       )
     values (#{name,jdbcType=CHAR}, #{password,jdbcType=VARCHAR}, #{mobilePhone,jdbcType=CHAR}, 
-      #{email,jdbcType=VARCHAR}, #{groupId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
+      #{email,jdbcType=VARCHAR}, #{deptId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
       #{valid,jdbcType=INTEGER}, #{title,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, 
       #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}
       )
@@ -142,8 +142,8 @@
       <if test="email != null">
         email,
       </if>
-      <if test="groupId != null">
-        group_id,
+      <if test="deptId != null">
+        dept_id,
       </if>
       <if test="companyId != null">
         company_id,
@@ -180,8 +180,8 @@
       <if test="email != null">
         #{email,jdbcType=VARCHAR},
       </if>
-      <if test="groupId != null">
-        #{groupId,jdbcType=BIGINT},
+      <if test="deptId != null">
+        #{deptId,jdbcType=BIGINT},
       </if>
       <if test="companyId != null">
         #{companyId,jdbcType=BIGINT},
@@ -230,8 +230,8 @@
       <if test="record.email != null">
         email = #{record.email,jdbcType=VARCHAR},
       </if>
-      <if test="record.groupId != null">
-        group_id = #{record.groupId,jdbcType=BIGINT},
+      <if test="record.deptId != null">
+        dept_id = #{record.deptId,jdbcType=BIGINT},
       </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=BIGINT},
@@ -266,7 +266,7 @@
       password = #{record.password,jdbcType=VARCHAR},
       mobile_phone = #{record.mobilePhone,jdbcType=CHAR},
       email = #{record.email,jdbcType=VARCHAR},
-      group_id = #{record.groupId,jdbcType=BIGINT},
+      dept_id = #{record.deptId,jdbcType=BIGINT},
       company_id = #{record.companyId,jdbcType=BIGINT},
       valid = #{record.valid,jdbcType=INTEGER},
       title = #{record.title,jdbcType=INTEGER},
@@ -293,8 +293,8 @@
       <if test="email != null">
         email = #{email,jdbcType=VARCHAR},
       </if>
-      <if test="groupId != null">
-        group_id = #{groupId,jdbcType=BIGINT},
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=BIGINT},
       </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=BIGINT},
@@ -326,7 +326,7 @@
       password = #{password,jdbcType=VARCHAR},
       mobile_phone = #{mobilePhone,jdbcType=CHAR},
       email = #{email,jdbcType=VARCHAR},
-      group_id = #{groupId,jdbcType=BIGINT},
+      dept_id = #{deptId,jdbcType=BIGINT},
       company_id = #{companyId,jdbcType=BIGINT},
       valid = #{valid,jdbcType=INTEGER},
       title = #{title,jdbcType=INTEGER},

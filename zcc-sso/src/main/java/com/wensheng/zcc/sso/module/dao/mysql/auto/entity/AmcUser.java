@@ -13,7 +13,7 @@ public class AmcUser {
 
     private String email;
 
-    private Long groupId;
+    private Long deptId;
 
     private Long companyId;
 
@@ -69,12 +69,12 @@ public class AmcUser {
         this.email = email == null ? null : email.trim();
     }
 
-    public Long getGroupId() {
-        return groupId;
+    public Long getDeptId() {
+        return deptId;
     }
 
-    public void setGroupId(Long groupId) {
-        this.groupId = groupId;
+    public void setDeptId(Long deptId) {
+        this.deptId = deptId;
     }
 
     public Long getCompanyId() {

@@ -46,10 +46,14 @@
     ${prefix}password as password,
     ${prefix}mobile_phone as mobile_phone,
     ${prefix}email as email,
-    ${prefix}group_id as group_id,
+    ${prefix}dept_id as dept_id,
     ${prefix}company_id as company_id,
     ${prefix}valid as valid,
-    ${prefix}wxid as wxid
+    ${prefix}title as title,
+    ${prefix}create_by as create_by,
+    ${prefix}create_date as create_date,
+    ${prefix}update_by as update_by,
+    ${prefix}update_date as update_date
   </sql>
   <sql id="Role_Column_List">
     ${prefix}id as ${alias}id,

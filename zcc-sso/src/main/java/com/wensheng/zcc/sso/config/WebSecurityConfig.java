@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.config;
 
 import com.wensheng.zcc.sso.service.UserService;
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -34,6 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   }
 
   @Bean
+  @PostConstruct
   public DaoAuthenticationProvider authenticationProvider() {
     final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userService);

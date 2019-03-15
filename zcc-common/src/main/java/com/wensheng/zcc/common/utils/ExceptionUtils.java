@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.utils;
+package com.wensheng.zcc.common.utils;
 
 /**
  * @author chenwei on 1/11/19

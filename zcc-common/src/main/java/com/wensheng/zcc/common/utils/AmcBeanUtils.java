@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.utils;
+package com.wensheng.zcc.common.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

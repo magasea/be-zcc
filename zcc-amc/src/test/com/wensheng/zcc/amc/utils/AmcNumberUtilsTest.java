@@ -1,7 +1,5 @@
 package com.wensheng.zcc.amc.utils;
 
-import static org.junit.Assert.*;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import org.junit.Test;

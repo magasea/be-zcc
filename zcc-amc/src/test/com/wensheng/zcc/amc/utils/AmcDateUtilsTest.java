@@ -1,7 +1,5 @@
 package com.wensheng.zcc.amc.utils;
 
-import static org.junit.Assert.*;
-
 import java.text.ParseException;
 import java.util.Date;
 import org.junit.Test;

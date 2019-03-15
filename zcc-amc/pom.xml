@@ -28,6 +28,11 @@
             <artifactId>rulebook-spring</artifactId>
             <version>0.11</version>
         </dependency>
+        <dependency>
+            <groupId>com.wensheng.zcc</groupId>
+            <artifactId>zcc-common</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
     <properties>

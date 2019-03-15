@@ -1,24 +1,18 @@
 package com.wensheng.zcc.amc.service.impl.helper;
 
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import com.wensheng.zcc.amc.utils.AmcBeanUtils;
-import com.wensheng.zcc.amc.utils.AmcNumberUtils;
-import com.wensheng.zcc.amc.utils.ExceptionUtils;
-import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcNumberUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author chenwei on 1/10/19

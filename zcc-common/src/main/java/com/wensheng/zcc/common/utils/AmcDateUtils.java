@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.utils;
+package com.wensheng.zcc.common.utils;
 
 import java.text.DateFormat;
 import java.text.ParseException;

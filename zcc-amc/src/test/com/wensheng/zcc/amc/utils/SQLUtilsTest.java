@@ -1,7 +1,5 @@
 package com.wensheng.zcc.amc.utils;
 
-import static org.junit.Assert.*;
-
 import java.util.HashMap;
 import org.junit.Test;
 import org.springframework.data.domain.Sort;

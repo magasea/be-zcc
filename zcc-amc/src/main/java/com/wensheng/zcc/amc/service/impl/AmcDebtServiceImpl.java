@@ -1,7 +1,5 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import static org.reflections.Reflections.collect;
-
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
@@ -38,11 +36,11 @@ import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
-import com.wensheng.zcc.amc.utils.AmcBeanUtils;
-import com.wensheng.zcc.amc.utils.AmcNumberUtils;
-import com.wensheng.zcc.amc.utils.ExceptionUtils;
-import com.wensheng.zcc.amc.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcNumberUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.ArrayList;

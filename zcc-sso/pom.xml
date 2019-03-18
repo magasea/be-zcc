@@ -84,6 +84,7 @@
                     <configurationFile>
                         src/main/resources/generatorConfig.xml
                     </configurationFile>
+
                 </configuration>
             </plugin>
         </plugins>

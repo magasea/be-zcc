@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="CHAR" property="name" />
-    <result column="desc" jdbcType="VARCHAR" property="desc" />
+    <result column="description" jdbcType="VARCHAR" property="description" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -65,7 +65,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, desc
+    id, name, description
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompanyExample" resultMap="BaseResultMap">
     select
@@ -102,8 +102,8 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_COMPANY (name, desc)
-    values (#{name,jdbcType=CHAR}, #{desc,jdbcType=VARCHAR})
+    insert into AMC_COMPANY (name, description)
+    values (#{name,jdbcType=CHAR}, #{description,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -114,16 +114,16 @@
       <if test="name != null">
         name,
       </if>
-      <if test="desc != null">
-        desc,
+      <if test="description != null">
+        description,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
-      <if test="desc != null">
-        #{desc,jdbcType=VARCHAR},
+      <if test="description != null">
+        #{description,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -142,8 +142,8 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
-      <if test="record.desc != null">
-        desc = #{record.desc,jdbcType=VARCHAR},
+      <if test="record.description != null">
+        description = #{record.description,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -154,7 +154,7 @@
     update AMC_COMPANY
     set id = #{record.id,jdbcType=BIGINT},
       name = #{record.name,jdbcType=CHAR},
-      desc = #{record.desc,jdbcType=VARCHAR}
+      description = #{record.description,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -165,8 +165,8 @@
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
-      <if test="desc != null">
-        desc = #{desc,jdbcType=VARCHAR},
+      <if test="description != null">
+        description = #{description,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -174,7 +174,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
     update AMC_COMPANY
     set name = #{name,jdbcType=CHAR},
-      desc = #{desc,jdbcType=VARCHAR}
+      description = #{description,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompanyExample" resultMap="BaseResultMap">

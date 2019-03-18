@@ -31,7 +31,7 @@ public class AmcUserController {
   @Autowired
   AmcBasicService amcBasicService;
 
-  @PreAuthorize("#oauth2.clientHasRole('AMC_ADMIN') and #oauth2.hasScope('write')")
+  @PreAuthorize("#oauth2.clientHasRole('AMC_ADMIN') and #oauth2.hasScope({amcId})")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create", method = RequestMethod.POST)
   public AmcUser createUser(@RequestBody AmcUser amcUser){
 
@@ -48,7 +48,7 @@ public class AmcUserController {
   }
 
 //  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN')")
+//  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/create")
   public AmcCompany createCompany(@RequestBody AmcCompany amcCompany){
 

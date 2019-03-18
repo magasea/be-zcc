@@ -40,6 +40,12 @@ public class ExceptionUtils {
     FAILED_UPLOADFILE2SERVER(1018, "failed to upload file to server", "上传文件到Server失败"),
     LIMTEXCEED_UPLOADFILENUMBER(1019, "exceed limit when upload files to server at the same time ", "同时上传文件的数量不能超过2"
         + "个，否则服务器要超时， 敬请谅解"),
+
+    NO_SUCHUSER(1020, "No such user", "not fund such user"),
+    NO_REQUIRED_PHONEINFO(1021, "No phone info", "没有手机信息"),
+    INVALID_PASSWORD(1022, "Invalid Password", "密码不匹配或者为空"),
+    INVALID_PHONE_VERCODE(1023, "Invalid vercode", "验证码不匹配或者验证码过期"),
+    MISSING_COMPANYNAME(1024, "Missing Company Name", "缺少公司名称"),
     ;
     int code;
     String name;

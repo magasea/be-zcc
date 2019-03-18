@@ -14,5 +14,5 @@ public interface AmcBasicService {
 
   AmcDept createDept(AmcDept amcDept);
 
-  AmcCmpyDeptVo createCmpyDept(AmcCmpyDeptVo amcCmpyDeptVo);
+  AmcCmpyDeptVo createModifyCmpyDept(AmcCmpyDeptVo amcCmpyDeptVo) throws Exception;
 }

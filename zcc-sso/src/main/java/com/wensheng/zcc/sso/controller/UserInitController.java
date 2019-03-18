@@ -1,12 +1,12 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.vo.LoginVo;
 import com.wensheng.zcc.sso.module.vo.UserCreateVo;
 import com.wensheng.zcc.sso.service.PhoneMsgService;
 import com.wensheng.zcc.sso.service.UserService;
-import com.wensheng.zcc.sso.service.util.ExceptionUtils;
-import com.wensheng.zcc.sso.service.util.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.service.util.VerifyCodeUtil;
 import java.awt.Image;
 import java.io.IOException;
@@ -19,10 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestBody;

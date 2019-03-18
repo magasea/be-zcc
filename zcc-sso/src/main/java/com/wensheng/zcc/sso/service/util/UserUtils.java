@@ -9,7 +9,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  */
 public class UserUtils {
 
-  @Autowired
   private static BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 

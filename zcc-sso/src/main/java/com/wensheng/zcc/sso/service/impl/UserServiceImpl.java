@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
@@ -15,7 +16,6 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.service.UserService;
-import com.wensheng.zcc.sso.service.util.ExceptionUtils.AmcExceptions;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -87,6 +87,7 @@ public class UserServiceImpl implements UserService {
 
     List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
     authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
+
     UserDetails userDetails = new User(amcUsers.get(0).getMobilePhone(), amcUsers.get(0).getPassword(), grantedAuthorityAuthorities);
     return userDetails;
   }
@@ -95,6 +96,9 @@ public class UserServiceImpl implements UserService {
 
     AmcUserExt amcUserExt = amcUserExtMapper.selectByExtExample(amcUser.getId());
     List<String> authorities = new ArrayList<>();
+    if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
+      authorities.add(amcUser.getCompanyId().toString());
+    }
 
     for(AmcPermission amcPermission: amcUserExt.getAmcPermissions()){
       authorities.add(amcPermission.getName());

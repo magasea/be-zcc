@@ -55,6 +55,7 @@ public class AmcAssetController {
 
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
+  @LogExecutionTime
   public AmcPage<AmcAssetVo> getAmcAssets(
       @RequestBody(required = false) QueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());

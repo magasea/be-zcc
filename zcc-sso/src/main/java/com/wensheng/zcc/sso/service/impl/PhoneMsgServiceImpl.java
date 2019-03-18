@@ -1,27 +1,23 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPhoneMsgMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsg;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPhoneMsgExample;
 import com.wensheng.zcc.sso.service.PhoneMsgService;
-import com.wensheng.zcc.sso.service.util.AmcBeanUtils;
 import com.wensheng.zcc.sso.service.util.VerifyCodeUtil;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import sun.net.www.http.HttpClient;
 
 /**
  * @author chenwei on 2/21/19

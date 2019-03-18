@@ -2,7 +2,6 @@ package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
-import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
@@ -48,7 +47,8 @@ public class AmcUserController {
     return "successed";
   }
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
+//  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
+  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/create")
   public AmcCompany createCompany(@RequestBody AmcCompany amcCompany){
 
@@ -57,9 +57,9 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or #oauth2.hasScope('AMC_ADMIN')")
-  @RequestMapping(value = "/amc/amc-company/amc-department/create")
-  public AmcDept createDepartment(@RequestBody AmcDept amcDept){
+  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or  #oauth2.hasScope({amcId})")
+  @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/create")
+  public AmcDept createDepartment(@RequestBody AmcDept amcDept, @RequestParam Long amcId){
 
     AmcDept amcDeptResult = amcBasicService.createDept(amcDept);
     return amcDeptResult;
@@ -68,12 +68,13 @@ public class AmcUserController {
 
   @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or #oauth2.hasScope('AMC_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/createCmpyDept")
-  public AmcCmpyDeptVo createAmcCmpyDept(@RequestBody AmcCmpyDeptVo amcCmpyDeptVo){
+  public AmcCmpyDeptVo createAmcCmpyDept(@RequestBody AmcCmpyDeptVo amcCmpyDeptVo) throws Exception {
 
-    AmcCmpyDeptVo amcCmpyDeptVoResult = amcBasicService.createCmpyDept(amcCmpyDeptVo);
+    AmcCmpyDeptVo amcCmpyDeptVoResult = amcBasicService.createModifyCmpyDept(amcCmpyDeptVo);
     return amcCmpyDeptVoResult;
-
   }
+
+
 
 
 }

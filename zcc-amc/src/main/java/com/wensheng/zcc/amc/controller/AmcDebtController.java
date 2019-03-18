@@ -409,6 +409,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody
+  @LogExecutionTime
   public AmcPage<AmcDebtVo> queryDebts( @RequestBody  QueryParam queryParam)
       throws Exception {
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());

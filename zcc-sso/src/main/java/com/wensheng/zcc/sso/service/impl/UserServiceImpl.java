@@ -98,7 +98,7 @@ public class UserServiceImpl implements UserService {
     List<String> authorities = new ArrayList<>();
     boolean isAmcOper = false;
     if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
-      authorities.add(String.format("PERM_%s_read",amcUser.getCompanyId()));
+      authorities.add(String.format("PERM_%s_READ",amcUser.getCompanyId()));
       isAmcOper = true;
     }
 
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
     for(AmcRole amcRole: amcUserExt.getAmcRoles()){
       authorities.add(amcRole.getName());
       if(isAmcOper && amcRole.getName().equals(AmcRolesEnum.ROLE_AMC_ADMIN.name())){
-        authorities.add(String.format("PERM_%s_write",amcUser.getCompanyId()));
+        authorities.add(String.format("PERM_%s_WRITE",amcUser.getCompanyId()));
       }
     }
     return authorities;

@@ -135,6 +135,6 @@ public class MiniAppServiceImpl implements MiniAppService {
     } catch (IOException e) {
       e.printStackTrace();
     }
-    return in;
+      return in;
   }
 }

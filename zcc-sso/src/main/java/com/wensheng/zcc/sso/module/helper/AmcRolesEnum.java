@@ -5,7 +5,10 @@ package com.wensheng.zcc.sso.module.helper;
  * @project zcc-backend
  */
 public enum AmcRolesEnum {
-  ROLE_AMC_USER("ROLE_AMC_USER", 1),
+  ROLE_SYSTEM_ADMIN("ROLE_SYSTEM_ADMIN", 1),
+  ROLE_AMC_ADMIN("ROLE_AMC_ADMIN", 2),
+  ROLE_AMC_USER("ROLE_AMC_USER", 3),
+  ROLE_ZCC_CLIENT("ROLE_ZCC_CLIENT", 4),
   ;
   AmcRolesEnum(String name , int id){
     this.name = name;

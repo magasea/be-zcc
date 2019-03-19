@@ -96,8 +96,10 @@ public class UserServiceImpl implements UserService {
 
     AmcUserExt amcUserExt = amcUserExtMapper.selectByExtExample(amcUser.getId());
     List<String> authorities = new ArrayList<>();
+    boolean isAmcOper = false;
     if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
-      authorities.add(amcUser.getCompanyId().toString());
+      authorities.add(String.format("PERM_%s_read",amcUser.getCompanyId()));
+      isAmcOper = true;
     }
 
     for(AmcPermission amcPermission: amcUserExt.getAmcPermissions()){
@@ -105,6 +107,9 @@ public class UserServiceImpl implements UserService {
     }
     for(AmcRole amcRole: amcUserExt.getAmcRoles()){
       authorities.add(amcRole.getName());
+      if(isAmcOper && amcRole.getName().equals(AmcRolesEnum.ROLE_AMC_ADMIN.name())){
+        authorities.add(String.format("PERM_%s_write",amcUser.getCompanyId()));
+      }
     }
     return authorities;
 

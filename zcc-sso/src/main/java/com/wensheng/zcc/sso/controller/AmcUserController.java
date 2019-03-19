@@ -12,6 +12,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -39,7 +40,7 @@ public class AmcUserController {
     return amcUserResult;
   }
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
+  @PreAuthorize("hasRole('AMC_ADMIN') and #oauth2.hasScope('write')")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/modifyRole", method = RequestMethod.POST)
   public String modifyRole(@RequestBody UserRoleModifyVo userRoleModifyVo ){
     List<Long> roleIds =  userRoleModifyVo.getAmcRoleList().stream().map(item-> item.getId()).collect(Collectors.toList());
@@ -48,7 +49,7 @@ public class AmcUserController {
   }
 
 //  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
-//  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/create")
   public AmcCompany createCompany(@RequestBody AmcCompany amcCompany){
 
@@ -57,9 +58,9 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or  #oauth2.hasScope({amcId})")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or  (hasRole('AMC_ADMIN') and hasPermission(#amcId, 'write'))")
   @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/create")
-  public AmcDept createDepartment(@RequestBody AmcDept amcDept, @RequestParam Long amcId){
+  public AmcDept createDepartment(@RequestBody AmcDept amcDept, @PathVariable Long amcId){
 
     AmcDept amcDeptResult = amcBasicService.createDept(amcDept);
     return amcDeptResult;

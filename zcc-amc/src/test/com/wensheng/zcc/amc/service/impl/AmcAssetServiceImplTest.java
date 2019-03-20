@@ -26,8 +26,9 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.service.AmcAssetService;
-import com.wensheng.zcc.amc.utils.AmcDateUtils;
-import com.wensheng.zcc.amc.utils.AmcNumberUtils;
+
+import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Arrays;

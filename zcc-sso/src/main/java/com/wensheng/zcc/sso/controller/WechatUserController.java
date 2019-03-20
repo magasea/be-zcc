@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chenwei on 3/14/19
@@ -27,6 +28,7 @@ public class WechatUserController {
   WechatService wechatService;
 
   @RequestMapping(value="/wechatLogin",method= RequestMethod.POST)
+  @ResponseBody
   public String wechatLogin(@RequestBody WechatLogin login) throws IOException {
 
     return wechatService.loginWechat(login.getCode());

@@ -92,8 +92,13 @@ project:
 # tag::wechatConfig
 wechat:
   miniapp:
-    appId: wxdb885be2c95a5b32
-    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    #  appId: wxdb885be2c95a5b32
+    #  appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+    appId: wx43360e750e7099b9
+    appSecret: e08507e5865fe1315e403d011693253f
+    loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
     get_token_url: https://api.weixin.qq.com/cgi-bin/token
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 

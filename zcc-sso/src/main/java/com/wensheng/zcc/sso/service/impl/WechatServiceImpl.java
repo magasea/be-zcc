@@ -71,7 +71,7 @@ public class WechatServiceImpl implements WechatService {
 
     }
 
-    amcWechatUserExample.createCriteria().andSessionKeyEqualTo()
+//    amcWechatUserExample.createCriteria().andSessionKeyEqualTo()
 
     return null;
   }

@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.sso.module.vo.WechatLogin;
+import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.service.WechatService;
 import com.wensheng.zcc.sso.service.util.VerifyCodeUtil;
 import java.io.IOException;
@@ -29,7 +30,15 @@ public class WechatUserController {
 
   @RequestMapping(value="/wechatLogin",method= RequestMethod.POST)
   @ResponseBody
-  public String wechatLogin(@RequestBody WechatLogin login) throws IOException {
+  public WechatLoginResult wechatLogin(@RequestBody WechatLogin login) throws IOException {
+
+    return wechatService.loginWechat(login.getCode());
+
+  }
+
+  @RequestMapping(value="/registryPhone",method= RequestMethod.POST)
+  @ResponseBody
+  public WechatLoginResult wechatRegistryPhone(@RequestBody WechatLogin login) throws IOException {
 
     return wechatService.loginWechat(login.getCode());
 

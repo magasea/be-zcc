@@ -1,23 +1,49 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcWechatUserMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample;
+import com.wensheng.zcc.sso.module.helper.AmcPermEnum;
+import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
+import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.service.WechatService;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.crypto.Cipher;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.SecretKeySpec;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.ClientDetails;
+import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.ClientRegistrationException;
+import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2Request;
+import org.springframework.security.oauth2.provider.client.BaseClientDetails;
+import org.springframework.security.oauth2.provider.client.InMemoryClientDetailsService;
+import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -28,10 +54,35 @@ import org.springframework.web.client.RestTemplate;
  * @project miniapp-backend
  */
 @Service
+@Slf4j
 public class WechatServiceImpl implements WechatService {
 
   @Value("${weixin.loginUrl}")
   String loginUrl;
+
+
+  @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.client-id}")
+  private String amcWechatClientId;
+
+  @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.secret}")
+  private String amcWechatSecret;
+
+
+  @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.scopes}")
+  private String amcWechatScopes;
+
+  @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.authorizedGrantTypes}")
+  private String amcWechatAuthorizedGrantTypes;
+
+  @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.redirectUris}")
+  private String amcWechatRedirectUris;
+
+
+  @Value("${wechat.miniapp.appId}")
+  String appId;
+
+  @Value("${wechat.miniapp.appSecret}")
+  String appSecret;
 
   private RestTemplate restTemplate = new RestTemplate();
 
@@ -39,6 +90,20 @@ public class WechatServiceImpl implements WechatService {
 
   @Autowired
   AmcWechatUserMapper amcWechatUserMapper;
+
+  @Autowired
+  DefaultTokenServices tokenServices;
+
+  @Autowired
+  TokenEnhancer wechatTokenEnhancer;
+
+  @Autowired
+  JwtAccessTokenConverter accessTokenConverter;
+
+
+
+
+  private InMemoryClientDetailsService clientDetailsService = new InMemoryClientDetailsService() ;
 
   @PostConstruct
   private  void init(){
@@ -50,29 +115,118 @@ public class WechatServiceImpl implements WechatService {
     converter.setSupportedMediaTypes(Arrays.asList(new MediaType[]{MediaType.ALL}));
     messageConverters.add(converter);
     restTemplate.setMessageConverters(messageConverters);
+    BaseClientDetails baseClientDetails = new BaseClientDetails();
+    baseClientDetails.setClientId(amcWechatClientId);
+    if(!StringUtils.isEmpty(amcWechatAuthorizedGrantTypes)){
+      baseClientDetails.setAuthorizedGrantTypes(Arrays.stream(amcWechatAuthorizedGrantTypes.split(",")).collect(Collectors.toList()));
+    }
+    baseClientDetails.setClientSecret(amcWechatSecret);
+    if(!StringUtils.isEmpty(amcWechatScopes)){
+      baseClientDetails.setScope(Arrays.stream(amcWechatScopes.split(",")).collect(Collectors.toList()));
+    }
+    Map<String, BaseClientDetails> clientParam = new HashMap<>();
+    clientParam.put(amcWechatClientId, baseClientDetails);
+    clientDetailsService.setClientDetailsStore(clientParam);
+    tokenServices.setTokenEnhancer(wechatTokenEnhancer);
+
+
+    tokenServices.setClientDetailsService(clientDetailsService);
   }
 
   @Override
-  public String loginWechat(String code) {
+  public WechatLoginResult loginWechat(String code) {
     String loginWechatUrl = loginUrl.replace("JSCODE", code);
     ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
         WechatCode2SessionVo.class);
-    StringBuilder sb = new StringBuilder();
-    if(!CollectionUtils.isEmpty(responseEntity.getBody())){
-      responseEntity.getBody().entrySet().forEach( item -> sb.append(item.toString()));
+    String info = gson.toJson(responseEntity.getBody());
+    log.info(String.format("got response from wechat:%s", info));
+    WechatLoginResult wechatLoginResult = new WechatLoginResult();
+    wechatLoginResult.setResp(info);
+    if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
+      wechatLoginResult.setOAuth2AccessToken(generateToken(responseEntity.getBody()));
     }
-    return sb.toString();
+    CUWechatUser((responseEntity.getBody()));
+    return wechatLoginResult;
   }
 
   @Override
   public AmcWechatUser CUWechatUser(WechatCode2SessionVo wechatCode2SessionVo) {
     AmcWechatUserExample amcWechatUserExample = new AmcWechatUserExample();
     if(StringUtils.isEmpty(wechatCode2SessionVo.getSessionKey())){
-
+      return null;
     }
 
-//    amcWechatUserExample.createCriteria().andSessionKeyEqualTo()
+    amcWechatUserExample.createCriteria().andWechatOpenidEqualTo(wechatCode2SessionVo.getOpenid());
+    AmcWechatUser amcWechatUser = new AmcWechatUser();
 
+    amcWechatUser.setSessionKey(wechatCode2SessionVo.getSessionKey());
+    amcWechatUser.setWechatOpenid(wechatCode2SessionVo.getOpenid());
+    amcWechatUser.setWechatUnionId(wechatCode2SessionVo.getUnionid());
+    List<AmcWechatUser> amcWechatUsersHistory =  amcWechatUserMapper.selectByExample(amcWechatUserExample);
+    if(CollectionUtils.isEmpty(amcWechatUsersHistory)){
+      amcWechatUserMapper.insertSelective(amcWechatUser);
+
+    }else{
+      if(!amcWechatUsersHistory.get(0).getSessionKey().equals(wechatCode2SessionVo.getSessionKey())){
+        log.info(String.format("session key:%s not changed", wechatCode2SessionVo.getSessionKey()));
+        return amcWechatUsersHistory.get(0);
+      }
+      amcWechatUserMapper.updateByExampleSelective(amcWechatUser, amcWechatUserExample);
+
+    }
+    return amcWechatUser;
+  }
+
+  private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){
+    HashMap<String, String> authorizationParameters = new HashMap<String, String>();
+    authorizationParameters.put("scope", amcWechatScopes);
+    authorizationParameters.put("username", wechatCode2SessionVo.getOpenid());
+    authorizationParameters.put("client_id", amcWechatClientId);
+    authorizationParameters.put("grant", amcWechatAuthorizedGrantTypes);
+    List<String> scopes = new ArrayList<>();
+    if(!StringUtils.isEmpty(amcWechatScopes)){
+      Arrays.stream(amcWechatScopes.split(",")).forEach(item -> scopes.add(item.trim()));
+    }
+    Set<String> scopesSet = scopes.stream().collect(Collectors.toSet());
+    List<GrantedAuthority> authorities = new ArrayList<>();
+    authorities.add(new SimpleGrantedAuthority(AmcRolesEnum.ROLE_ZCC_CLIENT.name()));
+    authorities.add(new SimpleGrantedAuthority(AmcPermEnum.PERM_AMC_VIEW.name()));
+
+
+
+    OAuth2Request authorizationRequest = new OAuth2Request(authorizationParameters, amcWechatClientId, authorities,true, scopesSet, null,
+        amcWechatRedirectUris, null, null);
+
+
+    // Create principal and auth token
+    User userPrincipal = new User(wechatCode2SessionVo.getOpenid(), wechatCode2SessionVo.getSessionKey(), true, true, true, true,
+        authorities);
+    UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal,
+        wechatCode2SessionVo.getSessionKey(), authorities) ;
+
+    OAuth2Authentication auth2Authentication = new OAuth2Authentication(authorizationRequest, authenticationToken);
+
+
+    OAuth2AccessToken token = tokenServices.createAccessToken(auth2Authentication);
+    token = accessTokenConverter.enhance(token, auth2Authentication);
+
+    return token;
+  }
+
+
+  public String decodePhone(String encryptedData, String iv, String sessionKey){
+    try {
+      IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes("UTF-8"));
+      SecretKeySpec skeySpec = new SecretKeySpec(sessionKey.getBytes("UTF-8"), "AES");
+
+      Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+      cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivParameterSpec);
+
+      byte[] decrypted = cipher.doFinal(encryptedData.getBytes());
+      return new String(decrypted);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
     return null;
   }
 }

@@ -117,5 +117,8 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
         return new CustomTokenEnhancer();
     }
 
+    @Bean
+    public TokenEnhancer wechatTokenEnhancer(){ return new WechatTokenEnhancer(); }
+
 
 }

@@ -14,4 +14,5 @@ public class WechatCode2SessionVo {
   String openid;
   String unionid;
   String errcode;
+  String errmsg;
 }

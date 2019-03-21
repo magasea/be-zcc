@@ -48,6 +48,7 @@ spring:
                         secret: secret
                         scopes: thirdpart, read
                         authorizedGrantTypes: implicit, refresh_token, client_credentials
+                        redirectUris: admin,http://${oauth2.host}:10003/amc/login, http://${oauth2.host}:8080/login/oauth2/code/custom, http://${oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${oauth2.host}:8080/authorize/oauth2/code/bael, http://${oauth2.host}:8080/login/oauth2/code/bael
                     amc-admin:
                         client-id: amcAdminId
                         secret: secret

@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.service;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
+import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 
 /**
  * @author chenwei on 3/19/19
@@ -12,6 +13,8 @@ public interface WechatService {
   public WechatLoginResult loginWechat(String code);
 
   public AmcWechatUser CUWechatUser(WechatCode2SessionVo wechatCode2SessionVo);
+
+  public String registryPhone(WechatPhoneRegistry wechatPhoneRegistry);
 
 
 }

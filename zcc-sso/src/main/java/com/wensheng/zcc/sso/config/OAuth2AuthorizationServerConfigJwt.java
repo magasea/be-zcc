@@ -91,6 +91,14 @@ public class OAuth2AuthorizationServerConfigJwt extends AuthorizationServerConfi
         return defaultTokenServices;
     }
 
+    @Bean
+    public DefaultTokenServices tokenWechatServices() {
+        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setSupportRefreshToken(true);
+        return defaultTokenServices;
+    }
+
     @Override
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();

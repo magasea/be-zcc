@@ -8,6 +8,8 @@ import lombok.Data;
  */
 @Data
 public class WechatPhoneRegistry {
+  String sessionKey;
+  String openId;
   String encryptedData;
   String iv;
 

@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.service;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
+import java.util.List;
 
 /**
  * @author chenwei on 3/15/19
@@ -11,8 +12,11 @@ import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
 public interface AmcBasicService {
 
   AmcCompany createCompany(AmcCompany amcCompany);
+  List<AmcCompany> queryCompany();
 
   AmcDept createDept(AmcDept amcDept);
+  List<AmcDept> queryDept(Long amcId);
 
   AmcCmpyDeptVo createModifyCmpyDept(AmcCmpyDeptVo amcCmpyDeptVo) throws Exception;
+
 }

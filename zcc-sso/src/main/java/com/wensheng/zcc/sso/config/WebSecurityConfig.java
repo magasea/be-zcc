@@ -26,8 +26,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Resource(name = "userService")
     UserService userService;
 
-    @Autowired
-    BCryptPasswordEncoder passwordEncoder;
 
 
 
@@ -42,7 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
   public DaoAuthenticationProvider authenticationProvider() {
     final DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
     authProvider.setUserDetailsService(userService);
-    authProvider.setPasswordEncoder(passwordEncoder);
+    authProvider.setPasswordEncoder(passwordEncoder());
     return authProvider;
   }
 
@@ -77,6 +75,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.antMatchers("/oauth/token/revokeById/**").permitAll()
 		.antMatchers("/tokens/**").permitAll()
     .antMatchers("/user/init").permitAll()
+    .antMatchers("/wechat/**").permitAll()
     .anyRequest().authenticated()
 		.and().formLogin().permitAll()
 		.and().csrf().disable();

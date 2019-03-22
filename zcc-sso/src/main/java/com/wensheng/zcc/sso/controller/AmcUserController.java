@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chenwei on 3/14/19
@@ -34,6 +35,7 @@ public class AmcUserController {
 
   @PreAuthorize("#oauth2.clientHasRole('AMC_ADMIN') and #oauth2.hasScope({amcId})")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create", method = RequestMethod.POST)
+  @ResponseBody
   public AmcUser createUser(@RequestBody AmcUser amcUser){
 
     AmcUser amcUserResult = amcUserService.createUser(amcUser);
@@ -42,6 +44,7 @@ public class AmcUserController {
 
   @PreAuthorize("hasRole('AMC_ADMIN') and #oauth2.hasScope('write')")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/modifyRole", method = RequestMethod.POST)
+  @ResponseBody
   public String modifyRole(@RequestBody UserRoleModifyVo userRoleModifyVo ){
     List<Long> roleIds =  userRoleModifyVo.getAmcRoleList().stream().map(item-> item.getId()).collect(Collectors.toList());
     amcUserService.modifyUserRole(userRoleModifyVo.getAmcUser().getId(), roleIds);
@@ -50,7 +53,8 @@ public class AmcUserController {
 
 //  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
-  @RequestMapping(value = "/amc/amc-company/create")
+  @RequestMapping(value = "/amc/amc-company/create", method = RequestMethod.POST)
+  @ResponseBody
   public AmcCompany createCompany(@RequestBody AmcCompany amcCompany){
 
     AmcCompany amcCompanyResult = amcBasicService.createCompany(amcCompany);
@@ -58,8 +62,18 @@ public class AmcUserController {
 
   }
 
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @RequestMapping(value = "/amc/amc-company/companys", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcCompany> queryCompany(){
+
+    List<AmcCompany> amcCompanyResult = amcBasicService.queryCompany();
+    return amcCompanyResult;
+
+  }
+
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or  (hasRole('AMC_ADMIN') and hasPermission(#amcId, 'write'))")
-  @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/create")
+  @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/create", method = RequestMethod.POST)
   public AmcDept createDepartment(@RequestBody AmcDept amcDept, @PathVariable Long amcId){
 
     AmcDept amcDeptResult = amcBasicService.createDept(amcDept);
@@ -67,8 +81,18 @@ public class AmcUserController {
 
   }
 
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'read')")
+  @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/depts")
+  public List<AmcDept> queryDepts( @PathVariable Long amcId){
+
+    List<AmcDept> amcDeptResult = amcBasicService.queryDept(amcId);
+    return amcDeptResult;
+
+  }
+
   @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or #oauth2.hasScope('AMC_ADMIN')")
-  @RequestMapping(value = "/amc/amc-company/createCmpyDept")
+  @RequestMapping(value = "/amc/amc-company/createCmpyDept", method = RequestMethod.POST)
+  @ResponseBody
   public AmcCmpyDeptVo createAmcCmpyDept(@RequestBody AmcCmpyDeptVo amcCmpyDeptVo) throws Exception {
 
     AmcCmpyDeptVo amcCmpyDeptVoResult = amcBasicService.createModifyCmpyDept(amcCmpyDeptVo);

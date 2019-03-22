@@ -39,9 +39,23 @@ public class AmcBasicServiceImpl implements AmcBasicService {
   }
 
   @Override
+  public List<AmcCompany> queryCompany() {
+    List<AmcCompany> amcCompanies = amcCompanyMapper.selectByExample(null);
+    return amcCompanies;
+  }
+
+  @Override
   public AmcDept createDept(AmcDept amcDept) {
     int count = amcDeptMapper.insertSelective(amcDept);
     return amcDept;
+  }
+
+  @Override
+  public List<AmcDept> queryDept(Long amcId) {
+    AmcDeptExample amcDeptExample = new AmcDeptExample();
+    amcDeptExample.createCriteria().andCmpyIdEqualTo(amcId);
+    List<AmcDept> amcDepts = amcDeptMapper.selectByExample(amcDeptExample);
+    return amcDepts;
   }
 
   @Override

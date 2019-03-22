@@ -9,7 +9,15 @@ import com.wensheng.zcc.sso.module.helper.AmcPermEnum;
 import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
+import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 import com.wensheng.zcc.sso.service.WechatService;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.security.AlgorithmParameters;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -19,7 +27,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
@@ -78,10 +89,10 @@ public class WechatServiceImpl implements WechatService {
   private String amcWechatRedirectUris;
 
 
-  @Value("${wechat.miniapp.appId}")
+  @Value("${weixin.appId}")
   String appId;
 
-  @Value("${wechat.miniapp.appSecret}")
+  @Value("${weixin.appSecret}")
   String appSecret;
 
   private RestTemplate restTemplate = new RestTemplate();
@@ -92,7 +103,7 @@ public class WechatServiceImpl implements WechatService {
   AmcWechatUserMapper amcWechatUserMapper;
 
   @Autowired
-  DefaultTokenServices tokenServices;
+  DefaultTokenServices tokenWechatServices;
 
   @Autowired
   TokenEnhancer wechatTokenEnhancer;
@@ -126,11 +137,11 @@ public class WechatServiceImpl implements WechatService {
     }
     Map<String, BaseClientDetails> clientParam = new HashMap<>();
     clientParam.put(amcWechatClientId, baseClientDetails);
-    clientDetailsService.setClientDetailsStore(clientParam);
-    tokenServices.setTokenEnhancer(wechatTokenEnhancer);
+//    clientDetailsService.setClientDetailsStore(clientParam);
+    tokenWechatServices.setTokenEnhancer(wechatTokenEnhancer);
 
 
-    tokenServices.setClientDetailsService(clientDetailsService);
+//    tokenWechatServices.setClientDetailsService(clientDetailsService);
   }
 
   @Override
@@ -177,6 +188,21 @@ public class WechatServiceImpl implements WechatService {
     return amcWechatUser;
   }
 
+  @Override
+  public String registryPhone(WechatPhoneRegistry wechatPhoneRegistry) {
+    AmcWechatUserExample amcWechatUserExample = new AmcWechatUserExample();
+    amcWechatUserExample.createCriteria().andWechatOpenidEqualTo(wechatPhoneRegistry.getOpenId());
+    List<AmcWechatUser> amcWechatUsers = amcWechatUserMapper.selectByExample(amcWechatUserExample);
+    if(!CollectionUtils.isEmpty(amcWechatUsers)){
+      String sessionKey = amcWechatUsers.get(0).getSessionKey();
+      String phoneNumber = decodePhone(wechatPhoneRegistry.getEncryptedData(), wechatPhoneRegistry.getIv(),
+          sessionKey);
+      return phoneNumber;
+    }
+
+    return null;
+  }
+
   private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){
     HashMap<String, String> authorizationParameters = new HashMap<String, String>();
     authorizationParameters.put("scope", amcWechatScopes);
@@ -190,8 +216,8 @@ public class WechatServiceImpl implements WechatService {
     Set<String> scopesSet = scopes.stream().collect(Collectors.toSet());
     List<GrantedAuthority> authorities = new ArrayList<>();
     authorities.add(new SimpleGrantedAuthority(AmcRolesEnum.ROLE_ZCC_CLIENT.name()));
-    authorities.add(new SimpleGrantedAuthority(AmcPermEnum.PERM_AMC_VIEW.name()));
 
+    authorities.add(new SimpleGrantedAuthority(AmcPermEnum.PERM_AMC_VIEW.name()));
 
 
     OAuth2Request authorizationRequest = new OAuth2Request(authorizationParameters, amcWechatClientId, authorities,true, scopesSet, null,
@@ -207,7 +233,7 @@ public class WechatServiceImpl implements WechatService {
     OAuth2Authentication auth2Authentication = new OAuth2Authentication(authorizationRequest, authenticationToken);
 
 
-    OAuth2AccessToken token = tokenServices.createAccessToken(auth2Authentication);
+    OAuth2AccessToken token = tokenWechatServices.createAccessToken(auth2Authentication);
     token = accessTokenConverter.enhance(token, auth2Authentication);
 
     return token;
@@ -216,17 +242,22 @@ public class WechatServiceImpl implements WechatService {
 
   public String decodePhone(String encryptedData, String iv, String sessionKey){
     try {
+      sessionKey = URLDecoder.decode(sessionKey,"UTF-8");
+      encryptedData = URLDecoder.decode(encryptedData,"UTF-8");
+      iv = URLDecoder.decode(iv,"UTF-8");
       IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes("UTF-8"));
       SecretKeySpec skeySpec = new SecretKeySpec(sessionKey.getBytes("UTF-8"), "AES");
 
       Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-      cipher.init(Cipher.ENCRYPT_MODE, skeySpec, ivParameterSpec);
+      cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
 
       byte[] decrypted = cipher.doFinal(encryptedData.getBytes());
       return new String(decrypted);
     } catch (Exception ex) {
       ex.printStackTrace();
     }
+
+
     return null;
   }
 }

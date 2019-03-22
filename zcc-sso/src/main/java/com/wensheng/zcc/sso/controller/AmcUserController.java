@@ -74,6 +74,7 @@ public class AmcUserController {
 
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or  (hasRole('AMC_ADMIN') and hasPermission(#amcId, 'write'))")
   @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/create", method = RequestMethod.POST)
+  @ResponseBody
   public AmcDept createDepartment(@RequestBody AmcDept amcDept, @PathVariable Long amcId){
 
     AmcDept amcDeptResult = amcBasicService.createDept(amcDept);
@@ -83,6 +84,7 @@ public class AmcUserController {
 
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'read')")
   @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/depts")
+  @ResponseBody
   public List<AmcDept> queryDepts( @PathVariable Long amcId){
 
     List<AmcDept> amcDeptResult = amcBasicService.queryDept(amcId);

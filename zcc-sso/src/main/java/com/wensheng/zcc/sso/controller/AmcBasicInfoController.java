@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chenwei on 3/15/19
@@ -21,6 +22,7 @@ public class AmcBasicInfoController {
   AmcUserService amcUserService;
 
   @RequestMapping(value = "/roles", method = RequestMethod.POST)
+  @ResponseBody
   public List<AmcRole> getAmcRoles(){
 
     List<AmcRole> amcRoles = amcUserService.getAmcRoles();
@@ -29,6 +31,7 @@ public class AmcBasicInfoController {
   }
 
   @RequestMapping(value = "/role-perms", method = RequestMethod.POST)
+  @ResponseBody
   public List<AmcRolePermission> getAmcRolePerms(){
     List<AmcRolePermission> amcRolePermissions = amcUserService.getAmcRolePerms();
     return amcRolePermissions;

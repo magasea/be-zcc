@@ -17,10 +17,10 @@ import java.security.AlgorithmParameters;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.security.Security;
 import java.security.spec.InvalidParameterSpecException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +34,9 @@ import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import lombok.extern.slf4j.Slf4j;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.bouncycastle.util.encoders.Base64;
+import org.bouncycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -111,6 +114,8 @@ public class WechatServiceImpl implements WechatService {
   @Autowired
   JwtAccessTokenConverter accessTokenConverter;
 
+  public static final int INIT_VECTOR_LENGTH = 16;
+
 
 
 
@@ -178,7 +183,7 @@ public class WechatServiceImpl implements WechatService {
       amcWechatUserMapper.insertSelective(amcWechatUser);
 
     }else{
-      if(!amcWechatUsersHistory.get(0).getSessionKey().equals(wechatCode2SessionVo.getSessionKey())){
+      if(amcWechatUsersHistory.get(0).getSessionKey().equals(wechatCode2SessionVo.getSessionKey())){
         log.info(String.format("session key:%s not changed", wechatCode2SessionVo.getSessionKey()));
         return amcWechatUsersHistory.get(0);
       }
@@ -242,17 +247,24 @@ public class WechatServiceImpl implements WechatService {
 
   public String decodePhone(String encryptedData, String iv, String sessionKey){
     try {
-      sessionKey = URLDecoder.decode(sessionKey,"UTF-8");
-      encryptedData = URLDecoder.decode(encryptedData,"UTF-8");
-      iv = URLDecoder.decode(iv,"UTF-8");
-      IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes("UTF-8"));
-      SecretKeySpec skeySpec = new SecretKeySpec(sessionKey.getBytes("UTF-8"), "AES");
+      byte[] sessionKeyBytes = Base64.decode(sessionKey);
+      byte[] encryptedDataBytes = Base64.decode(encryptedData);
+      byte[] ivBytes =  Base64.decode(iv);
 
+      Security.addProvider(new BouncyCastleProvider());
+
+
+      SecretKeySpec skeySpec = new SecretKeySpec(sessionKeyBytes, "AES");
+      AlgorithmParameters parameters = AlgorithmParameters.getInstance("AES");
+      parameters.init(new IvParameterSpec(ivBytes, 0, INIT_VECTOR_LENGTH));
       Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
-      cipher.init(Cipher.DECRYPT_MODE, skeySpec, ivParameterSpec);
+      cipher.init(Cipher.DECRYPT_MODE, skeySpec, new IvParameterSpec(ivBytes, 0, INIT_VECTOR_LENGTH));
 
-      byte[] decrypted = cipher.doFinal(encryptedData.getBytes());
-      return new String(decrypted);
+      byte[] decrypted = cipher.doFinal(encryptedDataBytes);
+      if (null != decrypted && decrypted.length > 0) {
+        String result = new String(decrypted, "UTF-8");
+        return  result;
+      }
     } catch (Exception ex) {
       ex.printStackTrace();
     }

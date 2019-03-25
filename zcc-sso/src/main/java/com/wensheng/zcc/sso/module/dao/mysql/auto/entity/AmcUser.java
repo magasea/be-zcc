@@ -5,7 +5,7 @@ import java.util.Date;
 public class AmcUser {
     private Long id;
 
-    private String name;
+    private String userName;
 
     private String password;
 
@@ -20,6 +20,8 @@ public class AmcUser {
     private Integer valid;
 
     private Integer title;
+
+    private String nickName;
 
     private Long createBy;
 
@@ -37,12 +39,12 @@ public class AmcUser {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setName(String name) {
-        this.name = name == null ? null : name.trim();
+    public void setUserName(String userName) {
+        this.userName = userName == null ? null : userName.trim();
     }
 
     public String getPassword() {
@@ -99,6 +101,14 @@ public class AmcUser {
 
     public void setTitle(Integer title) {
         this.title = title;
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public void setNickName(String nickName) {
+        this.nickName = nickName == null ? null : nickName.trim();
     }
 
     public Long getCreateBy() {

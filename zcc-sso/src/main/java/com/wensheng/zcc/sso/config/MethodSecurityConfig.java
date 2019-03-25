@@ -7,6 +7,7 @@ import org.springframework.security.access.expression.method.DefaultMethodSecuri
 import org.springframework.security.access.expression.method.MethodSecurityExpressionHandler;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.GlobalMethodSecurityConfiguration;
+import org.springframework.security.oauth2.provider.expression.OAuth2MethodSecurityExpressionHandler;
 
 /**
  * @author chenwei on 3/19/19
@@ -18,8 +19,8 @@ public class MethodSecurityConfig  extends GlobalMethodSecurityConfiguration {
 
   @Override
   protected MethodSecurityExpressionHandler createExpressionHandler() {
-    DefaultMethodSecurityExpressionHandler expressionHandler =
-        new DefaultMethodSecurityExpressionHandler();
+    OAuth2MethodSecurityExpressionHandler expressionHandler =
+        new OAuth2MethodSecurityExpressionHandler();
     expressionHandler.setPermissionEvaluator(new SecurityPermissionEvaluator());
     return expressionHandler;
   }

@@ -1,5 +1,7 @@
 package com.wensheng.zcc.sso.module.dao.mysql.auto.entity;
 
+import java.util.Date;
+
 public class AmcWechatUser {
     private Long id;
 
@@ -18,6 +20,8 @@ public class AmcWechatUser {
     private String location;
 
     private Integer loginState;
+
+    private Date updateDate;
 
     public Long getId() {
         return id;
@@ -89,5 +93,13 @@ public class AmcWechatUser {
 
     public void setLoginState(Integer loginState) {
         this.loginState = loginState;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 }

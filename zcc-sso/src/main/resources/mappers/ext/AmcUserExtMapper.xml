@@ -42,7 +42,7 @@
 
   <sql id="User_Column_List">
     ${prefix}id as id,
-    ${prefix}name as name,
+    ${prefix}user_name as user_name,
     ${prefix}password as password,
     ${prefix}mobile_phone as mobile_phone,
     ${prefix}email as email,
@@ -50,6 +50,7 @@
     ${prefix}company_id as company_id,
     ${prefix}valid as valid,
     ${prefix}title as title,
+    ${prefix}nick_name as nick_name,
     ${prefix}create_by as create_by,
     ${prefix}create_date as create_date,
     ${prefix}update_by as update_by,

@@ -19,4 +19,5 @@ public interface AmcBasicService {
 
   AmcCmpyDeptVo createModifyCmpyDept(AmcCmpyDeptVo amcCmpyDeptVo) throws Exception;
 
+  AmcCompany queryCompany(Long companyId);
 }

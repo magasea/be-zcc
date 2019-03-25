@@ -5,6 +5,8 @@ public class AmcCompany {
 
     private String name;
 
+    private String cname;
+
     private String description;
 
     public Long getId() {
@@ -21,6 +23,14 @@ public class AmcCompany {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getCname() {
+        return cname;
+    }
+
+    public void setCname(String cname) {
+        this.cname = cname == null ? null : cname.trim();
     }
 
     public String getDescription() {

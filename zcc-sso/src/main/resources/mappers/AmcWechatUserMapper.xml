@@ -11,6 +11,7 @@
     <result column="gender" jdbcType="VARCHAR" property="gender" />
     <result column="location" jdbcType="VARCHAR" property="location" />
     <result column="login_state" jdbcType="INTEGER" property="loginState" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -72,7 +73,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, wechat_union_id, wechat_openid, phone_number, session_key, user_name, gender, 
-    location, login_state
+    location, login_state, update_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample" resultMap="BaseResultMap">
     select
@@ -111,10 +112,12 @@
     </selectKey>
     insert into AMC_WECHAT_USER (wechat_union_id, wechat_openid, phone_number, 
       session_key, user_name, gender, 
-      location, login_state)
+      location, login_state, update_date
+      )
     values (#{wechatUnionId,jdbcType=VARCHAR}, #{wechatOpenid,jdbcType=VARCHAR}, #{phoneNumber,jdbcType=CHAR}, 
       #{sessionKey,jdbcType=VARCHAR}, #{userName,jdbcType=VARCHAR}, #{gender,jdbcType=VARCHAR}, 
-      #{location,jdbcType=VARCHAR}, #{loginState,jdbcType=INTEGER})
+      #{location,jdbcType=VARCHAR}, #{loginState,jdbcType=INTEGER}, #{updateDate,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -146,6 +149,9 @@
       <if test="loginState != null">
         login_state,
       </if>
+      <if test="updateDate != null">
+        update_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="wechatUnionId != null">
@@ -171,6 +177,9 @@
       </if>
       <if test="loginState != null">
         #{loginState,jdbcType=INTEGER},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -210,6 +219,9 @@
       <if test="record.loginState != null">
         login_state = #{record.loginState,jdbcType=INTEGER},
       </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -225,7 +237,8 @@
       user_name = #{record.userName,jdbcType=VARCHAR},
       gender = #{record.gender,jdbcType=VARCHAR},
       location = #{record.location,jdbcType=VARCHAR},
-      login_state = #{record.loginState,jdbcType=INTEGER}
+      login_state = #{record.loginState,jdbcType=INTEGER},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -257,6 +270,9 @@
       <if test="loginState != null">
         login_state = #{loginState,jdbcType=INTEGER},
       </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -269,7 +285,8 @@
       user_name = #{userName,jdbcType=VARCHAR},
       gender = #{gender,jdbcType=VARCHAR},
       location = #{location,jdbcType=VARCHAR},
-      login_state = #{loginState,jdbcType=INTEGER}
+      login_state = #{loginState,jdbcType=INTEGER},
+      update_date = #{updateDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample" resultMap="BaseResultMap">

@@ -84,7 +84,7 @@ public class UserInitController {
     AmcUser amcUser = new AmcUser();
     amcUser.setPassword(userCreateVo.getPassword());
     amcUser.setEmail(userCreateVo.getEmail());
-    amcUser.setName(userCreateVo.getUserName());
+    amcUser.setUserName(userCreateVo.getUserName());
     amcUser.setMobilePhone(userCreateVo.getPhoneNum());
     userService.createDefaultAmcUser(amcUser);
     Map<String, String> tokenKeyValue = userService.getTokens(amcUser);

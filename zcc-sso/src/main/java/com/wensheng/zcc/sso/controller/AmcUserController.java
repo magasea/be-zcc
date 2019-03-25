@@ -34,7 +34,7 @@ public class AmcUserController {
   @Autowired
   AmcBasicService amcBasicService;
 
-  @PreAuthorize("#oauth2.clientHasRole('AMC_ADMIN') and #oauth2.hasScope({amcId})")
+  @PreAuthorize("hasRole('AMC_ADMIN') and #oauth2.hasScope({amcId})")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createUser(@RequestBody AmcUser amcUser){
@@ -43,7 +43,7 @@ public class AmcUserController {
     return amcUserResult;
   }
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_admin", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createAmcAdmin(@RequestBody AmcUser amcUser){
@@ -56,7 +56,7 @@ public class AmcUserController {
   }
 
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or (#oauth2.clientHasRole('AMC_ADMIN') and #oauth2.hasScope({amcId}))")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and #oauth2.hasScope({amcId}))")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_user", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createAmcUser(@RequestBody AmcUser amcUser, @RequestParam Long amcId){
@@ -68,7 +68,7 @@ public class AmcUserController {
     return amcUserResult;
   }
 
-  @PreAuthorize("hasRole('AMC_ADMIN') and #oauth2.hasScope('write')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/modifyRole", method = RequestMethod.POST)
   @ResponseBody
   public String modifyRole(@RequestBody UserRoleModifyVo userRoleModifyVo ){
@@ -77,7 +77,7 @@ public class AmcUserController {
     return "successed";
   }
 
-//  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
+//  @PreAuthorize("hasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/create", method = RequestMethod.POST)
   @ResponseBody
@@ -94,6 +94,16 @@ public class AmcUserController {
   public List<AmcCompany> queryCompany(){
 
     List<AmcCompany> amcCompanyResult = amcBasicService.queryCompany();
+    return amcCompanyResult;
+
+  }
+
+  @PreAuthorize("hasPermission(#companyId, 'read')")
+  @RequestMapping(value = "/amc/amc-company/{companyId}/company", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcCompany queryCompany(@PathVariable Long companyId){
+
+    AmcCompany amcCompanyResult = amcBasicService.queryCompany(companyId);
     return amcCompanyResult;
 
   }
@@ -118,7 +128,7 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or #oauth2.hasScope('AMC_ADMIN')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or #oauth2.hasScope('AMC_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/createCmpyDept", method = RequestMethod.POST)
   @ResponseBody
   public AmcCmpyDeptVo createAmcCmpyDept(@RequestBody AmcCmpyDeptVo amcCmpyDeptVo) throws Exception {

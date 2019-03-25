@@ -93,4 +93,9 @@ public class AmcBasicServiceImpl implements AmcBasicService {
 
     return amcCmpyDeptVo;
   }
+
+  @Override
+  public AmcCompany queryCompany(Long companyId) {
+    return amcCompanyMapper.selectByPrimaryKey(companyId);
+  }
 }

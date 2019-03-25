@@ -4,6 +4,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
+import com.wensheng.zcc.sso.module.vo.UserCreateVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcUserService;
@@ -39,6 +40,31 @@ public class AmcUserController {
   public AmcUser createUser(@RequestBody AmcUser amcUser){
 
     AmcUser amcUserResult = amcUserService.createUser(amcUser);
+    return amcUserResult;
+  }
+
+  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN')")
+  @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_admin", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcUser createAmcAdmin(@RequestBody AmcUser amcUser){
+
+
+    AmcUser amcUserResult = amcUserService.createAmcAdmin(amcUser);
+
+
+    return amcUserResult;
+  }
+
+
+  @PreAuthorize("#oauth2.clientHasRole('SYSTEM_ADMIN') or (#oauth2.clientHasRole('AMC_ADMIN') and #oauth2.hasScope({amcId}))")
+  @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_user", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcUser createAmcUser(@RequestBody AmcUser amcUser, @RequestParam Long amcId){
+
+    amcUser.setCompanyId(amcId);
+    AmcUser amcUserResult = amcUserService.createAmcUser(amcUser);
+
+
     return amcUserResult;
   }
 

@@ -9,6 +9,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
+import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -83,6 +84,28 @@ public class AmcUserServiceImpl implements AmcUserService {
   @Override
   public List<AmcRolePermission> getAmcRolePerms() {
     return amcRolePermissionMapper.selectByExample(null);
+  }
+
+  @Override
+  public AmcUser createAmcAdmin(AmcUser amcUser) {
+
+    amcUserMapper.insertSelective(amcUser);
+    List<Long> roleIds = new ArrayList<>();
+    roleIds.add(Long.valueOf(AmcRolesEnum.ROLE_AMC_ADMIN.getId()));
+    addRolesForUser(amcUser.getId(), roleIds);
+
+    return amcUser;
+  }
+
+  @Override
+  public AmcUser createAmcUser(AmcUser amcUser) {
+
+    amcUserMapper.insertSelective(amcUser);
+    List<Long> roleIds = new ArrayList<>();
+    roleIds.add(Long.valueOf(AmcRolesEnum.ROLE_AMC_USER.getId()));
+    addRolesForUser(amcUser.getId(), roleIds);
+
+    return amcUser;
   }
 
   private void addRolesForUser(Long userId, List<Long> addRoleIds) {

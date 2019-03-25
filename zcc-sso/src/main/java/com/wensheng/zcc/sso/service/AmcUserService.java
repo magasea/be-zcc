@@ -18,4 +18,8 @@ public interface AmcUserService {
   List<AmcRole> getAmcRoles();
 
   List<AmcRolePermission> getAmcRolePerms();
+
+  AmcUser createAmcAdmin(AmcUser amcUser);
+
+  AmcUser createAmcUser(AmcUser amcUser);
 }

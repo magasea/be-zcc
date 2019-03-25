@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.module.vo;
 
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import lombok.Data;
 
 /**
@@ -17,5 +18,6 @@ public class UserCreateVo {
   String department;
   String group;
   String email;
+  AmcRole amcRole;
 
 }

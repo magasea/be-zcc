@@ -46,6 +46,7 @@ public class ExceptionUtils {
     INVALID_PASSWORD(1022, "Invalid Password", "密码不匹配或者为空"),
     INVALID_PHONE_VERCODE(1023, "Invalid vercode", "验证码不匹配或者验证码过期"),
     MISSING_COMPANYNAME(1024, "Missing Company Name", "缺少公司名称"),
+    NOT_AUTHORIZED_FORTHISTASK(1025, "not authorized for this task", "用户的角色不允许做这个操作"),
     ;
     int code;
     String name;

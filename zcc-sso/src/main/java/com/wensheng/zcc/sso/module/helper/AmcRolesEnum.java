@@ -9,6 +9,7 @@ public enum AmcRolesEnum {
   ROLE_AMC_ADMIN("ROLE_AMC_ADMIN", 2),
   ROLE_AMC_USER("ROLE_AMC_USER", 3),
   ROLE_ZCC_CLIENT("ROLE_ZCC_CLIENT", 4),
+  ROLE_LAWYER("ROLE_LAWYER", 5),
   ;
   AmcRolesEnum(String name , int id){
     this.name = name;
@@ -17,4 +18,12 @@ public enum AmcRolesEnum {
   private String name;
   private int id;
 
+
+  public String getName() {
+    return name;
+  }
+
+  public int getId() {
+    return id;
+  }
 }

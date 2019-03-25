@@ -34,7 +34,7 @@ public class AmcUserController {
   @Autowired
   AmcBasicService amcBasicService;
 
-  @PreAuthorize("hasRole('AMC_ADMIN') and #oauth2.hasScope({amcId})")
+  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission({amcId},'write')")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createUser(@RequestBody AmcUser amcUser){
@@ -56,7 +56,7 @@ public class AmcUserController {
   }
 
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and #oauth2.hasScope({amcId}))")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission({amcId},'write'))")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_user", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createAmcUser(@RequestBody AmcUser amcUser, @RequestParam Long amcId){
@@ -128,7 +128,7 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or #oauth2.hasScope('AMC_ADMIN')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasRole('AMC_ADMIN')")
   @RequestMapping(value = "/amc/amc-company/createCmpyDept", method = RequestMethod.POST)
   @ResponseBody
   public AmcCmpyDeptVo createAmcCmpyDept(@RequestBody AmcCmpyDeptVo amcCmpyDeptVo) throws Exception {

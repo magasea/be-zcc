@@ -27,6 +27,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -122,6 +123,8 @@ public class AmcAssetController {
     return assetVo;
   }
 
+
+  @PreAuthorize("hasPermission(#amcAssetVo.editActionId, 'AMC_REVIEW')")
   @RequestMapping(value = "/amcid/{amcid}/asset/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo updateAmcAsset(
@@ -261,6 +264,8 @@ public class AmcAssetController {
     return assetDocuments;
   }
 
+
+
   @RequestMapping(value = "/amcid/{amcid}/asset/doc/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcAssetDocument(@RequestBody BaseActionVo<List<AssetDocument>> listBaseActionVo ) throws Exception{
@@ -269,6 +274,7 @@ public class AmcAssetController {
       amcOssFileService.delFileInOss(assetDocument.getOssPath());
     }
   }
+
 
   @RequestMapping(value = "/amcid/{amcid}/asset/del", method = RequestMethod.POST)
   @ResponseBody

@@ -17,7 +17,6 @@ public enum AreaUnitEnum {
     this.type = type;
     this.name = name;
   }
-  //    住宅，别墅，商铺，写字楼，工业房地产，土地，机器设备，其它
   int type;
   String name;
 

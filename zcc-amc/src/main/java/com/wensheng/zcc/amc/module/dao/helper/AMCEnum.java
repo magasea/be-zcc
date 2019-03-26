@@ -1,6 +1,6 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
-import com.wensheng.zcc.amc.module.dao.helper.base.EnumUtils;
+import com.wensheng.zcc.common.utils.base.EnumUtils;
 
 import java.util.function.Function;
 

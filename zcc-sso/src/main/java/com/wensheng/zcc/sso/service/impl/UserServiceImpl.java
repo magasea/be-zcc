@@ -15,6 +15,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
+import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.service.UserService;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -88,7 +89,9 @@ public class UserServiceImpl implements UserService {
     List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
     authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
 
-    UserDetails userDetails = new User(amcUsers.get(0).getMobilePhone(), amcUsers.get(0).getPassword(), grantedAuthorityAuthorities);
+    UserDetails userDetails =
+        User.builder().authorities(grantedAuthorityAuthorities).username(amcUsers.get(0).getMobilePhone()).password(amcUsers.get(0).getPassword()).disabled(!amcUsers.get(0).getValid().equals(
+        AmcUserValidEnum.VALID.getId())).build();
     return userDetails;
   }
   @Override

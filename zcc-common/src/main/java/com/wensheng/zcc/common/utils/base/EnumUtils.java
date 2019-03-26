@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.module.dao.helper.base;
+package com.wensheng.zcc.common.utils.base;
 
 import com.google.common.collect.Maps;
 import java.lang.reflect.Array;

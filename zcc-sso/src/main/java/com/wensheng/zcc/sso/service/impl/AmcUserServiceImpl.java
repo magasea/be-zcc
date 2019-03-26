@@ -1,5 +1,7 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
@@ -7,13 +9,14 @@ import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
 import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
+import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.util.UserUtils;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -97,6 +100,64 @@ public class AmcUserServiceImpl implements AmcUserService {
   public AmcUser createAmcUser(AmcUser amcUser) {
     AmcUser amcUserCreated = createUserAndRole(amcUser, AmcRolesEnum.ROLE_AMC_USER);
     return amcUserCreated;
+  }
+
+  @Override
+  public List<AmcUser> getAmcUsers(Long amcId) {
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    amcUsers.stream().forEach(amcUser -> amcUser.setPassword(""));
+    return amcUsers;
+  }
+
+  @Override
+  public List<AmcUser> getAmcUserByPhoneNum(String phoneNum) {
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andMobilePhoneEqualTo(phoneNum);
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    return amcUsers;
+  }
+
+  @Override
+  public List<AmcUser> getAllUsers() {
+    List<AmcUser> amcUsers =  amcUserMapper.selectByExample(null);
+    amcUsers.stream().forEach(amcUser -> amcUser.setPassword(""));
+    return amcUsers;
+  }
+
+  @Override
+  public void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum) {
+    AmcUser amcUser = new AmcUser();
+    amcUser.setValid(amcUserValidEnum.getId());
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andIdEqualTo(userId);
+    amcUserMapper.updateByExampleSelective(amcUser, amcUserExample);
+  }
+
+  @Override
+  public void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum) {
+
+
+    AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+    amcUserRoleExample.createCriteria().andUserIdEqualTo(userId);
+    List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
+    if(!CollectionUtils.isEmpty(amcUserRoles)){
+      AmcUserRole amcUserRole =
+          amcUserRoles.stream().filter( item -> ( item.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId() ||
+              item.getRoleId() == AmcRolesEnum.ROLE_AMC_ADMIN.getId())).findAny().orElse(null);
+      if(amcUserRole != null){
+        ExceptionUtils.getAmcException(AmcExceptions.NOT_AUTHORIZED_FORTHISTASK, String.format("target user with "
+            + "role:%s", AmcRolesEnum.lookupByDisplayIdUtil(amcUserRole.getRoleId().intValue()).getName()));
+      }
+    }
+
+    AmcUser amcUser = new AmcUser();
+    amcUser.setValid(amcUserValidEnum.getId());
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andIdEqualTo(userId).andCompanyIdEqualTo(amcId);
+
+    amcUserMapper.updateByExampleSelective(amcUser, amcUserExample);
   }
 
   private AmcUser createUserAndRole(AmcUser amcUser, AmcRolesEnum amcRolesEnum){

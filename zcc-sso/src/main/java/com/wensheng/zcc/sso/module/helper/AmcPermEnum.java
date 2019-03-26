@@ -1,5 +1,8 @@
 package com.wensheng.zcc.sso.module.helper;
 
+import com.wensheng.zcc.common.utils.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 3/20/19
  * @project miniapp-backend
@@ -21,6 +24,23 @@ public enum AmcPermEnum {
     this.id = id;
   }
 
+  private static final Function<String, AmcPermEnum> func =
+      EnumUtils.lookupMap(AmcPermEnum.class, e -> e.getName());
+  public static AmcPermEnum lookupByDisplayNameUtil(String name) {
+    return func.apply(name);
+  }
+
+  private static final Function<Integer, AmcPermEnum> funcStatus =
+      EnumUtils.lookupMap(AmcPermEnum.class, e -> e.getId());
+  public static AmcPermEnum lookupByDisplayIdUtil(Integer id) {
+    return funcStatus.apply(id);
+  }
 
 
-}
+  public String getName() {
+    return name;
+  }
+
+  public Integer getId() {
+    return id;
+  }}

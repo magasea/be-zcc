@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.controller;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
+import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
 import com.wensheng.zcc.sso.module.vo.UserCreateVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
@@ -34,8 +35,8 @@ public class AmcUserController {
   @Autowired
   AmcBasicService amcBasicService;
 
-  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission({amcId},'write')")
-  @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create", method = RequestMethod.POST)
+  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId,'write')")
+  @RequestMapping(value = "/amcid/{amcid}/amc-user/create", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createUser(@RequestBody AmcUser amcUser){
 
@@ -44,7 +45,7 @@ public class AmcUserController {
   }
 
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
-  @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_admin", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/amc-user/create_amc_admin", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createAmcAdmin(@RequestBody AmcUser amcUser){
 
@@ -56,17 +57,57 @@ public class AmcUserController {
   }
 
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission({amcId},'write'))")
-  @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/create_amc_user", method = RequestMethod.POST)
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'write'))")
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/create_amc_user", method = RequestMethod.POST)
   @ResponseBody
-  public AmcUser createAmcUser(@RequestBody AmcUser amcUser, @RequestParam Long amcId){
+  public String createAmcUser(@RequestBody AmcUser amcUser, @PathVariable Long amcId){
 
     amcUser.setCompanyId(amcId);
     AmcUser amcUserResult = amcUserService.createAmcUser(amcUser);
+    if(amcUserResult == null){
+      return "false";
+    }
 
-
-    return amcUserResult;
+    return "succeed";
   }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'read'))")
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcUser> getAmcUsers( @PathVariable Long amcId){
+
+    List<AmcUser> amcUserResult = amcUserService.getAmcUsers(amcId);
+    return amcUserResult;
+
+  }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @RequestMapping(value = "/amc-user/allUsers", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcUser> getAllUsers( ){
+
+    List<AmcUser> amcUserResult = amcUserService.getAllUsers();
+    return amcUserResult;
+
+  }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @RequestMapping(value = "/amc-user/modifyUser", method = RequestMethod.POST)
+  @ResponseBody
+  public String modifyUser(@RequestParam Long userId, @RequestParam AmcUserValidEnum amcUserValidEnum){
+    amcUserService.modifyUserValidState(userId, amcUserValidEnum);
+    return "successed";
+  }
+
+  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId, 'write')")
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/modifyUser", method = RequestMethod.POST)
+  @ResponseBody
+  public String modifyUser(@RequestParam Long userId,
+      @PathVariable Long amcId, @RequestParam AmcUserValidEnum amcUserValidEnum){
+    amcUserService.modifyUserValidState(userId, amcId, amcUserValidEnum);
+    return "successed";
+  }
+
 
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amcid/{amcid}/dept/amc-user/modifyRole", method = RequestMethod.POST)
@@ -76,6 +117,8 @@ public class AmcUserController {
     amcUserService.modifyUserRole(userRoleModifyVo.getAmcUser().getId(), roleIds);
     return "successed";
   }
+
+
 
 //  @PreAuthorize("hasRole('SYSTEM_ADMIN') and #oauth2.hasScope('write')")
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")

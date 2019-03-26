@@ -1,5 +1,8 @@
 package com.wensheng.zcc.sso.module.helper;
 
+import com.wensheng.zcc.common.utils.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 2/26/19
  * @project zcc-backend
@@ -25,5 +28,17 @@ public enum AmcRolesEnum {
 
   public int getId() {
     return id;
+  }
+
+  private static final Function<String, AmcRolesEnum> func =
+      EnumUtils.lookupMap(AmcRolesEnum.class, e -> e.getName());
+  public static AmcRolesEnum lookupByDisplayNameUtil(String name) {
+    return func.apply(name);
+  }
+
+  private static final Function<Integer, AmcRolesEnum> funcStatus =
+      EnumUtils.lookupMap(AmcRolesEnum.class, e -> e.getId());
+  public static AmcRolesEnum lookupByDisplayIdUtil(Integer id) {
+    return funcStatus.apply(id);
   }
 }

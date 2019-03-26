@@ -2,7 +2,9 @@ package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
+import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.service.AmcUserService;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,5 +39,14 @@ public class AmcBasicInfoController {
     return amcRolePermissions;
   }
 
+  @RequestMapping(value = "/userStates", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getUserStates(){
 
+    List<String> result = new ArrayList<>();
+    for(AmcUserValidEnum amcUserValidEnum : AmcUserValidEnum.values()){
+      result.add(String.format("%d:%s", amcUserValidEnum.getId(), amcUserValidEnum.getName()));
+    }
+    return result;
+  }
 }

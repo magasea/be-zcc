@@ -317,7 +317,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
     }
-    if(amcDebt.getTotalAmount() > 0 ){
+    if(amcDebt.getTotalAmount() !=null && amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
 
     }

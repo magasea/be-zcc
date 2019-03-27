@@ -103,7 +103,7 @@ public class AmcUserController {
   @RequestMapping(value = "/amcid/{amcId}/amc-user/modifyUser", method = RequestMethod.POST)
   @ResponseBody
   public String modifyUser(@RequestParam Long userId,
-      @PathVariable Long amcId, @RequestParam AmcUserValidEnum amcUserValidEnum){
+      @PathVariable Long amcId, @RequestParam AmcUserValidEnum amcUserValidEnum) throws Exception {
     amcUserService.modifyUserValidState(userId, amcId, amcUserValidEnum);
     return "successed";
   }

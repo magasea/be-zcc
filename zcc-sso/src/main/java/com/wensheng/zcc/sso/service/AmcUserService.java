@@ -32,5 +32,5 @@ public interface AmcUserService {
 
   void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum);
 
-  void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum);
+  void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum) throws Exception;
 }

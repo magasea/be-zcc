@@ -136,7 +136,7 @@ public class AmcUserServiceImpl implements AmcUserService {
   }
 
   @Override
-  public void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum) {
+  public void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum) throws Exception {
 
 
     AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
@@ -147,7 +147,7 @@ public class AmcUserServiceImpl implements AmcUserService {
           amcUserRoles.stream().filter( item -> ( item.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId() ||
               item.getRoleId() == AmcRolesEnum.ROLE_AMC_ADMIN.getId())).findAny().orElse(null);
       if(amcUserRole != null){
-        ExceptionUtils.getAmcException(AmcExceptions.NOT_AUTHORIZED_FORTHISTASK, String.format("target user with "
+        throw ExceptionUtils.getAmcException(AmcExceptions.NOT_AUTHORIZED_FORTHISTASK, String.format("target user with "
             + "role:%s", AmcRolesEnum.lookupByDisplayIdUtil(amcUserRole.getRoleId().intValue()).getName()));
       }
     }

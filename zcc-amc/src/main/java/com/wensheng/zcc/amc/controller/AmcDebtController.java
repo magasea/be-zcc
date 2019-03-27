@@ -72,7 +72,7 @@ public class AmcDebtController {
   ZccRulesService zccRulesService;
 
 
-//  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
+//  @RequestMapping(value = "/api/amcid/{amcId}/debt/grn300tcontract/add", method = RequestMethod.POST)
 //  @ResponseBody
 //  public Long addGrntContract(@PathVariable(name = "amcId") Integer amcId,
 //      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {

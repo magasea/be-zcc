@@ -33,6 +33,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
@@ -98,6 +99,8 @@ public class WechatServiceImpl implements WechatService {
   @Value("${weixin.appSecret}")
   String appSecret;
 
+  private final int accessTokenValidSeconds = 30*24*60*60;
+
   private RestTemplate restTemplate = new RestTemplate();
 
   private Gson gson = new Gson();
@@ -133,6 +136,7 @@ public class WechatServiceImpl implements WechatService {
     restTemplate.setMessageConverters(messageConverters);
     BaseClientDetails baseClientDetails = new BaseClientDetails();
     baseClientDetails.setClientId(amcWechatClientId);
+    baseClientDetails.setAccessTokenValiditySeconds(accessTokenValidSeconds);
     if(!StringUtils.isEmpty(amcWechatAuthorizedGrantTypes)){
       baseClientDetails.setAuthorizedGrantTypes(Arrays.stream(amcWechatAuthorizedGrantTypes.split(",")).collect(Collectors.toList()));
     }
@@ -202,7 +206,13 @@ public class WechatServiceImpl implements WechatService {
       String sessionKey = amcWechatUsers.get(0).getSessionKey();
       String phoneNumber = decodePhone(wechatPhoneRegistry.getEncryptedData(), wechatPhoneRegistry.getIv(),
           sessionKey);
-      return phoneNumber;
+      PhoneObject phoneObject = null;
+      if(!StringUtils.isEmpty(phoneNumber)){
+        phoneObject =   gson.fromJson(phoneNumber, PhoneObject.class);
+        amcWechatUsers.get(0).setPhoneNumber(String.format("%s-%s",phoneObject.countryCode,phoneObject.phoneNumber));
+        amcWechatUserMapper.updateByPrimaryKeySelective(amcWechatUsers.get(0));
+      }
+      return String.format("%s-%s",phoneObject.countryCode,phoneObject.phoneNumber);
     }
 
     return null;
@@ -271,5 +281,11 @@ public class WechatServiceImpl implements WechatService {
 
 
     return null;
+  }
+  @Data
+  private class PhoneObject{
+    String phoneNumber;
+    String countryCode;
+
   }
 }

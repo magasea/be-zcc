@@ -8,11 +8,11 @@ logging:
         root: WARN
 mongodb:
   original:
-    host: 10.20.100.227
+    host: 10.20.100.235
     port: 27017
     database: wensheng
   wszcc:
-    host: 10.20.100.227
+    host: 10.20.100.235
     port: 27017
     database: wszcc
 

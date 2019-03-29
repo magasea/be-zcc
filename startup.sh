@@ -1,5 +1,7 @@
 #!/bin/bash
-export JAVA_HOME=/home/sunht/workingTools/jdk1.8.0_191
+#export JAVA_HOME=/home/sunht/workingTools/jdk1.8.0_191
+#export JAVA_HOME=/home/sunht/workingTools/jdk-12
+export JAVA_HOME=/home/sunht/workingTools/jdk-10.0.2
 export PATH=${JAVA_HOME}/bin:${PATH}
 export LANG=en_US.utf8
 export JAVA_OPTS="-Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8"

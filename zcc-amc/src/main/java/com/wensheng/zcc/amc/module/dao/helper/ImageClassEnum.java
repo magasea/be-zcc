@@ -11,6 +11,10 @@ public enum ImageClassEnum {
   MAIN(1, "主图片"),
   LOCATION(2, "位置图片"),
   OTHER(3, "其他"),
+  STREET(4, "街景"),
+  OUTSIDE(5, "外观"),
+  INSIDE(6, "内景"),
+  ARIMAGE(7, "AR图"),
   ;
   private int id;
   private String name;

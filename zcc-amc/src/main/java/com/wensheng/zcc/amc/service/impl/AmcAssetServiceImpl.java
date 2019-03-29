@@ -417,12 +417,16 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             if(!CollectionUtils.isEmpty(assetImages)){
                 log.info("now need delete history main image");
                 for(AssetImage assetImageItem: assetImages){
-
                     wszccTemplate.remove(assetImageItem);
+                    try {
+                        amcOssFileService.delFileInOss(assetImage.getOssPath());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.error("Failed to del file on oss with osspath:"+ assetImage.getOssPath(), e);
+                    }
                 }
             }
             wszccTemplate.save(assetImage);
-
         }else{
             query = new Query();
             query.addCriteria(Criteria.where("ossPath").is(assetImage.getOssPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));

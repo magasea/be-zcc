@@ -30,6 +30,8 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
+import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
@@ -198,7 +200,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       wszccTemplate.remove(queryNormal, DebtImage.class);
       amcDebtMapper.deleteByPrimaryKey(amcDebtId);
     }else{
-      log.error("Cannot del not draft debt with id:"+ amcDebtId);
+      log.error(String.format("Cannot del not %s debt with id:%s",
+          PublishStateEnum.lookupByDisplayStatusUtil(amcDebt.getPublishState()).getName(), amcDebtId));
     }
 
     return 1;
@@ -562,7 +565,20 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcCmpy create(AmcCmpy amcCmpy) {
-    amcCmpyMapper.insertSelective(amcCmpy);
+    boolean needQuery = false;
+    try{
+      amcCmpyMapper.insertSelective(amcCmpy);
+    }
+    catch (Exception e) {
+      log.error(" item to insert already exists", e);
+      needQuery = true;
+    }
+    if(needQuery){
+      AmcCmpyExample amcCmpyExample = new AmcCmpyExample();
+      amcCmpyExample.createCriteria().andNameEqualTo(amcCmpy.getName());
+      List<AmcCmpy> amcCmpyHistories = amcCmpyMapper.selectByExample(amcCmpyExample);
+      return amcCmpyHistories.get(0);
+    }
     return amcCmpy;
   }
 
@@ -768,6 +784,32 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Long assetCount = amcAssetService.getAssetCountWithDebtIds(amcDebtIds);
     amcDebtSummary.setAssetTotalCount(assetCount);
     return amcDebtSummary;
+  }
+
+  @Override
+  public void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id) {
+    for(AmcDebtorCmpy cmpyItem: newCompanies){
+      AmcDebtor amcDebtor = new AmcDebtor();
+      amcDebtor.setDebtId(id);
+      amcDebtor.setCompanyId(cmpyItem.getCmpyId());
+      amcDebtor.setDebtorType(DebtorTypeEnum.COMPANY.getId());
+      amcDebtor.setRole(cmpyItem.getRole().getId());
+      amcDebtor.setDebtorName(cmpyItem.getName());
+      amcDebtorMapper.insertSelective(amcDebtor);
+    }
+  }
+
+  @Override
+  public void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id) {
+    for(AmcDebtorPerson personItem: newPersons){
+      AmcDebtor amcDebtor = new AmcDebtor();
+      amcDebtor.setDebtId(id);
+      amcDebtor.setRole(personItem.getRole().getId());
+      amcDebtor.setDebtorName(personItem.getName());
+      amcDebtor.setDebtorType(DebtorTypeEnum.PERSON.getId());
+      amcDebtor.setDebtorName(personItem.getName());
+      amcDebtorMapper.insertSelective(amcDebtor);
+    }
   }
 
 }

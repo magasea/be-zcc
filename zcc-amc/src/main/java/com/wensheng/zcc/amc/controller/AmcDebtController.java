@@ -72,7 +72,7 @@ public class AmcDebtController {
   ZccRulesService zccRulesService;
 
 
-//  @RequestMapping(value = "/api/amcid/{amcId}/debt/grn300tcontract/add", method = RequestMethod.POST)
+//  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
 //  @ResponseBody
 //  public Long addGrntContract(@PathVariable(name = "amcId") Integer amcId,
 //      @RequestBody BaseActionVo<AmcGrntctrct> grntctrctBaseActionVo) throws Exception {
@@ -314,9 +314,9 @@ public class AmcDebtController {
       AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
 
     //4. make relationship between debtors with debt
-    if (!CollectionUtils.isEmpty(createVo.getDebtors())) {
-      amcDebtService.connDebt2Debtors(createVo.getDebtors(), amcDebtVo.getId());
-    }
+    handleDebtors(createVo, amcDebtVo.getId());
+
+
     if(createVo.getDebtAdditional() != null && createVo.getDebtAdditional().getDesc() != null){
       amcDebtService.saveDebtDesc(createVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
     }
@@ -382,9 +382,7 @@ public class AmcDebtController {
       }
 
       amcDebtService.update(amcDebt);
-      if (!CollectionUtils.isEmpty(amcDebtVo.getDebtors())) {
-        amcDebtService.connDebt2Debtors(amcDebtVo.getDebtors(), amcDebtVo.getId());
-      }
+      handleDebtors(amcDebtVo, amcDebtVo.getId());
       if(amcDebtVo.getDebtAdditional() != null  && amcDebtVo.getDebtAdditional().getDesc() != null && !StringUtils.isEmpty(amcDebtVo.getDebtAdditional().getDesc())){
         amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
       }
@@ -393,6 +391,20 @@ public class AmcDebtController {
     }
 
     return amcDebtVo;
+  }
+
+  private void handleDebtors(AmcDebtCreateVo amcDebtCreateVo, Long amcDebtId){
+    if (!CollectionUtils.isEmpty(amcDebtCreateVo.getDebtors())) {
+      amcDebtService.connDebt2Debtors(amcDebtCreateVo.getDebtors(), amcDebtId);
+    }
+
+    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewCompanies())){
+      amcDebtService.connDebt2Cmpys(amcDebtCreateVo.getNewCompanies(), amcDebtId);
+    }
+
+    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewPersons())){
+      amcDebtService.connDebt2Persons(amcDebtCreateVo.getNewPersons(), amcDebtId);
+    }
   }
 
 

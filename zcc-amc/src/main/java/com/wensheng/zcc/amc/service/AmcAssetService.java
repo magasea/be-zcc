@@ -53,6 +53,8 @@ public interface AmcAssetService {
     Map<String, List<Long>> getAllAssetTitles();
 
   AssetImage saveImageInfo( AssetImage assetImage);
+
+
   AssetDocument saveDoc(AssetDocument assetDocument);
 
   void delImage(AssetImage assetImage);

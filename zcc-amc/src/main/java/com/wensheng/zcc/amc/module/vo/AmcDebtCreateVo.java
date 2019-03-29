@@ -1,6 +1,9 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import io.swagger.models.auth.In;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -70,6 +73,10 @@ public class AmcDebtCreateVo {
 
 
   private List<Long> debtors;
+
+  private List<AmcDebtorCmpy> newCompanies;
+
+  private List<AmcDebtorPerson> newPersons;
 
   private DebtAdditional debtAdditional;
 

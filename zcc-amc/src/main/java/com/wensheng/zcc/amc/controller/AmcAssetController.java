@@ -180,7 +180,8 @@ public class AmcAssetController {
   @ResponseBody
   public List<AssetImage> addAmcAssetImage(
        @RequestParam("assetId") Long assetId, @RequestParam("isToOss") Boolean isToOss,
-      @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId,
+      @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId, @RequestParam(value = "description",
+      required = false) String description,
       @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
     if(uploadingImages != null && uploadingImages.length >= 3){
@@ -190,6 +191,7 @@ public class AmcAssetController {
     if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
     }
+
     for(MultipartFile uploadedImage : uploadingImages) {
       try {
         String filePath = amcOssFileService.handleMultiPartFile(uploadedImage, assetId,
@@ -212,6 +214,7 @@ public class AmcAssetController {
         assetImage.setTag(tag);
         assetImage.setOriginalName(filePath);
         assetImage.setAmcAssetId(assetId);
+        assetImage.setDescription(description);
         assetImages.add(amcAssetService.saveImageInfo( assetImage));
 
       } catch (Exception e) {
@@ -221,6 +224,20 @@ public class AmcAssetController {
       }
     }
     return assetImages;
+  }
+
+  @RequestMapping(value = "/amcid/{amcid}/asset/image/modify",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public String modifyAssetImage(
+      @RequestBody AssetImage assetImage) throws Exception {
+
+
+
+        amcAssetService.saveImageInfo( assetImage);
+
+
+    return "succeed";
   }
 
   @LogExecutionTime

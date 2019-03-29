@@ -51,6 +51,7 @@
     ${prefix}valid as valid,
     ${prefix}title as title,
     ${prefix}nick_name as nick_name,
+    ${prefix}location as location,
     ${prefix}create_by as create_by,
     ${prefix}create_date as create_date,
     ${prefix}update_by as update_by,

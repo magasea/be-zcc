@@ -17,6 +17,8 @@ public class AmcUser {
 
     private Long companyId;
 
+    private Integer location;
+
     private Integer valid;
 
     private Integer title;
@@ -85,6 +87,14 @@ public class AmcUser {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Integer getLocation() {
+        return location;
+    }
+
+    public void setLocation(Integer location) {
+        this.location = location;
     }
 
     public Integer getValid() {

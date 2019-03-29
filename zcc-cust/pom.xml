@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.wensheng.zcc</groupId>
+    <artifactId>zcc-cust</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <parent>
+        <groupId>com.wensheng.zcc</groupId>
+        <artifactId>zcc-backend</artifactId>
+        <version>0.1-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+
+        <!-- https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss -->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>3.4.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.deliveredtechnologies</groupId>
+            <artifactId>rulebook-spring</artifactId>
+            <version>0.11</version>
+        </dependency>
+        <dependency>
+            <groupId>com.wensheng.zcc</groupId>
+            <artifactId>zcc-common</artifactId>
+            <version>0.1-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <properties>
+        <java.version>10</java.version>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.mybatis.generator</groupId>
+                <artifactId>mybatis-generator-maven-plugin</artifactId>
+                <version>1.3.7</version>
+
+                <dependencies>
+
+                    <dependency>
+                        <groupId>org.mybatis.generator</groupId>
+                        <artifactId>mybatis-generator-core</artifactId>
+                        <version>1.3.6</version>
+                    </dependency>
+                    <!-- https://mvnrepository.com/artifact/mysql/mysql-connector-java -->
+                    <dependency>
+                        <groupId>mysql</groupId>
+                        <artifactId>mysql-connector-java</artifactId>
+                        <version>8.0.15</version>
+                    </dependency>
+
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>Generate MyBatis Artifacts</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!--允许移动生成的文件 -->
+                    <verbose>true</verbose>
+                    <!-- 是否覆盖 -->
+                    <overwrite>true</overwrite>
+                    <!-- 自动生成的配置 -->
+                    <!-- <configurationFile>
+                        src/main/resources/mybatis-generator/generatorConfig-learn.xml
+                    </configurationFile> -->
+                    <!-- 多数据源需要配置多个，方便生成代码的时候使用，该配置文件一个数据源一个，切换配置文件就可以生成对应的数据源的代码了 -->
+                    <configurationFile>
+                        src/main/resources/generatorConfig.xml
+                    </configurationFile>
+                </configuration>
+            </plugin>
+        </plugins>
+        <!-- 下面的rerource配置是为了让变异工程的时候把resource目录下的一些配置文件编译到变异目录下，不配置变异xml文件不好使 -->
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+            </resource>
+        </resources>
+
+    </build>
+
+</project>

@@ -147,6 +147,7 @@
     <modules>
         <module>zcc-sso</module>
         <module>zcc-amc</module>
+        <module>zcc-cust</module>
         <module>zcc-common</module>
     </modules>
     <build>

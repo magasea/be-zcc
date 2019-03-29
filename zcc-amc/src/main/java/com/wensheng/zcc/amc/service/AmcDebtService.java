@@ -10,6 +10,8 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
+import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
@@ -87,4 +89,7 @@ public interface AmcDebtService {
 
   AmcDebtSummary getSummaryInfo();
 
+  void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id);
+
+  void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id);
 }

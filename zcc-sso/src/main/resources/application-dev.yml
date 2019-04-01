@@ -62,11 +62,29 @@ spring:
                         redirectUris: client,http://${oauth2.host}:10003/amc/login
                         authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
+    kafka:
+        consumer:
+            group-id: grp-zcc-logger
+            auto-offset-reset: earliest
+        # change this property if you are using your own
+        # Kafka cluster or your Docker IP is different
+        bootstrap-servers: 10.20.100.238:9092
+
 mybatis:
     type-aliases-package: com.wensheng.zcc.sso.module
     mapper-locations:
         - classpath:mappers/*Mapper.xml
         - classpath:mappers/ext/*Mapper.xml
+
+mongodb:
+#    original:
+#        host: 10.20.100.235
+#        port: 27017
+#        database: wensheng
+    wszcc_sso:
+        host: 10.20.100.235
+        port: 27017
+        database: wszcc_sso
 
 weixin:
 #    appId: wxdb885be2c95a5b32

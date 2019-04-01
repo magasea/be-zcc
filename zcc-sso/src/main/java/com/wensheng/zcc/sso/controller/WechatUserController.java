@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.module.vo.WechatLogin;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
@@ -46,6 +47,16 @@ public class WechatUserController {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     phoneRegistry.setOpenId(authentication.getName());
     return wechatService.registryPhone(phoneRegistry);
+
+  }
+
+  @RequestMapping(value="/registryLocation",method= RequestMethod.POST)
+  @ResponseBody
+  public String wechatRegistryLocation(@RequestBody WechatUserLocation wechatUserLocation) throws IOException {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    wechatUserLocation.setOpenId(authentication.getName());
+    wechatService.registryUserLocation(wechatUserLocation);
+    return "succeed";
 
   }
 

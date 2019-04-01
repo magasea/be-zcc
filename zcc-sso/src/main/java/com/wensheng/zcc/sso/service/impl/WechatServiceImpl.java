@@ -1,6 +1,8 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.mq.kafka.KafkaParams;
+import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcWechatUserMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample;
@@ -9,6 +11,7 @@ import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
+import com.wensheng.zcc.sso.service.KafkaService;
 import com.wensheng.zcc.sso.service.WechatService;
 import java.security.AlgorithmParameters;
 import java.security.Security;
@@ -33,6 +36,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -61,7 +65,6 @@ public class WechatServiceImpl implements WechatService {
   @Value("${weixin.loginUrl}")
   String loginUrl;
 
-
   @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.client-id}")
   private String amcWechatClientId;
 
@@ -84,6 +87,9 @@ public class WechatServiceImpl implements WechatService {
 
   @Value("${weixin.appSecret}")
   String appSecret;
+
+  @Autowired
+  KafkaService kafkaService;
 
   private final int accessTokenValidSeconds = 30*24*60*60;
 
@@ -202,6 +208,12 @@ public class WechatServiceImpl implements WechatService {
     }
 
     return null;
+  }
+
+  @Override
+  public String registryUserLocation(WechatUserLocation wechatUserLocation) {
+    kafkaService.send(wechatUserLocation);
+    return "succeed";
   }
 
   private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){

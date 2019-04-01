@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service;
 
+import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
@@ -17,4 +18,5 @@ public interface WechatService {
   public String registryPhone(WechatPhoneRegistry wechatPhoneRegistry);
 
 
+  String registryUserLocation(WechatUserLocation wechatUserLocation);
 }

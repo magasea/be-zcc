@@ -415,34 +415,35 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             query.addCriteria(Criteria.where("amcAssetId").is(assetImage.getAmcAssetId()).and("tag").is(ImageClassEnum.MAIN.getId()));
             List<AssetImage> assetImages =  wszccTemplate.find(query, AssetImage.class);
             if(!CollectionUtils.isEmpty(assetImages)){
-                log.info("now need delete history main image");
+                log.info("now need change history main image");
                 for(AssetImage assetImageItem: assetImages){
-                    wszccTemplate.remove(assetImageItem);
-                    try {
-                        amcOssFileService.delFileInOss(assetImage.getOssPath());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        log.error("Failed to del file on oss with osspath:"+ assetImage.getOssPath(), e);
-                    }
+                    assetImageItem.setTag(ImageClassEnum.OTHER.getId());
+                    wszccTemplate.save(assetImageItem);
+//                    try {
+//                        amcOssFileService.delFileInOss(assetImage.getOssPath());
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        log.error("Failed to del file on oss with osspath:"+ assetImage.getOssPath(), e);
+//                    }
                 }
             }
-            wszccTemplate.save(assetImage);
-        }else{
-            query = new Query();
-            query.addCriteria(Criteria.where("ossPath").is(assetImage.getOssPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
-            List<AssetImage> assetImages =  wszccTemplate.find(query, AssetImage.class);
-
-            if(!CollectionUtils.isEmpty(assetImages)){
-                log.info("there is duplicate image, just update it");
-                AmcBeanUtils.copyProperties(assetImage, assetImages.get(0));
-                wszccTemplate.save(assetImages.get(0));
-            }else{
-                log.info("there is no image, just insert it");
-                wszccTemplate.save(assetImage);
-            }
-
-
+//            wszccTemplate.save(assetImage);
         }
+        query = new Query();
+        query.addCriteria(Criteria.where("ossPath").is(assetImage.getOssPath()).and("amcAssetId").is(assetImage.getAmcAssetId()));
+        List<AssetImage> assetImages =  wszccTemplate.find(query, AssetImage.class);
+
+        if(!CollectionUtils.isEmpty(assetImages)){
+            log.info("there is duplicate image, just update it");
+            AmcBeanUtils.copyProperties(assetImage, assetImages.get(0));
+            wszccTemplate.save(assetImages.get(0));
+        }else{
+            log.info("there is no image, just insert it");
+            wszccTemplate.save(assetImage);
+        }
+
+
+
 
         return assetImage;
 

@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc;
+package com.wensheng.zcc.log;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;

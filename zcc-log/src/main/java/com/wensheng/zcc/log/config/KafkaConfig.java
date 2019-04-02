@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
+import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -80,6 +82,10 @@ public class KafkaConfig {
   @Bean
   public ConsumerFactory<String, Object> consumerFactory() {
     final GsonDeserializer<Object> gsonSerializer = new GsonDeserializer<>();
+    Map<String, String> config = new HashMap<>();
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, WechatUserLocation.class.getName());
+    gsonSerializer.configure(config, false);
+    gsonSerializer.close();
     return new DefaultKafkaConsumerFactory<>(
         kafkaProperties.buildConsumerProperties(), new StringDeserializer(), gsonSerializer
     );
@@ -116,13 +122,19 @@ public class KafkaConfig {
 
   @Bean
   public ConsumerFactory<String, byte[]> byteArrayConsumerFactory() {
+    GsonDeserializer gsonDeserializer = new GsonDeserializer<>();
+    Map<String, String> config = new HashMap<>();
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, WechatUserLocation.class.getName());
+    gsonDeserializer.configure(config, false);
+    gsonDeserializer.close();
     return new DefaultKafkaConsumerFactory<>(
-        kafkaProperties.buildConsumerProperties(), new StringDeserializer(), new GsonDeserializer<>()
+        kafkaProperties.buildConsumerProperties(), new StringDeserializer(), gsonDeserializer
     );
   }
 
   @Bean
   public ConcurrentKafkaListenerContainerFactory<String, byte[]> kafkaListenerByteArrayContainerFactory() {
+
     ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(byteArrayConsumerFactory());

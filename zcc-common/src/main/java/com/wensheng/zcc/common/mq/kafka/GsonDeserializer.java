@@ -2,6 +2,7 @@ package com.wensheng.zcc.common.mq.kafka;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import java.time.LocalDateTime;
 import java.util.Map;
 import org.apache.kafka.common.serialization.Deserializer;
 
@@ -15,7 +16,7 @@ public class GsonDeserializer<T> implements Deserializer<T> {
   public static final String CONFIG_KEY_CLASS = "key.deserializer.class";
   private Class<T> cls;
 
-  private Gson gson = new GsonBuilder().create();
+  private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new DateTimeDeserializer()).create();
 
 
   @Override
@@ -27,7 +28,7 @@ public class GsonDeserializer<T> implements Deserializer<T> {
       cls = (Class<T>) Class.forName(clsName);
     } catch (ClassNotFoundException e) {
       System.err.printf("Failed to configure GsonDeserializer. " +
-              "Did you forget to specify the '%s' property ?%n",
+              "Did you forget to specify the '%s' Stringproperty ?%n",
           configKey);
     }
   }

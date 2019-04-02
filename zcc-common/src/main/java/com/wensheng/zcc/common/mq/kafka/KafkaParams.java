@@ -9,10 +9,7 @@ import org.springframework.beans.factory.annotation.Value;
  */
 public class KafkaParams {
 
-  @Value("${kafka.topic-prefix}")
-  static String topicPrefix;
 
-  public static final String MQ_TOPIC_WECHAT_USERLOCATION = String.format("%s_mq_topic_wechat_userlocation",
-      topicPrefix);
+  public static final String MQ_TOPIC_WECHAT_USERLOCATION = "topic_wechat_userLocation";
 
 }

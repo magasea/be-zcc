@@ -1,24 +1,16 @@
 package com.wensheng.zcc.sso.config;
 
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
-import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.GsonSerializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
-import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -42,7 +34,7 @@ public class KafkaConfig {
     Map<String, Object> props =
         new HashMap<>(kafkaProperties.buildProducerProperties());
     props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-        StringSerializer.class);
+        "org.apache.kafka.common.serialization.StringSerializer");
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
         GsonSerializer.class);
     return props;

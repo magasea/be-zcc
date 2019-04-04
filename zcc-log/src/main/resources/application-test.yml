@@ -3,9 +3,9 @@ server:
 spring:
   autoconfigure:
     exclude:
-#      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+      #      - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
       - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
-#      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
+      #      - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
       - org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration
 
@@ -16,17 +16,17 @@ spring:
     # change this property if you are using your own
     # Kafka cluster or your Docker IP is different
     bootstrap-servers: ${env.kafka-host}:9092
-#  jpa:
-#      generate-ddl: false
-#      hibernate:
-#          ddl-auto: 'none'
-#          naming:
-#              physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-#      properties:
-#          hibernate:
-#              hbm2ddl:
-#                  auto: none
-#      show-sql: true
+  #  jpa:
+  #      generate-ddl: false
+  #      hibernate:
+  #          ddl-auto: 'none'
+  #          naming:
+  #              physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+  #      properties:
+  #          hibernate:
+  #              hbm2ddl:
+  #                  auto: none
+  #      show-sql: true
   data:
     mongodb:
       database: wszcc_log
@@ -43,5 +43,5 @@ kafka:
   topic-wechat-userlocation: topic_wechat_userLocation_${env.env-prefix}
 
 env:
-  env-prefix: dev
+  env-prefix: test
   kafka-host: 10.20.100.238

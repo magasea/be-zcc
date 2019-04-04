@@ -1,7 +1,7 @@
 package com.wensheng.zcc.sso.config;
 
 import lombok.Data;
-import org.springframework.boot.autoconfigure.mongo.MongoProperties;
+
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -9,11 +9,11 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Data
 @ConfigurationProperties(prefix = "mongodb")
-public class MultipleMongoProperties {
+public class MongoProperties {
 
 
 
-    private MongoProperties wszcc_sso = new MongoProperties();
+    private org.springframework.boot.autoconfigure.mongo.MongoProperties wszcc_sso = new org.springframework.boot.autoconfigure.mongo.MongoProperties();
 
 
 }

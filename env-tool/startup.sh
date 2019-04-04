@@ -7,8 +7,10 @@ export LANG=en_US.utf8
 export JAVA_OPTS="-Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8"
 execJarName_amc=/home/sunht/working/zcc/zcc-amc-0.1-SNAPSHOT.jar
 execJarName_sso=/home/sunht/working/zcc/zcc-sso-0.1-SNAPSHOT.jar
+execJarName_log=/home/sunht/working/zcc/zcc-log-0.1-SNAPSHOT.jar
 pattern_amc=zcc-amc
 pattern_sso=zcc-sso
+pattern_log=zcc-log
 killProcess() {
     echo "$1"
     result=`ps -ef | grep "$1" | grep -v grep | awk '{print $2}'| wc -l`
@@ -21,8 +23,11 @@ killProcess() {
 
 killProcess ${pattern_amc}
 killProcess ${pattern_sso}
+killProcess ${pattern_log}
 echo ${execJarName_amc}
 echo ${execJarName_sso}
+echo ${execJarName_log}
 sleep 5
 nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
 nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &
+nohup java -jar -Dspring.profiles.active=test ${execJarName_log} &>loger.log &

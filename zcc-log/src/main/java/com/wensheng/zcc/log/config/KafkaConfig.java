@@ -4,8 +4,8 @@ import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
 import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
+import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
-import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -18,7 +18,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.core.ConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
-import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.converter.BytesJsonMessageConverter;
+import org.springframework.kafka.support.converter.MessageConverter;
+
 
 /**
  * @author chenwei on 4/1/19
@@ -121,7 +123,7 @@ public class KafkaConfig {
   // Byte Array Consumer Configuration
 
   @Bean
-  public ConsumerFactory<String, byte[]> byteArrayConsumerFactory() {
+  public ConsumerFactory<String, byte[]> baWechatUserLocationConsumerFactory() {
     GsonDeserializer gsonDeserializer = new GsonDeserializer<>();
     Map<String, String> config = new HashMap<>();
     config.put(GsonDeserializer.CONFIG_VALUE_CLASS, WechatUserLocation.class.getName());
@@ -133,11 +135,37 @@ public class KafkaConfig {
   }
 
   @Bean
-  public ConcurrentKafkaListenerContainerFactory<String, byte[]> kafkaListenerByteArrayContainerFactory() {
+  public ConcurrentKafkaListenerContainerFactory<String, byte[]> baUserLocationContainerFactory() {
 
     ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
-    factory.setConsumerFactory(byteArrayConsumerFactory());
+    factory.setConsumerFactory(baWechatUserLocationConsumerFactory());
+//    MessageConverter messageConverter = new BytesJsonMessageConverter();
+//    factory.setMessageConverter(messageConverter);
+    return factory;
+  }
+
+
+  @Bean
+  public ConsumerFactory<String, byte[]> baAmcUserOpConsumerFactory() {
+    GsonDeserializer gsonDeserializer = new GsonDeserializer<>();
+    Map<String, String> config = new HashMap<>();
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, AmcUserOperation.class.getName());
+    gsonDeserializer.configure(config, false);
+    gsonDeserializer.close();
+    return new DefaultKafkaConsumerFactory<>(
+        kafkaProperties.buildConsumerProperties(), new StringDeserializer(), gsonDeserializer
+    );
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, byte[]> baAmcUserOpFactory() {
+
+    ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(baAmcUserOpConsumerFactory());
+//    MessageConverter messageConverter = new BytesJsonMessageConverter();
+//    factory.setMessageConverter(messageConverter);
     return factory;
   }
 }

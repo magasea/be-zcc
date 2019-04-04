@@ -65,6 +65,8 @@ spring:
             scopes: amcClient,read,write
             redirectUris: client,http://localhost:10003/amc/login
             authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
+  kafka:
+    bootstrap-servers: 10.20.100.238:9092
   servlet:
     multipart:
       enabled: true
@@ -103,3 +105,5 @@ wechat:
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 
 # end::wechatConfig
+
+env-hint: test

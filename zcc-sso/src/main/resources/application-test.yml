@@ -114,4 +114,4 @@ logging:
 oauth2:
     host: localhost
     authLink: http://${oauth2.host}:10002
-env-hint: dev
+env-hint: test

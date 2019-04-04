@@ -9,7 +9,9 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
+import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -18,6 +20,8 @@ import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 /**
  * @author chenwei on 1/15/19
@@ -32,6 +36,9 @@ public class AmcAspect {
 
   @Autowired
   AmcDebtService amcDebtService;
+
+  @Autowired
+  KafkaService kafkaService;
 
 
   @Before("execution(* com.wensheng.zcc.amc.controller.*.* (com.wensheng.zcc.amc.module.vo.base.BaseActionVo<com"
@@ -52,10 +59,16 @@ public class AmcAspect {
     }
   }
 
-//  @Before("execution(* com.wensheng.zcc.amc.controller.*.* (com.wensheng.zcc.amc.module.vo.base.BaseActionVo<com"
-//      + ".wensheng.zcc.amc.module.vo.AmcAssetVo>, ..)) && args(baseActionVo)")
-//  public void beforeDoDebtAction(BaseActionVo<AmcAssetVo> baseActionVo) throws Exception {
-//    log.info("now get the point cut");
+  @Before("@annotation(EditActionChecker) && args(baseActionVo)")
+  public void beforeDoDebtAction(BaseActionVo baseActionVo) throws Exception {
+    log.info("now get the point cut");
+    AmcUserOperation amcUserOperation = new AmcUserOperation();
+    amcUserOperation.setActionId(baseActionVo.getEditActionId());
+    amcUserOperation.setParam(baseActionVo.getContent());
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+    kafkaService.send(amcUserOperation);
+
 //    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
 //
 //    PublishStateEnum publishStateEnum =
@@ -67,8 +80,8 @@ public class AmcAspect {
 //      throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
 //          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
 //    }
-//
-//  }
+
+  }
 
   @Around("@annotation(LogExecutionTime)")
   public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{

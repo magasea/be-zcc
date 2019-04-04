@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
@@ -115,6 +116,7 @@ public class AmcAssetController {
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
     AmcAsset amcAsset = getAssetFromVo(amcAssetVo.getContent());
+//    amcAsset.setPublishState(PublishStateEnum.DRAFT.getStatus());
     AmcAssetVo assetVo = amcAssetService.create(amcAsset);
     amcAssetVo.getContent().getAssetAdditional().setAmcAssetId(assetVo.getId());
     AssetAdditional assetAdditional =
@@ -124,7 +126,10 @@ public class AmcAssetController {
   }
 
 
-  @PreAuthorize("hasPermission(#amcAssetVo.editActionId, 'AMC_REVIEW')")
+
+
+
+
   @RequestMapping(value = "/amcid/{amcid}/asset/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo updateAmcAsset(

@@ -14,10 +14,12 @@ import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -68,6 +70,45 @@ public class AmcAspect {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
     kafkaService.send(amcUserOperation);
+
+//    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
+//
+//    PublishStateEnum publishStateEnum =
+//        zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
+//            PublishStateEnum.lookupByDisplayStatusUtil(baseActionVo.getContent().getPublishState() ));
+//    if(publishStateEnum == null) {
+//      log.error(String.format("actionId:%s with current publishState:%s is not applicable",
+//          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
+//      throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
+//          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
+//    }
+
+  }
+
+  @Around("@annotation(EditActionChecker))")
+  public void testAnnotation(JoinPoint joinPoint) throws Exception {
+
+    log.info("now get the point cut testAnnotation");
+    CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
+    String[] names = codeSignature.getParameterNames();
+    boolean gotActionObject = false;
+    for(int idx = 0; idx < joinPoint.getArgs().length; idx++){
+      if(joinPoint.getArgs()[idx] instanceof BaseActionVo){
+        BaseActionVo actionObj = (BaseActionVo) joinPoint.getArgs()[idx];
+        log.info("now get baseAction with actionId:{}", actionObj.getEditActionId());
+        gotActionObject = true;
+        break;
+      }else if(names[idx].equals("debtId") || names[idx].equals("amcDebtId")){
+        Long amcDebtId = (Long)joinPoint.getArgs()[idx];
+        log.info("now get the debtId:{}", amcDebtId);
+      }
+    }
+//    AmcUserOperation amcUserOperation = new AmcUserOperation();
+//    amcUserOperation.setActionId(baseActionVo.getEditActionId());
+//    amcUserOperation.setParam(baseActionVo.getContent());
+//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+//    kafkaService.send(amcUserOperation);
 
 //    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
 //

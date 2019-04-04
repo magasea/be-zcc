@@ -10,16 +10,18 @@ import java.util.function.Function;
 public enum PublishStateEnum {
     NOTCLEAR(-1, "不确定"),
     PUBLISHED(1, "发布"),
-    NOTPUBLISHED(2, "未发布"),
     DELETED(0, "已删除"),
-    ABORTED(3, "已放弃"),
     SOLD(4, "已售出"),
-    CHECK_WAIT(5, "待审核"),
+    DRAFT_CHECK_WAIT(5, "草稿待审核"),
+    RECORD_CHECK_WAIT(12, "草案待审核"),
     DRAFT(6, "草稿"),
-    OFF_SHELF(7, "已下架"),
-    CHECK_FAILED(8, "审核未通过"),
-    INIT(9, "初始化"),
-    PUBLISHED1(1, "已发布");
+    RECORD(10,"草案"),
+    SOLD_OFF_SHELF(7, "售出已下架"),
+    UNSOLD_OFF_SHELF(11, "未售出已下架"),
+    DRAFT_CHECK_FAILED(8, "草稿审核未通过"),
+    RECORD_CHECK_FAILED(13, "草案审核未通过"),
+
+    ;
 
     private int status;
     private String name;

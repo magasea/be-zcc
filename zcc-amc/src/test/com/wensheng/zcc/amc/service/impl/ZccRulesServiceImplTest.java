@@ -27,7 +27,8 @@ public class ZccRulesServiceImplTest {
   @Test
   public void runActionAndStatus() {
 
-    PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_CREATE, PublishStateEnum.INIT);
+    PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_CREATE,
+        PublishStateEnum.DRAFT);
     Assert.assertEquals(publishStateEnum, PublishStateEnum.DRAFT);
   }
 }

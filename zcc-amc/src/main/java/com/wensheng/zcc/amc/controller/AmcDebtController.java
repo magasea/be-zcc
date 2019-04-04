@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
@@ -104,13 +105,14 @@ public class AmcDebtController {
 //    }
 //  }
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
-  @ResponseBody
-  public AmcDebtor addAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
-      @RequestBody BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
 
-    return amcDebtService.create(amcDebtorBaseActionVo.getContent());
-  }
+//  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/add", method = RequestMethod.POST)
+//  @ResponseBody
+//  public AmcDebtor addAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
+//      @RequestBody BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
+//
+//    return amcDebtService.create(amcDebtorBaseActionVo.getContent());
+//  }
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/debtors-unasigned", method = RequestMethod.POST)
   @ResponseBody
@@ -140,13 +142,13 @@ public class AmcDebtController {
   }
 
 
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/update", method = RequestMethod.POST)
-  @ResponseBody
-  public AmcDebtor updateAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
-      @RequestBody BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
-
-    return amcDebtService.update(amcDebtorBaseActionVo.getContent());
-  }
+//  @RequestMapping(value = "/api/amcid/{amcId}/debt/debtor/update", method = RequestMethod.POST)
+//  @ResponseBody
+//  public AmcDebtor updateAmcDebtor(@PathVariable(name = "amcId") Integer amcId,
+//      @RequestBody BaseActionVo<AmcDebtor> amcDebtorBaseActionVo) throws Exception {
+//
+//    return amcDebtService.update(amcDebtorBaseActionVo.getContent());
+//  }
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/company/add", method = RequestMethod.POST)
   @ResponseBody
@@ -189,7 +191,9 @@ public class AmcDebtController {
 //    return queryResults;
   }
 
+  @EditActionChecker
   @LogExecutionTime
+
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", headers = "Content-Type= multipart/form-data",method =
       RequestMethod.POST)
   @ResponseBody

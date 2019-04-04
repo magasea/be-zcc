@@ -36,64 +36,57 @@ public class EditProcessRule {
 
   @Then
   public void then() throws Exception {
-    if(editAction == EditActionEnum.ACT_CREATE && currentStatus == PublishStateEnum.INIT ){
+    if(editAction == EditActionEnum.ACT_CREATE  ){
       editStatusResult = PublishStateEnum.DRAFT;
       return;
     }
     if(editAction == EditActionEnum.ACT_SAVE){
-      if(currentStatus == PublishStateEnum.INIT) {
+      if(currentStatus == PublishStateEnum.DRAFT || currentStatus == PublishStateEnum.DRAFT_CHECK_FAILED) {
         editStatusResult =  PublishStateEnum.DRAFT;
-        return;
-      }else if( currentStatus == PublishStateEnum.PUBLISHED ||
-          currentStatus == PublishStateEnum.SOLD){
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
-      }else{
-        editStatusResult =  currentStatus;
         return;
       }
     }
     if(editAction == EditActionEnum.ACT_REVIEW_FAIL ){
-      if( currentStatus == PublishStateEnum.DRAFT ||
-          currentStatus == PublishStateEnum.CHECK_FAILED || currentStatus == PublishStateEnum.CHECK_WAIT ) {
-        editStatusResult =  PublishStateEnum.CHECK_FAILED;
+      if( currentStatus == PublishStateEnum.DRAFT_CHECK_WAIT ) {
+        editStatusResult =  PublishStateEnum.DRAFT_CHECK_FAILED;
         return;
-      }else{
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
+      }
+      if(currentStatus == PublishStateEnum.RECORD_CHECK_WAIT){
+        editStatusResult = PublishStateEnum.RECORD_CHECK_FAILED;
       }
     }
     if(editAction == EditActionEnum.ACT_REVIEW_PASS){
-      if(currentStatus == PublishStateEnum.CHECK_FAILED || currentStatus == PublishStateEnum.CHECK_WAIT){
+      if(currentStatus == PublishStateEnum.DRAFT_CHECK_WAIT || currentStatus == PublishStateEnum.RECORD_CHECK_WAIT){
         editStatusResult =  PublishStateEnum.PUBLISHED;
         return;
-      }else{
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }
     }
     if(editAction == EditActionEnum.ACT_SUBMIT4PUB){
-      if(currentStatus == PublishStateEnum.DRAFT || currentStatus == PublishStateEnum.CHECK_FAILED){
-        editStatusResult =  PublishStateEnum.CHECK_WAIT;
+      if(currentStatus == PublishStateEnum.DRAFT ){
+        editStatusResult =  PublishStateEnum.DRAFT_CHECK_WAIT;
         return;
-      }else{
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
+      }
+      if(currentStatus == PublishStateEnum.RECORD || currentStatus == PublishStateEnum.UNSOLD_OFF_SHELF){
+        editStatusResult = PublishStateEnum.RECORD_CHECK_WAIT;
       }
     }
     if(editAction == EditActionEnum.ACT_OFF_SHELF){
-      if(currentStatus == PublishStateEnum.PUBLISHED ){
-        editStatusResult =  PublishStateEnum.CHECK_WAIT;
+      if(currentStatus == PublishStateEnum.SOLD ){
+        editStatusResult =  PublishStateEnum.SOLD_OFF_SHELF;
         return;
-      }else{
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
+      }
+      if(currentStatus == PublishStateEnum.PUBLISHED){
+        editStatusResult = PublishStateEnum.SOLD_OFF_SHELF;
       }
     }
     if(editAction == EditActionEnum.ACT_SOLD){
       if(currentStatus == PublishStateEnum.PUBLISHED){
         editStatusResult =  PublishStateEnum.SOLD;
         return;
-      }else{
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
       }
     }
-    throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION);
+    throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION, String.format("currentStatus:%s action:%s",
+        currentStatus.getName(), editAction.getCname()));
   }
 
 }

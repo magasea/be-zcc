@@ -130,7 +130,8 @@ public class AmcAssetServiceImplTest {
                     }
 
                 } else {
-                    amcAssetId = new Long(amcAssetMapper.insertSelective(amcAssetMysql));
+                    amcAssetMapper.insertSelective(amcAssetMysql);
+                    amcAssetId = amcAssetMysql.getId();
                 }
 
                 handleAmcAddtional(originItem, amcAssetId);

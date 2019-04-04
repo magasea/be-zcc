@@ -91,7 +91,7 @@ public class WechatServiceImpl implements WechatService {
   @Autowired
   KafkaService kafkaService;
 
-  private final int accessTokenValidSeconds = 30*24*60*60;
+  private final int accessTokenValidSeconds = 365*24*60*60;
 
   private RestTemplate restTemplate = new RestTemplate();
 

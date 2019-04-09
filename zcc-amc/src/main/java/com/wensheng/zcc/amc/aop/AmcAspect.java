@@ -3,9 +3,6 @@ package com.wensheng.zcc.amc.aop;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -14,7 +11,6 @@ import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -64,12 +60,7 @@ public class AmcAspect {
   @Before("@annotation(EditActionChecker) && args(baseActionVo)")
   public void beforeDoDebtAction(BaseActionVo baseActionVo) throws Exception {
     log.info("now get the point cut");
-    AmcUserOperation amcUserOperation = new AmcUserOperation();
-    amcUserOperation.setActionId(baseActionVo.getEditActionId());
-    amcUserOperation.setParam(baseActionVo.getContent());
-    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-    kafkaService.send(amcUserOperation);
 
 //    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
 //
@@ -86,15 +77,17 @@ public class AmcAspect {
   }
 
   @Around("@annotation(EditActionChecker))")
-  public void testAnnotation(JoinPoint joinPoint) throws Exception {
+  public Object testAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {
+    AmcUserOperation amcUserOperation = new AmcUserOperation();
 
+    BaseActionVo actionObj = null;
     log.info("now get the point cut testAnnotation");
     CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
     String[] names = codeSignature.getParameterNames();
     boolean gotActionObject = false;
     for(int idx = 0; idx < joinPoint.getArgs().length; idx++){
       if(joinPoint.getArgs()[idx] instanceof BaseActionVo){
-        BaseActionVo actionObj = (BaseActionVo) joinPoint.getArgs()[idx];
+        actionObj = (BaseActionVo) joinPoint.getArgs()[idx];
         log.info("now get baseAction with actionId:{}", actionObj.getEditActionId());
         gotActionObject = true;
         break;
@@ -103,6 +96,21 @@ public class AmcAspect {
         log.info("now get the debtId:{}", amcDebtId);
       }
     }
+    if(gotActionObject){
+      amcUserOperation.setActionId(actionObj.getEditActionId());
+
+      amcUserOperation.setParam(actionObj.getContent());
+      Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//      AmcUserDetail amcUserDetail = (AmcUserDetail) authentication.getPrincipal();
+      amcUserOperation.setUserName(authentication.getPrincipal().toString());
+//      if(((HashMap)authentication.getDetails()).containsKey("userId")){
+//        amcUserOperation.setUserId((Long)((Map)authentication.getDetails()).get("userId"));
+//      }
+      kafkaService.send(amcUserOperation);
+
+    }
+    final Object proceed = joinPoint.proceed();
+    return proceed;
 //    AmcUserOperation amcUserOperation = new AmcUserOperation();
 //    amcUserOperation.setActionId(baseActionVo.getEditActionId());
 //    amcUserOperation.setParam(baseActionVo.getContent());

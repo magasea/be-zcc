@@ -38,6 +38,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -355,14 +356,18 @@ public class AmcDebtController {
     return amcDebtExtVo;
   }
 
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtCreateVo updateDebt(@RequestBody AmcDebtCreateVo amcDebtVo)
+  public AmcDebtCreateVo updateDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> amcDebtUpdateAct, @PathVariable Long id)
       throws Exception {
+    AmcDebtCreateVo amcDebtVo = amcDebtUpdateAct.getContent();
 
     try {
 
       AmcDebt amcDebt = new AmcDebt();
+
       AmcBeanUtils.copyProperties(amcDebtVo, amcDebt);
       AmcBeanUtils.fillNullObjects(amcDebt);
       log.info("amcDebtVo.getBaseAmount()"+ amcDebtVo.getBaseAmount());
@@ -392,6 +397,7 @@ public class AmcDebtController {
       }
     } catch (Exception ex) {
       log.error("failed to update debt", ex);
+      throw ex;
     }
 
     return amcDebtVo;

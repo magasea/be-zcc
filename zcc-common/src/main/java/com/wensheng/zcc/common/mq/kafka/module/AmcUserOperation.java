@@ -11,6 +11,7 @@ import org.apache.tomcat.jni.Local;
 @Data
 public class AmcUserOperation<T> {
   Long userId;
+  String userName;
   Integer actionId;
   T param;
   LocalDateTime dateTime;

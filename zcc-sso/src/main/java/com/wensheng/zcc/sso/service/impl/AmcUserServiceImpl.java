@@ -2,10 +2,12 @@ package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -44,6 +46,9 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Autowired
   AmcRolePermissionMapper amcRolePermissionMapper;
+
+  @Autowired
+  AmcPermissionMapper amcPermissionMapper;
 
   @Override
   public void modifyUserRole(Long userId, List<Long> roleIds) {
@@ -158,6 +163,12 @@ public class AmcUserServiceImpl implements AmcUserService {
     amcUserExample.createCriteria().andIdEqualTo(userId).andCompanyIdEqualTo(amcId);
 
     amcUserMapper.updateByExampleSelective(amcUser, amcUserExample);
+  }
+
+  @Override
+  public List<AmcPermission> getAmcPerms() {
+    List<AmcPermission> amcPermissions = amcPermissionMapper.selectByExample(null);
+    return amcPermissions;
   }
 
   private AmcUser createUserAndRole(AmcUser amcUser, AmcRolesEnum amcRolesEnum){

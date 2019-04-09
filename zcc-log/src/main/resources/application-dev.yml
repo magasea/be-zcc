@@ -41,6 +41,7 @@ mongodb:
 
 kafka:
   topic-wechat-userlocation: topic_wechat_userLocation_${env.env-prefix}
+  topic_amc_useroper: topic_amc_userOper_${env.env-prefix}
 
 env:
   env-prefix: dev

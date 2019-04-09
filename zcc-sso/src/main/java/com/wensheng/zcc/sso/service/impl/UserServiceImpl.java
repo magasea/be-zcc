@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
@@ -16,6 +17,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
+import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
 import com.wensheng.zcc.sso.service.UserService;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -88,31 +90,45 @@ public class UserServiceImpl implements UserService {
 
     List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
     authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
+    boolean userEnabled = amcUsers.get(0).getValid().equals(AmcUserValidEnum.VALID.getId());
+    AmcUserDetail amcUserDetail = new AmcUserDetail(amcUsers.get(0).getMobilePhone(),"",userEnabled, userEnabled,userEnabled,
+        userEnabled,grantedAuthorityAuthorities);
+    AmcBeanUtils.copyProperties(amcUsers.get(0), amcUserDetail);
 
-    UserDetails userDetails =
-        User.builder().authorities(grantedAuthorityAuthorities).username(amcUsers.get(0).getMobilePhone()).password(amcUsers.get(0).getPassword()).disabled(!amcUsers.get(0).getValid().equals(
-        AmcUserValidEnum.VALID.getId())).build();
-    return userDetails;
+//    UserDetails userDetails =
+//        User.builder().authorities(grantedAuthorityAuthorities).username(amcUsers.get(0).getMobilePhone()).password(amcUsers.get(0).getPassword()).disabled(!amcUsers.get(0).getValid().equals(
+//        AmcUserValidEnum.VALID.getId())).build();
+    return amcUserDetail;
   }
   @Override
   public List<String> getPermissions(AmcUser amcUser){
 
     AmcUserExt amcUserExt = amcUserExtMapper.selectByExtExample(amcUser.getId());
     List<String> authorities = new ArrayList<>();
-    boolean isAmcOper = false;
+//    boolean isAmcOper = false;
+//    if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
+//      authorities.add(String.format("PERM_%s_READ",amcUser.getCompanyId()));
+//      isAmcOper = true;
+//    }
+    boolean isCompanyUser = false;
     if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
-      authorities.add(String.format("PERM_%s_READ",amcUser.getCompanyId()));
-      isAmcOper = true;
+      isCompanyUser = true;
     }
-
+    StringBuilder sb = new StringBuilder();
     for(AmcPermission amcPermission: amcUserExt.getAmcPermissions()){
-      authorities.add(amcPermission.getName());
+      sb.setLength(0);
+      if(amcPermission.getName().contains("AMC") && isCompanyUser){
+        sb.append("PERM_").append(amcUser.getCompanyId()).append("_").append(amcPermission.getName().substring("PERM_".length()));
+        authorities.add(sb.toString());
+      }else{
+        authorities.add(amcPermission.getName());
+      }
     }
     for(AmcRole amcRole: amcUserExt.getAmcRoles()){
       authorities.add(amcRole.getName());
-      if(isAmcOper && amcRole.getName().equals(AmcRolesEnum.ROLE_AMC_ADMIN.name())){
-        authorities.add(String.format("PERM_%s_WRITE",amcUser.getCompanyId()));
-      }
+//      if(isAmcOper && amcRole.getName().equals(AmcRolesEnum.ROLE_AMC_ADMIN.name())){
+//        authorities.add(String.format("PERM_%s_WRITE",amcUser.getCompanyId()));
+//      }
     }
     return authorities;
 

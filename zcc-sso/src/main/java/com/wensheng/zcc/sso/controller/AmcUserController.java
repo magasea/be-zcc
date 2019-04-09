@@ -35,7 +35,7 @@ public class AmcUserController {
   @Autowired
   AmcBasicService amcBasicService;
 
-  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId,'write')")
+  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser')")
   @RequestMapping(value = "/amcid/{amcid}/amc-user/create", method = RequestMethod.POST)
   @ResponseBody
   public AmcUser createUser(@RequestBody AmcUser amcUser){
@@ -57,7 +57,7 @@ public class AmcUserController {
   }
 
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'write'))")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/create_amc_user", method = RequestMethod.POST)
   @ResponseBody
   public String createAmcUser(@RequestBody AmcUser amcUser, @PathVariable Long amcId){
@@ -71,7 +71,7 @@ public class AmcUserController {
     return "succeed";
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'read'))")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers", method = RequestMethod.POST)
   @ResponseBody
   public List<AmcUser> getAmcUsers( @PathVariable Long amcId){
@@ -99,7 +99,7 @@ public class AmcUserController {
     return "successed";
   }
 
-  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId, 'write')")
+  @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId, 'crud_amcuser')")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/modifyUser", method = RequestMethod.POST)
   @ResponseBody
   public String modifyUser(@RequestParam Long userId,
@@ -141,7 +141,7 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("hasPermission(#companyId, 'read')")
+  @PreAuthorize("hasPermission(#companyId, 'crud_amcuser')")
   @RequestMapping(value = "/amc/amc-company/{companyId}/company", method = RequestMethod.POST)
   @ResponseBody
   public AmcCompany queryCompany(@PathVariable Long companyId){
@@ -151,7 +151,7 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or  (hasRole('AMC_ADMIN') and hasPermission(#amcId, 'write'))")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or  (hasRole('AMC_ADMIN') and hasPermission(#amcId, 'crud_amcuser'))")
   @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/create", method = RequestMethod.POST)
   @ResponseBody
   public AmcDept createDepartment(@RequestBody AmcDept amcDept, @PathVariable Long amcId){
@@ -161,7 +161,7 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'read')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'crud_amcuser')")
   @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/depts")
   @ResponseBody
   public List<AmcDept> queryDepts( @PathVariable Long amcId){

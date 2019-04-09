@@ -22,10 +22,11 @@ public class SecurityPermissionEvaluator implements PermissionEvaluator {
       return false;
     }
     String targetType = targetDomainObject.getClass().getSimpleName().toUpperCase();
-    if(targetType.equals("INTEGER") && ((Integer)targetDomainObject) == EditActionEnum.ACT_REVIEW_FAIL.getId() ||
-        ((Integer)targetDomainObject) == EditActionEnum.ACT_REVIEW_PASS.getId()){
-      return hasPrivilege(auth, "PERM", permission.toString().toUpperCase());
-    }else{
+    if(targetType.equals("LONG")){
+      return hasPrivilege(auth, String.format("PERM_%s",targetDomainObject), ((String) permission).toUpperCase());
+    }
+
+    else {
       return true;
     }
 

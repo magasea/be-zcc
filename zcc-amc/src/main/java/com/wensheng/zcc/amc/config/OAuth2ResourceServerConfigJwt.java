@@ -1,5 +1,8 @@
 package com.wensheng.zcc.amc.config;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,7 +15,10 @@ import org.springframework.security.oauth2.config.annotation.web.configuration.R
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
+import org.springframework.security.oauth2.provider.token.store.DelegatingJwtClaimsSetVerifier;
+import org.springframework.security.oauth2.provider.token.store.IssuerClaimVerifier;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
+import org.springframework.security.oauth2.provider.token.store.JwtClaimsSetVerifier;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 
 @Configuration
@@ -43,6 +49,49 @@ public class OAuth2ResourceServerConfigJwt extends ResourceServerConfigurerAdapt
     }
 
 
+
+
+    @Bean
+    public TokenStore tokenStore() {
+        return new JwtTokenStore(accessTokenConverter());
+    }
+
+    @Bean
+    public JwtAccessTokenConverter accessTokenConverter() {
+        final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        converter.setAccessTokenConverter(new CustomAccessTokenConverter());
+
+        converter.setSigningKey("123");
+        return converter;
+    }
+
+    @Bean
+    @Primary
+    public DefaultTokenServices tokenServices() {
+        final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+        defaultTokenServices.setTokenStore(tokenStore());
+        defaultTokenServices.setReuseRefreshToken(true);
+        return defaultTokenServices;
+    }
+
+    @Bean
+    public JwtClaimsSetVerifier jwtClaimsSetVerifier() {
+        return new DelegatingJwtClaimsSetVerifier(Arrays.asList(issuerClaimVerifier(), customJwtClaimVerifier()));
+    }
+
+    @Bean
+    public JwtClaimsSetVerifier issuerClaimVerifier() {
+        try {
+            return new IssuerClaimVerifier(new URL("http://localhost:8081"));
+        } catch (final MalformedURLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Bean
+    public JwtClaimsSetVerifier customJwtClaimVerifier() {
+        return new CustomClaimVerifier();
+    }
 
 
 

@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
@@ -38,6 +39,13 @@ public class AmcBasicInfoController {
   public List<AmcRolePermission> getAmcRolePerms(){
     List<AmcRolePermission> amcRolePermissions = amcUserService.getAmcRolePerms();
     return amcRolePermissions;
+  }
+
+  @RequestMapping(value = "/perms", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcPermission> getAmcPerms(){
+    List<AmcPermission> amcPermissions = amcUserService.getAmcPerms();
+    return amcPermissions;
   }
 
   @RequestMapping(value = "/userStates", method = RequestMethod.POST)

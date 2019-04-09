@@ -1,8 +1,10 @@
 package com.wensheng.zcc.log.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.log.module.dao.mongo.AmcUserOperLog;
 import com.wensheng.zcc.log.module.dao.mongo.WechatUserLocationLog;
 import com.wensheng.zcc.log.service.KafkaService;
 import java.util.Arrays;
@@ -69,5 +71,26 @@ public class KafkaServiceImpl implements KafkaService {
     return StreamSupport.stream(headers.spliterator(), false)
         .filter(header -> header.key().equals("__TypeId__"))
         .findFirst().map(header -> new String(header.value())).orElse("N/A");
+  }
+
+
+  @KafkaListener( topics = "${kafka.topic_amc_useroper}", clientIdPrefix = "zcc-log",
+      containerFactory = "baAmcUserOpFactory")
+  public void listenUserOperation(ConsumerRecord<String, WechatUserLocation> cr,
+      @Payload AmcUserOperation payload) {
+    log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),
+        typeIdHeader(cr.headers()), payload, cr.toString());
+    String gsonStr = null;
+    try{
+      gsonStr = gson.toJson(payload);
+      AmcUserOperLog amcUserOperLog = new AmcUserOperLog();
+      AmcBeanUtils.copyProperties(payload, amcUserOperLog);
+      amcUserOperLog.setParam(gson.toJson(payload.getParam()));
+      wszccTemplate.save(amcUserOperLog);
+
+    }catch (Exception ex){
+      log.error("Failed to handle:{}", gsonStr, ex);
+    }
+
   }
 }

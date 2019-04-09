@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service;
 
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -33,4 +34,7 @@ public interface AmcUserService {
   void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum);
 
   void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum) throws Exception;
+
+  List<AmcPermission> getAmcPerms();
+
 }

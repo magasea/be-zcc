@@ -367,28 +367,8 @@ public class AmcDebtController {
     try {
 
       AmcDebt amcDebt = new AmcDebt();
+      initDebt(amcDebtVo, amcDebt);
 
-      AmcBeanUtils.copyProperties(amcDebtVo, amcDebt);
-      AmcBeanUtils.fillNullObjects(amcDebt);
-      log.info("amcDebtVo.getBaseAmount()"+ amcDebtVo.getBaseAmount());
-      if( null != amcDebtVo.getBaseAmount()){
-        amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getBaseAmount()));
-
-      }else{
-        log.error("baseAmount empty"+amcDebtVo.getBaseAmount());
-      }
-      if(null != amcDebtVo.getValuation()){
-        amcDebt.setValuation(
-            AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
-      }else{
-        log.error("amcDebtVo.getValuation()"+ amcDebtVo.getValuation());
-      }
-      if(null != amcDebtVo.getTotalAmount()){
-        amcDebt
-            .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getTotalAmount()));
-      }else{
-        log.error("amcDebtVo.getTotalAmount()"+ amcDebtVo.getTotalAmount());
-      }
 
       amcDebtService.update(amcDebt);
       handleDebtors(amcDebtVo, amcDebtVo.getId());
@@ -403,6 +383,32 @@ public class AmcDebtController {
     return amcDebtVo;
   }
 
+  private void initDebt(AmcDebtCreateVo amcDebtVo, AmcDebt amcDebt){
+    AmcBeanUtils.copyProperties(amcDebtVo, amcDebt);
+    AmcBeanUtils.fillNullObjects(amcDebt);
+    log.info("amcDebtVo.getBaseAmount()"+ amcDebtVo.getBaseAmount());
+    if( null != amcDebtVo.getBaseAmount()){
+      amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getBaseAmount()));
+
+    }else{
+      log.error("baseAmount empty"+amcDebtVo.getBaseAmount());
+    }
+    if(null != amcDebtVo.getValuation()){
+      amcDebt.setValuation(
+          AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
+    }else{
+      log.error("amcDebtVo.getValuation()"+ amcDebtVo.getValuation());
+    }
+    if(null != amcDebtVo.getTotalAmount()){
+      amcDebt
+          .setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getTotalAmount()));
+    }else{
+      log.error("amcDebtVo.getTotalAmount()"+ amcDebtVo.getTotalAmount());
+    }
+  }
+
+
+
   private void handleDebtors(AmcDebtCreateVo amcDebtCreateVo, Long amcDebtId){
     if (!CollectionUtils.isEmpty(amcDebtCreateVo.getDebtors())) {
       amcDebtService.connDebt2Debtors(amcDebtCreateVo.getDebtors(), amcDebtId);
@@ -415,6 +421,17 @@ public class AmcDebtController {
     if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewPersons())){
       amcDebtService.connDebt2Persons(amcDebtCreateVo.getNewPersons(), amcDebtId);
     }
+  }
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @EditActionChecker
+  @RequestMapping(value = "/api/amcid/{id}/debt/updateState", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDebtVo updateDebtState(@RequestBody BaseActionVo<AmcDebtVo> debtVoBaseActionVo , @PathVariable Long id){
+
+    AmcDebt amcDebt = new AmcDebt();
+    amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
+    amcDebt.setId(debtVoBaseActionVo.getContent().getId());
+    return amcDebtService.updatePublishState(amcDebt);
   }
 
 

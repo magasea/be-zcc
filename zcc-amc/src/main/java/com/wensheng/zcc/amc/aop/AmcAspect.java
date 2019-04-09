@@ -3,6 +3,9 @@ package com.wensheng.zcc.amc.aop;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -98,7 +101,7 @@ public class AmcAspect {
     }
     if(gotActionObject){
       amcUserOperation.setActionId(actionObj.getEditActionId());
-
+      updatePublishStateByRuleBook(actionObj.getContent(), actionObj.getEditActionId());
       amcUserOperation.setParam(actionObj.getContent());
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 //      AmcUserDetail amcUserDetail = (AmcUserDetail) authentication.getPrincipal();
@@ -107,6 +110,7 @@ public class AmcAspect {
 //        amcUserOperation.setUserId((Long)((Map)authentication.getDetails()).get("userId"));
 //      }
       kafkaService.send(amcUserOperation);
+
 
     }
     final Object proceed = joinPoint.proceed();
@@ -131,6 +135,34 @@ public class AmcAspect {
 //    }
 
   }
+
+  private void updatePublishStateByRuleBook(Object param, int actionId){
+    if(param instanceof AmcDebtCreateVo ){
+      AmcDebtCreateVo debtCreateVo = (AmcDebtCreateVo) param;
+      PublishStateEnum publishStateEnum =
+          zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
+              PublishStateEnum.lookupByDisplayStatusUtil( debtCreateVo.getPublishState() ));
+      log.info("will update debt publish state from:{} to {}", debtCreateVo.getPublishState(), publishStateEnum.getStatus());
+      debtCreateVo.setPublishState(publishStateEnum.getStatus());
+
+    }else if(param instanceof AmcAssetVo){
+      AmcAssetVo assetVo = (AmcAssetVo) param;
+      AmcDebt amcDebt = amcDebtService.getDebt(assetVo.getDebtId());
+      PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_SAVE,
+          PublishStateEnum.lookupByDisplayStatusUtil(amcDebt.getPublishState()));
+      amcDebt.setPublishState(publishStateEnum.getStatus());
+      log.info("will update debt publish state from:{} to {}", amcDebt.getPublishState(), publishStateEnum.getStatus());
+      amcDebtService.update(amcDebt);
+    }else if(param instanceof AmcDebtVo){
+      AmcDebtVo debtVo = (AmcDebtVo) param;
+      PublishStateEnum publishStateEnum =
+          zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
+              PublishStateEnum.lookupByDisplayStatusUtil( debtVo.getPublishState() ));
+      log.info("will update debt publish state from:{} to {}", debtVo.getPublishState(), publishStateEnum.getStatus());
+      debtVo.setPublishState(publishStateEnum.getStatus());
+    }
+  }
+
 
   @Around("@annotation(LogExecutionTime)")
   public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{

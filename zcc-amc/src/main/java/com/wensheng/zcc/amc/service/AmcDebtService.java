@@ -30,6 +30,7 @@ public interface AmcDebtService {
   public int del(Long amcDebtId);
 
   public AmcDebtVo update(AmcDebt AmcDebt);
+  public AmcDebtVo updatePublishState(AmcDebt AmcDebt);
 
   public List<AmcDebtVo> queryAll(int offset, int size);
 
@@ -92,4 +93,6 @@ public interface AmcDebtService {
   void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id);
 
   void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id);
+
+  AmcDebt getDebt(Long debtId);
 }

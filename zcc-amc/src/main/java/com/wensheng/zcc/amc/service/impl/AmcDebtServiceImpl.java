@@ -209,7 +209,15 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcDebtVo update(AmcDebt amcDebt) {
-    int result = amcDebtMapper.updateByPrimaryKey(amcDebt);
+    int result = amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    return null;
+  }
+
+  @Override
+  public AmcDebtVo updatePublishState(AmcDebt amcDebt) {
+
+    amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+
     return null;
   }
 
@@ -810,6 +818,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtor.setDebtorName(personItem.getName());
       amcDebtorMapper.insertSelective(amcDebtor);
     }
+  }
+
+  @Override
+  public AmcDebt getDebt(Long debtId) {
+    return amcDebtMapper.selectByPrimaryKey(debtId);
   }
 
 }

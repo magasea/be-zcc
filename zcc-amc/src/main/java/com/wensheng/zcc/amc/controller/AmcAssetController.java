@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
@@ -111,6 +112,8 @@ public class AmcAssetController {
 
   }
 
+
+  @EditActionChecker
   @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
@@ -129,7 +132,7 @@ public class AmcAssetController {
 
 
 
-
+  @EditActionChecker
   @RequestMapping(value = "/amcid/{amcid}/asset/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo updateAmcAsset(

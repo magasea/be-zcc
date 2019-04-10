@@ -17,7 +17,8 @@ public class QueryParam {
   List<Long> area = null;
   List<Long> landArea = null;
   List<String> location = null;
-  Integer editStatus = -1;
+  List<Integer> publishStates = null;
+//  Integer editStatus = -1;
   Integer sealStatus = -1;
   Integer assetType = -1;
   @SQLInjectionSafe

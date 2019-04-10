@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -12,6 +13,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
+import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
@@ -95,4 +97,8 @@ public interface AmcDebtService {
   void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id);
 
   AmcDebt getDebt(Long debtId);
+
+  void saveOperLog(BaseActionVo<AmcDebtVo> amcDebt, String reviewComment);
+
+  List<AmcOperLog> getOperLog(Long debtId);
 }

@@ -274,6 +274,7 @@ public class WechatServiceImpl implements WechatService {
         return  result;
       }
     } catch (Exception ex) {
+      log.error("Failed to decode phoneNumber", ex);
       ex.printStackTrace();
     }
 

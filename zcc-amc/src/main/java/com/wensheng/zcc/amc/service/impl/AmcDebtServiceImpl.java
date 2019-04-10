@@ -14,6 +14,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
@@ -32,6 +33,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
+import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
@@ -45,6 +47,8 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -823,6 +827,23 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public AmcDebt getDebt(Long debtId) {
     return amcDebtMapper.selectByPrimaryKey(debtId);
+  }
+
+  @Override
+  public void saveOperLog(BaseActionVo<AmcDebtVo> amcDebtVoBaseActionVo, String reviewComment) {
+    AmcOperLog amcOperLog = new AmcOperLog();
+    amcOperLog.setActionId(amcDebtVoBaseActionVo.getEditActionId());
+    amcOperLog.setComment(reviewComment);
+    amcOperLog.setDebtId(amcDebtVoBaseActionVo.getContent().getId());
+    amcOperLog.setDateTime(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
+    wszccTemplate.save(amcOperLog);
+  }
+
+  @Override
+  public List<AmcOperLog> getOperLog(Long debtId) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("debtId").is(debtId));
+    return wszccTemplate.find(query, AmcOperLog.class);
   }
 
 }

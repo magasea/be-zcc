@@ -53,6 +53,10 @@ public class AmcDebt {
 
     private String briefDesc;
 
+    private Long updateBy;
+
+    private Date updateDate;
+
     private Long createdBy;
 
     private Date createdDate;
@@ -255,6 +259,22 @@ public class AmcDebt {
 
     public void setBriefDesc(String briefDesc) {
         this.briefDesc = briefDesc == null ? null : briefDesc.trim();
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     public Long getCreatedBy() {

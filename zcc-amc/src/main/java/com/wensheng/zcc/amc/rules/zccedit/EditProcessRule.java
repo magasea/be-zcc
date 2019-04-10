@@ -72,6 +72,7 @@ public class EditProcessRule {
       }
       if(currentStatus == PublishStateEnum.RECORD || currentStatus == PublishStateEnum.UNSOLD_OFF_SHELF){
         editStatusResult = PublishStateEnum.RECORD_CHECK_WAIT;
+        return;
       }
     }
     if(editAction == EditActionEnum.ACT_OFF_SHELF){
@@ -81,6 +82,7 @@ public class EditProcessRule {
       }
       if(currentStatus == PublishStateEnum.PUBLISHED){
         editStatusResult = PublishStateEnum.UNSOLD_OFF_SHELF;
+        return;
       }
     }
     if(editAction == EditActionEnum.ACT_SOLD){

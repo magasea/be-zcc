@@ -49,12 +49,13 @@ public class SQLUtils {
   public static AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam){
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
-    criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
+    boolean needDefaultPublishState = true;
     if(!CollectionUtils.isEmpty(queryParam)){
       for(Entry<String, Object> item: queryParam.entrySet()){
 
-        if(item.getKey().equals(QueryParamEnum.EditStatus.name())){
-          criteria.andPublishStateEqualTo((Integer) item.getValue());
+        if(item.getKey().equals(QueryParamEnum.PublishStates.name())){
+          criteria.andPublishStateIn((List) item.getValue());
+          needDefaultPublishState = false;
         }
 
 
@@ -68,6 +69,9 @@ public class SQLUtils {
           criteria.andTitleLike(sb.toString());
         }
       }
+    }
+    if(needDefaultPublishState){
+      criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
     }
     return amcDebtExample;
   }
@@ -89,8 +93,9 @@ public class SQLUtils {
 
       queryParamMap.put(QueryParamEnum.LandArea.name(), landAreas);
     }
-    if (queryParam.getEditStatus() != null && queryParam.getEditStatus() > -1) {
-      queryParamMap.put(QueryParamEnum.EditStatus.name(), queryParam.getEditStatus());
+
+    if(queryParam.getPublishStates() != null && !CollectionUtils.isEmpty(queryParam.getPublishStates())){
+      queryParamMap.put(QueryParamEnum.PublishStates.name(), queryParam.getPublishStates());
     }
     if (queryParam.getSealStatus() != null && queryParam.getSealStatus() > -1) {
       queryParamMap.put(QueryParamEnum.SealedState.name(), queryParam.getSealStatus());

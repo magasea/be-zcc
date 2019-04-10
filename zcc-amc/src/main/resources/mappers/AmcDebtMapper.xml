@@ -27,6 +27,8 @@
     <result column="recomm_end_date" jdbcType="TIMESTAMP" property="recommEndDate" />
     <result column="orig_creditor_id" jdbcType="BIGINT" property="origCreditorId" />
     <result column="brief_desc" jdbcType="VARCHAR" property="briefDesc" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
   </resultMap>
@@ -93,7 +95,7 @@
     total_amount_desc, settle_date, court_id, amc_debt_code, publish_state, publish_date, 
     lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor2_id, 
     is_recommanded, guarant_type, recomm_start_date, recomm_end_date, orig_creditor_id, 
-    brief_desc, created_by, created_date
+    brief_desc, update_by, update_date, created_by, created_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -138,7 +140,8 @@
       valuation, amc_contactor_id, amc_contactor2_id, 
       is_recommanded, guarant_type, recomm_start_date, 
       recomm_end_date, orig_creditor_id, brief_desc, 
-      created_by, created_date)
+      update_by, update_date, created_by, 
+      created_date)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
@@ -147,7 +150,8 @@
       #{valuation,jdbcType=BIGINT}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactor2Id,jdbcType=BIGINT}, 
       #{isRecommanded,jdbcType=INTEGER}, #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, 
       #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, #{briefDesc,jdbcType=VARCHAR}, 
-      #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP})
+      #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
+      #{createdDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -226,6 +230,12 @@
       </if>
       <if test="briefDesc != null">
         brief_desc,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDate != null">
+        update_date,
       </if>
       <if test="createdBy != null">
         created_by,
@@ -306,6 +316,12 @@
       </if>
       <if test="briefDesc != null">
         #{briefDesc,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="createdBy != null">
         #{createdBy,jdbcType=BIGINT},
@@ -399,6 +415,12 @@
       <if test="record.briefDesc != null">
         brief_desc = #{record.briefDesc,jdbcType=VARCHAR},
       </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="record.createdBy != null">
         created_by = #{record.createdBy,jdbcType=BIGINT},
       </if>
@@ -437,6 +459,8 @@
       recomm_end_date = #{record.recommEndDate,jdbcType=TIMESTAMP},
       orig_creditor_id = #{record.origCreditorId,jdbcType=BIGINT},
       brief_desc = #{record.briefDesc,jdbcType=VARCHAR},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
       created_date = #{record.createdDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
@@ -518,6 +542,12 @@
       <if test="briefDesc != null">
         brief_desc = #{briefDesc,jdbcType=VARCHAR},
       </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="createdBy != null">
         created_by = #{createdBy,jdbcType=BIGINT},
       </if>
@@ -553,6 +583,8 @@
       recomm_end_date = #{recommEndDate,jdbcType=TIMESTAMP},
       orig_creditor_id = #{origCreditorId,jdbcType=BIGINT},
       brief_desc = #{briefDesc,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},
       created_date = #{createdDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}

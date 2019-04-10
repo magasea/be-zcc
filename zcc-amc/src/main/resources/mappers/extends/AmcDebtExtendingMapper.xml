@@ -67,6 +67,8 @@
   ${prefix}recomm_end_date as recomm_end_date,
   ${prefix}orig_creditor_id as orig_creditor_id,
   ${prefix}brief_desc as brief_desc,
+  ${prefix}update_by as update_by,
+  ${prefix}update_date as update_date,
   ${prefix}created_by as created_by,
   ${prefix}created_date as created_date
   </sql>

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -9,8 +10,10 @@ import com.wensheng.zcc.sso.module.vo.UserCreateVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcUserService;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -178,6 +181,26 @@ public class AmcUserController {
 
     AmcCmpyDeptVo amcCmpyDeptVoResult = amcBasicService.createModifyCmpyDept(amcCmpyDeptVo);
     return amcCmpyDeptVoResult;
+  }
+
+  @RequestMapping(value = "/amcid/amcUsers", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcBasicUser> getAmcBasicUsers(){
+    List<AmcUser> amcUsers = amcUserService.getAllUsers();
+    List<AmcBasicUser> amcBasicUsers = new ArrayList<>();
+    for(AmcUser amcUser: amcUsers){
+      AmcBasicUser amcBasicUser = new AmcBasicUser();
+      AmcBeanUtils.copyProperties(amcUser, amcBasicUser);
+      amcBasicUsers.add(amcBasicUser);
+    }
+    return amcBasicUsers;
+  }
+
+  @Data
+  class AmcBasicUser{
+    Long id;
+    String userName;
+    String mobilePhone;
   }
 
 

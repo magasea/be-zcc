@@ -66,6 +66,9 @@ public class AmcDebtVo {
   private Long origCreditorId;
 
   private String briefDesc;
+  private Long updateBy;
+
+  private Date updateDate;
 
   private Long createdBy;
 

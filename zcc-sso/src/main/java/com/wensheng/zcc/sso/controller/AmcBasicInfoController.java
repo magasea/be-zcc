@@ -70,4 +70,6 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+
+
 }

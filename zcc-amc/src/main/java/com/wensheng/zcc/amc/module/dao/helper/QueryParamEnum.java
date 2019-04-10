@@ -6,7 +6,8 @@ package com.wensheng.zcc.amc.module.dao.helper;
  */
 public enum QueryParamEnum {
   DebtId("DebtId"),
-  EditStatus("EditStatus"),
+//  EditStatus("EditStatus"),
+  PublishStates("PublishStates"),
   Area("Area"),
   LandArea("LandArea"),
   SealedState("SealedState"),

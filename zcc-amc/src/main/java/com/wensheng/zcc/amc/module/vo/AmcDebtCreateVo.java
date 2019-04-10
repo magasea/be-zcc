@@ -67,6 +67,10 @@ public class AmcDebtCreateVo {
 
   private String briefDesc;
 
+  private Long updateBy;
+
+  private Date updateDate;
+
   private Long createdBy;
 
   private Date createdDate;

@@ -13,6 +13,7 @@ import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -23,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
 
 /**
  * @author chenwei on 1/15/19
@@ -100,10 +102,18 @@ public class AmcAspect {
       }
     }
     if(gotActionObject){
-      amcUserOperation.setActionId(actionObj.getEditActionId());
-      updatePublishStateByRuleBook(actionObj.getContent(), actionObj.getEditActionId());
-      amcUserOperation.setParam(actionObj.getContent());
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+      amcUserOperation.setActionId(actionObj.getEditActionId());
+      Long userId = -1L;
+      amcUserOperation.setParam(actionObj.getContent());
+      if(authentication.getDetails() != null && ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails() != null){
+        Map details = (Map) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
+        if(details.containsKey("userId")){
+          userId = Long.valueOf( String.format("%d",details.get("userId")));
+          amcUserOperation.setUserId(userId);
+        }
+      }
+      updatePublishStateByRuleBook(actionObj.getContent(), actionObj.getEditActionId(), userId);
 //      AmcUserDetail amcUserDetail = (AmcUserDetail) authentication.getPrincipal();
       amcUserOperation.setUserName(authentication.getPrincipal().toString());
 //      if(((HashMap)authentication.getDetails()).containsKey("userId")){
@@ -136,7 +146,7 @@ public class AmcAspect {
 
   }
 
-  private void updatePublishStateByRuleBook(Object param, int actionId){
+  private void updatePublishStateByRuleBook(Object param, int actionId, Long userId){
     if(param instanceof AmcDebtCreateVo ){
       AmcDebtCreateVo debtCreateVo = (AmcDebtCreateVo) param;
       PublishStateEnum publishStateEnum =
@@ -144,6 +154,7 @@ public class AmcAspect {
               PublishStateEnum.lookupByDisplayStatusUtil( debtCreateVo.getPublishState() ));
       log.info("will update debt publish state from:{} to {}", debtCreateVo.getPublishState(), publishStateEnum.getStatus());
       debtCreateVo.setPublishState(publishStateEnum.getStatus());
+      debtCreateVo.setUpdateBy(userId);
 
     }else if(param instanceof AmcAssetVo){
       AmcAssetVo assetVo = (AmcAssetVo) param;
@@ -151,6 +162,7 @@ public class AmcAspect {
       PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_SAVE,
           PublishStateEnum.lookupByDisplayStatusUtil(amcDebt.getPublishState()));
       amcDebt.setPublishState(publishStateEnum.getStatus());
+      amcDebt.setUpdateBy(userId);
       log.info("will update debt publish state from:{} to {}", amcDebt.getPublishState(), publishStateEnum.getStatus());
       amcDebtService.update(amcDebt);
     }else if(param instanceof AmcDebtVo){
@@ -159,6 +171,7 @@ public class AmcAspect {
           zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
               PublishStateEnum.lookupByDisplayStatusUtil( debtVo.getPublishState() ));
       log.info("will update debt publish state from:{} to {}", debtVo.getPublishState(), publishStateEnum.getStatus());
+      debtVo.setUpdateBy(userId);
       debtVo.setPublishState(publishStateEnum.getStatus());
     }
   }

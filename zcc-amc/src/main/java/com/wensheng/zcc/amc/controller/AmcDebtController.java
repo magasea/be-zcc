@@ -7,9 +7,11 @@ import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -426,14 +428,49 @@ public class AmcDebtController {
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/updateState", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtVo updateDebtState(@RequestBody BaseActionVo<AmcDebtVo> debtVoBaseActionVo , @PathVariable Long id){
+  public AmcDebtVo updateDebtState(@RequestBody BaseActionVo<AmcDebtVo> debtVoBaseActionVo , @PathVariable Long id)
+      throws Exception {
 
     AmcDebt amcDebt = new AmcDebt();
+    if(debtVoBaseActionVo.getEditActionId() == EditActionEnum.ACT_REVIEW_FAIL.getId()){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION, "Cannot do review fail oper in"
+          + " updateDebtState inteerface");
+    }
     amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
     amcDebt.setId(debtVoBaseActionVo.getContent().getId());
+    amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
     return amcDebtService.updatePublishState(amcDebt);
   }
 
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @EditActionChecker
+  @RequestMapping(value = "/api/amcid/{id}/debt/reviewDebt", method = RequestMethod.POST)
+  @ResponseBody
+  public String reviewDebt(@RequestBody BaseActionVo<AmcDebtVo> debtVoBaseActionVo ,
+      @RequestParam(required = false) String reviewComment,  @PathVariable Long id)
+      throws Exception {
+
+    AmcDebt amcDebt = new AmcDebt();
+
+    amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
+    amcDebt.setId(debtVoBaseActionVo.getContent().getId());
+    amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
+    amcDebtService.updatePublishState(amcDebt);
+    amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
+    return "success";
+
+  }
+
+
+  @RequestMapping(value = "/api/amcid/{id}/debt/oplog/get", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcOperLog> getOperLog(@RequestParam Long debtId , @PathVariable Long id) throws Exception {
+
+
+    return amcDebtService.getOperLog(debtId);
+
+  }
 
   @RequestMapping(value = "/api/amcid/{id}/debts/total", method = RequestMethod.POST)
   @ResponseBody

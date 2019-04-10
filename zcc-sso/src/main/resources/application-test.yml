@@ -112,6 +112,6 @@ logging:
             wensheng: TRACE
         root: WARN
 oauth2:
-    host: localhost
+    host: 10.20.100.236
     authLink: http://${oauth2.host}:10002
 env-hint: test

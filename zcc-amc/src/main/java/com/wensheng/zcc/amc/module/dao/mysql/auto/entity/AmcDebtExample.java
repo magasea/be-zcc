@@ -1665,6 +1665,126 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andUpdateByIsNull() {
+            addCriterion("update_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNotNull() {
+            addCriterion("update_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByEqualTo(Long value) {
+            addCriterion("update_by =", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotEqualTo(Long value) {
+            addCriterion("update_by <>", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThan(Long value) {
+            addCriterion("update_by >", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("update_by >=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThan(Long value) {
+            addCriterion("update_by <", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThanOrEqualTo(Long value) {
+            addCriterion("update_by <=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIn(List<Long> values) {
+            addCriterion("update_by in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotIn(List<Long> values) {
+            addCriterion("update_by not in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByBetween(Long value1, Long value2) {
+            addCriterion("update_by between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotBetween(Long value1, Long value2) {
+            addCriterion("update_by not between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateIsNull() {
+            addCriterion("update_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateIsNotNull() {
+            addCriterion("update_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateEqualTo(Date value) {
+            addCriterion("update_date =", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotEqualTo(Date value) {
+            addCriterion("update_date <>", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateGreaterThan(Date value) {
+            addCriterion("update_date >", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("update_date >=", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateLessThan(Date value) {
+            addCriterion("update_date <", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateLessThanOrEqualTo(Date value) {
+            addCriterion("update_date <=", value, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateIn(List<Date> values) {
+            addCriterion("update_date in", values, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotIn(List<Date> values) {
+            addCriterion("update_date not in", values, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateBetween(Date value1, Date value2) {
+            addCriterion("update_date between", value1, value2, "updateDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateDateNotBetween(Date value1, Date value2) {
+            addCriterion("update_date not between", value1, value2, "updateDate");
+            return (Criteria) this;
+        }
+
         public Criteria andCreatedByIsNull() {
             addCriterion("created_by is null");
             return (Criteria) this;

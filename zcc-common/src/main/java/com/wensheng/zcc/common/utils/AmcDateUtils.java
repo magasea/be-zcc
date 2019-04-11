@@ -3,6 +3,9 @@ package com.wensheng.zcc.common.utils;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.Locale;
 
@@ -29,6 +32,10 @@ public class AmcDateUtils {
     Date result =  df.parse(input);
     return  result;
 //    System.out.println(result);
+  }
+
+  public static LocalDateTime getLocalDateTime(){
+    return LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC);
   }
 
 }

@@ -2,6 +2,14 @@ package com.wensheng.zcc.common.mq.kafka;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import com.google.gson.LongSerializationPolicy;
+import com.google.gson.reflect.TypeToken;
+import com.wensheng.zcc.common.utils.GsonMapperFixInt;
+import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Map;
 import org.apache.commons.codec.Charsets;
@@ -18,7 +26,9 @@ public class GsonSerializer<T> implements Serializer<T> {
   public static final String CONFIG_KEY_CLASS = "key.deserializer.class";
   private Class<T> cls;
 
-  private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new DateTimeSerializer()).create();
+  private Gson gson =
+      new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.DEFAULT).registerTypeAdapter(LocalDateTime.class,
+          new DateTimeSerializer()).create();
 
   @Override
   public void configure(Map<String, ?> config, boolean isKey) {

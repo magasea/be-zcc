@@ -11,7 +11,9 @@ import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
+import com.wensheng.zcc.common.module.GenericList;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -90,6 +92,7 @@ public class AmcAspect {
     CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
     String[] names = codeSignature.getParameterNames();
     boolean gotActionObject = false;
+    amcUserOperation.setParam(new ArrayList());
     for(int idx = 0; idx < joinPoint.getArgs().length; idx++){
       if(joinPoint.getArgs()[idx] instanceof BaseActionVo){
         actionObj = (BaseActionVo) joinPoint.getArgs()[idx];
@@ -99,13 +102,17 @@ public class AmcAspect {
       }else if(names[idx].equals("debtId") || names[idx].equals("amcDebtId")){
         Long amcDebtId = (Long)joinPoint.getArgs()[idx];
         log.info("now get the debtId:{}", amcDebtId);
+      }else if(names[idx].equals("reviewComment")){
+        String reviewComment = (String) joinPoint.getArgs()[idx];
+        amcUserOperation.getParam().add(reviewComment);
       }
     }
     if(gotActionObject){
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
       amcUserOperation.setActionId(actionObj.getEditActionId());
       Long userId = -1L;
-      amcUserOperation.setParam(actionObj.getContent());
+
+      amcUserOperation.getParam().add(actionObj.getContent());
       if(authentication.getDetails() != null && ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails() != null){
         Map details = (Map) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
         if(details.containsKey("userId")){
@@ -147,6 +154,16 @@ public class AmcAspect {
   }
 
   private void updatePublishStateByRuleBook(Object param, int actionId, Long userId){
+    if(param instanceof List){
+      for(Object item: (List)param ){
+        doUpdateSinglePublishState(item, actionId, userId);
+      }
+    }else{
+      doUpdateSinglePublishState(param, actionId, userId);
+    }
+  }
+
+  private void doUpdateSinglePublishState(Object param, int actionId, Long userId){
     if(param instanceof AmcDebtCreateVo ){
       AmcDebtCreateVo debtCreateVo = (AmcDebtCreateVo) param;
       PublishStateEnum publishStateEnum =
@@ -174,6 +191,7 @@ public class AmcAspect {
       debtVo.setUpdateBy(userId);
       debtVo.setPublishState(publishStateEnum.getStatus());
     }
+
   }
 
 

@@ -17,9 +17,11 @@ public class AmcOperLog {
   String id;
 
   String userName;
+  @Indexed
   Long userId;
   @Indexed
   Long debtId;
+  @Indexed
   Integer actionId;
   Long assetId;
   String comment;

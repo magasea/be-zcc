@@ -374,9 +374,11 @@ public class AmcDebtController {
 
       amcDebtService.update(amcDebt);
       handleDebtors(amcDebtVo, amcDebtVo.getId());
+      amcDebtService.saveOperLog(amcDebtUpdateAct,"");
       if(amcDebtVo.getDebtAdditional() != null  && amcDebtVo.getDebtAdditional().getDesc() != null && !StringUtils.isEmpty(amcDebtVo.getDebtAdditional().getDesc())){
         amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
       }
+
     } catch (Exception ex) {
       log.error("failed to update debt", ex);
       throw ex;
@@ -439,6 +441,7 @@ public class AmcDebtController {
     amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
     amcDebt.setId(debtVoBaseActionVo.getContent().getId());
     amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
+    amcDebtService.saveOperLog(debtVoBaseActionVo,"");
     return amcDebtService.updatePublishState(amcDebt);
   }
 
@@ -450,9 +453,7 @@ public class AmcDebtController {
   public String reviewDebt(@RequestBody BaseActionVo<AmcDebtVo> debtVoBaseActionVo ,
       @RequestParam(required = false) String reviewComment,  @PathVariable Long id)
       throws Exception {
-
     AmcDebt amcDebt = new AmcDebt();
-
     amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
     amcDebt.setId(debtVoBaseActionVo.getContent().getId());
     amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
@@ -463,12 +464,37 @@ public class AmcDebtController {
   }
 
 
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @EditActionChecker
+  @RequestMapping(value = "/api/amcid/{id}/debt/reviewBatchDebt", method = RequestMethod.POST)
+  @ResponseBody
+  public String reviewBatchDebt(@RequestBody BaseActionVo<List<AmcDebtVo>> debtVoBaseActionVo ,
+      @RequestParam(required = false) String reviewComment,  @PathVariable Long id)
+      throws Exception {
+    AmcDebt amcDebt = new AmcDebt();
+    if(CollectionUtils.isEmpty(debtVoBaseActionVo.getContent())){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION,"got empty list for amcDebtVo");
+    }
+    for(AmcDebtVo amcDebtVo: debtVoBaseActionVo.getContent()){
+      amcDebt.setPublishState(amcDebtVo.getPublishState());
+      amcDebt.setId(amcDebtVo.getId());
+      amcDebt.setUpdateBy(amcDebtVo.getUpdateBy());
+      amcDebtService.updatePublishState(amcDebt);
+      amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
+    }
+
+    return "success";
+
+  }
+
+
   @RequestMapping(value = "/api/amcid/{id}/debt/oplog/get", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcOperLog> getOperLog(@RequestParam Long debtId , @PathVariable Long id) throws Exception {
+  public List<AmcOperLog> getOperLog(@RequestParam Long debtId , @PathVariable Long id,
+      @RequestParam(required = false, defaultValue = "-1") Integer actionId) throws Exception {
 
 
-    return amcDebtService.getOperLog(debtId);
+    return amcDebtService.getOperLog(debtId, actionId);
 
   }
 

@@ -36,6 +36,7 @@ public class KafkaConfig {
         "org.apache.kafka.common.serialization.StringSerializer");
     props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
         GsonSerializer.class);
+
     return props;
   }
 

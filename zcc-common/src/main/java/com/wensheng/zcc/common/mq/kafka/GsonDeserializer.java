@@ -2,6 +2,9 @@ package com.wensheng.zcc.common.mq.kafka;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.LongSerializationPolicy;
+import com.google.gson.reflect.TypeToken;
+import com.wensheng.zcc.common.utils.GsonMapperFixInt;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -21,7 +24,9 @@ public class GsonDeserializer<T> implements Deserializer<T> {
   public static final String CONFIG_KEY_CLASS = "key.deserializer.class";
   private Class<T> cls;
 
-  private Gson gson = new GsonBuilder().registerTypeAdapter(LocalDateTime.class, new DateTimeDeserializer()).create();
+  private Gson gson =
+      new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.DEFAULT).registerTypeAdapter(LocalDateTime.class,
+      new DateTimeDeserializer()).create();
 
 
   @Override

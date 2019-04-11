@@ -10,7 +10,7 @@ import java.util.function.Function;
 public enum EditActionEnum {
   ACT_CREATE(1, "create-draft", "创建"),
   ACT_SAVE(2, "save", "保存"),
-  ACT_SUBMIT4PUB(3, "submit-pub", "提交审核发布"),
+  ACT_SUBMIT4PUB(3, "submit-pub", "提交审核"),
   ACT_REVIEW_FAIL(4, "review-failed","审核未通过"),
   ACT_REVIEW_PASS(5, "review-pass","审核通过发布"),
   ACT_OFF_SHELF(6, "off-shelf","下架"),

@@ -28,6 +28,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
+import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -830,19 +831,39 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public void saveOperLog(BaseActionVo<AmcDebtVo> amcDebtVoBaseActionVo, String reviewComment) {
+  public <T> void saveOperLog(BaseActionVo<T> amcDebtVoBaseActionVo, String reviewComment) {
     AmcOperLog amcOperLog = new AmcOperLog();
     amcOperLog.setActionId(amcDebtVoBaseActionVo.getEditActionId());
     amcOperLog.setComment(reviewComment);
-    amcOperLog.setDebtId(amcDebtVoBaseActionVo.getContent().getId());
+    if(amcDebtVoBaseActionVo.getContent() instanceof AmcDebtVo){
+      amcOperLog.setDebtId(((AmcDebtVo)amcDebtVoBaseActionVo.getContent()).getId());
+      amcOperLog.setUserId(((AmcDebtVo)amcDebtVoBaseActionVo.getContent()).getUpdateBy());
+    }else if(amcDebtVoBaseActionVo.getContent() instanceof AmcDebtCreateVo){
+      amcOperLog.setDebtId(((AmcDebtCreateVo)amcDebtVoBaseActionVo.getContent()).getId());
+      amcOperLog.setUserId(((AmcDebtCreateVo)amcDebtVoBaseActionVo.getContent()).getUpdateBy());
+    }else if(amcDebtVoBaseActionVo.getContent() instanceof List){
+      for(AmcDebtVo item: (List<AmcDebtVo>)amcDebtVoBaseActionVo.getContent()){
+        amcOperLog = new AmcOperLog();
+        amcOperLog.setDebtId(item.getId());
+        amcOperLog.setUserId(item.getUpdateBy());
+        amcOperLog.setDateTime(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
+        wszccTemplate.save(amcOperLog);
+      }
+      return;
+    }
     amcOperLog.setDateTime(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
     wszccTemplate.save(amcOperLog);
   }
 
   @Override
-  public List<AmcOperLog> getOperLog(Long debtId) {
+  public List<AmcOperLog> getOperLog(Long debtId, Integer actionId) {
     Query query = new Query();
-    query.addCriteria(Criteria.where("debtId").is(debtId));
+    Criteria criteria = Criteria.where("debtId").is(debtId);
+
+    if(actionId > 0){
+      criteria.and("actionId").is(actionId);
+    }
+    query.addCriteria(criteria);
     return wszccTemplate.find(query, AmcOperLog.class);
   }
 

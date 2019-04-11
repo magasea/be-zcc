@@ -98,7 +98,7 @@ public interface AmcDebtService {
 
   AmcDebt getDebt(Long debtId);
 
-  void saveOperLog(BaseActionVo<AmcDebtVo> amcDebt, String reviewComment);
+  <T> void saveOperLog(BaseActionVo<T> amcDebt, String reviewComment);
 
-  List<AmcOperLog> getOperLog(Long debtId);
+  List<AmcOperLog> getOperLog(Long debtId, Integer actionId);
 }

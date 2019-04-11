@@ -57,6 +57,7 @@ public class EditProcessRule {
       }
       if(currentStatus == PublishStateEnum.RECORD_CHECK_WAIT){
         editStatusResult = PublishStateEnum.RECORD_CHECK_FAILED;
+        return;
       }
     }
     if(editAction == EditActionEnum.ACT_REVIEW_PASS){

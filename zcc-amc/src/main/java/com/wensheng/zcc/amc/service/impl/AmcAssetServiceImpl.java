@@ -179,27 +179,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         Query query= new Query();
         query.addCriteria(Criteria.where("amcAssetId").is(amcAsset.getId()));
 
-        if(amcAsset.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
-            amcAssetMapper.deleteByPrimaryKey(amcAsset.getId());
-            wszccTemplate.remove(query, AssetAdditional.class);
-            List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
-            for(AssetImage assetImage: assetImages){
-
-                try {
-                    amcOssFileService.delFileInOss(assetImage.getOssPath());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    log.error("Failed to del file on oss with osspath:"+ assetImage.getOssPath(), e);
-                }
-            }
-            wszccTemplate.remove(query, AssetImage.class);
-        }else{
-            AmcAsset amcAssetUpdate = new AmcAsset();
-            amcAssetUpdate.setPublishState(PublishStateEnum.DELETED.getStatus());
-            amcAssetUpdate.setId(amcAsset.getId());
-            amcAssetMapper.updateByPrimaryKeySelective(amcAssetUpdate);
-        }
-
+        delMongoForAmcAsset(amcAsset.getId());
+        amcAssetMapper.deleteByPrimaryKey(amcAsset.getId());
 
     }
 
@@ -283,6 +264,38 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             amcAssetDetailVo.setAssetImageList(assetImages);
         }
         return amcAssetDetailVo;
+
+    }
+
+    private void delMongoForAmcAsset(Long assetId) {
+
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").is(assetId));
+
+        wszccTemplate.remove(query, AssetAdditional.class);
+
+        Query queryComment = new Query();
+        queryComment.addCriteria(Criteria.where("amcAssetId").is(assetId));
+        wszccTemplate.remove(queryComment, AssetComment.class);
+
+        Query queryAssetDocument = new Query();
+        queryAssetDocument.addCriteria(Criteria.where("amcAssetId").is(assetId));
+        wszccTemplate.remove(queryAssetDocument, AssetDocument.class);
+
+        Query queryAssetImage = new Query();
+        queryAssetImage.addCriteria(Criteria.where("amcAssetId").is(assetId));
+        List<AssetImage> assetImages = wszccTemplate.find(queryAssetImage, AssetImage.class);
+        if(!CollectionUtils.isEmpty(assetImages)){
+            try {
+                for (AssetImage assetImage : assetImages) {
+                    amcOssFileService.delFileInOss(assetImage.getOssPath());
+                }
+            }catch (Exception ex){
+                log.error("Failed to delete ossFile:", ex);
+            }
+        }
+
+
 
     }
 

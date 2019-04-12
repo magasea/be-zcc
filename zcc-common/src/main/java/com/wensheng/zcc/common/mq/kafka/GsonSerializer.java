@@ -2,14 +2,7 @@ package com.wensheng.zcc.common.mq.kafka;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import com.google.gson.LongSerializationPolicy;
-import com.google.gson.reflect.TypeToken;
-import com.wensheng.zcc.common.utils.GsonMapperFixInt;
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.Map;
 import org.apache.commons.codec.Charsets;

@@ -92,6 +92,15 @@ public class EditProcessRule {
         return;
       }
     }
+    if(editAction == EditActionEnum.ACT_DEL){
+      if( currentStatus == PublishStateEnum.RECORD || currentStatus == PublishStateEnum.RECORD_CHECK_FAILED || currentStatus == PublishStateEnum.DRAFT_CHECK_FAILED || currentStatus == PublishStateEnum.UNSOLD_OFF_SHELF){
+        editStatusResult = PublishStateEnum.DELETED;
+        return;
+      }
+      if(currentStatus == PublishStateEnum.DRAFT ){
+        editStatusResult = PublishStateEnum.DRAFT;
+      }
+    }
     throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION, String.format("currentStatus:%s action:%s",
         currentStatus.getName(), editAction.getCname()));
   }

@@ -11,7 +11,6 @@ import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
-import com.wensheng.zcc.common.module.GenericList;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import java.util.ArrayList;
 import java.util.List;

@@ -144,7 +144,7 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("hasPermission(#companyId, 'crud_amcuser')")
+  @PreAuthorize("hasPermission(#companyId, 'AMC_VIEW')")
   @RequestMapping(value = "/amc/amc-company/{companyId}/company", method = RequestMethod.POST)
   @ResponseBody
   public AmcCompany queryCompany(@PathVariable Long companyId){

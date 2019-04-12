@@ -846,6 +846,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
         amcOperLog = new AmcOperLog();
         amcOperLog.setDebtId(item.getId());
         amcOperLog.setUserId(item.getUpdateBy());
+        amcOperLog.setActionId(amcDebtVoBaseActionVo.getEditActionId());
         amcOperLog.setDateTime(LocalDateTime.ofInstant(Instant.now(), ZoneOffset.UTC));
         wszccTemplate.save(amcOperLog);
       }

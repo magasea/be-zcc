@@ -3,8 +3,6 @@ package com.wensheng.zcc.common.mq.kafka;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.LongSerializationPolicy;
-import com.google.gson.reflect.TypeToken;
-import com.wensheng.zcc.common.utils.GsonMapperFixInt;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;

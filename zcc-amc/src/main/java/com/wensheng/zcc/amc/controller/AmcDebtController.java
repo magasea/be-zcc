@@ -161,13 +161,12 @@ public class AmcDebtController {
     return amcDebtService.create(amcCmpyBaseActionVo.getContent());
   }
 
-
   @RequestMapping(value = "/api/amcid/{amcId}/debt/company/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcCmpy updateAmcCompany(@PathVariable(name = "amcId") Integer amcId,
       @RequestBody BaseActionVo<AmcCmpy> amcCmpyBaseActionVo) throws Exception {
 
-    return amcDebtService.create(amcCmpyBaseActionVo.getContent());
+    return amcDebtService.update(amcCmpyBaseActionVo.getContent());
   }
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/companies", method = RequestMethod.POST)
@@ -259,6 +258,7 @@ public class AmcDebtController {
     amcDebtService.delImage(debtImageBaseActionVo.getContent());
   }
 
+  @EditActionChecker
   @RequestMapping(value = "/api/amcid/{amcid}/debt/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcDebt(@RequestBody BaseActionVo<Long> debtIdBaseActionVo) throws Exception {
@@ -480,9 +480,9 @@ public class AmcDebtController {
       amcDebt.setId(amcDebtVo.getId());
       amcDebt.setUpdateBy(amcDebtVo.getUpdateBy());
       amcDebtService.updatePublishState(amcDebt);
-      amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
-    }
 
+    }
+    amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
     return "success";
 
   }

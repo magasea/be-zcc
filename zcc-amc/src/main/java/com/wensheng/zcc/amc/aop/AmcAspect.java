@@ -20,6 +20,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -181,6 +182,8 @@ public class AmcAspect {
       amcDebt.setUpdateBy(userId);
       log.info("will update debt publish state from:{} to {}", amcDebt.getPublishState(), publishStateEnum.getStatus());
       amcDebtService.update(amcDebt);
+      assetVo.setPublishState(publishStateEnum.getStatus());
+      assetVo.setUpdateBy(userId);
     }else if(param instanceof AmcDebtVo){
       AmcDebtVo debtVo = (AmcDebtVo) param;
       PublishStateEnum publishStateEnum =
@@ -202,4 +205,7 @@ public class AmcAspect {
     log.info(String.format("%s executed in %d ms", joinPoint.getSignature(), executime));
     return proceed;
   }
+
+
+
 }

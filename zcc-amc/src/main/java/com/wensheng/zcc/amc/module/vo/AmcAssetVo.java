@@ -63,6 +63,10 @@ public class AmcAssetVo {
 
   private Date createdDate;
 
+  private Long updateBy;
+
+  private Date updateDate;
+
   private AmcDebtContactor amcContactorId;
 
   AssetAdditional assetAdditional;

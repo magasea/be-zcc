@@ -173,6 +173,15 @@ public class AmcAssetServiceImpl implements AmcAssetService {
       return count;
   }
 
+    @Override
+    public void updateByDebtState(Long debtId, Integer publishState) {
+        AmcAsset amcAsset = new AmcAsset();
+        amcAsset.setPublishState(publishState);
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdEqualTo(debtId);
+        amcAssetMapper.updateByExampleSelective(amcAsset, amcAssetExample);
+    }
+
     private void del(AmcAsset amcAsset) {
 
         AmcAssetExample amcAssetExample = new AmcAssetExample();
@@ -216,6 +225,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Override
     public AmcAssetDetailVo queryAssetDetail(Long assetId) throws Exception {
         AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(assetId);
+
 
         AmcAssetDetailVo amcAssetDetailVo = queryMongoForAmcAsset(amcAsset);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){

@@ -24,6 +24,8 @@
     <result column="building_name" jdbcType="CHAR" property="buildingName" />
     <result column="gps_lng" jdbcType="CHAR" property="gpsLng" />
     <result column="gps_lat" jdbcType="CHAR" property="gpsLat" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
@@ -89,8 +91,8 @@
   <sql id="Base_Column_List">
     id, title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
     zcc_asset_code, valuation, debt_id, area, land_area, land_area_unit, publish_date, 
-    province, city, county, street, building_name, gps_lng, gps_lat, created_by, created_date, 
-    amc_contactor_id
+    province, city, county, street, building_name, gps_lng, gps_lat, update_by, update_date, 
+    created_by, created_date, amc_contactor_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -133,16 +135,18 @@
       debt_id, area, land_area, 
       land_area_unit, publish_date, province, 
       city, county, street, building_name, 
-      gps_lng, gps_lat, created_by, 
-      created_date, amc_contactor_id)
+      gps_lng, gps_lat, update_by, 
+      update_date, created_by, created_date, 
+      amc_contactor_id)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
       #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, 
       #{debtId,jdbcType=BIGINT}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
       #{landAreaUnit,jdbcType=INTEGER}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
       #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
-      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{createdBy,jdbcType=BIGINT}, 
-      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
+      #{gpsLng,jdbcType=CHAR}, #{gpsLat,jdbcType=CHAR}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}, 
+      #{amcContactorId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -212,6 +216,12 @@
       </if>
       <if test="gpsLat != null">
         gps_lat,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateDate != null">
+        update_date,
       </if>
       <if test="createdBy != null">
         created_by,
@@ -286,6 +296,12 @@
       </if>
       <if test="gpsLat != null">
         #{gpsLat,jdbcType=CHAR},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        #{updateDate,jdbcType=TIMESTAMP},
       </if>
       <if test="createdBy != null">
         #{createdBy,jdbcType=BIGINT},
@@ -373,6 +389,12 @@
       <if test="record.gpsLat != null">
         gps_lat = #{record.gpsLat,jdbcType=CHAR},
       </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateDate != null">
+        update_date = #{record.updateDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="record.createdBy != null">
         created_by = #{record.createdBy,jdbcType=BIGINT},
       </if>
@@ -411,6 +433,8 @@
       building_name = #{record.buildingName,jdbcType=CHAR},
       gps_lng = #{record.gpsLng,jdbcType=CHAR},
       gps_lat = #{record.gpsLat,jdbcType=CHAR},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
       created_date = #{record.createdDate,jdbcType=TIMESTAMP},
       amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT}
@@ -484,6 +508,12 @@
       <if test="gpsLat != null">
         gps_lat = #{gpsLat,jdbcType=CHAR},
       </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateDate != null">
+        update_date = #{updateDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="createdBy != null">
         created_by = #{createdBy,jdbcType=BIGINT},
       </if>
@@ -519,6 +549,8 @@
       building_name = #{buildingName,jdbcType=CHAR},
       gps_lng = #{gpsLng,jdbcType=CHAR},
       gps_lat = #{gpsLat,jdbcType=CHAR},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},
       created_date = #{createdDate,jdbcType=TIMESTAMP},
       amc_contactor_id = #{amcContactorId,jdbcType=BIGINT}

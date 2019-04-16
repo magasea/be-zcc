@@ -538,13 +538,31 @@ public class AmcDebtController {
   }
 
 
+
+
   @RequestMapping(value = "/api/amcid/{id}/debt/editAble", method = RequestMethod.POST)
   @ResponseBody
-  public Boolean editAble(@RequestParam("debtStatus") Integer debtStatus) {
+  public PublishStateEnum editAble(@RequestParam("debtStatus") Integer currentDebtStatus,
+      @RequestParam("actionId") Integer actionId) {
 
-    return zccRulesService.editAble(PublishStateEnum.lookupByDisplayStatusUtil(debtStatus));
+    return zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
+        PublishStateEnum.lookupByDisplayStatusUtil(currentDebtStatus));
 
   }
+
+
+  @RequestMapping(value = "/api/amcid/{id}/debt/editAble", method = RequestMethod.POST)
+  @ResponseBody
+  public PublishStateEnum editAble(@RequestParam("debtId") Long debtId,
+      @RequestParam("actionId") Integer actionId) {
+
+
+    return zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
+        PublishStateEnum.lookupByDisplayStatusUtil(amcDebtService.getDebt(debtId).getPublishState()));
+
+  }
+
+
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/origcreditor/add", method = RequestMethod.POST)
   @ResponseBody

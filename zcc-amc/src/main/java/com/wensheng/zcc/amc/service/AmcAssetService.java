@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
@@ -22,11 +23,11 @@ public interface AmcAssetService {
 
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception;
 
-
-
     public int delAsset(Long amcAssetId) throws Exception;
 
     public int del(Long amcDebtId);
+
+    public void updateByDebtState(Long debtId, Integer publishState);
 
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception;
 

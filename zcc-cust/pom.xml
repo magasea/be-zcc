@@ -17,17 +17,7 @@
 
     <dependencies>
 
-        <!-- https://mvnrepository.com/artifact/com.aliyun.oss/aliyun-sdk-oss -->
-        <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-            <version>3.4.0</version>
-        </dependency>
-        <dependency>
-            <groupId>com.deliveredtechnologies</groupId>
-            <artifactId>rulebook-spring</artifactId>
-            <version>0.11</version>
-        </dependency>
+
         <dependency>
             <groupId>com.wensheng.zcc</groupId>
             <artifactId>zcc-common</artifactId>

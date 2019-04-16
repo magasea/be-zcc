@@ -215,6 +215,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public AmcDebtVo update(AmcDebt amcDebt) {
     int result = amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    amcAssetService.updateByDebtState(amcDebt.getId(), amcDebt.getPublishState());
     return null;
   }
 
@@ -222,8 +223,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   public AmcDebtVo updatePublishState(AmcDebt amcDebt) {
 
     amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    amcAssetService.updateByDebtState(amcDebt.getId(),
+        amcDebt.getPublishState());
 
     return null;
+
+
   }
 
   @Override

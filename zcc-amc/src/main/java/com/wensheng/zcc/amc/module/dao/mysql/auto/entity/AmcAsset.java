@@ -47,6 +47,10 @@ public class AmcAsset {
 
     private String gpsLat;
 
+    private Long updateBy;
+
+    private Date updateDate;
+
     private Long createdBy;
 
     private Date createdDate;
@@ -227,6 +231,22 @@ public class AmcAsset {
 
     public void setGpsLat(String gpsLat) {
         this.gpsLat = gpsLat == null ? null : gpsLat.trim();
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Date getUpdateDate() {
+        return updateDate;
+    }
+
+    public void setUpdateDate(Date updateDate) {
+        this.updateDate = updateDate;
     }
 
     public Long getCreatedBy() {

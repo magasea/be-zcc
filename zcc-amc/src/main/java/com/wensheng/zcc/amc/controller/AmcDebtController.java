@@ -540,7 +540,7 @@ public class AmcDebtController {
 
 
 
-  @RequestMapping(value = "/api/amcid/{id}/debt/editAble", method = RequestMethod.POST)
+  @RequestMapping(value = "/api/amcid/{id}/debt/stateEditAble", method = RequestMethod.POST)
   @ResponseBody
   public PublishStateEnum editAble(@RequestParam("debtStatus") Integer currentDebtStatus,
       @RequestParam("actionId") Integer actionId) {

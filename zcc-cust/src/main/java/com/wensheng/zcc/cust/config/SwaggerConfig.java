@@ -1,4 +1,4 @@
-package com.wensheng.zcc.sso.config;
+package com.wensheng.zcc.cust.config;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -44,22 +44,22 @@ public class SwaggerConfig {
 //        .build();
 //  }
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
-  private String amcAdminClientId;
+  @Value("${spring.security.oauth2.client.registration.amc-cust-client.client-id}")
+  private String amcCustClientId;
 
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.secret}")
-  private String amcAdminSecret;
+  @Value("${spring.security.oauth2.client.registration.amc-cust-client.secret}")
+  private String amcCustSecret;
 
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.scopes}")
-  private String amcAdminScopes;
+  @Value("${spring.security.oauth2.client.registration.amc-cust-client.scopes}")
+  private String amcCustScopes;
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.authorizedGrantTypes}")
-  private String amcAdminAuthorizedGrantTypes;
+  @Value("${spring.security.oauth2.client.registration.amc-cust-client.authorizedGrantTypes}")
+  private String amcCustAuthorizedGrantTypes;
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.redirectUris}")
-  private String amcAdminRedirectUris;
+  @Value("${spring.security.oauth2.client.registration.amc-cust-client.redirectUris}")
+  private String amcCustRedirectUris;
 
 
 
@@ -73,7 +73,7 @@ public class SwaggerConfig {
   @Bean
   public Docket api() {
 
-    List<ResponseMessage> list = new java.util.ArrayList<>();
+    List<ResponseMessage> list = new ArrayList<>();
     list.add(new ResponseMessageBuilder().code(500).message("500 message")
         .responseModel(new ModelRef("Result")).build());
     list.add(new ResponseMessageBuilder().code(401).message("Unauthorized")
@@ -124,7 +124,7 @@ public class SwaggerConfig {
 
   @Bean
   public SecurityConfiguration securityInfo() {
-    return new SecurityConfiguration(amcAdminClientId, amcAdminSecret, "", "", "", ApiKeyVehicle.HEADER, "", " ");
+    return new SecurityConfiguration(amcCustClientId, amcCustSecret, "", "", "", ApiKeyVehicle.HEADER, "", " ");
   }
 
   private ApiInfo apiInfo() {

@@ -186,6 +186,7 @@ public class WechatServiceImpl implements WechatService {
       amcWechatUserMapper.updateByExampleSelective(amcWechatUser, amcWechatUserExample);
 
     }
+    kafkaService.send(amcWechatUser);
     return amcWechatUser;
   }
 

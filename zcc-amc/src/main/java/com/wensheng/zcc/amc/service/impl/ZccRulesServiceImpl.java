@@ -39,7 +39,7 @@ public class ZccRulesServiceImpl implements ZccRulesService {
     facts.setValue("editAction", EditActionEnum.ACT_SAVE);
     facts.setValue("currentStatus", editStatus);
     ruleBook4ZccEdit.run(facts);
-//    ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
+    ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
     PublishStateEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();
     if(retVal != null){
       return true;

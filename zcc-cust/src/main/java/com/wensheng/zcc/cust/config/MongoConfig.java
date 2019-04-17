@@ -1,16 +1,11 @@
-package com.wensheng.zcc.log.config;
+package com.wensheng.zcc.cust.config;
 
 import com.mongodb.MongoClient;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
-import org.springframework.data.mongodb.MongoDbFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
-import org.springframework.data.mongodb.core.mapping.MongoMappingContext;
 
 /**
  * @author Marcos Barbero

@@ -1,5 +1,7 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
+import java.util.Date;
+
 public class CustTrdPerson {
     private Long id;
 
@@ -22,6 +24,10 @@ public class CustTrdPerson {
     private String city;
 
     private String notes;
+
+    private Long createBy;
+
+    private Date createDate;
 
     public Long getId() {
         return id;
@@ -109,5 +115,21 @@ public class CustTrdPerson {
 
     public void setNotes(String notes) {
         this.notes = notes == null ? null : notes.trim();
+    }
+
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public Date getCreateDate() {
+        return createDate;
+    }
+
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 }

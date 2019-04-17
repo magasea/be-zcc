@@ -1,5 +1,5 @@
 server:
-    port: 10002
+    port: 10004
 spring:
     autoconfigure:
         exclude:
@@ -7,8 +7,8 @@ spring:
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
         password: wensheng
-        url: jdbc:mysql://10.20.100.70:3306/ZCC_SSO?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-        username: wenshengsso
+        url: jdbc:mysql://10.20.100.70:3306/ZCC_CUST?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+        username: wenshengcust
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
         maxActive: 20
@@ -55,8 +55,8 @@ spring:
                         scopes: amcAdmin,amcClient,read,write
                         authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
                         redirectUris: admin,http://${oauth2.host}:10003/amc/login, http://${oauth2.host}:8080/login/oauth2/code/custom, http://${oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${oauth2.host}:8080/authorize/oauth2/code/bael, http://${oauth2.host}:8080/login/oauth2/code/bael
-                    amc-client:
-                        client-id: amcClientId
+                    amc-cust-client:
+                        client-id: amcCustClientId
                         secret: secret
                         scopes: amcClient,read,write
                         redirectUris: client,http://${oauth2.host}:10003/amc/login
@@ -64,27 +64,24 @@ spring:
 
     kafka:
         consumer:
-            group-id: grp-zcc-logger
+            group-id: grp-zcc-cust
             auto-offset-reset: earliest
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
         bootstrap-servers: 10.20.100.238:9092
+    data:
+        mongodb:
+            database: wszcc_cust
+            host: 10.20.100.235
+            port: 27017
 
 mybatis:
-    type-aliases-package: com.wensheng.zcc.sso.module
+    type-aliases-package: com.wensheng.zcc.cust.module
     mapper-locations:
         - classpath:mappers/*Mapper.xml
         - classpath:mappers/ext/*Mapper.xml
 
-mongodb:
-    #    original:
-    #        host: 10.20.100.235
-    #        port: 27017
-    #        database: wensheng
-    wszcc_sso:
-        host: 10.20.100.235
-        port: 27017
-        database: wszcc_sso
+
 
 weixin:
     #    appId: wxdb885be2c95a5b32
@@ -104,13 +101,15 @@ message:
     commond: MT_REQUEST
     multiCommond: MULTI_MT_REQUEST
 
-
+kafka:
+    topic_wechatuser: topic_wechatuser_${env.env-hint}
 
 logging:
     level:
         com:
             wensheng: TRACE
         root: WARN
+
 oauth2:
     host: 10.20.100.236
     authLink: http://${oauth2.host}:10002

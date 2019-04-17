@@ -12,6 +12,8 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -153,7 +155,7 @@ public class AmcAspect {
 
   }
 
-  private void updatePublishStateByRuleBook(Object param, int actionId, Long userId){
+  private void updatePublishStateByRuleBook(Object param, int actionId, Long userId) throws Exception {
     if(param instanceof List){
       for(Object item: (List)param ){
         doUpdateSinglePublishState(item, actionId, userId);
@@ -163,7 +165,7 @@ public class AmcAspect {
     }
   }
 
-  private void doUpdateSinglePublishState(Object param, int actionId, Long userId){
+  private void doUpdateSinglePublishState(Object param, int actionId, Long userId) throws Exception {
     if(param instanceof AmcDebtCreateVo ){
       AmcDebtCreateVo debtCreateVo = (AmcDebtCreateVo) param;
       PublishStateEnum publishStateEnum =
@@ -178,6 +180,11 @@ public class AmcAspect {
       AmcDebt amcDebt = amcDebtService.getDebt(assetVo.getDebtId());
       PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_SAVE,
           PublishStateEnum.lookupByDisplayStatusUtil(amcDebt.getPublishState()));
+      if(publishStateEnum == null){
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION, String.format("do action:%s on "
+            + "state:%s is not allowed", EditActionEnum.ACT_SAVE.getCname(),
+            PublishStateEnum.lookupByDisplayStatusUtil(amcDebt.getPublishState()).getName()));
+      }
       amcDebt.setPublishState(publishStateEnum.getStatus());
       amcDebt.setUpdateBy(userId);
       log.info("will update debt publish state from:{} to {}", amcDebt.getPublishState(), publishStateEnum.getStatus());

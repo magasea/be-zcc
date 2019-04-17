@@ -1,8 +1,8 @@
-package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
+package com.wensheng.zcc.common.mq.kafka.module;
 
 import java.util.Date;
 
-public class CustWechatInfo {
+public class AmcWechatUser {
     private Long id;
 
     private String wechatUnionId;
@@ -17,11 +17,11 @@ public class CustWechatInfo {
 
     private String gender;
 
+    private String location;
+
     private Integer loginState;
 
     private Date updateDate;
-
-    private byte[] location;
 
     public Long getId() {
         return id;
@@ -79,6 +79,14 @@ public class CustWechatInfo {
         this.gender = gender == null ? null : gender.trim();
     }
 
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location == null ? null : location.trim();
+    }
+
     public Integer getLoginState() {
         return loginState;
     }
@@ -93,13 +101,5 @@ public class CustWechatInfo {
 
     public void setUpdateDate(Date updateDate) {
         this.updateDate = updateDate;
-    }
-
-    public byte[] getLocation() {
-        return location;
-    }
-
-    public void setLocation(byte[] location) {
-        this.location = location;
     }
 }

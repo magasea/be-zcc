@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class CustTrdPersonExample {
@@ -841,6 +842,126 @@ public class CustTrdPersonExample {
 
         public Criteria andNotesNotBetween(String value1, String value2) {
             addCriterion("notes not between", value1, value2, "notes");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByIsNull() {
+            addCriterion("create_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByIsNotNull() {
+            addCriterion("create_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByEqualTo(Long value) {
+            addCriterion("create_by =", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByNotEqualTo(Long value) {
+            addCriterion("create_by <>", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByGreaterThan(Long value) {
+            addCriterion("create_by >", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("create_by >=", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByLessThan(Long value) {
+            addCriterion("create_by <", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByLessThanOrEqualTo(Long value) {
+            addCriterion("create_by <=", value, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByIn(List<Long> values) {
+            addCriterion("create_by in", values, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByNotIn(List<Long> values) {
+            addCriterion("create_by not in", values, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByBetween(Long value1, Long value2) {
+            addCriterion("create_by between", value1, value2, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateByNotBetween(Long value1, Long value2) {
+            addCriterion("create_by not between", value1, value2, "createBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIsNull() {
+            addCriterion("create_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIsNotNull() {
+            addCriterion("create_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateEqualTo(Date value) {
+            addCriterion("create_date =", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotEqualTo(Date value) {
+            addCriterion("create_date <>", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateGreaterThan(Date value) {
+            addCriterion("create_date >", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("create_date >=", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateLessThan(Date value) {
+            addCriterion("create_date <", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateLessThanOrEqualTo(Date value) {
+            addCriterion("create_date <=", value, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateIn(List<Date> values) {
+            addCriterion("create_date in", values, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotIn(List<Date> values) {
+            addCriterion("create_date not in", values, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateBetween(Date value1, Date value2) {
+            addCriterion("create_date between", value1, value2, "createDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCreateDateNotBetween(Date value1, Date value2) {
+            addCriterion("create_date not between", value1, value2, "createDate");
             return (Criteria) this;
         }
     }

@@ -13,6 +13,8 @@
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -74,7 +76,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, 
-    notes
+    notes, create_by, create_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -113,10 +115,12 @@
     </selectKey>
     insert into CUST_TRD_PERSON (name, age_range, gender, 
       mobile_num, tel_num, email, id_card_num, 
-      province, city, notes)
+      province, city, notes, create_by, 
+      create_date)
     values (#{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, #{gender,jdbcType=INTEGER}, 
       #{mobileNum,jdbcType=CHAR}, #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, 
-      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR})
+      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -154,6 +158,12 @@
       <if test="notes != null">
         notes,
       </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createDate != null">
+        create_date,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
@@ -185,6 +195,12 @@
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -230,6 +246,12 @@
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -247,7 +269,9 @@
       id_card_num = #{record.idCardNum,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
-      notes = #{record.notes,jdbcType=VARCHAR}
+      notes = #{record.notes,jdbcType=VARCHAR},
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -285,6 +309,12 @@
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -299,7 +329,9 @@
       id_card_num = #{idCardNum,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
-      notes = #{notes,jdbcType=VARCHAR}
+      notes = #{notes,jdbcType=VARCHAR},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_date = #{createDate,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">

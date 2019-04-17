@@ -33,11 +33,7 @@ spring:
       host: 10.20.100.235
       port: 27017
 
-mongodb:
-  wszcc_sso:
-    host: 10.20.100.235
-    port: 27017
-    database: wszcc_log
+
 
 kafka:
   topic-wechat-userlocation: topic_wechat_userLocation_${env.env-prefix}

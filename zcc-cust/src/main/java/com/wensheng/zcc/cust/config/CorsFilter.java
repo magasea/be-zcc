@@ -1,4 +1,4 @@
-package com.wensheng.zcc.sso.config;
+package com.wensheng.zcc.cust.config;
 
 import java.io.IOException;
 import javax.servlet.Filter;

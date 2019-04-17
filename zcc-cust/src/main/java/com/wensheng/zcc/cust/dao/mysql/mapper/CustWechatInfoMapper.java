@@ -11,17 +11,21 @@ public interface CustWechatInfoMapper {
 
     int deleteByExample(CustWechatInfoExample example);
 
-    int deleteByPrimaryKey(Long id);
-
     int insert(CustWechatInfo record);
 
     int insertSelective(CustWechatInfo record);
+
+    List<CustWechatInfo> selectByExampleWithBLOBsWithRowbounds(CustWechatInfoExample example, RowBounds rowBounds);
+
+    List<CustWechatInfo> selectByExampleWithBLOBs(CustWechatInfoExample example);
 
     List<CustWechatInfo> selectByExampleWithRowbounds(CustWechatInfoExample example, RowBounds rowBounds);
 
     List<CustWechatInfo> selectByExample(CustWechatInfoExample example);
 
     int updateByExampleSelective(@Param("record") CustWechatInfo record, @Param("example") CustWechatInfoExample example);
+
+    int updateByExampleWithBLOBs(@Param("record") CustWechatInfo record, @Param("example") CustWechatInfoExample example);
 
     int updateByExample(@Param("record") CustWechatInfo record, @Param("example") CustWechatInfoExample example);
 }

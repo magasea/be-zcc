@@ -1,10 +1,13 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
@@ -12,18 +15,25 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @project miniapp-backend
  */
 @Controller
-@RequestMapping("/amc/cust/")
+@RequestMapping("/amc/cust/custinfo")
 public class CustInfoController {
 
   @Autowired
   CustInfoService custInfoService;
 
-  @RequestMapping("/addCmpy")
+  @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
-  public String addCompany(CustTrdCmpy custTrdCmpy){
+  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy){
 
-    custInfoService.addCompany(custTrdCmpy);
-    return "succeed";
+    return custInfoService.addCompany(custTrdCmpy);
   }
+
+  @RequestMapping(value = "/addPerson", method = RequestMethod.POST)
+  @ResponseBody
+  public CustTrdPerson addPerson(@RequestBody CustTrdPerson custTrdPerson){
+
+     return custInfoService.addTrdPerson(custTrdPerson);
+  }
+
 
 }

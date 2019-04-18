@@ -38,7 +38,7 @@ public class KafkaServiceImpl {
   }
 
   @KafkaListener( topics = "${kafka.topic_wechatuser}", clientIdPrefix = "zcc-cust",
-      containerFactory = "baWechatUserFactory")
+      containerFactory = "baWechatUserContainerFactory")
   public void listenUserOperation(ConsumerRecord<String, WechatUserLocation> cr,
       @Payload AmcUserOperation payload) {
     log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),

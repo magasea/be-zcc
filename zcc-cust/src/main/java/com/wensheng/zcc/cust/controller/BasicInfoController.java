@@ -1,11 +1,14 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
+import com.wensheng.zcc.cust.service.BasicInfoService;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +22,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping("/amc/cust/basic")
 public class BasicInfoController {
+
+  @Autowired
+  BasicInfoService basicInfoService;
 
   @RequestMapping(value = "/investScales", method = RequestMethod.POST)
   @ResponseBody
@@ -52,5 +58,16 @@ public class BasicInfoController {
       result.add(String.format("%d:%s:%s", ageRangeEnum.getId(), ageRangeEnum.getName(), ageRangeEnum.getCname()));
     }
     return result;
+  }
+
+  @RequestMapping(value = "/regions", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustRegion> getRegions(@RequestParam(required = false) Long regionId){
+    if(regionId == null){
+      return basicInfoService.getAllCustRegion();
+    }else{
+      return basicInfoService.getSubCustRegion(regionId);
+    }
+
   }
 }

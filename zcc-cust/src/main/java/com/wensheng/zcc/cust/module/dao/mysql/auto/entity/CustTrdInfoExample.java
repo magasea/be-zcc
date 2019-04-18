@@ -732,52 +732,62 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceEqualTo(Integer value) {
+        public Criteria andTrdProvinceEqualTo(String value) {
             addCriterion("trd_province =", value, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceNotEqualTo(Integer value) {
+        public Criteria andTrdProvinceNotEqualTo(String value) {
             addCriterion("trd_province <>", value, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceGreaterThan(Integer value) {
+        public Criteria andTrdProvinceGreaterThan(String value) {
             addCriterion("trd_province >", value, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceGreaterThanOrEqualTo(Integer value) {
+        public Criteria andTrdProvinceGreaterThanOrEqualTo(String value) {
             addCriterion("trd_province >=", value, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceLessThan(Integer value) {
+        public Criteria andTrdProvinceLessThan(String value) {
             addCriterion("trd_province <", value, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceLessThanOrEqualTo(Integer value) {
+        public Criteria andTrdProvinceLessThanOrEqualTo(String value) {
             addCriterion("trd_province <=", value, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceIn(List<Integer> values) {
+        public Criteria andTrdProvinceLike(String value) {
+            addCriterion("trd_province like", value, "trdProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdProvinceNotLike(String value) {
+            addCriterion("trd_province not like", value, "trdProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdProvinceIn(List<String> values) {
             addCriterion("trd_province in", values, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceNotIn(List<Integer> values) {
+        public Criteria andTrdProvinceNotIn(List<String> values) {
             addCriterion("trd_province not in", values, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceBetween(Integer value1, Integer value2) {
+        public Criteria andTrdProvinceBetween(String value1, String value2) {
             addCriterion("trd_province between", value1, value2, "trdProvince");
             return (Criteria) this;
         }
 
-        public Criteria andTrdProvinceNotBetween(Integer value1, Integer value2) {
+        public Criteria andTrdProvinceNotBetween(String value1, String value2) {
             addCriterion("trd_province not between", value1, value2, "trdProvince");
             return (Criteria) this;
         }
@@ -792,52 +802,62 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityEqualTo(Integer value) {
+        public Criteria andTrdCityEqualTo(String value) {
             addCriterion("trd_city =", value, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotEqualTo(Integer value) {
+        public Criteria andTrdCityNotEqualTo(String value) {
             addCriterion("trd_city <>", value, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityGreaterThan(Integer value) {
+        public Criteria andTrdCityGreaterThan(String value) {
             addCriterion("trd_city >", value, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityGreaterThanOrEqualTo(Integer value) {
+        public Criteria andTrdCityGreaterThanOrEqualTo(String value) {
             addCriterion("trd_city >=", value, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityLessThan(Integer value) {
+        public Criteria andTrdCityLessThan(String value) {
             addCriterion("trd_city <", value, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityLessThanOrEqualTo(Integer value) {
+        public Criteria andTrdCityLessThanOrEqualTo(String value) {
             addCriterion("trd_city <=", value, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityIn(List<Integer> values) {
+        public Criteria andTrdCityLike(String value) {
+            addCriterion("trd_city like", value, "trdCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCityNotLike(String value) {
+            addCriterion("trd_city not like", value, "trdCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCityIn(List<String> values) {
             addCriterion("trd_city in", values, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotIn(List<Integer> values) {
+        public Criteria andTrdCityNotIn(List<String> values) {
             addCriterion("trd_city not in", values, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityBetween(Integer value1, Integer value2) {
+        public Criteria andTrdCityBetween(String value1, String value2) {
             addCriterion("trd_city between", value1, value2, "trdCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotBetween(Integer value1, Integer value2) {
+        public Criteria andTrdCityNotBetween(String value1, String value2) {
             addCriterion("trd_city not between", value1, value2, "trdCity");
             return (Criteria) this;
         }

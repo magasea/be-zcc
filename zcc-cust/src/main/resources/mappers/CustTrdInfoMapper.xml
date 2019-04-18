@@ -11,8 +11,8 @@
     <result column="info_source" jdbcType="VARCHAR" property="infoSource" />
     <result column="info_website" jdbcType="VARCHAR" property="infoWebsite" />
     <result column="info_url" jdbcType="VARCHAR" property="infoUrl" />
-    <result column="trd_province" jdbcType="INTEGER" property="trdProvince" />
-    <result column="trd_city" jdbcType="INTEGER" property="trdCity" />
+    <result column="trd_province" jdbcType="CHAR" property="trdProvince" />
+    <result column="trd_city" jdbcType="CHAR" property="trdCity" />
     <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />
     <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />
     <result column="base_amount" jdbcType="INTEGER" property="baseAmount" />
@@ -136,8 +136,8 @@
       seller_type, seller_id)
     values (#{itemType,jdbcType=TINYINT}, #{trdType,jdbcType=TINYINT}, #{infoTitle,jdbcType=VARCHAR}, 
       #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
-      #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=INTEGER}, 
-      #{trdCity,jdbcType=INTEGER}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
+      #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
+      #{trdCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
       #{baseAmount,jdbcType=INTEGER}, #{interestAmount,jdbcType=INTEGER}, #{totalAmount,jdbcType=INTEGER}, 
       #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{infoTime,jdbcType=TIMESTAMP}, 
       #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=TINYINT}, #{buyerId,jdbcType=BIGINT}, 
@@ -245,10 +245,10 @@
         #{infoUrl,jdbcType=VARCHAR},
       </if>
       <if test="trdProvince != null">
-        #{trdProvince,jdbcType=INTEGER},
+        #{trdProvince,jdbcType=CHAR},
       </if>
       <if test="trdCity != null">
-        #{trdCity,jdbcType=INTEGER},
+        #{trdCity,jdbcType=CHAR},
       </if>
       <if test="trdAmountOrig != null">
         #{trdAmountOrig,jdbcType=CHAR},
@@ -328,10 +328,10 @@
         info_url = #{record.infoUrl,jdbcType=VARCHAR},
       </if>
       <if test="record.trdProvince != null">
-        trd_province = #{record.trdProvince,jdbcType=INTEGER},
+        trd_province = #{record.trdProvince,jdbcType=CHAR},
       </if>
       <if test="record.trdCity != null">
-        trd_city = #{record.trdCity,jdbcType=INTEGER},
+        trd_city = #{record.trdCity,jdbcType=CHAR},
       </if>
       <if test="record.trdAmountOrig != null">
         trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
@@ -388,8 +388,8 @@
       info_source = #{record.infoSource,jdbcType=VARCHAR},
       info_website = #{record.infoWebsite,jdbcType=VARCHAR},
       info_url = #{record.infoUrl,jdbcType=VARCHAR},
-      trd_province = #{record.trdProvince,jdbcType=INTEGER},
-      trd_city = #{record.trdCity,jdbcType=INTEGER},
+      trd_province = #{record.trdProvince,jdbcType=CHAR},
+      trd_city = #{record.trdCity,jdbcType=CHAR},
       trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{record.trdAmount,jdbcType=BIGINT},
       base_amount = #{record.baseAmount,jdbcType=INTEGER},
@@ -435,10 +435,10 @@
         info_url = #{infoUrl,jdbcType=VARCHAR},
       </if>
       <if test="trdProvince != null">
-        trd_province = #{trdProvince,jdbcType=INTEGER},
+        trd_province = #{trdProvince,jdbcType=CHAR},
       </if>
       <if test="trdCity != null">
-        trd_city = #{trdCity,jdbcType=INTEGER},
+        trd_city = #{trdCity,jdbcType=CHAR},
       </if>
       <if test="trdAmountOrig != null">
         trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
@@ -492,8 +492,8 @@
       info_source = #{infoSource,jdbcType=VARCHAR},
       info_website = #{infoWebsite,jdbcType=VARCHAR},
       info_url = #{infoUrl,jdbcType=VARCHAR},
-      trd_province = #{trdProvince,jdbcType=INTEGER},
-      trd_city = #{trdCity,jdbcType=INTEGER},
+      trd_province = #{trdProvince,jdbcType=CHAR},
+      trd_city = #{trdCity,jdbcType=CHAR},
       trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{trdAmount,jdbcType=BIGINT},
       base_amount = #{baseAmount,jdbcType=INTEGER},

@@ -23,6 +23,8 @@ public class CustTrdPerson {
 
     private String city;
 
+    private String addr;
+
     private String notes;
 
     private Long createBy;
@@ -107,6 +109,14 @@ public class CustTrdPerson {
 
     public void setCity(String city) {
         this.city = city == null ? null : city.trim();
+    }
+
+    public String getAddr() {
+        return addr;
+    }
+
+    public void setAddr(String addr) {
+        this.addr = addr == null ? null : addr.trim();
     }
 
     public String getNotes() {

@@ -5,6 +5,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.service.CustInfoService;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,5 +35,15 @@ public class CustInfoServiceImpl implements CustInfoService {
   public CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson) {
     custTrdPersonMapper.insertSelective(custTrdPerson);
     return custTrdPerson;
+  }
+
+  @Override
+  public List<CustTrdPerson> getTrdPersons() {
+    return custTrdPersonMapper.selectByExample(null);
+  }
+
+  @Override
+  public List<CustTrdCmpy> getCmpies() {
+    return custTrdCmpyMapper.selectByExample(null);
   }
 }

@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.service.impl;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.service.TrdInfoService;
+import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,5 +21,10 @@ public class TrdInfoServiceImpl implements TrdInfoService {
   public CustTrdInfo addTrdInfo(CustTrdInfo custTrdInfo) {
     custTrdInfoMapper.insertSelective(custTrdInfo);
     return custTrdInfo;
+  }
+
+  @Override
+  public List<CustTrdInfo> getTrdInfo() {
+    return custTrdInfoMapper.selectByExample(null);
   }
 }

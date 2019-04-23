@@ -4,13 +4,14 @@ package com.wensheng.zcc.cust.module.helper;
  * @author chenwei on 4/17/19
  * @project miniapp-backend
  */
-public enum AgeRangeEnum {
-  AGERANGEIN30(1, "Age lower than 30", "年龄小于30"),
-  AGERANGEIN3050(2, "Age between 30 to 50", "年龄介于30到50"),
-  AGERANGEIN50(3, "Age greater than 50", "年龄大于50"),
+public enum PersonSexEnum {
+  MALE(1, "male", "男"),
+  FEMALE(2, "female", "女"),
+  UNKNOWN(3, "unknown", "未知"),
+  OTHER(4, "other", "其他"),
   ;
 
-  AgeRangeEnum(Integer id, String name, String cname){
+  PersonSexEnum(Integer id, String name, String cname){
     this.id = id;
     this.name = name;
     this.cname = cname;

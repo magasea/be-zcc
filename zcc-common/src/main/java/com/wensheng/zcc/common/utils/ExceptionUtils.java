@@ -47,6 +47,7 @@ public class ExceptionUtils {
     INVALID_PHONE_VERCODE(1023, "Invalid vercode", "验证码不匹配或者验证码过期"),
     MISSING_COMPANYNAME(1024, "Missing Company Name", "缺少公司名称"),
     NOT_AUTHORIZED_FORTHISTASK(1025, "not authorized for this task", "用户的角色不允许做这个操作"),
+    CANNOT_DEL(1026, "cannot del ", "该资源不能被删除"),
     ;
     int code;
     String name;

@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.service.TrdInfoService;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -30,5 +31,9 @@ public class TradInfoController {
     return trdInfoService.addTrdInfo(custTrdInfo);
   }
 
-
+  @RequestMapping(value = "/getTrdInfo", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustTrdInfo> getTradInfo(){
+    return trdInfoService.getTrdInfo();
+  }
 }

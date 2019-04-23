@@ -12,6 +12,7 @@
     <result column="id_card_num" jdbcType="CHAR" property="idCardNum" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
+    <result column="addr" jdbcType="VARCHAR" property="addr" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
@@ -76,7 +77,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, 
-    notes, create_by, create_date
+    addr, notes, create_by, create_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -115,12 +116,12 @@
     </selectKey>
     insert into CUST_TRD_PERSON (name, age_range, gender, 
       mobile_num, tel_num, email, id_card_num, 
-      province, city, notes, create_by, 
-      create_date)
+      province, city, addr, notes, 
+      create_by, create_date)
     values (#{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, #{gender,jdbcType=INTEGER}, 
       #{mobileNum,jdbcType=CHAR}, #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, 
-      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, 
-      #{createDate,jdbcType=TIMESTAMP})
+      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -154,6 +155,9 @@
       </if>
       <if test="city != null">
         city,
+      </if>
+      <if test="addr != null">
+        addr,
       </if>
       <if test="notes != null">
         notes,
@@ -192,6 +196,9 @@
       </if>
       <if test="city != null">
         #{city,jdbcType=CHAR},
+      </if>
+      <if test="addr != null">
+        #{addr,jdbcType=VARCHAR},
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
@@ -243,6 +250,9 @@
       <if test="record.city != null">
         city = #{record.city,jdbcType=CHAR},
       </if>
+      <if test="record.addr != null">
+        addr = #{record.addr,jdbcType=VARCHAR},
+      </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
@@ -269,6 +279,7 @@
       id_card_num = #{record.idCardNum,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
+      addr = #{record.addr,jdbcType=VARCHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP}
@@ -306,6 +317,9 @@
       <if test="city != null">
         city = #{city,jdbcType=CHAR},
       </if>
+      <if test="addr != null">
+        addr = #{addr,jdbcType=VARCHAR},
+      </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
@@ -329,6 +343,7 @@
       id_card_num = #{idCardNum,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
+      addr = #{addr,jdbcType=VARCHAR},
       notes = #{notes,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP}

@@ -21,4 +21,5 @@ public interface AmcHelperService {
 
   Long getPersonTotalCount();
 
+    void deletePersons(Long[] contactorIds) throws Exception;
 }

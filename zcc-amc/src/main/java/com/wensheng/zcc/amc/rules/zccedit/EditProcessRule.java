@@ -45,7 +45,7 @@ public class EditProcessRule {
         editStatusResult =  PublishStateEnum.DRAFT;
         return;
       }
-      if(currentStatus == PublishStateEnum.UNSOLD_OFF_SHELF){
+      if(currentStatus == PublishStateEnum.UNSOLD_OFF_SHELF|| currentStatus == PublishStateEnum.RECORD){
         editStatusResult = PublishStateEnum.RECORD;
         return;
       }
@@ -98,7 +98,7 @@ public class EditProcessRule {
         return;
       }
       if(currentStatus == PublishStateEnum.DRAFT ){
-        editStatusResult = PublishStateEnum.DRAFT;
+        editStatusResult = PublishStateEnum.DELETED;
       }
     }
     throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION, String.format("currentStatus:%s action:%s",

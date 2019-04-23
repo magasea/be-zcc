@@ -3,8 +3,10 @@ package com.wensheng.zcc.cust.controller;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
+import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PersonSexEnum;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import java.util.ArrayList;
 import java.util.List;
@@ -56,6 +58,28 @@ public class BasicInfoController {
     List<String> result = new ArrayList<>();
     for(AgeRangeEnum ageRangeEnum : AgeRangeEnum.values()){
       result.add(String.format("%d:%s:%s", ageRangeEnum.getId(), ageRangeEnum.getName(), ageRangeEnum.getCname()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/sex", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getSex(){
+
+    List<String> result = new ArrayList<>();
+    for(PersonSexEnum personSexEnum : PersonSexEnum.values()){
+      result.add(String.format("%d:%s:%s", personSexEnum.getId(), personSexEnum.getName(), personSexEnum.getCname()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/custTypes", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getCustTypes(){
+
+    List<String> result = new ArrayList<>();
+    for(CustTypeEnum custTypeEnum : CustTypeEnum.values()){
+      result.add(String.format("%d:%s", custTypeEnum.getId(), custTypeEnum.getName()));
     }
     return result;
   }

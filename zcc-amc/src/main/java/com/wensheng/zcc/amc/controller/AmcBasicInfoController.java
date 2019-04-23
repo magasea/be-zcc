@@ -259,4 +259,14 @@ public class AmcBasicInfoController {
     return amcHelperService.updatePerson(amcPerson);
   }
 
+  @RequestMapping(value = "/amcid/{amcId}/amccontactor/del", method = RequestMethod.POST)
+  @ResponseBody
+  public String delAmcDebtContactors(@RequestBody Long[] contactorIds) throws Exception {
+    if(contactorIds != null && contactorIds.length > 0){
+      amcHelperService.deletePersons(contactorIds);
+    }
+    return "succeed";
+
+  }
+
 }

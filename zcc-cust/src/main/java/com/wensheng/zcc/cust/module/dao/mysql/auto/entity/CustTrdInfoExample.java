@@ -1432,52 +1432,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeEqualTo(Byte value) {
+        public Criteria andBuyerTypeEqualTo(Integer value) {
             addCriterion("buyer_type =", value, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeNotEqualTo(Byte value) {
+        public Criteria andBuyerTypeNotEqualTo(Integer value) {
             addCriterion("buyer_type <>", value, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeGreaterThan(Byte value) {
+        public Criteria andBuyerTypeGreaterThan(Integer value) {
             addCriterion("buyer_type >", value, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeGreaterThanOrEqualTo(Byte value) {
+        public Criteria andBuyerTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("buyer_type >=", value, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeLessThan(Byte value) {
+        public Criteria andBuyerTypeLessThan(Integer value) {
             addCriterion("buyer_type <", value, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeLessThanOrEqualTo(Byte value) {
+        public Criteria andBuyerTypeLessThanOrEqualTo(Integer value) {
             addCriterion("buyer_type <=", value, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeIn(List<Byte> values) {
+        public Criteria andBuyerTypeIn(List<Integer> values) {
             addCriterion("buyer_type in", values, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeNotIn(List<Byte> values) {
+        public Criteria andBuyerTypeNotIn(List<Integer> values) {
             addCriterion("buyer_type not in", values, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeBetween(Byte value1, Byte value2) {
+        public Criteria andBuyerTypeBetween(Integer value1, Integer value2) {
             addCriterion("buyer_type between", value1, value2, "buyerType");
             return (Criteria) this;
         }
 
-        public Criteria andBuyerTypeNotBetween(Byte value1, Byte value2) {
+        public Criteria andBuyerTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("buyer_type not between", value1, value2, "buyerType");
             return (Criteria) this;
         }

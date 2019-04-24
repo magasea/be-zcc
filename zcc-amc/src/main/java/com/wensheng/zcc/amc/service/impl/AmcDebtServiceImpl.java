@@ -873,4 +873,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return wszccTemplate.find(query, AmcOperLog.class);
   }
 
+  @Override
+  public void setRecomm(List<Long> debtIds, int id) {
+    AmcDebt amcDebt = new AmcDebt();
+    amcDebt.setIsRecommanded(id);
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andIdIn(debtIds);
+    amcDebtMapper.updateByExampleSelective(amcDebt, amcDebtExample);
+  }
+
 }

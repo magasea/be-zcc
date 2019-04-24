@@ -43,7 +43,7 @@ public class CustTrdInfo {
 
     private String notes;
 
-    private Byte buyerType;
+    private Integer buyerType;
 
     private Long buyerId;
 
@@ -211,11 +211,11 @@ public class CustTrdInfo {
         this.notes = notes == null ? null : notes.trim();
     }
 
-    public Byte getBuyerType() {
+    public Integer getBuyerType() {
         return buyerType;
     }
 
-    public void setBuyerType(Byte buyerType) {
+    public void setBuyerType(Integer buyerType) {
         this.buyerType = buyerType;
     }
 

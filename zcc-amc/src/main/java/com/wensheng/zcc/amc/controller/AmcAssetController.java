@@ -7,6 +7,7 @@ import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -128,6 +129,19 @@ public class AmcAssetController {
     return assetVo;
   }
 
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @RequestMapping(value = "/amcid/{amcid}/asset/setRecomm", method = RequestMethod.POST)
+  @ResponseBody
+  public void recommAmcAsset(
+          @RequestBody BaseActionVo<List<Long>> amcAssetVo, @RequestParam IsRecommandEnum isRecommandEnum) throws Exception {
+
+    if(CollectionUtils.isEmpty(amcAssetVo.getContent())){
+      return;
+    }
+    amcAssetService.setRecomm(amcAssetVo.getContent(), isRecommandEnum.getId());
+
+
+  }
 
 
 

@@ -22,7 +22,7 @@
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
     <result column="info_time" jdbcType="TIMESTAMP" property="infoTime" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
-    <result column="buyer_type" jdbcType="TINYINT" property="buyerType" />
+    <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
     <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
     <result column="seller_type" jdbcType="TINYINT" property="sellerType" />
     <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
@@ -140,7 +140,7 @@
       #{trdCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
       #{baseAmount,jdbcType=INTEGER}, #{interestAmount,jdbcType=INTEGER}, #{totalAmount,jdbcType=INTEGER}, 
       #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{infoTime,jdbcType=TIMESTAMP}, 
-      #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=TINYINT}, #{buyerId,jdbcType=BIGINT}, 
+      #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
       #{sellerType,jdbcType=TINYINT}, #{sellerId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
@@ -278,7 +278,7 @@
         #{notes,jdbcType=VARCHAR},
       </if>
       <if test="buyerType != null">
-        #{buyerType,jdbcType=TINYINT},
+        #{buyerType,jdbcType=INTEGER},
       </if>
       <if test="buyerId != null">
         #{buyerId,jdbcType=BIGINT},
@@ -361,7 +361,7 @@
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
       <if test="record.buyerType != null">
-        buyer_type = #{record.buyerType,jdbcType=TINYINT},
+        buyer_type = #{record.buyerType,jdbcType=INTEGER},
       </if>
       <if test="record.buyerId != null">
         buyer_id = #{record.buyerId,jdbcType=BIGINT},
@@ -399,7 +399,7 @@
       trd_date = #{record.trdDate,jdbcType=DATE},
       info_time = #{record.infoTime,jdbcType=TIMESTAMP},
       notes = #{record.notes,jdbcType=VARCHAR},
-      buyer_type = #{record.buyerType,jdbcType=TINYINT},
+      buyer_type = #{record.buyerType,jdbcType=INTEGER},
       buyer_id = #{record.buyerId,jdbcType=BIGINT},
       seller_type = #{record.sellerType,jdbcType=TINYINT},
       seller_id = #{record.sellerId,jdbcType=BIGINT}
@@ -468,7 +468,7 @@
         notes = #{notes,jdbcType=VARCHAR},
       </if>
       <if test="buyerType != null">
-        buyer_type = #{buyerType,jdbcType=TINYINT},
+        buyer_type = #{buyerType,jdbcType=INTEGER},
       </if>
       <if test="buyerId != null">
         buyer_id = #{buyerId,jdbcType=BIGINT},
@@ -503,7 +503,7 @@
       trd_date = #{trdDate,jdbcType=DATE},
       info_time = #{infoTime,jdbcType=TIMESTAMP},
       notes = #{notes,jdbcType=VARCHAR},
-      buyer_type = #{buyerType,jdbcType=TINYINT},
+      buyer_type = #{buyerType,jdbcType=INTEGER},
       buyer_id = #{buyerId,jdbcType=BIGINT},
       seller_type = #{sellerType,jdbcType=TINYINT},
       seller_id = #{sellerId,jdbcType=BIGINT}

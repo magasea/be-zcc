@@ -11,4 +11,7 @@ public interface TrdInfoService {
   CustTrdInfo addTrdInfo(CustTrdInfo custTrdInfo);
 
   List<CustTrdInfo> getTrdInfo();
+
+
+  List<CustTrdInfo> getTrdInfo(Long custId, int id);
 }

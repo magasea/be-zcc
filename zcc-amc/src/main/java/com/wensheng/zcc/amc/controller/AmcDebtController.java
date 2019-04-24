@@ -6,11 +6,7 @@ import com.wensheng.zcc.amc.controller.helper.AmcPage;
 import com.wensheng.zcc.amc.controller.helper.PageInfo;
 import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
-import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
-import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
-import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
@@ -386,6 +382,28 @@ public class AmcDebtController {
 
     return amcDebtVo;
   }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @RequestMapping(value = "/api/amcid/{id}/debt/recommDebt", method = RequestMethod.POST)
+  @ResponseBody
+  public void recommDebt(@RequestBody BaseActionVo<List<Long>> amcDebtUpdateRecommdAct, @PathVariable Long id, @RequestParam IsRecommandEnum isRecommandEnum)
+          throws Exception {
+
+
+
+
+      if(CollectionUtils.isEmpty(amcDebtUpdateRecommdAct.getContent())){
+        return;
+      }
+
+      amcDebtService.setRecomm(amcDebtUpdateRecommdAct.getContent(), isRecommandEnum.getId());
+
+
+
+
+  }
+
+
 
   private void initDebt(AmcDebtCreateVo amcDebtVo, AmcDebt amcDebt){
     AmcBeanUtils.copyProperties(amcDebtVo, amcDebt);

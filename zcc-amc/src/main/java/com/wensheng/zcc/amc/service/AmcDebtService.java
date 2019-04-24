@@ -101,4 +101,6 @@ public interface AmcDebtService {
   <T> void saveOperLog(BaseActionVo<T> amcDebt, String reviewComment);
 
   List<AmcOperLog> getOperLog(Long debtId, Integer actionId);
+
+    void setRecomm(List<Long> debtIds, int id);
 }

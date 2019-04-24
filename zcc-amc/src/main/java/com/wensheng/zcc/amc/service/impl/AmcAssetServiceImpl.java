@@ -510,6 +510,15 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssetMapper.countByExample(amcAssetExample);
     }
 
+    @Override
+    public void setRecomm(List<Long> assetIds, int isRecomm) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
+                Update update = new Update();
+                update.addToSet("isRecommanded", isRecomm);
+        wszccTemplate.findAndModify(query, update, AssetAdditional.class);
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();

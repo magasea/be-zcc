@@ -5,9 +5,9 @@ import java.util.Date;
 public class CustTrdInfo {
     private Long id;
 
-    private Byte itemType;
+    private Integer itemType;
 
-    private Byte trdType;
+    private Integer trdType;
 
     private String infoTitle;
 
@@ -59,19 +59,19 @@ public class CustTrdInfo {
         this.id = id;
     }
 
-    public Byte getItemType() {
+    public Integer getItemType() {
         return itemType;
     }
 
-    public void setItemType(Byte itemType) {
+    public void setItemType(Integer itemType) {
         this.itemType = itemType;
     }
 
-    public Byte getTrdType() {
+    public Integer getTrdType() {
         return trdType;
     }
 
-    public void setTrdType(Byte trdType) {
+    public void setTrdType(Integer trdType) {
         this.trdType = trdType;
     }
 

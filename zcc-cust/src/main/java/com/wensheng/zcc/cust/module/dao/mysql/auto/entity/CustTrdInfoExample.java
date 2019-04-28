@@ -202,52 +202,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeEqualTo(Byte value) {
+        public Criteria andItemTypeEqualTo(Integer value) {
             addCriterion("item_type =", value, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeNotEqualTo(Byte value) {
+        public Criteria andItemTypeNotEqualTo(Integer value) {
             addCriterion("item_type <>", value, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeGreaterThan(Byte value) {
+        public Criteria andItemTypeGreaterThan(Integer value) {
             addCriterion("item_type >", value, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeGreaterThanOrEqualTo(Byte value) {
+        public Criteria andItemTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("item_type >=", value, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeLessThan(Byte value) {
+        public Criteria andItemTypeLessThan(Integer value) {
             addCriterion("item_type <", value, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeLessThanOrEqualTo(Byte value) {
+        public Criteria andItemTypeLessThanOrEqualTo(Integer value) {
             addCriterion("item_type <=", value, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeIn(List<Byte> values) {
+        public Criteria andItemTypeIn(List<Integer> values) {
             addCriterion("item_type in", values, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeNotIn(List<Byte> values) {
+        public Criteria andItemTypeNotIn(List<Integer> values) {
             addCriterion("item_type not in", values, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeBetween(Byte value1, Byte value2) {
+        public Criteria andItemTypeBetween(Integer value1, Integer value2) {
             addCriterion("item_type between", value1, value2, "itemType");
             return (Criteria) this;
         }
 
-        public Criteria andItemTypeNotBetween(Byte value1, Byte value2) {
+        public Criteria andItemTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("item_type not between", value1, value2, "itemType");
             return (Criteria) this;
         }
@@ -262,52 +262,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeEqualTo(Byte value) {
+        public Criteria andTrdTypeEqualTo(Integer value) {
             addCriterion("trd_type =", value, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeNotEqualTo(Byte value) {
+        public Criteria andTrdTypeNotEqualTo(Integer value) {
             addCriterion("trd_type <>", value, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeGreaterThan(Byte value) {
+        public Criteria andTrdTypeGreaterThan(Integer value) {
             addCriterion("trd_type >", value, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeGreaterThanOrEqualTo(Byte value) {
+        public Criteria andTrdTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("trd_type >=", value, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeLessThan(Byte value) {
+        public Criteria andTrdTypeLessThan(Integer value) {
             addCriterion("trd_type <", value, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeLessThanOrEqualTo(Byte value) {
+        public Criteria andTrdTypeLessThanOrEqualTo(Integer value) {
             addCriterion("trd_type <=", value, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeIn(List<Byte> values) {
+        public Criteria andTrdTypeIn(List<Integer> values) {
             addCriterion("trd_type in", values, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeNotIn(List<Byte> values) {
+        public Criteria andTrdTypeNotIn(List<Integer> values) {
             addCriterion("trd_type not in", values, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeBetween(Byte value1, Byte value2) {
+        public Criteria andTrdTypeBetween(Integer value1, Integer value2) {
             addCriterion("trd_type between", value1, value2, "trdType");
             return (Criteria) this;
         }
 
-        public Criteria andTrdTypeNotBetween(Byte value1, Byte value2) {
+        public Criteria andTrdTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("trd_type not between", value1, value2, "trdType");
             return (Criteria) this;
         }

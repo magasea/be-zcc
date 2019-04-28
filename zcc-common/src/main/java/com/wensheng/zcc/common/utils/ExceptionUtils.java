@@ -48,6 +48,9 @@ public class ExceptionUtils {
     MISSING_COMPANYNAME(1024, "Missing Company Name", "缺少公司名称"),
     NOT_AUTHORIZED_FORTHISTASK(1025, "not authorized for this task", "用户的角色不允许做这个操作"),
     CANNOT_DEL(1026, "cannot del ", "该资源不能被删除"),
+    INVALID_ENUM(1027, "Invalid Enum", "枚举值不正确"),
+    INVALID_REGION_NAME(1028, "Invalid Region Name", "非法的地域名称"),
+    INVALID_PHONE(1029, "Invalid PhoneNum", "非法的电话号码"),
     ;
     int code;
     String name;

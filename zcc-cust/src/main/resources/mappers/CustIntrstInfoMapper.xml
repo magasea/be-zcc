@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="cust_id" jdbcType="BIGINT" property="custId" />
-    <result column="cust_type" jdbcType="TINYINT" property="custType" />
+    <result column="cust_type" jdbcType="INTEGER" property="custType" />
     <result column="intrst_city" jdbcType="CHAR" property="intrstCity" />
     <result column="intrst_type" jdbcType="INTEGER" property="intrstType" />
     <result column="invest_scale" jdbcType="INTEGER" property="investScale" />
@@ -107,7 +107,7 @@
     </selectKey>
     insert into CUST_INTRST_INFO (cust_id, cust_type, intrst_city, 
       intrst_type, invest_scale)
-    values (#{custId,jdbcType=BIGINT}, #{custType,jdbcType=TINYINT}, #{intrstCity,jdbcType=CHAR}, 
+    values (#{custId,jdbcType=BIGINT}, #{custType,jdbcType=INTEGER}, #{intrstCity,jdbcType=CHAR}, 
       #{intrstType,jdbcType=INTEGER}, #{investScale,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfo">
@@ -137,7 +137,7 @@
         #{custId,jdbcType=BIGINT},
       </if>
       <if test="custType != null">
-        #{custType,jdbcType=TINYINT},
+        #{custType,jdbcType=INTEGER},
       </if>
       <if test="intrstCity != null">
         #{intrstCity,jdbcType=CHAR},
@@ -166,7 +166,7 @@
         cust_id = #{record.custId,jdbcType=BIGINT},
       </if>
       <if test="record.custType != null">
-        cust_type = #{record.custType,jdbcType=TINYINT},
+        cust_type = #{record.custType,jdbcType=INTEGER},
       </if>
       <if test="record.intrstCity != null">
         intrst_city = #{record.intrstCity,jdbcType=CHAR},
@@ -186,7 +186,7 @@
     update CUST_INTRST_INFO
     set id = #{record.id,jdbcType=BIGINT},
       cust_id = #{record.custId,jdbcType=BIGINT},
-      cust_type = #{record.custType,jdbcType=TINYINT},
+      cust_type = #{record.custType,jdbcType=INTEGER},
       intrst_city = #{record.intrstCity,jdbcType=CHAR},
       intrst_type = #{record.intrstType,jdbcType=INTEGER},
       invest_scale = #{record.investScale,jdbcType=INTEGER}
@@ -201,7 +201,7 @@
         cust_id = #{custId,jdbcType=BIGINT},
       </if>
       <if test="custType != null">
-        cust_type = #{custType,jdbcType=TINYINT},
+        cust_type = #{custType,jdbcType=INTEGER},
       </if>
       <if test="intrstCity != null">
         intrst_city = #{intrstCity,jdbcType=CHAR},
@@ -218,7 +218,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfo">
     update CUST_INTRST_INFO
     set cust_id = #{custId,jdbcType=BIGINT},
-      cust_type = #{custType,jdbcType=TINYINT},
+      cust_type = #{custType,jdbcType=INTEGER},
       intrst_city = #{intrstCity,jdbcType=CHAR},
       intrst_type = #{intrstType,jdbcType=INTEGER},
       invest_scale = #{investScale,jdbcType=INTEGER}

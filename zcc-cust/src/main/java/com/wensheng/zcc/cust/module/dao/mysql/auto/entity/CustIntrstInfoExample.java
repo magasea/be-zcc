@@ -234,52 +234,52 @@ public class CustIntrstInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeEqualTo(Byte value) {
+        public Criteria andCustTypeEqualTo(Integer value) {
             addCriterion("cust_type =", value, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeNotEqualTo(Byte value) {
+        public Criteria andCustTypeNotEqualTo(Integer value) {
             addCriterion("cust_type <>", value, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeGreaterThan(Byte value) {
+        public Criteria andCustTypeGreaterThan(Integer value) {
             addCriterion("cust_type >", value, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeGreaterThanOrEqualTo(Byte value) {
+        public Criteria andCustTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("cust_type >=", value, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeLessThan(Byte value) {
+        public Criteria andCustTypeLessThan(Integer value) {
             addCriterion("cust_type <", value, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeLessThanOrEqualTo(Byte value) {
+        public Criteria andCustTypeLessThanOrEqualTo(Integer value) {
             addCriterion("cust_type <=", value, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeIn(List<Byte> values) {
+        public Criteria andCustTypeIn(List<Integer> values) {
             addCriterion("cust_type in", values, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeNotIn(List<Byte> values) {
+        public Criteria andCustTypeNotIn(List<Integer> values) {
             addCriterion("cust_type not in", values, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeBetween(Byte value1, Byte value2) {
+        public Criteria andCustTypeBetween(Integer value1, Integer value2) {
             addCriterion("cust_type between", value1, value2, "custType");
             return (Criteria) this;
         }
 
-        public Criteria andCustTypeNotBetween(Byte value1, Byte value2) {
+        public Criteria andCustTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("cust_type not between", value1, value2, "custType");
             return (Criteria) this;
         }

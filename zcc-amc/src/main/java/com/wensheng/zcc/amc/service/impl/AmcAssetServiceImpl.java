@@ -515,7 +515,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
                 Update update = new Update();
-                update.addToSet("isRecommanded", isRecomm);
+                update.set("isRecommanded", isRecomm);
         wszccTemplate.findAndModify(query, update, AssetAdditional.class);
     }
 

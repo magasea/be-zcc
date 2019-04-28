@@ -3,8 +3,8 @@
 <mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="item_type" jdbcType="TINYINT" property="itemType" />
-    <result column="trd_type" jdbcType="TINYINT" property="trdType" />
+    <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="trd_type" jdbcType="INTEGER" property="trdType" />
     <result column="info_title" jdbcType="VARCHAR" property="infoTitle" />
     <result column="pack_count" jdbcType="INTEGER" property="packCount" />
     <result column="info_id" jdbcType="CHAR" property="infoId" />
@@ -134,7 +134,7 @@
       trd_status, trd_date, info_time, 
       notes, buyer_type, buyer_id, 
       seller_type, seller_id)
-    values (#{itemType,jdbcType=TINYINT}, #{trdType,jdbcType=TINYINT}, #{infoTitle,jdbcType=VARCHAR}, 
+    values (#{itemType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, 
       #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
       #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
       #{trdCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
@@ -221,10 +221,10 @@
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="itemType != null">
-        #{itemType,jdbcType=TINYINT},
+        #{itemType,jdbcType=INTEGER},
       </if>
       <if test="trdType != null">
-        #{trdType,jdbcType=TINYINT},
+        #{trdType,jdbcType=INTEGER},
       </if>
       <if test="infoTitle != null">
         #{infoTitle,jdbcType=VARCHAR},
@@ -304,10 +304,10 @@
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.itemType != null">
-        item_type = #{record.itemType,jdbcType=TINYINT},
+        item_type = #{record.itemType,jdbcType=INTEGER},
       </if>
       <if test="record.trdType != null">
-        trd_type = #{record.trdType,jdbcType=TINYINT},
+        trd_type = #{record.trdType,jdbcType=INTEGER},
       </if>
       <if test="record.infoTitle != null">
         info_title = #{record.infoTitle,jdbcType=VARCHAR},
@@ -380,8 +380,8 @@
   <update id="updateByExample" parameterType="map">
     update CUST_TRD_INFO
     set id = #{record.id,jdbcType=BIGINT},
-      item_type = #{record.itemType,jdbcType=TINYINT},
-      trd_type = #{record.trdType,jdbcType=TINYINT},
+      item_type = #{record.itemType,jdbcType=INTEGER},
+      trd_type = #{record.trdType,jdbcType=INTEGER},
       info_title = #{record.infoTitle,jdbcType=VARCHAR},
       pack_count = #{record.packCount,jdbcType=INTEGER},
       info_id = #{record.infoId,jdbcType=CHAR},
@@ -411,10 +411,10 @@
     update CUST_TRD_INFO
     <set>
       <if test="itemType != null">
-        item_type = #{itemType,jdbcType=TINYINT},
+        item_type = #{itemType,jdbcType=INTEGER},
       </if>
       <if test="trdType != null">
-        trd_type = #{trdType,jdbcType=TINYINT},
+        trd_type = #{trdType,jdbcType=INTEGER},
       </if>
       <if test="infoTitle != null">
         info_title = #{infoTitle,jdbcType=VARCHAR},
@@ -484,8 +484,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     update CUST_TRD_INFO
-    set item_type = #{itemType,jdbcType=TINYINT},
-      trd_type = #{trdType,jdbcType=TINYINT},
+    set item_type = #{itemType,jdbcType=INTEGER},
+      trd_type = #{trdType,jdbcType=INTEGER},
       info_title = #{infoTitle,jdbcType=VARCHAR},
       pack_count = #{packCount,jdbcType=INTEGER},
       info_id = #{infoId,jdbcType=CHAR},

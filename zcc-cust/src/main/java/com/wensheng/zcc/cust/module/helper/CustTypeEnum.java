@@ -12,6 +12,7 @@ public enum CustTypeEnum {
   NO_INFO(-1, "不确定"),
   PERSON(1, "个人"),
   COMPANY(2, "公司"),
+  BANK(3, "银行"),
   ;
 
   private int id;

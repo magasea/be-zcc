@@ -3,7 +3,9 @@ package com.wensheng.zcc.cust.controller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.service.CustInfoService;
+import com.wensheng.zcc.cust.service.ScriptSysService;
 import java.util.List;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -23,6 +25,9 @@ public class CustInfoController {
 
   @Autowired
   CustInfoService custInfoService;
+
+  @Autowired
+  ScriptSysService scriptSysService;
 
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
@@ -52,6 +57,12 @@ public class CustInfoController {
   public CustTrdPerson addPerson(@RequestBody CustTrdPerson custTrdPerson){
 
      return custInfoService.addTrdPerson(custTrdPerson);
+  }
+
+  @RequestMapping(value = "/doSynchronization", method = RequestMethod.GET)
+  @ResponseBody
+  public void doSynchronization() throws Exception {
+    scriptSysService.doSynchWithScriptOn();
   }
 
 

@@ -5,7 +5,7 @@ public class CustIntrstInfo {
 
     private Long custId;
 
-    private Byte custType;
+    private Integer custType;
 
     private String intrstCity;
 
@@ -29,11 +29,11 @@ public class CustIntrstInfo {
         this.custId = custId;
     }
 
-    public Byte getCustType() {
+    public Integer getCustType() {
         return custType;
     }
 
-    public void setCustType(Byte custType) {
+    public void setCustType(Integer custType) {
         this.custType = custType;
     }
 

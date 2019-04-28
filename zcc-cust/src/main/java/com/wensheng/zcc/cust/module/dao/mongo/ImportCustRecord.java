@@ -7,9 +7,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import javax.persistence.Id;
 import javax.persistence.Index;
 
-@Document( collection = "IMPORT_CONSUMER_LOG")
+@Document( collection = "IMPORT_CUST_LOG")
 @Data
-public class ImportRecord {
+public class ImportCustRecord {
 
     @Id
     String id;

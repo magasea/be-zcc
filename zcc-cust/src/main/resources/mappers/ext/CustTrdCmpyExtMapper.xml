@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper">
+  <cache/>
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt">
+    <id column="id" jdbcType="BIGINT" property="id"  />
+    <association property="custTrdCmpy"
+      resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper.BaseResultMap"/>
+    <collection property="custTrdInfoList" columnPrefix="cti_"
+      resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap"/>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+
+  <sql id="Base_Column_List">
+    ${prefix}id as id,
+    ${prefix}cmpy_name as cmpy_name,
+    ${prefix}uni_social_code as uni_social_code,
+    ${prefix}legal_reptive as legal_reptive,
+    ${prefix}cmpy_phone as cmpy_phone,
+    ${prefix}cmpy_addr as cmpy_addr,
+    ${prefix}annu_rept_phone as annu_rept_phone,
+    ${prefix}annu_rept_addr as annu_rept_addr
+  </sql>
+  <sql id="cust_trd_info_list">
+    ${prefix}id as ${alias}id,
+    ${prefix}item_type as ${alias}item_type,
+    ${prefix}trd_type as ${alias}trd_type,
+    ${prefix}info_title as ${alias}info_title,
+    ${prefix}pack_count as ${alias}pack_count,
+    ${prefix}info_id as ${alias}info_id,
+    ${prefix}info_source as ${alias}info_source,
+    ${prefix}info_website as ${alias}info_website,
+    ${prefix}info_url as ${alias}info_url,
+    ${prefix}trd_province as ${alias}trd_province,
+    ${prefix}trd_city as ${alias}trd_city,
+    ${prefix}trd_amount_orig as ${alias}trd_amount_orig,
+    ${prefix}trd_amount as ${alias}trd_amount,
+    ${prefix}base_amount as ${alias}base_amount,
+    ${prefix}interest_amount as ${alias}interest_amount,
+    ${prefix}total_amount as ${alias}total_amount,
+    ${prefix}trd_status as ${alias}trd_status,
+    ${prefix}trd_date as ${alias}trd_date,
+    ${prefix}info_time as ${alias}info_time,
+    ${prefix}notes as ${alias}notes,
+    ${prefix}buyer_type as ${alias}buyer_type,
+    ${prefix}buyer_id as ${alias}buyer_id,
+    ${prefix}seller_type as ${alias}seller_type,
+    ${prefix}seller_id as ${alias}seller_id
+  </sql>
+
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_TRD_CMPY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+
+  <sql id = "CUST_TRD_CMPY">
+    ${prefix}TABLE
+  </sql>
+  <sql id="CUST_TRD_INFO">
+    ${prefix}TABLE
+  </sql>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List">
+      <property name="prefix" value="ctc."/>
+    </include>,
+    <include refid="cust_trd_info_list" >
+      <property name="prefix" value="cti."/>
+      <property name="alias" value="cti_"/>
+    </include>
+    from CUST_TRD_CMPY ctc
+    left join CUST_TRD_INFO cti on cti.buyer_id = ctc.id
+    and cti.buyer_type = 2
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

@@ -1002,52 +1002,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountEqualTo(Integer value) {
+        public Criteria andBaseAmountEqualTo(Long value) {
             addCriterion("base_amount =", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotEqualTo(Integer value) {
+        public Criteria andBaseAmountNotEqualTo(Long value) {
             addCriterion("base_amount <>", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThan(Integer value) {
+        public Criteria andBaseAmountGreaterThan(Long value) {
             addCriterion("base_amount >", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThanOrEqualTo(Integer value) {
+        public Criteria andBaseAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("base_amount >=", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThan(Integer value) {
+        public Criteria andBaseAmountLessThan(Long value) {
             addCriterion("base_amount <", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThanOrEqualTo(Integer value) {
+        public Criteria andBaseAmountLessThanOrEqualTo(Long value) {
             addCriterion("base_amount <=", value, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountIn(List<Integer> values) {
+        public Criteria andBaseAmountIn(List<Long> values) {
             addCriterion("base_amount in", values, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotIn(List<Integer> values) {
+        public Criteria andBaseAmountNotIn(List<Long> values) {
             addCriterion("base_amount not in", values, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountBetween(Integer value1, Integer value2) {
+        public Criteria andBaseAmountBetween(Long value1, Long value2) {
             addCriterion("base_amount between", value1, value2, "baseAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotBetween(Integer value1, Integer value2) {
+        public Criteria andBaseAmountNotBetween(Long value1, Long value2) {
             addCriterion("base_amount not between", value1, value2, "baseAmount");
             return (Criteria) this;
         }
@@ -1062,52 +1062,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountEqualTo(Integer value) {
+        public Criteria andInterestAmountEqualTo(Long value) {
             addCriterion("interest_amount =", value, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountNotEqualTo(Integer value) {
+        public Criteria andInterestAmountNotEqualTo(Long value) {
             addCriterion("interest_amount <>", value, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountGreaterThan(Integer value) {
+        public Criteria andInterestAmountGreaterThan(Long value) {
             addCriterion("interest_amount >", value, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountGreaterThanOrEqualTo(Integer value) {
+        public Criteria andInterestAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("interest_amount >=", value, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountLessThan(Integer value) {
+        public Criteria andInterestAmountLessThan(Long value) {
             addCriterion("interest_amount <", value, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountLessThanOrEqualTo(Integer value) {
+        public Criteria andInterestAmountLessThanOrEqualTo(Long value) {
             addCriterion("interest_amount <=", value, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountIn(List<Integer> values) {
+        public Criteria andInterestAmountIn(List<Long> values) {
             addCriterion("interest_amount in", values, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountNotIn(List<Integer> values) {
+        public Criteria andInterestAmountNotIn(List<Long> values) {
             addCriterion("interest_amount not in", values, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountBetween(Integer value1, Integer value2) {
+        public Criteria andInterestAmountBetween(Long value1, Long value2) {
             addCriterion("interest_amount between", value1, value2, "interestAmount");
             return (Criteria) this;
         }
 
-        public Criteria andInterestAmountNotBetween(Integer value1, Integer value2) {
+        public Criteria andInterestAmountNotBetween(Long value1, Long value2) {
             addCriterion("interest_amount not between", value1, value2, "interestAmount");
             return (Criteria) this;
         }
@@ -1122,52 +1122,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountEqualTo(Integer value) {
+        public Criteria andTotalAmountEqualTo(Long value) {
             addCriterion("total_amount =", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotEqualTo(Integer value) {
+        public Criteria andTotalAmountNotEqualTo(Long value) {
             addCriterion("total_amount <>", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountGreaterThan(Integer value) {
+        public Criteria andTotalAmountGreaterThan(Long value) {
             addCriterion("total_amount >", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountGreaterThanOrEqualTo(Integer value) {
+        public Criteria andTotalAmountGreaterThanOrEqualTo(Long value) {
             addCriterion("total_amount >=", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLessThan(Integer value) {
+        public Criteria andTotalAmountLessThan(Long value) {
             addCriterion("total_amount <", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountLessThanOrEqualTo(Integer value) {
+        public Criteria andTotalAmountLessThanOrEqualTo(Long value) {
             addCriterion("total_amount <=", value, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountIn(List<Integer> values) {
+        public Criteria andTotalAmountIn(List<Long> values) {
             addCriterion("total_amount in", values, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotIn(List<Integer> values) {
+        public Criteria andTotalAmountNotIn(List<Long> values) {
             addCriterion("total_amount not in", values, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountBetween(Integer value1, Integer value2) {
+        public Criteria andTotalAmountBetween(Long value1, Long value2) {
             addCriterion("total_amount between", value1, value2, "totalAmount");
             return (Criteria) this;
         }
 
-        public Criteria andTotalAmountNotBetween(Integer value1, Integer value2) {
+        public Criteria andTotalAmountNotBetween(Long value1, Long value2) {
             addCriterion("total_amount not between", value1, value2, "totalAmount");
             return (Criteria) this;
         }
@@ -1552,52 +1552,52 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeEqualTo(Byte value) {
+        public Criteria andSellerTypeEqualTo(Integer value) {
             addCriterion("seller_type =", value, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeNotEqualTo(Byte value) {
+        public Criteria andSellerTypeNotEqualTo(Integer value) {
             addCriterion("seller_type <>", value, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeGreaterThan(Byte value) {
+        public Criteria andSellerTypeGreaterThan(Integer value) {
             addCriterion("seller_type >", value, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeGreaterThanOrEqualTo(Byte value) {
+        public Criteria andSellerTypeGreaterThanOrEqualTo(Integer value) {
             addCriterion("seller_type >=", value, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeLessThan(Byte value) {
+        public Criteria andSellerTypeLessThan(Integer value) {
             addCriterion("seller_type <", value, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeLessThanOrEqualTo(Byte value) {
+        public Criteria andSellerTypeLessThanOrEqualTo(Integer value) {
             addCriterion("seller_type <=", value, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeIn(List<Byte> values) {
+        public Criteria andSellerTypeIn(List<Integer> values) {
             addCriterion("seller_type in", values, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeNotIn(List<Byte> values) {
+        public Criteria andSellerTypeNotIn(List<Integer> values) {
             addCriterion("seller_type not in", values, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeBetween(Byte value1, Byte value2) {
+        public Criteria andSellerTypeBetween(Integer value1, Integer value2) {
             addCriterion("seller_type between", value1, value2, "sellerType");
             return (Criteria) this;
         }
 
-        public Criteria andSellerTypeNotBetween(Byte value1, Byte value2) {
+        public Criteria andSellerTypeNotBetween(Integer value1, Integer value2) {
             addCriterion("seller_type not between", value1, value2, "sellerType");
             return (Criteria) this;
         }

@@ -29,7 +29,7 @@
 
     <mappers>
         <!--<mapper resource="mappers/*.xml" />-->
-        <!--<mapper resource="mappers/extends/*.xml" />-->
+        <!--<mapper resource="mappers/ext/*.xml" />-->
         <package name="com.wensheng.zcc.sso.dao.mysql.mapper" />
 
     </mappers>

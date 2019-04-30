@@ -1,8 +1,9 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class CustTrdInfo {
+public class CustTrdInfo implements Serializable {
     private Long id;
 
     private Integer itemType;
@@ -29,11 +30,11 @@ public class CustTrdInfo {
 
     private Long trdAmount;
 
-    private Integer baseAmount;
+    private Long baseAmount;
 
-    private Integer interestAmount;
+    private Long interestAmount;
 
-    private Integer totalAmount;
+    private Long totalAmount;
 
     private Integer trdStatus;
 
@@ -47,7 +48,7 @@ public class CustTrdInfo {
 
     private Long buyerId;
 
-    private Byte sellerType;
+    private Integer sellerType;
 
     private Long sellerId;
 
@@ -155,27 +156,27 @@ public class CustTrdInfo {
         this.trdAmount = trdAmount;
     }
 
-    public Integer getBaseAmount() {
+    public Long getBaseAmount() {
         return baseAmount;
     }
 
-    public void setBaseAmount(Integer baseAmount) {
+    public void setBaseAmount(Long baseAmount) {
         this.baseAmount = baseAmount;
     }
 
-    public Integer getInterestAmount() {
+    public Long getInterestAmount() {
         return interestAmount;
     }
 
-    public void setInterestAmount(Integer interestAmount) {
+    public void setInterestAmount(Long interestAmount) {
         this.interestAmount = interestAmount;
     }
 
-    public Integer getTotalAmount() {
+    public Long getTotalAmount() {
         return totalAmount;
     }
 
-    public void setTotalAmount(Integer totalAmount) {
+    public void setTotalAmount(Long totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -227,11 +228,11 @@ public class CustTrdInfo {
         this.buyerId = buyerId;
     }
 
-    public Byte getSellerType() {
+    public Integer getSellerType() {
         return sellerType;
     }
 
-    public void setSellerType(Byte sellerType) {
+    public void setSellerType(Integer sellerType) {
         this.sellerType = sellerType;
     }
 

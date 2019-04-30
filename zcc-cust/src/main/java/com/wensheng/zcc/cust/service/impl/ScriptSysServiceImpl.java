@@ -5,8 +5,11 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustIntrstInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.ImportCustRecord;
+import com.wensheng.zcc.cust.module.dao.mongo.ImportTrdInfoRecord;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
@@ -14,17 +17,18 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
-import com.wensheng.zcc.cust.module.helper.sync.BuyerTypeSyncEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
 import com.wensheng.zcc.cust.module.helper.sync.TrdInfoSyncTypeEnum;
 import com.wensheng.zcc.cust.module.sync.CustInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.ScriptSysService;
-import com.wensheng.zcc.cust.utils.sync.SyncEnumUtils;
 import com.wensheng.zcc.cust.utils.sync.SyncUtils;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -65,11 +69,19 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     @Autowired
     CustIntrstInfoMapper custIntrstInfoMapper;
 
+
+    @Autowired
+  CustTrdInfoMapper custTrdInfoMapper;
+
+    @Autowired
+  CustTrdSellerMapper custTrdSellerMapper;
+
     private Gson gson = new Gson();
 
     private final String getTrdInfoByBuyerType = "http://cl.wenshengamc.com/debts/getAll?type=%d&timeStart=&timeEnd=&seller=&page=%d&area=";
     private final String getDebtCust = "http://10.20.100.228:8085/debtCustomers/getJson?page=%d&pageSize=10";
-    private final String getTrdInfoDetailByCust = "http://10.20.200.228:8085/debtCustomerDebts/getJson?customerId=%s&page=%d&pageSize=%d";
+    private final String getTrdInfoDetailByCust = "http://10.20.100.228:8085/debtCustomerDebts/getJson?customerId"
+        + "=%s&page=%d&pageSize=20";
 
     @PostConstruct
     void init(){
@@ -107,7 +119,164 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
     }
 
-    private void ProcessCustInfoData(PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp)
+  @Override
+  public void doSynchWithCusts() {
+    synchTrdInfoForCmpyCust();
+    synchTrdInfoForPersonCust();
+  }
+
+  private void synchTrdInfoForPersonCust() {
+      Query query;
+      List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(null);
+      for(CustTrdPerson custTrdPerson: custTrdPersonList){
+        query = new Query();
+        query.addCriteria(Criteria.where("custId").is(custTrdPerson.getId()).and("type").is(CustTypeEnum.PERSON.getId()));
+        List<ImportCustRecord> importCustRecords = mongoTemplate.find(query, ImportCustRecord.class);
+        if(CollectionUtils.isEmpty(importCustRecords)){
+          log.error("there is no trad info for custId:{}", custTrdPerson.getId());
+        }else if(importCustRecords.size() > 2){
+          log.error("there is multiple origCustId:{} for the custId:{}",importCustRecords.
+              stream().map(item -> item.getOriginId()).collect(Collectors.joining(",")),
+              custTrdPerson.getId()) ;
+        }else{
+          String origCustId = importCustRecords.get(0).getOriginId();
+          synchCustTrd(origCustId, custTrdPerson.getId(), CustTypeEnum.PERSON.getId());
+        }
+        query = null;
+      }
+
+
+  }
+
+  private void synchCustTrd(String origCustId, Long custId, Integer custType) {
+      int pageNum = 1;
+      boolean hasNext = true;
+      while(hasNext){
+        PageWrapperResp<TrdInfoFromSync> pageWrapperResp =  getTrdInfoByCust(origCustId, pageNum);
+        processTradInfo(pageWrapperResp.getList(), custId, custType);
+        if(pageNum > pageWrapperResp.getPages() || CollectionUtils.isEmpty(pageWrapperResp.getList())){
+          hasNext = false;
+          break;
+        }
+        pageNum++;
+      }
+
+  }
+
+  private void processTradInfo(List<TrdInfoFromSync> trdInfoFromSyncs, Long custId, Integer custType) {
+      Query query ;
+    for(TrdInfoFromSync trdInfoOrig: trdInfoFromSyncs){
+      query = new Query();
+      query.addCriteria(Criteria.where("originId").is(trdInfoOrig.getId()).and("origCustId").is(trdInfoOrig.getCustomerId()));
+      List<ImportTrdInfoRecord> importTrdInfoRecords =  mongoTemplate.find(query, ImportTrdInfoRecord.class);
+      if(CollectionUtils.isEmpty(importTrdInfoRecords)){
+        makeNewTrdInfo(trdInfoOrig, custId, custType);
+      }else{
+        CustTrdInfo custTrdInfo = custTrdInfoMapper.selectByPrimaryKey(importTrdInfoRecords.get(0).getTrdId());
+        if(custTrdInfo == null){
+          makeNewTrdInfo(trdInfoOrig, custId, custType);
+        }else{
+          copyTrdFromSync2Local(trdInfoOrig, custTrdInfo);
+        }
+
+      }
+
+    }
+
+  }
+
+  private void copyTrdFromSync2Local(TrdInfoFromSync trdInfoOrig, CustTrdInfo custTrdInfo) {
+      CustTrdInfo custTrdInfoUpdate = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custTrdInfo.getBuyerId(),
+          custTrdInfo.getBuyerType());
+      custTrdInfoUpdate.setId(custTrdInfo.getId());
+      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoUpdate);
+
+  }
+
+  private void makeNewTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType) {
+
+    CustTrdInfo custTrdInfo = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custId,custType);
+
+    custTrdInfoMapper.insertSelective(custTrdInfo);
+    Query query = new Query();
+    query.addCriteria(Criteria.where("originId").is(trdInfoOrig.getId()));
+    List<ImportTrdInfoRecord> importTrdInfoRecords = mongoTemplate.find(query, ImportTrdInfoRecord.class);
+    if(CollectionUtils.isEmpty(importTrdInfoRecords)){
+      Update update = new Update();
+      update.set("custId", custId);
+      update.set("origCustId", trdInfoOrig.getCustomerId());
+      update.set("originId", trdInfoOrig.getId());
+      update.set("trdId", custTrdInfo.getId());
+
+      mongoTemplate.upsert(query, update, ImportTrdInfoRecord.class);
+    }else{
+          ImportTrdInfoRecord importTrdInfoRecord = importTrdInfoRecords.get(0);
+    importTrdInfoRecord.setCustId(custId);
+    importTrdInfoRecord.setOrigCustId(trdInfoOrig.getCustomerId());
+    importTrdInfoRecord.setOriginId(trdInfoOrig.getId());
+    importTrdInfoRecord.setTrdId(custTrdInfo.getId());
+    mongoTemplate.save(importTrdInfoRecord);
+    }
+
+  }
+
+  private CustTrdInfo getTrdInfoFromOrigTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType){
+    CustTrdSellerExample custTrdSellerExample = new CustTrdSellerExample();
+    custTrdSellerExample.createCriteria().andNameEqualTo(trdInfoOrig.getSeller());
+    CustTrdSeller sellerRecord = null;
+    CustTrdInfo custTrdInfo = new CustTrdInfo();
+    custTrdInfo.setBuyerId(custId);
+    custTrdInfo.setBuyerType(custType);
+    List<CustTrdSeller> custTrdSellers = custTrdSellerMapper.selectByExample(custTrdSellerExample);
+    if(CollectionUtils.isEmpty(custTrdSellers) && !StringUtils.isEmpty(trdInfoOrig.getSeller())){
+      CustTrdSeller custTrdSeller = new CustTrdSeller();
+      custTrdSeller.setName(trdInfoOrig.getSeller());
+      custTrdSeller.setType(trdInfoOrig.getSeller().length() > 5? CustTypeEnum.COMPANY.getId(): CustTypeEnum.PERSON.getId());
+      custTrdSellerMapper.insertSelective(custTrdSeller);
+      sellerRecord = custTrdSeller;
+    }else{
+      sellerRecord = custTrdSellers.get(0);
+    }
+
+    custTrdInfo.setSellerId(sellerRecord.getId());
+    custTrdInfo.setTotalAmount(trdInfoOrig.getTrdAmount());
+    custTrdInfo.setBuyerId(custId);
+    custTrdInfo.setBuyerType(custType);
+    custTrdInfo.setInfoId(trdInfoOrig.getId());
+    custTrdInfo.setTrdType(trdInfoOrig.getInvType());
+    custTrdInfo.setInfoTitle(trdInfoOrig.getTitle());
+    if(trdInfoOrig.getTradeTime() != null){
+      custTrdInfo.setInfoTime(new Date(trdInfoOrig.getTradeTime()));
+    }
+    custTrdInfo.setInfoUrl(trdInfoOrig.getUrl());
+    custTrdInfo.setTrdProvince(trdInfoOrig.getTrdProvince());
+    custTrdInfo.setTrdCity(trdInfoOrig.getTrdCity());
+    custTrdInfo.setTrdAmountOrig(trdInfoOrig.getTrdAmountOrig());
+    return custTrdInfo;
+  }
+
+  private void synchTrdInfoForCmpyCust() {
+    Query query;
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(null);
+    for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
+      query = new Query();
+      query.addCriteria(Criteria.where("custId").is(custTrdCmpy.getId()).and("type").is(CustTypeEnum.COMPANY.getId()));
+      List<ImportCustRecord> importCustRecords = mongoTemplate.find(query, ImportCustRecord.class);
+      if(CollectionUtils.isEmpty(importCustRecords)){
+        log.error("there is no trad info for custId:{}", custTrdCmpy.getId());
+      }else if(importCustRecords.size() > 2){
+        log.error("there is multiple origCustId:{} for the custId:{}",importCustRecords.
+                stream().map(item -> item.getOriginId()).collect(Collectors.joining(",")),
+            custTrdCmpy.getId()) ;
+      }else{
+        String origCustId = importCustRecords.get(0).getOriginId();
+        synchCustTrd(origCustId, custTrdCmpy.getId(), CustTypeEnum.COMPANY.getId());
+      }
+      query = null;
+    }
+  }
+
+  private void ProcessCustInfoData(PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp)
         throws Exception {
 
         for(CustInfoFromSync custItem: custInfoFromSyncPageWrapperResp.getList()){
@@ -314,23 +483,23 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     }
 
 
-    private void ProcessTrdInfoData(TrdInfoFromSync trdInfoFromSync) {
-        trdInfoFromSync.getList().stream().forEach(trdItem -> {
-            try {
-                processTrdInfoItem(trdItem);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+//    private void ProcessTrdInfoData(TrdInfoFromSync trdInfoFromSync) {
+//        trdInfoFromSync.getList().stream().forEach(trdItem -> {
+//            try {
+//                processTrdInfoItem(trdItem);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        });
+//
+//    }
 
-    }
-
-    private void processTrdInfoItem(TrdInfoFromSync.TrdItem trdItem) throws Exception {
-        CustTrdInfo custTrdInfo = new CustTrdInfo();
-        custTrdInfo.setBuyerType(SyncEnumUtils.convertTo(BuyerTypeSyncEnum.lookupByDisplayNameUtil(trdItem.getBuyerType())).getId());
-        updateOrModifyBuyer(trdItem.getId());
-
-    }
+//    private void processTrdInfoItem(TrdInfoFromSync.TrdItem trdItem) throws Exception {
+//        CustTrdInfo custTrdInfo = new CustTrdInfo();
+//        custTrdInfo.setBuyerType(SyncEnumUtils.convertTo(BuyerTypeSyncEnum.lookupByDisplayNameUtil(trdItem.getBuyerType())).getId());
+//        updateOrModifyBuyer(trdItem.getId());
+//
+//    }
 
     private void updateOrModifyBuyer(String id) {
     }
@@ -345,9 +514,13 @@ public class ScriptSysServiceImpl implements ScriptSysService {
         return restTemplate.exchange(String.format(getDebtCust, pageNum), HttpMethod.GET, null, new ParameterizedTypeReference<PageWrapperResp<CustInfoFromSync>>() {}).getBody();
     }
 
+  private PageWrapperResp<TrdInfoFromSync> getTrdInfoByCust(String originCustId, int pageNum){
+
+    return restTemplate.exchange(String.format(getTrdInfoDetailByCust, originCustId, pageNum), HttpMethod.GET, null,
+        new ParameterizedTypeReference<PageWrapperResp<TrdInfoFromSync>>() {}).getBody();
+  }
+
     public void cleanUp(){
       mongoTemplate.dropCollection(ImportCustRecord.class);
-
-
     }
 }

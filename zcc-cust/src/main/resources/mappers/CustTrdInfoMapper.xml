@@ -15,16 +15,16 @@
     <result column="trd_city" jdbcType="CHAR" property="trdCity" />
     <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />
     <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />
-    <result column="base_amount" jdbcType="INTEGER" property="baseAmount" />
-    <result column="interest_amount" jdbcType="INTEGER" property="interestAmount" />
-    <result column="total_amount" jdbcType="INTEGER" property="totalAmount" />
+    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
+    <result column="interest_amount" jdbcType="BIGINT" property="interestAmount" />
+    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
     <result column="info_time" jdbcType="TIMESTAMP" property="infoTime" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
     <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
-    <result column="seller_type" jdbcType="TINYINT" property="sellerType" />
+    <result column="seller_type" jdbcType="INTEGER" property="sellerType" />
     <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -138,10 +138,10 @@
       #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
       #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
       #{trdCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
-      #{baseAmount,jdbcType=INTEGER}, #{interestAmount,jdbcType=INTEGER}, #{totalAmount,jdbcType=INTEGER}, 
+      #{baseAmount,jdbcType=BIGINT}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
       #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{infoTime,jdbcType=TIMESTAMP}, 
       #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
-      #{sellerType,jdbcType=TINYINT}, #{sellerId,jdbcType=BIGINT})
+      #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -257,13 +257,13 @@
         #{trdAmount,jdbcType=BIGINT},
       </if>
       <if test="baseAmount != null">
-        #{baseAmount,jdbcType=INTEGER},
+        #{baseAmount,jdbcType=BIGINT},
       </if>
       <if test="interestAmount != null">
-        #{interestAmount,jdbcType=INTEGER},
+        #{interestAmount,jdbcType=BIGINT},
       </if>
       <if test="totalAmount != null">
-        #{totalAmount,jdbcType=INTEGER},
+        #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="trdStatus != null">
         #{trdStatus,jdbcType=INTEGER},
@@ -284,7 +284,7 @@
         #{buyerId,jdbcType=BIGINT},
       </if>
       <if test="sellerType != null">
-        #{sellerType,jdbcType=TINYINT},
+        #{sellerType,jdbcType=INTEGER},
       </if>
       <if test="sellerId != null">
         #{sellerId,jdbcType=BIGINT},
@@ -340,13 +340,13 @@
         trd_amount = #{record.trdAmount,jdbcType=BIGINT},
       </if>
       <if test="record.baseAmount != null">
-        base_amount = #{record.baseAmount,jdbcType=INTEGER},
+        base_amount = #{record.baseAmount,jdbcType=BIGINT},
       </if>
       <if test="record.interestAmount != null">
-        interest_amount = #{record.interestAmount,jdbcType=INTEGER},
+        interest_amount = #{record.interestAmount,jdbcType=BIGINT},
       </if>
       <if test="record.totalAmount != null">
-        total_amount = #{record.totalAmount,jdbcType=INTEGER},
+        total_amount = #{record.totalAmount,jdbcType=BIGINT},
       </if>
       <if test="record.trdStatus != null">
         trd_status = #{record.trdStatus,jdbcType=INTEGER},
@@ -367,7 +367,7 @@
         buyer_id = #{record.buyerId,jdbcType=BIGINT},
       </if>
       <if test="record.sellerType != null">
-        seller_type = #{record.sellerType,jdbcType=TINYINT},
+        seller_type = #{record.sellerType,jdbcType=INTEGER},
       </if>
       <if test="record.sellerId != null">
         seller_id = #{record.sellerId,jdbcType=BIGINT},
@@ -392,16 +392,16 @@
       trd_city = #{record.trdCity,jdbcType=CHAR},
       trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{record.trdAmount,jdbcType=BIGINT},
-      base_amount = #{record.baseAmount,jdbcType=INTEGER},
-      interest_amount = #{record.interestAmount,jdbcType=INTEGER},
-      total_amount = #{record.totalAmount,jdbcType=INTEGER},
+      base_amount = #{record.baseAmount,jdbcType=BIGINT},
+      interest_amount = #{record.interestAmount,jdbcType=BIGINT},
+      total_amount = #{record.totalAmount,jdbcType=BIGINT},
       trd_status = #{record.trdStatus,jdbcType=INTEGER},
       trd_date = #{record.trdDate,jdbcType=DATE},
       info_time = #{record.infoTime,jdbcType=TIMESTAMP},
       notes = #{record.notes,jdbcType=VARCHAR},
       buyer_type = #{record.buyerType,jdbcType=INTEGER},
       buyer_id = #{record.buyerId,jdbcType=BIGINT},
-      seller_type = #{record.sellerType,jdbcType=TINYINT},
+      seller_type = #{record.sellerType,jdbcType=INTEGER},
       seller_id = #{record.sellerId,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -447,13 +447,13 @@
         trd_amount = #{trdAmount,jdbcType=BIGINT},
       </if>
       <if test="baseAmount != null">
-        base_amount = #{baseAmount,jdbcType=INTEGER},
+        base_amount = #{baseAmount,jdbcType=BIGINT},
       </if>
       <if test="interestAmount != null">
-        interest_amount = #{interestAmount,jdbcType=INTEGER},
+        interest_amount = #{interestAmount,jdbcType=BIGINT},
       </if>
       <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=INTEGER},
+        total_amount = #{totalAmount,jdbcType=BIGINT},
       </if>
       <if test="trdStatus != null">
         trd_status = #{trdStatus,jdbcType=INTEGER},
@@ -474,7 +474,7 @@
         buyer_id = #{buyerId,jdbcType=BIGINT},
       </if>
       <if test="sellerType != null">
-        seller_type = #{sellerType,jdbcType=TINYINT},
+        seller_type = #{sellerType,jdbcType=INTEGER},
       </if>
       <if test="sellerId != null">
         seller_id = #{sellerId,jdbcType=BIGINT},
@@ -496,16 +496,16 @@
       trd_city = #{trdCity,jdbcType=CHAR},
       trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{trdAmount,jdbcType=BIGINT},
-      base_amount = #{baseAmount,jdbcType=INTEGER},
-      interest_amount = #{interestAmount,jdbcType=INTEGER},
-      total_amount = #{totalAmount,jdbcType=INTEGER},
+      base_amount = #{baseAmount,jdbcType=BIGINT},
+      interest_amount = #{interestAmount,jdbcType=BIGINT},
+      total_amount = #{totalAmount,jdbcType=BIGINT},
       trd_status = #{trdStatus,jdbcType=INTEGER},
       trd_date = #{trdDate,jdbcType=DATE},
       info_time = #{infoTime,jdbcType=TIMESTAMP},
       notes = #{notes,jdbcType=VARCHAR},
       buyer_type = #{buyerType,jdbcType=INTEGER},
       buyer_id = #{buyerId,jdbcType=BIGINT},
-      seller_type = #{sellerType,jdbcType=TINYINT},
+      seller_type = #{sellerType,jdbcType=INTEGER},
       seller_id = #{sellerId,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>

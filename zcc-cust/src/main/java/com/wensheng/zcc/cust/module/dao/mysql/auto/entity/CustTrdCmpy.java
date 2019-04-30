@@ -1,6 +1,8 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
-public class CustTrdCmpy {
+import java.io.Serializable;
+
+public class CustTrdCmpy implements Serializable {
     private Long id;
 
     private String cmpyName;

@@ -68,6 +68,10 @@ public class SQLUtils {
           StringBuilder sb = new StringBuilder().append("%").append(item.getValue()).append("%");
           criteria.andTitleLike(sb.toString());
         }
+
+        if(item.getKey().equalsIgnoreCase(QueryParamEnum.Recommand.name())){
+          criteria.andIsRecommandedIn((List) item.getValue());
+        }
       }
     }
     if(needDefaultPublishState){
@@ -111,7 +115,7 @@ public class SQLUtils {
       queryParamMap.put(QueryParamEnum.Title.name(), queryParam.getTitle());
     }
 
-    if (!StringUtils.isEmpty(queryParam.getRecommand())) {
+    if (!CollectionUtils.isEmpty(queryParam.getRecommand())) {
       queryParamMap.put(QueryParamEnum.Recommand.name(), queryParam.getRecommand());
     }
 

@@ -1,21 +1,15 @@
 package com.wensheng.zcc.amc.controller;
 
-import com.wensheng.zcc.amc.controller.helper.AmcPage;
-import com.wensheng.zcc.amc.controller.helper.PageInfo;
-import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
-import com.wensheng.zcc.amc.module.dao.mongo.origin.Debtpack;
+import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.PageInfo;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;

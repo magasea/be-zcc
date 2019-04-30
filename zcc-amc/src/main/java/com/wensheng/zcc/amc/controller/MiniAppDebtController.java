@@ -1,7 +1,7 @@
 //package com.wensheng.zcc.amc.controller;
 //
-//import com.wensheng.zcc.amc.controller.helper.PageInfo;
-//import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+//import com.wensheng.zcc.common.params.PageInfo;
+//import com.wensheng.zcc.common.params.PageReqRepHelper;
 //import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 //import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 //import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;

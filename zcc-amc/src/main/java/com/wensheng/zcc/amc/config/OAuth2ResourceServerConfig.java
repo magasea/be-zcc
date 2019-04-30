@@ -21,7 +21,7 @@
 //
 //@Configuration
 //@EnableResourceServer
-//public class OAuth2ResourceServerConfig extends ResourceServerConfigurerAdapter {
+//public class OAuth2ResourceServerConfig ext ResourceServerConfigurerAdapter {
 //
 //    @Override
 //    public void configure(final HttpSecurity http) throws Exception {

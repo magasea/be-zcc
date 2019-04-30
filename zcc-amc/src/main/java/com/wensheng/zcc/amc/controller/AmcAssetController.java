@@ -2,13 +2,12 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
-import com.wensheng.zcc.amc.controller.helper.AmcPage;
-import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
-import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;

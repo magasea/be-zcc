@@ -1,8 +1,8 @@
 package com.wensheng.zcc.amc.controller;
 
-import com.wensheng.zcc.amc.controller.helper.AmcPage;
-import com.wensheng.zcc.amc.controller.helper.PageInfo;
-import com.wensheng.zcc.amc.controller.helper.PageReqRepHelper;
+import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.PageInfo;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetNatureEnum;

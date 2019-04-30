@@ -1,13 +1,8 @@
-package com.wensheng.zcc.amc.controller.helper;
+package com.wensheng.zcc.common.params;
 
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 /**
@@ -32,13 +27,13 @@ public class PageReqRepHelper {
         (pageable.getPage()-1)*pageable.getSize(): 0;
   }
 
-  public static <T> Page<T> getPageRespdep(Long total, List<T> list, PageInfo pageable){
-    PageRequest pageRequest = PageRequest.of(pageable.page(), pageable.getSize());
-
-    PageImpl page = new PageImpl<T>(list, pageRequest, total );
-    return page;
-
-  }
+//  public static <T> Page<T> getPageRespdep(Long total, List<T> list, PageInfo pageable){
+//    PageRequest pageRequest = PageRequest.of(pageable.page(), pageable.getSize());
+//
+//    PageImpl page = new PageImpl<T>(list, pageRequest, total );
+//    return page;
+//
+//  }
 
   public static <T> AmcPage <T> getAmcPage(List<T> queryResults, Long total){
     AmcPage<T> amcPage = new AmcPage<>();

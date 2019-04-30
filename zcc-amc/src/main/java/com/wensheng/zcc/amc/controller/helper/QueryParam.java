@@ -1,10 +1,9 @@
 package com.wensheng.zcc.amc.controller.helper;
 
-import java.util.ArrayList;
+import com.wensheng.zcc.common.aop.SQLInjectionSafe;
+import com.wensheng.zcc.common.params.PageInfo;
 import java.util.List;
-import java.util.stream.Collectors;
 import lombok.Data;
-import org.springframework.util.CollectionUtils;
 
 /**
  * @author chenwei on 1/8/19
@@ -23,7 +22,7 @@ public class QueryParam {
   Integer assetType = -1;
   @SQLInjectionSafe
   String title;
-  Integer recommand = -1;
+  List<Integer> recommand = null;
   Long amcContactorId = -1L;
 
 

@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.controller.helper;
+package com.wensheng.zcc.common.params;
 
 import java.util.List;
 import lombok.Data;

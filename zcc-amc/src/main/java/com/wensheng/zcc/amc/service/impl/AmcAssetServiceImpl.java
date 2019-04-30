@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
@@ -23,9 +24,11 @@ import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -344,10 +347,13 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
         boolean queryRecom = false;
-        Integer recomFilterVal = 0;
-        if(queryParam.containsKey("Recommand") && queryParam.get("Recommand") != null){
+        Set<Integer> recomFilterVal = new HashSet<>();
+        if(queryParam.containsKey(QueryParamEnum.Recommand.name()) && queryParam.get(QueryParamEnum.Recommand.name()) != null){
             try {
-                recomFilterVal = Integer.parseInt(queryParam.get("Recommand").toString());
+                List<Integer> recommands =  ((List)queryParam.get(QueryParamEnum.Recommand.name()));
+                if(!CollectionUtils.isEmpty(recommands)){
+                    recommands.forEach(item -> recomFilterVal.add(item));
+                }
                 queryRecom = true;
             } catch (NumberFormatException e) {
                 queryRecom = false;
@@ -357,7 +363,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
         for(AssetAdditional additional: assetAdditionals){
             if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
-                if(queryRecom && recomFilterVal > -1 && recomFilterVal != additional.getIsRecommanded()){
+                if(queryRecom && !recomFilterVal.contains(additional.getIsRecommanded())){
                     amcAssetVoMap.remove(additional.getAmcAssetId());
                     log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
                 }else{
@@ -578,6 +584,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("AmcContactorId")){
                     criteria.andAmcContactorIdEqualTo((Long)item.getValue());
                 }
+
             }
         }
         return amcAssetExample;

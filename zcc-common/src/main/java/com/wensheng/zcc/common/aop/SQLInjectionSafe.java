@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.controller.helper;
+package com.wensheng.zcc.common.aop;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;

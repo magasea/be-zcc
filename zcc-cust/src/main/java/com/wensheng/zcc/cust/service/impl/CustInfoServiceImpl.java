@@ -1,13 +1,29 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.google.common.collect.Lists;
+import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
+import com.wensheng.zcc.cust.utils.SQLUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.RowBounds;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 /**
@@ -24,6 +40,8 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Autowired
   CustTrdPersonMapper custTrdPersonMapper;
 
+  @Autowired
+  CustTrdCmpyExtMapper custTrdCmpyExtMapper;
 
   @Override
   public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) {
@@ -45,5 +63,72 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdCmpy> getCmpies() {
     return custTrdCmpyMapper.selectByExample(null);
+  }
+
+  @Override
+  public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
+    String orderBy = SQLUtils.getOrderBy(orderByParam);
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.setOrderByClause(orderBy);
+    RowBounds rowBounds = new RowBounds(offset, size);
+
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExampleWithRowbounds(custTrdCmpyExample,
+        rowBounds);
+
+    return convertToVoes(custTrdCmpyTrdExts);
+  }
+
+  @Override
+  public Long getCmpyTradeCount(QueryParam queryParam) {
+    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustTrdExample(queryParam);
+
+    return custTrdCmpyMapper.countByExample(custTrdCmpyExample);
+  }
+
+  @Override
+  public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) {
+    return null;
+  }
+
+  @Override
+  public Long getPersonTradeCount(QueryParam queryParam) {
+    return null;
+  }
+
+  private List<CustTrdInfoVo> convertToVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
+    List<CustTrdInfoVo> custTrdInfoVos = new ArrayList<>();
+    for(CustTrdCmpyTrdExt custTrdCmpyTrdExt: custTrdCmpyTrdExts){
+      CustTrdInfoVo custTrdInfoVo = new CustTrdInfoVo();
+      custTrdInfoVo.setCustId(custTrdCmpyTrdExt.getId());
+      custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr(),
+          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
+      custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone(),
+          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
+      Long totalAmount = 0L;
+      Set<String> cities = new HashSet<>();
+      Map<Integer, Integer> invest2Counts = new HashMap<>();
+      for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
+        totalAmount += custTrdInfo.getTotalAmount();
+        cities.add(custTrdInfo.getTrdCity());
+        if(custTrdInfo.getTrdType() == null){
+          continue;
+        }
+        if(!invest2Counts.containsKey(custTrdInfo.getTrdType())){
+          invest2Counts.put(custTrdInfo.getTrdType(), 1);
+        }else{
+          invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
+        }
+      }
+      custTrdInfoVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoVo.setIntrestCities(new ArrayList<String>(cities));
+      custTrdInfoVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoVos.add(custTrdInfoVo);
+    }
+
+    return custTrdInfoVos;
   }
 }

@@ -1,5 +1,13 @@
 package com.wensheng.zcc.cust.module.dao.mysql.ext;
 
-public class CustTrdPersonTrdExt {
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import java.util.List;
+import lombok.Data;
 
+@Data
+public class CustTrdPersonTrdExt {
+  Long id;
+  CustTrdPerson custTrdPerson;
+  List<CustTrdInfo> custTrdInfoList;
 }

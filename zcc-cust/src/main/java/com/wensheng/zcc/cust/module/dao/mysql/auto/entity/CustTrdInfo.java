@@ -1,9 +1,8 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
-import java.io.Serializable;
 import java.util.Date;
 
-public class CustTrdInfo implements Serializable {
+public class CustTrdInfo {
     private Long id;
 
     private Integer itemType;

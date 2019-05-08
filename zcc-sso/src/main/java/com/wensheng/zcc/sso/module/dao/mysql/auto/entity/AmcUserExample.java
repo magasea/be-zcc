@@ -566,62 +566,62 @@ public class AmcUserExample {
         }
 
         public Criteria andLocationIsNull() {
-            addCriterion("location is null");
+            addCriterion("city is null");
             return (Criteria) this;
         }
 
         public Criteria andLocationIsNotNull() {
-            addCriterion("location is not null");
+            addCriterion("city is not null");
             return (Criteria) this;
         }
 
         public Criteria andLocationEqualTo(Integer value) {
-            addCriterion("location =", value, "location");
+            addCriterion("city =", value, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotEqualTo(Integer value) {
-            addCriterion("location <>", value, "location");
+            addCriterion("city <>", value, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationGreaterThan(Integer value) {
-            addCriterion("location >", value, "location");
+            addCriterion("city >", value, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationGreaterThanOrEqualTo(Integer value) {
-            addCriterion("location >=", value, "location");
+            addCriterion("city >=", value, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationLessThan(Integer value) {
-            addCriterion("location <", value, "location");
+            addCriterion("city <", value, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationLessThanOrEqualTo(Integer value) {
-            addCriterion("location <=", value, "location");
+            addCriterion("city <=", value, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationIn(List<Integer> values) {
-            addCriterion("location in", values, "location");
+            addCriterion("city in", values, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotIn(List<Integer> values) {
-            addCriterion("location not in", values, "location");
+            addCriterion("city not in", values, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationBetween(Integer value1, Integer value2) {
-            addCriterion("location between", value1, value2, "location");
+            addCriterion("city between", value1, value2, "city");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotBetween(Integer value1, Integer value2) {
-            addCriterion("location not between", value1, value2, "location");
+            addCriterion("city not between", value1, value2, "city");
             return (Criteria) this;
         }
 

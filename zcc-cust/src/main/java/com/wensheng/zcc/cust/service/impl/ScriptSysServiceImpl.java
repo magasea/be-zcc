@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustIntrstInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
@@ -27,6 +28,7 @@ import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.utils.sync.SyncUtils;
+import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -120,12 +122,12 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     }
 
   @Override
-  public void doSynchWithCusts() {
+  public void doSynchWithCusts() throws ParseException {
     synchTrdInfoForCmpyCust();
     synchTrdInfoForPersonCust();
   }
 
-  private void synchTrdInfoForPersonCust() {
+  private void synchTrdInfoForPersonCust() throws ParseException {
       Query query;
       List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(null);
       for(CustTrdPerson custTrdPerson: custTrdPersonList){
@@ -148,7 +150,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
   }
 
-  private void synchCustTrd(String origCustId, Long custId, Integer custType) {
+  private void synchCustTrd(String origCustId, Long custId, Integer custType) throws ParseException {
       int pageNum = 1;
       boolean hasNext = true;
       while(hasNext){
@@ -163,7 +165,8 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
   }
 
-  private void processTradInfo(List<TrdInfoFromSync> trdInfoFromSyncs, Long custId, Integer custType) {
+  private void processTradInfo(List<TrdInfoFromSync> trdInfoFromSyncs, Long custId, Integer custType)
+      throws ParseException {
       Query query ;
     for(TrdInfoFromSync trdInfoOrig: trdInfoFromSyncs){
       query = new Query();
@@ -185,7 +188,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
   }
 
-  private void copyTrdFromSync2Local(TrdInfoFromSync trdInfoOrig, CustTrdInfo custTrdInfo) {
+  private void copyTrdFromSync2Local(TrdInfoFromSync trdInfoOrig, CustTrdInfo custTrdInfo) throws ParseException {
       CustTrdInfo custTrdInfoUpdate = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custTrdInfo.getBuyerId(),
           custTrdInfo.getBuyerType());
       custTrdInfoUpdate.setId(custTrdInfo.getId());
@@ -193,7 +196,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
   }
 
-  private void makeNewTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType) {
+  private void makeNewTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType) throws ParseException {
 
     CustTrdInfo custTrdInfo = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custId,custType);
 
@@ -220,7 +223,8 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
   }
 
-  private CustTrdInfo getTrdInfoFromOrigTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType){
+  private CustTrdInfo getTrdInfoFromOrigTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType)
+      throws ParseException {
     CustTrdSellerExample custTrdSellerExample = new CustTrdSellerExample();
     custTrdSellerExample.createCriteria().andNameEqualTo(trdInfoOrig.getSeller());
     CustTrdSeller sellerRecord = null;
@@ -245,8 +249,10 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     custTrdInfo.setInfoId(trdInfoOrig.getId());
     custTrdInfo.setTrdType(trdInfoOrig.getInvType());
     custTrdInfo.setInfoTitle(trdInfoOrig.getTitle());
-    if(trdInfoOrig.getTradeTime() != null){
+    if(trdInfoOrig.getTradeTime() != null && !trdInfoOrig.getTradeTime().equals("null")){
       custTrdInfo.setInfoTime(new Date(trdInfoOrig.getTradeTime()));
+    }else{
+      custTrdInfo.setInfoTime(AmcDateUtils.getDateFromStr("1900-01-01 00:00:00"));
     }
     custTrdInfo.setInfoUrl(trdInfoOrig.getUrl());
     custTrdInfo.setTrdProvince(trdInfoOrig.getTrdProvince());
@@ -255,7 +261,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     return custTrdInfo;
   }
 
-  private void synchTrdInfoForCmpyCust() {
+  private void synchTrdInfoForCmpyCust() throws ParseException {
     Query query;
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(null);
     for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
@@ -392,6 +398,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
       }
         custTrdPerson.setCity(getCodeByCityCode(custItem.getCitys()));
         custTrdPerson.setEmail(custItem.getEmail());
+        custTrdPerson.setName(custItem.getName());
     }
 
   private <T> void makeRelationWithCity(T custItem, String citys) throws Exception {

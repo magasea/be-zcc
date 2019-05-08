@@ -31,4 +31,8 @@ public interface CustInfoService {
       throws Exception;
 
   Long getPersonTradeCount(QueryParam queryParam);
+
+  CustTrdCmpy getCompany(Long companyId);
+
+  CustTrdPerson getPerson(Long personId);
 }

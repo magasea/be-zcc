@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.service.impl;
 import com.deliveredtechnologies.rulebook.FactMap;
 import com.deliveredtechnologies.rulebook.NameValueReferableMap;
 import com.deliveredtechnologies.rulebook.model.RuleBook;
+import com.deliveredtechnologies.rulebook.model.runner.RuleBookRunner;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.service.ZccRulesService;
@@ -27,6 +28,8 @@ public class ZccRulesServiceImpl implements ZccRulesService {
     NameValueReferableMap facts = new FactMap();
     facts.setValue("editAction", action);
     facts.setValue("currentStatus", status);
+    ruleBook4ZccEdit = new RuleBookRunner("com.wensheng.zcc.amc.rules.zccedit");
+//    ruleBook4ZccEdit.run(facts);
     ruleBook4ZccEdit.run(facts);
     ruleBook4ZccEdit.getResult().ifPresent(result->log.info(result.toString()));
     PublishStateEnum retVal = ruleBook4ZccEdit.getResult().get().getValue();

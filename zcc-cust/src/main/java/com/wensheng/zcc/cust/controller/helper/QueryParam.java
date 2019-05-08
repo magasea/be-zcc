@@ -9,7 +9,8 @@ import lombok.Data;
 public class QueryParam {
 
   int custType;
-
+  String city;
+  String name;
   PageInfo pageInfo;
 
 

@@ -1,6 +1,5 @@
 package com.wensheng.zcc.cust.service.impl;
 
-import com.google.common.collect.Lists;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
@@ -11,6 +10,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * @author chenwei on 4/17/19
@@ -75,19 +75,27 @@ public class CustInfoServiceImpl implements CustInfoService {
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
-    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     custTrdCmpyExample.setOrderByClause(orderBy);
+    String filterBy = SQLUtils.getFilterByForCustCmpyTrd(queryParam);
     RowBounds rowBounds = new RowBounds(offset, size);
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = new ArrayList<>();
+    if(!StringUtils.isEmpty(filterBy)){
+      CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+      custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
+      custTrdCmpyExtExample.setFilterByClause(filterBy);
+      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByFilterWithRowbounds(custTrdCmpyExtExample, rowBounds);
+    }else{
+      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExampleWithRowbounds(custTrdCmpyExample, rowBounds);
+    }
 
-    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExampleWithRowbounds(custTrdCmpyExample,
-        rowBounds);
 
     return convertCmpyToVoes(custTrdCmpyTrdExts);
   }
 
   @Override
   public Long getCmpyTradeCount(QueryParam queryParam) {
-    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustTrdExample(queryParam);
+    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
 
     return custTrdCmpyMapper.countByExample(custTrdCmpyExample);
   }
@@ -96,7 +104,7 @@ public class CustInfoServiceImpl implements CustInfoService {
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
-    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
     custTrdPersonExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
 
@@ -111,7 +119,21 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public Long getPersonTradeCount(QueryParam queryParam) {
-    return null;
+    CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
+
+    return custTrdPersonMapper.countByExample(custTrdPersonExample);
+  }
+
+  @Override
+  public CustTrdCmpy getCompany(Long companyId) {
+
+    return custTrdCmpyMapper.selectByPrimaryKey(companyId);
+
+  }
+
+  @Override
+  public CustTrdPerson getPerson(Long personId) {
+    return custTrdPersonMapper.selectByPrimaryKey(personId);
   }
 
   private List<CustTrdInfoVo> convertCmpyToVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
@@ -128,6 +150,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       Long totalAmount = 0L;
       Set<String> cities = new HashSet<>();
       Map<Integer, Integer> invest2Counts = new HashMap<>();
+      Map<String, Integer> city2Counts = new HashMap<>();
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
         totalAmount += custTrdInfo.getTotalAmount();
         cities.add(custTrdInfo.getTrdCity());
@@ -139,9 +162,15 @@ public class CustInfoServiceImpl implements CustInfoService {
         }else{
           invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
         }
+
+        if(!city2Counts.containsKey(custTrdInfo.getTrdCity())){
+          city2Counts.put(custTrdInfo.getTrdCity(), 1);
+        }else {
+          city2Counts.put(custTrdInfo.getTrdCity(), city2Counts.get(custTrdInfo.getTrdCity())+1);
+        }
       }
       custTrdInfoVo.setTrdTotalAmount( totalAmount);
-      custTrdInfoVo.setIntrestCities(new ArrayList<String>(cities));
+      custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);
     }
@@ -163,6 +192,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       Long totalAmount = 0L;
       Set<String> cities = new HashSet<>();
       Map<Integer, Integer> invest2Counts = new HashMap<>();
+      Map<String, Integer> city2Counts = new HashMap<>();
       for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
         totalAmount += custTrdInfo.getTotalAmount();
         cities.add(custTrdInfo.getTrdCity());
@@ -174,9 +204,14 @@ public class CustInfoServiceImpl implements CustInfoService {
         }else{
           invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
         }
+        if(!city2Counts.containsKey(custTrdInfo.getTrdCity())){
+          city2Counts.put(custTrdInfo.getTrdCity(), 1);
+        }else {
+          city2Counts.put(custTrdInfo.getTrdCity(), city2Counts.get(custTrdInfo.getTrdCity())+1);
+        }
       }
       custTrdInfoVo.setTrdTotalAmount( totalAmount);
-      custTrdInfoVo.setIntrestCities(new ArrayList<String>(cities));
+      custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);
     }

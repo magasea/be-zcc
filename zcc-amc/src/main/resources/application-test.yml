@@ -105,5 +105,11 @@ wechat:
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 
 # end::wechatConfig
-
+baidu:
+  logis:
+    appName: amc-lgs
+    appAK: LMZGzYuSmmBvE5IS5EMdEsUGROx7r2G8
+    appId: 16178564
+    appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
+    getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
 env-hint: test

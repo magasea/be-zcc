@@ -53,6 +53,22 @@ public class CustInfoController {
 
   }
 
+  @RequestMapping(value = "/getCmpy", method = RequestMethod.POST)
+  @ResponseBody
+  public CustTrdCmpy getCmpy(@RequestParam Long companyId){
+
+    return custInfoService.getCompany(companyId);
+
+  }
+
+  @RequestMapping(value = "/getPerson", method = RequestMethod.POST)
+  @ResponseBody
+  public CustTrdPerson getPerson(@RequestParam Long personId){
+
+    return custInfoService.getPerson(personId);
+
+  }
+
   @RequestMapping(value = "/getPersons", method = RequestMethod.POST)
   @ResponseBody
   public List<CustTrdPerson> getPersons(){

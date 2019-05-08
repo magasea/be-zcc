@@ -4,6 +4,9 @@ import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.impl.AmcBaiDuLogisQuery;
+import com.wensheng.zcc.common.module.LatLng;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +32,8 @@ public class MiniAppAssetController {
   @Autowired
   AmcOssFileService amcOssFileService;
 
+  @Autowired
+  AmcBaiDuLogisQuery amcBaiDuLogisQuery;
 
   @RequestMapping(value = "/asset/allTitles", method = RequestMethod.POST)
   @ResponseBody
@@ -44,6 +49,12 @@ public class MiniAppAssetController {
 
   }
 
+
+  @RequestMapping(value = "/baidu/geo/", method = RequestMethod.POST)
+  @ResponseBody
+  public LatLng getLatLng(@RequestParam String address) throws UnsupportedEncodingException {
+    return  amcBaiDuLogisQuery.getLogisByAddress(address);
+  }
 
 
 

@@ -2,18 +2,23 @@ package com.wensheng.zcc.cust.utils;
 
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample.Criteria;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author chenwei on 1/7/19
  * @project zcc-backend
  */
 public class SQLUtils {
+
+  private final static String ALIAS_CUST_TRD_INFO = "cti";
+  private final static String ALIAS_CUST_TRD_CMPY = "ctc";
+
 
   public static String getOrderBy(Map<String, Sort.Direction> orderByParam) throws Exception {
     if(CollectionUtils.isEmpty(orderByParam)){
@@ -42,10 +47,32 @@ public class SQLUtils {
   }
 
 
-  public static CustTrdCmpyExample getCustTrdExample(QueryParam queryParam) {
+  public static CustTrdCmpyExample getCustCmpyTrdExample(QueryParam queryParam) {
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
-    Criteria criteria = custTrdCmpyExample.createCriteria();
-    return custTrdCmpyExample;
+    CustTrdCmpyExample.Criteria criteria = custTrdCmpyExample.createCriteria();
 
+    if(!StringUtils.isEmpty(queryParam.getName())){
+        criteria.andCmpyNameLike(String.format("%s%", queryParam.getName()));
+    }
+    return custTrdCmpyExample;
+  }
+  public static String getFilterByForCustCmpyTrd(QueryParam queryParam){
+    StringBuilder sb = new StringBuilder();
+    if(!StringUtils.isEmpty(queryParam.getCity())){
+      sb.append(ALIAS_CUST_TRD_INFO);
+      if(queryParam.getCity().endsWith("000")){
+        sb.append(".").append("trd_city like '").append(queryParam.getCity().substring(0,
+            queryParam.getCity().length() -3)).append("%'");
+      }else{
+        sb.append(".").append("trd_city =" ).append(queryParam.getCity());
+      }
+    }
+    return sb.toString();
+  }
+
+  public static CustTrdPersonExample getCustPersonTrdExample(QueryParam queryParam) {
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    CustTrdPersonExample.Criteria criteria = custTrdPersonExample.createCriteria();
+    return custTrdPersonExample;
   }
 }

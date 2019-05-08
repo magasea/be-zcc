@@ -11,7 +11,7 @@ public class CustTrdInfoVo {
   Map<Integer, Integer> investType2Counts;
   Integer trdCount;
   Long trdTotalAmount;
-  List<String> intrestCities;
+  Map<String, Integer> intrestCities;
   String phone;
   String address;
 }

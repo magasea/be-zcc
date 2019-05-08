@@ -6,10 +6,5 @@ import lombok.Data;
 @Data
 public class CustTrdCmpyExtExample extends CustTrdCmpyExample {
   protected String filterByClause ;
-//  public String getFilterByClause() {
-//    return filterByClause;
-//  }
-//  public void setFilterByClause(String filterByClause){
-//    this.filterByClause = filterByClause;
-//  }
+
 }

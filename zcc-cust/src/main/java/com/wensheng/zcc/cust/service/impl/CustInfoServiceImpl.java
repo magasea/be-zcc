@@ -12,6 +12,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
@@ -107,10 +108,16 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
     custTrdPersonExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
+    String filterBy = SQLUtils.getFilterByForCustCmpyTrd(queryParam);
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExtList = new ArrayList<>();
+    if(!StringUtils.isEmpty(filterBy)){
+      CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
+      custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
+      custTrdPersonExtExample.setFilterByClause(filterBy);
+    }else{
+      custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExampleWithRowbounds(custTrdPersonExample, rowBounds);
 
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExtList =
-        custTrdPersonExtMapper.selectByExampleWithRowbounds(custTrdPersonExample,
-        rowBounds);
+    }
 
     return convertPersonToVoes(custTrdPersonTrdExtList);
   }

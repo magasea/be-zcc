@@ -153,4 +153,32 @@
       order by ${orderByClause}
     </if>
   </select>
+
+  <select id="selectByFilterWithRowbounds"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List">
+      <property name="prefix" value="ctp."/>
+    </include>,
+    <include refid="cust_trd_info_list" >
+      <property name="prefix" value="cti."/>
+      <property name="alias" value="cti_"/>
+    </include>
+    from CUST_TRD_PERSON ctp
+    left join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
+    and cti.buyer_type = 1
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="filterByClause != null">
+      and ${filterByClause}
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
 </mapper>

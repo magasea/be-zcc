@@ -32,6 +32,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -128,11 +129,12 @@ public class AmcAssetController {
     return assetVo;
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcid, 'AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcid}/asset/setRecomm", method = RequestMethod.POST)
   @ResponseBody
   public void recommAmcAsset(
-          @RequestBody BaseActionVo<List<Long>> amcAssetVo, @RequestParam IsRecommandEnum isRecommandEnum) throws Exception {
+          @RequestBody BaseActionVo<List<Long>> amcAssetVo,
+      @PathVariable("amcid") Long amcid, @RequestParam IsRecommandEnum isRecommandEnum) throws Exception {
 
     if(CollectionUtils.isEmpty(amcAssetVo.getContent())){
       return;

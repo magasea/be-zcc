@@ -7,6 +7,10 @@ public class AmcDebtContactor {
 
     private String name;
 
+    private String nikname;
+
+    private Integer location;
+
     private String phoneNumber;
 
     private String notes;
@@ -33,6 +37,22 @@ public class AmcDebtContactor {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public String getNikname() {
+        return nikname;
+    }
+
+    public void setNikname(String nikname) {
+        this.nikname = nikname == null ? null : nikname.trim();
+    }
+
+    public Integer getLocation() {
+        return location;
+    }
+
+    public void setLocation(Integer location) {
+        this.location = location;
     }
 
     public String getPhoneNumber() {

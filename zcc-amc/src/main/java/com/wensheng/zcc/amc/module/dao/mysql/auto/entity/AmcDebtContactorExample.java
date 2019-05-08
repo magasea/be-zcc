@@ -294,6 +294,136 @@ public class AmcDebtContactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andNiknameIsNull() {
+            addCriterion("nikname is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameIsNotNull() {
+            addCriterion("nikname is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameEqualTo(String value) {
+            addCriterion("nikname =", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameNotEqualTo(String value) {
+            addCriterion("nikname <>", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameGreaterThan(String value) {
+            addCriterion("nikname >", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameGreaterThanOrEqualTo(String value) {
+            addCriterion("nikname >=", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameLessThan(String value) {
+            addCriterion("nikname <", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameLessThanOrEqualTo(String value) {
+            addCriterion("nikname <=", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameLike(String value) {
+            addCriterion("nikname like", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameNotLike(String value) {
+            addCriterion("nikname not like", value, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameIn(List<String> values) {
+            addCriterion("nikname in", values, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameNotIn(List<String> values) {
+            addCriterion("nikname not in", values, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameBetween(String value1, String value2) {
+            addCriterion("nikname between", value1, value2, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andNiknameNotBetween(String value1, String value2) {
+            addCriterion("nikname not between", value1, value2, "nikname");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationIsNull() {
+            addCriterion("location is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationIsNotNull() {
+            addCriterion("location is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationEqualTo(Integer value) {
+            addCriterion("location =", value, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationNotEqualTo(Integer value) {
+            addCriterion("location <>", value, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationGreaterThan(Integer value) {
+            addCriterion("location >", value, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationGreaterThanOrEqualTo(Integer value) {
+            addCriterion("location >=", value, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationLessThan(Integer value) {
+            addCriterion("location <", value, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationLessThanOrEqualTo(Integer value) {
+            addCriterion("location <=", value, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationIn(List<Integer> values) {
+            addCriterion("location in", values, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationNotIn(List<Integer> values) {
+            addCriterion("location not in", values, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationBetween(Integer value1, Integer value2) {
+            addCriterion("location between", value1, value2, "location");
+            return (Criteria) this;
+        }
+
+        public Criteria andLocationNotBetween(Integer value1, Integer value2) {
+            addCriterion("location not between", value1, value2, "location");
+            return (Criteria) this;
+        }
+
         public Criteria andPhoneNumberIsNull() {
             addCriterion("phone_number is null");
             return (Criteria) this;

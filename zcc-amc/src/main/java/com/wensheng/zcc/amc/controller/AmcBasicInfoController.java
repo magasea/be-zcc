@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.service.impl.AmcBaiDuLogisQuery;
+import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
@@ -270,6 +271,18 @@ public class AmcBasicInfoController {
     }
     return "succeed";
 
+  }
+
+  @RequestMapping(value = "/amcBranchLocations", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getAmcBranchLocations(){
+
+    List<String> result = new ArrayList<>();
+    for(AmcBranchLocationEnum amcBranchLocationEnum : AmcBranchLocationEnum.values()){
+      result.add(String.format("%d:%s:%s", amcBranchLocationEnum.getId(), amcBranchLocationEnum.getName(),
+          amcBranchLocationEnum.getCname()));
+    }
+    return result;
   }
 
 }

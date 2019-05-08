@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
@@ -120,7 +121,8 @@ public class AmcAssetController {
   public AmcAssetVo addAmcAsset(
       @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
     AmcAsset amcAsset = getAssetFromVo(amcAssetVo.getContent());
-//    amcAsset.setPublishState(PublishStateEnum.DRAFT.getStatus());
+    amcAsset.setPublishState(PublishStateEnum.DRAFT.getStatus());
+
     AmcAssetVo assetVo = amcAssetService.create(amcAsset);
     amcAssetVo.getContent().getAssetAdditional().setAmcAssetId(assetVo.getId());
     AssetAdditional assetAdditional =

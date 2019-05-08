@@ -183,7 +183,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Transactional
   public int del(Long amcDebtId) {
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
-    if(amcDebt != null && amcDebt.getPublishState() == PublishStateEnum.DRAFT.getStatus()){
+    if(amcDebt != null && (amcDebt.getPublishState() == PublishStateEnum.DRAFT.getStatus()||amcDebt.getPublishState() == PublishStateEnum.NOTCLEAR.getStatus())){
       amcAssetService.del(amcDebtId);
       AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
       amcDebtorExample.createCriteria().andDebtIdEqualTo(amcDebtId);

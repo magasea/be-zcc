@@ -41,7 +41,7 @@ public class EditProcessRule {
       return;
     }
     if(editAction == EditActionEnum.ACT_SAVE){
-      if(currentStatus == PublishStateEnum.DRAFT || currentStatus == PublishStateEnum.DRAFT_CHECK_FAILED) {
+      if(currentStatus == PublishStateEnum.DRAFT || currentStatus == PublishStateEnum.DRAFT_CHECK_FAILED || currentStatus == PublishStateEnum.NOTCLEAR) {
         editStatusResult =  PublishStateEnum.DRAFT;
         return;
       }

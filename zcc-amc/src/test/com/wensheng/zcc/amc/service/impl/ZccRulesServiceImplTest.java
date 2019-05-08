@@ -25,7 +25,7 @@ public class ZccRulesServiceImplTest {
   ZccRulesService zccRulesService;
 
   @Test
-  public void runActionAndStatus() {
+  public void runActionAndStatus() throws Exception {
 
     PublishStateEnum publishStateEnum = zccRulesService.runActionAndStatus(EditActionEnum.ACT_CREATE,
         PublishStateEnum.DRAFT);

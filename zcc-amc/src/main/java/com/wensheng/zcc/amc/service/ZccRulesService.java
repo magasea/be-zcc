@@ -9,8 +9,8 @@ import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
  */
 public interface ZccRulesService {
 
-  public PublishStateEnum runActionAndStatus(EditActionEnum action, PublishStateEnum status);
+  public PublishStateEnum runActionAndStatus(EditActionEnum action, PublishStateEnum status) throws Exception;
 
-  public boolean editAble(PublishStateEnum editStatus);
+  public boolean editAble(PublishStateEnum editStatus) throws Exception;
 
 }

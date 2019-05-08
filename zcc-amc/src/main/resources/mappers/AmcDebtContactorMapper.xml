@@ -5,6 +5,8 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="branch_id" jdbcType="BIGINT" property="branchId" />
     <result column="name" jdbcType="CHAR" property="name" />
+    <result column="nikname" jdbcType="CHAR" property="nikname" />
+    <result column="location" jdbcType="INTEGER" property="location" />
     <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
   </resultMap>
@@ -67,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, branch_id, name, phone_number, notes
+    id, branch_id, name, nikname, location, phone_number, notes
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
@@ -104,10 +106,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBT_CONTACTOR (branch_id, name, phone_number, 
-      notes)
-    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{phoneNumber,jdbcType=CHAR}, 
-      #{notes,jdbcType=VARCHAR})
+    insert into AMC_DEBT_CONTACTOR (branch_id, name, nikname, 
+      location, phone_number, notes
+      )
+    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{nikname,jdbcType=CHAR}, 
+      #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -120,6 +124,12 @@
       </if>
       <if test="name != null">
         name,
+      </if>
+      <if test="nikname != null">
+        nikname,
+      </if>
+      <if test="location != null">
+        location,
       </if>
       <if test="phoneNumber != null">
         phone_number,
@@ -134,6 +144,12 @@
       </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
+      </if>
+      <if test="nikname != null">
+        #{nikname,jdbcType=CHAR},
+      </if>
+      <if test="location != null">
+        #{location,jdbcType=INTEGER},
       </if>
       <if test="phoneNumber != null">
         #{phoneNumber,jdbcType=CHAR},
@@ -161,6 +177,12 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
+      <if test="record.nikname != null">
+        nikname = #{record.nikname,jdbcType=CHAR},
+      </if>
+      <if test="record.location != null">
+        location = #{record.location,jdbcType=INTEGER},
+      </if>
       <if test="record.phoneNumber != null">
         phone_number = #{record.phoneNumber,jdbcType=CHAR},
       </if>
@@ -177,6 +199,8 @@
     set id = #{record.id,jdbcType=BIGINT},
       branch_id = #{record.branchId,jdbcType=BIGINT},
       name = #{record.name,jdbcType=CHAR},
+      nikname = #{record.nikname,jdbcType=CHAR},
+      location = #{record.location,jdbcType=INTEGER},
       phone_number = #{record.phoneNumber,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR}
     <if test="_parameter != null">
@@ -192,6 +216,12 @@
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
+      <if test="nikname != null">
+        nikname = #{nikname,jdbcType=CHAR},
+      </if>
+      <if test="location != null">
+        location = #{location,jdbcType=INTEGER},
+      </if>
       <if test="phoneNumber != null">
         phone_number = #{phoneNumber,jdbcType=CHAR},
       </if>
@@ -205,6 +235,8 @@
     update AMC_DEBT_CONTACTOR
     set branch_id = #{branchId,jdbcType=BIGINT},
       name = #{name,jdbcType=CHAR},
+      nikname = #{nikname,jdbcType=CHAR},
+      location = #{location,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}

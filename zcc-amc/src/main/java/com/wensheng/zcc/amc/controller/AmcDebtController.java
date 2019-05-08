@@ -314,6 +314,7 @@ public class AmcDebtController {
     }
 
     //3. create the debt
+    amcDebt.setPublishState(PublishStateEnum.DRAFT.getStatus());
       AmcDebtVo amcDebtVo = amcDebtService.create(amcDebt);
 
     //4. make relationship between debtors with debt
@@ -560,7 +561,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{id}/debt/stateEditAble", method = RequestMethod.POST)
   @ResponseBody
   public PublishStateEnum editAble(@RequestParam("debtStatus") Integer currentDebtStatus,
-      @RequestParam("actionId") Integer actionId) {
+      @RequestParam("actionId") Integer actionId) throws Exception {
 
     return zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
         PublishStateEnum.lookupByDisplayStatusUtil(currentDebtStatus));
@@ -571,7 +572,7 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{id}/debt/editAble", method = RequestMethod.POST)
   @ResponseBody
   public PublishStateEnum editAble(@RequestParam("debtId") Long debtId,
-      @RequestParam("actionId") Integer actionId) {
+      @RequestParam("actionId") Integer actionId) throws Exception {
 
 
     return zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),

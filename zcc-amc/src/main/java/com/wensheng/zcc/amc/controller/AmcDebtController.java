@@ -263,7 +263,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @ResponseBody
-  public String createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo) throws Exception {
+  public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo) throws Exception {
 
     AmcDebt amcDebt = new AmcDebt();
     AmcDebtCreateVo createVo = baseCreateVo.getContent();
@@ -325,7 +325,7 @@ public class AmcDebtController {
       amcDebtService.saveDebtDesc(createVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
     }
 
-    return "succed";
+    return amcDebtVo;
   }
 
 

@@ -13,6 +13,6 @@ public interface CustTrdPersonExtMapper {
 
 
     List<CustTrdPersonTrdExt> selectByExampleWithRowbounds(CustTrdPersonExample example, RowBounds rowBounds);
-    List<CustTrdPersonTrdExt> selectByFilterWithRowbounds(CustTrdPersonExtExample example, RowBounds rowBounds);
+    Long countByFilter(CustTrdPersonExtExample example);
 
 }

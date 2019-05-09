@@ -181,4 +181,18 @@
       order by ${orderByClause}
     </if>
   </select>
+
+  <select id="countByFilter"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultType="java.lang.Long">
+    select count(*)
+    from CUST_TRD_PERSON ctp
+    left join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
+    and cti.buyer_type = 1
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="filterByClause != null">
+      and ${filterByClause}
+    </if>
+  </select>
 </mapper>

@@ -78,7 +78,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     custTrdCmpyExample.setOrderByClause(orderBy);
-    String filterBy = SQLUtils.getFilterByForCustCmpyTrd(queryParam);
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
     RowBounds rowBounds = new RowBounds(offset, size);
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = new ArrayList<>();
     if(!StringUtils.isEmpty(filterBy)){
@@ -97,8 +97,19 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public Long getCmpyTradeCount(QueryParam queryParam) {
     CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    if(!StringUtils.isEmpty(filterBy)){
+      CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+      custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
+      custTrdCmpyExtExample.setFilterByClause(filterBy);
+      return custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
+    }else{
+      return custTrdCmpyMapper.countByExample(custTrdCmpyExample);
+    }
 
-    return custTrdCmpyMapper.countByExample(custTrdCmpyExample);
+
+
+
   }
 
   @Override
@@ -108,7 +119,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
     custTrdPersonExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
-    String filterBy = SQLUtils.getFilterByForCustCmpyTrd(queryParam);
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
     List<CustTrdPersonTrdExt> custTrdPersonTrdExtList = new ArrayList<>();
     if(!StringUtils.isEmpty(filterBy)){
       CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
@@ -128,7 +139,17 @@ public class CustInfoServiceImpl implements CustInfoService {
   public Long getPersonTradeCount(QueryParam queryParam) {
     CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
 
-    return custTrdPersonMapper.countByExample(custTrdPersonExample);
+
+
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    if(!StringUtils.isEmpty(filterBy)){
+      CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
+      custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
+      custTrdPersonExtExample.setFilterByClause(filterBy);
+      return custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
+    }else{
+      return custTrdPersonMapper.countByExample(custTrdPersonExample);
+    }
   }
 
   @Override

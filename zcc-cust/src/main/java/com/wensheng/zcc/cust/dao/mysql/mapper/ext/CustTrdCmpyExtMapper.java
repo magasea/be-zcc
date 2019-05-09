@@ -16,6 +16,6 @@ public interface CustTrdCmpyExtMapper {
 
     List<CustTrdCmpyTrdExt> selectByFilterWithRowbounds(CustTrdCmpyExample example, RowBounds rowBounds);
 
-    Long countByFilter(String filterCause);
+    Long countByFilter(CustTrdCmpyExample example   );
 
 }

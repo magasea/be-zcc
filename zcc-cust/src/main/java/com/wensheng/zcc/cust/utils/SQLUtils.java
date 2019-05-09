@@ -52,11 +52,11 @@ public class SQLUtils {
     CustTrdCmpyExample.Criteria criteria = custTrdCmpyExample.createCriteria();
 
     if(!StringUtils.isEmpty(queryParam.getName())){
-        criteria.andCmpyNameLike(String.format("%s%", queryParam.getName()));
+        criteria.andCmpyNameLike(new StringBuilder(queryParam.getName()).append("%").toString() );
     }
     return custTrdCmpyExample;
   }
-  public static String getFilterByForCustCmpyTrd(QueryParam queryParam){
+  public static String getFilterByForCustTrd(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(queryParam.getCity())){
       sb.append(ALIAS_CUST_TRD_INFO);

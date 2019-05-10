@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.TrdInfoService;
@@ -41,8 +42,9 @@ public class TradInfoController {
 
   @RequestMapping(value = "/getTrdInfoByCustId", method = RequestMethod.POST)
   @ResponseBody
-  public List<CustTrdInfo> getTradInfo(@RequestParam Long custId, @RequestParam CustTypeEnum custTypeEnum){
-    return trdInfoService.getTrdInfo(custId, custTypeEnum.getId());
+  public List<CustTrdInfoExt> getTradInfo(@RequestParam Long custId, @RequestParam CustTypeEnum custTypeEnum){
+    List<CustTrdInfoExt> result = trdInfoService.getTrdInfo(custId, custTypeEnum.getId());
+    return result;
   }
 
   @RequestMapping(value = "/doSynchronization", method = RequestMethod.GET)

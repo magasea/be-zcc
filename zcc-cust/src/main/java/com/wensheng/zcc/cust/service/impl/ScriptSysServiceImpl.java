@@ -258,6 +258,8 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     custTrdInfo.setTrdProvince(trdInfoOrig.getTrdProvince());
     custTrdInfo.setTrdCity(trdInfoOrig.getTrdCity());
     custTrdInfo.setTrdAmountOrig(trdInfoOrig.getTrdAmountOrig());
+    custTrdInfo.setTrdContactorName(trdInfoOrig.getName());
+    custTrdInfo.setTrdContactorAddr(trdInfoOrig.getAddress());
     return custTrdInfo;
   }
 

@@ -14,4 +14,5 @@ public class CustTrdInfoVo {
   Map<String, Integer> intrestCities;
   String phone;
   String address;
+
 }

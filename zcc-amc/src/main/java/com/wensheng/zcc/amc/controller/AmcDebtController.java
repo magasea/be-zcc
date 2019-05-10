@@ -198,7 +198,7 @@ public class AmcDebtController {
   public List<DebtImage> uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
       @RequestParam("debtId") Long debtId,
       @RequestParam("desc") String desc,
-      @RequestParam("images") MultipartFile[] uploadingImages) throws Exception {
+      @RequestParam("images") MultipartFile uploadingImage) throws Exception {
     if (debtId == null || debtId < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("debtId %s is not valid",
           debtId));
@@ -206,7 +206,7 @@ public class AmcDebtController {
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
     List<String> filePaths = new ArrayList<>();
-    for (MultipartFile uploadingImage : uploadingImages) {
+
       try {
         String filePath = amcOssFileService
             .handleMultiPartFile(uploadingImage, debtId, ImagePathClassEnum.DEBT.getName());
@@ -215,7 +215,7 @@ public class AmcDebtController {
         e.printStackTrace();
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
       }
-    }
+
     String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
     List<DebtImage> debtImages = new ArrayList<>();
     String ossPath;
@@ -239,7 +239,7 @@ public class AmcDebtController {
       }
 
     }
-    log.info("begin handle upload files 3");
+    log.info("begin handle upload files");
 
 
     return debtImages;

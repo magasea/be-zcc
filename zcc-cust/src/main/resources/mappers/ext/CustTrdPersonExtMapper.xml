@@ -169,7 +169,7 @@
       <property name="alias" value="cti_"/>
     </include>
     from CUST_TRD_PERSON ctp
-    left join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
+    inner join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
     and cti.buyer_type = 1
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
@@ -183,16 +183,21 @@
   </select>
 
   <select id="countByFilter"
-    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultType="java.lang.Long">
-    select count(*)
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample"
+    resultType="java.lang.Long">
+    select count(tmp.id) from(
+
+    select ctp.id as id, count(ctp.id)
     from CUST_TRD_PERSON ctp
-    left join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
+    inner join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
     and cti.buyer_type = 1
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
     <if test="filterByClause != null">
-      and ${filterByClause}
+      and ${filterByClause} group by ctp.id
     </if>
+
+    ) as tmp
   </select>
 </mapper>

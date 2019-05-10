@@ -11,6 +11,6 @@ import lombok.Data;
 public class CustTrdCmpyTrdExt implements Serializable {
   Long id;
   CustTrdCmpy custTrdCmpy;
-  List<CustTrdInfo> custTrdInfoList;
+  List<CustTrdInfoExt> custTrdInfoList;
 
 }

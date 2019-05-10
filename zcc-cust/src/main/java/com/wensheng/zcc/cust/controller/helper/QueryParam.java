@@ -11,6 +11,8 @@ public class QueryParam {
   int custType;
   String city;
   String name;
+  Integer trdType;
+  List<Integer> investScales;
   PageInfo pageInfo;
 
 

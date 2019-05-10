@@ -31,6 +31,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
         additionalInfo.put("title", amcUserDetail.getTitle());
         additionalInfo.put("username", amcUserDetail.getUserName());
         additionalInfo.put("userId", amcUserDetail.getId());
+        additionalInfo.put("location", amcUserDetail.getLocation());
 //        }
         additionalInfo.put("organization", authentication.getName() + randomAlphabetic(4));
 

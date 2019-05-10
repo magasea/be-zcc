@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
+<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="item_type" jdbcType="INTEGER" property="itemType" />
     <result column="trd_type" jdbcType="INTEGER" property="trdType" />
@@ -28,6 +28,7 @@
     <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
     <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />
     <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
+    <result column="cts_seller_name"  property="sellerName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -93,17 +94,54 @@
     total_amount, trd_status, trd_date, info_time, notes, buyer_type, buyer_id, seller_type, 
     seller_id, trd_contactor_name, trd_contactor_addr
   </sql>
+
+  <sql id="Base_List">
+    ${prefix}id as id,
+    ${prefix}item_type as item_type,
+    ${prefix}trd_type as trd_type,
+    ${prefix}info_title as info_title,
+    ${prefix}pack_count as pack_count,
+    ${prefix}info_id as info_id,
+    ${prefix}info_source as info_source,
+    ${prefix}info_website as info_website,
+    ${prefix}info_url as info_url,
+    ${prefix}trd_province as trd_province,
+    ${prefix}trd_city as trd_city,
+    ${prefix}trd_amount_orig as trd_amount_orig,
+    ${prefix}trd_amount as trd_amount,
+    ${prefix}base_amount as base_amount,
+    ${prefix}interest_amount as interest_amount,
+    ${prefix}total_amount as total_amount,
+    ${prefix}trd_status as trd_status,
+    ${prefix}trd_date as trd_date,
+    ${prefix}info_time as info_time,
+    ${prefix}notes as notes,
+    ${prefix}buyer_type as buyer_type,
+    ${prefix}buyer_id as buyer_id,
+    ${prefix}seller_type as seller_type,
+    ${prefix}seller_id as seller_id,
+    ${prefix}trd_contactor_name as trd_contactor_name,
+    ${prefix}trd_contactor_addr as trd_contactor_addr
+  </sql>
+
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from CUST_TRD_INFO
+    <include refid="Base_List">
+     <property name="prefix" value="cti."/>
+    </include>
+    ,
+    cts.name as cts_seller_name
+    from CUST_TRD_INFO cti
+    left join CUST_TRD_SELLER cts
+    on cts.id = cti.seller_id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
+
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>

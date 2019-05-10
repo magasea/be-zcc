@@ -51,6 +51,10 @@ public class CustTrdInfo {
 
     private Long sellerId;
 
+    private String trdContactorName;
+
+    private String trdContactorAddr;
+
     public Long getId() {
         return id;
     }
@@ -241,5 +245,21 @@ public class CustTrdInfo {
 
     public void setSellerId(Long sellerId) {
         this.sellerId = sellerId;
+    }
+
+    public String getTrdContactorName() {
+        return trdContactorName;
+    }
+
+    public void setTrdContactorName(String trdContactorName) {
+        this.trdContactorName = trdContactorName == null ? null : trdContactorName.trim();
+    }
+
+    public String getTrdContactorAddr() {
+        return trdContactorAddr;
+    }
+
+    public void setTrdContactorAddr(String trdContactorAddr) {
+        this.trdContactorAddr = trdContactorAddr == null ? null : trdContactorAddr.trim();
     }
 }

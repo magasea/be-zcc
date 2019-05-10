@@ -135,7 +135,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
   @Override
-  public DebtImage saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass) {
+  public synchronized DebtImage  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc,
+      ImageClassEnum imageClass) {
     DebtImage debtImage = new DebtImage();
     debtImage.setDebtId(debtId);
     debtImage.setOriginalName(originName);
@@ -148,10 +149,17 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       query.addCriteria(Criteria.where("debtId").is(debtId).and("tag").is(ImageClassEnum.MAIN.getId()));
       List<DebtImage> debtImageList =  wszccTemplate.find(query, DebtImage.class);
       if(!CollectionUtils.isEmpty(debtImageList)){
-        logger.info("now need delete history main image");
-        for(DebtImage debtImageItem: debtImageList){
 
-          wszccTemplate.remove(debtImageItem);
+        for(DebtImage debtImageItem: debtImageList){
+          logger.info("now need delete history main image");
+          try {
+            amcOssFileService.delFileInOss(debtImage.getOssPath());
+            wszccTemplate.remove(debtImageItem);
+          } catch (Exception e) {
+            e.printStackTrace();
+            log.error("Failed to del ossFile with osspath:"+ debtImage.getOssPath(), e);
+          }
+
         }
       }
     }

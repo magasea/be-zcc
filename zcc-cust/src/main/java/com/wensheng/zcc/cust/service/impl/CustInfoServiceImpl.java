@@ -125,8 +125,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
       custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
       custTrdPersonExtExample.setFilterByClause(filterBy);
+      custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByFilterWithRowbounds(custTrdPersonExtExample, rowBounds);
+
     }else{
       custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExampleWithRowbounds(custTrdPersonExample, rowBounds);
+
 
     }
 

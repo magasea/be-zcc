@@ -71,7 +71,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
 
   @Override
-  public  String  handleFile2Oss(String filePath, String prePath) throws Exception {
+  public  synchronized String  handleFile2Oss(String filePath, String prePath) throws Exception {
     String ext = ImageUtils.getImageType(filePath);
     if(ext.equals(ImageUtils.UNKNOWNTYPE)){
       ext = FilenameUtils.getExtension(filePath);

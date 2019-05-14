@@ -151,10 +151,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       if(!CollectionUtils.isEmpty(debtImageList)){
 
         for(DebtImage debtImageItem: debtImageList){
-          logger.info("now need delete history main image");
+
           try {
-            amcOssFileService.delFileInOss(debtImage.getOssPath());
-            wszccTemplate.remove(debtImageItem);
+            if(!debtImageItem.getOssPath().equals(ossPath)){
+              logger.info("now need delete history main image");
+              amcOssFileService.delFileInOss(debtImageItem.getOssPath());
+              wszccTemplate.remove(debtImageItem);
+            }
+
           } catch (Exception e) {
             e.printStackTrace();
             log.error("Failed to del ossFile with osspath:"+ debtImage.getOssPath(), e);
@@ -447,8 +451,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     query.addCriteria(Criteria.where("debtId").in(debtIds));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
-    Map<Long, DebtImage> debtImageMap = debtImages.stream().collect(Collectors.toMap(item->item.getDebtId(),
-        item-> item));
+    Map<Long, DebtImage> debtImageMap = new HashMap<>();
+    debtImages.forEach(item -> debtImageMap.put(item.getDebtId(), item));
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
     for(AmcDebt amcDebt: amcDebtList){

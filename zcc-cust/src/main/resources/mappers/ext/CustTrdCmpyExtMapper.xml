@@ -138,7 +138,7 @@
       <include refid="Example_Where_Clause" />
     </if>
     <if test="filterByClause != null">
-      and ${filterByClause}
+      ${filterByClause}
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}
@@ -159,7 +159,7 @@
       <include refid="Example_Where_Clause" />
     </if>
     <if test="filterByClause != null">
-      and ${filterByClause} group by ctc.id
+      ${filterByClause} group by ctc.id
     </if>
 
     ) as tmp

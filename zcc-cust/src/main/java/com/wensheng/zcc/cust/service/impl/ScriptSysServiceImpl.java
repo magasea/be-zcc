@@ -294,6 +294,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
     @Transactional
     void processCustInfoItem(CustInfoFromSync custItem) throws Exception {
+        log.info(gson.toJson(custItem));
         Query query = new Query();
 
 

@@ -53,13 +53,14 @@ public class SQLUtils {
     CustTrdCmpyExample.Criteria criteria = custTrdCmpyExample.createCriteria();
 
     if(!StringUtils.isEmpty(queryParam.getName())){
-        criteria.andCmpyNameLike(new StringBuilder(queryParam.getName()).append("%").toString() );
+        criteria.andCmpyNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append("%").toString() );
     }
     return custTrdCmpyExample;
   }
   public static String getFilterByForCustTrd(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(queryParam.getCity())){
+      sb.append(" and ");
       sb.append(ALIAS_CUST_TRD_INFO);
       if(queryParam.getCity().endsWith("000")){
         sb.append(".").append("trd_city like '").append(queryParam.getCity().substring(0,
@@ -93,6 +94,10 @@ public class SQLUtils {
   public static CustTrdPersonExample getCustPersonTrdExample(QueryParam queryParam) {
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
     CustTrdPersonExample.Criteria criteria = custTrdPersonExample.createCriteria();
+    if(!StringUtils.isEmpty(queryParam.getName())){
+      criteria.andNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append(
+          "%").toString() );
+    }
     return custTrdPersonExample;
   }
 }

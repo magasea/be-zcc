@@ -239,7 +239,7 @@ public class AmcDebtController {
       }
 
     }
-    log.info("begin handle upload files");
+
 
 
     return debtImages;

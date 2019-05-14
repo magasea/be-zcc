@@ -97,6 +97,7 @@ public class CustInfoController {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
       orderByParam.put("id", Direction.DESC);
+
     }
 
 
@@ -109,6 +110,7 @@ public class CustInfoController {
             orderByParam);
         totalCount = custInfoService.getCmpyTradeCount(queryParam);
       }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
+        orderByParam.put("mobile_num", Direction.DESC);
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getPersonTradeCount(queryParam);

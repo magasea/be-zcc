@@ -118,23 +118,23 @@
     ${prefix}data_status as ${alias}data_status
   </sql>
 
-  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from CUST_TRD_PERSON
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+<!--  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">-->
+<!--    select-->
+<!--    <if test="distinct">-->
+<!--      distinct-->
+<!--    </if>-->
+<!--    'true' as QUERYID,-->
+<!--    <include refid="Base_Column_List" />-->
+<!--    from CUST_TRD_PERSON-->
+<!--    <if test="_parameter != null">-->
+<!--      <include refid="Example_Where_Clause" />-->
+<!--    </if>-->
+<!--    <if test="orderByClause != null">-->
+<!--      order by ${orderByClause}-->
+<!--    </if>-->
+<!--  </select>-->
 
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -150,15 +150,39 @@
     from CUST_TRD_PERSON ctp
     left join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
     and cti.buyer_type = 1
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
+<!--    <if test="_parameter != null">-->
+<!--      <include refid="Example_Where_Clause" />-->
+<!--    </if>-->
+<!--    <if test="orderByClause != null">-->
+<!--      order by ${orderByClause}-->
+<!--    </if>-->
+    <if test = "whereClause != null">
+      where ${whereClause}
     </if>
   </select>
 
-  <select id="selectByFilterWithRowbounds"
+  <select id="selectByPreFilter"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample"
+    resultType="Long">
+    select ctp.id as id
+    from CUST_TRD_PERSON ctp
+    inner join CUST_TRD_INFO cti on cti.buyer_id = ctp.id
+    and cti.buyer_type = 1
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="filterByClause != null">
+      ${filterByClause}
+    </if>
+    <if test="orderByClause != null">
+      group by ctp.id order by ${orderByClause}
+    </if>
+    <if test="limitByClause != null">
+      limit ${limitByClause}
+    </if>
+  </select>
+
+  <select id="selectByFilter"
     parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
@@ -180,6 +204,9 @@
     </if>
     <if test="filterByClause != null">
       ${filterByClause}
+    </if>
+    <if test = "whereClause != null">
+      where ${whereClause}
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}

@@ -141,22 +141,27 @@ public class CustInfoServiceImpl implements CustInfoService {
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
-    CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
-    custTrdPersonExample.setOrderByClause(orderBy);
+    CustTrdPersonExtExample custTrdPersonExtExample = SQLUtils.getCustPersonTrdExample(queryParam);
+    custTrdPersonExtExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExtList = new ArrayList<>();
-    if(!StringUtils.isEmpty(filterBy)){
-      CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
-      custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
+    if(!StringUtils.isEmpty(filterBy)) {
       custTrdPersonExtExample.setFilterByClause(filterBy);
-      custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByFilterWithRowbounds(custTrdPersonExtExample, rowBounds);
-
-    }else{
-      custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExampleWithRowbounds(custTrdPersonExample, rowBounds);
-
-
     }
+    custTrdPersonExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExtList = new ArrayList<>();
+    List<Long> ids = custTrdPersonExtMapper.selectByPreFilter(custTrdPersonExtExample);
+    StringBuilder sb = new StringBuilder(" ctp.id in ( ");
+    ids.forEach(item -> sb.append(item).append(","));
+    sb.setLength(sb.length() -1);
+    sb.append(")");
+    custTrdPersonExtExample.setWhereClause(sb.toString());
+
+
+    custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExample(custTrdPersonExtExample);
+
+
+
 
     return convertPersonToVoes(custTrdPersonTrdExtList);
   }

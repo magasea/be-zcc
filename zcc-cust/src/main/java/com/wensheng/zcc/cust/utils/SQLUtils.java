@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -95,13 +96,13 @@ public class SQLUtils {
     return sb.toString();
   }
 
-  public static CustTrdPersonExample getCustPersonTrdExample(QueryParam queryParam) {
-    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    CustTrdPersonExample.Criteria criteria = custTrdPersonExample.createCriteria();
+  public static CustTrdPersonExtExample getCustPersonTrdExample(QueryParam queryParam) {
+    CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
+    CustTrdPersonExtExample.Criteria criteria = custTrdPersonExtExample.createCriteria();
     if(!StringUtils.isEmpty(queryParam.getName())){
       criteria.andNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append(
           "%").toString() );
     }
-    return custTrdPersonExample;
+    return custTrdPersonExtExample;
   }
 }

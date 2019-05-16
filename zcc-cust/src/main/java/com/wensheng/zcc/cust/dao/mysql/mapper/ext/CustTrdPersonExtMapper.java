@@ -13,8 +13,9 @@ import org.apache.ibatis.session.RowBounds;
 public interface CustTrdPersonExtMapper {
 
 
-    List<CustTrdPersonTrdExt> selectByExampleWithRowbounds(CustTrdPersonExample example, RowBounds rowBounds);
-    List<CustTrdPersonTrdExt> selectByFilterWithRowbounds(CustTrdPersonExample example, RowBounds rowBounds);
+    List<CustTrdPersonTrdExt> selectByExample(CustTrdPersonExample examples);
+    List<CustTrdPersonTrdExt> selectByFilter(CustTrdPersonExample example);
+    List<Long> selectByPreFilter(CustTrdPersonExample example);
     Long countByFilter(CustTrdPersonExtExample example);
 
 }

@@ -71,9 +71,9 @@ public class SQLUtils {
     }
     if(!CollectionUtils.isEmpty(queryParam.getInvestScales())){
       if(queryParam.getInvestScales().size() == 1 && queryParam.getInvestScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL2.getId() ){
-        sb.append(" and ( cti.base_amount < 10000000 or cti.total_amount < 10000000 )" );
+        sb.append(" and ( cti.total_amount < 10000000 )" );
       }else if(queryParam.getInvestScales().size() == 1 && queryParam.getInvestScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL5.getId()){
-        sb.append(" and ( cti.base_amount >= 100000000 or cti.total_amount >= 100000000 )" );
+        sb.append(" and ( cti.total_amount >= 100000000 )" );
       }else{
         InvestScaleEnum leftScale , rightScale;
 
@@ -84,10 +84,13 @@ public class SQLUtils {
           leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(1));
           rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(2));
         }
-        sb.append(" and ( cti.base_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount())
-        .append(" or cti.total_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount()).append(")");
+        sb.append(" and  ( cti.total_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount()).append(")");
       }
     }
+    if(queryParam.getTrdType() != null){
+      sb.append(" and ").append(" cti.trd_type = ").append(queryParam.getTrdType());
+    }
+
     return sb.toString();
   }
 

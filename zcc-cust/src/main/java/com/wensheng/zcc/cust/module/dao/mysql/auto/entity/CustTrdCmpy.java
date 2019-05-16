@@ -17,6 +17,10 @@ public class CustTrdCmpy {
 
     private String annuReptAddr;
 
+    private Integer dataStatus;
+
+    private Integer dataQuality;
+
     public Long getId() {
         return id;
     }
@@ -79,5 +83,21 @@ public class CustTrdCmpy {
 
     public void setAnnuReptAddr(String annuReptAddr) {
         this.annuReptAddr = annuReptAddr == null ? null : annuReptAddr.trim();
+    }
+
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
+
+    public Integer getDataQuality() {
+        return dataQuality;
+    }
+
+    public void setDataQuality(Integer dataQuality) {
+        this.dataQuality = dataQuality;
     }
 }

@@ -11,6 +11,7 @@ public enum AmcBranchLocationEnum {
   JIANGSU(3, "jiangsu", "江苏"),
   BEIJING(4,"beijing","北京"),
   SHANGHAI(5, "shanghai", "上海"),
+  OTHER(6, "other", "其他"),
   ;
 
   int id;

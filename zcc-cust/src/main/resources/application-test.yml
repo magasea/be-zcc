@@ -74,7 +74,10 @@ spring:
             database: wszcc_cust
             host: 10.20.100.235
             port: 27017
-
+    task:
+        scheduling:
+            thread-name-prefix: synchWithScrapySystem
+            cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
 mybatis:
     type-aliases-package: com.wensheng.zcc.cust.module
     mapper-locations:

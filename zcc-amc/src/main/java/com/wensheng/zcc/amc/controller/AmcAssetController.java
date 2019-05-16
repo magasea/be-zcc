@@ -209,10 +209,10 @@ public class AmcAssetController {
       required = false) String description,
       @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
-    if(uploadingImages != null && uploadingImages.length >= 3){
-      throw ExceptionUtils.getAmcException(AmcExceptions.LIMTEXCEED_UPLOADFILENUMBER,
-          "upload "+uploadingImages.length + " files at same time");
-    }
+//    if(uploadingImages != null && uploadingImages.length >= 3){
+//      throw ExceptionUtils.getAmcException(AmcExceptions.LIMTEXCEED_UPLOADFILENUMBER,
+//          "upload "+uploadingImages.length + " files at same time");
+//    }
     if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
     }

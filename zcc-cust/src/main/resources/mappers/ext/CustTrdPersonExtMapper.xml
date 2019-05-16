@@ -85,7 +85,10 @@
     ${prefix}addr as addr,
     ${prefix}notes as notes,
     ${prefix}create_by as create_by,
-    ${prefix}create_date as create_date
+    ${prefix}create_date as create_date,
+    ${prefix}data_status as data_status,
+        ${prefix}data_quality as data_quality
+
   </sql>
   <sql id="cust_trd_info_list">
     ${prefix}id as ${alias}id,
@@ -111,7 +114,8 @@
     ${prefix}buyer_type as ${alias}buyer_type,
     ${prefix}buyer_id as ${alias}buyer_id,
     ${prefix}seller_type as ${alias}seller_type,
-    ${prefix}seller_id as ${alias}seller_id
+    ${prefix}seller_id as ${alias}seller_id,
+    ${prefix}data_status as ${alias}data_status
   </sql>
 
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">

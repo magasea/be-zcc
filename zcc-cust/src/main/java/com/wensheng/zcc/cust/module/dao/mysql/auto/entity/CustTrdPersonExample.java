@@ -1034,6 +1034,126 @@ public class CustTrdPersonExample {
             addCriterion("create_date not between", value1, value2, "createDate");
             return (Criteria) this;
         }
+
+        public Criteria andDataStatusIsNull() {
+            addCriterion("data_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusIsNotNull() {
+            addCriterion("data_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusEqualTo(Integer value) {
+            addCriterion("data_status =", value, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusNotEqualTo(Integer value) {
+            addCriterion("data_status <>", value, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusGreaterThan(Integer value) {
+            addCriterion("data_status >", value, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("data_status >=", value, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusLessThan(Integer value) {
+            addCriterion("data_status <", value, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("data_status <=", value, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusIn(List<Integer> values) {
+            addCriterion("data_status in", values, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusNotIn(List<Integer> values) {
+            addCriterion("data_status not in", values, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusBetween(Integer value1, Integer value2) {
+            addCriterion("data_status between", value1, value2, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("data_status not between", value1, value2, "dataStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityIsNull() {
+            addCriterion("data_quality is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityIsNotNull() {
+            addCriterion("data_quality is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityEqualTo(Integer value) {
+            addCriterion("data_quality =", value, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityNotEqualTo(Integer value) {
+            addCriterion("data_quality <>", value, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityGreaterThan(Integer value) {
+            addCriterion("data_quality >", value, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityGreaterThanOrEqualTo(Integer value) {
+            addCriterion("data_quality >=", value, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityLessThan(Integer value) {
+            addCriterion("data_quality <", value, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityLessThanOrEqualTo(Integer value) {
+            addCriterion("data_quality <=", value, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityIn(List<Integer> values) {
+            addCriterion("data_quality in", values, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityNotIn(List<Integer> values) {
+            addCriterion("data_quality not in", values, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityBetween(Integer value1, Integer value2) {
+            addCriterion("data_quality between", value1, value2, "dataQuality");
+            return (Criteria) this;
+        }
+
+        public Criteria andDataQualityNotBetween(Integer value1, Integer value2) {
+            addCriterion("data_quality not between", value1, value2, "dataQuality");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

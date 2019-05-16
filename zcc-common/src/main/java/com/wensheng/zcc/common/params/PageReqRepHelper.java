@@ -1,6 +1,7 @@
 package com.wensheng.zcc.common.params;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
@@ -11,7 +12,7 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public class PageReqRepHelper {
   public static Map<String, Direction> getOrderParam(PageInfo pageable){
-    Map<String, Direction> orderByParam = new HashMap<>();
+    HashMap<String, Direction> orderByParam = new LinkedHashMap<>();
     if(pageable.getSort() != null && pageable.getSort().length > 0){
 
       for(String orderBy : pageable.getSort()){

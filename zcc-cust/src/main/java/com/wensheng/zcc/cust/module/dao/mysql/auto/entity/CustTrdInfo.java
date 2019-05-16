@@ -55,6 +55,10 @@ public class CustTrdInfo {
 
     private String trdContactorAddr;
 
+    private Integer dataStatus;
+
+    private Integer dataQuality;
+
     public Long getId() {
         return id;
     }
@@ -261,5 +265,21 @@ public class CustTrdInfo {
 
     public void setTrdContactorAddr(String trdContactorAddr) {
         this.trdContactorAddr = trdContactorAddr == null ? null : trdContactorAddr.trim();
+    }
+
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
+
+    public Integer getDataQuality() {
+        return dataQuality;
+    }
+
+    public void setDataQuality(Integer dataQuality) {
+        this.dataQuality = dataQuality;
     }
 }

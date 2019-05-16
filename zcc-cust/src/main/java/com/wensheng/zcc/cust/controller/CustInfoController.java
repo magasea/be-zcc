@@ -9,6 +9,7 @@ import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.ScriptSysService;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -96,8 +97,8 @@ public class CustInfoController {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("data_quality", Direction.DESC);
       orderByParam.put("id", Direction.DESC);
-
     }
 
 
@@ -110,7 +111,7 @@ public class CustInfoController {
             orderByParam);
         totalCount = custInfoService.getCmpyTradeCount(queryParam);
       }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
-        orderByParam.put("mobile_num", Direction.DESC);
+
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getPersonTradeCount(queryParam);

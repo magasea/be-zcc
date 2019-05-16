@@ -28,6 +28,8 @@
     <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
     <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />
     <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -91,7 +93,7 @@
     id, item_type, trd_type, info_title, pack_count, info_id, info_source, info_website, 
     info_url, trd_province, trd_city, trd_amount_orig, trd_amount, base_amount, interest_amount, 
     total_amount, trd_status, trd_date, info_time, notes, buyer_type, buyer_id, seller_type, 
-    seller_id, trd_contactor_name, trd_contactor_addr
+    seller_id, trd_contactor_name, trd_contactor_addr, data_status, data_quality
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -136,7 +138,8 @@
       trd_status, trd_date, info_time, 
       notes, buyer_type, buyer_id, 
       seller_type, seller_id, trd_contactor_name, 
-      trd_contactor_addr)
+      trd_contactor_addr, data_status, data_quality
+      )
     values (#{itemType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, 
       #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
       #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
@@ -145,7 +148,8 @@
       #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{infoTime,jdbcType=TIMESTAMP}, 
       #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
       #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, #{trdContactorName,jdbcType=CHAR}, 
-      #{trdContactorAddr,jdbcType=CHAR})
+      #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -228,6 +232,12 @@
       <if test="trdContactorAddr != null">
         trd_contactor_addr,
       </if>
+      <if test="dataStatus != null">
+        data_status,
+      </if>
+      <if test="dataQuality != null">
+        data_quality,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="itemType != null">
@@ -304,6 +314,12 @@
       </if>
       <if test="trdContactorAddr != null">
         #{trdContactorAddr,jdbcType=CHAR},
+      </if>
+      <if test="dataStatus != null">
+        #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dataQuality != null">
+        #{dataQuality,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -394,6 +410,12 @@
       <if test="record.trdContactorAddr != null">
         trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR},
       </if>
+      <if test="record.dataStatus != null">
+        data_status = #{record.dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.dataQuality != null">
+        data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -426,7 +448,9 @@
       seller_type = #{record.sellerType,jdbcType=INTEGER},
       seller_id = #{record.sellerId,jdbcType=BIGINT},
       trd_contactor_name = #{record.trdContactorName,jdbcType=CHAR},
-      trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR}
+      trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR},
+      data_status = #{record.dataStatus,jdbcType=INTEGER},
+      data_quality = #{record.dataQuality,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -509,6 +533,12 @@
       <if test="trdContactorAddr != null">
         trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR},
       </if>
+      <if test="dataStatus != null">
+        data_status = #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dataQuality != null">
+        data_quality = #{dataQuality,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -538,7 +568,9 @@
       seller_type = #{sellerType,jdbcType=INTEGER},
       seller_id = #{sellerId,jdbcType=BIGINT},
       trd_contactor_name = #{trdContactorName,jdbcType=CHAR},
-      trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR}
+      trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR},
+      data_status = #{dataStatus,jdbcType=INTEGER},
+      data_quality = #{dataQuality,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">

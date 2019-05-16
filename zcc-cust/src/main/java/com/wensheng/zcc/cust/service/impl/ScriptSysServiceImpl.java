@@ -27,9 +27,7 @@ import com.wensheng.zcc.cust.module.sync.CustInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.ScriptSysService;
-import com.wensheng.zcc.cust.utils.sync.SyncUtils;
 import java.text.ParseException;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -90,6 +88,26 @@ public class ScriptSysServiceImpl implements ScriptSysService {
       restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
     }
 
+
+//    @Scheduled(cron = "${spring.task.scheduling.cronExpr}")
+//    public void doSyncTask(){
+//      try {
+//        doSynchWithScriptOn();
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//        log.error("failed to do scheduled task for syn with custs", e);
+//      }
+//
+//      try {
+//
+//        doSynchWithCusts();
+//      } catch (ParseException e) {
+//        e.printStackTrace();
+//        log.error("failed to do scheduled task for syn with trdInfo", e);
+//      }
+//
+//
+//    }
 
     @Override
     public void doSynchWithScriptOn() throws Exception {
@@ -168,35 +186,65 @@ public class ScriptSysServiceImpl implements ScriptSysService {
   private void processTradInfo(List<TrdInfoFromSync> trdInfoFromSyncs, Long custId, Integer custType)
       throws ParseException {
       Query query ;
+      boolean dataQualityIncrease2 = true;
+      boolean eachDataQuality = false;
+      int increaseStep = 0;
     for(TrdInfoFromSync trdInfoOrig: trdInfoFromSyncs){
+      eachDataQuality = false;
+      log.info(gson.toJson(trdInfoOrig));
       query = new Query();
       query.addCriteria(Criteria.where("originId").is(trdInfoOrig.getId()).and("origCustId").is(trdInfoOrig.getCustomerId()));
       List<ImportTrdInfoRecord> importTrdInfoRecords =  mongoTemplate.find(query, ImportTrdInfoRecord.class);
       if(CollectionUtils.isEmpty(importTrdInfoRecords)){
-        makeNewTrdInfo(trdInfoOrig, custId, custType);
+        eachDataQuality = makeNewTrdInfo(trdInfoOrig, custId, custType);
       }else{
         CustTrdInfo custTrdInfo = custTrdInfoMapper.selectByPrimaryKey(importTrdInfoRecords.get(0).getTrdId());
         if(custTrdInfo == null){
-          makeNewTrdInfo(trdInfoOrig, custId, custType);
+          eachDataQuality = makeNewTrdInfo(trdInfoOrig, custId, custType);
         }else{
-          copyTrdFromSync2Local(trdInfoOrig, custTrdInfo);
+          eachDataQuality =  copyTrdFromSync2Local(trdInfoOrig, custTrdInfo);
         }
 
       }
+      if(eachDataQuality){
+        increaseStep = 1;
+      }
 
+      dataQualityIncrease2 = dataQualityIncrease2&eachDataQuality;
+    }
+    if(dataQualityIncrease2){
+      increaseStep = 2;
+    }
+    if(CustTypeEnum.COMPANY.getId() == custType){
+      CustTrdCmpy custTrdCmpy = custTrdCmpyMapper.selectByPrimaryKey(custId);
+      if(!StringUtils.isEmpty(custTrdCmpy.getCmpyPhone()) &&!custTrdCmpy.getCmpyPhone().equals("-1") && !StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())&& !custTrdCmpy.getCmpyAddr().equals("-1")){
+        custTrdCmpy.setDataQuality(custTrdCmpy.getDataQuality() + increaseStep);
+      }else{
+        custTrdCmpy.setDataQuality(0);
+      }
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+    }else if(CustTypeEnum.PERSON.getId() == custType){
+      CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(custId);
+      if(!StringUtils.isEmpty(custTrdPerson.getMobileNum()) && !custTrdPerson.getMobileNum().equals("-1")){
+        custTrdPerson.setDataQuality(custTrdPerson.getDataQuality() + increaseStep);
+      }else if(increaseStep == 0){
+        custTrdPerson.setDataQuality(1);
+      }
+      custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     }
 
   }
 
-  private void copyTrdFromSync2Local(TrdInfoFromSync trdInfoOrig, CustTrdInfo custTrdInfo) throws ParseException {
+  private boolean copyTrdFromSync2Local(TrdInfoFromSync trdInfoOrig, CustTrdInfo custTrdInfo) throws ParseException {
       CustTrdInfo custTrdInfoUpdate = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custTrdInfo.getBuyerId(),
           custTrdInfo.getBuyerType());
       custTrdInfoUpdate.setId(custTrdInfo.getId());
       custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoUpdate);
+      return custTrdInfoUpdate.getTotalAmount() > 0;
 
   }
 
-  private void makeNewTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType) throws ParseException {
+  private boolean makeNewTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType) throws ParseException {
 
     CustTrdInfo custTrdInfo = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custId,custType);
 
@@ -220,6 +268,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     importTrdInfoRecord.setTrdId(custTrdInfo.getId());
     mongoTemplate.save(importTrdInfoRecord);
     }
+    return custTrdInfo.getTotalAmount() > 0;
 
   }
 
@@ -249,10 +298,14 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     custTrdInfo.setInfoId(trdInfoOrig.getId());
     custTrdInfo.setTrdType(trdInfoOrig.getInvType());
     custTrdInfo.setInfoTitle(trdInfoOrig.getTitle());
+    if(trdInfoOrig.getUpdateTime() != null && !trdInfoOrig.getUpdateTime().equals("null")){
+      custTrdInfo.setInfoTime(new Date(trdInfoOrig.getUpdateTime()));
+    }
+
     if(trdInfoOrig.getTradeTime() != null && !trdInfoOrig.getTradeTime().equals("null")){
-      custTrdInfo.setInfoTime(new Date(trdInfoOrig.getTradeTime()));
+      custTrdInfo.setTrdDate(new Date(trdInfoOrig.getTradeTime()));
     }else{
-      custTrdInfo.setInfoTime(AmcDateUtils.getDateFromStr("1900-01-01 00:00:00"));
+      custTrdInfo.setTrdDate(AmcDateUtils.getDateFromStr("1900-01-01 00:00:00"));
     }
     custTrdInfo.setInfoUrl(trdInfoOrig.getUrl());
     custTrdInfo.setTrdProvince(trdInfoOrig.getTrdProvince());
@@ -260,6 +313,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     custTrdInfo.setTrdAmountOrig(trdInfoOrig.getTrdAmountOrig());
     custTrdInfo.setTrdContactorName(trdInfoOrig.getName());
     custTrdInfo.setTrdContactorAddr(trdInfoOrig.getAddress());
+    custTrdInfo.setDataStatus(trdInfoOrig.getDataStatus());
     return custTrdInfo;
   }
 
@@ -372,36 +426,63 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdCmpy custTrdCmpy)
         throws Exception {
         if(!StringUtils.isEmpty(custItem.getPhone())){
-          String[] items = SyncUtils.getPhoneList(custItem.getPhone());
-          if(items.length >= 2){
-            custTrdCmpy.setCmpyPhone(items[0]);
-            custTrdCmpy.setAnnuReptPhone( String.join(",",Arrays.copyOf(items, 1)));
-          }else{
-            custTrdCmpy.setCmpyPhone(items[0]);
-            custTrdCmpy.setAnnuReptPhone(items[0]);
-          }
+          custTrdCmpy.setCmpyPhone(custItem.getPhone());
+//          String[] items = SyncUtils.getPhoneList(custItem.getPhone());
+//          if(items.length >= 2){
+//            custTrdCmpy.setCmpyPhone(items[0]);
+//            custTrdCmpy.setAnnuReptPhone( String.join(",",Arrays.copyOf(items, 1)));
+//          }else{
+//            custTrdCmpy.setCmpyPhone(items[0]);
+//            custTrdCmpy.setAnnuReptPhone(items[0]);
+//          }
         }
         custTrdCmpy.setCmpyAddr(custItem.getAddress());
         custTrdCmpy.setCmpyName(custItem.getName());
         custTrdCmpy.setLegalReptive(custItem.getLinkMan());
+        custTrdCmpy.setDataStatus(custItem.getDataStatus());
+        int initDataQuality = -1;
+        if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getId())){
+          custTrdCmpy.setCmpyAddr(custItem.getDebtCustomerCompany().getCmpyAddr());
+          custTrdCmpy.setAnnuReptAddr(custItem.getDebtCustomerCompany().getAnnuReptAddr());
+          custTrdCmpy.setCmpyPhone(custItem.getDebtCustomerCompany().getCmpyPhone());
+          custTrdCmpy.setAnnuReptPhone(custItem.getDebtCustomerCompany().getAnnuReptPhone());
+          custTrdCmpy.setLegalReptive(custItem.getDebtCustomerCompany().getLegalReptive());
+          custTrdCmpy.setCmpyName(custItem.getDebtCustomerCompany().getCmpyName());
+          custTrdCmpy.setUniSocialCode(custItem.getDebtCustomerCompany().getUniSocialCode());
+          if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getUniSocialCode())){
+            initDataQuality += 1;
+          }
+          if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getCmpyPhone()) || !StringUtils.isEmpty(custItem.getDebtCustomerCompany().getAnnuReptPhone())){
+            initDataQuality += 1;
+          }
+        }
+        custTrdCmpy.setDataQuality(initDataQuality);
     }
 
     private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdPerson custTrdPerson)
         throws Exception {
         custTrdPerson.setAddr(custItem.getAddress());
+      int initDataQuality = -1;
       if(!StringUtils.isEmpty(custItem.getPhone())){
-        String[] items = SyncUtils.getPhoneList(custItem.getPhone());
-        if(items.length >= 2){
-          custTrdPerson.setMobileNum(items[0]);
-          custTrdPerson.setTelNum( String.join(",",Arrays.copyOf(items, 1)));
-        }else{
-          custTrdPerson.setMobileNum(items[0]);
-          custTrdPerson.setTelNum(items[0]);
-        }
+        initDataQuality += 1;
+        custTrdPerson.setMobileNum(custItem.getPhone());
+//        String[] items = SyncUtils.getPhoneList(custItem.getPhone());
+//        if(items.length >= 2){
+//          custTrdPerson.setMobileNum(items[0]);
+//          custTrdPerson.setTelNum( String.join(",",Arrays.copyOf(items, 1)));
+//        }else{
+//          custTrdPerson.setMobileNum(items[0]);
+//          custTrdPerson.setTelNum(items[0]);
+//        }
       }
-        custTrdPerson.setCity(getCodeByCityCode(custItem.getCitys()));
+      if(!StringUtils.isEmpty(custItem.getAddress())){
+        initDataQuality += 1;
+      }
+
         custTrdPerson.setEmail(custItem.getEmail());
         custTrdPerson.setName(custItem.getName());
+        custTrdPerson.setDataStatus(custItem.getDataStatus());
+        custTrdPerson.setDataQuality(initDataQuality);
     }
 
   private <T> void makeRelationWithCity(T custItem, String citys) throws Exception {

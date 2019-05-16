@@ -10,6 +10,8 @@
     <result column="cmpy_addr" jdbcType="VARCHAR" property="cmpyAddr" />
     <result column="annu_rept_phone" jdbcType="CHAR" property="annuReptPhone" />
     <result column="annu_rept_addr" jdbcType="VARCHAR" property="annuReptAddr" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -71,7 +73,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, cmpy_addr, annu_rept_phone, 
-    annu_rept_addr
+    annu_rept_addr, data_status, data_quality
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
@@ -110,10 +112,12 @@
     </selectKey>
     insert into CUST_TRD_CMPY (cmpy_name, uni_social_code, legal_reptive, 
       cmpy_phone, cmpy_addr, annu_rept_phone, 
-      annu_rept_addr)
+      annu_rept_addr, data_status, data_quality
+      )
     values (#{cmpyName,jdbcType=CHAR}, #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, 
       #{cmpyPhone,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, 
-      #{annuReptAddr,jdbcType=VARCHAR})
+      #{annuReptAddr,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -142,6 +146,12 @@
       <if test="annuReptAddr != null">
         annu_rept_addr,
       </if>
+      <if test="dataStatus != null">
+        data_status,
+      </if>
+      <if test="dataQuality != null">
+        data_quality,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpyName != null">
@@ -164,6 +174,12 @@
       </if>
       <if test="annuReptAddr != null">
         #{annuReptAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="dataStatus != null">
+        #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dataQuality != null">
+        #{dataQuality,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -200,6 +216,12 @@
       <if test="record.annuReptAddr != null">
         annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
       </if>
+      <if test="record.dataStatus != null">
+        data_status = #{record.dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.dataQuality != null">
+        data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -214,7 +236,9 @@
       cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
       cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
-      annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR}
+      annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
+      data_status = #{record.dataStatus,jdbcType=INTEGER},
+      data_quality = #{record.dataQuality,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -243,6 +267,12 @@
       <if test="annuReptAddr != null">
         annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
       </if>
+      <if test="dataStatus != null">
+        data_status = #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dataQuality != null">
+        data_quality = #{dataQuality,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -254,7 +284,9 @@
       cmpy_phone = #{cmpyPhone,jdbcType=CHAR},
       cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
-      annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR}
+      annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
+      data_status = #{dataStatus,jdbcType=INTEGER},
+      data_quality = #{dataQuality,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">

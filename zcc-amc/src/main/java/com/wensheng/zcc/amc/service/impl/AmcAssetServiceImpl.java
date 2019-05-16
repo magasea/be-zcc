@@ -528,9 +528,14 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
-        criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
+
+        boolean needDefaultPublishState = true;
         if(!CollectionUtils.isEmpty(queryParam)){
             for(Entry<String, Object> item: queryParam.entrySet()){
+                if(item.getKey().equals(QueryParamEnum.PublishStates.name())){
+                    criteria.andPublishStateIn((List) item.getValue());
+                    needDefaultPublishState = false;
+                }
                 if(item.getKey().equals("DebtId")){
                     criteria.andDebtIdEqualTo((Long)item.getValue());
                 }
@@ -586,6 +591,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 }
 
             }
+        }
+        if(needDefaultPublishState){
+            criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
         }
         return amcAssetExample;
     }

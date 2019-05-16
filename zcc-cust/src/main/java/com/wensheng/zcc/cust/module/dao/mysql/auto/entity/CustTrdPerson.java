@@ -31,6 +31,10 @@ public class CustTrdPerson {
 
     private Date createDate;
 
+    private Integer dataStatus;
+
+    private Integer dataQuality;
+
     public Long getId() {
         return id;
     }
@@ -141,5 +145,21 @@ public class CustTrdPerson {
 
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
+    }
+
+    public Integer getDataStatus() {
+        return dataStatus;
+    }
+
+    public void setDataStatus(Integer dataStatus) {
+        this.dataStatus = dataStatus;
+    }
+
+    public Integer getDataQuality() {
+        return dataQuality;
+    }
+
+    public void setDataQuality(Integer dataQuality) {
+        this.dataQuality = dataQuality;
     }
 }

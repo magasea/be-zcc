@@ -96,10 +96,7 @@ public class CustInfoController {
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
-    if(CollectionUtils.isEmpty(orderByParam)){
-      orderByParam.put("data_quality", Direction.DESC);
-      orderByParam.put("id", Direction.DESC);
-    }
+
 
 
     List<CustTrdInfoVo> queryResults = null;
@@ -107,11 +104,19 @@ public class CustInfoController {
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     try{
       if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+        if(CollectionUtils.isEmpty(orderByParam)){
+          orderByParam.put("ctc.data_quality", Direction.DESC);
+          orderByParam.put("ctc.id", Direction.DESC);
+        }
         queryResults = custInfoService.queryCmpyTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getCmpyTradeCount(queryParam);
       }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
 
+        if(CollectionUtils.isEmpty(orderByParam)){
+          orderByParam.put("ctp.data_quality", Direction.DESC);
+          orderByParam.put("ctp.id", Direction.DESC);
+        }
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getPersonTradeCount(queryParam);

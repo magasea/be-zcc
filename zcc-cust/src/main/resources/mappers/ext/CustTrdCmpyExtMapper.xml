@@ -78,21 +78,22 @@
     ${prefix}data_status as ${alias}data_status
   </sql>
 
-  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
-    select
-    <if test="distinct">
-      distinct
-    </if>
-    'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from CUST_TRD_CMPY
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
-  </select>
+<!--  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"-->
+<!--    resultMap="BaseResultMap">-->
+<!--    select-->
+<!--    <if test="distinct">-->
+<!--      distinct-->
+<!--    </if>-->
+<!--    'true' as QUERYID,-->
+<!--    <include refid="Base_Column_List" />-->
+<!--    from CUST_TRD_CMPY-->
+<!--    <if test="_parameter != null">-->
+<!--      <include refid="Example_Where_Clause" />-->
+<!--    </if>-->
+<!--    <if test="orderByClause != null">-->
+<!--      order by ${orderByClause}-->
+<!--    </if>-->
+<!--  </select>-->
 
   <sql id = "CUST_TRD_CMPY">
     ${prefix}TABLE
@@ -100,7 +101,7 @@
   <sql id="CUST_TRD_INFO">
     ${prefix}TABLE
   </sql>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -116,26 +117,24 @@
     from CUST_TRD_CMPY ctc
     left join CUST_TRD_INFO cti on cti.buyer_id = ctc.id
     and cti.buyer_type = 2
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
+    <if test = "whereClause != null">
+      where ${whereClause}
     </if>
-    <if test="orderByClause != null">
-      order by ${orderByClause}
-    </if>
+<!--    <if test="_parameter != null">-->
+<!--      <include refid="Example_Where_Clause" />-->
+<!--    </if>-->
+<!--    <if test="orderByClause != null">-->
+<!--      order by ${orderByClause}-->
+<!--    </if>-->
   </select>
 
 
-  <select id="selectByPreFilterWithRowbounds"
-    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
-    select
+  <select id="selectByPreFilter"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"
+    resultType="Long">
+    select ctc.id as id
 
-    <include refid="Base_Column_List">
-      <property name="prefix" value="ctc."/>
-    </include>,
-    <include refid="cust_trd_info_list" >
-      <property name="prefix" value="cti."/>
-      <property name="alias" value="cti_"/>
-    </include>,
+
 
     from CUST_TRD_CMPY ctc
     inner join CUST_TRD_INFO cti on cti.buyer_id = ctc.id
@@ -147,11 +146,14 @@
       ${filterByClause}
     </if>
     <if test="orderByClause != null">
-      order by ${orderByClause}
+       group by ctc.id order by ${orderByClause}
+    </if>
+    <if test="limitByClause != null">
+      limit ${limitByClause}
     </if>
   </select>
 
-  <select id="selectByFilterWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
+  <select id="selectByFilter" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
 
     <include refid="Base_Column_List">
@@ -169,6 +171,9 @@
     </if>
     <if test="filterByClause != null">
       ${filterByClause}
+    </if>
+    <if test = "whereClause != null">
+      where ${whereClause}
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}

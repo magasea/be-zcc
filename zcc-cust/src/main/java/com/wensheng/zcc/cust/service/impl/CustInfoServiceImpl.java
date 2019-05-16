@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.google.gson.Gson;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
@@ -50,6 +51,8 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Autowired
   CustTrdPersonExtMapper custTrdPersonExtMapper;
 
+  Gson gson = new Gson();
+
   @Override
   public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) {
     custTrdCmpyMapper.insertSelective(custTrdCmpy);
@@ -76,18 +79,40 @@ public class CustInfoServiceImpl implements CustInfoService {
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
-    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
-    custTrdCmpyExample.setOrderByClause(orderBy);
+    CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
+    custTrdCmpyExtExample.setOrderByClause(orderBy);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
     RowBounds rowBounds = new RowBounds(offset, size);
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = new ArrayList<>();
+    custTrdCmpyExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
     if(!StringUtils.isEmpty(filterBy)){
-      CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-      custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
+
+
+
       custTrdCmpyExtExample.setFilterByClause(filterBy);
-      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByFilterWithRowbounds(custTrdCmpyExtExample, rowBounds);
+      List<Long> preGroupResults =
+          custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
+      log.info("preGroupResults:{}", gson.toJson(preGroupResults));
+      StringBuilder sb = new StringBuilder(" ctc.id in ( ");
+      preGroupResults.forEach(item -> sb.append(item).append(","));
+      sb.setLength(sb.length() -1);
+      sb.append(")");
+      custTrdCmpyExtExample.setWhereClause(sb.toString());
+      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByFilter(custTrdCmpyExtExample);
     }else{
-      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExampleWithRowbounds(custTrdCmpyExample, rowBounds);
+
+      List<Long> preGroupResults =
+          custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
+      log.info("preGroupResults:{}", gson.toJson(preGroupResults));
+//      CustTrdCmpyExtExample.Criteria criteria = custTrdCmpyExtExample.createCriteria();
+//      criteria.andIdIn(preGroupResults);
+//      custTrdCmpyExtExample.getOredCriteria().add(criteria);
+      StringBuilder sb = new StringBuilder(" ctc.id in ( ");
+      preGroupResults.forEach(item -> sb.append(item).append(","));
+      sb.setLength(sb.length() -1);
+      sb.append(")");
+      custTrdCmpyExtExample.setWhereClause(sb.toString());
+      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExample(custTrdCmpyExtExample);
     }
 
 

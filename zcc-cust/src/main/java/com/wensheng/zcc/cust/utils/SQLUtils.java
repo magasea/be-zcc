@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.utils;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -48,14 +49,14 @@ public class SQLUtils {
   }
 
 
-  public static CustTrdCmpyExample getCustCmpyTrdExample(QueryParam queryParam) {
-    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
-    CustTrdCmpyExample.Criteria criteria = custTrdCmpyExample.createCriteria();
+  public static CustTrdCmpyExtExample getCustCmpyTrdExample(QueryParam queryParam) {
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    CustTrdCmpyExtExample.Criteria criteria = custTrdCmpyExtExample.createCriteria();
 
     if(!StringUtils.isEmpty(queryParam.getName())){
         criteria.andCmpyNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append("%").toString() );
     }
-    return custTrdCmpyExample;
+    return custTrdCmpyExtExample;
   }
   public static String getFilterByForCustTrd(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();

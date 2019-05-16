@@ -6,5 +6,7 @@ import lombok.Data;
 @Data
 public class CustTrdCmpyExtExample extends CustTrdCmpyExample {
   protected String filterByClause ;
+  protected String limitByClause;
+  protected String whereClause;
 
 }

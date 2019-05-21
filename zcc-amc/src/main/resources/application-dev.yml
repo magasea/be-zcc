@@ -8,11 +8,11 @@ logging:
         root: WARN
 mongodb:
   original:
-    host: 10.20.100.235
+    host: ${env-hint.mongodb-host}
     port: 27017
     database: wensheng
   wszcc:
-    host: 10.20.100.235
+    host: ${env-hint.mongodb-host}
     port: 27017
     database: wszcc
 
@@ -21,9 +21,9 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   datasource:
-      password: wensheng
-      url: jdbc:mysql://10.20.100.70:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-      username: root
+      password: ${env-hint.dbpasswd}
+      url: jdbc:mysql://${env-hint.dbhost}:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+      username: ${env-hint.dbusername}
       driverClassName: com.mysql.cj.jdbc.Driver
       filters: stat
       maxActive: 20
@@ -67,7 +67,7 @@ spring:
             authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
   kafka:
-    bootstrap-servers: 10.20.100.238:9092
+    bootstrap-servers: ${env-hint.kfkhost}:9092
   servlet:
     multipart:
       enabled: true
@@ -83,9 +83,9 @@ mybatis:
 
 project:
   params:
-    debt_image_path: /disk/temp/debt/images/
-    asset_image_path: /disk/temp/asset/images/
-    qrcode_image_path: /disk/temp/qrcode/images/
+    debt_image_path: ${env-hint.image-repo}/debt/images/
+    asset_image_path: ${env-hint.image-repo}/asset/images/
+    qrcode_image_path: ${env-hint.image-repo}/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
@@ -115,4 +115,14 @@ baidu:
 
 # end::wechatConfig
 
-env-hint: dev
+env-hint:
+  name: dev
+  dbhost: 10.20.100.70
+  kfkhost: 10.20.100.238
+  dbusername: root
+  dbpasswd: wensheng
+  mongodb-host: 10.20.100.235
+  image-repo: /disk/temp
+  oauth2:
+    host: localhost
+    authLink: http://${env-hint.oauth2.host}:10002

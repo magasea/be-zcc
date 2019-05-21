@@ -66,8 +66,8 @@ public class SwaggerConfig {
 //  @Value("${info.build.name}")
   private String infoBuildName = "internal.test.0.0.1";
 
-//  @Value("${host.full.dns.auth.link}")
-  private String authLink = "http://localhost:10002";
+  @Value("${env-hint.oauth2.authLink}")
+  private String authLink ;
 
   @Bean
   public Docket api() {

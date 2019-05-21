@@ -2,17 +2,17 @@ server:
   port: 10001
 
 logging:
-    level:
-        com:
-            wensheng: TRACE
-        root: WARN
+  level:
+    com:
+      wensheng: TRACE
+    root: WARN
 mongodb:
   original:
-    host: 10.20.100.235
+    host: ${env-hint.mongodb-host}
     port: 27017
     database: wensheng
   wszcc:
-    host: 10.20.100.235
+    host: ${env-hint.mongodb-host}
     port: 27017
     database: wszcc
 
@@ -21,23 +21,23 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   datasource:
-      password: wensheng
-      url: jdbc:mysql://10.20.100.70:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-      username: root
-      driverClassName: com.mysql.cj.jdbc.Driver
-      filters: stat
-      maxActive: 20
-      initialSize: 1
-      maxWait: 60000
-      minIdle: 1
-      timeBetweenEvictionRunsMillis: 60000
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: select 'x'
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      poolPreparedStatements: true
-      maxOpenPreparedStatements: 20
+    password: ${env-hint.dbpasswd}
+    url: jdbc:mysql://${env-hint.dbhost}:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+    username: ${env-hint.dbusername}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
 
   security:
     oauth2:
@@ -67,7 +67,7 @@ spring:
             authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
   kafka:
-    bootstrap-servers: 10.20.100.238:9092
+    bootstrap-servers: ${env-hint.kfkhost}:9092
   servlet:
     multipart:
       enabled: true
@@ -83,9 +83,9 @@ mybatis:
 
 project:
   params:
-    debt_image_path: /disk/temp/debt/images/
-    asset_image_path: /disk/temp/asset/images/
-    qrcode_image_path: /disk/temp/qrcode/images/
+    debt_image_path: ${env-hint.image-repo}/debt/images/
+    asset_image_path: ${env-hint.image-repo}/asset/images/
+    qrcode_image_path: ${env-hint.image-repo}/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
@@ -95,8 +95,8 @@ project:
 # tag::wechatConfig
 wechat:
   miniapp:
-  #  appId: wxdb885be2c95a5b32
-  #  appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    #  appId: wxdb885be2c95a5b32
+    #  appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
     #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
     #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
     appId: wx43360e750e7099b9
@@ -105,7 +105,6 @@ wechat:
     get_token_url: https://api.weixin.qq.com/cgi-bin/token
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 
-# end::wechatConfig
 baidu:
   logis:
     appName: amc-lgs
@@ -113,4 +112,15 @@ baidu:
     appId: 16178564
     appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
     getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
-env-hint: prod
+
+env-hint:
+  name: prod
+  dbhost: 10.20.100.238
+  dbusername: amcuser
+  dbpasswd: Wensheng#123
+  kfkhost: 10.20.100.238
+  mongodb-host: 10.20.100.238
+  image-repo: /mnt/backup/temp
+  oauth2:
+    host: 10.20.100.238
+    authLink: http://${env-hint.oauth2.host}:10002

@@ -82,40 +82,36 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     custTrdCmpyExtExample.setOrderByClause(orderBy);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
-    RowBounds rowBounds = new RowBounds(offset, size);
+
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = new ArrayList<>();
     custTrdCmpyExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
+    List<Long> preGroupResults = new ArrayList<>();
     if(!StringUtils.isEmpty(filterBy)){
 
 
 
       custTrdCmpyExtExample.setFilterByClause(filterBy);
-      List<Long> preGroupResults =
+      preGroupResults =
           custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
       log.info("preGroupResults:{}", gson.toJson(preGroupResults));
-      StringBuilder sb = new StringBuilder(" ctc.id in ( ");
-      preGroupResults.forEach(item -> sb.append(item).append(","));
-      sb.setLength(sb.length() -1);
-      sb.append(")");
-      custTrdCmpyExtExample.setWhereClause(sb.toString());
-      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByFilter(custTrdCmpyExtExample);
+
     }else{
 
-      List<Long> preGroupResults =
+      preGroupResults =
           custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
       log.info("preGroupResults:{}", gson.toJson(preGroupResults));
 //      CustTrdCmpyExtExample.Criteria criteria = custTrdCmpyExtExample.createCriteria();
 //      criteria.andIdIn(preGroupResults);
 //      custTrdCmpyExtExample.getOredCriteria().add(criteria);
-      StringBuilder sb = new StringBuilder(" ctc.id in ( ");
-      preGroupResults.forEach(item -> sb.append(item).append(","));
-      sb.setLength(sb.length() -1);
-      sb.append(")");
-      custTrdCmpyExtExample.setWhereClause(sb.toString());
-      custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExample(custTrdCmpyExtExample);
+
     }
-
-
+    StringBuilder sb = new StringBuilder(" ctc.id in ( ");
+    preGroupResults.forEach(item -> sb.append(item).append(","));
+    sb.setLength(sb.length() -1);
+    sb.append(")");
+    custTrdCmpyExtExample.setWhereClause(sb.toString());
+    custTrdCmpyExtExample.setFilterByClause(null);
+    custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExample(custTrdCmpyExtExample);
     return convertCmpyToVoes(custTrdCmpyTrdExts);
   }
 
@@ -156,7 +152,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     sb.setLength(sb.length() -1);
     sb.append(")");
     custTrdPersonExtExample.setWhereClause(sb.toString());
-
+    custTrdPersonExtExample.setFilterByClause(null);
 
     custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExample(custTrdPersonExtExample);
 

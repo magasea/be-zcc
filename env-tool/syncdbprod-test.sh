@@ -16,6 +16,6 @@ ssh chenwei@10.20.100.238 'chmod 755 /home/chenwei/tmp/commands.sh && /home/chen
 scp chenwei@10.20.100.238:/home/chenwei/tmp/*.sql /home/chenwei/tmp/mysqlback/
 ssh chenwei@10.20.100.70 '[ ! -d /home/chenwei/tmp/mysqlback ] && mkdir -p /home/chenwei/tmp/mysqlback'
 scp /home/chenwei/tmp/mysqlback/*-`date +%Y-%m-%d`.sql chenwei@10.20.100.70:/home/chenwei/tmp/mysqlback/
-ssh chenwei@10.20.100.70 "cd /home/chenwei/tmp/mysqlback/ && mysql -u root -pWensheng@12345678 < ./zccamc-`date +%Y-%m-%d`.sql"
-ssh chenwei@10.20.100.70 "cd /home/chenwei/tmp/mysqlback/ && mysql -u root -pWensheng@12345678 < ./zcccust-`date +%Y-%m-%d`.sql"
-ssh chenwei@10.20.100.70 "cd /home/chenwei/tmp/mysqlback/ && mysql -u root -pWensheng@12345678 < ./zccsso-`date +%Y-%m-%d`.sql"
+ssh chenwei@10.20.100.70 "cd /home/chenwei/tmp/mysqlback/ && mysql -u root -pwensheng < ./zccamc-`date +%Y-%m-%d`.sql"
+ssh chenwei@10.20.100.70 "cd /home/chenwei/tmp/mysqlback/ && mysql -u root -pwensheng < ./zcccust-`date +%Y-%m-%d`.sql"
+ssh chenwei@10.20.100.70 "cd /home/chenwei/tmp/mysqlback/ && mysql -u root -pwensheng < ./zccsso-`date +%Y-%m-%d`.sql"

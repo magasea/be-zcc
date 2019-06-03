@@ -6,15 +6,22 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.ScriptSysService;
+import com.wensheng.zcc.cust.utils.ExcelGenerator;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -131,5 +138,49 @@ public class CustInfoController {
     return PageReqRepHelper.getAmcPage(queryResults, totalCount );
 
   }
+
+  @RequestMapping(value = "/export", method = RequestMethod.POST)
+  public ResponseEntity<InputStreamResource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+
+
+
+    List<CustTrdInfoExcelVo> queryResults = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
+
+
+      if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+        if(CollectionUtils.isEmpty(orderByParam)){
+          orderByParam.put("ctc.data_quality", Direction.DESC);
+          orderByParam.put("ctc.id", Direction.DESC);
+        }
+
+        queryResults = custInfoService.queryCmpyTrade(offset, size, queryParam,
+            orderByParam);
+      }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
+
+        if(CollectionUtils.isEmpty(orderByParam)){
+          orderByParam.put("ctp.data_quality", Direction.DESC);
+          orderByParam.put("ctp.id", Direction.DESC);
+        }
+        queryResults = custInfoService.queryPersonTrade(offset, size, queryParam,
+            orderByParam);
+      }
+
+
+
+    ByteArrayInputStream in = ExcelGenerator.customersToExcel(queryResults);
+    // return IOUtils.toByteArray(in);
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.add("Content-Disposition", "attachment; filename=custs.xlsx");
+
+    return ResponseEntity
+        .ok()
+        .headers(headers)
+        .body(new InputStreamResource(in));
+  }
+
 
 }

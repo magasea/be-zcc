@@ -1,0 +1,125 @@
+server:
+    port: 10005
+spring:
+    autoconfigure:
+        exclude:
+            - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+            - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+    datasource:
+        password: wensheng
+        url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+        username: wenshengcust
+        driverClassName: com.mysql.cj.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+    #    jpa:
+    #        generate-ddl: false
+    #        hibernate:
+    #            ddl-auto: 'none '
+    #            naming:
+    #                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    #        properties:
+    #            hibernate:
+    #                hbm2ddl:
+    #                    auto: none
+    #        show-sql: true
+    security:
+        oauth2:
+            client:
+                registration:
+                    sample:
+                        client-id: sampleClientId
+                        authorizedGrantTypes: implicit
+                        scops: read,write
+                        accessTokenValiditySeconds: 3600
+                    amc-client-thirdpart:
+                        client-id: amcClient3rdPartId
+                        secret: secret
+                        scopes: thirdpart, read
+                        authorizedGrantTypes: implicit, refresh_token, client_credentials
+                        redirectUris: admin,http://${env.oauth2.host}:10003/amc/login, http://${env.oauth2.host}:8080/login/oauth2/code/custom, http://${env.oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${env.oauth2.host}:8080/authorize/oauth2/code/bael, http://${env.oauth2.host}:8080/login/oauth2/code/bael
+                    amc-admin:
+                        client-id: amcAdminId
+                        secret: secret
+                        scopes: amcAdmin,amcClient,read,write
+                        authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
+                        redirectUris: admin,http://${env.oauth2.host}:10003/amc/login, http://${env.oauth2.host}:8080/login/oauth2/code/custom, http://${env.oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${env.oauth2.host}:8080/authorize/oauth2/code/bael, http://${env.oauth2.host}:8080/login/oauth2/code/bael
+                    amc-wechat-client:
+                        client-id: amcWXClientId
+                        secret: secret
+                        scopes: amcClient,read,write
+                        redirectUris: client,http://${env.oauth2.host}:10003/amc/login
+                        authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
+
+    kafka:
+        consumer:
+            group-id: grp-zcc-cust
+            auto-offset-reset: earliest
+        # change this property if you are using your own
+        # Kafka cluster or your Docker IP is different
+        bootstrap-servers: ${env.kfkhost}:9092
+    data:
+        mongodb:
+            database: wszcc_cust
+            host: 10.20.100.235
+            port: 27017
+    task:
+        scheduling:
+            thread-name-prefix: synchWithScrapySystem
+            cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+
+mybatis:
+    type-aliases-package: com.wensheng.zcc.cust.module
+    mapper-locations:
+        - classpath:mappers/*Mapper.xml
+        - classpath:mappers/ext/*Mapper.xml
+
+
+
+weixin:
+    #    appId: wxdb885be2c95a5b32
+    #    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+    appId: wxeeab9e65ce72c1bb
+    appSecret: 09241d1dadb03685a13c07f2ed3daf97
+    encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
+    loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
+    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+
+message:
+    url: http://esms100.10690007.net/sms/mt
+    spid: 9346
+    sppassword: xuKh9a8u
+    commond: MT_REQUEST
+    multiCommond: MULTI_MT_REQUEST
+
+kafka:
+    topic_wechatuser: topic_wechatuser_${env.env-hint}
+
+logging:
+    level:
+        com:
+            wensheng: TRACE
+        root: WARN
+
+
+env:
+    env-hint: test
+    dbhost: 10.20.100.70
+    kfkhost: 10.20.100.238
+    oauth2:
+        host: 10.20.100.236
+        authLink: http://${env.oauth2.host}:10002

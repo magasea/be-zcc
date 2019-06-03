@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.service;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +26,16 @@ public interface CustInfoService {
   List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam)
       throws Exception;
 
+  List<CustTrdInfoExcelVo> queryCmpyTrade(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception;
+
   Long getCmpyTradeCount(QueryParam queryParam);
 
   List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam)
       throws Exception;
+
+  List<CustTrdInfoExcelVo> queryPersonTrade(int offset, int size,  QueryParam queryParam, Map<String, Direction> orderByParam) throws Exception;
+
 
   Long getPersonTradeCount(QueryParam queryParam);
 

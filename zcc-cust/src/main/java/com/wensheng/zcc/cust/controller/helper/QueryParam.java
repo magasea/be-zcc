@@ -14,6 +14,7 @@ public class QueryParam {
   Integer trdType;
   List<Integer> investScales;
   PageInfo pageInfo;
+  int exportSize = -1;
 
 
 

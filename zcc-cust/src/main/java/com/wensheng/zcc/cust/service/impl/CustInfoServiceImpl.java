@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
@@ -15,6 +16,8 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
+import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
@@ -51,6 +54,9 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Autowired
   CustTrdPersonExtMapper custTrdPersonExtMapper;
 
+  @Autowired
+  CustRegionMapper custRegionMapper;
+
   Gson gson = new Gson();
 
   @Override
@@ -77,6 +83,12 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
+    return convertCmpyToVoes(custTrdCmpyTrdExts);
+  }
+
+  private List<CustTrdCmpyTrdExt> queryCmpy(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
@@ -112,21 +124,69 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdCmpyExtExample.setWhereClause(sb.toString());
     custTrdCmpyExtExample.setFilterByClause(null);
     custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExample(custTrdCmpyExtExample);
-    return convertCmpyToVoes(custTrdCmpyTrdExts);
+    return custTrdCmpyTrdExts;
+  }
+
+  @Override
+  public List<CustTrdInfoExcelVo> queryCmpyTrade(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam)
+      throws Exception {
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy( offset,  size,  queryParam,  orderByParam);
+    return convertCmpyToExcelVoes(custTrdCmpyTrdExts);
+  }
+
+  private List<CustTrdInfoExcelVo> convertCmpyToExcelVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
+    List<CustTrdInfoExcelVo> custTrdInfoExcelVos = new ArrayList<>();
+    for(CustTrdCmpyTrdExt custTrdCmpyTrdExt: custTrdCmpyTrdExts){
+      CustTrdInfoExcelVo custTrdInfoExcelVo = new CustTrdInfoExcelVo();
+      custTrdInfoExcelVo.setCustId(custTrdCmpyTrdExt.getId());
+      custTrdInfoExcelVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr(),
+          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoExcelVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
+      custTrdInfoExcelVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone(),
+          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoExcelVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
+      Long totalAmount = 0L;
+
+      Map<String, Integer> invest2Counts = new HashMap<>();
+      Map<String, Integer> city2Counts = new HashMap<>();
+      String cityName = null;
+      String trdTypeName = null;
+      for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
+        totalAmount += custTrdInfo.getTotalAmount();
+
+        if(custTrdInfo.getTrdType() == null){
+          continue;
+        }
+        trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
+        if(!invest2Counts.containsKey(trdTypeName)){
+          invest2Counts.put(trdTypeName, 1);
+        }else{
+          invest2Counts.put(trdTypeName, invest2Counts.get(trdTypeName)+1);
+        }
+        cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+        if(!city2Counts.containsKey(cityName)){
+          city2Counts.put(cityName, 1);
+        }else {
+          city2Counts.put(cityName, city2Counts.get(cityName)+1);
+        }
+      }
+      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoExcelVo.setIntrestCities(city2Counts);
+      custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoExcelVos.add(custTrdInfoExcelVo);
+    }
+
+    return custTrdInfoExcelVos;
   }
 
   @Override
   public Long getCmpyTradeCount(QueryParam queryParam) {
     CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
-    if(!StringUtils.isEmpty(filterBy)){
-      CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-      custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
-      custTrdCmpyExtExample.setFilterByClause(filterBy);
-      return custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
-    }else{
-      return custTrdCmpyMapper.countByExample(custTrdCmpyExample);
-    }
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
+    custTrdCmpyExtExample.setFilterByClause(filterBy);
+    return custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
 
 
 
@@ -135,6 +195,16 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
+
+
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
+
+
+    return convertPersonToVoes(custTrdPersonTrdExts);
+  }
+
+  private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdPersonExtExample custTrdPersonExtExample = SQLUtils.getCustPersonTrdExample(queryParam);
@@ -155,13 +225,61 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExtExample.setFilterByClause(null);
 
     custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExample(custTrdPersonExtExample);
-
-
-
-
-    return convertPersonToVoes(custTrdPersonTrdExtList);
+    return  custTrdPersonTrdExtList;
   }
 
+  @Override
+  public List<CustTrdInfoExcelVo> queryPersonTrade(int offset, int size,  QueryParam queryParam, Map<String,
+      Direction> orderByParam)
+      throws Exception {
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
+
+
+    return convertPersonToExcelVoes(custTrdPersonTrdExts);
+  }
+
+  private List<CustTrdInfoExcelVo> convertPersonToExcelVoes(List<CustTrdPersonTrdExt> custTrdPersonTrdExts) {
+    List<CustTrdInfoExcelVo> custTrdInfoExcelVos = new ArrayList<>();
+    for(CustTrdPersonTrdExt custTrdPersonTrdExt: custTrdPersonTrdExts){
+      CustTrdInfoExcelVo custTrdInfoExcelVo = new CustTrdInfoExcelVo();
+      custTrdInfoExcelVo.setCustId(custTrdPersonTrdExt.getId());
+      custTrdInfoExcelVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
+      custTrdInfoExcelVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
+      custTrdInfoExcelVo.setPhone(String.format("%s;%s",
+          custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
+          custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
+      custTrdInfoExcelVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
+      Long totalAmount = 0L;
+      Map<String, Integer> invest2Counts = new HashMap<>();
+      Map<String, Integer> city2Counts = new HashMap<>();
+      String cityName;
+      String trdTypeName;
+      for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
+        totalAmount += custTrdInfo.getTotalAmount();
+        if(custTrdInfo.getTrdType() == null){
+          continue;
+        }
+        trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
+        cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+        if(!invest2Counts.containsKey(trdTypeName)){
+          invest2Counts.put(trdTypeName, 1);
+        }else{
+          invest2Counts.put(trdTypeName, invest2Counts.get(trdTypeName)+1);
+        }
+        if(!city2Counts.containsKey(cityName)){
+          city2Counts.put(cityName, 1);
+        }else {
+          city2Counts.put(cityName, city2Counts.get(cityName)+1);
+        }
+      }
+      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoExcelVo.setIntrestCities(city2Counts);
+      custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoExcelVos.add(custTrdInfoExcelVo);
+    }
+
+    return custTrdInfoExcelVos;
+  }
 
 
   @Override
@@ -171,14 +289,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 
 
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
-    if(!StringUtils.isEmpty(filterBy)){
-      CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
-      custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
-      custTrdPersonExtExample.setFilterByClause(filterBy);
-      return custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
-    }else{
-      return custTrdPersonMapper.countByExample(custTrdPersonExample);
-    }
+    CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
+    custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
+    custTrdPersonExtExample.setFilterByClause(filterBy);
+    return custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
   }
 
   @Override

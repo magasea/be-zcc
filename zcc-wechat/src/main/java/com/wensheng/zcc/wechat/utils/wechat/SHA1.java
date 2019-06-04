@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------
 
-package com.wensheng.zcc.wechat.service.impl;
+package com.wensheng.zcc.wechat.utils.wechat;
 
 import java.security.MessageDigest;
 import java.util.Arrays;
@@ -17,7 +17,7 @@ import org.springframework.util.StringUtils;
  *
  * 计算公众平台的消息签名接口.
  */
-class SHA1 {
+public class SHA1 {
 
 	/**
 	 * 用SHA1算法生成安全签名

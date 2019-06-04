@@ -1,16 +1,11 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import com.wensheng.zcc.wechat.utils.wechat.AesException;
+import com.wensheng.zcc.wechat.utils.wechat.SHA1;
 import java.io.IOException;
-import java.io.StringReader;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 @Service

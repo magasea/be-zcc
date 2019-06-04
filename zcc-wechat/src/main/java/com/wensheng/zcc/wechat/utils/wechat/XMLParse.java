@@ -6,7 +6,7 @@
 
 // ------------------------------------------------------------------------
 
-package com.wensheng.zcc.wechat.service.impl;
+package com.wensheng.zcc.wechat.utils.wechat;
 
 import java.io.StringReader;
 

@@ -2,6 +2,8 @@ package com.wensheng.zcc.wechat.service.impl;
 
 import static org.junit.Assert.*;
 
+import com.wensheng.zcc.wechat.utils.wechat.AesException;
+import com.wensheng.zcc.wechat.utils.wechat.WXBizMsgCrypt;
 import java.io.IOException;
 import java.io.StringReader;
 

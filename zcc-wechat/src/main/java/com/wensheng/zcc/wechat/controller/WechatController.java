@@ -11,6 +11,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -105,9 +106,9 @@ public class WechatController {
 
   }
 
-  @RequestMapping(value = "/get-usersInfo", method = RequestMethod.GET)
+  @RequestMapping(value = "/get-usersInfo", method = RequestMethod.POST)
   @ResponseBody
-  public List<WechatUser> getUsersInfo(@RequestParam(value = "openIds") List<String> openIds)
+  public List<WechatUser> getUsersInfo(@RequestBody List<String> openIds)
   {
 
     return  wxService.getWechatPublicUserInfo(openIds);
@@ -144,7 +145,7 @@ public class WechatController {
 
   @RequestMapping(value = "/batch-untag", method = RequestMethod.POST)
   @ResponseBody
-  public String batchUntag(@RequestParam("openIds") List<String> openIds, @RequestParam("tagId") Long tagId)
+  public String batchUntag(@RequestBody List<String> openIds, @RequestParam("tagId") Long tagId)
   {
 
     return wxService.untagWechatPublicUserBatch(openIds, tagId);
@@ -152,7 +153,7 @@ public class WechatController {
   }
   @RequestMapping(value = "/batch-tag", method = RequestMethod.POST)
   @ResponseBody
-  public String batchTag(@RequestParam("openIds") List<String> openIds, @RequestParam("tagId") Long tagId)
+  public String batchTag(@RequestBody List<String> openIds, @RequestParam("tagId") Long tagId)
   {
 
     return wxService.tagWechatPublicUserBatch(openIds, tagId);
@@ -161,8 +162,7 @@ public class WechatController {
 
   @RequestMapping(value = "/get-usertags", method = RequestMethod.POST)
   @ResponseBody
-  public List<Long> getUserTag(@RequestParam("openId") String openId)
-  {
+  public List<Long> getUserTag(@RequestParam("openId") String openId) throws Exception {
 
     return wxService.getTagOfUser(openId);
 

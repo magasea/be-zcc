@@ -64,15 +64,15 @@ spring:
 
     kafka:
         consumer:
-            group-id: grp-zcc-cust
+            group-id: grp-zcc-wechat
             auto-offset-reset: earliest
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
         bootstrap-servers: ${env.kfkhost}:9092
     data:
         mongodb:
-            database: wszcc_cust
-            host: 10.20.100.235
+            database: wszcc_wechat
+            host: ${env.mongodb-host}
             port: 27017
     task:
         scheduling:
@@ -139,6 +139,7 @@ env:
     env-hint: dev
     dbhost: 10.20.100.70
     kfkhost: 10.20.100.238
+    mongodb-host: 10.20.100.235
     oauth2:
         host: localhost
         authLink: http://${env.oauth2.host}:10002

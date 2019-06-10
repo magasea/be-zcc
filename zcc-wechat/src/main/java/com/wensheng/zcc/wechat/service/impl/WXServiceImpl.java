@@ -190,7 +190,7 @@ public class WXServiceImpl {
     return data;
   }
 
-  public void createWechatPublicUserTag(String tagName){
+  public synchronized void createWechatPublicUserTag(String tagName){
     String token = getPublicToken();
 
     String url = String.format(createUserTagUrl, token );
@@ -205,7 +205,7 @@ public class WXServiceImpl {
 
   }
 
-  public void delWechatPublicUserTag(Long tagId){
+  public synchronized  void delWechatPublicUserTag(Long tagId){
     String token = getPublicToken();
 
     String url = String.format(delUserTagUrl, token );
@@ -219,7 +219,7 @@ public class WXServiceImpl {
 
   }
 
-  public String untagWechatPublicUserBatch(List<String> openIds, Long tagId){
+  public synchronized String  untagWechatPublicUserBatch(List<String> openIds, Long tagId){
     String token = getPublicToken();
 
     String url = String.format(unTagUserBatchUrl, token );
@@ -236,7 +236,7 @@ public class WXServiceImpl {
 
   }
 
-  public String tagWechatPublicUserBatch(List<String> openIds, Long tagId){
+  public synchronized String tagWechatPublicUserBatch(List<String> openIds, Long tagId){
     String token = getPublicToken();
 
     String url = String.format(tagUserBatchUrl, token );
@@ -254,7 +254,7 @@ public class WXServiceImpl {
 
   }
 
-  public List<Long> getTagOfUser(String openId){
+  public List<Long> getTagOfUser(String openId) throws Exception {
     String token = getPublicToken();
 
     String url = String.format(getTagsOfUserUrl, token );
@@ -266,10 +266,11 @@ public class WXServiceImpl {
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, TagsOfUser.class);
     System.out.println(response.getBody().toString());
     TagsOfUser resp = (TagsOfUser)response.getBody();
-    if(StringUtils.isEmpty(resp.errmsg)){
+    if(resp.errcode != null && resp.errcode != 0){
       return resp.getTags();
     }else{
-      return new ArrayList<>();
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
     }
 
   }
@@ -289,7 +290,7 @@ public class WXServiceImpl {
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, UserIdsResp.class);
     UserIdsResp respBody = ((ResponseEntity<UserIdsResp>) response).getBody();
     System.out.println(respBody.toString());
-    if(!StringUtils.isEmpty(respBody.errmsg)){
+    if(respBody.errcode != null && respBody.errcode != 0){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
           respBody.getErrcode(), respBody.getErrmsg()));
     }

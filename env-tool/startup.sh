@@ -9,10 +9,12 @@ execJarName_amc=/home/sunht/working/zcc/zcc-amc-0.1-SNAPSHOT.jar
 execJarName_sso=/home/sunht/working/zcc/zcc-sso-0.1-SNAPSHOT.jar
 execJarName_log=/home/sunht/working/zcc/zcc-log-0.1-SNAPSHOT.jar
 execJarName_cust=/home/sunht/working/zcc/zcc-cust-0.1-SNAPSHOT.jar
+execJarName_wechat=/home/sunht/working/zcc/zcc-wechat-0.1-SNAPSHOT.jar
 pattern_amc=zcc-amc
 pattern_sso=zcc-sso
 pattern_log=zcc-log
 pattern_cust=zcc-cust
+pattern_wechat=zcc-wechat
 
 killProcess() {
     echo "$1"
@@ -28,14 +30,18 @@ killProcess ${pattern_amc}
 killProcess ${pattern_sso}
 killProcess ${pattern_log}
 killProcess ${pattern_cust}
+killProcess ${pattern_wechat}
 
 echo ${execJarName_amc}
 echo ${execJarName_sso}
 echo ${execJarName_log}
 echo ${execJarName_cust}
+echo ${execJarName_wechat}
 
 sleep 5
 nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
 nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &
 nohup java -jar -Dspring.profiles.active=test ${execJarName_log} &>loger.log &
 nohup java -jar -Dspring.profiles.active=test ${execJarName_cust} &>cust.log &
+nohup java -jar -Dspring.profiles.active=test ${execJarName_wechat} &>wechat.log &
+

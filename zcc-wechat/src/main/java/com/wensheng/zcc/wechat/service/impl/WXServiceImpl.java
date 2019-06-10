@@ -1,11 +1,35 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.utils.wechat.AesException;
 import com.wensheng.zcc.wechat.utils.wechat.SHA1;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
 import javax.xml.parsers.ParserConfigurationException;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 
 @Service
@@ -22,6 +46,48 @@ public class WXServiceImpl {
 
   @Value("${weixin.token}")
   String token;
+
+  @Value("${weixin.get_public_token_url}")
+  String getPublicTokenUrl;
+
+  @Value("${weixin.get_public_users_url}")
+  String getPublicUsersUrl;
+
+  @Value("${weixin.get_public_usersinfo_url}")
+  String getPublicUsersInfoUrl;
+
+  @Value("${weixin.get_usertags_url}")
+  String getUserTagsUrl;
+
+  @Value("${weixin.get_tagsofuser_url}")
+  String getTagsOfUserUrl;
+
+  @Value("${weixin.create_usertag_url}")
+  String createUserTagUrl;
+
+
+  @Value("${weixin.delete_usertag_url}")
+  String delUserTagUrl;
+
+  @Value("${weixin.untaguser_batch_url}")
+  String unTagUserBatchUrl;
+
+  @Value("${weixin.taguser_batch_url}")
+  String tagUserBatchUrl;
+
+//  get_tag_usersids_url
+  @Value("${weixin.get_useroftagid_url}")
+  String getUsersOfTagIdUrl;
+
+  private Gson gson = new Gson();
+
+  private RestTemplate restTemplate = new RestTemplate();
+  @PostConstruct
+  void init(){
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
+  }
 
   String nonce = "xxxxxx";
   String replyMsg = "我是中文abcd123";
@@ -62,6 +128,229 @@ public class WXServiceImpl {
 //    // 第三方收到公众号平台发送的消息
 //    String afterDecrpt = pc.decryptMsg(msgSignature, timeStamp.toString(), nonce, fromXML);
 //    return afterDecrpt;
+  }
+
+  @Cacheable("token")
+  public String getPublicToken(){
+    String url = String.format(getPublicTokenUrl, appId, appSecret );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpEntity<?> entity = new HttpEntity<>(headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    String token =(String) ((Map)response.getBody()).get("access_token");
+    return token;
+  }
+
+
+  public UserIdsResp getWechatPublicUserIds(String openId){
+    String token = getPublicToken();
+    StringBuilder url = new StringBuilder(String.format(getPublicUsersUrl, token, "" ));
+    if(StringUtils.isEmpty(openId)){
+      url.append("&next_openid=").append(openId);
+    }
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpEntity<?> entity = new HttpEntity<>(headers);
+
+    UserIdsResp response = restTemplate.exchange(url.toString(), HttpMethod.GET, entity, UserIdsResp.class).getBody();
+    System.out.println(response.toString());
+
+    return response;
+  }
+
+
+  public List<WechatUser> getWechatPublicUserInfo(List<String> openIds){
+    String token = getPublicToken();
+
+    UserListReq userListReq = new UserListReq();
+    userListReq.setUser_list(new ArrayList<>());
+    openIds.forEach(item-> userListReq.getUser_list().add(new UserIdInfoReq(item, "zh_CN")));
+    String url = String.format(getPublicUsersInfoUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpEntity<UserListReq> entity = new HttpEntity<>( userListReq, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    List<WechatUser> data =(List) ((Map)response.getBody()).get("user_info_list");
+    return data;
+  }
+
+  public List<TagInfoExt> getWechatPublicUserTag(){
+    String token = getPublicToken();
+
+    String url = String.format(getUserTagsUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpEntity<?> entity = new HttpEntity<>(headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    List<TagInfoExt> data =(List) ((Map)response.getBody()).get("tags");
+    return data;
+  }
+
+  public void createWechatPublicUserTag(String tagName){
+    String token = getPublicToken();
+
+    String url = String.format(createUserTagUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    Tag tag = new Tag();
+    tag.setTag(new HashMap<>());
+    tag.getTag().put("name", tagName);
+    HttpEntity<Tag> entity = new HttpEntity<Tag>(tag, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+
+  }
+
+  public void delWechatPublicUserTag(Long tagId){
+    String token = getPublicToken();
+
+    String url = String.format(delUserTagUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    Map<String, Long> tag = new HashMap<>();
+    tag.put("id", tagId);
+    HttpEntity<Map> entity = new HttpEntity<>(tag, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+
+  }
+
+  public String untagWechatPublicUserBatch(List<String> openIds, Long tagId){
+    String token = getPublicToken();
+
+    String url = String.format(unTagUserBatchUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    TagUserBatchReq tagUserBatchReq = new TagUserBatchReq();
+    tagUserBatchReq.setOpenIdList( openIds);
+    tagUserBatchReq.setTagId(tagId);
+    HttpEntity<TagUserBatchReq> entity = new HttpEntity<>(tagUserBatchReq, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    Map<String, String> respMap = (Map)response.getBody();
+    return String.format("%s:%s", respMap.get("errcode"), respMap.get("errmsg") );
+
+  }
+
+  public String tagWechatPublicUserBatch(List<String> openIds, Long tagId){
+    String token = getPublicToken();
+
+    String url = String.format(tagUserBatchUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    TagUserBatchReq tagUserBatchReq = new TagUserBatchReq();
+    tagUserBatchReq.setOpenIdList(openIds);
+    tagUserBatchReq.setTagId(tagId);
+
+    HttpEntity<TagUserBatchReq> entity = new HttpEntity<>(tagUserBatchReq, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    Map<String, String> respMap = (Map)response.getBody();
+    return String.format("%s:%s", respMap.get("errcode"), respMap.get("errmsg") );
+
+  }
+
+  public List<Long> getTagOfUser(String openId){
+    String token = getPublicToken();
+
+    String url = String.format(getTagsOfUserUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    Map<String, String> openIdMap = new HashMap<>();
+    openIdMap.put("openid", openId);
+    HttpEntity<Map> entity = new HttpEntity<>(openIdMap, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, TagsOfUser.class);
+    System.out.println(response.getBody().toString());
+    TagsOfUser resp = (TagsOfUser)response.getBody();
+    if(StringUtils.isEmpty(resp.errmsg)){
+      return resp.getTags();
+    }else{
+      return new ArrayList<>();
+    }
+
+  }
+
+  public UserIdsResp getUsersOfTagId(Long tagId, String openId) throws Exception {
+    String token = getPublicToken();
+
+    String url = String.format(getUsersOfTagIdUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    Map<String, Object> openIdMap = new HashMap<>();
+    if(!StringUtils.isEmpty(openId)){
+      openIdMap.put("next_openid", openId);
+    }
+    openIdMap.put("tagid", tagId);
+    HttpEntity<Map> entity = new HttpEntity<>(openIdMap, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, UserIdsResp.class);
+    UserIdsResp respBody = ((ResponseEntity<UserIdsResp>) response).getBody();
+    System.out.println(respBody.toString());
+    if(!StringUtils.isEmpty(respBody.errmsg)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          respBody.getErrcode(), respBody.getErrmsg()));
+    }
+
+    return respBody;
+  }
+
+  @Data
+  public class UserListReq{
+    List<UserIdInfoReq> user_list;
+  }
+
+  @Data
+  @AllArgsConstructor
+  public class UserIdInfoReq{
+    String openid;
+    String lang;
+  }
+
+  @Data
+  public class UserIdsInfo{
+    @SerializedName( "openid")
+    List<String> openId;
+    @SerializedName(value = "next_openid")
+    String nextOpenId;
+  }
+  @Data
+  public class UserIdsResp extends GeneralResp{
+    Long total;
+    Long count;
+    UserIdsInfo data;
+  }
+  @Data
+  public class TagsOfUser extends GeneralResp{
+    @SerializedName("tagid_list")
+    List<Long> tags;
+
+  }
+
+  @Data
+  public class TagInfoExt extends WechatTag {
+    Long count;
+  }
+  @Data
+  public class Tag{
+    Map<String, String> tag;
+  }
+
+  @Data
+  public class GeneralResp{
+    Long errcode;
+    String errmsg;
+
+  }
+
+  @Data
+  public class TagUserBatchReq{
+    @SerializedName("openid_list")
+    List<String> openIdList;
+    @SerializedName("tagid")
+    Long tagId;
   }
 
 }

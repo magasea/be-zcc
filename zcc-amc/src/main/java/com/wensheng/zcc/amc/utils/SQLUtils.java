@@ -4,6 +4,8 @@ import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,12 +48,26 @@ public class SQLUtils {
     return sb.toString();
   }
 
-  public static AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam){
+  public static AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
     boolean needDefaultPublishState = true;
     if(!CollectionUtils.isEmpty(queryParam)){
       for(Entry<String, Object> item: queryParam.entrySet()){
+
+        if(item.getKey().equals(QueryParamEnum.BaseAmount.name())){
+          List<Long> amounts = (List) item.getValue();
+          if(amounts.get(0) < 0 && amounts.get(1) > 0){
+            criteria.andBaseAmountLessThanOrEqualTo(amounts.get(1));
+          }else if(amounts.get(1) < 0 && amounts.get(0) > 0){
+            criteria.andBaseAmountGreaterThan(amounts.get(0));
+          }else if(amounts.get(0) > 0 && amounts.get(1) > 0){
+            criteria.andBaseAmountBetween(amounts.get(0), amounts.get(1));
+          }else{
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_AMOUNT_RANGE,  String.format("%d,%d",amounts.get(0), amounts.get(1))
+                );
+          }
+        }
 
         if(item.getKey().equals(QueryParamEnum.PublishStates.name())){
           criteria.andPublishStateIn((List) item.getValue());
@@ -72,6 +88,10 @@ public class SQLUtils {
         if(item.getKey().equalsIgnoreCase(QueryParamEnum.Recommand.name())){
           criteria.andIsRecommandedIn((List) item.getValue());
         }
+
+        if(item.getKey().equals(QueryParamEnum.CourtId.name())){
+          criteria.andCourtIdEqualTo((Long)item.getValue());
+        }
       }
     }
     if(needDefaultPublishState){
@@ -91,6 +111,10 @@ public class SQLUtils {
     if (!CollectionUtils.isEmpty(queryParam.getArea()) && queryParam.getArea().size() > 1) {
       List<Long> areas = SQLUtils.areaFilterUpdate4DB(queryParam.getArea());
       queryParamMap.put(QueryParamEnum.Area.name(), areas);
+    }
+    if (!CollectionUtils.isEmpty(queryParam.getBaseAmount()) && queryParam.getBaseAmount().size() > 1) {
+      List<Long> amounts = SQLUtils.amountFilterUpdate4DB(queryParam.getBaseAmount());
+      queryParamMap.put(QueryParamEnum.BaseAmount.name(), amounts);
     }
     if (!CollectionUtils.isEmpty(queryParam.getLandArea()) && queryParam.getLandArea().size() > 1) {
       List<Long> landAreas = SQLUtils.areaFilterUpdate4DB(queryParam.getLandArea());
@@ -122,6 +146,12 @@ public class SQLUtils {
     if (queryParam.getAmcContactorId() != null && queryParam.getAmcContactorId() > 0) {
       queryParamMap.put("AmcContactorId", queryParam.getAmcContactorId());
     }
+    if(queryParam.getCourtId() != null && queryParam.getCourtId() > 0){
+      queryParamMap.put(QueryParamEnum.CourtId.name(), queryParam.getCourtId());
+    }
+    if(queryParam.getValuation() != null && !CollectionUtils.isEmpty(queryParam.getValuation())){
+      queryParamMap.put(QueryParamEnum.Valuation.name(), queryParam.getValuation());
+    }
     return queryParamMap;
 
   }
@@ -131,4 +161,11 @@ public class SQLUtils {
 
       return result;
     }
+
+  public static List<Long> amountFilterUpdate4DB(List<Long> origAmount){
+    List<Long> result = origAmount.stream().map(item ->  item > 0?item*100:-1).collect(Collectors.toList());
+
+
+    return result;
+  }
 }

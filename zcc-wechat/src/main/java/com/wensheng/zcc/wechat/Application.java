@@ -6,7 +6,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@MapperScan({"com.wensheng.zcc.cust.dao.mysql.mapper"})
+@MapperScan({"com.wensheng.zcc.wechat.dao.mysql.mapper"})
 @EnableScheduling
 public class Application {
 

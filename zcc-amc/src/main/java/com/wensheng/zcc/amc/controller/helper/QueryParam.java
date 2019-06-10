@@ -18,12 +18,15 @@ public class QueryParam {
   List<String> location = null;
   List<Integer> publishStates = null;
 //  Integer editStatus = -1;
+  List<Long> baseAmount = null;
+  List<Long> valuation = null;
   Integer sealStatus = -1;
   Integer assetType = -1;
   @SQLInjectionSafe
   String title;
   List<Integer> recommand = null;
   Long amcContactorId = -1L;
+  Long courtId = -1L;
 
 
   PageInfo pageInfo;

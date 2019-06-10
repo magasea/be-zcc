@@ -12,10 +12,13 @@ public enum QueryParamEnum {
   LandArea("LandArea"),
   SealedState("SealedState"),
   Title("Title"),
+  BaseAmount("BaseAmount"),
   AssetType("AssetType"),
   Location("Location"),
   Recommand("Recommand"),
   AmcContactorId("AmcContactorId"),
+  Valuation("Valuation"),
+  CourtId("CourtId"),
 
   ;
 

@@ -47,7 +47,7 @@ public interface AmcDebtService {
 
   List<AmcDebt> queryByDebtpackId(Long debtPackId);
 
-  Long getTotalCount(Map<String, Object> queryParamMap);
+  Long getTotalCount(Map<String, Object> queryParamMap) throws Exception;
 
 
 

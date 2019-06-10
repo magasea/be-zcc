@@ -47,7 +47,7 @@ public interface AmcAssetService {
     public List<AmcAssetVo> queryAssetPage( int offset, int pageSize, Map<String, Object> queryParam, Map<String,
         Direction> orderByParam) throws Exception;
 
-    Long getAssetCount(Map<String, Object> queryParam);
+    Long getAssetCount(Map<String, Object> queryParam) throws Exception;
 
     public List<AmcAssetVo> queryForHomePage(int size);
 

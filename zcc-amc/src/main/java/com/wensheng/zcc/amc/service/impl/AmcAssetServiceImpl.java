@@ -22,6 +22,8 @@ import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -401,7 +403,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 //    };
 
     @Override
-    public Long getAssetCount(Map<String, Object> queryParam) {
+    public Long getAssetCount(Map<String, Object> queryParam) throws Exception {
         AmcAssetExample amcAssetExample = getAmcAssetExampleWithQueryParam(queryParam);
         return amcAssetMapper.countByExample(amcAssetExample);
     }
@@ -525,7 +527,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         wszccTemplate.findAndModify(query, update, AssetAdditional.class);
     }
 
-    private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam){
+    private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
 
@@ -544,29 +546,59 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 }
 
                 if(item.getKey().equals("Area")){
-                    if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andAreaBetween(0L, (Long)((List)item.getValue()).get(1));
-                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
-                        criteria.andAreaGreaterThan((Long)((List)item.getValue()).get(0));
-                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andAreaBetween((Long)((List)item.getValue()).get(0), (Long)((List)item.getValue()).get(1));
+                    List<Long> areas = (List) item.getValue();
+                    if(areas.get(0) < 0 && areas.get(1) > 0){
+                        criteria.andAreaLessThanOrEqualTo( areas.get(1));
+                    }else if(areas.get(0) > 0 && areas.get(1) <= 0){
+                        criteria.andAreaGreaterThan(areas.get(0));
+                    }else if(areas.get(0) > 0 && areas.get(1) > 0 && areas.get(0) < areas.get(1)){
+
+                        criteria.andAreaLessThanOrEqualTo( areas.get(1));
+                        criteria.andAreaGreaterThan(areas.get(0));
+                    }
+                    else if(areas.get(0) > 0 && areas.get(1) > 0 && areas.get(0) > areas.get(1)){
+
+                        criteria.andAreaLessThanOrEqualTo( areas.get(0));
+                        criteria.andAreaGreaterThan(areas.get(1));
                     }
 
                 }
+
+                if(item.getKey().equals("Valuation")){
+                    List<Long> valuations = SQLUtils.amountFilterUpdate4DB((List)item.getValue());
+                    if(valuations.get(0) < 0 && valuations.get(1) > 0){
+                        criteria.andValuationLessThanOrEqualTo(valuations.get(1));
+                    }else if(valuations.get(1) < 0 && valuations.get(0) > 0){
+                        criteria.andValuationGreaterThan(valuations.get(0));
+                    }else if(valuations.get(0) > 0 && valuations.get(1) > 0){
+                        criteria.andValuationBetween(valuations.get(0), valuations.get(1));
+                    }else{
+                        throw ExceptionUtils
+                            .getAmcException(AmcExceptions.INVALID_AMOUNT_RANGE,  String.format("%d,%d",valuations.get(0), valuations.get(1))
+                            );
+                    }
+
+                }
+
                 if(item.getKey().equals("LandArea")){
-                    if((Long)((List)item.getValue()).get(0) < 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andLandAreaBetween(0L, (Long)((List)item.getValue()).get(1));
-                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) <= 0){
-                        criteria.andLandAreaGreaterThan((Long)((List)item.getValue()).get(0));
-                    }else if((Long)((List)item.getValue()).get(0) > 0 && (Long)((List)item.getValue()).get(1) > 0){
-                        criteria.andLandAreaBetween((Long)((List)item.getValue()).get(0),
-                            (Long)((List)item.getValue()).get(1));
+                    List<Long> areas = (List) item.getValue();
+                    if(areas.get(0) < 0 && areas.get(1) > 0){
+                        criteria.andLandAreaBetween(0L, areas.get(1));
+                    }else if(areas.get(0) > 0 && areas.get(1) <= 0){
+                        criteria.andLandAreaGreaterThan(areas.get(0));
+                    }else if(areas.get(0) > 0 && areas.get(1) > 0 && areas.get(0) < areas.get(1)){
+                        criteria.andLandAreaLessThanOrEqualTo(areas.get(1));
+                        criteria.andLandAreaGreaterThan(areas.get(0));
+                    }else if(areas.get(0) > 0 && areas.get(1) > 0 && areas.get(0) > areas.get(1)){
+                        criteria.andLandAreaLessThanOrEqualTo(areas.get(0));
+                        criteria.andLandAreaGreaterThan(areas.get(1));
                     }
 
                 }
                 if(item.getKey().equals("SealedState")){
                     criteria.andSealedStateEqualTo((Integer) item.getValue());
                 }
+
                 if(item.getKey().equals("Title")){
 
                     criteria.andTitleLike((String)item.getValue());

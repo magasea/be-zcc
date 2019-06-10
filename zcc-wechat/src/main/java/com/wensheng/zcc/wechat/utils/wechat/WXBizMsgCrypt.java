@@ -64,7 +64,7 @@ public class WXBizMsgCrypt {
 	}
 
 	// 生成4个字节的网络字节序
-	byte[] getNetworkBytesOrder(int sourceNumber) {
+	public byte[] getNetworkBytesOrder(int sourceNumber) {
 		byte[] orderBytes = new byte[4];
 		orderBytes[3] = (byte) (sourceNumber & 0xFF);
 		orderBytes[2] = (byte) (sourceNumber >> 8 & 0xFF);
@@ -84,7 +84,7 @@ public class WXBizMsgCrypt {
 	}
 
 	// 随机生成16位字符串
-	String getRandomStr() {
+	public String getRandomStr() {
 		String base = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 		Random random = new Random();
 		StringBuffer sb = new StringBuffer();
@@ -102,7 +102,7 @@ public class WXBizMsgCrypt {
 	 * @return 加密后base64编码的字符串
 	 * @throws AesException aes加密失败
 	 */
-	String encrypt(String randomStr, String text) throws AesException {
+	public String encrypt(String randomStr, String text) throws AesException {
 		ByteGroup byteCollector = new ByteGroup();
 		byte[] randomStrBytes = randomStr.getBytes(CHARSET);
 		byte[] textBytes = text.getBytes(CHARSET);

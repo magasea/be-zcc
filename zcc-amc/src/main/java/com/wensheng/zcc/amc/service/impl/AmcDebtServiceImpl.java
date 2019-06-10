@@ -525,7 +525,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public Long getTotalCount(Map<String, Object> queryParamMap) {
+  public Long getTotalCount(Map<String, Object> queryParamMap) throws Exception {
     AmcDebtExample amcDebtExample = SQLUtils.getAmcDebtExampleWithQueryParam(queryParamMap);
     return amcDebtMapper.countByExample(amcDebtExample);
   }

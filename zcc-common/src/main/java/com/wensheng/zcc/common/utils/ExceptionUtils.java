@@ -51,6 +51,8 @@ public class ExceptionUtils {
     INVALID_ENUM(1027, "Invalid Enum", "枚举值不正确"),
     INVALID_REGION_NAME(1028, "Invalid Region Name", "非法的地域名称"),
     INVALID_PHONE(1029, "Invalid PhoneNum", "非法的电话号码"),
+    INVALID_AMOUNT_RANGE(1030, "Invalid Price Amount Range", "非法的价格区间"),
+    INVALID_WECHAT_PARAMETER(1031, "Invalid Wechat Parameter", "非法的微信参数"),
     ;
     int code;
     String name;

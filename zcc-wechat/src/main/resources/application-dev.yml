@@ -80,16 +80,24 @@ spring:
             cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
 
     cache:
-        cache-names: token
+        cache-names: TOKEN
         caffeine:
-            spec: maximumSize=500, expireAfterAccess=5400s
+            spec: maximumSize=500, expireAfterAccess=120s
+    servlet:
+        multipart:
+            enabled: true
+            file-size-threshold: 10240KB
+            max-file-size: 10240KB
+            max-request-size: 10240KB
 
 mybatis:
     type-aliases-package: com.wensheng.zcc.wechat.module
     mapper-locations:
         - classpath:mappers/*Mapper.xml
         - classpath:mappers/ext/*Mapper.xml
-
+project:
+    params:
+        wechat_image_path: ${env.image-repo}/wechat/images/
 
 
 weixin:
@@ -103,19 +111,35 @@ weixin:
     token: wensheng
     userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
     loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
+
     get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
+
+    # user and tag management
     get_public_users_url: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
     get_public_userinfo_url: https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN
     get_public_usersinfo_url: https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s
     get_usertags_url: https://api.weixin.qq.com/cgi-bin/tags/get?access_token=%s
     create_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/create?access_token=%s
     delete_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/delete?access_token=%s
+    mod_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/update?access_token=%s
     untaguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token=%s
     taguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=%s
     get_tagsofuser_url: https://api.weixin.qq.com/cgi-bin/tags/getidlist?access_token=%s
     get_useroftagid_url: https://api.weixin.qq.com/cgi-bin/user/tag/get?access_token=%s
     get_token_url: https://api.weixin.qq.com/cgi-bin/token
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+
+    #material management
+    material_add_new_url: https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s
+    material_uploadimage_url: https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s
+    material_addmaterial_url: https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s
+    material_get_url: https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=%s
+    material_del_url: https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=%s
+    material_update_url: https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=%s
+    material_get_count_url: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=%s
+    material_batch_get_url: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=%s
+
+
 
 message:
     url: http://esms100.10690007.net/sms/mt
@@ -140,6 +164,7 @@ env:
     dbhost: 10.20.100.70
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
+    image-repo: /disk/temp
     oauth2:
         host: localhost
         authLink: http://${env.oauth2.host}:10002

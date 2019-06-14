@@ -53,6 +53,8 @@ public class ImageUtils {
     }
   }
 
+
+
   public static synchronized MessageDigest getMD() throws NoSuchAlgorithmException {
 
       if(md == null){

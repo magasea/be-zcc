@@ -1,10 +1,12 @@
 package com.wensheng.zcc.wechat.controller;
 
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
-import com.wensheng.zcc.wechat.service.impl.WXServiceImpl.TagInfoExt;
-import com.wensheng.zcc.wechat.service.impl.WXServiceImpl.UserIdsResp;
+import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.service.WXBasicService;
+import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl;
+import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.TagInfoExt;
+import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.UserIdsResp;
 import com.wensheng.zcc.wechat.utils.wechat.AesException;
-import com.wensheng.zcc.wechat.service.impl.WXServiceImpl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,15 +27,27 @@ import org.xml.sax.SAXException;
 public class WechatController {
 
   @Autowired
-  WXServiceImpl wxService;
+  WXUserServiceImpl wxService;
+
+  @Autowired
+  WXBasicService wxBasicService;
 
   @RequestMapping(value = "/check", method = RequestMethod.GET)
   @ResponseBody
   public String checkWechat(@RequestParam("signature") String signature, @RequestParam("echostr") String echostr,
       @RequestParam("nonce") String nonce, @RequestParam("timestamp") Long timeStamp)
-      throws ParserConfigurationException, AesException, SAXException, IOException {
+      throws ParserConfigurationException, AesException {
 
-    String response = wxService.checkWechatResp(timeStamp, nonce, echostr, signature);
+    String response = wxBasicService.checkWechatResp(timeStamp, nonce, echostr, signature);
+    return response;
+
+  }
+
+  @RequestMapping(value = "/check", method = RequestMethod.POST)
+  @ResponseBody
+  public String reportLocation(@RequestBody  String xmlLocation) {
+
+    String response = wxService.recordLocation(xmlLocation);
     return response;
 
   }
@@ -48,41 +62,6 @@ public class WechatController {
       @RequestPart("uploadingImages") MultipartFile[] uploadingImages) throws Exception {
     List<String> filePaths = new ArrayList<>();
 
-//    if(assetId == null){
-//      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
-//    }
-//
-//    for(MultipartFile uploadedImage : uploadingImages) {
-//      try {
-//        String filePath = amcOssFileService.handleMultiPartFile(uploadedImage, assetId,
-//            ImagePathClassEnum.ASSET.getName());
-//        filePaths.add(filePath);
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//        throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2SERVER, e.getMessage());
-//      }
-//    }
-//    String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetId+"/";
-//
-//    List<AssetImage> assetImages = new ArrayList<>();
-//    for(String filePath: filePaths){
-//      try {
-//        String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
-//        AssetImage assetImage = new AssetImage();
-//
-//        assetImage.setOssPath(ossPath);
-//        assetImage.setTag(tag);
-//        assetImage.setOriginalName(filePath);
-//        assetImage.setAmcAssetId(assetId);
-//        assetImage.setDescription(description);
-//        assetImages.add(amcAssetService.saveImageInfo( assetImage));
-//
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//        throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2OSS, e.getMessage());
-//
-//      }
-//    }
     return "";
   }
 
@@ -92,7 +71,7 @@ public class WechatController {
   public String getToken()
        {
 
-    String response = wxService.getPublicToken();
+    String response = wxBasicService.getPublicToken();
     return response;
 
   }
@@ -115,7 +94,7 @@ public class WechatController {
 
   }
 
-  @RequestMapping(value = "/get-tagInfo", method = RequestMethod.GET)
+  @RequestMapping(value = "/tag/get-tagInfo", method = RequestMethod.GET)
   @ResponseBody
   public List<TagInfoExt> getTagInfo()
   {
@@ -123,7 +102,7 @@ public class WechatController {
     return  wxService.getWechatPublicUserTag();
 
   }
-  @RequestMapping(value = "/create-user-tag", method = RequestMethod.POST)
+  @RequestMapping(value = "/tag/create-user-tag", method = RequestMethod.POST)
   @ResponseBody
   public String createUsersTag(@RequestParam("tagName") String tagName)
   {
@@ -133,17 +112,25 @@ public class WechatController {
 
   }
 
-  @RequestMapping(value = "/del-user-tag", method = RequestMethod.POST)
+  @RequestMapping(value = "/tag/del-user-tag", method = RequestMethod.POST)
   @ResponseBody
-  public String delUsersTag(@RequestParam("tagName") Long wechatTagId)
-  {
+  public String delUsersTag(@RequestParam("tagId") Long wechatTagId) throws Exception {
 
     wxService.delWechatPublicUserTag(wechatTagId);
     return "success";
 
   }
 
-  @RequestMapping(value = "/batch-untag", method = RequestMethod.POST)
+  @RequestMapping(value = "/tag/mod-user-tag", method = RequestMethod.POST)
+  @ResponseBody
+  public String modUsersTag(@RequestBody TagMod tagMod) throws Exception {
+
+    wxService.modWechatPublicUserTag(tagMod);
+    return "success";
+
+  }
+
+  @RequestMapping(value = "/tag/batch-untag", method = RequestMethod.POST)
   @ResponseBody
   public String batchUntag(@RequestBody List<String> openIds, @RequestParam("tagId") Long tagId)
   {
@@ -151,7 +138,7 @@ public class WechatController {
     return wxService.untagWechatPublicUserBatch(openIds, tagId);
 
   }
-  @RequestMapping(value = "/batch-tag", method = RequestMethod.POST)
+  @RequestMapping(value = "/tag/batch-tag", method = RequestMethod.POST)
   @ResponseBody
   public String batchTag(@RequestBody List<String> openIds, @RequestParam("tagId") Long tagId)
   {
@@ -160,7 +147,7 @@ public class WechatController {
 
   }
 
-  @RequestMapping(value = "/get-usertags", method = RequestMethod.POST)
+  @RequestMapping(value = "/tag/get-usertags", method = RequestMethod.POST)
   @ResponseBody
   public List<Long> getUserTag(@RequestParam("openId") String openId) throws Exception {
 
@@ -168,7 +155,7 @@ public class WechatController {
 
   }
 
-  @RequestMapping(value = "/get-usersOfTag", method = RequestMethod.POST)
+  @RequestMapping(value = "/tag/get-usersOfTag", method = RequestMethod.POST)
   @ResponseBody
   public UserIdsResp getUserTag(@RequestParam(value = "openId", required = false) String openId,
       @RequestParam("tagId") Long tagId) throws Exception {

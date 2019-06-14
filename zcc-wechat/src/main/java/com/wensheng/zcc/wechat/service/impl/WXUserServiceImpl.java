@@ -6,6 +6,12 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
+import com.wensheng.zcc.wechat.module.vo.GeneralResp;
+import com.wensheng.zcc.wechat.module.vo.TagCreate;
+import com.wensheng.zcc.wechat.module.vo.TagDel;
+import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.service.WXBasicService;
+import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.utils.wechat.AesException;
 import com.wensheng.zcc.wechat.utils.wechat.SHA1;
 import java.io.IOException;
@@ -18,8 +24,9 @@ import javax.xml.parsers.ParserConfigurationException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.util.StringUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,22 +40,12 @@ import org.springframework.web.client.RestTemplate;
 import org.xml.sax.SAXException;
 
 @Service
-public class WXServiceImpl {
 
-  @Value("${weixin.appId}")
-  String appId;
+public class WXUserServiceImpl implements WXUserService {
 
-  @Value("${weixin.appSecret}")
-  String appSecret;
+  @Autowired
+  WXBasicService wxBasicService;
 
-  @Value("${weixin.encodingAesKey}")
-  String encodingAesKey;
-
-  @Value("${weixin.token}")
-  String token;
-
-  @Value("${weixin.get_public_token_url}")
-  String getPublicTokenUrl;
 
   @Value("${weixin.get_public_users_url}")
   String getPublicUsersUrl;
@@ -68,6 +65,10 @@ public class WXServiceImpl {
 
   @Value("${weixin.delete_usertag_url}")
   String delUserTagUrl;
+
+  @Value("${weixin.mod_usertag_url}")
+  String modUserTagUrl;
+
 
   @Value("${weixin.untaguser_batch_url}")
   String unTagUserBatchUrl;
@@ -98,54 +99,11 @@ public class WXServiceImpl {
   String replyMsg2 = "<xml><ToUserName><![CDATA[oia2Tj我是中文jewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
   String afterAesEncrypt2 = "jn1L23DB+6ELqJ+6bruv23M2GmYfkv0xBh2h+XTBOKVKcgDFHle6gqcZ1cZrk3e1qjPQ1F4RsLWzQRG9udbKWesxlkupqcEcW7ZQweImX9+wLMa0GaUzpkycA8+IamDBxn5loLgZpnS7fVAbExOkK5DYHBmv5tptA9tklE/fTIILHR8HLXa5nQvFb3tYPKAlHF3rtTeayNf0QuM+UW/wM9enGIDIJHF7CLHiDNAYxr+r+OrJCmPQyTy8cVWlu9iSvOHPT/77bZqJucQHQ04sq7KZI27OcqpQNSto2OdHCoTccjggX5Z9Mma0nMJBU+jLKJ38YB1fBIz+vBzsYjrTmFQ44YfeEuZ+xRTQwr92vhA9OxchWVINGC50qE/6lmkwWTwGX9wtQpsJKhP+oS7rvTY8+VdzETdfakjkwQ5/Xka042OlUb1/slTwo4RscuQ+RdxSGvDahxAJ6+EAjLt9d8igHngxIbf6YyqqROxuxqIeIch3CssH/LqRs+iAcILvApYZckqmA7FNERspKA5f8GoJ9sv8xmGvZ9Yrf57cExWtnX8aCMMaBropU/1k+hKP5LVdzbWCG0hGwx/dQudYR/eXp3P0XxjlFiy+9DMlaFExWUZQDajPkdPrEeOwofJb";
 
-  public String checkWechatResp(Long timeStamp, String nonce, String echoStr, String signature)
-      throws AesException, ParserConfigurationException, IOException, SAXException {
 
-    String signatureLocal = SHA1.getSHA1(token, timeStamp.toString(), nonce, null);
-    if( signature.equals(signatureLocal) ){
-      return echoStr;
-    }else{
-      return "false";
-    }
-
-//    WXBizMsgCrypt pc = new WXBizMsgCrypt(token, encodingAesKey, appId);
-//    String afterEncrpt = pc.encryptMsg(echoStr, timeStamp.toString(), nonce);
-//
-//    DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-//    DocumentBuilder db = dbf.newDocumentBuilder();
-//    StringReader sr = new StringReader(afterEncrpt);
-//    InputSource is = new InputSource(sr);
-//    Document document = db.parse(is);
-//
-//    Element root = document.getDocumentElement();
-//    NodeList nodelist1 = root.getElementsByTagName("Encrypt");
-//    NodeList nodelist2 = root.getElementsByTagName("MsgSignature");
-//
-//    String encrypt = nodelist1.item(0).getTextContent();
-//    String msgSignature = nodelist2.item(0).getTextContent();
-//    String fromXML = String.format(xmlFormat, encrypt);
-//
-//    // 第三方收到公众号平台发送的消息
-//    String afterDecrpt = pc.decryptMsg(msgSignature, timeStamp.toString(), nonce, fromXML);
-//    return afterDecrpt;
-  }
-
-  @Cacheable("token")
-  public String getPublicToken(){
-    String url = String.format(getPublicTokenUrl, appId, appSecret );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-    HttpEntity<?> entity = new HttpEntity<>(headers);
-
-    ResponseEntity response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
-    String token =(String) ((Map)response.getBody()).get("access_token");
-    return token;
-  }
 
 
   public UserIdsResp getWechatPublicUserIds(String openId){
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
     StringBuilder url = new StringBuilder(String.format(getPublicUsersUrl, token, "" ));
     if(StringUtils.isEmpty(openId)){
       url.append("&next_openid=").append(openId);
@@ -162,7 +120,7 @@ public class WXServiceImpl {
 
 
   public List<WechatUser> getWechatPublicUserInfo(List<String> openIds){
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
 
     UserListReq userListReq = new UserListReq();
     userListReq.setUser_list(new ArrayList<>());
@@ -178,8 +136,8 @@ public class WXServiceImpl {
   }
 
   public List<TagInfoExt> getWechatPublicUserTag(){
-    String token = getPublicToken();
-
+    String token = wxBasicService.getPublicToken();
+    System.out.println(token);
     String url = String.format(getUserTagsUrl, token );
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -191,36 +149,66 @@ public class WXServiceImpl {
   }
 
   public synchronized void createWechatPublicUserTag(String tagName){
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
 
     String url = String.format(createUserTagUrl, token );
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-    Tag tag = new Tag();
-    tag.setTag(new HashMap<>());
-    tag.getTag().put("name", tagName);
-    HttpEntity<Tag> entity = new HttpEntity<Tag>(tag, headers);
+
+    Map<String, TagCreate> tagMap = new HashMap<>();
+    TagCreate tag = new TagCreate();
+
+    tag.setName(tagName);
+    tagMap.put("tag", tag);
+    HttpEntity<Map> entity = new HttpEntity<Map>(tagMap, headers);
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
     System.out.println(((ResponseEntity<Map>) response).getBody().toString());
 
   }
 
-  public synchronized  void delWechatPublicUserTag(Long tagId){
-    String token = getPublicToken();
+  public synchronized  void delWechatPublicUserTag(Long tagId) throws Exception {
+    String token = wxBasicService.getPublicToken();
 
     String url = String.format(delUserTagUrl, token );
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
-    Map<String, Long> tag = new HashMap<>();
-    tag.put("id", tagId);
-    HttpEntity<Map> entity = new HttpEntity<>(tag, headers);
-    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    TagDel tag = new TagDel();
+    tag.setId(tagId);
+    Map<String, TagDel> tagMap = new HashMap<>();
+    tagMap.put("tag", tag);
+    HttpEntity<Map> entity = new HttpEntity(tagMap, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, GeneralResp.class);
+    System.out.println(((GeneralResp)response.getBody()).toString());
+    GeneralResp resp = (GeneralResp)response.getBody();
+    if(resp.errcode != null && resp.errcode != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.errcode, resp.errmsg));
+    }
+
+  }
+
+  public synchronized  void modWechatPublicUserTag(TagMod tagMod) throws Exception {
+    String token = wxBasicService.getPublicToken();
+
+    String url = String.format(modUserTagUrl, token );
+    HttpHeaders headers = new HttpHeaders();
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+
+    Map<String, TagMod> tagMap = new HashMap<>();
+    tagMap.put("tag", tagMod);
+    HttpEntity<Map> entity = new HttpEntity(tagMap, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, GeneralResp.class);
+    System.out.println(((GeneralResp)response.getBody()).toString());
+    GeneralResp resp = (GeneralResp)response.getBody();
+    if(resp.errcode != null && resp.errcode != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.errcode, resp.errmsg));
+    }
 
   }
 
   public synchronized String  untagWechatPublicUserBatch(List<String> openIds, Long tagId){
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
 
     String url = String.format(unTagUserBatchUrl, token );
     HttpHeaders headers = new HttpHeaders();
@@ -237,7 +225,7 @@ public class WXServiceImpl {
   }
 
   public synchronized String tagWechatPublicUserBatch(List<String> openIds, Long tagId){
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
 
     String url = String.format(tagUserBatchUrl, token );
     HttpHeaders headers = new HttpHeaders();
@@ -255,7 +243,7 @@ public class WXServiceImpl {
   }
 
   public List<Long> getTagOfUser(String openId) throws Exception {
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
 
     String url = String.format(getTagsOfUserUrl, token );
     HttpHeaders headers = new HttpHeaders();
@@ -276,7 +264,7 @@ public class WXServiceImpl {
   }
 
   public UserIdsResp getUsersOfTagId(Long tagId, String openId) throws Exception {
-    String token = getPublicToken();
+    String token = wxBasicService.getPublicToken();
 
     String url = String.format(getUsersOfTagIdUrl, token );
     HttpHeaders headers = new HttpHeaders();
@@ -296,6 +284,10 @@ public class WXServiceImpl {
     }
 
     return respBody;
+  }
+
+  public String recordLocation(String xmlLocation) {
+    return null;
   }
 
   @Data
@@ -324,7 +316,7 @@ public class WXServiceImpl {
     UserIdsInfo data;
   }
   @Data
-  public class TagsOfUser extends GeneralResp{
+  public class TagsOfUser extends GeneralResp {
     @SerializedName("tagid_list")
     List<Long> tags;
 
@@ -334,17 +326,10 @@ public class WXServiceImpl {
   public class TagInfoExt extends WechatTag {
     Long count;
   }
-  @Data
-  public class Tag{
-    Map<String, String> tag;
-  }
 
-  @Data
-  public class GeneralResp{
-    Long errcode;
-    String errmsg;
 
-  }
+
+
 
   @Data
   public class TagUserBatchReq{

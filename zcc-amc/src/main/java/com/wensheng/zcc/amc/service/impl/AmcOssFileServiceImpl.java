@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.SystemUtils;
 import java.io.File;
 import java.util.List;
 import javax.annotation.PostConstruct;
@@ -114,14 +115,14 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     File targetFile = null;
     switch (type){
       case "debt":
-        checkAndMakeDir(debtImageRepo+File.separator + id);
+        SystemUtils.checkAndMakeDir(debtImageRepo+File.separator + id);
         targetFile =
-            new File(debtImageRepo+File.separator + id+ File.pathSeparator +multipartFile.getOriginalFilename());
+            new File(debtImageRepo+File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
       case "asset":
-        checkAndMakeDir(assetImageRepo+File.separator + id);
+        SystemUtils.checkAndMakeDir(assetImageRepo+File.separator + id);
         targetFile =
-            new File(assetImageRepo+File.separator + id+ File.pathSeparator +multipartFile.getOriginalFilename());
+            new File(assetImageRepo+File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
         default:
           throw new Exception("type"+type + "is not debt or asset");
@@ -134,18 +135,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
   }
 
 
-  private boolean checkAndMakeDir(String path) throws Exception {
-    File directory = new File(path);
-    try{
-      if (! directory.exists()){
-        directory.mkdir();
-      }
-    }catch (Exception ex){
-      log.error("Make dir exception:", ex);
-      throw ExceptionUtils.getAmcException(AmcExceptions.DIRECTORY_OPER_FAILED);
-    }
-    return true;
-  }
+
 
 
 }

@@ -29,6 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.geo.Circle;
 import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metrics;
@@ -307,14 +308,15 @@ public class WXUserServiceImpl implements WXUserService {
           = xmlMapper.readValue(xmlLocation, WXUserGeoInfo.class);
 
       WXUserGeoRecord wxUserGeoRecord = new WXUserGeoRecord();
-      wxUserGeoRecord.setLocation(new GeoJsonPoint(wxUserGeoInfo.getLatitude(), wxUserGeoInfo.getLongitude()));
+      wxUserGeoRecord.setLocation(new GeoJsonPoint( wxUserGeoInfo.getLongitude(), wxUserGeoInfo.getLatitude()));
       wxUserGeoRecord.setOpenId(wxUserGeoInfo.getFromUserName());
       wxUserGeoRecord.setCreateTime(Instant.ofEpochSecond(wxUserGeoInfo.getCreateTime()).atZone(ZoneId.of("UTC")).toLocalDate());
-      Point point = new Point(wxUserGeoInfo.getLatitude(), wxUserGeoInfo.getLongitude());
+      GeoJsonPoint geoJsonPoint = new GeoJsonPoint( wxUserGeoInfo.getLongitude(), wxUserGeoInfo.getLatitude());
+//      Circle area = new Circle(new Point(wxUserGeoInfo.getLatitude(),  wxUserGeoInfo.getLongitude()),
+//          new Distance(10, Metrics.KILOMETERS));
+      NearQuery nearQuery = NearQuery.near(geoJsonPoint).maxDistance(100.00).inKilometers();
       GeoResults<WXUserGeoRecord> wxUserGeoRecordGeoResults =
-          mongoTemplate.geoNear( NearQuery.near(point).maxDistance(new Distance(100.00,
-              Metrics.KILOMETERS)),
-              WXUserGeoRecord.class);
+          mongoTemplate.geoNear( nearQuery, WXUserGeoRecord.class);
       if(CollectionUtils.isEmpty(wxUserGeoRecordGeoResults.getContent())){
         mongoTemplate.save(wxUserGeoRecord);
       }else{

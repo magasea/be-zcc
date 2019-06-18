@@ -5,7 +5,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-class WXMaterialItem{
+public class WXMaterialItem extends GeneralResp{
   @SerializedName("news_item")
   List<WXMaterial> newsItem;
   @SerializedName("create_time")

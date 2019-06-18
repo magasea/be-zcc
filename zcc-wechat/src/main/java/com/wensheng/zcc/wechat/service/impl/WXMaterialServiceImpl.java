@@ -11,6 +11,7 @@ import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialBatch;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
+import com.wensheng.zcc.wechat.module.vo.WXMaterialItem;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialMod;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.service.WXBasicService;
@@ -263,7 +264,7 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<Map> entity = new HttpEntity<>(paramMap, headers);
 
-    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, WXMaterialBatch.class);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, WXMaterialItem.class);
     MediaUploadResp resp = (MediaUploadResp) response.getBody();
     if(resp.getErrcode() != null && resp.getErrcode() != 0){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",

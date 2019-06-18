@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 
 @Data
-class WXMaterialContent{
+public class WXMaterialContent{
   WXMaterialItem content;
   @SerializedName("update_time")
   Long  updateTime;

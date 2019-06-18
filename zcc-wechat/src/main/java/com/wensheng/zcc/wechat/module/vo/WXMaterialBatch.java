@@ -15,24 +15,3 @@ public class WXMaterialBatch extends GeneralResp {
 
 }
 
-@Data
-class WXMaterialItem{
-  @SerializedName("news_item")
-  List<WXMaterial> newsItem;
-  @SerializedName("create_time")
-  Long createTime;
-
-  @SerializedName("update_time")
-  Long updateTime;
-}
-
-@Data
-class WXMaterialContent{
-  WXMaterialItem content;
-  @SerializedName("update_time")
-  Long  updateTime;
-  @SerializedName("media_id")
-  String mediaId;
-  String name;
-  String url;
-}

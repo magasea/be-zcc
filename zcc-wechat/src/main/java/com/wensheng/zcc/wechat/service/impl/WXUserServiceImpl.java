@@ -1,33 +1,43 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.wechat.module.dao.mongo.WXUserGeoRecord;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.TagCreate;
 import com.wensheng.zcc.wechat.module.vo.TagDel;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
-import com.wensheng.zcc.wechat.utils.wechat.AesException;
-import com.wensheng.zcc.wechat.utils.wechat.SHA1;
 import java.io.IOException;
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.xml.parsers.ParserConfigurationException;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.geo.Distance;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Point;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -36,11 +46,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-import org.xml.sax.SAXException;
 
 @Service
-
+@Slf4j
 public class WXUserServiceImpl implements WXUserService {
 
   @Autowired
@@ -79,6 +89,9 @@ public class WXUserServiceImpl implements WXUserService {
 //  get_tag_usersids_url
   @Value("${weixin.get_useroftagid_url}")
   String getUsersOfTagIdUrl;
+
+  @Autowired
+  MongoTemplate mongoTemplate;
 
   private Gson gson = new Gson();
 
@@ -287,6 +300,32 @@ public class WXUserServiceImpl implements WXUserService {
   }
 
   public String recordLocation(String xmlLocation) {
+
+    XmlMapper xmlMapper = new XmlMapper();
+    try {
+      WXUserGeoInfo wxUserGeoInfo
+          = xmlMapper.readValue(xmlLocation, WXUserGeoInfo.class);
+
+      WXUserGeoRecord wxUserGeoRecord = new WXUserGeoRecord();
+      wxUserGeoRecord.setLocation(new GeoJsonPoint(wxUserGeoInfo.getLatitude(), wxUserGeoInfo.getLongitude()));
+      wxUserGeoRecord.setOpenId(wxUserGeoInfo.getFromUserName());
+      wxUserGeoRecord.setCreateTime(Instant.ofEpochSecond(wxUserGeoInfo.getCreateTime()).atZone(ZoneId.of("UTC")).toLocalDate());
+      Point point = new Point(wxUserGeoInfo.getLatitude(), wxUserGeoInfo.getLongitude());
+      GeoResults<WXUserGeoRecord> wxUserGeoRecordGeoResults =
+          mongoTemplate.geoNear( NearQuery.near(point).maxDistance(new Distance(100.00,
+              Metrics.KILOMETERS)),
+              WXUserGeoRecord.class);
+      if(CollectionUtils.isEmpty(wxUserGeoRecordGeoResults.getContent())){
+        mongoTemplate.save(wxUserGeoRecord);
+      }else{
+        log.info("Distance is too near, so no record need to be record");
+      }
+
+    } catch (IOException e) {
+      log.error(String.format("Failed to parse:%s", xmlLocation), e);
+      e.printStackTrace();
+    }
+
     return null;
   }
 

@@ -19,6 +19,8 @@ import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialBatch;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
+import com.wensheng.zcc.wechat.module.vo.WXMaterialItem;
+import com.wensheng.zcc.wechat.module.vo.WXMaterialMod;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXMaterialService;
@@ -50,6 +52,7 @@ import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.FormHttpMessageConverter;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -77,8 +80,10 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   String materialUpdateUrl;
   @Value("${weixin.material_get_count_url}")
   String materialGetCountUrl;
+
   @Value("${weixin.material_batch_get_url}")
   String materialBatchGetUrl;
+
 
   @Value("${project.params.wechat_image_path}")
   String wechatImagePath;
@@ -97,20 +102,22 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   void init(){
     GsonBuilder gson = new GsonBuilder();
     restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2XmlHttpMessageConverter);
     GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
     gsonHttpMessageConverter.setSupportedMediaTypes(Arrays.asList(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON));
 
     gsonHttpMessageConverter.setGson(gson.create());
-    ByteArrayHttpMessageConverter byteArrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
-    FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
+//    ByteArrayHttpMessageConverter byteArrayHttpMessageConverter = new ByteArrayHttpMessageConverter();
+//    FormHttpMessageConverter formHttpMessageConverter = new FormHttpMessageConverter();
     restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
-    restTemplate.getMessageConverters().add(formHttpMessageConverter);
-    restTemplate.getMessageConverters().add(byteArrayHttpMessageConverter);
-    restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
+//    restTemplate.getMessageConverters().add(formHttpMessageConverter);
+//    restTemplate.getMessageConverters().add(byteArrayHttpMessageConverter);
+//    restTemplate.getMessageConverters().add(new FormHttpMessageConverter());
 
   }
   public HttpHeaders getHttpJsonHeader(){
     HttpHeaders headers = new HttpHeaders();
+    headers.getAccept().clear();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     return headers;
   }
@@ -259,6 +266,25 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
   }
 
+
+  public synchronized MediaUploadResp getMaterial(String mediaId) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialGetUrl, token);
+    Map<String, String> paramMap = new HashMap<>();
+    paramMap.put("media_id", mediaId);
+
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<Map> entity = new HttpEntity<>(paramMap, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, WXMaterialBatch.class);
+    MediaUploadResp resp = (MediaUploadResp) response.getBody();
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    return resp;
+
+  }
   public synchronized WXMaterialBatch getBatchMaterial(int type, Long offset, Long count) throws Exception {
     String token = wxBasicService.getPublicToken();
     String url = String.format(materialBatchGetUrl, token);
@@ -306,6 +332,38 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     return resp;
 
   }
+
+  public GeneralResp delMaterial(String mediaId) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialDelUrl, token);
+    HttpHeaders headers = getHttpJsonHeader();
+    Map<String, String> paramMap = new HashMap<>();
+    paramMap.put("media_id", mediaId);
+    HttpEntity<Map> entity = new HttpEntity<>(paramMap, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, GeneralResp.class);
+    GeneralResp resp = (GeneralResp) response.getBody();
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    return resp;
+  }
+
+  public GeneralResp modMaterial(WXMaterialMod wxMaterialMod) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialUpdateUrl, token);
+    HttpHeaders headers = getHttpJsonHeader();
+
+    HttpEntity<WXMaterialMod> entity = new HttpEntity<>(wxMaterialMod, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, GeneralResp.class);
+    GeneralResp resp = (GeneralResp) response.getBody();
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    return resp;
+  }
+
 
   @Data
   class MatAddNewResp extends GeneralResp {

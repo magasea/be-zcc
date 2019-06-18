@@ -138,7 +138,13 @@ weixin:
     material_get_count_url: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=%s
     material_batch_get_url: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=%s
 
-
+baidu:
+    logis:
+        appName: amc-lgs
+        appAK: LMZGzYuSmmBvE5IS5EMdEsUGROx7r2G8
+        appId: 16178564
+        appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
+        getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
 message:
     url: http://esms100.10690007.net/sms/mt
     spid: 9346

@@ -10,9 +10,11 @@ import com.google.gson.JsonSerializer;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.wechat.module.vo.Article;
 import com.wensheng.zcc.wechat.module.vo.ArticleVo;
+import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialBatch;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
+import com.wensheng.zcc.wechat.module.vo.WXMaterialMod;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.module.vo.helper.NeedOpenCommentEnum;
 import com.wensheng.zcc.wechat.module.vo.helper.OnlyFansCanCommentEnum;
@@ -73,6 +75,23 @@ public class WechatMaterialController {
     }
   }
 
+  @RequestMapping(value = "/delMaterial", method = RequestMethod.POST)
+  @ResponseBody
+  public GeneralResp delMaterial(@RequestParam("mediaId") String mediaId) throws Exception {
+
+
+    return wxMaterialService.delMaterial(mediaId);
+
+  }
+
+  @RequestMapping(value = "/modMaterial", method = RequestMethod.POST)
+  @ResponseBody
+  public GeneralResp modMaterial(@RequestBody() WXMaterialMod wxMaterialMod) throws Exception {
+
+
+    return wxMaterialService.modMaterial(wxMaterialMod);
+
+  }
 
   @RequestMapping(value = "/uploadImage", headers = "Content-Type= multipart/form-data", method = RequestMethod.POST)
   @ResponseBody
@@ -101,7 +120,7 @@ public class WechatMaterialController {
 
   @RequestMapping(value = "/material/batchget", method = RequestMethod.POST)
   @ResponseBody
-  public WXMaterialBatch uploadImage(@RequestParam("type") Integer type, @RequestParam("offset") Long offset,
+  public WXMaterialBatch batchGet(@RequestParam("type") Integer type, @RequestParam("offset") Long offset,
       @RequestParam("count") Long count) throws Exception {
 
 

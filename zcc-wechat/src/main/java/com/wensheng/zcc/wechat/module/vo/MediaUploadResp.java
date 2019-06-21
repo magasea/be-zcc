@@ -11,4 +11,10 @@ class MediaUploadResp extends GeneralResp{
 
   @SerializedName("media_id")
   String mediaId;
+
+  String type;
+
+  @SerializedName("created_at")
+  Long createdAt;
+
 }

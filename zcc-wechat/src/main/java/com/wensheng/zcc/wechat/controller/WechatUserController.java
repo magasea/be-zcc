@@ -24,7 +24,7 @@ import org.xml.sax.SAXException;
 
 @Controller
 @RequestMapping(value = "/ws/wechat")
-public class WechatController {
+public class WechatUserController {
 
   @Autowired
   WXUserServiceImpl wxService;

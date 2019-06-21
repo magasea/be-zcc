@@ -90,6 +90,7 @@ spring:
             max-file-size: 10240KB
             max-request-size: 10240KB
 
+
 mybatis:
     type-aliases-package: com.wensheng.zcc.wechat.module
     mapper-locations:
@@ -130,6 +131,10 @@ weixin:
     get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 
     #material management
+    material_add_tmp_url: https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s
+    material_get_tmp_url: https://api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s
+    material_upload_temp_url: https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=%s
+    material_preview_url: https://api.weixin.qq.com/cgi-bin/message/mass/preview?access_token=%s
     material_add_new_url: https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s
     material_uploadimage_url: https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s
     material_addmaterial_url: https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s
@@ -139,6 +144,8 @@ weixin:
     material_get_count_url: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=%s
     material_batch_get_url: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=%s
 
+    msg_group_send_tag_url: https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s
+
 baidu:
     logis:
         appName: amc-lgs
@@ -146,6 +153,11 @@ baidu:
         appId: 16178564
         appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
         getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
+gaode:
+#    String url = "http://restapi.amap.com/v3/geocode/geo?key=0c53a687090bf18a7394ffc66a0b6432&address="+urlEncoder.encode(address,"utf-8")
+    key: 0c53a687090bf18a7394ffc66a0b6432
+    geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
+
 
 
 message:

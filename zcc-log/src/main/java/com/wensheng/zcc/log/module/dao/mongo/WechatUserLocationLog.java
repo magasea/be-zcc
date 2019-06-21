@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJson;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -20,10 +23,9 @@ public class WechatUserLocationLog {
 
   @Indexed
   String openId;
-  BigDecimal latitude;
-  BigDecimal longitude;
 
-  Double[] location;
+  @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+  GeoJson location;
 
   BigDecimal speed;
   BigDecimal accuracy;

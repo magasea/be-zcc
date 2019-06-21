@@ -13,10 +13,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author chenwei on 4/1/19
@@ -58,8 +62,20 @@ public class KafkaServiceImpl implements KafkaService {
        gsonStr = gson.toJson(payload);
       WechatUserLocationLog wechatUserLocationLog = new WechatUserLocationLog();
       AmcBeanUtils.copyProperties(payload, wechatUserLocationLog);
-      wechatUserLocationLog.setLocation(new Double[]{payload.getLongitude().doubleValue(), payload.getLatitude().doubleValue()});
-      wszccTemplate.save(wechatUserLocationLog);
+
+      GeoJsonPoint geoJsonPoint = new GeoJsonPoint( payload.getLongitude().doubleValue(), payload.getLatitude().doubleValue());
+//      Circle area = new Circle(new Point(wxUserGeoInfo.getLatitude(),  wxUserGeoInfo.getLongitude()),
+//          new Distance(10, Metrics.KILOMETERS));
+      NearQuery nearQuery = NearQuery.near(geoJsonPoint).maxDistance(100.00).inKilometers();
+      GeoResults<WechatUserLocationLog> wechatUserLocationLogGeoResults =
+          wszccTemplate.geoNear( nearQuery, WechatUserLocationLog.class);
+      if(CollectionUtils.isEmpty(wechatUserLocationLogGeoResults.getContent())){
+        wechatUserLocationLog.setLocation(geoJsonPoint);
+        wszccTemplate.save(wechatUserLocationLog);
+      }else{
+        log.info("Distance is too near, so no record need to be record");
+      }
+
 
     }catch (Exception ex){
       log.error("Failed to handle:{}", gsonStr, ex);

@@ -106,14 +106,20 @@ public class WXUserServiceImpl implements WXUserService {
 
   String nonce = "xxxxxx";
   String replyMsg = "我是中文abcd123";
-  String xmlFormat = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
+  String xmlFormat = "<xml><ToUserName><![CDATA[toWxName]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
   String afterAesEncrypt = "jn1L23DB+6ELqJ+6bruv21Y6MD7KeIfP82D6gU39rmkgczbWwt5+3bnyg5K55bgVtVzd832WzZGMhkP72vVOfg==";
   String randomStr = "aaaabbbbccccdddd";
 
   String replyMsg2 = "<xml><ToUserName><![CDATA[oia2Tj我是中文jewbmiOUlr6X-1crbLOvLw]]></ToUserName><FromUserName><![CDATA[gh_7f083739789a]]></FromUserName><CreateTime>1407743423</CreateTime><MsgType><![CDATA[video]]></MsgType><Video><MediaId><![CDATA[eYJ1MbwPRJtOvIEabaxHs7TX2D-HV71s79GUxqdUkjm6Gs2Ed1KF3ulAOA9H1xG0]]></MediaId><Title><![CDATA[testCallBackReplyVideo]]></Title><Description><![CDATA[testCallBackReplyVideo]]></Description></Video></xml>";
   String afterAesEncrypt2 = "jn1L23DB+6ELqJ+6bruv23M2GmYfkv0xBh2h+XTBOKVKcgDFHle6gqcZ1cZrk3e1qjPQ1F4RsLWzQRG9udbKWesxlkupqcEcW7ZQweImX9+wLMa0GaUzpkycA8+IamDBxn5loLgZpnS7fVAbExOkK5DYHBmv5tptA9tklE/fTIILHR8HLXa5nQvFb3tYPKAlHF3rtTeayNf0QuM+UW/wM9enGIDIJHF7CLHiDNAYxr+r+OrJCmPQyTy8cVWlu9iSvOHPT/77bZqJucQHQ04sq7KZI27OcqpQNSto2OdHCoTccjggX5Z9Mma0nMJBU+jLKJ38YB1fBIz+vBzsYjrTmFQ44YfeEuZ+xRTQwr92vhA9OxchWVINGC50qE/6lmkwWTwGX9wtQpsJKhP+oS7rvTY8+VdzETdfakjkwQ5/Xka042OlUb1/slTwo4RscuQ+RdxSGvDahxAJ6+EAjLt9d8igHngxIbf6YyqqROxuxqIeIch3CssH/LqRs+iAcILvApYZckqmA7FNERspKA5f8GoJ9sv8xmGvZ9Yrf57cExWtnX8aCMMaBropU/1k+hKP5LVdzbWCG0hGwx/dQudYR/eXp3P0XxjlFiy+9DMlaFExWUZQDajPkdPrEeOwofJb";
 
-
+  public HttpHeaders getHttpJsonHeader(){
+    HttpHeaders headers = new HttpHeaders();
+    headers.getAccept().clear();
+    headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    return headers;
+  }
 
 
   public UserIdsResp getWechatPublicUserIds(String openId){
@@ -122,8 +128,7 @@ public class WXUserServiceImpl implements WXUserService {
     if(StringUtils.isEmpty(openId)){
       url.append("&next_openid=").append(openId);
     }
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<?> entity = new HttpEntity<>(headers);
 
     UserIdsResp response = restTemplate.exchange(url.toString(), HttpMethod.GET, entity, UserIdsResp.class).getBody();
@@ -140,8 +145,7 @@ public class WXUserServiceImpl implements WXUserService {
     userListReq.setUser_list(new ArrayList<>());
     openIds.forEach(item-> userListReq.getUser_list().add(new UserIdInfoReq(item, "zh_CN")));
     String url = String.format(getPublicUsersInfoUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<UserListReq> entity = new HttpEntity<>( userListReq, headers);
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
     System.out.println(((ResponseEntity<Map>) response).getBody().toString());
@@ -153,8 +157,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
     System.out.println(token);
     String url = String.format(getUserTagsUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<?> entity = new HttpEntity<>(headers);
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
     System.out.println(((ResponseEntity<Map>) response).getBody().toString());
@@ -166,8 +169,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(createUserTagUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
 
     Map<String, TagCreate> tagMap = new HashMap<>();
     TagCreate tag = new TagCreate();
@@ -184,8 +186,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(delUserTagUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     TagDel tag = new TagDel();
     tag.setId(tagId);
     Map<String, TagDel> tagMap = new HashMap<>();
@@ -205,8 +206,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(modUserTagUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
 
     Map<String, TagMod> tagMap = new HashMap<>();
     tagMap.put("tag", tagMod);
@@ -225,8 +225,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(unTagUserBatchUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     TagUserBatchReq tagUserBatchReq = new TagUserBatchReq();
     tagUserBatchReq.setOpenIdList( openIds);
     tagUserBatchReq.setTagId(tagId);
@@ -242,8 +241,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(tagUserBatchUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     TagUserBatchReq tagUserBatchReq = new TagUserBatchReq();
     tagUserBatchReq.setOpenIdList(openIds);
     tagUserBatchReq.setTagId(tagId);
@@ -260,8 +258,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(getTagsOfUserUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     Map<String, String> openIdMap = new HashMap<>();
     openIdMap.put("openid", openId);
     HttpEntity<Map> entity = new HttpEntity<>(openIdMap, headers);
@@ -281,8 +278,7 @@ public class WXUserServiceImpl implements WXUserService {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(getUsersOfTagIdUrl, token );
-    HttpHeaders headers = new HttpHeaders();
-    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    HttpHeaders headers = getHttpJsonHeader();
     Map<String, Object> openIdMap = new HashMap<>();
     if(!StringUtils.isEmpty(openId)){
       openIdMap.put("next_openid", openId);

@@ -29,7 +29,7 @@ public class WXBizMsgCryptTest {
 	String nonce = "xxxxxx";
 	String appId = "wxb11529c136998cb6";
 	String replyMsg = "我是中文abcd123";
-	String xmlFormat = "<xml><ToUserName><![CDATA[toUser]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
+	String xmlFormat = "<xml><ToUserName><![CDATA[toWxName]]></ToUserName><Encrypt><![CDATA[%1$s]]></Encrypt></xml>";
 	String afterAesEncrypt = "jn1L23DB+6ELqJ+6bruv21Y6MD7KeIfP82D6gU39rmkgczbWwt5+3bnyg5K55bgVtVzd832WzZGMhkP72vVOfg==";
 	String randomStr = "aaaabbbbccccdddd";
 

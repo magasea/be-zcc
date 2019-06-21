@@ -8,11 +8,15 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.SystemUtils;
 import com.wensheng.zcc.wechat.module.vo.Article;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
+import com.wensheng.zcc.wechat.module.vo.MaterialPreviewReq;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialBatch;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialItem;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialMod;
+import com.wensheng.zcc.wechat.module.vo.WXMaterialPreviewResp;
+import com.wensheng.zcc.wechat.module.vo.WXMsgGroupResp;
+import com.wensheng.zcc.wechat.module.vo.WXMsgGroupTagReq;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXMaterialService;
@@ -60,8 +64,15 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   String materialUploadimageUrl;
   @Value("${weixin.material_addmaterial_url}")
   String materialAddmaterialUrl;
+  @Value("${weixin.material_add_tmp_url}")
+  String materialAddTempUrl;
   @Value("${weixin.material_get_url}")
   String materialGetUrl;
+  @Value("${weixin.material_get_tmp_url}")
+  String materialGetTempUrl;
+  @Value("${weixin.material_preview_url}")
+  String materialPreviewUrl;
+
   @Value("${weixin.material_del_url}")
   String materialDelUrl;
   @Value("${weixin.material_update_url}")
@@ -72,10 +83,14 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   @Value("${weixin.material_batch_get_url}")
   String materialBatchGetUrl;
 
+  @Value("${weixin.material_upload_temp_url}")
+  String materialUploadTempUrl;
 
   @Value("${project.params.wechat_image_path}")
   String wechatImagePath;
 
+  @Value(("${weixin.msg_group_send_tag_url}"))
+  String msgGroupSendTagUrl;
 
   @Autowired
   WXUserService wxService;
@@ -106,6 +121,7 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   public HttpHeaders getHttpJsonHeader(){
     HttpHeaders headers = new HttpHeaders();
     headers.getAccept().clear();
+    headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     return headers;
   }
@@ -133,6 +149,24 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     }
     return resp.getMediaId();
 
+  }
+
+  public MediaUploadResp addTempMaterial(List<Article> articles) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialUploadTempUrl, token);
+    HttpHeaders headers = getHttpJsonHeader();
+    Map<String, Object> articlesMap = new HashMap<>();
+
+    articlesMap.put("articles", articles);
+    HttpEntity<Map> entity = new HttpEntity<>(articlesMap, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, MediaUploadResp.class);
+    MediaUploadResp resp = (MediaUploadResp) response.getBody();
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    return resp;
   }
 
   public synchronized String uploadImage(MultipartFile mediaFile) throws Exception {
@@ -168,54 +202,20 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
   }
 
-//  public synchronized String uploadImageTest(MultipartFile mediaFile) throws Exception {
-//    String urlTest = "http://localhost:10001/api/amcid/7/asset/image/add";
-//    StringBuilder sb = new StringBuilder(wechatImagePath);
-//    SystemUtils.checkAndMakeDir(sb.toString());
-//
-//    File imageFile = new File("/home/chenwei/Pictures/Screenshot from 2019-05-13 16-51-21.jpg");
-//
-//
-//    HttpHeaders headers = getHttpMultiFileHeader();
-//    MultiValueMap<String, Object> body
-//        = new LinkedMultiValueMap<>();
-////    FileSystemResource fileSystemResource = new FileSystemResource(imageFile);
-//    FileSystemResource fileSystemResource = new FileSystemResource(imageFile);
-//
-//
-//    body.add("uploadingImages", getUserImageFileResource() );
-//    body.add("isToOss", 1);
-//    body.add("imageClass", 1);
-//    body.add("description", "test");
-//    body.add("assetId", 98);
-//    body.add("actionId", 1);
-//
-//
-//    HttpEntity<Map> entity = new HttpEntity<>(body, headers);
-//
-//    ResponseEntity response = restTemplate.exchange(urlTest, HttpMethod.POST, entity, String.class);
-//
-//    System.out.println(response.getBody());
-//    return response.getBody().toString();
-//
-//
-//  }
-//  public static Resource getUserFileResource() throws IOException {
-//    //todo replace tempFile with a real file
-//    Path tempFile = Files.createTempFile("upload-test-file", ".txt");
-//    Files.write(tempFile, "some test content...\nline1\nline2".getBytes());
-//    System.out.println("uploading: " + tempFile);
-//    File file = tempFile.toFile();
-//    //to upload in-memory bytes use ByteArrayResource instead
-//    return new FileSystemResource(file);
-//  }
-//
-//  public static Resource getUserImageFileResource() throws IOException {
-//    //todo replace tempFile with a real file
-//    File imageFile = new File("/home/chenwei/Pictures/Screenshot from 2019-05-13 16-51-21.jpg");
-//    //to upload in-memory bytes use ByteArrayResource instead
-//    return new FileSystemResource(imageFile);
-//  }
+  public synchronized WXMsgGroupResp groupMsgSendWithTag(WXMsgGroupTagReq wxMsgGroupTagReq) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(msgGroupSendTagUrl, token);
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<WXMsgGroupTagReq> entity = new HttpEntity<>(wxMsgGroupTagReq, headers);
+    ResponseEntity<WXMsgGroupResp> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity,
+        WXMsgGroupResp.class);
+    WXMsgGroupResp resp = responseEntity.getBody();
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    return resp;
+  }
 
 
 
@@ -254,8 +254,39 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
   }
 
+  public synchronized MediaUploadResp addTempMaterial(MultipartFile mediaFile, String type) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialAddTempUrl, token, type);
 
-  public synchronized MediaUploadResp getMaterial(String mediaId) throws Exception {
+    HttpHeaders headers = getHttpMultiFileHeader();
+    MultiValueMap<String, Object> body
+        = new LinkedMultiValueMap<>();
+    StringBuilder sb = new StringBuilder(wechatImagePath);
+    SystemUtils.checkAndMakeDir(sb.toString());
+    File imageFile =
+        new File(sb.append(File.separatorChar).append(Instant.now().getEpochSecond()).toString());
+    mediaFile.transferTo(imageFile);
+    String ext = ImageUtils.getImageType(imageFile.getAbsolutePath());
+    String newFilePath = String.format("%s.%s",imageFile.getAbsolutePath(),
+        ext.toLowerCase());
+    Files.move(imageFile.toPath(), Paths.get(newFilePath));
+    Resource resource = new FileSystemResource(newFilePath);
+    body.add("media",  resource);
+    body.add("type", type);
+    HttpEntity<Map> entity = new HttpEntity<>(body, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, MediaUploadResp.class);
+    MediaUploadResp resp = (MediaUploadResp) response.getBody();
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    return resp;
+
+  }
+
+
+  public synchronized WXMaterialItem getMaterial(String mediaId) throws Exception {
     String token = wxBasicService.getPublicToken();
     String url = String.format(materialGetUrl, token);
     Map<String, String> paramMap = new HashMap<>();
@@ -265,7 +296,7 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     HttpEntity<Map> entity = new HttpEntity<>(paramMap, headers);
 
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, WXMaterialItem.class);
-    MediaUploadResp resp = (MediaUploadResp) response.getBody();
+    WXMaterialItem resp = (WXMaterialItem) response.getBody();
     if(resp.getErrcode() != null && resp.getErrcode() != 0){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
           resp.getErrcode(), resp.getErrmsg()));
@@ -350,6 +381,34 @@ public class WXMaterialServiceImpl implements WXMaterialService {
           resp.getErrcode(), resp.getErrmsg()));
     }
     return resp;
+  }
+
+  public byte[] getTempMaterial(String mediaId) {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialGetTempUrl, token, mediaId);
+    Map<String, String> paramMap = new HashMap<>();
+
+
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<Map> entity = new HttpEntity<>(paramMap, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.GET, entity, byte[].class);
+    return (byte[])response.getBody();
+
+  }
+
+
+
+  public WXMaterialPreviewResp previewMaterial(MaterialPreviewReq materialPreviewReq){
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(materialPreviewUrl, token);
+
+
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<MaterialPreviewReq> entity = new HttpEntity<MaterialPreviewReq>(materialPreviewReq, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, WXMaterialPreviewResp.class);
+    return (WXMaterialPreviewResp)response.getBody();
   }
 
 

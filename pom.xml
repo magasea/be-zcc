@@ -156,6 +156,7 @@
         <module>zcc-wechat</module>
         <module>zcc-log</module>
         <module>zcc-common</module>
+      <module>zcc-comn-func</module>
     </modules>
     <!--<build>-->
         <!--<plugins>-->

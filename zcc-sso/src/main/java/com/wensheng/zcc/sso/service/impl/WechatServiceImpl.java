@@ -12,6 +12,7 @@ import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
+import com.wensheng.zcc.sso.module.vo.WechatUserInfo;
 import com.wensheng.zcc.sso.service.KafkaService;
 import com.wensheng.zcc.sso.service.WechatService;
 import java.security.AlgorithmParameters;
@@ -70,6 +71,9 @@ public class WechatServiceImpl implements WechatService {
 
   @Value("${weixin.open.loginUrl}")
   String loginOpenUrl;
+
+  @Value("${weixin.open.getUserInfoUrl}")
+  String getUserInfoUrl;
 
   @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.client-id}")
   private String amcWechatClientId;
@@ -238,6 +242,17 @@ public class WechatServiceImpl implements WechatService {
     }
     CUWechatUser((responseEntity.getBody()));
     return wechatLoginResult;
+  }
+
+  @Override
+  public WechatUserInfo getWechatUserInfo(String openId, String accessToken) {
+    String url = String.format(getUserInfoUrl, accessToken, openId);
+    ResponseEntity<WechatUserInfo> responseEntity = restTemplate.getForEntity(url,
+        WechatUserInfo.class);
+    String info = gson.toJson(responseEntity.getBody());
+    log.info(String.format("got response from wechat:%s", info));
+
+    return responseEntity.getBody();
   }
 
   private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){

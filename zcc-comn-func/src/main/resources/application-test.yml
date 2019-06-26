@@ -1,0 +1,188 @@
+server:
+    port: 10005
+spring:
+    autoconfigure:
+        exclude:
+            - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
+            - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+    datasource:
+        password: wensheng
+        url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+        username: wenshengcust
+        driverClassName: com.mysql.cj.jdbc.Driver
+        filters: stat
+        maxActive: 20
+        initialSize: 1
+        maxWait: 60000
+        minIdle: 1
+        timeBetweenEvictionRunsMillis: 60000
+        minEvictableIdleTimeMillis: 300000
+        validationQuery: select 'x'
+        testWhileIdle: true
+        testOnBorrow: false
+        testOnReturn: false
+        poolPreparedStatements: true
+        maxOpenPreparedStatements: 20
+    #    jpa:
+    #        generate-ddl: false
+    #        hibernate:
+    #            ddl-auto: 'none '
+    #            naming:
+    #                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+    #        properties:
+    #            hibernate:
+    #                hbm2ddl:
+    #                    auto: none
+    #        show-sql: true
+    security:
+        oauth2:
+            client:
+                registration:
+                    sample:
+                        client-id: sampleClientId
+                        authorizedGrantTypes: implicit
+                        scops: read,write
+                        accessTokenValiditySeconds: 3600
+                    amc-client-thirdpart:
+                        client-id: amcClient3rdPartId
+                        secret: secret
+                        scopes: thirdpart, read
+                        authorizedGrantTypes: implicit, refresh_token, client_credentials
+                        redirectUris: admin,http://${env.oauth2.host}:10003/amc/login, http://${env.oauth2.host}:8080/login/oauth2/code/custom, http://${env.oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${env.oauth2.host}:8080/authorize/oauth2/code/bael, http://${env.oauth2.host}:8080/login/oauth2/code/bael
+                    amc-admin:
+                        client-id: amcAdminId
+                        secret: secret
+                        scopes: amcAdmin,amcClient,read,write
+                        authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
+                        redirectUris: admin,http://${env.oauth2.host}:10003/amc/login, http://${env.oauth2.host}:8080/login/oauth2/code/custom, http://${env.oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${env.oauth2.host}:8080/authorize/oauth2/code/bael, http://${env.oauth2.host}:8080/login/oauth2/code/bael
+                    amc-wechat-client:
+                        client-id: amcWXClientId
+                        secret: secret
+                        scopes: amcClient,read,write
+                        redirectUris: client,http://${env.oauth2.host}:10003/amc/login
+                        authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
+
+    kafka:
+        consumer:
+            group-id: grp-zcc-wechat
+            auto-offset-reset: earliest
+        # change this property if you are using your own
+        # Kafka cluster or your Docker IP is different
+        bootstrap-servers: ${env.kfkhost}:9092
+    data:
+        mongodb:
+            database: wszcc_wechat
+            host: ${env.mongodb-host}
+            port: 27017
+    task:
+        scheduling:
+            thread-name-prefix: synchWithScrapySystem
+            cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+    cache:
+        cache-names: TOKEN
+        caffeine:
+            spec: maximumSize=500, expireAfterAccess=120s
+    servlet:
+        multipart:
+            enabled: true
+            file-size-threshold: 10240KB
+            max-file-size: 10240KB
+            max-request-size: 10240KB
+
+mybatis:
+    type-aliases-package: com.wensheng.zcc.wechat.module
+    mapper-locations:
+        - classpath:mappers/*Mapper.xml
+        - classpath:mappers/ext/*Mapper.xml
+
+project:
+    params:
+        wechat_image_path: ${env.image-repo}/wechat/images/
+
+weixin:
+    #    appId: wxdb885be2c95a5b32
+    #    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+    appId: wx6f60584065dd3e45
+    appSecret: 3217390a438df7cd13189b6a9c69abf2
+    encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
+    token: wensheng
+    userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
+    loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
+
+    get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
+
+    # user and tag management
+    get_public_users_url: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
+    get_public_userinfo_url: https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN
+    get_public_usersinfo_url: https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s
+    get_usertags_url: https://api.weixin.qq.com/cgi-bin/tags/get?access_token=%s
+    create_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/create?access_token=%s
+    delete_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/delete?access_token=%s
+    mod_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/update?access_token=%s
+    untaguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token=%s
+    taguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=%s
+    get_tagsofuser_url: https://api.weixin.qq.com/cgi-bin/tags/getidlist?access_token=%s
+    get_useroftagid_url: https://api.weixin.qq.com/cgi-bin/user/tag/get?access_token=%s
+    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+
+    #material management
+    material_add_tmp_url: https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s
+    material_get_tmp_url: https://api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s
+    material_upload_temp_url: https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=%s
+    material_preview_url: https://api.weixin.qq.com/cgi-bin/message/mass/preview?access_token=%s
+    material_add_new_url: https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s
+    material_uploadimage_url: https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s
+    material_addmaterial_url: https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s
+    material_get_url: https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=%s
+    material_del_url: https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=%s
+    material_update_url: https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=%s
+    material_get_count_url: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=%s
+    material_batch_get_url: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=%s
+    msg_group_send_tag_url: https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s
+    msg_group_send_openid_url: https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s
+    msg_group_del_url: https://api.weixin.qq.com/cgi-bin/message/mass/delete?access_token=%s
+    msg_group_get_url: https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=%s
+baidu:
+    logis:
+        appName: amc-lgs
+        appAK: LMZGzYuSmmBvE5IS5EMdEsUGROx7r2G8
+        appId: 16178564
+        appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
+        getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
+
+gaode:
+    #    String url = "http://restapi.amap.com/v3/geocode/geo?key=0c53a687090bf18a7394ffc66a0b6432&address="+urlEncoder.encode(address,"utf-8")
+    key: 0c53a687090bf18a7394ffc66a0b6432
+    geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
+
+
+
+message:
+    url: http://esms100.10690007.net/sms/mt
+    spid: 9346
+    sppassword: xuKh9a8u
+    commond: MT_REQUEST
+    multiCommond: MULTI_MT_REQUEST
+
+kafka:
+    topic_wechatuser: topic_wechatuser_${env.env-hint}
+
+logging:
+    level:
+        com:
+            wensheng: TRACE
+        root: WARN
+
+
+env:
+    env-hint: test
+    dbhost: 10.20.100.70
+    kfkhost: 10.20.100.238
+    mongodb-host: 10.20.100.235
+    image-repo: /backup/temp
+    oauth2:
+        host: 10.20.100.236
+        authLink: http://${env.oauth2.host}:10002

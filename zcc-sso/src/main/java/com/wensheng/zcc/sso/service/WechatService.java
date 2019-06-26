@@ -5,6 +5,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
+import com.wensheng.zcc.sso.module.vo.WechatUserInfo;
 
 /**
  * @author chenwei on 3/19/19
@@ -21,4 +22,6 @@ public interface WechatService {
   String registryUserLocation(WechatUserLocation wechatUserLocation);
 
   WechatLoginResult loginWechatOpenPlatform(String code);
+
+  WechatUserInfo getWechatUserInfo(String openId, String accessToken);
 }

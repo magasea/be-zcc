@@ -4,6 +4,7 @@ import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.module.vo.WechatLogin;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
+import com.wensheng.zcc.sso.module.vo.WechatUserInfo;
 import com.wensheng.zcc.sso.service.WechatService;
 import com.wensheng.zcc.sso.service.util.VerifyCodeUtil;
 import java.io.IOException;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 
@@ -49,6 +51,14 @@ public class WechatUserController {
 
   }
 
+  @RequestMapping(value="/openplatform/wechatUserInfo",method= RequestMethod.POST)
+  @ResponseBody
+  public WechatUserInfo wechatLoginOpenPlatform(@RequestParam String openId, @RequestParam String token) throws IOException {
+
+    return wechatService.getWechatUserInfo(openId, token);
+
+  }
+
   @RequestMapping(value="/registryPhone",method= RequestMethod.POST)
   @ResponseBody
   public String wechatRegistryPhone(@RequestBody WechatPhoneRegistry phoneRegistry) throws IOException {
@@ -67,6 +77,7 @@ public class WechatUserController {
     return "succeed";
 
   }
+
 
 
 }

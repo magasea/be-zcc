@@ -1,6 +1,8 @@
 package com.wensheng.zcc.wechat.service.impl;
 
 
+import com.wensheng.zcc.wechat.module.vo.ReGeoCode;
+import net.webby.protostuff.runtime.Generators;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,5 +24,12 @@ WXMaterialServiceImpl wxMaterialService;
   @Test
   public void uploadImageTest() throws Exception {
 //    wxMaterialService.uploadImageTest(null);
+  }
+
+  @Test
+  public void generateProto(){
+    ReGeoCode geoCode = new ReGeoCode();
+    String content = Generators.newProtoGenerator(geoCode).generate();
+    System.out.println(content);
   }
 }

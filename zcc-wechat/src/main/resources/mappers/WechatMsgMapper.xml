@@ -1,0 +1,369 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatMsgMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsg">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="msg_id" jdbcType="BIGINT" property="msgId" />
+    <result column="media_id" jdbcType="VARCHAR" property="mediaId" />
+    <result column="send_status" jdbcType="CHAR" property="sendStatus" />
+    <result column="result_status" jdbcType="INTEGER" property="resultStatus" />
+    <result column="total_count" jdbcType="INTEGER" property="totalCount" />
+    <result column="filter_count" jdbcType="INTEGER" property="filterCount" />
+    <result column="sent_count" jdbcType="INTEGER" property="sentCount" />
+    <result column="error_count" jdbcType="INTEGER" property="errorCount" />
+    <result column="to_user_name" jdbcType="CHAR" property="toUserName" />
+    <result column="from_user_name" jdbcType="CHAR" property="fromUserName" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="msg_type" jdbcType="CHAR" property="msgType" />
+    <result column="event" jdbcType="CHAR" property="event" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, msg_id, media_id, send_status, result_status, total_count, filter_count, sent_count, 
+    error_count, to_user_name, from_user_name, create_time, msg_type, event
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_MSG
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_MSG
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from WECHAT_MSG
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgExample">
+    delete from WECHAT_MSG
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsg">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_MSG (msg_id, media_id, send_status, 
+      result_status, total_count, filter_count, 
+      sent_count, error_count, to_user_name, 
+      from_user_name, create_time, msg_type, 
+      event)
+    values (#{msgId,jdbcType=BIGINT}, #{mediaId,jdbcType=VARCHAR}, #{sendStatus,jdbcType=CHAR}, 
+      #{resultStatus,jdbcType=INTEGER}, #{totalCount,jdbcType=INTEGER}, #{filterCount,jdbcType=INTEGER}, 
+      #{sentCount,jdbcType=INTEGER}, #{errorCount,jdbcType=INTEGER}, #{toUserName,jdbcType=CHAR}, 
+      #{fromUserName,jdbcType=CHAR}, #{createTime,jdbcType=DATE}, #{msgType,jdbcType=CHAR}, 
+      #{event,jdbcType=CHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsg">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_MSG
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="msgId != null">
+        msg_id,
+      </if>
+      <if test="mediaId != null">
+        media_id,
+      </if>
+      <if test="sendStatus != null">
+        send_status,
+      </if>
+      <if test="resultStatus != null">
+        result_status,
+      </if>
+      <if test="totalCount != null">
+        total_count,
+      </if>
+      <if test="filterCount != null">
+        filter_count,
+      </if>
+      <if test="sentCount != null">
+        sent_count,
+      </if>
+      <if test="errorCount != null">
+        error_count,
+      </if>
+      <if test="toUserName != null">
+        to_user_name,
+      </if>
+      <if test="fromUserName != null">
+        from_user_name,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="msgType != null">
+        msg_type,
+      </if>
+      <if test="event != null">
+        event,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="msgId != null">
+        #{msgId,jdbcType=BIGINT},
+      </if>
+      <if test="mediaId != null">
+        #{mediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="sendStatus != null">
+        #{sendStatus,jdbcType=CHAR},
+      </if>
+      <if test="resultStatus != null">
+        #{resultStatus,jdbcType=INTEGER},
+      </if>
+      <if test="totalCount != null">
+        #{totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="filterCount != null">
+        #{filterCount,jdbcType=INTEGER},
+      </if>
+      <if test="sentCount != null">
+        #{sentCount,jdbcType=INTEGER},
+      </if>
+      <if test="errorCount != null">
+        #{errorCount,jdbcType=INTEGER},
+      </if>
+      <if test="toUserName != null">
+        #{toUserName,jdbcType=CHAR},
+      </if>
+      <if test="fromUserName != null">
+        #{fromUserName,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=DATE},
+      </if>
+      <if test="msgType != null">
+        #{msgType,jdbcType=CHAR},
+      </if>
+      <if test="event != null">
+        #{event,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgExample" resultType="java.lang.Long">
+    select count(*) from WECHAT_MSG
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update WECHAT_MSG
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.msgId != null">
+        msg_id = #{record.msgId,jdbcType=BIGINT},
+      </if>
+      <if test="record.mediaId != null">
+        media_id = #{record.mediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.sendStatus != null">
+        send_status = #{record.sendStatus,jdbcType=CHAR},
+      </if>
+      <if test="record.resultStatus != null">
+        result_status = #{record.resultStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.totalCount != null">
+        total_count = #{record.totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.filterCount != null">
+        filter_count = #{record.filterCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.sentCount != null">
+        sent_count = #{record.sentCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.errorCount != null">
+        error_count = #{record.errorCount,jdbcType=INTEGER},
+      </if>
+      <if test="record.toUserName != null">
+        to_user_name = #{record.toUserName,jdbcType=CHAR},
+      </if>
+      <if test="record.fromUserName != null">
+        from_user_name = #{record.fromUserName,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=DATE},
+      </if>
+      <if test="record.msgType != null">
+        msg_type = #{record.msgType,jdbcType=CHAR},
+      </if>
+      <if test="record.event != null">
+        event = #{record.event,jdbcType=CHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update WECHAT_MSG
+    set id = #{record.id,jdbcType=BIGINT},
+      msg_id = #{record.msgId,jdbcType=BIGINT},
+      media_id = #{record.mediaId,jdbcType=VARCHAR},
+      send_status = #{record.sendStatus,jdbcType=CHAR},
+      result_status = #{record.resultStatus,jdbcType=INTEGER},
+      total_count = #{record.totalCount,jdbcType=INTEGER},
+      filter_count = #{record.filterCount,jdbcType=INTEGER},
+      sent_count = #{record.sentCount,jdbcType=INTEGER},
+      error_count = #{record.errorCount,jdbcType=INTEGER},
+      to_user_name = #{record.toUserName,jdbcType=CHAR},
+      from_user_name = #{record.fromUserName,jdbcType=CHAR},
+      create_time = #{record.createTime,jdbcType=DATE},
+      msg_type = #{record.msgType,jdbcType=CHAR},
+      event = #{record.event,jdbcType=CHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsg">
+    update WECHAT_MSG
+    <set>
+      <if test="msgId != null">
+        msg_id = #{msgId,jdbcType=BIGINT},
+      </if>
+      <if test="mediaId != null">
+        media_id = #{mediaId,jdbcType=VARCHAR},
+      </if>
+      <if test="sendStatus != null">
+        send_status = #{sendStatus,jdbcType=CHAR},
+      </if>
+      <if test="resultStatus != null">
+        result_status = #{resultStatus,jdbcType=INTEGER},
+      </if>
+      <if test="totalCount != null">
+        total_count = #{totalCount,jdbcType=INTEGER},
+      </if>
+      <if test="filterCount != null">
+        filter_count = #{filterCount,jdbcType=INTEGER},
+      </if>
+      <if test="sentCount != null">
+        sent_count = #{sentCount,jdbcType=INTEGER},
+      </if>
+      <if test="errorCount != null">
+        error_count = #{errorCount,jdbcType=INTEGER},
+      </if>
+      <if test="toUserName != null">
+        to_user_name = #{toUserName,jdbcType=CHAR},
+      </if>
+      <if test="fromUserName != null">
+        from_user_name = #{fromUserName,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=DATE},
+      </if>
+      <if test="msgType != null">
+        msg_type = #{msgType,jdbcType=CHAR},
+      </if>
+      <if test="event != null">
+        event = #{event,jdbcType=CHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsg">
+    update WECHAT_MSG
+    set msg_id = #{msgId,jdbcType=BIGINT},
+      media_id = #{mediaId,jdbcType=VARCHAR},
+      send_status = #{sendStatus,jdbcType=CHAR},
+      result_status = #{resultStatus,jdbcType=INTEGER},
+      total_count = #{totalCount,jdbcType=INTEGER},
+      filter_count = #{filterCount,jdbcType=INTEGER},
+      sent_count = #{sentCount,jdbcType=INTEGER},
+      error_count = #{errorCount,jdbcType=INTEGER},
+      to_user_name = #{toUserName,jdbcType=CHAR},
+      from_user_name = #{fromUserName,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=DATE},
+      msg_type = #{msgType,jdbcType=CHAR},
+      event = #{event,jdbcType=CHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_MSG
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

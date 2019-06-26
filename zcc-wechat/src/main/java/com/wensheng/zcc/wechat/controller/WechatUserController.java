@@ -3,6 +3,7 @@ package com.wensheng.zcc.wechat.controller;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.service.WXBasicService;
+import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
 import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl;
 import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.TagInfoExt;
 import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.UserIdsResp;
@@ -32,6 +33,9 @@ public class WechatUserController {
   @Autowired
   WXBasicService wxBasicService;
 
+  @Autowired
+  WXMaterialServiceImpl wxMaterialService;
+
   @RequestMapping(value = "/check", method = RequestMethod.GET)
   @ResponseBody
   public String checkWechat(@RequestParam("signature") String signature, @RequestParam("echostr") String echostr,
@@ -45,9 +49,14 @@ public class WechatUserController {
 
   @RequestMapping(value = "/check", method = RequestMethod.POST)
   @ResponseBody
-  public String reportLocation(@RequestBody  String xmlLocation) {
+  public String reportLocation(@RequestBody  String xmlMsg) {
 
-    String response = wxService.recordLocation(xmlLocation);
+    String response = null ;
+    if(xmlMsg.contains("LOCATION")){
+      response = wxService.recordLocation(xmlMsg);
+    }else if(xmlMsg.contains("MASSSENDJOBFINISH")){
+      response = wxMaterialService.recordMsgResult(xmlMsg);
+    }
     return response;
 
   }

@@ -63,4 +63,6 @@ public interface AmcAssetService {
   Long getAssetCountWithDebtIds(List<Long> amcDebtIds);
 
     void setRecomm(List<Long> assetIds, int isRecomm);
+
+  List<AmcAssetVo> getAssetsByIds(List<Long> assetIds) throws Exception;
 }

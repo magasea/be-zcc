@@ -3,6 +3,7 @@ package com.wensheng.zcc.wechat.service.impl;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.wechat.module.dao.mongo.WXUserGeoRecord;
+import com.wensheng.zcc.wechat.module.vo.ReGeoCode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -99,54 +100,6 @@ public class AmcGaoDeLogisQuery {
     @SerializedName("regeocode")
     ReGeoCode reGeoCode;
 
-  }
-
-  @Data
-  class ReGeoCode{
-    @SerializedName("formatted_address")
-    String formattedAddress;
-    AddressComponent addressComponent;
-  }
-
-  @Data
-  class AddressComponent{
-    String country;
-    String province;
-    List<String> city;
-    String citycode;
-    String district;
-    String adcode;
-    String township;
-    String towncode;
-    StreetNumber streetNumber;
-    List<BusinessArea> businessAreas;
-    Building building;
-    Neighborhood neighborhood;
-  }
-  @Data
-  class StreetNumber{
-    String number;
-    String location;
-    String direction;
-    Double distance;
-    String street;
-  }
-  @Data
-  class BusinessArea{
-    String location;
-    String name;
-    Long id;
-  }
-  @Data
-  class Building{
-    List<String> name;
-    List<Integer> type;
-  }
-
-  @Data
-  class Neighborhood{
-    List<String> name;
-    List<Integer> type;
   }
 
 }

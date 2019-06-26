@@ -85,6 +85,17 @@ public class AmcAssetController {
 //    return queryResults;
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/assetids", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public List<AmcAssetVo> getAmcAssetsByIds(
+      @RequestBody(required = false) List<Long> assetIds) throws Exception {
+
+    List<AmcAssetVo> queryResults = amcAssetService.getAssetsByIds(assetIds);
+
+    return queryResults;
+  }
+
   @RequestMapping(value = "/amcid/{amcid}/assets/recommand", method = RequestMethod.POST)
   @ResponseBody
   public List<AmcAssetVo> getAmcAssets(

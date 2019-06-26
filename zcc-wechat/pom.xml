@@ -58,6 +58,12 @@
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.9.8</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/com.moovel.proto/protostuff-runtime-proto -->
+        <dependency>
+            <groupId>com.moovel.proto</groupId>
+            <artifactId>protostuff-runtime-proto</artifactId>
+            <version>0.0.4</version>
+        </dependency>
 
 
     </dependencies>

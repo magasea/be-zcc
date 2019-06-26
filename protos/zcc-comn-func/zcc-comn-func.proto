@@ -1,0 +1,43 @@
+syntax = "proto3";
+import "../common/common.proto";
+package com.wenshengamc.zcccomnfunc.gaodegeo;
+option java_multiple_files = true;
+
+message GreetingRequest {
+    string name = 1;
+}
+
+message GreetingResponse {
+    string greeting = 2;
+}
+
+
+message WXUserGeoReq {
+  string id;
+
+  string openId;
+
+  string unionId;
+
+
+  GeoJson location;
+
+  string province;
+  string city;
+
+  string address;
+
+  LocalDate updateTime ;
+
+  LocalDate createTime;
+}
+
+message WhoResponse {
+    string key = 1;
+    string value = 2;
+}
+
+service MyService {
+    rpc getAddress(WXUserGeoReq) returns (GreetingResponse);
+    rpc who(WhoRequest) returns (stream WhoResponse);
+}

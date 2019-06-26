@@ -1,6 +1,7 @@
 package com.wensheng.zcc.wechat.controller;
 
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.wechat.module.vo.AMCWXMsgResult;
 import com.wensheng.zcc.wechat.module.vo.Article;
 import com.wensheng.zcc.wechat.module.vo.ArticleVo;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
@@ -223,6 +224,30 @@ public class WechatMaterialController {
 
   }
 
+  @RequestMapping(value = "/material/msg/send-openid", method = RequestMethod.POST)
+  @ResponseBody
+  public WXMsgGroupResp sendMsgWithOpenid(@RequestBody  WXMsgGroupTagReq wxMsgGroupTagReq) throws Exception {
 
 
+    return wxMaterialService.groupMsgSendWithOpenid(wxMsgGroupTagReq);
+
+  }
+
+  @RequestMapping(value = "/material/msg/del", method = RequestMethod.POST)
+  @ResponseBody
+  public GeneralResp delGrpMsg(@RequestParam("msgId")Long msgId, @RequestParam("articleIdx") Long articleIdx) throws Exception {
+
+
+    return wxMaterialService.delGrpMsg(msgId, articleIdx);
+
+  }
+
+  @RequestMapping(value = "/material/msg/query", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AMCWXMsgResult> querySentMsg() throws Exception {
+
+
+    return wxMaterialService.querySentMsg();
+
+  }
 }

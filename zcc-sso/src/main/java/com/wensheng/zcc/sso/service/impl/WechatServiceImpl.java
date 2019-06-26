@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcWechatUserMapper;
@@ -35,7 +36,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -64,6 +67,9 @@ public class WechatServiceImpl implements WechatService {
 
   @Value("${weixin.loginUrl}")
   String loginUrl;
+
+  @Value("${weixin.open.loginUrl}")
+  String loginOpenUrl;
 
   @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.client-id}")
   private String amcWechatClientId;
@@ -118,14 +124,15 @@ public class WechatServiceImpl implements WechatService {
 
   @PostConstruct
   private  void init(){
-    List<HttpMessageConverter<?>> messageConverters = new ArrayList<HttpMessageConverter<?>>();
-    //Add the Jackson Message converter
-    MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-    // Note: here we are making this converter to process any kind of response,
-    // not only application/*json, which is the default behaviour
-    converter.setSupportedMediaTypes(Arrays.asList(new MediaType[]{MediaType.ALL}));
-    messageConverters.add(converter);
-    restTemplate.setMessageConverters(messageConverters);
+    GsonBuilder gson = new GsonBuilder();
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2XmlHttpMessageConverter);
+    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    gsonHttpMessageConverter.setSupportedMediaTypes(Arrays.asList(MediaType.TEXT_PLAIN, MediaType.APPLICATION_JSON));
+
+    gsonHttpMessageConverter.setGson(gson.create());
+
+    restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
     BaseClientDetails baseClientDetails = new BaseClientDetails();
     baseClientDetails.setClientId(amcWechatClientId);
     baseClientDetails.setAccessTokenValiditySeconds(accessTokenValidSeconds);
@@ -217,12 +224,34 @@ public class WechatServiceImpl implements WechatService {
     return "succeed";
   }
 
+  @Override
+  public WechatLoginResult loginWechatOpenPlatform(String code) {
+    String loginWechatUrl = String.format(loginOpenUrl, code);
+    ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
+        WechatCode2SessionVo.class);
+    String info = gson.toJson(responseEntity.getBody());
+    log.info(String.format("got response from wechat:%s", info));
+    WechatLoginResult wechatLoginResult = new WechatLoginResult();
+    wechatLoginResult.setResp(info);
+    if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
+      wechatLoginResult.setOAuth2AccessToken(generateToken(responseEntity.getBody()));
+    }
+    CUWechatUser((responseEntity.getBody()));
+    return wechatLoginResult;
+  }
+
   private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){
     HashMap<String, String> authorizationParameters = new HashMap<String, String>();
     authorizationParameters.put("scope", amcWechatScopes);
     authorizationParameters.put("username", wechatCode2SessionVo.getOpenid());
     authorizationParameters.put("client_id", amcWechatClientId);
     authorizationParameters.put("grant", amcWechatAuthorizedGrantTypes);
+    if(!StringUtils.isEmpty(wechatCode2SessionVo.getAccessToken())){
+      authorizationParameters.put("accessToken", wechatCode2SessionVo.getAccessToken());
+    }
+    if(!StringUtils.isEmpty(wechatCode2SessionVo.getRefreshToken())){
+      authorizationParameters.put("refreshToken", wechatCode2SessionVo.getRefreshToken());
+    }
     List<String> scopes = new ArrayList<>();
     if(!StringUtils.isEmpty(amcWechatScopes)){
       Arrays.stream(amcWechatScopes.split(",")).forEach(item -> scopes.add(item.trim()));
@@ -237,10 +266,16 @@ public class WechatServiceImpl implements WechatService {
     OAuth2Request authorizationRequest = new OAuth2Request(authorizationParameters, amcWechatClientId, authorities,true, scopesSet, null,
         amcWechatRedirectUris, null, null);
 
-
+    User userPrincipal = null;
     // Create principal and auth token
-    User userPrincipal = new User(wechatCode2SessionVo.getOpenid(), wechatCode2SessionVo.getSessionKey(), true, true, true, true,
-        authorities);
+    if(!StringUtils.isEmpty(wechatCode2SessionVo.getSessionKey())){
+      userPrincipal = new User(wechatCode2SessionVo.getOpenid(), wechatCode2SessionVo.getSessionKey(), true, true, true, true,
+          authorities);
+    }else if(!StringUtils.isEmpty(wechatCode2SessionVo.getAccessToken())){
+      userPrincipal = new User(wechatCode2SessionVo.getOpenid(), wechatCode2SessionVo.getAccessToken(), true, true, true, true,
+          authorities);
+    }
+
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal,
         wechatCode2SessionVo.getSessionKey(), authorities) ;
 

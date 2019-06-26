@@ -75,6 +75,11 @@ spring:
       max-file-size: 200MB
       max-request-size: 215MB
       location: ${env-hint.image-repo}
+  task:
+    scheduling:
+      thread-name-prefix: synchWithScrapySystem
+      cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+
 
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module

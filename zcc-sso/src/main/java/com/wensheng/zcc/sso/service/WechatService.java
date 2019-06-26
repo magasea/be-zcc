@@ -19,4 +19,6 @@ public interface WechatService {
 
 
   String registryUserLocation(WechatUserLocation wechatUserLocation);
+
+  WechatLoginResult loginWechatOpenPlatform(String code);
 }

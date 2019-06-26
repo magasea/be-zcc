@@ -41,6 +41,14 @@ public class WechatUserController {
 
   }
 
+  @RequestMapping(value="/openplatform/wechatLogin",method= RequestMethod.POST)
+  @ResponseBody
+  public WechatLoginResult wechatLoginOpenPlatform(@RequestBody WechatLogin login) throws IOException {
+
+    return wechatService.loginWechatOpenPlatform(login.getCode());
+
+  }
+
   @RequestMapping(value="/registryPhone",method= RequestMethod.POST)
   @ResponseBody
   public String wechatRegistryPhone(@RequestBody WechatPhoneRegistry phoneRegistry) throws IOException {

@@ -527,6 +527,45 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         wszccTemplate.findAndModify(query, update, AssetAdditional.class);
     }
 
+    @Override
+    public List<AmcAssetVo> getAssetsByIds(List<Long> assetIds) throws Exception {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andIdIn(assetIds);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+        if(CollectionUtils.isEmpty(amcAssetVos)){
+            return amcAssetVos;
+        }
+        Map<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
+            item->item));
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()));
+        List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+        query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
+        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+
+
+
+
+        for(AssetAdditional additional: assetAdditionals){
+            if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
+
+                amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+
+            }
+        }
+        for(AssetImage assetImage: assetImages){
+            if(amcAssetVoMap.containsKey(assetImage.getAmcAssetId())){
+                amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
+            }
+        }
+        List <AmcAssetVo> amcAssetVosList = new ArrayList<>(amcAssetVoMap.values());
+//            Collections.sort(amcAssetVosList, amcAssetVoComparator);
+        return amcAssetVosList;
+
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();

@@ -1,15 +1,26 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.amc.utils.ImageUtils;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.SystemUtils;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatMsgCkitemMapper;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatMsgMapper;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsg;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgCkitem;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgCkitemExample;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMsgExample;
+import com.wensheng.zcc.wechat.module.vo.AMCWXMsgResult;
 import com.wensheng.zcc.wechat.module.vo.Article;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.MaterialPreviewReq;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
+import com.wensheng.zcc.wechat.module.vo.WXMsgCPRCheckResult;
+import com.wensheng.zcc.wechat.module.vo.WXCopyrightCheckResults;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialBatch;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialItem;
@@ -22,13 +33,16 @@ import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXMaterialService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -46,6 +60,7 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -92,11 +107,23 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   @Value(("${weixin.msg_group_send_tag_url}"))
   String msgGroupSendTagUrl;
 
+  @Value("${weixin.msg_group_send_openid_url}")
+  String msgGroupSendOpenidUrl;
+
+  @Value("${weixin.msg_group_del_url}")
+  String msgGroupDelUrl;
+
   @Autowired
   WXUserService wxService;
 
   @Autowired
   WXBasicService wxBasicService;
+
+  @Autowired
+  WechatMsgMapper wechatMsgMapper;
+
+  @Autowired
+  WechatMsgCkitemMapper wechatMsgCkitemMapper;
 
 //  private Gson gson = new Gson();
 
@@ -210,13 +237,34 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     ResponseEntity<WXMsgGroupResp> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity,
         WXMsgGroupResp.class);
     WXMsgGroupResp resp = responseEntity.getBody();
+
+    if(resp.getErrcode() != null && resp.getErrcode() != 0){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
+          resp.getErrcode(), resp.getErrmsg()));
+    }
+    WechatMsg wechatMsg = new WechatMsg();
+    wechatMsg.setMsgId(resp.getMsgId());
+    wechatMsg.setMediaId(wxMsgGroupTagReq.getMpNews().getMediaId());
+    wechatMsgMapper.insertSelective(wechatMsg);
+    return resp;
+  }
+
+
+  public synchronized WXMsgGroupResp groupMsgSendWithOpenid(WXMsgGroupTagReq wxMsgGroupTagReq) throws Exception {
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(msgGroupSendOpenidUrl, token);
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<WXMsgGroupTagReq> entity = new HttpEntity<>(wxMsgGroupTagReq, headers);
+    ResponseEntity<WXMsgGroupResp> responseEntity = restTemplate.exchange(url, HttpMethod.POST, entity,
+        WXMsgGroupResp.class);
+    WXMsgGroupResp resp = responseEntity.getBody();
     if(resp.getErrcode() != null && resp.getErrcode() != 0){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_WECHAT_PARAMETER, String.format("%s:%s",
           resp.getErrcode(), resp.getErrmsg()));
     }
     return resp;
-  }
 
+  }
 
 
   public synchronized MediaUploadResp addMaterial(MultipartFile mediaFile, String title, String introduction,
@@ -399,6 +447,22 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
 
 
+
+  public GeneralResp delGrpMsg(Long msgId, Long articleIdx){
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(msgGroupDelUrl, token);
+    Map<String, Long> paramMap = new HashMap<>();
+    paramMap.put("msg_id", msgId);
+    if(articleIdx != null && articleIdx > 0){
+      paramMap.put("article_idx", articleIdx);
+    }
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<Map> entity = new HttpEntity<Map>(paramMap, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, GeneralResp.class);
+    return (GeneralResp) response.getBody();
+  }
+
   public WXMaterialPreviewResp previewMaterial(MaterialPreviewReq materialPreviewReq){
     String token = wxBasicService.getPublicToken();
     String url = String.format(materialPreviewUrl, token);
@@ -409,6 +473,68 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, WXMaterialPreviewResp.class);
     return (WXMaterialPreviewResp)response.getBody();
+  }
+  public String recordMsgResult(String xmlMsg) {
+    XmlMapper xmlMapper = new XmlMapper();
+    try {
+      WXCopyrightCheckResults wxCopyrightCheckResults
+          = xmlMapper.readValue(xmlMsg, WXCopyrightCheckResults.class);
+
+      WechatMsg wechatMsg = new WechatMsg();
+      AmcBeanUtils.copyProperties(wxCopyrightCheckResults, wechatMsg);
+      wechatMsg.setMsgId(wxCopyrightCheckResults.getMsgID());
+      WechatMsgExample wechatMsgExample = new WechatMsgExample();
+      wechatMsgExample.createCriteria().andMsgIdEqualTo(wechatMsg.getMsgId());
+      List<WechatMsg> wechatMsgs = wechatMsgMapper.selectByExample(wechatMsgExample);
+      if(CollectionUtils.isEmpty(wechatMsgs)){
+        wechatMsgMapper.insertSelective(wechatMsg);
+      }else{
+        wechatMsg.setId(wechatMsgs.get(0).getId());
+        wechatMsgMapper.updateByPrimaryKeySelective(wechatMsg);
+      }
+
+      if(CollectionUtils.isEmpty(wxCopyrightCheckResults.getCopyrightCheckResult().getResultList())){
+        for(WXMsgCPRCheckResult item  : wxCopyrightCheckResults.getCopyrightCheckResult().getResultList()){
+          WechatMsgCkitem wechatMsgCkitem = new WechatMsgCkitem();
+
+          AmcBeanUtils.copyProperties(item, wechatMsgCkitem);
+          wechatMsgCkitem.setMsgId(wechatMsg.getMsgId());
+
+          WechatMsgCkitemExample wechatMsgCkitemExample = new WechatMsgCkitemExample();
+          wechatMsgCkitemExample.createCriteria().andArticleIdxEqualTo(wechatMsgCkitem.getArticleIdx()).andMsgIdEqualTo(wechatMsg.getMsgId());
+          List<WechatMsgCkitem> wechatMsgCkitems = wechatMsgCkitemMapper.selectByExample(wechatMsgCkitemExample);
+          if(CollectionUtils.isEmpty(wechatMsgCkitems)){
+            wechatMsgCkitemMapper.insertSelective(wechatMsgCkitem);
+          }else{
+            wechatMsgCkitem.setId(wechatMsgCkitems.get(0).getId());
+            wechatMsgCkitemMapper.updateByPrimaryKeySelective(wechatMsgCkitem);
+          }
+        }
+      }
+
+
+    } catch (IOException e) {
+      log.error(String.format("Failed to parse:%s", xmlMsg), e);
+      e.printStackTrace();
+    }
+    return null;
+
+  }
+//Todo: update mapper xml to make the query in one time
+  public List<AMCWXMsgResult> querySentMsg() {
+
+    List<AMCWXMsgResult> amcwxMsgResults = new ArrayList<>();
+    List<WechatMsg> wechatMsgs = wechatMsgMapper.selectByExample(null);
+    WechatMsgCkitemExample wechatMsgCkitemExample = null;
+    for(WechatMsg wechatMsg: wechatMsgs){
+      AMCWXMsgResult amcwxMsgResult = new AMCWXMsgResult();
+      amcwxMsgResult.setWechatMsg(wechatMsg);
+      wechatMsgCkitemExample = new WechatMsgCkitemExample();
+      wechatMsgCkitemExample.createCriteria().andMsgIdEqualTo(wechatMsg.getMsgId());
+      amcwxMsgResult.setWechatMsgCkitems(wechatMsgCkitemMapper.selectByExample(wechatMsgCkitemExample));
+      amcwxMsgResults.add(amcwxMsgResult);
+    }
+    return amcwxMsgResults;
   }
 
 

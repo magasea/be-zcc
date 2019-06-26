@@ -1,0 +1,10 @@
+syntax = "proto3";
+package com.wenshengamc.zcc.common;
+message GeoJson{
+  string type = 1;
+  repeated double coordinates = 2;
+}
+message Timestamp {
+  int64 seconds = 1;
+  int32 nanos = 2;
+}

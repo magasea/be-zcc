@@ -609,7 +609,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 
   private PageWrapperResp<TrdInfoFromSync> getTrdInfoByCust(String originCustId, int pageNum){
 
-    return restTemplate.exchange(String.format(getTrdInfoDetailByCust, originCustId, pageNum), HttpMethod.GET, null,
+    return restTemplate.git exchange(String.format(getTrdInfoDetailByCust, originCustId, pageNum), HttpMethod.GET, null,
         new ParameterizedTypeReference<PageWrapperResp<TrdInfoFromSync>>() {}).getBody();
   }
 

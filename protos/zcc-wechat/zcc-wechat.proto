@@ -1,0 +1,40 @@
+syntax = "proto3";
+import "common.proto";
+
+package com.wenshengamc.zcc.wechat;
+
+
+option java_multiple_files = true;
+
+message AmcAssetImage {
+    int64 amcAssetId = 1;
+    string amcAssetMainImage =2;
+    repeated string amcAssetImages = 3;
+}
+
+message WechatAssetImage {
+  string amcAssetImage = 1;
+  string wechatAssetImage = 2;
+}
+
+message ImageUploadResult {
+  int64 amcAssetId = 1;
+  string mediaId = 2;
+  string mediaIdUrl = 3;
+  repeated WechatAssetImage wechatAssetImages = 4;
+}
+
+message UploadImg2WechatReq {
+    repeated AmcAssetImage amcAssetImages = 1;
+}
+
+
+
+message UploadImg2WechatResp {
+    repeated ImageUploadResult results =1;
+}
+
+service WechatGrpcService {
+  rpc uploadImage2Wechat(UploadImg2WechatReq) returns (UploadImg2WechatResp);
+
+}

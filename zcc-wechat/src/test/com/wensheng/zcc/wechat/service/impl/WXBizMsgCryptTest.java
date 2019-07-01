@@ -151,4 +151,12 @@ public class WXBizMsgCryptTest {
 		wxcpt.verifyUrl(verifyMsgSig, timeStamp, nonce, echoStr);
 		// 只要不抛出异常就好
 	}
+
+//	@Test
+//	public void makeSubCity2CityMap(){
+//		String path = "/home/chenwei/tmp/data.txt";
+//		File file = new File()
+//
+//	}
 }
+

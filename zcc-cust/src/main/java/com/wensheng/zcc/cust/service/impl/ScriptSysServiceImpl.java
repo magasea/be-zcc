@@ -21,12 +21,13 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
 import com.wensheng.zcc.cust.module.helper.sync.TrdInfoSyncTypeEnum;
-import com.wensheng.zcc.cust.module.sync.CmpyInfo;
+import com.wensheng.zcc.cust.module.sync.CustInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
-import com.wensheng.zcc.cust.module.sync.PersonInfo;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.ScriptSysService;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
@@ -79,10 +80,9 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     private Gson gson = new Gson();
 
     private final String getTrdInfoByBuyerType = "http://cl.wenshengamc.com/debts/getAll?type=%d&timeStart=&timeEnd=&seller=&page=%d&area=";
-    private final String getDebtCust = "http://10.20.100.228:8085/debtCustomers/getJson?page=%d&pageSize=10";
-    private final String getTrdInfoDetailByCust = "http://10.20.100.228:8085/debtCustomerDebts/getJson?customerId=%s&page=%d&pageSize=20";
-    private final String getCmpyCust ="http://10.20.100.228:8085/custTrdCmpys/getJson?provinceName=%s&page=%d&rows=10";
-    private final String getPersonCust="http://10.20.100.228:8085/custTrdPersons/getJson?provinceName=%s&page=%d&rows=10";
+    private final String getDebtCust = "http://10.20.102.242:8085/debtCustomers/getJson?page=%d&pageSize=10&provinceName=%s";
+    private final String getTrdInfoDetailByCust = "http://10.20.102.242:8085/debtCustomerDebts/getJson?customerId=%s&page=%d&pageSize=20";
+
     @PostConstruct
     void init(){
       restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
@@ -110,7 +110,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 //    }
 
     @Override
-    public void doSynchWithScriptOn(String provinceName) throws Exception {
+    public void doSynchWithScriptOn(String province) throws Exception {
 
         //1. get cust list
         boolean stillHaveNext = true;
@@ -125,8 +125,8 @@ public class ScriptSysServiceImpl implements ScriptSysService {
 //            }
 //        }
         while(stillHaveNext){
-            PageWrapperResp<CmpyInfo> custInfoFromSyncPageWrapperResp = getCmpyCustList(pageNum, provinceName);
-            ProcessCmpyInfoData(custInfoFromSyncPageWrapperResp);
+            PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp = getCustList(pageNum, province);
+            ProcessCustInfoData(custInfoFromSyncPageWrapperResp);
             if (++pageNum <= custInfoFromSyncPageWrapperResp.getPages() && !CollectionUtils.isEmpty(custInfoFromSyncPageWrapperResp.getList())) {
 
                 stillHaveNext = true;
@@ -134,19 +134,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
                 stillHaveNext = false;
             }
         }
-
-        stillHaveNext = true;
-        pageNum = 1;
-      while(stillHaveNext){
-        PageWrapperResp<PersonInfo> custInfoFromSyncPageWrapperResp = getPersonCustList(pageNum, provinceName);
-        ProcessPersonInfoData(custInfoFromSyncPageWrapperResp);
-        if (++pageNum <= custInfoFromSyncPageWrapperResp.getPages() && !CollectionUtils.isEmpty(custInfoFromSyncPageWrapperResp.getList())) {
-
-          stillHaveNext = true;
-        }else{
-          stillHaveNext = false;
-        }
-      }
+        //2. get
 
 
     }
@@ -350,128 +338,60 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     }
   }
 
-  private void ProcessCmpyInfoData(PageWrapperResp<CmpyInfo> custInfoFromSyncPageWrapperResp)
-      throws Exception {
+  private void ProcessCustInfoData(PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp)
+        throws Exception {
 
-    for(CmpyInfo custItem: custInfoFromSyncPageWrapperResp.getList()){
-      processCmpyInfoItem(custItem);
-    }
-  }
-
-  private void ProcessPersonInfoData(PageWrapperResp<PersonInfo> custInfoFromSyncPageWrapperResp)
-      throws Exception {
-
-    for(PersonInfo custItem: custInfoFromSyncPageWrapperResp.getList()){
-      processPersonInfoItem(custItem);
-    }
-  }
-
-//  private void ProcessCustInfoData(PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp)
-//        throws Exception {
-//
-//        for(CustInfoFromSync custItem: custInfoFromSyncPageWrapperResp.getList()){
-//            processCustInfoItem(custItem);
-//        }
-//    }
-
-//    @Transactional
-//    void processCustInfoItem(CustInfoFromSync custItem) throws Exception {
-//        log.info(gson.toJson(custItem));
-//        Query query = new Query();
-//
-//
-//
-//        if(custItem.getType() == CustTypeSyncEnum.COMPANY.getId()){
-//          query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.COMPANY.getId()));
-//          List<ImportCustRecord> importCustCmpyRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
-//            log.info("got company cust:{}", gson.toJson(custItem));
-//
-//
-//            if(CollectionUtils.isEmpty(importCustCmpyRecordList)){
-//                makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
-//
-//            }else{
-//                CustTrdCmpy custTrdCmpy =  custTrdCmpyMapper.selectByPrimaryKey(importCustCmpyRecordList.get(0).getCustId());
-//                if(custTrdCmpy == null){
-//                    makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
-//                }else{
-//                    copyCustFromSync2Local(custItem, custTrdCmpy);
-//                    makeRelationWithCity(custTrdCmpy, custItem.getCitys());
-//                    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
-//                }
-//            }
-//        }else if(custItem.getType() == CustTypeSyncEnum.PERSON.getId()){
-//
-//          query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.PERSON.getId()));
-//          List<ImportCustRecord> importCustPersonRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
-//            if(CollectionUtils.isEmpty(importCustPersonRecordList)) {
-//                makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
-//            }else{
-//                CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(importCustPersonRecordList.get(0).getCustId());
-//                if(custTrdPerson == null){
-//                    makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
-//                }else{
-//                    copyCustFromSync2Local(custItem, custTrdPerson);
-//                    makeRelationWithCity(custTrdPerson, custItem.getCitys());
-//                    custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
-//                }
-//            }
-//        }
-//    }
-
-  @Transactional
-  void processCmpyInfoItem(CmpyInfo custItem) throws Exception {
-    log.info(gson.toJson(custItem));
-    Query query = new Query();
-
-    query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.COMPANY.getId()));
-    List<ImportCustRecord> importCustCmpyRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
-    log.info("got company cust:{}", gson.toJson(custItem));
-
-
-    if(CollectionUtils.isEmpty(importCustCmpyRecordList)){
-      makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
-
-    }else{
-      CustTrdCmpy custTrdCmpy =  custTrdCmpyMapper.selectByPrimaryKey(importCustCmpyRecordList.get(0).getCustId());
-      if(custTrdCmpy == null){
-        makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
-      }else{
-        copyCustFromSync2Local(custItem, custTrdCmpy);
-        makeRelationWithCity(custTrdCmpy, custItem.getCitys());
-        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
-      }
+        for(CustInfoFromSync custItem: custInfoFromSyncPageWrapperResp.getList()){
+            processCustInfoItem(custItem);
+        }
     }
 
-  }
-
-  @Transactional
-  void processPersonInfoItem(PersonInfo custItem) throws Exception {
-    log.info(gson.toJson(custItem));
-    Query query = new Query();
+    @Transactional
+    void processCustInfoItem(CustInfoFromSync custItem) throws Exception {
+        log.info(gson.toJson(custItem));
+        Query query = new Query();
 
 
 
+        if(custItem.getType() == CustTypeSyncEnum.COMPANY.getId()){
+          query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.COMPANY.getId()));
+          List<ImportCustRecord> importCustCmpyRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
+            log.info("got company cust:{}", gson.toJson(custItem));
 
 
-    query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.PERSON.getId()));
-    List<ImportCustRecord> importCustPersonRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
-    if(CollectionUtils.isEmpty(importCustPersonRecordList)) {
-      makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
-    }else{
-      CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(importCustPersonRecordList.get(0).getCustId());
-      if(custTrdPerson == null){
-        makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
-      }else{
-        copyCustFromSync2Local(custItem, custTrdPerson);
-        makeRelationWithCity(custTrdPerson, custItem.getCitys());
-        custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
-      }
+            if(CollectionUtils.isEmpty(importCustCmpyRecordList)){
+                makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
+
+            }else{
+                CustTrdCmpy custTrdCmpy =  custTrdCmpyMapper.selectByPrimaryKey(importCustCmpyRecordList.get(0).getCustId());
+                if(custTrdCmpy == null){
+                    makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
+                }else{
+                    copyCustFromSync2Local(custItem, custTrdCmpy);
+                    makeRelationWithCity(custTrdCmpy, custItem.getCitys());
+                    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+                }
+            }
+        }else if(custItem.getType() == CustTypeSyncEnum.PERSON.getId()){
+
+          query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.PERSON.getId()));
+          List<ImportCustRecord> importCustPersonRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
+            if(CollectionUtils.isEmpty(importCustPersonRecordList)) {
+                makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
+            }else{
+                CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(importCustPersonRecordList.get(0).getCustId());
+                if(custTrdPerson == null){
+                    makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
+                }else{
+                    copyCustFromSync2Local(custItem, custTrdPerson);
+                    makeRelationWithCity(custTrdPerson, custItem.getCitys());
+                    custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
+                }
+            }
+        }
     }
 
-  }
-
-  private void makeNewCustPersonBySync(PersonInfo custItem, int type) throws Exception {
+  private void makeNewCustPersonBySync(CustInfoFromSync custItem, int type) throws Exception {
 
     CustTrdPerson custTrdPerson = new CustTrdPerson();
 
@@ -489,7 +409,7 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     mongoTemplate.upsert(query, update, ImportCustRecord.class);
   }
 
-  private void makeNewCustCmpyBySync(CmpyInfo custItem, int type) throws Exception {
+  private void makeNewCustCmpyBySync(CustInfoFromSync custItem, int type) throws Exception {
         CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
         copyCustFromSync2Local(custItem, custTrdCmpy);
         custTrdCmpyMapper.insertSelective(custTrdCmpy);
@@ -503,104 +423,67 @@ public class ScriptSysServiceImpl implements ScriptSysService {
         mongoTemplate.upsert(query, update, ImportCustRecord.class);
     }
 
-//  private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdCmpy custTrdCmpy)
-//      throws Exception {
-//    if(!StringUtils.isEmpty(custItem.getPhone())){
-//      custTrdCmpy.setCmpyPhone(custItem.getPhone());
-////          String[] items = SyncUtils.getPhoneList(custItem.getPhone());
-////          if(items.length >= 2){
-////            custTrdCmpy.setCmpyPhone(items[0]);
-////            custTrdCmpy.setAnnuReptPhone( String.join(",",Arrays.copyOf(items, 1)));
-////          }else{
-////            custTrdCmpy.setCmpyPhone(items[0]);
-////            custTrdCmpy.setAnnuReptPhone(items[0]);
-////          }
-//    }
-//    custTrdCmpy.setCmpyAddr(custItem.getAddress());
-//    custTrdCmpy.setCmpyName(custItem.getName());
-//    custTrdCmpy.setLegalReptive(custItem.getLinkMan());
-//    custTrdCmpy.setDataStatus(custItem.getDataStatus());
-//    int initDataQuality = -1;
-//    if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getId())){
-//      custTrdCmpy.setCmpyAddr(custItem.getDebtCustomerCompany().getCmpyAddr());
-//      custTrdCmpy.setAnnuReptAddr(custItem.getDebtCustomerCompany().getAnnuReptAddr());
-//      custTrdCmpy.setCmpyPhone(custItem.getDebtCustomerCompany().getCmpyPhone());
-//      custTrdCmpy.setAnnuReptPhone(custItem.getDebtCustomerCompany().getAnnuReptPhone());
-//      custTrdCmpy.setLegalReptive(custItem.getDebtCustomerCompany().getLegalReptive());
-//      custTrdCmpy.setCmpyName(custItem.getDebtCustomerCompany().getCmpyName());
-//      custTrdCmpy.setUniSocialCode(custItem.getDebtCustomerCompany().getUniSocialCode());
-//      if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getUniSocialCode())){
-//        initDataQuality += 1;
-//      }
-//      if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getCmpyPhone()) || !StringUtils.isEmpty(custItem.getDebtCustomerCompany().getAnnuReptPhone())){
-//        initDataQuality += 1;
-//      }
-//    }
-//    custTrdCmpy.setDataQuality(initDataQuality);
-//  }
-
-
-
-    private void copyCustFromSync2Local(CmpyInfo custItem, CustTrdCmpy custTrdCmpy)
+    private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdCmpy custTrdCmpy)
         throws Exception {
+        if(!StringUtils.isEmpty(custItem.getPhone())){
+          custTrdCmpy.setCmpyPhone(custItem.getPhone());
+//          String[] items = SyncUtils.getPhoneList(custItem.getPhone());
+//          if(items.length >= 2){
+//            custTrdCmpy.setCmpyPhone(items[0]);
+//            custTrdCmpy.setAnnuReptPhone( String.join(",",Arrays.copyOf(items, 1)));
+//          }else{
+//            custTrdCmpy.setCmpyPhone(items[0]);
+//            custTrdCmpy.setAnnuReptPhone(items[0]);
+//          }
+        }
+        custTrdCmpy.setCmpyAddr(custItem.getAddress());
+        custTrdCmpy.setCmpyName(custItem.getName());
+        custTrdCmpy.setLegalReptive(custItem.getLinkMan());
         custTrdCmpy.setDataStatus(custItem.getDataStatus());
         int initDataQuality = -1;
-        if(custItem.getId() != null && custItem.getId() > 0){
-          custTrdCmpy.setCmpyAddr(custItem.getCmpyAddr());
-          custTrdCmpy.setAnnuReptAddr(custItem.getAnnuReptAddr());
-          custTrdCmpy.setCmpyPhone(custItem.getCmpyPhone());
-          custTrdCmpy.setAnnuReptPhone(custItem.getAnnuReptPhone());
-          custTrdCmpy.setLegalReptive(custItem.getLegalReptive());
-          custTrdCmpy.setCmpyName(custItem.getCmpyName());
-          custTrdCmpy.setUniSocialCode(custItem.getUniSocialCode());
-          if(!StringUtils.isEmpty(custItem.getUniSocialCode())){
+        if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getId())){
+          custTrdCmpy.setCmpyAddr(custItem.getDebtCustomerCompany().getCmpyAddr());
+          custTrdCmpy.setAnnuReptAddr(custItem.getDebtCustomerCompany().getAnnuReptAddr());
+          custTrdCmpy.setCmpyPhone(custItem.getDebtCustomerCompany().getCmpyPhone());
+          custTrdCmpy.setAnnuReptPhone(custItem.getDebtCustomerCompany().getAnnuReptPhone());
+          custTrdCmpy.setLegalReptive(custItem.getDebtCustomerCompany().getLegalReptive());
+          custTrdCmpy.setCmpyName(custItem.getDebtCustomerCompany().getCmpyName());
+          custTrdCmpy.setUniSocialCode(custItem.getDebtCustomerCompany().getUniSocialCode());
+          if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getUniSocialCode())){
             initDataQuality += 1;
           }
-          if(!StringUtils.isEmpty(custItem.getCmpyPhone()) || !StringUtils.isEmpty(custItem.getAnnuReptPhone())){
+          if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getCmpyPhone()) || !StringUtils.isEmpty(custItem.getDebtCustomerCompany().getAnnuReptPhone())){
             initDataQuality += 1;
           }
         }
         custTrdCmpy.setDataQuality(initDataQuality);
     }
 
-  private void copyCustFromSync2Local(PersonInfo custItem, CustTrdPerson custTrdPerson)
-      throws Exception {
-    custTrdPerson.setAddr(custItem.getAddress());
-    int initDataQuality = -1;
-    if(!StringUtils.isEmpty(custItem.getMobileNum())){
-      initDataQuality += 1;
+    private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdPerson custTrdPerson)
+        throws Exception {
+        custTrdPerson.setAddr(custItem.getAddress());
+      int initDataQuality = -1;
+      if(!StringUtils.isEmpty(custItem.getPhone())){
+        initDataQuality += 1;
+        custTrdPerson.setMobileNum(custItem.getPhone());
+//        String[] items = SyncUtils.getPhoneList(custItem.getPhone());
+//        if(items.length >= 2){
+//          custTrdPerson.setMobileNum(items[0]);
+//          custTrdPerson.setTelNum( String.join(",",Arrays.copyOf(items, 1)));
+//        }else{
+//          custTrdPerson.setMobileNum(items[0]);
+//          custTrdPerson.setTelNum(items[0]);
+//        }
+      }
+      if(!StringUtils.isEmpty(custItem.getAddress())){
+        initDataQuality += 1;
+      }
 
-      custTrdPerson.setMobileNum(custItem.getMobileNum());
-
+        custTrdPerson.setEmail(custItem.getEmail());
+        custTrdPerson.setName(custItem.getName());
+        custTrdPerson.setDataStatus(custItem.getDataStatus());
+        custTrdPerson.setDataQuality(initDataQuality);
     }
-    if(!StringUtils.isEmpty(custItem.getAddress())){
-      initDataQuality += 1;
-    }
-
-    custTrdPerson.setEmail(custItem.getEmail());
-    custTrdPerson.setName(custItem.getName());
-    custTrdPerson.setDataStatus(custItem.getDataStatus());
-    custTrdPerson.setDataQuality(initDataQuality);
-  }
-
-//    private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdPerson custTrdPerson)
-//        throws Exception {
-//        custTrdPerson.setAddr(custItem.getAddress());
-//      int initDataQuality = -1;
-//      if(!StringUtils.isEmpty(custItem.getPhone())){
-//        initDataQuality += 1;
-//        custTrdPerson.setMobileNum(custItem.getPhone());
-//
-//      }
-//      if(!StringUtils.isEmpty(custItem.getAddress())){
-//        initDataQuality += 1;
-//      }
-//
-//        custTrdPerson.setEmail(custItem.getEmail());
-//        custTrdPerson.setName(custItem.getName());
-//        custTrdPerson.setDataStatus(custItem.getDataStatus());
-//        custTrdPerson.setDataQuality(initDataQuality);
-//    }
 
   private <T> void makeRelationWithCity(T custItem, String citys) throws Exception {
       if(StringUtils.isEmpty(citys) || citys.equalsIgnoreCase("null")){
@@ -717,20 +600,12 @@ public class ScriptSysServiceImpl implements ScriptSysService {
         return restTemplate.getForEntity(String.format(getTrdInfoByBuyerType, trdInfoTypeEnum.getId(), pageNum), TrdInfoFromSync.class).getBody();
     }
 
-    private PageWrapperResp<CmpyInfo> getCmpyCustList(int pageNum, String provinceName){
-        String url = String.format(getCmpyCust,provinceName, pageNum);
-
+    private PageWrapperResp<CustInfoFromSync> getCustList(int pageNum, String province){
+//      String provEncod = encodeUtf8(province);
+      String url = String.format(getDebtCust, pageNum, province);
         return restTemplate.exchange(url, HttpMethod.GET, null,
-            new ParameterizedTypeReference<PageWrapperResp<CmpyInfo>>() {}).getBody();
+            new ParameterizedTypeReference<PageWrapperResp<CustInfoFromSync>>() {}).getBody();
     }
-
-  private PageWrapperResp<PersonInfo> getPersonCustList(int pageNum, String provinceName){
-    String url = String.format(getPersonCust,provinceName, pageNum);
-
-    return restTemplate.exchange(url, HttpMethod.GET, null,
-        new ParameterizedTypeReference<PageWrapperResp<PersonInfo>>() {}).getBody();
-
-  }
 
   private PageWrapperResp<TrdInfoFromSync> getTrdInfoByCust(String originCustId, int pageNum){
 
@@ -741,4 +616,20 @@ public class ScriptSysServiceImpl implements ScriptSysService {
     public void cleanUp(){
       mongoTemplate.dropCollection(ImportCustRecord.class);
     }
+
+  /**
+   * 将字符串转换成UTF-8编码
+   * @param str
+   * @return
+   */
+  public static String encodeUtf8(String str){
+    String encode = "";
+    try{
+      encode = URLEncoder.encode(str, "UTF-8");
+    }catch(Exception e){
+      encode = str;
+      log.info("将字符串[" + str + "]转换成UTF-8格式化出错！");
+    }
+    return encode;
+  }
 }

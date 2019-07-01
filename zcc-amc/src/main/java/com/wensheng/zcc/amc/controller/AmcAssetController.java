@@ -85,6 +85,17 @@ public class AmcAssetController {
 //    return queryResults;
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/upload2wechat/assetids", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public Map<Long, List<String>> uploadAmcAssetsImage2WechatByIds(
+      @RequestBody(required = false) List<Long> assetIds) throws Exception {
+
+    Map<Long, List<String>> assetResultIds = amcAssetService.uploadAmcAssetsImage2WechatByIds(assetIds);
+
+    return assetResultIds;
+  }
+
   @RequestMapping(value = "/amcid/{amcid}/assetids", method = RequestMethod.POST)
   @ResponseBody
   @LogExecutionTime

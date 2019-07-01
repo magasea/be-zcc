@@ -19,7 +19,7 @@ public class KafkaServiceImpl implements KafkaService {
   @Autowired
   KafkaTemplate kafkaTemplate;
 
-  @Value("${env-hint.name}")
+  @Value("${env.name}")
   String env;
 
 

@@ -1,4 +1,4 @@
-package com.wensheng.zcc.wechat.module.dao.mongo;
+package com.wensheng.zcc.common.module.dto;
 
 import java.time.LocalDate;
 import java.util.Date;

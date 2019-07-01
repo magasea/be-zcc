@@ -66,7 +66,7 @@ public class SwaggerConfig {
 //  @Value("${info.build.name}")
   private String infoBuildName = "internal.test.0.0.1";
 
-  @Value("${env-hint.oauth2.authLink}")
+  @Value("${env.oauth2.authLink}")
   private String authLink ;
 
 

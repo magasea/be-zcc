@@ -1,6 +1,12 @@
 server:
   port: 10001
-
+grpc:
+  server:
+    port: 10011
+  client:
+    wechat:
+      host: ${env.rpchost}
+      port: 10015
 logging:
   level:
     com:
@@ -8,11 +14,11 @@ logging:
     root: WARN
 mongodb:
   original:
-    host: ${env-hint.mongodb-host}
+    host: ${env.mongodb-host}
     port: 27017
     database: wensheng
   wszcc:
-    host: ${env-hint.mongodb-host}
+    host: ${env.mongodb-host}
     port: 27017
     database: wszcc
 
@@ -21,9 +27,9 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   datasource:
-    password: ${env-hint.dbpasswd}
-    url: jdbc:mysql://${env-hint.dbhost}:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-    username: ${env-hint.dbusername}
+    password: ${env.dbpasswd}
+    url: jdbc:mysql://${env.dbhost}:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+    username: ${env.dbusername}
     driverClassName: com.mysql.cj.jdbc.Driver
     filters: stat
     maxActive: 20
@@ -67,14 +73,14 @@ spring:
             authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
   kafka:
-    bootstrap-servers: ${env-hint.kfkhost}:9092
+    bootstrap-servers: ${env.kfkhost}:9092
   servlet:
     multipart:
       enabled: true
       file-size-threshold: 2KB
       max-file-size: 200MB
       max-request-size: 215MB
-      location: ${env-hint.image-repo}
+      location: ${env.image-repo}
   task:
     scheduling:
       thread-name-prefix: synchWithScrapySystem
@@ -87,9 +93,9 @@ mybatis:
 
 project:
   params:
-    debt_image_path: ${env-hint.image-repo}/debt/images/
-    asset_image_path: ${env-hint.image-repo}/asset/images/
-    qrcode_image_path: ${env-hint.image-repo}/qrcode/images/
+    debt_image_path: ${env.image-repo}/debt/images/
+    asset_image_path: ${env.image-repo}/asset/images/
+    qrcode_image_path: ${env.image-repo}/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
@@ -117,14 +123,15 @@ baidu:
     appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
     getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
 
-env-hint:
+env:
   name: test
   dbhost: 10.20.100.70
   dbusername: root
+  rpchost: localhost
   dbpasswd: wensheng
   kfkhost: 10.20.100.238
   mongodb-host: 10.20.100.235
   image-repo: /backup/temp
   oauth2:
     host: 10.20.100.236
-    authLink: http://${env-hint.oauth2.host}:10002
+    authLink: http://${env.oauth2.host}:10002

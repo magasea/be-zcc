@@ -65,4 +65,6 @@ public interface AmcAssetService {
     void setRecomm(List<Long> assetIds, int isRecomm);
 
   List<AmcAssetVo> getAssetsByIds(List<Long> assetIds) throws Exception;
+
+  Map<Long, List<String>> uploadAmcAssetsImage2WechatByIds(List<Long> assetIds);
 }

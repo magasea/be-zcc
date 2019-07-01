@@ -1,5 +1,12 @@
 server:
     port: 10005
+grpc:
+    server:
+        port: 10015
+    client:
+        comnfunc:
+            host: ${env.rpchost}
+            port: 10016
 spring:
     autoconfigure:
         exclude:
@@ -184,6 +191,7 @@ logging:
 env:
     env-hint: dev
     dbhost: 10.20.100.70
+    rpchost: localhost
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /disk/temp

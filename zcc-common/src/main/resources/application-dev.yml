@@ -1,7 +1,7 @@
 MongoConfigkafka:
-    topic-prefix: ${env-hint}
+    topic-prefix: ${env}
     topic-wechat-user-location: TOPIC_WECHAT_USERLOCATION-${env-hit}
 
 
 
-env-hint: dev
+env: dev

@@ -1,7 +1,7 @@
 package com.wensheng.zcc.wechat.service.impl;
 
 
-import com.wensheng.zcc.wechat.module.vo.ReGeoCode;
+import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import net.webby.protostuff.runtime.Generators;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +26,5 @@ WXMaterialServiceImpl wxMaterialService;
 //    wxMaterialService.uploadImageTest(null);
   }
 
-  @Test
-  public void generateProto(){
-    ReGeoCode geoCode = new ReGeoCode();
-    String content = Generators.newProtoGenerator(geoCode).generate();
-    System.out.println(content);
-  }
+
 }

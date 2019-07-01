@@ -5,7 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
-import com.wensheng.zcc.wechat.module.dao.mongo.WXUserGeoRecord;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;

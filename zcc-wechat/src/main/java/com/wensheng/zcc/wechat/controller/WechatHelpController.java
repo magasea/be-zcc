@@ -1,5 +1,6 @@
 package com.wensheng.zcc.wechat.controller;
 
+import com.wensheng.zcc.wechat.service.impl.AmcGaoDeGrpcServImpl;
 import com.wensheng.zcc.wechat.service.impl.AmcGaoDeLogisQuery;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,15 @@ public class WechatHelpController {
   @Autowired
   WXMaterialServiceImpl wxMaterialService;
 
+  @Autowired
+  AmcGaoDeGrpcServImpl amcGaoDeGrpcServ;
+
   @RequestMapping(value = "/fillUserGeoAddr", method = RequestMethod.POST)
   @ResponseBody
   public String fillUserGeoAddr() throws Exception {
 
 
-     amcGaoDeLogisQuery.updateGeoAddressOfUser();
+    amcGaoDeGrpcServ.updateGeoAddressOfUser();
      return "success";
 
   }

@@ -93,8 +93,8 @@ public class CustInfoController {
 
   @RequestMapping(value = "/doSynchronization", method = RequestMethod.GET)
   @ResponseBody
-  public void doSynchronization() throws Exception {
-    scriptSysService.doSynchWithScriptOn();
+  public void doSynchronization(@RequestParam("provinceName") String provinceName) throws Exception {
+    scriptSysService.doSynchWithScriptOn(provinceName);
   }
 
 

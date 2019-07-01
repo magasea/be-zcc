@@ -1,8 +1,8 @@
 server:
-    port: 10005
+    port: 10006
 grpc:
     server:
-        port: 10015
+        port: 10016
 spring:
     autoconfigure:
         exclude:
@@ -72,11 +72,11 @@ spring:
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
         bootstrap-servers: ${env.kfkhost}:9092
-    data:
-        mongodb:
-            database: wszcc_wechat
-            host: ${env.mongodb-host}
-            port: 27017
+#    data:
+#        mongodb:
+#            database: wszcc_wechat
+#            host: ${env.mongodb-host}
+#            port: 27017
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
@@ -94,11 +94,11 @@ spring:
             max-request-size: 10240KB
 
 
-mybatis:
-    type-aliases-package: com.wensheng.zcc.wechat.module
-    mapper-locations:
-        - classpath:mappers/*Mapper.xml
-        - classpath:mappers/ext/*Mapper.xml
+#mybatis:
+#    type-aliases-package: com.wensheng.zcc.wechat.module
+#    mapper-locations:
+#        - classpath:mappers/*Mapper.xml
+#        - classpath:mappers/ext/*Mapper.xml
 project:
     params:
         wechat_image_path: ${env.image-repo}/wechat/images/

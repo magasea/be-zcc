@@ -24,9 +24,15 @@ import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wenshengamc.zcc.wechat.AmcAssetImage;
+import com.wenshengamc.zcc.wechat.ImageUploadResult;
+import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
+import com.wenshengamc.zcc.wechat.UploadImg2WechatResp;
+import com.wenshengamc.zcc.wechat.WechatAssetImage;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -69,6 +75,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     AmcOssFileService amcOssFileService;
+
+    @Autowired
+    WechatGrpcService wechatGrpcService;
 
 
     @Override
@@ -564,6 +573,85 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 //            Collections.sort(amcAssetVosList, amcAssetVoComparator);
         return amcAssetVosList;
 
+    }
+
+    @Override
+    public Map<Long, List<String>> uploadAmcAssetsImage2WechatByIds(List<Long> assetIds) {
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
+        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+        Map<Long, List<String>> assetImageMap = new HashMap<>();
+        Map<Long, String> assetMainImage = new HashMap<>();
+        UploadImg2WechatReq.Builder builder = UploadImg2WechatReq.newBuilder();
+        for(AssetImage assetImage : assetImages){
+            if(!assetImageMap.containsKey(assetImage.getAmcAssetId())){
+                assetImageMap.put(assetImage.getAmcAssetId(), new ArrayList<>());
+            }
+
+
+            if( ImageClassEnum.MAIN.getId() == assetImage.getTag()){
+                assetMainImage.put(assetImage.getAmcAssetId(), assetImage.getOssPath());
+            }else{
+                assetImageMap.get(assetImage.getAmcAssetId()).add(assetImage.getOssPath());
+            }
+        }
+        Iterator it = assetImageMap.entrySet().iterator();
+        AmcAssetImage.Builder imagesBuilder = AmcAssetImage.newBuilder();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry<Long, List<String>>)it.next();
+            imagesBuilder.clear();
+            if(!CollectionUtils.isEmpty((List<String>)pair.getValue())){
+                ((List<String>)pair.getValue()).stream().forEach(item -> imagesBuilder.addAmcAssetImages(item));
+            }
+            imagesBuilder.setAmcAssetId((Long)pair.getKey());
+            if(assetMainImage.containsKey((Long)pair.getKey())){
+                imagesBuilder.setAmcAssetMainImage(assetMainImage.get((Long)pair.getKey()));
+            }
+            builder.addAmcAssetImages(imagesBuilder);
+
+
+
+        }
+        UploadImg2WechatResp resp = wechatGrpcService.uploadImage2Wechat(builder.build());
+        Map<Long, List<String>> result = new HashMap<>();
+        Query querySubItem = null ;
+        for(ImageUploadResult item: resp.getResultsList()){
+            Long assetId = item.getAmcAssetId();
+            result.put(assetId, new ArrayList<>());
+            for(WechatAssetImage subItem: item.getWechatAssetImagesList()){
+             if(!StringUtils.isEmpty(subItem.getWechatAssetImage())){
+                 querySubItem = new Query();
+                 querySubItem.addCriteria(Criteria.where("amcAssetId").is(assetId).and("ossPath").is(subItem.getAmcAssetImage()));
+
+                 List<AssetImage> assetImageList = wszccTemplate.find(querySubItem, AssetImage.class);
+                 if(CollectionUtils.isEmpty(assetImageList)){
+                    log.error("failed to find image for amcAssetId:{} and ossPath:{}", assetId, subItem.getAmcAssetImage());
+                 }else{
+                     assetImageList.get(0).setWechatPath(subItem.getWechatAssetImage());
+//                     if( ImageClassEnum.MAIN.getId() == assetImageList.get(0).getTag() && !StringUtils.isEmpty(item.getMediaId())){
+//                         assetImageList.get(0).setMediaId(item.getMediaId());
+//                     }
+                     wszccTemplate.save(assetImageList.get(0));
+                     result.get(assetId).add(subItem.getWechatAssetImage());
+
+                 }
+             }
+
+            }
+            querySubItem = null;
+            if(!StringUtils.isEmpty(item.getMediaId())){
+                querySubItem = new Query();
+                querySubItem.addCriteria(Criteria.where("amcAssetId").is(assetId).and("tag").is(ImageClassEnum.MAIN.getId()));
+                List<AssetImage> assetImageList = wszccTemplate.find(querySubItem, AssetImage.class);
+                if(!CollectionUtils.isEmpty(assetImageList)){
+                    assetImageList.get(0).setMediaId(item.getMediaId());
+                    assetImageList.get(0).setWechatPath(item.getMediaIdUrl());
+                    wszccTemplate.save(assetImageList.get(0));
+                }
+            }
+
+        }
+        return result;
     }
 
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {

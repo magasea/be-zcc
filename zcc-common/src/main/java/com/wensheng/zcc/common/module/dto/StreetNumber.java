@@ -1,4 +1,4 @@
-package com.wensheng.zcc.wechat.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
 import lombok.Data;
 

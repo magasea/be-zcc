@@ -1,9 +1,9 @@
 package com.wensheng.zcc.wechat.service.impl;
 
 import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
-import com.wensheng.zcc.wechat.module.dao.mongo.WXUserGeoRecord;
-import com.wensheng.zcc.wechat.module.vo.ReGeoCode;
+import com.wensheng.zcc.common.module.dto.GaoDeReGeoResult;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
@@ -89,17 +88,6 @@ public class AmcGaoDeLogisQuery {
         mongoTemplate.save(wxUserGeoRecord);
       }
     }
-  }
-
-  @Data
-  class GaoDeReGeoResult{
-    Integer status;
-    String info;
-    @SerializedName("infocode")
-    String infoCode;
-    @SerializedName("regeocode")
-    ReGeoCode reGeoCode;
-
   }
 
 }

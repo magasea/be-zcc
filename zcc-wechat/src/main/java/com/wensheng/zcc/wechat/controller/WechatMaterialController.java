@@ -235,7 +235,8 @@ public class WechatMaterialController {
 
   @RequestMapping(value = "/material/msg/del", method = RequestMethod.POST)
   @ResponseBody
-  public GeneralResp delGrpMsg(@RequestParam("msgId")Long msgId, @RequestParam("articleIdx") Long articleIdx) throws Exception {
+  public GeneralResp delGrpMsg(@RequestParam("msgId")Long msgId,
+      @RequestParam(value = "articleIdx", required = false) Long articleIdx) throws Exception {
 
 
     return wxMaterialService.delGrpMsg(msgId, articleIdx);

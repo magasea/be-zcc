@@ -1,10 +1,11 @@
-package com.wensheng.zcc.wechat.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
 import java.util.List;
 import lombok.Data;
 
 @Data
-class Neighborhood {
+public
+class Building {
   List<String> name;
   List<Integer> type;
 }

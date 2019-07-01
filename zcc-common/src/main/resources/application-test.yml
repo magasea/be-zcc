@@ -1,5 +1,5 @@
 kafka:
-    topic-prefix: ${env-hint}
+    topic-prefix: ${env}
 
-env-hint: test
+env-hi: test
 

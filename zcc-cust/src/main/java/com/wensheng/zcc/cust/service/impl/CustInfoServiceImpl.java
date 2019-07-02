@@ -184,6 +184,7 @@ public class CustInfoServiceImpl implements CustInfoService {
   public Long getCmpyTradeCount(QueryParam queryParam) {
     CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
     custTrdCmpyExtExample.setFilterByClause(filterBy);
@@ -291,6 +292,7 @@ public class CustInfoServiceImpl implements CustInfoService {
 
 
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
     custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
     custTrdPersonExtExample.setFilterByClause(filterBy);

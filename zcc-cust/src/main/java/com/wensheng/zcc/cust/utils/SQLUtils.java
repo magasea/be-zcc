@@ -93,6 +93,7 @@ public class SQLUtils {
       sb.append(" and ").append(" cti.trd_type = ").append(queryParam.getTrdType());
     }
 
+
     return sb.toString();
   }
 

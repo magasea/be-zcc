@@ -94,6 +94,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     custTrdCmpyExtExample.setOrderByClause(orderBy);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
 
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = new ArrayList<>();
     custTrdCmpyExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
@@ -211,6 +212,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExtExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     if(!StringUtils.isEmpty(filterBy)) {
       custTrdPersonExtExample.setFilterByClause(filterBy);
     }

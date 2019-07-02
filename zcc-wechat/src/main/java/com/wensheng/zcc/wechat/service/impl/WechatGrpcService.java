@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -39,11 +40,15 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
           iurBuilder.addWechatAssetImages(waiBuilder);
 
         }
-        MediaUploadResp mediaUploadResp =
-            wxMaterialService.uploadMaterialByUrlSrc(amcAssetImage.getAmcAssetMainImage());
+        if(!StringUtils.isEmpty(amcAssetImage.getAmcAssetMainImage())){
+          MediaUploadResp mediaUploadResp =
+              wxMaterialService.uploadMaterialByUrlSrc(amcAssetImage.getAmcAssetMainImage());
 
-        iurBuilder.setMediaId(mediaUploadResp.getMediaId());
-        iurBuilder.setMediaIdUrl(mediaUploadResp.getUrl());
+          iurBuilder.setMediaId(mediaUploadResp.getMediaId());
+          iurBuilder.setMediaIdUrl(mediaUploadResp.getUrl());
+
+        }
+
         iurBuilder.setAmcAssetId(amcAssetImage.getAmcAssetId());
         rspBuilder.addResults(iurBuilder);
       }

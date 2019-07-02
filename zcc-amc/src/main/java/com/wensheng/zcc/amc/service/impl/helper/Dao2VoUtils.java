@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.service.impl.helper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -30,6 +31,8 @@ public class Dao2VoUtils {
 
     AmcAssetVo amcAssetVo = new AmcAssetVo();
     AmcBeanUtils.copyProperties(amcAsset, amcAssetVo);
+    amcAssetVo.setAmcContactorId(new AmcDebtContactor());
+    amcAssetVo.getAmcContactorId().setId(amcAsset.getAmcContactorId());
     if(amcAsset.getValuation() != null && amcAsset.getValuation() > 0){
       amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
     }
@@ -79,7 +82,7 @@ public class Dao2VoUtils {
 
   public static AmcDebtVo convertDo2Vo(AmcDebt amcDebt) {
     AmcDebtVo amcDebtVo = new AmcDebtVo();
-    BeanUtils.copyProperties(amcDebt, amcDebtVo);
+    AmcBeanUtils.copyProperties(amcDebt, amcDebtVo);
     if(amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
     }

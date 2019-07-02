@@ -57,10 +57,7 @@ public class GrpcConfig {
     Server server = ServerBuilder.forPort(grpcPort)
         .addService(ServerInterceptors.intercept(wechatGrpcService, unknownStatusDescriptionInterceptor))
         .build();
-    System.out.println("Starting server...");
-    server.start();
-    System.out.println("Server started!");
-    server.awaitTermination();
+
     return server;
 
   }

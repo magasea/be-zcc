@@ -41,7 +41,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URI;
 import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.time.Instant;
@@ -122,6 +125,8 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
   @Value("${weixin.msg_group_del_url}")
   String msgGroupDelUrl;
+
+  String resizeParam = "?x-oss-process=image/resize,w_300/quality,Q_50";
 
   @Autowired
   WXUserService wxService;
@@ -241,25 +246,21 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   }
 
   public synchronized String uploadImageByUrlSrc(String srcUrl) throws Exception {
-    URL url = new URL(srcUrl);
-    InputStream in = new BufferedInputStream(url.openStream());
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    byte[] buf = new byte[1024];
-    int n = 0;
-    while (-1!=(n=in.read(buf)))
-    {
-      out.write(buf, 0, n);
-    }
-    out.close();
-    in.close();
-    byte[] response = out.toByteArray();
-    StringBuilder sb = new StringBuilder(wechatImagePath);
-//    File imageFile =
-//        new File(sb.append(File.separatorChar).append(Instant.now().getEpochSecond()).toString());
-    String imageFileName = sb.append(File.separatorChar).append(UUID.randomUUID()).toString();
-    FileOutputStream fos = new FileOutputStream(imageFileName);
-    fos.write(response);
-    fos.close();
+    StringBuilder sb = new StringBuilder(srcUrl).append(resizeParam);
+    URL url = new URL(sb.toString());
+
+
+    StringBuilder sbFile = new StringBuilder(wechatImagePath);
+
+    SystemUtils.checkAndMakeDir(sbFile.toString());
+    String imageFileName = sbFile.append(File.separatorChar).append(UUID.randomUUID()).toString();
+    ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+    FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+    fileOutputStream.getChannel()
+        .transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+    fileOutputStream.close();
+
+
     String ext = ImageUtils.getImageType(imageFileName);
     String newFilePath = String.format("%s.%s",imageFileName,
         ext.toLowerCase());
@@ -289,25 +290,21 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   }
 
   public synchronized MediaUploadResp uploadMaterialByUrlSrc(String srcUrl) throws Exception {
-    URL url = new URL(srcUrl);
-    InputStream in = new BufferedInputStream(url.openStream());
-    ByteArrayOutputStream out = new ByteArrayOutputStream();
-    byte[] buf = new byte[1024];
-    int n = 0;
-    while (-1!=(n=in.read(buf)))
-    {
-      out.write(buf, 0, n);
-    }
-    out.close();
-    in.close();
-    byte[] response = out.toByteArray();
-    StringBuilder sb = new StringBuilder(wechatImagePath);
+    StringBuilder sb = new StringBuilder(srcUrl).append(resizeParam);
+    URL url = new URL(sb.toString());
 
-    SystemUtils.checkAndMakeDir(sb.toString());
-    String imageFileName = sb.append(File.separatorChar).append(UUID.randomUUID()).toString();
-    FileOutputStream fos = new FileOutputStream(imageFileName);
-    fos.write(response);
-    fos.close();
+
+    StringBuilder sbFile = new StringBuilder(wechatImagePath);
+
+    SystemUtils.checkAndMakeDir(sbFile.toString());
+    String imageFileName = sbFile.append(File.separatorChar).append(UUID.randomUUID()).toString();
+    ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+    FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+    fileOutputStream.getChannel()
+        .transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+    fileOutputStream.close();
+
+
     String ext = ImageUtils.getImageType(imageFileName);
     String newFilePath = String.format("%s.%s",imageFileName,
         ext.toLowerCase());

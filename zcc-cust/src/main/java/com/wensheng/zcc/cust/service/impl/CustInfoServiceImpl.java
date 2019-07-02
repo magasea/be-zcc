@@ -32,6 +32,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 /**
@@ -117,6 +118,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 //      criteria.andIdIn(preGroupResults);
 //      custTrdCmpyExtExample.getOredCriteria().add(criteria);
 
+    }
+    if(CollectionUtils.isEmpty(preGroupResults)){
+      log.error("Failed to get results by filter:{}", filterBy);
+      return custTrdCmpyTrdExts;
     }
     StringBuilder sb = new StringBuilder(" ctc.id in ( ");
     preGroupResults.forEach(item -> sb.append(item).append(","));
@@ -220,6 +225,10 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
     List<CustTrdPersonTrdExt> custTrdPersonTrdExtList = new ArrayList<>();
     List<Long> ids = custTrdPersonExtMapper.selectByPreFilter(custTrdPersonExtExample);
+    if(CollectionUtils.isEmpty(ids)){
+      log.error("Failed to get results for filter:{}", filterBy);
+      return custTrdPersonTrdExtList;
+    }
     StringBuilder sb = new StringBuilder(" ctp.id in ( ");
     ids.forEach(item -> sb.append(item).append(","));
     sb.setLength(sb.length() -1);

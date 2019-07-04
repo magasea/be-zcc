@@ -651,6 +651,12 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             }
 
         }
+        for(Long assetId : assetIds){
+            if(!result.containsKey(assetId)){
+                //just for frontend can handle this
+                result.put(assetId, new ArrayList<>());
+            }
+        }
         return result;
     }
 

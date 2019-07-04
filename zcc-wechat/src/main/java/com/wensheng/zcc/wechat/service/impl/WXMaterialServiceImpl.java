@@ -126,7 +126,9 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   @Value("${weixin.msg_group_del_url}")
   String msgGroupDelUrl;
 
-  String resizeParam = "?x-oss-process=image/resize,w_300/quality,Q_50";
+  String resizeParam = "?x-oss-process=image/resize,w_800";
+
+  String resizeParamSmall = "?x-oss-process=image/resize,w_800/quality,Q_50";
 
   @Autowired
   WXUserService wxService;
@@ -246,20 +248,13 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   }
 
   public synchronized String uploadImageByUrlSrc(String srcUrl) throws Exception {
-    StringBuilder sb = new StringBuilder(srcUrl).append(resizeParam);
-    URL url = new URL(sb.toString());
 
-
-    StringBuilder sbFile = new StringBuilder(wechatImagePath);
-
-    SystemUtils.checkAndMakeDir(sbFile.toString());
-    String imageFileName = sbFile.append(File.separatorChar).append(UUID.randomUUID()).toString();
-    ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
-    FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
-    fileOutputStream.getChannel()
-        .transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
-    fileOutputStream.close();
-
+   String imageFileName =  downloadFileFromUrl(srcUrl, resizeParam);
+    File file = new File(imageFileName);
+    if(file.length() > 2000000){
+      log.error("this file download from :{} is of size:{} need redownload!", srcUrl, file.length());
+      imageFileName =  downloadFileFromUrl(srcUrl, resizeParamSmall);
+    }
 
     String ext = ImageUtils.getImageType(imageFileName);
     String newFilePath = String.format("%s.%s",imageFileName,
@@ -289,7 +284,7 @@ public class WXMaterialServiceImpl implements WXMaterialService {
 
   }
 
-  public synchronized MediaUploadResp uploadMaterialByUrlSrc(String srcUrl) throws Exception {
+  public String downloadFileFromUrl(String srcUrl, String resizeParam) throws Exception {
     StringBuilder sb = new StringBuilder(srcUrl).append(resizeParam);
     URL url = new URL(sb.toString());
 
@@ -303,6 +298,17 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     fileOutputStream.getChannel()
         .transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
     fileOutputStream.close();
+    return imageFileName;
+
+  }
+
+  public synchronized MediaUploadResp uploadMaterialByUrlSrc(String srcUrl) throws Exception {
+    String imageFileName =  downloadFileFromUrl(srcUrl, resizeParam);
+    File file = new File(imageFileName);
+    if(file.length() > 2000000){
+      log.error("this file download from :{} is of size:{} need redownload!", srcUrl, file.length());
+      imageFileName =  downloadFileFromUrl(srcUrl, resizeParamSmall);
+    }
 
 
     String ext = ImageUtils.getImageType(imageFileName);

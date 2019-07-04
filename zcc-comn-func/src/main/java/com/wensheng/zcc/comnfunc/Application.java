@@ -17,6 +17,7 @@ public class Application implements CommandLineRunner {
     ApplicationContext applicationContext;
 
     public static void main(String[] args) {
+        
         SpringApplication.run(Application.class, args);
 
     }

@@ -10,4 +10,6 @@ import java.util.List;
 public interface BasicInfoService {
   List<CustRegion> getAllCustRegion();
   List<CustRegion> getSubCustRegion(Long parentId);
-}
+  public String getRegionNameByCode(Long code) throws Exception ;
+
+  }

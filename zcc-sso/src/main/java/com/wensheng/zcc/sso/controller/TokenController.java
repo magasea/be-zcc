@@ -32,6 +32,13 @@ public class TokenController {
         tokenServices.revokeToken(tokenId);
     }
 
+    @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeByUserId/{userId}")
+    @ResponseBody
+    public void revokeToken(HttpServletRequest request, @PathVariable Long userId) {
+//        tokenServices
+//        tokenServices.revokeToken(tokenId);
+    }
+
     @RequestMapping(method = RequestMethod.GET, value = "/tokens")
     @ResponseBody
     public List<String> getTokens() {

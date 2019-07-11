@@ -563,4 +563,10 @@ public class AmcAssetServiceImplTest {
             return curtInfos.get(0).getId();
         }
     }
+
+  @Test
+  public void checkGeoInfoWorker() {
+        amcAssetService.checkGeoInfoWorker();
+
+  }
 }

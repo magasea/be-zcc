@@ -4,14 +4,22 @@ import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.dto.GaoDeReGeoResult;
 import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryResp;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
+import com.wensheng.zcc.comnfunc.utils.SSLUtil;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.Point;
-import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -22,13 +30,19 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@Slf4j
 public class GaoDeServiceImpl implements GaoDeService {
 
   @Value("${gaode.geocoder-reverse}")
   private String geoCoderReverseUrl;
+
+  @Value("${gaode.geocoder}")
+  private String geoCoderUrl;
+
 
 
   private RestTemplate restTemplate  = new RestTemplate();
@@ -38,7 +52,11 @@ public class GaoDeServiceImpl implements GaoDeService {
   private Gson gson = new Gson();
 
   @PostConstruct
-  void init(){
+  void init() throws KeyStoreException, NoSuchAlgorithmException, KeyManagementException {
+
+
+    SSLUtil.turnOffSslChecking();
+
     GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
     gsonHttpMessageConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL) );
     restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
@@ -70,6 +88,31 @@ public class GaoDeServiceImpl implements GaoDeService {
 
 //
     return true;
+  }
+
+  public List<GaodeGeoQueryVal> getGeoInfoFromAddress(String address,  String city) throws Exception {
+
+
+
+    StringBuilder geoStr = new StringBuilder( String.format(geoCoderUrl,address));
+    if(!StringUtils.isEmpty(city)){
+      geoStr.append(String.format("&city=%s", city));
+    }
+
+    ResponseEntity<GaodeGeoQueryResp> resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+        GaodeGeoQueryResp.class);
+
+    GaodeGeoQueryResp gaoDeReGeoResult = resp.getBody();
+    List<GaodeGeoQueryVal> results = new ArrayList(gaoDeReGeoResult.getGeocodes());
+    if(CollectionUtils.isEmpty(results)){
+      log.error("Failed to get geo info for :{} and city:{}", address, city);
+      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+    }
+    System.out.println(results.get(0).getStreet());
+    System.out.println(results.get(0).getDistrict());
+//    List<GaodeGeoQueryVal> results = new ArrayList();
+    return results;
+
   }
 
 

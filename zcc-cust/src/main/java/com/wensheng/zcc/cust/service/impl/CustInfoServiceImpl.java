@@ -1,12 +1,14 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
+import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -16,7 +18,9 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
+import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
+import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
@@ -31,6 +35,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.mongodb.core.MongoAction;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -57,6 +67,9 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Autowired
   CustRegionMapper custRegionMapper;
+
+  @Autowired
+  MongoTemplate mongoTemplate;
 
   Gson gson = new Gson();
 
@@ -401,6 +414,68 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
 
     return custTrdInfoVos;
+  }
+  @Override
+  public List<CustInfoGeoNear> queryAllNearByCusts(GeoJsonPoint geoJsonPoint){
+    List<CustInfoGeoNear> custInfoGeoNears = new ArrayList<>();
+    custInfoGeoNears.add(queryNearByCusts(geoJsonPoint, new Integer[]{0, 100}));
+    custInfoGeoNears.add(queryNearByCusts(geoJsonPoint, new Integer[]{100, 200}));
+    custInfoGeoNears.add(queryNearByCusts(geoJsonPoint, new Integer[]{200, 300}));
+    return custInfoGeoNears;
+  }
+
+  public CustInfoGeoNear queryNearByCusts(GeoJsonPoint geoJsonPoint, Integer[] distances ){
+
+//      Circle area = new Circle(new Point(wxUserGeoInfo.getLatitude(),  wxUserGeoInfo.getLongitude()),
+//          new Distance(10, Metrics.KILOMETERS));
+
+    CustInfoGeoNear custInfoGeoNear = new CustInfoGeoNear();
+    custInfoGeoNear.setGeoJsonPoint(geoJsonPoint);
+    custInfoGeoNear.setDisttance(distances);
+    NearQuery nearQuery = null;
+    if(0 == distances[0] ){
+      nearQuery =
+          NearQuery.near(geoJsonPoint).maxDistance(distances[1]).inKilometers();
+    }else{
+      nearQuery =
+          NearQuery.near(geoJsonPoint).minDistance(distances[0]).maxDistance(distances[1]).inKilometers();
+    }
+    GeoResults<CustTrdGeo> custTrdGeoGeoResults =
+        mongoTemplate.geoNear( nearQuery, CustTrdGeo.class);
+    if(CollectionUtils.isEmpty(custTrdGeoGeoResults.getContent())){
+      log.error("failed to find trdInfo nearby in 100KM range");
+    }else{
+      log.info("Distance is too near, so no record need to be record");
+    }
+
+    List<Long> cmpyIds = new ArrayList<>();
+    List<Long> personIds = new ArrayList<>();
+    for(GeoResult<CustTrdGeo> custTrdGeoGeoResult: custTrdGeoGeoResults.getContent()){
+      CustTrdGeo item = custTrdGeoGeoResult.getContent();
+      if(item.getBuyerType() == CustTypeEnum.COMPANY.getId() ||
+          item.getBuyerType() == CustTypeEnum.BANK.getId()){
+        cmpyIds.add(item.getBuyerId());
+      }else if(item.getBuyerType() == CustTypeEnum.PERSON.getId()){
+        personIds.add(item.getBuyerId());
+      }else{
+        log.error("this buyer type is not handled:{}", item.getBuyerType());
+      }
+    }
+    if(!CollectionUtils.isEmpty(cmpyIds)){
+      CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+      custTrdCmpyExample.createCriteria().andIdIn(cmpyIds);
+      List<CustTrdCmpy> custTrdCmpyList =  custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+      custInfoGeoNear.setCustTrdCmpyList(custTrdCmpyList);
+    }
+
+    if(!CollectionUtils.isEmpty(personIds)){
+      CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+      custTrdPersonExample.createCriteria().andIdIn(personIds);
+      List<CustTrdPerson> custTrdPersonList =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
+      custInfoGeoNear.setCustTrdPersonList(custTrdPersonList);
+
+    }
+    return custInfoGeoNear;
   }
 
 

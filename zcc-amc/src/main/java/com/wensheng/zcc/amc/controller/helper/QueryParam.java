@@ -27,7 +27,7 @@ public class QueryParam {
   List<Integer> recommand = null;
   Long amcContactorId = -1L;
   Long courtId = -1L;
-
+  List<Long> debtPackIds = null;
 
   PageInfo pageInfo;
 

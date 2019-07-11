@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.service.impl;
 
 
+import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
@@ -18,12 +19,16 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wenshengamc.zcc.common.Common.GeoJson;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.wechat.AmcAssetImage;
 import com.wenshengamc.zcc.wechat.ImageUploadResult;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
@@ -38,11 +43,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -78,6 +85,12 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     WechatGrpcService wechatGrpcService;
+
+    @Autowired
+    ComnFuncServiceBlockingStub comnfuncServiceStub;
+
+    @Autowired
+    AmcDebtService amcDebtService;
 
 
     @Override
@@ -337,6 +350,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     @Override
+
     public List<AmcAssetVo> queryAssetPage(int offset, int pageSize, Map<String, Object> queryParam,
         Map<String, Direction> orderByParam) throws Exception {
 
@@ -754,6 +768,17 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("AmcContactorId")){
                     criteria.andAmcContactorIdEqualTo((Long)item.getValue());
                 }
+                if(item.getKey().equals(QueryParamEnum.DebtPackId.name())){
+                    List<Long> debtIds = amcDebtService.getDebtIdsByPackIds((List<Long>)item.getValue());
+                    if(CollectionUtils.isEmpty(debtIds)){
+                        log.error("There is no debtIds for debtPackIds:{}, and it will return emtpy result set",
+                            item.getValue().toString());
+                        criteria.andDebtIdEqualTo(-1L);
+                    }else{
+                        criteria.andDebtIdIn(debtIds);
+                    }
+
+                }
 
             }
         }
@@ -763,6 +788,82 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssetExample;
     }
 
+    public void checkGeoInfoWorker(){
+        //1. travers asset table get address
+        int offset = 0;
+        int pageSize = 20;
+        RowBounds rowBounds = new RowBounds(offset, pageSize);
+        boolean stop = false;
+        while(!stop){
+            List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(null, rowBounds);
+            rowBounds = null;
+            if(CollectionUtils.isEmpty(amcAssets)){
+                log.info("geo info finding finished");
+                stop = true;
+
+            }else{
+                Map<Long, AddressTmp> addresses = new HashMap<>();
+                for(AmcAsset amcAsset : amcAssets){
+                    AddressTmp addressTmp = new AddressTmp();
+                    addressTmp.setAddress(amcAsset.getStreet());
+                    addressTmp.setCity(amcAsset.getCity());
+                    addresses.put(amcAsset.getId(), addressTmp);
+                }
+                findGeoAndUpdate(addresses);
+                offset = offset + pageSize;
+                rowBounds = new RowBounds(offset, pageSize);
+            }
+
+        }
+
+
+
+        //2. call comnfunc to get GeoJson
+
+        //3. save it into asset additional info
+
+    }
+
+    public void findGeoAndUpdate(Map<Long, AddressTmp> addresses){
+
+        Query query = null;
+
+        for (Map.Entry<Long, AddressTmp> mapElement : addresses.entrySet()) {
+            Long assetId = mapElement.getKey();
+            Address.Builder aBuilder = Address.newBuilder();
+            String addressVal = mapElement.getValue().getAddress();
+            if(StringUtils.isEmpty(addressVal)){
+                log.error(" the address is empty:{} of amcId:{}", addressVal, assetId );
+            }
+            aBuilder.setAddress(mapElement.getValue().getAddress());
+            aBuilder.setCity(mapElement.getValue().getCity());
+            GeoJson geoJson;
+            try{
+                geoJson = comnfuncServiceStub.getGeoByAddress(aBuilder.build());
+            }catch (Exception ex){
+                log.error("", ex);
+                continue;
+            }
+
+
+            query = new Query();
+            query.addCriteria(Criteria.where("amcAssetId").is(assetId));
+            List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+            if(CollectionUtils.isEmpty(assetAdditionals)){
+                log.error("Failed to find assetAddtional by:{}", assetId);
+                query = null;
+                continue;
+            }
+            assetAdditionals.get(0).setLocation(new GeoJsonPoint(geoJson.getCoordinates(0), geoJson.getCoordinates(1)));
+            wszccTemplate.save(assetAdditionals.get(0));
+            query = null;
+        }
+    }
+    @Data
+    class AddressTmp{
+        String address;
+        String city;
+    }
 
 
 

@@ -1,6 +1,8 @@
 package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -17,6 +19,7 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -80,6 +83,21 @@ public class AmcUserController {
   public List<AmcUser> getAmcUsers( @PathVariable Long amcId){
 
     List<AmcUser> amcUserResult = amcUserService.getAmcUsers(amcId);
+    return amcUserResult;
+
+  }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers/search", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcUser> searchAmcUser( @PathVariable Long amcId, @RequestParam("mobilePhone") String mobilePhone)
+      throws Exception {
+    if(StringUtils.isEmpty(mobilePhone)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,
+          String.format("mobilePhone:%s", mobilePhone));
+    }
+
+    List<AmcUser> amcUserResult = amcUserService.searchUser(mobilePhone);
     return amcUserResult;
 
   }

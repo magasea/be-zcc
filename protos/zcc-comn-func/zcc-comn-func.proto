@@ -5,13 +5,6 @@ package com.wenshengamc.zcc.comnfunc.gaodegeo;
 
 option java_multiple_files = true;
 
-message GreetingRequest {
-    string name = 1;
-}
-
-message GreetingResponse {
-    string greeting = 2;
-}
 
 
 message WXUserGeoReq {
@@ -34,12 +27,19 @@ message WXUserGeoReq {
   wenshengamc.zcc.common.Timestamp createTime = 9;
 }
 
+message Address{
+  string address = 1;
+  string city = 2;
+}
+
 message WhoResponse {
-    string key = 1;
-    string value = 2;
+  string key = 1;
+  string value = 2;
 }
 
 service ComnFuncService {
   rpc getAddress(WXUserGeoReq) returns (WXUserGeoReq);
+
+  rpc getGeoByAddress(Address) returns (wenshengamc.zcc.common.GeoJson);
 
 }

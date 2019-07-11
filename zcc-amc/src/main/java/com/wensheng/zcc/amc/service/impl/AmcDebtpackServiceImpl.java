@@ -18,7 +18,10 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"DEBTPACK"})
 public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Autowired
@@ -116,6 +120,17 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
     return origCreditors;
   }
 
+
+  @Override
+  @Cacheable()
+  public List<AmcDebtpack> queryPacksWithLocation(String locationName) {
+    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
+    StringBuilder sb = new StringBuilder();
+    sb.append(locationName.substring(0,2)).append("%");
+    amcDebtpackExample.createCriteria().andTitleLike(sb.toString());
+    List<AmcDebtpack> amcDebtpacks = amcDebtpackMapper.selectByExample(amcDebtpackExample);
+    return amcDebtpacks;
+  }
 
 
   @Override

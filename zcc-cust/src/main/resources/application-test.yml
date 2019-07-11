@@ -1,5 +1,13 @@
 server:
     port: 10004
+grpc:
+    server:
+        port: 10014
+    client:
+        comnfunc:
+            host: ${env.rpchost}
+            port: 10016
+
 spring:
     autoconfigure:
         exclude:
@@ -74,6 +82,11 @@ spring:
             database: wszcc_cust
             host: 10.20.100.235
             port: 27017
+
+    cache:
+        cache-names: regionName
+        caffeine:
+            spec: maximumSize=500, expireAfterAccess=120s
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
@@ -117,6 +130,7 @@ logging:
 env:
     env-hint: test
     dbhost: 10.20.100.70
+    rpchost: 10.20.100.236
     kfkhost: 10.20.100.238
     oauth2:
         host: 10.20.100.236

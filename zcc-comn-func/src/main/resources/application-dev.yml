@@ -104,53 +104,7 @@ project:
         wechat_image_path: ${env.image-repo}/wechat/images/
 
 
-weixin:
-#    appId: wxdb885be2c95a5b32
-#    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
-#    get_token_url: https://api.weixin.qq.com/cgi-bin/token
-#    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
-    appId: wx6f60584065dd3e45
-    appSecret: 3217390a438df7cd13189b6a9c69abf2
-    encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
-    token: wensheng
-    userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
-    loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
 
-    get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
-
-    # user and tag management
-    get_public_users_url: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
-    get_public_userinfo_url: https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN
-    get_public_usersinfo_url: https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s
-    get_usertags_url: https://api.weixin.qq.com/cgi-bin/tags/get?access_token=%s
-    create_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/create?access_token=%s
-    delete_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/delete?access_token=%s
-    mod_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/update?access_token=%s
-    untaguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token=%s
-    taguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=%s
-    get_tagsofuser_url: https://api.weixin.qq.com/cgi-bin/tags/getidlist?access_token=%s
-    get_useroftagid_url: https://api.weixin.qq.com/cgi-bin/user/tag/get?access_token=%s
-    get_token_url: https://api.weixin.qq.com/cgi-bin/token
-    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
-
-    #material management
-    material_add_tmp_url: https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s
-    material_get_tmp_url: https://api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s
-    material_upload_temp_url: https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=%s
-    material_preview_url: https://api.weixin.qq.com/cgi-bin/message/mass/preview?access_token=%s
-    material_add_new_url: https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s
-    material_uploadimage_url: https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s
-    material_addmaterial_url: https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s
-    material_get_url: https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=%s
-    material_del_url: https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=%s
-    material_update_url: https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=%s
-    material_get_count_url: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=%s
-    material_batch_get_url: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=%s
-
-    msg_group_send_tag_url: https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s
-    msg_group_send_openid_url: https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s
-    msg_group_del_url: https://api.weixin.qq.com/cgi-bin/message/mass/delete?access_token=%s
-    msg_group_get_url: https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=%s
 
 baidu:
     logis:
@@ -163,6 +117,7 @@ gaode:
 #    String url = "http://restapi.amap.com/v3/geocode/geo?key=0c53a687090bf18a7394ffc66a0b6432&address="+urlEncoder.encode(address,"utf-8")
     key: 0c53a687090bf18a7394ffc66a0b6432
     geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
+    geocoder: https://restapi.amap.com/v3/geocode/geo?address=%s&key=${gaode.key}
 
 
 

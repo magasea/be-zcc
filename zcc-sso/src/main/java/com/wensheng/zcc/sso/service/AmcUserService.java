@@ -37,4 +37,5 @@ public interface AmcUserService {
 
   List<AmcPermission> getAmcPerms();
 
+  List<AmcUser> searchUser(String mobilePhone);
 }

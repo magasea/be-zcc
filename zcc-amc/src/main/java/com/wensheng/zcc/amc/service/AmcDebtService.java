@@ -103,4 +103,7 @@ public interface AmcDebtService {
   List<AmcOperLog> getOperLog(Long debtId, Integer actionId);
 
     void setRecomm(List<Long> debtIds, int id);
-}
+
+  public List<Long> getDebtIdsByPackIds(List<Long> debtPackIds);
+
+  }

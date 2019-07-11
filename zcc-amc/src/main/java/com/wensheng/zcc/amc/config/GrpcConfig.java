@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.config;
 
 import com.wensheng.zcc.amc.service.impl.WechatGrpcService;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceBlockingStub;
 import io.grpc.ManagedChannel;
@@ -18,6 +20,13 @@ public class GrpcConfig {
   @Value("${grpc.client.wechat.port}")
   int wechatPort;
 
+  @Value("${grpc.client.comnfunc.host}")
+  String comnfuncHost;
+
+
+  @Value("${grpc.client.comnfunc.port}")
+  int comnfuncPort;
+
   @Bean
   ManagedChannel wechatChannel(){
     ManagedChannelBuilder managedChannelBuilder = ManagedChannelBuilder.forAddress(wechatHost, wechatPort).usePlaintext();
@@ -32,4 +41,18 @@ public class GrpcConfig {
     return wechatService;
   }
 
+
+  @Bean
+  ManagedChannel comnfuncChannel(){
+    ManagedChannelBuilder managedChannelBuilder = ManagedChannelBuilder.forAddress(comnfuncHost, comnfuncPort).usePlaintext();
+    return managedChannelBuilder.build();
+  }
+
+
+  @Bean
+  ComnFuncServiceBlockingStub  comnfuncServiceStub(ManagedChannel comnfuncChannel){
+    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncServiceBlockingStub =
+        ComnFuncServiceGrpc.newBlockingStub(comnfuncChannel);
+    return comnFuncServiceBlockingStub;
+  }
 }

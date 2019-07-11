@@ -14,6 +14,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
@@ -55,6 +56,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -62,6 +64,9 @@ import org.apache.ibatis.session.RowBounds;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -80,6 +85,7 @@ import org.springframework.util.StringUtils;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"DEBT"})
 public class AmcDebtServiceImpl implements AmcDebtService {
 
   Logger logger = LoggerFactory.getLogger(getClass());
@@ -186,6 +192,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Transactional
+  @CacheEvict
   public AmcDebtVo create(AmcDebt amcDebt) {
     amcDebtMapper.insertSelective(amcDebt);
     return convertDo2Vo(amcDebt);
@@ -193,6 +200,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Transactional
+  @CacheEvict
   public int del(Long amcDebtId) {
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
     if(amcDebt != null && (amcDebt.getPublishState() == PublishStateEnum.DRAFT.getStatus()||amcDebt.getPublishState() == PublishStateEnum.NOTCLEAR.getStatus())){
@@ -418,7 +426,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       Map<String, Object> queryParam) throws Exception {
 
 
-    AmcDebtExample amcDebtExample = SQLUtils.getAmcDebtExampleWithQueryParam(queryParam);
+    AmcDebtExample amcDebtExample = getAmcDebtExampleWithQueryParam(queryParam);
     RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     try{
       amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy, rowBounds));
@@ -526,7 +534,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public Long getTotalCount(Map<String, Object> queryParamMap) throws Exception {
-    AmcDebtExample amcDebtExample = SQLUtils.getAmcDebtExampleWithQueryParam(queryParamMap);
+    AmcDebtExample amcDebtExample = getAmcDebtExampleWithQueryParam(queryParamMap);
     return amcDebtMapper.countByExample(amcDebtExample);
   }
 
@@ -893,5 +901,88 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtExample.createCriteria().andIdIn(debtIds);
     amcDebtMapper.updateByExampleSelective(amcDebt, amcDebtExample);
   }
+
+  @Override
+  @Cacheable
+  public List<Long> getDebtIdsByPackIds(List<Long> debtPackIds){
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    if(debtPackIds.size() > 1){
+      amcDebtExample.createCriteria().andDebtpackIdIn(debtPackIds);
+    }else{
+      amcDebtExample.createCriteria().andDebtpackIdEqualTo(debtPackIds.get(0));
+    }
+
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(CollectionUtils.isEmpty(amcDebts)){
+      return new ArrayList<>();
+    }
+    return amcDebts.stream().map(item -> item.getId()).collect(Collectors.toList());
+  }
+
+  public AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
+    boolean needDefaultPublishState = true;
+    if(!CollectionUtils.isEmpty(queryParam)){
+      for(Entry<String, Object> item: queryParam.entrySet()){
+
+        if(item.getKey().equals(QueryParamEnum.BaseAmount.name())){
+          List<Long> amounts = (List) item.getValue();
+          if(amounts.get(0) < 0 && amounts.get(1) > 0){
+            criteria.andBaseAmountLessThanOrEqualTo(amounts.get(1));
+          }else if(amounts.get(1) < 0 && amounts.get(0) > 0){
+            criteria.andBaseAmountGreaterThan(amounts.get(0));
+          }else if(amounts.get(0) > 0 && amounts.get(1) > 0){
+            criteria.andBaseAmountBetween(amounts.get(0), amounts.get(1));
+          }else{
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_AMOUNT_RANGE,  String.format("%d,%d",amounts.get(0), amounts.get(1))
+            );
+          }
+        }
+
+        if(item.getKey().equals(QueryParamEnum.PublishStates.name())){
+          criteria.andPublishStateIn((List) item.getValue());
+          needDefaultPublishState = false;
+        }
+
+
+
+        if(item.getKey().equals(QueryParamEnum.AmcContactorId.name())){
+          criteria.andAmcContactorIdEqualTo((Long)item.getValue());
+        }
+
+        if(item.getKey().equals(QueryParamEnum.Title.name())){
+          StringBuilder sb = new StringBuilder().append("%").append(item.getValue()).append("%");
+          criteria.andTitleLike(sb.toString());
+        }
+
+        if(item.getKey().equalsIgnoreCase(QueryParamEnum.Recommand.name())){
+          criteria.andIsRecommandedIn((List) item.getValue());
+        }
+
+        if(item.getKey().equals(QueryParamEnum.CourtId.name())){
+          criteria.andCourtIdEqualTo((Long)item.getValue());
+        }
+        if(item.getKey().equals(QueryParamEnum.DebtPackId.name())){
+          List<Long> debtPackIds = (List<Long>)item.getValue();
+          if(CollectionUtils.isEmpty(debtPackIds)){
+            log.error("There is no debtIds for debtPackIds:{}, and it will return emtpy result set",
+                item.getValue().toString());
+            criteria.andDebtpackIdEqualTo(-1L);
+          }else if(debtPackIds.size() > 1){
+            criteria.andDebtpackIdIn(debtPackIds);
+          }else{
+            criteria.andDebtpackIdEqualTo(debtPackIds.get(0));
+          }
+
+        }
+      }
+    }
+    if(needDefaultPublishState){
+      criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
+    }
+    return amcDebtExample;
+  }
+
 
 }

@@ -1,34 +1,44 @@
 package com.wensheng.zcc.amc.aop;
 
+import com.google.gson.Gson;
+import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
+import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
+import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.util.CollectionUtils;
 
 /**
  * @author chenwei on 1/15/19
@@ -45,7 +55,12 @@ public class AmcAspect {
   AmcDebtService amcDebtService;
 
   @Autowired
+  AmcDebtpackService amcDebtpackService;
+
+  @Autowired
   KafkaService kafkaService;
+
+  Gson gson = new Gson();
 
 
   @Before("execution(* com.wensheng.zcc.amc.controller.*.* (com.wensheng.zcc.amc.module.vo.base.BaseActionVo<com"
@@ -68,7 +83,8 @@ public class AmcAspect {
 
   @Before("@annotation(EditActionChecker) && args(baseActionVo)")
   public void beforeDoDebtAction(BaseActionVo baseActionVo) throws Exception {
-    log.info("now get the point cut");
+    log.info("now get the beforeDoDebtAction point cut");
+
 
 
 //    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
@@ -83,6 +99,31 @@ public class AmcAspect {
 //          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
 //    }
 
+  }
+
+  @Around("@annotation(QueryChecker) ")
+  public Object aroundDoQuery(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    QueryParam queryParam = (QueryParam) joinPoint.getArgs()[0];
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    log.info(authentication.getDetails().toString());
+    OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails)authentication.getDetails();
+    Map<String, Object> detailsParam =
+        (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
+    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
+      Integer locationId = (Integer) detailsParam.get("location");
+      AmcBranchLocationEnum locationEnum = AmcBranchLocationEnum.lookupByIdUtil(locationId) ;
+      if(null != locationEnum){
+        List<AmcDebtpack>  amcDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum.getCname());
+        if(!CollectionUtils.isEmpty(amcDebtpacks)){
+          List<Long> amcDebtPackIds = amcDebtpacks.stream().map( item -> item.getId()).collect(Collectors.toList());
+          queryParam.setDebtPackIds(amcDebtPackIds);
+        }
+      }
+
+    }
+    return joinPoint.proceed(new Object[]{queryParam});
   }
 
   @Around("@annotation(EditActionChecker))")

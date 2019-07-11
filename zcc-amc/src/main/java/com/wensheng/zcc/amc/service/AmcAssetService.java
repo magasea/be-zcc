@@ -67,4 +67,5 @@ public interface AmcAssetService {
   List<AmcAssetVo> getAssetsByIds(List<Long> assetIds) throws Exception;
 
   Map<Long, List<String>> uploadAmcAssetsImage2WechatByIds(List<Long> assetIds);
+  public void checkGeoInfoWorker();
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -169,6 +170,17 @@ public class AmcUserServiceImpl implements AmcUserService {
   public List<AmcPermission> getAmcPerms() {
     List<AmcPermission> amcPermissions = amcPermissionMapper.selectByExample(null);
     return amcPermissions;
+  }
+
+  @Override
+  public List<AmcUser> searchUser(String mobilePhone) {
+
+    AmcUserExample amcUserExample = new AmcUserExample();
+    StringBuilder sb = new StringBuilder("%");
+    sb.append(mobilePhone).append("%");
+    amcUserExample.createCriteria().andMobilePhoneLike(sb.toString());
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    return amcUsers;
   }
 
   private AmcUser createUserAndRole(AmcUser amcUser, AmcRolesEnum amcRolesEnum){

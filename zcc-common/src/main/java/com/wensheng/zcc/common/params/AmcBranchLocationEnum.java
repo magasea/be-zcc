@@ -1,5 +1,8 @@
 package com.wensheng.zcc.common.params;
 
+import com.wensheng.zcc.common.utils.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 3/29/19
  * @project miniapp-backend
@@ -23,6 +26,13 @@ public enum AmcBranchLocationEnum {
     this.name = name;
     this.cname = cname;
   }
+
+  private static final Function<Integer, AmcBranchLocationEnum> func =
+      EnumUtils.lookupMap(AmcBranchLocationEnum.class, e -> e.getId());
+  public static AmcBranchLocationEnum lookupByIdUtil(int id) {
+    return func.apply(id);
+  }
+
 
   public int getId() {
     return id;

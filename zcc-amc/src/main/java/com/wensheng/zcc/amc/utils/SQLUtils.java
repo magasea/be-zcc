@@ -48,57 +48,6 @@ public class SQLUtils {
     return sb.toString();
   }
 
-  public static AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
-    AmcDebtExample amcDebtExample = new AmcDebtExample();
-    AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
-    boolean needDefaultPublishState = true;
-    if(!CollectionUtils.isEmpty(queryParam)){
-      for(Entry<String, Object> item: queryParam.entrySet()){
-
-        if(item.getKey().equals(QueryParamEnum.BaseAmount.name())){
-          List<Long> amounts = (List) item.getValue();
-          if(amounts.get(0) < 0 && amounts.get(1) > 0){
-            criteria.andBaseAmountLessThanOrEqualTo(amounts.get(1));
-          }else if(amounts.get(1) < 0 && amounts.get(0) > 0){
-            criteria.andBaseAmountGreaterThan(amounts.get(0));
-          }else if(amounts.get(0) > 0 && amounts.get(1) > 0){
-            criteria.andBaseAmountBetween(amounts.get(0), amounts.get(1));
-          }else{
-            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_AMOUNT_RANGE,  String.format("%d,%d",amounts.get(0), amounts.get(1))
-                );
-          }
-        }
-
-        if(item.getKey().equals(QueryParamEnum.PublishStates.name())){
-          criteria.andPublishStateIn((List) item.getValue());
-          needDefaultPublishState = false;
-        }
-
-
-
-        if(item.getKey().equals(QueryParamEnum.AmcContactorId.name())){
-          criteria.andAmcContactorIdEqualTo((Long)item.getValue());
-        }
-
-        if(item.getKey().equals(QueryParamEnum.Title.name())){
-          StringBuilder sb = new StringBuilder().append("%").append(item.getValue()).append("%");
-          criteria.andTitleLike(sb.toString());
-        }
-
-        if(item.getKey().equalsIgnoreCase(QueryParamEnum.Recommand.name())){
-          criteria.andIsRecommandedIn((List) item.getValue());
-        }
-
-        if(item.getKey().equals(QueryParamEnum.CourtId.name())){
-          criteria.andCourtIdEqualTo((Long)item.getValue());
-        }
-      }
-    }
-    if(needDefaultPublishState){
-      criteria.andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
-    }
-    return amcDebtExample;
-  }
 
 
   public static Map<String, Object> getQueryParams(QueryParam queryParam) {
@@ -151,6 +100,9 @@ public class SQLUtils {
     }
     if(queryParam.getValuation() != null && !CollectionUtils.isEmpty(queryParam.getValuation())){
       queryParamMap.put(QueryParamEnum.Valuation.name(), queryParam.getValuation());
+    }
+    if(queryParam.getDebtPackIds() != null && !CollectionUtils.isEmpty(queryParam.getDebtPackIds())){
+      queryParamMap.put(QueryParamEnum.DebtPackId.name(), queryParam.getDebtPackIds());
     }
     return queryParamMap;
 

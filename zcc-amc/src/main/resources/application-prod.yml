@@ -7,6 +7,9 @@ grpc:
     wechat:
       host: ${env.rpchost}
       port: 10015
+    comnfunc:
+      host: ${env.rpchost}
+      port: 10016
 logging:
   level:
     com:
@@ -85,7 +88,10 @@ spring:
     scheduling:
       thread-name-prefix: synchWithScrapySystem
       cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
-
+  cache:
+    cache-names: DEBTPACK, DEBT
+    caffeine:
+      spec: maximumSize=500, expireAfterAccess=120s
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
   mapper-locations:

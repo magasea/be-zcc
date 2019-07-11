@@ -19,6 +19,7 @@ public enum QueryParamEnum {
   AmcContactorId("AmcContactorId"),
   Valuation("Valuation"),
   CourtId("CourtId"),
+  DebtPackId("DebtPackId"),
 
   ;
 

@@ -35,6 +35,10 @@ public interface AmcDebtpackService {
   public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId);
 
 
+  public List<AmcDebtpack> queryPacksWithLocation(String locationName);
+
+
+
 
 
   List<AmcDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception;

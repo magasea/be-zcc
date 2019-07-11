@@ -36,8 +36,8 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -52,8 +52,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
-@Primary
-public class ScriptSysServiceImpl implements ScriptSysService {
+@Order(2)
+public class SyncServiceImpl implements ScriptSysService {
 
     private RestTemplate restTemplate = new RestTemplate();
 

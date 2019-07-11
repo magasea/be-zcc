@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
+import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
@@ -529,6 +530,7 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debts", method = RequestMethod.POST)
   @ResponseBody
+  @QueryChecker
   @LogExecutionTime
   public AmcPage<AmcDebtVo> queryDebts( @RequestBody  QueryParam queryParam)
       throws Exception {

@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
+import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
@@ -61,6 +62,7 @@ public class AmcAssetController {
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
   @LogExecutionTime
+  @QueryChecker
   public AmcPage<AmcAssetVo> getAmcAssets(
       @RequestBody(required = false) QueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());

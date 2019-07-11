@@ -33,6 +33,7 @@
             <artifactId>zcc-common</artifactId>
             <version>0.1-SNAPSHOT</version>
         </dependency>
+
     </dependencies>
 
     <properties>
@@ -66,6 +67,9 @@
                             <resources>
                                 <resource>
                                     <directory>../protos/common/</directory>
+                                </resource>
+                                <resource>
+                                    <directory>../protos/zcc-comn-func/</directory>
                                 </resource>
                                 <resource>
                                     <directory>../protos/zcc-wechat/</directory>

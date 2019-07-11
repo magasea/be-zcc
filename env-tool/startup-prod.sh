@@ -1,6 +1,6 @@
 #!/bin/bash
-#export JAVA_HOME=/home/sunht/workingTools/jdk1.8.0_191
-#export JAVA_HOME=/home/sunht/workingTools/jdk-12
+#export JAVA_HOME=/home/chenwei/workingTools/jdk1.8.0_191
+#export JAVA_HOME=/home/chenwei/workingTools/jdk-12
 export JAVA_HOME=/home/chenwei/workingTools/jdk-10.0.2
 export PATH=${JAVA_HOME}/bin:${PATH}
 export LANG=en_US.utf8
@@ -9,11 +9,13 @@ execJarName_amc=/home/chenwei/working/zcc/zcc-amc-0.1-SNAPSHOT.jar
 execJarName_sso=/home/chenwei/working/zcc/zcc-sso-0.1-SNAPSHOT.jar
 execJarName_log=/home/chenwei/working/zcc/zcc-log-0.1-SNAPSHOT.jar
 execJarName_cust=/home/chenwei/working/zcc/zcc-cust-0.1-SNAPSHOT.jar
+execJarName_wechat=/home/chenwei/working/zcc/zcc-wechat-0.1-SNAPSHOT.jar
 execJarName_comnfunc=/home/chenwei/working/zcc/zcc-comn-func-0.1-SNAPSHOT.jar
 pattern_amc=zcc-amc
 pattern_sso=zcc-sso
 pattern_log=zcc-log
 pattern_cust=zcc-cust
+pattern_wechat=zcc-wechat
 pattern_comnfunc=zcc-comn-func
 
 killProcess() {
@@ -30,25 +32,21 @@ killProcess ${pattern_amc}
 killProcess ${pattern_sso}
 killProcess ${pattern_log}
 killProcess ${pattern_cust}
+killProcess ${pattern_wechat}
 killProcess ${pattern_comnfunc}
 
 echo ${execJarName_amc}
 echo ${execJarName_sso}
 echo ${execJarName_log}
 echo ${execJarName_cust}
+echo ${execJarName_wechat}
 echo ${execJarName_comnfunc}
 
 sleep 5
-
-killProcess ${pattern_amc}
-killProcess ${pattern_sso}
-killProcess ${pattern_log}
-killProcess ${pattern_cust}
-killProcess ${pattern_comnfunc}
-
 nohup java -jar -Dspring.profiles.active=prod ${execJarName_amc} &>amc.log &
 nohup java -jar -Dspring.profiles.active=prod ${execJarName_sso} &>sso.log &
 nohup java -jar -Dspring.profiles.active=prod ${execJarName_log} &>loger.log &
 nohup java -jar -Dspring.profiles.active=prod ${execJarName_cust} &>cust.log &
+nohup java -jar -Dspring.profiles.active=prod ${execJarName_wechat} &>wechat.log &
 nohup java -jar -Dspring.profiles.active=prod ${execJarName_comnfunc} &>comnfunc.log &
 

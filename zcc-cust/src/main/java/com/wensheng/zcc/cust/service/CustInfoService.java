@@ -3,11 +3,13 @@ package com.wensheng.zcc.cust.service;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 /**
  * @author chenwei on 4/17/19
@@ -42,4 +44,6 @@ public interface CustInfoService {
   CustTrdCmpy getCompany(Long companyId);
 
   CustTrdPerson getPerson(Long personId);
+
+  public List<CustInfoGeoNear> queryAllNearByCusts(GeoJsonPoint geoJsonPoint);
 }

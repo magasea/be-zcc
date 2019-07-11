@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-class Neighborhood {
+public class Neighborhood {
   List<String> name;
   List<Integer> type;
 }

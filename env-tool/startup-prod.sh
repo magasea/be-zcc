@@ -43,10 +43,10 @@ echo ${execJarName_wechat}
 echo ${execJarName_comnfunc}
 
 sleep 5
-nohup java -jar -Dspring.profiles.active=prod ${execJarName_amc} &>amc.log &
-nohup java -jar -Dspring.profiles.active=prod ${execJarName_sso} &>sso.log &
-nohup java -jar -Dspring.profiles.active=prod ${execJarName_log} &>loger.log &
-nohup java -jar -Dspring.profiles.active=prod ${execJarName_cust} &>cust.log &
-nohup java -jar -Dspring.profiles.active=prod ${execJarName_wechat} &>wechat.log &
-nohup java -jar -Dspring.profiles.active=prod ${execJarName_comnfunc} &>comnfunc.log &
+nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_amc} &>amc.log &
+nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_sso} &>sso.log &
+nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_log} &>loger.log &
+nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_cust} &>cust.log &
+nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_wechat} &>wechat.log &
+nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_comnfunc} &>comnfunc.log &
 

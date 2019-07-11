@@ -10,6 +10,8 @@ scp chenwei@10.20.100.238:/home/chenwei/tmp/mongoback/*-`date +%Y-%m-%d`.tar.gz 
 cd /home/chenwei/tmp/mongoback && tar xzvf *-`date +%Y-%m-%d`.tar.gz
 mongorestore --host 10.20.100.235 --port 27017 --drop /home/chenwei/tmp/mongoback/mongodump-wszcc-`date +%Y-%m-%d`
 mongorestore --host 10.20.100.235 --port 27017 --drop /home/chenwei/tmp/mongoback/mongodump-wszcc-log-`date +%Y-%m-%d`
+mongorestore --host 10.20.100.235 --port 27017 --drop /home/chenwei/tmp/mongoback/mongodump-wszcc-cust-`date +%Y-%m-%d`
+mongorestore --host 10.20.100.235 --port 27017 --drop /home/chenwei/tmp/mongoback/mongodump-wszcc-wechat-`date +%Y-%m-%d`
 echo '#!/bin/bash' > ./commands.sh
 echo 'cd /home/chenwei/tmp' >> ./commands.sh
 echo 'mysqldump --compatible=ansi -u root -pWensheng@12345678 -B ZCC_AMC > ./zccamc-`date +%Y-%m-%d`.sql' >> ./commands.sh

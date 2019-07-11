@@ -256,6 +256,7 @@ public class AmcDebtController {
   }
 
   @EditActionChecker
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') ")
   @RequestMapping(value = "/api/amcid/{amcid}/debt/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcDebt(@RequestBody BaseActionVo<Long> debtIdBaseActionVo) throws Exception {

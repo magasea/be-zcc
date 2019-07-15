@@ -7,6 +7,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -15,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -26,10 +28,23 @@ public class TokenController {
     @Resource(name = "tokenStore")
     private TokenStore tokenStore;
 
+    @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
+    private String amcAdminClientId;
+
     @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeById/{tokenId}")
     @ResponseBody
     public void revokeToken(HttpServletRequest request, @PathVariable String tokenId) {
         tokenServices.revokeToken(tokenId);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeByUserName")
+    @ResponseBody
+    public void revokeTokenByUserName( @RequestParam String userName) {
+        Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(amcAdminClientId,
+            userName);
+        for(OAuth2AccessToken oAuth2AccessToken : accessTokens){
+            tokenServices.revokeToken(oAuth2AccessToken.getValue());
+        }
     }
 
     @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeByUserId/{userId}")

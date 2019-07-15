@@ -748,7 +748,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
                 if(item.getKey().equals("Title")){
 
-                    criteria.andTitleLike((String)item.getValue());
+                    criteria.andTitleLike(String.format("%%s%",(String)item.getValue()));
                 }
                 if(item.getKey().equals("AssetType")){
                     criteria.andTypeEqualTo((Integer) item.getValue());

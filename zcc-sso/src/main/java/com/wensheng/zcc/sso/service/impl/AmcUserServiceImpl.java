@@ -12,6 +12,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample.Criteria;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
 import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
@@ -173,13 +174,25 @@ public class AmcUserServiceImpl implements AmcUserService {
   }
 
   @Override
-  public List<AmcUser> searchUser(String mobilePhone) {
+  public List<AmcUser> searchUserByPhone(String mobilePhone) {
 
     AmcUserExample amcUserExample = new AmcUserExample();
     StringBuilder sb = new StringBuilder("%");
     sb.append(mobilePhone).append("%");
     amcUserExample.createCriteria().andMobilePhoneLike(sb.toString());
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    return amcUsers;
+  }
+
+  @Override
+  public List<AmcUser> searchUserByName(String name) {
+    AmcUserExample amcUserExample = new AmcUserExample();
+    StringBuilder sb = new StringBuilder("%");
+    sb.append(name).append("%");
+    amcUserExample.createCriteria().andNickNameLike(sb.toString());
+    amcUserExample.or(amcUserExample.createCriteria().andUserNameLike(sb.toString()));
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+
     return amcUsers;
   }
 

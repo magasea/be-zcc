@@ -79,7 +79,7 @@ spring:
     data:
         mongodb:
             database: wszcc_cust
-            host: 10.20.100.235
+            host: 10.20.100.238
             port: 27017
     cache:
         cache-names: regionName

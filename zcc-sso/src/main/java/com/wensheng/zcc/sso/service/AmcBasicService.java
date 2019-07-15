@@ -16,6 +16,7 @@ public interface AmcBasicService {
 
   AmcDept createDept(AmcDept amcDept);
   List<AmcDept> queryDept(Long amcId);
+  List<AmcDept> queryDept();
 
   AmcCmpyDeptVo createModifyCmpyDept(AmcCmpyDeptVo amcCmpyDeptVo) throws Exception;
 

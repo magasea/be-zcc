@@ -8,17 +8,20 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
-import com.wensheng.zcc.sso.module.vo.UserCreateVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping("/amc/user")
+@Slf4j
 public class AmcUserController {
 
   @Autowired
@@ -88,16 +92,31 @@ public class AmcUserController {
   }
 
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
-  @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers/search", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers/searchByPhone", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcUser> searchAmcUser( @PathVariable Long amcId, @RequestParam("mobilePhone") String mobilePhone)
+  public List<AmcUser> searchAmcUserByPhone( @PathVariable Long amcId, @RequestParam("mobilePhone") String mobilePhone)
       throws Exception {
     if(StringUtils.isEmpty(mobilePhone)){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,
           String.format("mobilePhone:%s", mobilePhone));
     }
 
-    List<AmcUser> amcUserResult = amcUserService.searchUser(mobilePhone);
+    List<AmcUser> amcUserResult = amcUserService.searchUserByPhone(mobilePhone);
+    return amcUserResult;
+
+  }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers/searchByName", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcUser> searchAmcUserByName( @PathVariable Long amcId, @RequestParam("name") String name)
+      throws Exception {
+    if(StringUtils.isEmpty(name)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,
+          String.format("name:%s", name));
+    }
+
+    List<AmcUser> amcUserResult = amcUserService.searchUserByName(name);
     return amcUserResult;
 
   }
@@ -185,10 +204,31 @@ public class AmcUserController {
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'crud_amcuser')")
   @RequestMapping(value = "/amc/amc-company/{amcId}/amc-department/depts")
   @ResponseBody
-  public List<AmcDept> queryDepts( @PathVariable Long amcId){
+  public Map<Long, List<AmcDept>> queryDepts( @PathVariable Long amcId){
+    Map<Long, List<AmcDept>> result = null;
+    if(amcId > 0){
+      List<AmcDept> amcDeptResult = amcBasicService.queryDept(amcId);
+      result = new HashMap<>();
+      result.put(amcId, amcDeptResult);
+    }else if (amcId == 0){
+      log.info("it is system admin with amcid 0");
+      List<AmcDept> amcDepts = amcBasicService.queryDept();
+      if(!CollectionUtils.isEmpty(amcDepts)){
+        result = new HashMap<>();
+        for(AmcDept amcDept: amcDepts){
+          if(!result.containsKey(amcDept.getCmpyId())){
+            result.put(amcDept.getCmpyId(), new ArrayList<>());
+          }
+          result.get(amcDept.getCmpyId()).add(amcDept);
+        }
+      }else{
+        log.error("Failed to query all depts");
+        return new HashMap<>();
+      }
+    }
 
-    List<AmcDept> amcDeptResult = amcBasicService.queryDept(amcId);
-    return amcDeptResult;
+
+    return result;
 
   }
 

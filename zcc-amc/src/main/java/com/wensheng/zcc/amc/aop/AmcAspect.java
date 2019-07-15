@@ -107,8 +107,11 @@ public class AmcAspect {
     QueryParam queryParam = (QueryParam) joinPoint.getArgs()[0];
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
+      log.error("it is web user");
+      return joinPoint.proceed(new Object[]{queryParam});
+    }
     log.info(authentication.getDetails().toString());
-    OAuth2AuthenticationDetails details = (OAuth2AuthenticationDetails)authentication.getDetails();
     Map<String, Object> detailsParam =
         (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
     if(detailsParam.containsKey("location") && null != detailsParam.get("location")){

@@ -59,6 +59,12 @@ public class AmcBasicServiceImpl implements AmcBasicService {
   }
 
   @Override
+  public List<AmcDept> queryDept() {
+    List<AmcDept> amcDepts = amcDeptMapper.selectByExample(null);
+    return amcDepts;
+  }
+
+  @Override
   public AmcCmpyDeptVo createModifyCmpyDept(AmcCmpyDeptVo amcCmpyDeptVo) throws Exception {
     AmcCompanyExample amcCompanyExample = new AmcCompanyExample();
     if(StringUtils.isEmpty(amcCmpyDeptVo.getAmcCompany().getName())){

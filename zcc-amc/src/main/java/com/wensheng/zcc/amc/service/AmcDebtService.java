@@ -34,7 +34,7 @@ public interface AmcDebtService {
   public AmcDebtVo update(AmcDebt AmcDebt);
   public AmcDebtVo updatePublishState(AmcDebt AmcDebt);
 
-  public List<AmcDebtVo> queryAll(int offset, int size);
+  public List<AmcDebt> queryAllByUserId( Long userId);
 
   public AmcDebtExtVo get(Long amcDebtId) throws Exception;
 

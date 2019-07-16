@@ -252,8 +252,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> queryAll(int offset, int size) {
-    return null;
+  public List<AmcDebt> queryAllByUserId( Long userId) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andUpdateByEqualTo(userId);
+    amcDebtExample.or(amcDebtExample.createCriteria().andCreatedByEqualTo(userId));
+    List<AmcDebt>  amcDebts =  amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
   }
 
   private DebtAdditional queryAddtional(Long debtId){

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -37,15 +38,7 @@ public class TokenController {
         tokenServices.revokeToken(tokenId);
     }
 
-    @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeByUserName")
-    @ResponseBody
-    public void revokeTokenByUserName( @RequestParam String userName) {
-        Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(amcAdminClientId,
-            userName);
-        for(OAuth2AccessToken oAuth2AccessToken : accessTokens){
-            tokenServices.revokeToken(oAuth2AccessToken.getValue());
-        }
-    }
+
 
     @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeByUserId/{userId}")
     @ResponseBody

@@ -12,14 +12,20 @@ import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -44,6 +50,15 @@ public class AmcUserController {
 
   @Autowired
   AmcBasicService amcBasicService;
+
+  @Resource(name = "tokenServices")
+  private ConsumerTokenServices tokenServices;
+
+  @Resource(name = "tokenStore")
+  private TokenStore tokenStore;
+
+  @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
+  private String amcAdminClientId;
 
   @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser')")
   @RequestMapping(value = "/amcid/{amcid}/amc-user/create", method = RequestMethod.POST)
@@ -239,6 +254,17 @@ public class AmcUserController {
 
     AmcCmpyDeptVo amcCmpyDeptVoResult = amcBasicService.createModifyCmpyDept(amcCmpyDeptVo);
     return amcCmpyDeptVoResult;
+  }
+
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @RequestMapping(method = RequestMethod.POST, value = "/amcid/{amcId}/amc-user/amcUsers/revokeByName")
+  @ResponseBody
+  public void revokeTokenByUserName( @RequestParam String userName) {
+    Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(amcAdminClientId,
+        userName);
+    for(OAuth2AccessToken oAuth2AccessToken : accessTokens){
+      tokenServices.revokeToken(oAuth2AccessToken.getValue());
+    }
   }
 
   @RequestMapping(value = "/amcid/amcUsers", method = RequestMethod.POST)

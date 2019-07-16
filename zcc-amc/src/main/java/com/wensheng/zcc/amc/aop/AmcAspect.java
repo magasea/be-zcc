@@ -178,24 +178,7 @@ public class AmcAspect {
     }
     final Object proceed = joinPoint.proceed();
     return proceed;
-//    AmcUserOperation amcUserOperation = new AmcUserOperation();
-//    amcUserOperation.setActionId(baseActionVo.getEditActionId());
-//    amcUserOperation.setParam(baseActionVo.getContent());
-//    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-//    kafkaService.send(amcUserOperation);
-
-//    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(baseActionVo.getContent().getDebtId());
-//
-//    PublishStateEnum publishStateEnum =
-//        zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
-//            PublishStateEnum.lookupByDisplayStatusUtil(baseActionVo.getContent().getPublishState() ));
-//    if(publishStateEnum == null) {
-//      log.error(String.format("actionId:%s with current publishState:%s is not applicable",
-//          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
-//      throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
-//          baseActionVo.getEditActionId(), baseActionVo.getContent().getPublishState()));
-//    }
 
   }
 

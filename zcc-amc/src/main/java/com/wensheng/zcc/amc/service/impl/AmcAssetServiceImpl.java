@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -677,7 +678,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
-
+        StringBuilder sb = new StringBuilder();
         boolean needDefaultPublishState = true;
         if(!CollectionUtils.isEmpty(queryParam)){
             for(Entry<String, Object> item: queryParam.entrySet()){
@@ -747,8 +748,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 }
 
                 if(item.getKey().equals("Title")){
-
-                    criteria.andTitleLike(String.format("%%s%",(String)item.getValue()));
+                    sb.setLength(0);
+                    criteria.andTitleLike(sb.append("%").append((String)item.getValue()).append("%").toString());
                 }
                 if(item.getKey().equals("AssetType")){
                     criteria.andTypeEqualTo((Integer) item.getValue());

@@ -268,6 +268,7 @@ public class AmcDebtController {
   }
 
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','AMC_ADMIN','AMC_USER')")
   @ResponseBody
   public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo) throws Exception {
 

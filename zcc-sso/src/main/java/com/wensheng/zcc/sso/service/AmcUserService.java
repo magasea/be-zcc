@@ -25,6 +25,10 @@ public interface AmcUserService {
 
   AmcUser createAmcUser(AmcUser amcUser);
 
+  void delUser(Long userId);
+
+  void disableUser(Long userId);
+
   List<AmcUser> getAmcUsers(Long amcId);
 
   List<AmcUser> getAmcUserByPhoneNum(String phoneNum);

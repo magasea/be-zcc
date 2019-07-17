@@ -154,12 +154,21 @@ public class AmcUserController {
     return "successed";
   }
 
+  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @RequestMapping(value = "/amc-user/delUser", method = RequestMethod.POST)
+  @ResponseBody
+  public String delUser(@RequestParam Long userId){
+    amcUserService.delUser(userId);
+    return "successed";
+  }
+
   @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId, 'crud_amcuser')")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/modifyUser", method = RequestMethod.POST)
   @ResponseBody
   public String modifyUser(@RequestParam Long userId,
       @PathVariable Long amcId, @RequestParam AmcUserValidEnum amcUserValidEnum) throws Exception {
     amcUserService.modifyUserValidState(userId, amcId, amcUserValidEnum);
+
     return "successed";
   }
 

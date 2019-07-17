@@ -69,7 +69,10 @@ spring:
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
         bootstrap-servers: ${env.kfkhost}:9092
-
+    cache:
+        cache-names: TOKEN
+        caffeine:
+            spec: maximumSize=500, expireAfterAccess=120s
 mybatis:
     type-aliases-package: com.wensheng.zcc.sso.module
     mapper-locations:

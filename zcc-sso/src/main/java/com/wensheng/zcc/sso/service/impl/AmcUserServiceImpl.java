@@ -20,13 +20,20 @@ import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.util.UserUtils;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
+import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -51,6 +58,16 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Autowired
   AmcPermissionMapper amcPermissionMapper;
+
+  @Resource(name = "tokenServices")
+  private ConsumerTokenServices tokenServices;
+
+  @Resource(name = "tokenStore")
+  private TokenStore tokenStore;
+
+  @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
+  private String amcAdminClientId;
+
 
   @Override
   public void modifyUserRole(Long userId, List<Long> roleIds) {
@@ -109,6 +126,34 @@ public class AmcUserServiceImpl implements AmcUserService {
     return amcUserCreated;
   }
 
+
+
+  @Override
+  @Transactional
+  public void delUser(Long userId) {
+    AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+    amcUserRoleExample.createCriteria().andUserIdEqualTo(userId);
+    amcUserRoleMapper.deleteByExample(amcUserRoleExample);
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andIdEqualTo(userId);
+    amcUserMapper.deleteByExample(amcUserExample);
+  }
+
+  @Override
+  public void disableUser(Long userId) {
+    AmcUser amcUser = amcUserMapper.selectByPrimaryKey(userId);
+    if(null == amcUser){
+      log.error("Failed to find user with id:{}", userId);
+      return;
+    }
+    Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(amcAdminClientId,
+        amcUser.getMobilePhone());
+    for(OAuth2AccessToken oAuth2AccessToken : accessTokens){
+      log.info("Revoke token:{}", oAuth2AccessToken.getValue());
+      tokenServices.revokeToken(oAuth2AccessToken.getValue());
+    }
+  }
+
   @Override
   public List<AmcUser> getAmcUsers(Long amcId) {
     AmcUserExample amcUserExample = new AmcUserExample();
@@ -135,11 +180,18 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Override
   public void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum) {
+
+
     AmcUser amcUser = new AmcUser();
     amcUser.setValid(amcUserValidEnum.getId());
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andIdEqualTo(userId);
     amcUserMapper.updateByExampleSelective(amcUser, amcUserExample);
+
+    if( AmcUserValidEnum.LOCKED == amcUserValidEnum){
+      log.info("will disableuser:{}", userId);
+      disableUser(userId);
+    }
   }
 
   @Override

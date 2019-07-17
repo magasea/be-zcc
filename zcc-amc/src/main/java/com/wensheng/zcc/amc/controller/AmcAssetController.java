@@ -140,6 +140,7 @@ public class AmcAssetController {
 
 
   @EditActionChecker
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','AMC_ADMIN','AMC_USER')")
   @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(

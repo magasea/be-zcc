@@ -50,7 +50,7 @@ public class TokenController {
     @RequestMapping(method = RequestMethod.GET, value = "/tokens")
     @ResponseBody
     public List<String> getTokens() {
-        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId("sampleClientId");
+        Collection<OAuth2AccessToken> tokens = tokenStore.findTokensByClientId(amcAdminClientId);
         return Optional.ofNullable(tokens).orElse(Collections.emptyList()).stream().map(OAuth2AccessToken::getValue).collect(Collectors.toList());
     }
 

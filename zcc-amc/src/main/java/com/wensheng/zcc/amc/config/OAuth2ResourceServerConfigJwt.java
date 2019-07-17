@@ -61,7 +61,7 @@ public class OAuth2ResourceServerConfigJwt extends ResourceServerConfigurerAdapt
         final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setAccessTokenConverter(new CustomAccessTokenConverter());
 
-        converter.setSigningKey("123");
+        converter.setSigningKey("wenshengamc#1234567890");
         return converter;
     }
 

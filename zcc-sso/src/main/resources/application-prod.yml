@@ -70,7 +70,7 @@ spring:
         # Kafka cluster or your Docker IP is different
         bootstrap-servers: ${env.kfkhost}:9092
     cache:
-        cache-names: TOKEN
+        cache-names: TOKEN,USER
         caffeine:
             spec: maximumSize=500, expireAfterAccess=120s
 mybatis:

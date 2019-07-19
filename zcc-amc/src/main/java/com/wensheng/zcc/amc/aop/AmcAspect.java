@@ -137,6 +137,8 @@ public class AmcAspect {
     log.info("now get the point cut testAnnotation");
     CodeSignature codeSignature = (CodeSignature) joinPoint.getSignature();
     String[] names = codeSignature.getParameterNames();
+    String reviewComment = "";
+
     boolean gotActionObject = false;
     amcUserOperation.setParam(new ArrayList());
     for(int idx = 0; idx < joinPoint.getArgs().length; idx++){
@@ -149,7 +151,7 @@ public class AmcAspect {
         Long amcDebtId = (Long)joinPoint.getArgs()[idx];
         log.info("now get the debtId:{}", amcDebtId);
       }else if(names[idx].equals("reviewComment")){
-        String reviewComment = (String) joinPoint.getArgs()[idx];
+        reviewComment = (String) joinPoint.getArgs()[idx];
         amcUserOperation.getParam().add(reviewComment);
       }
     }
@@ -173,10 +175,20 @@ public class AmcAspect {
 //        amcUserOperation.setUserId((Long)((Map)authentication.getDetails()).get("userId"));
 //      }
       kafkaService.send(amcUserOperation);
+      if(! (actionObj.getContent() instanceof AmcDebtCreateVo)){
+        amcDebtService.saveOperLog(actionObj,reviewComment);
+      }else{
+        log.info("It is create debt action, need get debtId later");
+      }
+
 
 
     }
     final Object proceed = joinPoint.proceed();
+    if(proceed instanceof AmcDebtVo && actionObj.getContent() instanceof AmcDebtCreateVo){
+      ((AmcDebtCreateVo)actionObj.getContent()).setId(((AmcDebtVo) proceed).getId());
+      amcDebtService.saveOperLog(actionObj,reviewComment);
+    }
     return proceed;
 
 

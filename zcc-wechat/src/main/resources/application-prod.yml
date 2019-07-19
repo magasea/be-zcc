@@ -6,6 +6,8 @@ grpc:
     client:
         comnfunc:
             host: ${env.rpchost}
+            pubhost: ${env.pubhost}
+            pubport: ${env.pubport}
             port: 10016
 spring:
     autoconfigure:
@@ -189,6 +191,8 @@ env:
     dbhost: 10.20.100.70
     kfkhost: 10.20.100.238
     rpchost: localhost
+    pubhost: 101.132.27.96
+    pubport: 5444
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
     oauth2:

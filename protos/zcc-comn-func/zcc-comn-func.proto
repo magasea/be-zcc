@@ -37,9 +37,19 @@ message WhoResponse {
   string value = 2;
 }
 
+message WXPubTokenResp {
+  string wxPubToken = 1;
+}
+
+message WXPubTokenReq {
+
+}
+
 service ComnFuncService {
   rpc getAddress(WXUserGeoReq) returns (WXUserGeoReq);
 
   rpc getGeoByAddress(Address) returns (wenshengamc.zcc.common.GeoJson);
+
+  rpc getWXPublicToken(WXPubTokenReq) returns (WXPubTokenResp);
 
 }

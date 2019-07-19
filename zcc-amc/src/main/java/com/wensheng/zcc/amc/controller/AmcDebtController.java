@@ -196,7 +196,6 @@ public class AmcDebtController {
 
   @EditActionChecker
   @LogExecutionTime
-
   @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", headers = "Content-Type= multipart/form-data",method =
       RequestMethod.POST)
   @ResponseBody
@@ -267,6 +266,7 @@ public class AmcDebtController {
     amcDebtService.del(debtIdBaseActionVo.getContent());
   }
 
+  @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
   @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','AMC_ADMIN','AMC_USER')")
   @ResponseBody
@@ -378,7 +378,7 @@ public class AmcDebtController {
 
       amcDebtService.update(amcDebt);
       handleDebtors(amcDebtVo, amcDebtVo.getId());
-      amcDebtService.saveOperLog(amcDebtUpdateAct,"");
+//      amcDebtService.saveOperLog(amcDebtUpdateAct,"");
       if(amcDebtVo.getDebtAdditional() != null  && amcDebtVo.getDebtAdditional().getDesc() != null && !StringUtils.isEmpty(amcDebtVo.getDebtAdditional().getDesc())){
         amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
       }
@@ -466,7 +466,7 @@ public class AmcDebtController {
     amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
     amcDebt.setId(debtVoBaseActionVo.getContent().getId());
     amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
-    amcDebtService.saveOperLog(debtVoBaseActionVo,"");
+//    amcDebtService.saveOperLog(debtVoBaseActionVo,"");
     return amcDebtService.updatePublishState(amcDebt);
   }
 
@@ -483,7 +483,7 @@ public class AmcDebtController {
     amcDebt.setId(debtVoBaseActionVo.getContent().getId());
     amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
     amcDebtService.updatePublishState(amcDebt);
-    amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
+//    amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
     return "success";
 
   }
@@ -507,7 +507,7 @@ public class AmcDebtController {
       amcDebtService.updatePublishState(amcDebt);
 
     }
-    amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
+//    amcDebtService.saveOperLog(debtVoBaseActionVo, reviewComment);
     return "success";
 
   }

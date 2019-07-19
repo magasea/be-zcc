@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -31,6 +32,7 @@ import org.springframework.web.client.RestTemplate;
 public class AmcGaoDeGrpcServImpl {
 
   @Autowired
+  @Qualifier("comnFuncService")
   ComnFuncServiceBlockingStub comnFuncService;
 
 

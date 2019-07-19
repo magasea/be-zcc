@@ -1,14 +1,8 @@
 server:
-    port: 10005
+    port: 10006
 grpc:
     server:
-        port: 10015
-    client:
-        comnfunc:
-            host: ${env.rpchost}
-            pubhost: ${env.pubhost}
-            pubport: ${env.pubport}
-            port: 10016
+        port: 5444
 spring:
     autoconfigure:
         exclude:
@@ -78,11 +72,11 @@ spring:
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
         bootstrap-servers: ${env.kfkhost}:9092
-    data:
-        mongodb:
-            database: wszcc_wechat
-            host: ${env.mongodb-host}
-            port: 27017
+#    data:
+#        mongodb:
+#            database: wszcc_wechat
+#            host: ${env.mongodb-host}
+#            port: 27017
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
@@ -90,23 +84,13 @@ spring:
     cache:
         cache-names: TOKEN
         caffeine:
-            spec: maximumSize=500, expireAfterAccess=120s
+            spec: maximumSize=500, expireAfterAccess=5400s
     servlet:
         multipart:
             enabled: true
             file-size-threshold: 10240KB
             max-file-size: 10240KB
             max-request-size: 10240KB
-
-mybatis:
-    type-aliases-package: com.wensheng.zcc.wechat.module
-    mapper-locations:
-        - classpath:mappers/*Mapper.xml
-        - classpath:mappers/ext/*Mapper.xml
-
-project:
-    params:
-        wechat_image_path: ${env.image-repo}/wechat/images/
 
 weixin:
     #    appId: wxdb885be2c95a5b32
@@ -122,38 +106,12 @@ weixin:
 
     get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
 
-    # user and tag management
-    get_public_users_url: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
-    get_public_userinfo_url: https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN
-    get_public_usersinfo_url: https://api.weixin.qq.com/cgi-bin/user/info/batchget?access_token=%s
-    get_usertags_url: https://api.weixin.qq.com/cgi-bin/tags/get?access_token=%s
-    create_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/create?access_token=%s
-    delete_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/delete?access_token=%s
-    mod_usertag_url: https://api.weixin.qq.com/cgi-bin/tags/update?access_token=%s
-    untaguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchuntagging?access_token=%s
-    taguser_batch_url: https://api.weixin.qq.com/cgi-bin/tags/members/batchtagging?access_token=%s
-    get_tagsofuser_url: https://api.weixin.qq.com/cgi-bin/tags/getidlist?access_token=%s
-    get_useroftagid_url: https://api.weixin.qq.com/cgi-bin/user/tag/get?access_token=%s
-    get_token_url: https://api.weixin.qq.com/cgi-bin/token
-    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
 
-    #material management
-    material_add_tmp_url: https://api.weixin.qq.com/cgi-bin/media/upload?access_token=%s&type=%s
-    material_get_tmp_url: https://api.weixin.qq.com/cgi-bin/media/get?access_token=%s&media_id=%s
-    material_upload_temp_url: https://api.weixin.qq.com/cgi-bin/media/uploadnews?access_token=%s
-    material_preview_url: https://api.weixin.qq.com/cgi-bin/message/mass/preview?access_token=%s
-    material_add_new_url: https://api.weixin.qq.com/cgi-bin/material/add_news?access_token=%s
-    material_uploadimage_url: https://api.weixin.qq.com/cgi-bin/media/uploadimg?access_token=%s
-    material_addmaterial_url: https://api.weixin.qq.com/cgi-bin/material/add_material?access_token=%s&type=%s
-    material_get_url: https://api.weixin.qq.com/cgi-bin/material/get_material?access_token=%s
-    material_del_url: https://api.weixin.qq.com/cgi-bin/material/del_material?access_token=%s
-    material_update_url: https://api.weixin.qq.com/cgi-bin/material/update_news?access_token=%s
-    material_get_count_url: https://api.weixin.qq.com/cgi-bin/material/get_materialcount?access_token=%s
-    material_batch_get_url: https://api.weixin.qq.com/cgi-bin/material/batchget_material?access_token=%s
-    msg_group_send_tag_url: https://api.weixin.qq.com/cgi-bin/message/mass/sendall?access_token=%s
-    msg_group_send_openid_url: https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s
-    msg_group_del_url: https://api.weixin.qq.com/cgi-bin/message/mass/delete?access_token=%s
-    msg_group_get_url: https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=%s
+project:
+    params:
+        wechat_image_path: ${env.image-repo}/wechat/images/
+
+
 baidu:
     logis:
         appName: amc-lgs
@@ -167,7 +125,6 @@ gaode:
     key: 0c53a687090bf18a7394ffc66a0b6432
     geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
     geocoder: https://restapi.amap.com/v3/geocode/geo?address=%s&key=${gaode.key}
-
 
 
 message:
@@ -188,12 +145,9 @@ logging:
 
 
 env:
-    env-hint: test
+    env-hint: prod
     dbhost: 10.20.100.70
     kfkhost: 10.20.100.238
-    rpchost: localhost
-    pubhost: 101.132.27.96
-    pubport: 5444
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
     oauth2:

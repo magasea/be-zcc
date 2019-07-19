@@ -1,14 +1,12 @@
-package com.wensheng.zcc.wechat.service.impl;
+package com.wensheng.zcc.comnfunc.service.impl;
 
 import com.google.gson.Gson;
-import com.wensheng.zcc.wechat.service.WXBasicService;
-import com.wensheng.zcc.wechat.utils.wechat.AesException;
-import com.wensheng.zcc.wechat.utils.wechat.SHA1;
-import java.io.IOException;
+
+import com.wensheng.zcc.comnfunc.service.WXBasicService;
+import com.wensheng.zcc.comnfunc.utils.wechat.AesException;
+import com.wensheng.zcc.comnfunc.utils.wechat.SHA1;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import javax.xml.parsers.ParserConfigurationException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -20,9 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
-import org.xml.sax.SAXException;
 
 @CacheConfig(cacheNames = {"TOKEN"})
 @Service
@@ -43,9 +39,6 @@ public class WXBasicServiceImpl implements WXBasicService {
 
   @Value("${weixin.get_public_token_url}")
   String getPublicTokenUrl;
-
-  @Autowired
-  ComnfuncGrpcService comnfuncPubGrpcService;
 
   private Gson gson = new Gson();
 
@@ -99,9 +92,6 @@ public class WXBasicServiceImpl implements WXBasicService {
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
     System.out.println(((ResponseEntity<Map>) response).getBody().toString());
     String token =(String) ((Map)response.getBody()).get("access_token");
-    if(StringUtils.isEmpty(token) || token.length() < 10){
-      return comnfuncPubGrpcService.getWXPubToken();
-    }
     return token;
   }
 

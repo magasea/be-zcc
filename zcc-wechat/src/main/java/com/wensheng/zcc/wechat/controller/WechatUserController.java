@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -22,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
-
+@Slf4j
 @Controller
 @RequestMapping(value = "/ws/wechat")
 public class WechatUserController {
@@ -43,6 +44,7 @@ public class WechatUserController {
       throws ParserConfigurationException, AesException {
 
     String response = wxBasicService.checkWechatResp(timeStamp, nonce, echostr, signature);
+    log.info(response);
     return response;
 
   }

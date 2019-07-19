@@ -4,6 +4,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import java.util.List;
 
@@ -27,11 +28,15 @@ public interface AmcUserService {
 
   void delUser(Long userId);
 
+  AmcUser getUserById(Long userId);
+
   void disableUser(Long userId);
 
   List<AmcUser> getAmcUsers(Long amcId);
+  List<AmcUser> getAmcUsers(AmcUserExample amcUserExample);
 
-  List<AmcUser> getAmcUserByPhoneNum(String phoneNum);
+
+    List<AmcUser> getAmcUserByPhoneNum(String phoneNum);
 
   List<AmcUser> getAllUsers();
 

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 @Configuration
 public class GrpcConfig {
@@ -24,7 +25,10 @@ public class GrpcConfig {
   @Value("${grpc.client.comnfunc.host}")
   String comnfuncHost;
 
-
+  @Value("${grpc.client.comnfunc.pubhost}")
+  String comnfuncPubHost;
+  @Value("${grpc.client.comnfunc.pubport}")
+  int comnfuncPubPort;
  @Value("${grpc.client.comnfunc.port}")
  int comnfuncPort;
 
@@ -35,20 +39,33 @@ public class GrpcConfig {
   @Autowired
   WechatGrpcService wechatGrpcService;
 
-
- @Bean
+  @Primary
+ @Bean(name = "comnFuncChannel")
   ManagedChannel comnFuncChannel(){
    ManagedChannelBuilder managedChannelBuilder = ManagedChannelBuilder.forAddress(comnfuncHost, comnfuncPort).usePlaintext();
    return managedChannelBuilder.build();
  }
 
+  @Bean(name = "comnFuncPubChannel")
+  ManagedChannel comnFuncPubChannel(){
+    ManagedChannelBuilder managedChannelBuilder =
+        ManagedChannelBuilder.forAddress(comnfuncPubHost, comnfuncPubPort).usePlaintext();
+    return managedChannelBuilder.build();
+  }
 
- @Bean
+ @Bean(name = "comnFuncService")
+ @Primary
  ComnFuncServiceBlockingStub comnFuncServiceStub(ManagedChannel comnFuncChanel){
    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService = ComnFuncServiceGrpc.newBlockingStub(comnFuncChanel);
    return comnFuncService;
  }
-
+  @Bean(name = "comnFuncPubService")
+  ComnFuncServiceBlockingStub comnFuncPubServiceStub(){
+    ManagedChannel managedChannel = comnFuncPubChannel();
+    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService =
+        ComnFuncServiceGrpc.newBlockingStub(managedChannel);
+    return comnFuncService;
+  }
 
   @Bean
   Server server() throws InterruptedException, IOException {

@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -78,33 +79,36 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   public void deletePersons(Long[] contactorIds) throws Exception {
     StringBuilder sb = new StringBuilder();
     sb.append("Failed to delete contactor:");
-    boolean failed = false;
     for(Long contactorId: contactorIds){
       if(!checkAndDelContactor(contactorId)){
         sb.append(contactorId).append(",");
-        failed = true;
+
       }
     }
-    if(failed){
-      throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.CANNOT_DEL, "some debt related");
-    }
+
 
   }
 
-  private boolean checkAndDelContactor(Long contactorId) {
+  private boolean checkAndDelContactor(Long contactorId) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andAmcContactorIdEqualTo(contactorId)
             .andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
     if(!CollectionUtils.isEmpty(amcDebts)){
       StringBuilder sb = new StringBuilder();
-      amcDebts.stream().map(item -> sb.append(item.getId()).append(","));
-      log.error(String.format("cannot delete contactor:%d because debt %s is not deleted", contactorId, sb));
-      return false;
+      amcDebts.stream().forEach(item -> sb.append(item.getId()).append(","));
+      if(sb.length() > 0){
+        sb.setLength(sb.length() -1);
+      }
+      log.error(String.format("cannot delete contactor:%d because debt %s related", contactorId, sb));
+      throw ExceptionUtils.getAmcException(AmcExceptions.CANNOT_DEL, String.format("不能删除联系人:[%d] "
+          + "因为有债权 [%s] 关联到他/她, 可以考虑将债权的联系人设置为别人再做删除", contactorId, sb));
+
     }else{
       amcDebtContactorMapper.deleteByPrimaryKey(contactorId);
       return true;
     }
+
 
   }
 

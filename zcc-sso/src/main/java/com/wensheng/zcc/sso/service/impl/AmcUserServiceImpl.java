@@ -2,6 +2,7 @@ package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
@@ -27,8 +28,12 @@ import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field.Str;
+import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -42,6 +47,7 @@ import org.springframework.util.CollectionUtils;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"USER"})
 public class AmcUserServiceImpl implements AmcUserService {
 
   @Autowired
@@ -70,6 +76,7 @@ public class AmcUserServiceImpl implements AmcUserService {
 
 
   @Override
+  @CacheEvict
   public void modifyUserRole(Long userId, List<Long> roleIds) {
     AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
     amcUserRoleExample.createCriteria().andUserIdEqualTo(userId);
@@ -129,6 +136,7 @@ public class AmcUserServiceImpl implements AmcUserService {
 
 
   @Override
+  @CacheEvict
   @Transactional
   public void delUser(Long userId) {
     AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
@@ -139,6 +147,13 @@ public class AmcUserServiceImpl implements AmcUserService {
     amcUserMapper.deleteByExample(amcUserExample);
   }
 
+  @Override
+  @Cacheable
+  public AmcUser getUserById(Long userId) {
+    return amcUserMapper.selectByPrimaryKey(userId);
+  }
+
+  @CacheEvict
   @Override
   public void disableUser(Long userId) {
     AmcUser amcUser = amcUserMapper.selectByPrimaryKey(userId);
@@ -158,8 +173,15 @@ public class AmcUserServiceImpl implements AmcUserService {
   public List<AmcUser> getAmcUsers(Long amcId) {
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
-    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    List<AmcUser> amcUsers = this.getAmcUsers(amcUserExample);
     amcUsers.stream().forEach(amcUser -> amcUser.setPassword(""));
+    return amcUsers;
+  }
+
+  @AmcUserQueryChecker
+  @Override
+  public List<AmcUser> getAmcUsers(AmcUserExample amcUserExample){
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     return amcUsers;
   }
 
@@ -178,6 +200,7 @@ public class AmcUserServiceImpl implements AmcUserService {
     return amcUsers;
   }
 
+  @CacheEvict
   @Override
   public void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum) {
 
@@ -194,6 +217,7 @@ public class AmcUserServiceImpl implements AmcUserService {
     }
   }
 
+  @CacheEvict
   @Override
   public void modifyUserValidState(Long userId, Long amcId, AmcUserValidEnum amcUserValidEnum) throws Exception {
 

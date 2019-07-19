@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.controller;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.sso.aop.AmcUserCreateChecker;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -60,6 +61,7 @@ public class AmcUserController {
   @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
   private String amcAdminClientId;
 
+
   @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser')")
   @RequestMapping(value = "/amcid/{amcid}/amc-user/create", method = RequestMethod.POST)
   @ResponseBody
@@ -81,7 +83,7 @@ public class AmcUserController {
     return amcUserResult;
   }
 
-
+  @AmcUserCreateChecker
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/create_amc_user", method = RequestMethod.POST)
   @ResponseBody

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import lombok.Data;
 import org.apache.tomcat.jni.Local;
+import org.springframework.data.mongodb.core.index.Indexed;
 
 /**
  * @author chenwei on 4/3/19
@@ -11,9 +12,12 @@ import org.apache.tomcat.jni.Local;
  */
 @Data
 public class AmcUserOperation<T> {
+  @Indexed
   Long userId;
   String userName;
   Integer actionId;
+  @Indexed
+  String methodName;
   List<T> param;
   LocalDateTime dateTime;
 

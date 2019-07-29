@@ -2,6 +2,7 @@ package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
 import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
@@ -186,6 +187,14 @@ public class AmcUserServiceImpl implements AmcUserService {
   }
 
   @Override
+  public List<AmcUserRole> getAmcUserRoles(Long userId) {
+    AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+    amcUserRoleExample.createCriteria().andUserIdEqualTo(userId);
+    List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
+    return amcUserRoles;
+  }
+
+  @Override
   public List<AmcUser> getAmcUserByPhoneNum(String phoneNum) {
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andMobilePhoneEqualTo(phoneNum);
@@ -202,7 +211,7 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @CacheEvict
   @Override
-  public void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum) {
+  public void modifyUserValidState(Long userId, AmcUserValidEnum amcUserValidEnum) throws Exception{
 
 
     AmcUser amcUser = new AmcUser();
@@ -224,16 +233,16 @@ public class AmcUserServiceImpl implements AmcUserService {
 
     AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
     amcUserRoleExample.createCriteria().andUserIdEqualTo(userId);
-    List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
-    if(!CollectionUtils.isEmpty(amcUserRoles)){
-      AmcUserRole amcUserRole =
-          amcUserRoles.stream().filter( item -> ( item.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId() ||
-              item.getRoleId() == AmcRolesEnum.ROLE_AMC_ADMIN.getId())).findAny().orElse(null);
-      if(amcUserRole != null){
-        throw ExceptionUtils.getAmcException(AmcExceptions.NOT_AUTHORIZED_FORTHISTASK, String.format("target user with "
-            + "role:%s", AmcRolesEnum.lookupByDisplayIdUtil(amcUserRole.getRoleId().intValue()).getName()));
-      }
-    }
+//    List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
+//    if(!CollectionUtils.isEmpty(amcUserRoles)){
+//      AmcUserRole amcUserRole =
+//          amcUserRoles.stream().filter( item -> ( item.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId() ||
+//              item.getRoleId() == AmcRolesEnum.ROLE_AMC_ADMIN.getId())).findAny().orElse(null);
+//      if(amcUserRole != null){
+//        throw ExceptionUtils.getAmcException(AmcExceptions.NOT_AUTHORIZED_FORTHISTASK, String.format("target user with "
+//            + "role:%s", AmcRolesEnum.lookupByDisplayIdUtil(amcUserRole.getRoleId().intValue()).getName()));
+//      }
+//    }
 
     AmcUser amcUser = new AmcUser();
     amcUser.setValid(amcUserValidEnum.getId());
@@ -241,6 +250,10 @@ public class AmcUserServiceImpl implements AmcUserService {
     amcUserExample.createCriteria().andIdEqualTo(userId).andCompanyIdEqualTo(amcId);
 
     amcUserMapper.updateByExampleSelective(amcUser, amcUserExample);
+    if( AmcUserValidEnum.LOCKED == amcUserValidEnum){
+      log.info("will disableuser:{}", userId);
+      disableUser(userId);
+    }
   }
 
   @Override

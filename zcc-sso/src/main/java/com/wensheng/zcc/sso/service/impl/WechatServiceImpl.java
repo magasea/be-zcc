@@ -32,6 +32,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -52,6 +53,7 @@ import org.springframework.security.oauth2.provider.client.BaseClientDetails;
 import org.springframework.security.oauth2.provider.client.InMemoryClientDetailsService;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
+import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -119,6 +121,8 @@ public class WechatServiceImpl implements WechatService {
   @Autowired
   JwtAccessTokenConverter accessTokenConverter;
 
+
+
   public static final int INIT_VECTOR_LENGTH = 16;
 
 
@@ -150,7 +154,10 @@ public class WechatServiceImpl implements WechatService {
     Map<String, BaseClientDetails> clientParam = new HashMap<>();
     clientParam.put(amcWechatClientId, baseClientDetails);
 //    clientDetailsService.setClientDetailsStore(clientParam);
-    tokenWechatServices.setTokenEnhancer(wechatTokenEnhancer);
+    final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
+    tokenEnhancerChain.setTokenEnhancers(Arrays.asList(wechatTokenEnhancer, accessTokenConverter));
+    tokenWechatServices.setTokenEnhancer(tokenEnhancerChain);
+
 
 
 //    tokenWechatServices.setClientDetailsService(clientDetailsService);
@@ -258,7 +265,9 @@ public class WechatServiceImpl implements WechatService {
   private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){
     HashMap<String, String> authorizationParameters = new HashMap<String, String>();
     authorizationParameters.put("scope", amcWechatScopes);
-    authorizationParameters.put("username", wechatCode2SessionVo.getOpenid());
+    authorizationParameters.put("username",
+        StringUtils.isEmpty(wechatCode2SessionVo.getUnionid())? wechatCode2SessionVo.getOpenid():
+            wechatCode2SessionVo.getUnionid());
     authorizationParameters.put("client_id", amcWechatClientId);
     authorizationParameters.put("grant", amcWechatAuthorizedGrantTypes);
     if(!StringUtils.isEmpty(wechatCode2SessionVo.getAccessToken())){
@@ -284,21 +293,27 @@ public class WechatServiceImpl implements WechatService {
     User userPrincipal = null;
     // Create principal and auth token
     if(!StringUtils.isEmpty(wechatCode2SessionVo.getSessionKey())){
-      userPrincipal = new User(wechatCode2SessionVo.getOpenid(), wechatCode2SessionVo.getSessionKey(), true, true, true, true,
+      userPrincipal = new User(StringUtils.isEmpty(wechatCode2SessionVo.getUnionid())?
+          wechatCode2SessionVo.getOpenid():wechatCode2SessionVo.getUnionid(),
+          wechatCode2SessionVo.getUnionid(),
+          true, true,
+          true, true,
           authorities);
     }else if(!StringUtils.isEmpty(wechatCode2SessionVo.getAccessToken())){
-      userPrincipal = new User(wechatCode2SessionVo.getOpenid(), wechatCode2SessionVo.getAccessToken(), true, true, true, true,
+      userPrincipal = new User(StringUtils.isEmpty(wechatCode2SessionVo.getUnionid())?
+          wechatCode2SessionVo.getOpenid():wechatCode2SessionVo.getUnionid(), wechatCode2SessionVo.getUnionid(), true, true, true
+          , true,
           authorities);
     }
 
     UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userPrincipal,
-        wechatCode2SessionVo.getSessionKey(), authorities) ;
+        null, authorities) ;
 
     OAuth2Authentication auth2Authentication = new OAuth2Authentication(authorizationRequest, authenticationToken);
 
 
     OAuth2AccessToken token = tokenWechatServices.createAccessToken(auth2Authentication);
-    token = accessTokenConverter.enhance(token, auth2Authentication);
+//    token = accessTokenConverter.enhance(token, auth2Authentication);
 
     return token;
   }

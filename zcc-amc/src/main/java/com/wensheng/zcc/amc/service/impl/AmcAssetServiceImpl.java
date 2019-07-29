@@ -789,6 +789,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssetExample;
     }
 
+
     public void checkGeoInfoWorker(){
         //1. travers asset table get address
         int offset = 0;

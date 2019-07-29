@@ -40,5 +40,5 @@ kafka:
   topic_amc_useroper: topic_amc_userOper_${env.env-prefix}
 
 env:
-  env-prefix: dev
+  env-prefix: prod
   kafka-host: 10.20.100.238

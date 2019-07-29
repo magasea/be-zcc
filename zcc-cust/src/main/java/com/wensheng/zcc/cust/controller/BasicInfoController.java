@@ -8,6 +8,7 @@ import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PersonSexEnum;
 import com.wensheng.zcc.cust.service.BasicInfoService;
+import com.wensheng.zcc.cust.service.GeoInfoService;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,9 @@ public class BasicInfoController {
 
   @Autowired
   BasicInfoService basicInfoService;
+
+  @Autowired
+  GeoInfoService geoInfoService;
 
   @RequestMapping(value = "/investScales", method = RequestMethod.POST)
   @ResponseBody
@@ -92,6 +96,13 @@ public class BasicInfoController {
     }else{
       return basicInfoService.getSubCustRegion(regionId);
     }
+
+  }
+
+  @RequestMapping(value = "/searchGeoInfo4Trd", method = RequestMethod.POST)
+  @ResponseBody
+  public void searchGeoInfo4Trd(){
+    geoInfoService.searchGeoInfoForTrd();
 
   }
 }

@@ -4,6 +4,7 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.aop.AmcUserCreateChecker;
+import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -147,11 +148,11 @@ public class AmcUserController {
     return amcUserResult;
 
   }
-
+  @AmcUserModifyChecker
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amc-user/modifyUser", method = RequestMethod.POST)
   @ResponseBody
-  public String modifyUser(@RequestParam Long userId, @RequestParam AmcUserValidEnum amcUserValidEnum){
+  public String modifyUser(@RequestParam Long userId, @RequestParam AmcUserValidEnum amcUserValidEnum) throws Exception{
     amcUserService.modifyUserValidState(userId, amcUserValidEnum);
     return "successed";
   }
@@ -164,6 +165,7 @@ public class AmcUserController {
     return "successed";
   }
 
+  @AmcUserModifyChecker
   @PreAuthorize("hasRole('AMC_ADMIN') and hasPermission(#amcId, 'crud_amcuser')")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/modifyUser", method = RequestMethod.POST)
   @ResponseBody

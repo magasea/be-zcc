@@ -17,6 +17,7 @@ import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
@@ -140,6 +141,7 @@ public class AmcAspect {
     String reviewComment = "";
 
     boolean gotActionObject = false;
+    boolean needLog = false;
     amcUserOperation.setParam(new ArrayList());
     for(int idx = 0; idx < joinPoint.getArgs().length; idx++){
       if(joinPoint.getArgs()[idx] instanceof BaseActionVo){
@@ -153,42 +155,57 @@ public class AmcAspect {
       }else if(names[idx].equals("reviewComment")){
         reviewComment = (String) joinPoint.getArgs()[idx];
         amcUserOperation.getParam().add(reviewComment);
+      }else if(names[idx].equals(("contactorIds")) || names[idx].equals("amcPerson")){
+        amcUserOperation.setMethodName(joinPoint.getSignature().getName());
+        amcUserOperation.getParam().add(joinPoint.getArgs()[idx]);
+        needLog = true;
       }
     }
-    if(gotActionObject){
+    if(gotActionObject || needLog){
       Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-      amcUserOperation.setActionId(actionObj.getEditActionId());
+
       Long userId = -1L;
 
-      amcUserOperation.getParam().add(actionObj.getContent());
       if(authentication.getDetails() != null && ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails() != null){
         Map details = (Map) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
         if(details.containsKey("userId")){
           userId = Long.valueOf( String.format("%d",details.get("userId")));
           amcUserOperation.setUserId(userId);
+
         }
+
       }
-      updatePublishStateByRuleBook(actionObj.getContent(), actionObj.getEditActionId(), userId);
-//      AmcUserDetail amcUserDetail = (AmcUserDetail) authentication.getPrincipal();
       amcUserOperation.setUserName(authentication.getPrincipal().toString());
+      if(gotActionObject){
+        amcUserOperation.setActionId(actionObj.getEditActionId());
+        amcUserOperation.getParam().add(actionObj.getContent());
+
+        updatePublishStateByRuleBook(actionObj.getContent(), actionObj.getEditActionId(), userId);
+//      AmcUserDetail amcUserDetail = (AmcUserDetail) authentication.getPrincipal();
+
+        amcUserOperation.setDateTime(AmcDateUtils.getLocalDateTime());
 //      if(((HashMap)authentication.getDetails()).containsKey("userId")){
 //        amcUserOperation.setUserId((Long)((Map)authentication.getDetails()).get("userId"));
 //      }
-      kafkaService.send(amcUserOperation);
-      if(! (actionObj.getContent() instanceof AmcDebtCreateVo)){
-        amcDebtService.saveOperLog(actionObj,reviewComment);
-      }else{
-        log.info("It is create debt action, need get debtId later");
+
+        if(! (actionObj.getContent() instanceof AmcDebtCreateVo)){
+          amcDebtService.saveOperLog(actionObj,reviewComment);
+        }else{
+          log.info("It is create debt action, need get debtId later");
+        }
+
       }
-
-
-
     }
+
     final Object proceed = joinPoint.proceed();
     if(proceed instanceof AmcDebtVo && actionObj.getContent() instanceof AmcDebtCreateVo){
       ((AmcDebtCreateVo)actionObj.getContent()).setId(((AmcDebtVo) proceed).getId());
       amcDebtService.saveOperLog(actionObj,reviewComment);
     }
+    if(gotActionObject || needLog){
+      kafkaService.send(amcUserOperation);
+    }
+
     return proceed;
 
 

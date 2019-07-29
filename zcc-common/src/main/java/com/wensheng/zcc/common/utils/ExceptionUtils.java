@@ -53,6 +53,8 @@ public class ExceptionUtils {
     INVALID_PHONE(1029, "Invalid PhoneNum", "非法的电话号码"),
     INVALID_AMOUNT_RANGE(1030, "Invalid Price Amount Range", "非法的价格区间"),
     INVALID_WECHAT_PARAMETER(1031, "Invalid Wechat Parameter", "非法的微信参数"),
+
+    INVALID_USER_OPERATION(1032, "Invalid user operation", "不合规的用户操作"),
     ;
     int code;
     String name;

@@ -1,5 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.aop.EditActionChecker;
+import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.impl.AmcBaiDuLogisQuery;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcPage;
@@ -30,6 +32,7 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -50,6 +53,9 @@ public class AmcBasicInfoController {
 
   @Autowired
   AmcHelperService amcHelperService;
+
+  @Autowired
+  AmcAssetService amcAssetService;
 
 
 
@@ -258,16 +264,19 @@ public class AmcBasicInfoController {
     return amcHelperService.createPerson(amcPerson);
   }
 
+  @EditActionChecker
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcId}/amccontactor/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtContactor updateAmcDebtContactors(@RequestBody AmcDebtContactor amcPerson){
+  public AmcDebtContactor updateAmcDebtContactors(@RequestBody AmcDebtContactor amcPerson, @PathVariable Long amcId){
     return amcHelperService.updatePerson(amcPerson);
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @EditActionChecker
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcId}/amccontactor/del", method = RequestMethod.POST)
   @ResponseBody
-  public String delAmcDebtContactors(@RequestBody Long[] contactorIds) throws Exception {
+  public String delAmcDebtContactors(@RequestBody Long[] contactorIds, @PathVariable Long amcId) throws Exception {
     if(contactorIds != null && contactorIds.length > 0){
       amcHelperService.deletePersons(contactorIds);
     }
@@ -285,6 +294,14 @@ public class AmcBasicInfoController {
           amcBranchLocationEnum.getCname()));
     }
     return result;
+  }
+
+
+  @RequestMapping(value = "/checkGeoInfo", method = RequestMethod.POST)
+  @ResponseBody
+  public void checkGeoInfo(){
+
+   amcAssetService.checkGeoInfoWorker();
   }
 
 }

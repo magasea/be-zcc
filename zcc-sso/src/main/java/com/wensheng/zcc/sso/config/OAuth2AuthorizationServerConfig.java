@@ -64,7 +64,25 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 
     @Value("${spring.security.oauth2.client.registration.amc-admin.redirectUris}")
     private String amcAdminRedirectUris;
-    
+
+
+
+    @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.client-id}")
+    private String amcWechatClientId;
+
+    @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.secret}")
+    private String amcWechatSecret;
+
+
+    @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.scopes}")
+    private String amcWechatScopes;
+
+    @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.authorizedGrantTypes}")
+    private String amcWechatAuthorizedGrantTypes;
+
+    @Value("${spring.security.oauth2.client.registration.amc-client-thirdpart.redirectUris}")
+    private String amcWechatRedirectUris;
+
     @Autowired
     PasswordEncoder passwordEncoder;
 
@@ -81,7 +99,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         clients.inMemory().withClient("sampleClientId").authorizedGrantTypes("implicit").scopes("read", "write", "foo", "bar").autoApprove(false).accessTokenValiditySeconds(3600).redirectUris("http://localhost:8083/","http://localhost:8086/")
 
                 .and().withClient("testImplicitClientId").authorizedGrantTypes("implicit").scopes("read", "write", "foo", "bar").autoApprove(true).redirectUris("xxx")
-
+//            .and().withClient(amcWechatClientId).authorizedGrantTypes(amcWechatAuthorizedGrantTypes.replace(" ","").split(",")).scopes(amcWechatScopes.replace(" ", "").split(",")).autoApprove(true).redirectUris(amcWechatRedirectUris.split(","))
                 .and().withClient(amcAdminClientId).secret(passwordEncoder.encode(amcAdminSecret))
             .authorizedGrantTypes(amcAdminAuthorizedGrantTypes.replace(" ","").split(",")).scopes(amcAdminScopes.replace(" ","").split(
                 ","))
@@ -97,6 +115,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setSupportRefreshToken(true);
+        defaultTokenServices.setReuseRefreshToken(false);
         return defaultTokenServices;
     }
 
@@ -105,6 +124,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
         defaultTokenServices.setTokenStore(tokenStore());
         defaultTokenServices.setSupportRefreshToken(true);
+        defaultTokenServices.setReuseRefreshToken(false);
         return defaultTokenServices;
     }
 
@@ -112,7 +132,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     public void configure(final AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
         final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
         tokenEnhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer(), accessTokenConverter()));
-        endpoints.tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter()).tokenEnhancer(tokenEnhancerChain).authenticationManager(authenticationManager);
+        endpoints.tokenServices(tokenServices()).tokenStore(tokenStore()).accessTokenConverter(accessTokenConverter()).tokenEnhancer(tokenEnhancerChain).authenticationManager(authenticationManager);
     }
 
     @Bean
@@ -139,7 +159,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Bean
     public TokenEnhancer wechatTokenEnhancer(){ return new WechatTokenEnhancer(); }
 
-    @CacheConfig(cacheNames = {"TOKEN"})
+//    @CacheConfig(cacheNames = {"TOKEN"})
     class AmcJdbcTokenStore extends JdbcTokenStore{
 
         public AmcJdbcTokenStore(DataSource dataSource) {

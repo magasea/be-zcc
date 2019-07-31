@@ -53,10 +53,10 @@ public class AmcUserController {
   @Autowired
   AmcBasicService amcBasicService;
 
-  @Resource(name = "tokenServices")
+  @Autowired
   private ConsumerTokenServices tokenServices;
 
-  @Resource(name = "tokenStore")
+  @Autowired
   private TokenStore tokenStore;
 
   @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
@@ -269,10 +269,12 @@ public class AmcUserController {
     return amcCmpyDeptVoResult;
   }
 
+
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(method = RequestMethod.POST, value = "/amcid/{amcId}/amc-user/amcUsers/revokeByName")
   @ResponseBody
   public void revokeTokenByUserName( @RequestParam String userName) {
+
     Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientIdAndUserName(amcAdminClientId,
         userName);
     for(OAuth2AccessToken oAuth2AccessToken : accessTokens){

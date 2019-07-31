@@ -35,6 +35,7 @@ import org.bouncycastle.util.encoders.Base64;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -54,6 +55,7 @@ import org.springframework.security.oauth2.provider.client.InMemoryClientDetails
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
+import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -105,6 +107,9 @@ public class WechatServiceImpl implements WechatService {
 
   private final int accessTokenValidSeconds = 365*24*60*60;
 
+
+  private int refreshTokenValidSeconds = 2592000;
+
   private RestTemplate restTemplate = new RestTemplate();
 
   private Gson gson = new Gson();
@@ -113,7 +118,10 @@ public class WechatServiceImpl implements WechatService {
   AmcWechatUserMapper amcWechatUserMapper;
 
   @Autowired
-  DefaultTokenServices tokenWechatServices;
+  TokenStore tokenStore;
+
+
+  DefaultTokenServices tokenWechatServices = null;
 
   @Autowired
   TokenEnhancer wechatTokenEnhancer;
@@ -156,11 +164,23 @@ public class WechatServiceImpl implements WechatService {
 //    clientDetailsService.setClientDetailsStore(clientParam);
     final TokenEnhancerChain tokenEnhancerChain = new TokenEnhancerChain();
     tokenEnhancerChain.setTokenEnhancers(Arrays.asList(wechatTokenEnhancer, accessTokenConverter));
+
+    tokenWechatServices = tokenWechatServices();
     tokenWechatServices.setTokenEnhancer(tokenEnhancerChain);
 
 
 
 //    tokenWechatServices.setClientDetailsService(clientDetailsService);
+  }
+
+  private DefaultTokenServices tokenWechatServices() {
+    final DefaultTokenServices defaultTokenServices = new DefaultTokenServices();
+    defaultTokenServices.setTokenStore(tokenStore);
+    defaultTokenServices.setSupportRefreshToken(true);
+    defaultTokenServices.setReuseRefreshToken(false);
+    defaultTokenServices.setAccessTokenValiditySeconds(accessTokenValidSeconds);
+    defaultTokenServices.setRefreshTokenValiditySeconds(refreshTokenValidSeconds);
+    return defaultTokenServices;
   }
 
   @Override

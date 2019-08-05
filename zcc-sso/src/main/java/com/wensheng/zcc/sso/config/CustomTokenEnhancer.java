@@ -17,8 +17,6 @@ import org.springframework.util.CollectionUtils;
 
 public class CustomTokenEnhancer implements TokenEnhancer {
 
-    @Autowired
-    AmcUserService amcUserService;
 
 
     @Override

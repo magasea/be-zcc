@@ -42,6 +42,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+import org.springframework.transaction.annotation.Transactional;
 
 @Configuration
 @EnableAuthorizationServer
@@ -52,8 +53,8 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
-//    private int accessTokenValidSeconds = 3600;
-    private int accessTokenValidSeconds = 150;
+    private int accessTokenValidSeconds = 3600;
+//    private int accessTokenValidSeconds = 150;
 
     private int refreshTokenValidSeconds = 2592000;
 
@@ -197,23 +198,28 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
             return super.findTokensByClientId(clientId);
         }
 
+        @Transactional
         @CacheEvict
         public void removeAccessTokenUsingRefreshToken(OAuth2RefreshToken refreshToken) {
             super.removeAccessTokenUsingRefreshToken(refreshToken);
         }
 
+        @Transactional
         @CacheEvict
         public void removeAccessTokenUsingRefreshToken(String refreshToken) {
             super.removeAccessTokenUsingRefreshToken(refreshToken);
         }
+        @Transactional
         @CacheEvict
         public void removeAccessToken(OAuth2AccessToken token) {
             super.removeAccessToken(token);
         }
+        @Transactional
         @CacheEvict
         public void removeAccessToken(String tokenValue) {
             super.removeAccessToken(tokenValue);
         }
+        @Transactional
         @CacheEvict
         public void storeAccessToken(OAuth2AccessToken token, OAuth2Authentication authentication) {
             super.storeAccessToken(token, authentication);

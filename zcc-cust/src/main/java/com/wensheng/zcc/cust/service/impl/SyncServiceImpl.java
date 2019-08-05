@@ -50,6 +50,23 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
+/*
+1. call sync trade info interface
+  check trd info url exist or not exist
+  exist -> update history record
+  not exist -> insert new trd info
+2. call sync person/company info interface
+  use person id or company id to query person or company
+  check person exist or not
+  exist then update and return id
+  not exist insert and return id
+
+  check company exist or not
+  exist then update update and return id
+  not exist then insert and return id
+ */
+
+
 @Service
 @Slf4j
 @Order(2)

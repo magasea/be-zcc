@@ -312,16 +312,22 @@ public class WechatServiceImpl implements WechatService {
 
     User userPrincipal = null;
     // Create principal and auth token
+    String wechatUserId = "";
+    if(StringUtils.isEmpty(wechatCode2SessionVo.getUnionid())){
+      log.error("Failed to get unionid for user:{}", wechatCode2SessionVo.getOpenid());
+      wechatUserId = wechatCode2SessionVo.getOpenid();
+    }else{
+      wechatUserId = wechatCode2SessionVo.getUnionid();
+    }
     if(!StringUtils.isEmpty(wechatCode2SessionVo.getSessionKey())){
-      userPrincipal = new User(StringUtils.isEmpty(wechatCode2SessionVo.getUnionid())?
-          wechatCode2SessionVo.getOpenid():wechatCode2SessionVo.getUnionid(),
-          wechatCode2SessionVo.getUnionid(),
+
+      userPrincipal = new User(wechatUserId,
+          wechatCode2SessionVo.getSessionKey(),
           true, true,
           true, true,
           authorities);
     }else if(!StringUtils.isEmpty(wechatCode2SessionVo.getAccessToken())){
-      userPrincipal = new User(StringUtils.isEmpty(wechatCode2SessionVo.getUnionid())?
-          wechatCode2SessionVo.getOpenid():wechatCode2SessionVo.getUnionid(), wechatCode2SessionVo.getUnionid(), true, true, true
+      userPrincipal = new User(wechatUserId, wechatCode2SessionVo.getAccessToken(), true, true, true
           , true,
           authorities);
     }

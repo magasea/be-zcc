@@ -39,7 +39,7 @@ public class CustTrdInfo {
 
     private Date trdDate;
 
-    private Date infoTime;
+    private Date updateTime;
 
     private String notes;
 
@@ -203,12 +203,12 @@ public class CustTrdInfo {
         this.trdDate = trdDate;
     }
 
-    public Date getInfoTime() {
-        return infoTime;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setInfoTime(Date infoTime) {
-        this.infoTime = infoTime;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public String getNotes() {

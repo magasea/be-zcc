@@ -11,6 +11,7 @@ import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.ScriptSysService;
+import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.ExcelGenerator;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,7 +46,7 @@ public class CustInfoController {
   CustInfoService custInfoService;
 
   @Autowired
-  ScriptSysService scriptSysService;
+  SyncService syncService;
 
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
@@ -95,8 +96,8 @@ public class CustInfoController {
 
   @RequestMapping(value = "/doSynchronization", method = RequestMethod.GET)
   @ResponseBody
-  public void doSynchronization(@RequestParam("province") String province) throws Exception {
-    scriptSysService.doSynchWithScriptOn(province);
+  public void doSynchronization() throws Exception {
+    syncService.syncCustInfo();
   }
 
 

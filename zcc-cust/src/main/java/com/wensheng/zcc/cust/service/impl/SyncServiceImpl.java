@@ -16,19 +16,27 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
 import com.wensheng.zcc.cust.module.helper.sync.TrdInfoSyncTypeEnum;
+import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.CustInfoFromSync;
+import com.wensheng.zcc.cust.module.sync.CustPersonInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.ScriptSysService;
+import com.wensheng.zcc.cust.service.SyncService;
+import io.grpc.netty.shaded.io.netty.util.internal.StringUtil;
 import java.net.URLEncoder;
 import java.text.ParseException;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +44,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -44,6 +53,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -69,8 +79,8 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
-@Order(2)
-public class SyncServiceImpl implements ScriptSysService {
+
+public class SyncServiceImpl implements SyncService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -97,558 +107,576 @@ public class SyncServiceImpl implements ScriptSysService {
   CustTrdSellerMapper custTrdSellerMapper;
 
     private Gson gson = new Gson();
+    @Value("${cust.syncUrls.debtTradeResources}")
+    private String debtTradeResources;
 
-    private final String getTrdInfoByBuyerType = "http://cl.wenshengamc.com/debts/getAll?type=%d&timeStart=&timeEnd=&seller=&page=%d&area=";
-    private final String getDebtCust = "http://10.20.102.242:8085/debtCustomers/getJson?page=%d&pageSize=10&provinceName=%s";
-    private final String getTrdInfoDetailByCust = "http://10.20.102.242:8085/debtCustomerDebts/getJson?customerId=%s&page=%d&pageSize=20";
+    @Value("${cust.syncUrls.getCompanyInfoById}")
+    private String getCompanyInfoById;
+
+    @Value("${cust.syncUrls.getCompanyInfoByUpdateTime}")
+    private String getCompanyInfoByUpdateTime;
+
+    @Value("${cust.syncUrls.getPersonInfoById}")
+    private String getPersonInfoById;
+
+    @Value("${cust.syncUrls.getPersonInfoByUpdateTime}")
+    private String getPersonInfoByUpdateTime;
+
+    String[] provinceCodes = {"350000"};
+
+    boolean isTest = true;
 
     @PostConstruct
     void init(){
       restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
     }
 
-
-//    @Scheduled(cron = "${spring.task.scheduling.cronExpr}")
-//    public void doSyncTask(){
-//      try {
-//        doSynchWithScriptOn();
-//      } catch (Exception e) {
-//        e.printStackTrace();
-//        log.error("failed to do scheduled task for syn with custs", e);
-//      }
-//
-//      try {
-//
-//        doSynchWithCusts();
-//      } catch (ParseException e) {
-//        e.printStackTrace();
-//        log.error("failed to do scheduled task for syn with trdInfo", e);
-//      }
-//
-//
-//    }
-
-    @Override
-    public void doSynchWithScriptOn(String province) throws Exception {
-
-        //1. get cust list
-        boolean stillHaveNext = true;
-        int pageNum = 1;
-//        while(stillHaveNext){
-//            TrdInfoFromSync trdInfoFromSync = getTrdInfoList(TrdInfoSyncTypeEnum.DEBTPROCED, pageNum);
-//            ProcessTrdInfoData(trdInfoFromSync);
-//            if(++pageNum <= trdInfoFromSync.getPageNum() && !CollectionUtils.isEmpty(trdInfoFromSync.getList())){
-//                stillHaveNext = true;
-//            }else{
-//                stillHaveNext = false;
-//            }
-//        }
-        while(stillHaveNext){
-            PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp = getCustList(pageNum, province);
-            ProcessCustInfoData(custInfoFromSyncPageWrapperResp);
-            if (++pageNum <= custInfoFromSyncPageWrapperResp.getPages() && !CollectionUtils.isEmpty(custInfoFromSyncPageWrapperResp.getList())) {
-
-                stillHaveNext = true;
-            }else{
-                stillHaveNext = false;
-            }
-        }
-        //2. get
-
-
+    public PageWrapperResp<TrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
+//      String provEncod = encodeUtf8(province);
+        String url = String.format(debtTradeResources, pageNum, pageSize, provinceCode);
+        return restTemplate.exchange(url, HttpMethod.GET, null,
+            new ParameterizedTypeReference<PageWrapperResp<TrdInfoFromSync>>() {}).getBody();
     }
 
+    public CustCmpyInfoFromSync getCmpyInfoById(String id){
+      String url = String.format(getCompanyInfoById, id);
+      return restTemplate.getForEntity(url, CustCmpyInfoFromSync.class).getBody();
+    }
+
+
+  public CustPersonInfoFromSync getPersonInfoById(String id){
+    String url = String.format(getPersonInfoById, id);
+    return restTemplate.getForEntity(url, CustPersonInfoFromSync.class).getBody();
+  }
+
+  public PageWrapperResp<CustCmpyInfoFromSync> getCustCmpyInfoByDate(int pageNum, int pageSize, String fromDate,
+      String provinceCode){
+
+      String url = String.format(getCompanyInfoByUpdateTime, pageNum, pageSize, fromDate, provinceCode);
+      return restTemplate.exchange(url, HttpMethod.GET, null,
+          new ParameterizedTypeReference<PageWrapperResp<CustCmpyInfoFromSync>>(){}).getBody();
+
+  }
+
+  public PageWrapperResp<CustPersonInfoFromSync> getCustPersonInfoByDate(int pageNum, int pageSize, String fromDate,
+      String provinceCode){
+
+    String url = String.format(getPersonInfoByUpdateTime, pageNum, pageSize, fromDate, provinceCode);
+    return restTemplate.exchange(url, HttpMethod.GET, null,
+        new ParameterizedTypeReference<PageWrapperResp<CustPersonInfoFromSync>>(){}).getBody();
+
+  }
+
+//  @Scheduled(cron = "${spring.task.scheduling.cronExprTrd}")
   @Override
-  public void doSynchWithCusts() throws ParseException {
-    synchTrdInfoForCmpyCust();
-    synchTrdInfoForPersonCust();
-  }
-
-  private void synchTrdInfoForPersonCust() throws ParseException {
-      Query query;
-      List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(null);
-      for(CustTrdPerson custTrdPerson: custTrdPersonList){
-        query = new Query();
-        query.addCriteria(Criteria.where("custId").is(custTrdPerson.getId()).and("type").is(CustTypeEnum.PERSON.getId()));
-        List<ImportCustRecord> importCustRecords = mongoTemplate.find(query, ImportCustRecord.class);
-        if(CollectionUtils.isEmpty(importCustRecords)){
-          log.error("there is no trad info for custId:{}", custTrdPerson.getId());
-        }else if(importCustRecords.size() > 2){
-          log.error("there is multiple origCustId:{} for the custId:{}",importCustRecords.
-              stream().map(item -> item.getOriginId()).collect(Collectors.joining(",")),
-              custTrdPerson.getId()) ;
-        }else{
-          String origCustId = importCustRecords.get(0).getOriginId();
-          synchCustTrd(origCustId, custTrdPerson.getId(), CustTypeEnum.PERSON.getId());
-        }
-        query = null;
+  public void syncWithTrdInfo(){
+      for (String provinceCode: provinceCodes){
+        syncTrdInfoForProvince(provinceCode);
       }
+    }
+//  @Scheduled(cron = "${spring.task.scheduling.cronExprCust}")
+  @Override
+  public void syncCustInfo(){
+    for(String province: provinceCodes){
+      boolean needSyncTrdInfoBaseOnCmpyInfo = false;
+      boolean needSyncTrdInfoBaseOnPersonInfo = false;
+      needSyncTrdInfoBaseOnCmpyInfo = syncCustCmpyInfo(province);
 
-
+      needSyncTrdInfoBaseOnPersonInfo = syncCustPersonInfo(province);
+      if(needSyncTrdInfoBaseOnCmpyInfo || needSyncTrdInfoBaseOnPersonInfo){
+        syncWithTrdInfo();
+      }
+    }
   }
 
-  private void synchCustTrd(String origCustId, Long custId, Integer custType) throws ParseException {
-      int pageNum = 1;
-      boolean hasNext = true;
-      while(hasNext){
-        PageWrapperResp<TrdInfoFromSync> pageWrapperResp =  getTrdInfoByCust(origCustId, pageNum);
-        processTradInfo(pageWrapperResp.getList(), custId, custType);
-        if(pageNum > pageWrapperResp.getPages() || CollectionUtils.isEmpty(pageWrapperResp.getList())){
-          hasNext = false;
-          break;
+  private boolean syncCustPersonInfo(String province) {
+    String dateMonthAgo = AmcDateUtils.getDateStrMonthsDiff(1);
+    int pageNum = 0;
+    int pageSize = 10;
+
+    boolean haveNext = true;
+    boolean needSyncTrdInfo = false;
+    while(haveNext){
+      PageWrapperResp<CustPersonInfoFromSync> pageWrapperResp = getCustPersonInfoByDate(pageNum, pageSize, dateMonthAgo,
+          province);
+      if(pageWrapperResp.getPages() < pageNum || CollectionUtils.isEmpty(pageWrapperResp.getList())){
+        haveNext = false;
+        continue;
+      }
+      else{
+        for(CustPersonInfoFromSync custPersonInfoFromSync: pageWrapperResp.getList()){
+          if(updatePersonInfo(custPersonInfoFromSync)){
+            needSyncTrdInfo = true;
+          }
         }
         pageNum++;
       }
+    }
+    return needSyncTrdInfo;
+  }
+
+  private boolean updatePersonInfo(CustPersonInfoFromSync custPersonInfoFromSync) {
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobileNumEqualTo(
+        StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
+        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
+    List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    int action = -1;
+    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    if(CollectionUtils.isEmpty(custTrdPeople)){
+      //make new person
+      action = 1;
+    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime) || isTest){
+      //update person
+      action = 2;
+    }else{
+      log.info("no change for this personInfo:{} current record time:{}", custTrdPeople.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
+      return false;
+    }
+    CustTrdPerson custTrdPerson = new CustTrdPerson();
+    copyPersonSync2PersonInfo(custPersonInfoFromSync, custTrdPerson);
+    if(action == 1){
+      log.info("need do sync for trd because person not in db, name:{} mobileNum:{}",
+          custPersonInfoFromSync.getName(), custPersonInfoFromSync.getMobileNum());
+      return true;
+
+    }else if(action == 2 ){
+      custTrdPerson = custTrdPeople.get(0);
+
+      custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
+    }
+    return false;
+  }
+
+  private boolean syncCustCmpyInfo(String province) {
+    String dateMonthAgo = AmcDateUtils.getDateStrMonthsDiff(1);
+    int pageNum = 0;
+    int pageSize = 10;
+
+    boolean haveNext = true;
+    boolean needSyncTrdInfo = false;
+    while(haveNext){
+      PageWrapperResp<CustCmpyInfoFromSync> pageWrapperResp = getCustCmpyInfoByDate(pageNum, pageSize, dateMonthAgo,
+          province);
+      if(pageWrapperResp.getPages() < pageNum || CollectionUtils.isEmpty(pageWrapperResp.getList())){
+        haveNext = false;
+        continue;
+      }
+      else{
+        for(CustCmpyInfoFromSync custCmpyInfoFromSync: pageWrapperResp.getList()){
+          if(updateCmpyInfo(custCmpyInfoFromSync)){
+            needSyncTrdInfo = true;
+          }
+        }
+        pageNum++;
+      }
+    }
+    return needSyncTrdInfo;
+  }
+
+  private boolean updateCmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync) {
+
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    int action = -1;
+    Date updateTime = AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime());
+    if(CollectionUtils.isEmpty(custTrdCmpyList)){
+      //make new cmpy info
+      action = 1;
+    }else if(updateTime.after(custTrdCmpyList.get(0).getUpdateTime())){
+      //update cmpy info
+      action = 2;
+    }else{
+      log.info("no change for this cmpyInfo:{} record time:{}", custTrdCmpyList.get(0).getUpdateTime(), custCmpyInfoFromSync.getUpdateTime());
+      return false;
+    }
+    CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
+    copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
+    if(action == 1){
+      log.info("need sync trd info because company not in db, name:{}", custCmpyInfoFromSync.getCmpyName());
+      return true;
+
+    }else if(action == 2 ){
+      custTrdCmpy = custTrdCmpyList.get(0);
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+    }
+    return false;
 
   }
 
-  private void processTradInfo(List<TrdInfoFromSync> trdInfoFromSyncs, Long custId, Integer custType)
-      throws ParseException {
-      Query query ;
-      boolean dataQualityIncrease2 = true;
-      boolean eachDataQuality = false;
-      int increaseStep = 0;
-    for(TrdInfoFromSync trdInfoOrig: trdInfoFromSyncs){
-      eachDataQuality = false;
-      log.info(gson.toJson(trdInfoOrig));
-      query = new Query();
-      query.addCriteria(Criteria.where("originId").is(trdInfoOrig.getId()).and("origCustId").is(trdInfoOrig.getCustomerId()));
-      List<ImportTrdInfoRecord> importTrdInfoRecords =  mongoTemplate.find(query, ImportTrdInfoRecord.class);
-      if(CollectionUtils.isEmpty(importTrdInfoRecords)){
-        eachDataQuality = makeNewTrdInfo(trdInfoOrig, custId, custType);
-      }else{
-        CustTrdInfo custTrdInfo = custTrdInfoMapper.selectByPrimaryKey(importTrdInfoRecords.get(0).getTrdId());
-        if(custTrdInfo == null){
-          eachDataQuality = makeNewTrdInfo(trdInfoOrig, custId, custType);
-        }else{
-          eachDataQuality =  copyTrdFromSync2Local(trdInfoOrig, custTrdInfo);
+
+  private void syncTrdInfoForProvince(String provinceCode) {
+      int pageNum = 0;
+      int pageSize = 20;
+      boolean haveNext = true;
+      while(haveNext){
+        PageWrapperResp<TrdInfoFromSync> pageWrapperResp = getTradeInfosByProvince(provinceCode, pageNum, pageSize);
+        if(pageWrapperResp.getPages() < pageNum || CollectionUtils.isEmpty(pageWrapperResp.getList())){
+          haveNext = false;
+          continue;
         }
-
+        else{
+          for(TrdInfoFromSync trdInfoFromSync: pageWrapperResp.getList()){
+            handleTrdInfo(trdInfoFromSync);
+          }
+          pageNum++;
+        }
       }
-      if(eachDataQuality){
-        increaseStep = 1;
-      }
 
-      dataQualityIncrease2 = dataQualityIncrease2&eachDataQuality;
-    }
-    if(dataQualityIncrease2){
-      increaseStep = 2;
-    }
-    if(CustTypeEnum.COMPANY.getId() == custType){
-      CustTrdCmpy custTrdCmpy = custTrdCmpyMapper.selectByPrimaryKey(custId);
-      if(!StringUtils.isEmpty(custTrdCmpy.getCmpyPhone()) &&!custTrdCmpy.getCmpyPhone().equals("-1") && !StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())&& !custTrdCmpy.getCmpyAddr().equals("-1")){
-        custTrdCmpy.setDataQuality(custTrdCmpy.getDataQuality() + increaseStep);
+
+  }
+
+
+
+  private void handleTrdInfo(TrdInfoFromSync trdInfoFromSync) {
+
+    int action = -1;
+    Date updateDate = AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate());
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.createCriteria().andInfoUrlEqualTo(trdInfoFromSync.getUrl());
+    List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+    if(CollectionUtils.isEmpty(custTrdInfos)){
+      //make new trdInfo
+      action = 1;
+    }else{
+      //update trdInfo
+      if(custTrdInfos.get(0).getUpdateTime().before(updateDate)){
+        action = 2;
       }else{
-        custTrdCmpy.setDataQuality(0);
+        log.info("Db record dateTime:{} , current sync info dateTime:{}", custTrdInfos.get(0).getUpdateTime(),
+            updateDate);
+        return;
       }
-      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
-    }else if(CustTypeEnum.PERSON.getId() == custType){
-      CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(custId);
-      if(!StringUtils.isEmpty(custTrdPerson.getMobileNum()) && !custTrdPerson.getMobileNum().equals("-1")){
-        custTrdPerson.setDataQuality(custTrdPerson.getDataQuality() + increaseStep);
-      }else if(increaseStep == 0){
-        custTrdPerson.setDataQuality(1);
+
+    }
+
+    CustTrdInfo custTrdInfo = new CustTrdInfo();
+    copySyncTrd2TrdInfo(trdInfoFromSync, custTrdInfo);
+    Long buyerId = -1L ;
+    if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
+      buyerId = syncCmpyInfoById(trdInfoFromSync, true);
+      custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
+    }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+      buyerId = syncPersonInfoById(trdInfoFromSync, true);
+      custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
+    }
+    if(buyerId < 0){
+      log.error("Failed to sync trd buyer with id:{}", trdInfoFromSync.getBuyerIdPrep());
+      return;
+    }
+    custTrdInfo.setBuyerId(buyerId);
+
+    Long sellerId = -1L;
+    if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
+      sellerId = syncCmpyInfoById(trdInfoFromSync, false);
+      custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
+    }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+      sellerId = syncPersonInfoById(trdInfoFromSync, false);
+      custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
+    }
+    if(sellerId < 0){
+      log.error("Failed to sync trd seller with id:{}", trdInfoFromSync.getSellerIdPrep());
+      return;
+    }
+    custTrdInfo.setSellerId(sellerId);
+    if(action == 1){
+      //make new trdInfo
+      custTrdInfoMapper.insertSelective(custTrdInfo);
+    }else if(action == 2){
+      //update trdInfo
+
+      custTrdInfo.setId(custTrdInfos.get(0).getId());
+      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+
+    }else{
+      log.error("action:{}", action);
+    }
+
+  }
+
+  private Long syncPersonInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer) {
+      CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
+          trdInfoFromSync.getSellerIdPrep());
+    if( null == custPersonInfoFromSync){
+      log.error("Failed to get {} person info with id:{} with trd id:{}", isBuyer?"buyer":"seller", isBuyer?
+          trdInfoFromSync.getBuyerIdPrep():
+          trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
+      return -1L;
+    }
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
+        custPersonInfoFromSync.getName()).andMobileNumEqualTo(
+        StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
+        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
+    List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    int action = -1;
+    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    if(CollectionUtils.isEmpty(custTrdPeople)){
+      //make new person
+      action = 1;
+    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime)|| isTest){
+      //update person
+      action = 2;
+    }else{
+      log.info("no change for this personInfo:{} current record time:{}", custTrdPeople.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
+      return custTrdPeople.get(0).getId();
+    }
+    CustTrdPerson custTrdPerson = new CustTrdPerson();
+    copyPersonSync2PersonInfo(custPersonInfoFromSync, custTrdPerson);
+    if(action == 1){
+      if(isBuyer){
+        custTrdPerson.setDataQuality(checkBasicDataQuality(custTrdPerson));
+      }
+      custTrdPersonMapper.insertSelective(custTrdPerson);
+
+    }else if(action == 2 ){
+      custTrdPerson = custTrdPeople.get(0);
+      if(isBuyer){
+        int count = getTrdCntForPerson(custTrdPerson.getId()).intValue();
+        custTrdPerson.setDataQuality(count <= 0 || custTrdPerson.getDataQuality() < 0 ? -1: custTrdPerson.getDataQuality()+1);
       }
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     }
-
+    return custTrdPerson.getId();
   }
 
-  private boolean copyTrdFromSync2Local(TrdInfoFromSync trdInfoOrig, CustTrdInfo custTrdInfo) throws ParseException {
-      CustTrdInfo custTrdInfoUpdate = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custTrdInfo.getBuyerId(),
-          custTrdInfo.getBuyerType());
-      custTrdInfoUpdate.setId(custTrdInfo.getId());
-      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoUpdate);
-      return custTrdInfoUpdate.getTotalAmount() > 0;
+  private int checkBasicDataQuality(CustTrdPerson custTrdPerson) {
+      int dataQuality = 0;
 
+    if (StringUtils.isEmpty(custTrdPerson.getAddr())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdPerson.getCity())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdPerson.getEmail())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (custTrdPerson.getGender() <= 0) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdPerson.getIdCardNum())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+
+
+    if (StringUtils.isEmpty(custTrdPerson.getProvince())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdPerson.getTelNum())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    //key field cannot be empty
+    if (StringUtils.isEmpty(custTrdPerson.getName())) {
+      dataQuality = -1 ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+
+    if (StringUtils.isEmpty(custTrdPerson.getMobileNum())) {
+      dataQuality = -1 ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    return dataQuality;
   }
 
-  private boolean makeNewTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType) throws ParseException {
-
-    CustTrdInfo custTrdInfo = getTrdInfoFromOrigTrdInfo(trdInfoOrig, custId,custType);
-
-    custTrdInfoMapper.insertSelective(custTrdInfo);
-    Query query = new Query();
-    query.addCriteria(Criteria.where("originId").is(trdInfoOrig.getId()));
-    List<ImportTrdInfoRecord> importTrdInfoRecords = mongoTemplate.find(query, ImportTrdInfoRecord.class);
-    if(CollectionUtils.isEmpty(importTrdInfoRecords)){
-      Update update = new Update();
-      update.set("custId", custId);
-      update.set("origCustId", trdInfoOrig.getCustomerId());
-      update.set("originId", trdInfoOrig.getId());
-      update.set("trdId", custTrdInfo.getId());
-
-      mongoTemplate.upsert(query, update, ImportTrdInfoRecord.class);
-    }else{
-          ImportTrdInfoRecord importTrdInfoRecord = importTrdInfoRecords.get(0);
-    importTrdInfoRecord.setCustId(custId);
-    importTrdInfoRecord.setOrigCustId(trdInfoOrig.getCustomerId());
-    importTrdInfoRecord.setOriginId(trdInfoOrig.getId());
-    importTrdInfoRecord.setTrdId(custTrdInfo.getId());
-    mongoTemplate.save(importTrdInfoRecord);
-    }
-    return custTrdInfo.getTotalAmount() > 0;
-
+  private void copyPersonSync2PersonInfo(CustPersonInfoFromSync custPersonInfoFromSync, CustTrdPerson custTrdPerson) {
+    custTrdPerson.setAddr(custPersonInfoFromSync.getAddress());
+    custTrdPerson.setCity(StringUtils.isEmpty(custPersonInfoFromSync.getCityCode())? null:custPersonInfoFromSync.getCityCode());
+    custTrdPerson.setEmail(custPersonInfoFromSync.getEmail());
+    custTrdPerson.setGender(custPersonInfoFromSync.getGender());
+    custTrdPerson.setIdCardNum(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())?null:
+        custPersonInfoFromSync.getIdCardNum()) ;
+    custTrdPerson.setMobileNum(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
+        custPersonInfoFromSync.getMobileNum()) ;
+    custTrdPerson.setName(StringUtils.isEmpty(custPersonInfoFromSync.getName())? null: custPersonInfoFromSync.getName());
+    custTrdPerson.setProvince(custPersonInfoFromSync.getProvince());
+    custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
+    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    custTrdPerson.setUpdateTime(updateTime);
   }
-
-  private CustTrdInfo getTrdInfoFromOrigTrdInfo(TrdInfoFromSync trdInfoOrig, Long custId, Integer custType)
-      throws ParseException {
-    CustTrdSellerExample custTrdSellerExample = new CustTrdSellerExample();
-    custTrdSellerExample.createCriteria().andNameEqualTo(trdInfoOrig.getSeller());
-    CustTrdSeller sellerRecord = null;
-    CustTrdInfo custTrdInfo = new CustTrdInfo();
-    custTrdInfo.setBuyerId(custId);
-    custTrdInfo.setBuyerType(custType);
-    List<CustTrdSeller> custTrdSellers = custTrdSellerMapper.selectByExample(custTrdSellerExample);
-    if(CollectionUtils.isEmpty(custTrdSellers) && !StringUtils.isEmpty(trdInfoOrig.getSeller())){
-      CustTrdSeller custTrdSeller = new CustTrdSeller();
-      custTrdSeller.setName(trdInfoOrig.getSeller());
-      custTrdSeller.setType(trdInfoOrig.getSeller().length() > 5? CustTypeEnum.COMPANY.getId(): CustTypeEnum.PERSON.getId());
-      custTrdSellerMapper.insertSelective(custTrdSeller);
-      sellerRecord = custTrdSeller;
-    }else{
-      sellerRecord = custTrdSellers.get(0);
-    }
-
-    custTrdInfo.setSellerId(sellerRecord.getId());
-    custTrdInfo.setTotalAmount(trdInfoOrig.getTrdAmount());
-    custTrdInfo.setBuyerId(custId);
-    custTrdInfo.setBuyerType(custType);
-    custTrdInfo.setInfoId(trdInfoOrig.getId());
-    custTrdInfo.setTrdType(trdInfoOrig.getInvType());
-    custTrdInfo.setInfoTitle(trdInfoOrig.getTitle());
-    if(trdInfoOrig.getUpdateTime() != null && !trdInfoOrig.getUpdateTime().equals("null")){
-      custTrdInfo.setInfoTime(new Date(trdInfoOrig.getUpdateTime()));
-    }
-
-    if(trdInfoOrig.getTradeTime() != null && !trdInfoOrig.getTradeTime().equals("null")){
-      custTrdInfo.setTrdDate(new Date(trdInfoOrig.getTradeTime()));
-    }else{
-      custTrdInfo.setTrdDate(AmcDateUtils.getDateFromStr("1900-01-01 00:00:00"));
-    }
-    custTrdInfo.setInfoUrl(trdInfoOrig.getUrl());
-    custTrdInfo.setTrdProvince(trdInfoOrig.getTrdProvince());
-    custTrdInfo.setTrdCity(trdInfoOrig.getTrdCity());
-    custTrdInfo.setTrdAmountOrig(trdInfoOrig.getTrdAmountOrig());
-    custTrdInfo.setTrdContactorName(trdInfoOrig.getName());
-    custTrdInfo.setTrdContactorAddr(trdInfoOrig.getAddress());
-    custTrdInfo.setDataStatus(trdInfoOrig.getDataStatus());
-    return custTrdInfo;
-  }
-
-  private void synchTrdInfoForCmpyCust() throws ParseException {
-    Query query;
-    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(null);
-    for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
-      query = new Query();
-      query.addCriteria(Criteria.where("custId").is(custTrdCmpy.getId()).and("type").is(CustTypeEnum.COMPANY.getId()));
-      List<ImportCustRecord> importCustRecords = mongoTemplate.find(query, ImportCustRecord.class);
-      if(CollectionUtils.isEmpty(importCustRecords)){
-        log.error("there is no trad info for custId:{}", custTrdCmpy.getId());
-      }else if(importCustRecords.size() > 2){
-        log.error("there is multiple origCustId:{} for the custId:{}",importCustRecords.
-                stream().map(item -> item.getOriginId()).collect(Collectors.joining(",")),
-            custTrdCmpy.getId()) ;
-      }else{
-        String origCustId = importCustRecords.get(0).getOriginId();
-        synchCustTrd(origCustId, custTrdCmpy.getId(), CustTypeEnum.COMPANY.getId());
-      }
-      query = null;
-    }
-  }
-
-  private void ProcessCustInfoData(PageWrapperResp<CustInfoFromSync> custInfoFromSyncPageWrapperResp)
-        throws Exception {
-
-        for(CustInfoFromSync custItem: custInfoFromSyncPageWrapperResp.getList()){
-            processCustInfoItem(custItem);
-        }
-    }
-
-    @Transactional
-    void processCustInfoItem(CustInfoFromSync custItem) throws Exception {
-        log.info(gson.toJson(custItem));
-        Query query = new Query();
-
-
-
-        if(custItem.getType() == CustTypeSyncEnum.COMPANY.getId()){
-          query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.COMPANY.getId()));
-          List<ImportCustRecord> importCustCmpyRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
-            log.info("got company cust:{}", gson.toJson(custItem));
-
-
-            if(CollectionUtils.isEmpty(importCustCmpyRecordList)){
-                makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
-
-            }else{
-                CustTrdCmpy custTrdCmpy =  custTrdCmpyMapper.selectByPrimaryKey(importCustCmpyRecordList.get(0).getCustId());
-                if(custTrdCmpy == null){
-                    makeNewCustCmpyBySync(custItem, CustTypeEnum.COMPANY.getId());
-                }else{
-                    copyCustFromSync2Local(custItem, custTrdCmpy);
-                    makeRelationWithCity(custTrdCmpy, custItem.getCitys());
-                    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
-                }
-            }
-        }else if(custItem.getType() == CustTypeSyncEnum.PERSON.getId()){
-
-          query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(CustTypeEnum.PERSON.getId()));
-          List<ImportCustRecord> importCustPersonRecordList =  mongoTemplate.find(query, ImportCustRecord.class);
-            if(CollectionUtils.isEmpty(importCustPersonRecordList)) {
-                makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
-            }else{
-                CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(importCustPersonRecordList.get(0).getCustId());
-                if(custTrdPerson == null){
-                    makeNewCustPersonBySync(custItem, CustTypeEnum.PERSON.getId());
-                }else{
-                    copyCustFromSync2Local(custItem, custTrdPerson);
-                    makeRelationWithCity(custTrdPerson, custItem.getCitys());
-                    custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
-                }
-            }
-        }
-    }
-
-  private void makeNewCustPersonBySync(CustInfoFromSync custItem, int type) throws Exception {
-
-    CustTrdPerson custTrdPerson = new CustTrdPerson();
-
-
-    copyCustFromSync2Local(custItem, custTrdPerson);
-    custTrdPersonMapper.insertSelective(custTrdPerson);
-    makeRelationWithCity(custTrdPerson, custItem.getCitys());
-    Query query = new Query();
-    query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(type));
-    Update update = new Update();
-    update.set("custId", custTrdPerson.getId());
-    update.set("originId", custItem.getId());
-    update.set("type", type);
-
-    mongoTemplate.upsert(query, update, ImportCustRecord.class);
-  }
-
-  private void makeNewCustCmpyBySync(CustInfoFromSync custItem, int type) throws Exception {
-        CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
-        copyCustFromSync2Local(custItem, custTrdCmpy);
-        custTrdCmpyMapper.insertSelective(custTrdCmpy);
-        Query query = new Query();
-        query.addCriteria(Criteria.where("originId").is(custItem.getId()).and("type").is(type));
-        Update update = new Update();
-        update.set("custId", custTrdCmpy.getId());
-        update.set("originId", custItem.getId());
-        update.set("type", type);
-
-        mongoTemplate.upsert(query, update, ImportCustRecord.class);
-    }
-
-    private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdCmpy custTrdCmpy)
-        throws Exception {
-        if(!StringUtils.isEmpty(custItem.getPhone())){
-          custTrdCmpy.setCmpyPhone(custItem.getPhone());
-//          String[] items = SyncUtils.getPhoneList(custItem.getPhone());
-//          if(items.length >= 2){
-//            custTrdCmpy.setCmpyPhone(items[0]);
-//            custTrdCmpy.setAnnuReptPhone( String.join(",",Arrays.copyOf(items, 1)));
-//          }else{
-//            custTrdCmpy.setCmpyPhone(items[0]);
-//            custTrdCmpy.setAnnuReptPhone(items[0]);
-//          }
-        }
-        custTrdCmpy.setCmpyAddr(custItem.getAddress());
-        custTrdCmpy.setCmpyName(custItem.getName());
-        custTrdCmpy.setLegalReptive(custItem.getLinkMan());
-        custTrdCmpy.setDataStatus(custItem.getDataStatus());
-        int initDataQuality = -1;
-        if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getId())){
-          custTrdCmpy.setCmpyAddr(custItem.getDebtCustomerCompany().getCmpyAddr());
-          custTrdCmpy.setAnnuReptAddr(custItem.getDebtCustomerCompany().getAnnuReptAddr());
-          custTrdCmpy.setCmpyPhone(custItem.getDebtCustomerCompany().getCmpyPhone());
-          custTrdCmpy.setAnnuReptPhone(custItem.getDebtCustomerCompany().getAnnuReptPhone());
-          custTrdCmpy.setLegalReptive(custItem.getDebtCustomerCompany().getLegalReptive());
-          custTrdCmpy.setCmpyName(custItem.getDebtCustomerCompany().getCmpyName());
-          custTrdCmpy.setUniSocialCode(custItem.getDebtCustomerCompany().getUniSocialCode());
-          if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getUniSocialCode())){
-            initDataQuality += 1;
-          }
-          if(!StringUtils.isEmpty(custItem.getDebtCustomerCompany().getCmpyPhone()) || !StringUtils.isEmpty(custItem.getDebtCustomerCompany().getAnnuReptPhone())){
-            initDataQuality += 1;
-          }
-        }
-        custTrdCmpy.setDataQuality(initDataQuality);
-    }
-
-    private void copyCustFromSync2Local(CustInfoFromSync custItem, CustTrdPerson custTrdPerson)
-        throws Exception {
-        custTrdPerson.setAddr(custItem.getAddress());
-      int initDataQuality = -1;
-      if(!StringUtils.isEmpty(custItem.getPhone())){
-        initDataQuality += 1;
-        custTrdPerson.setMobileNum(custItem.getPhone());
-//        String[] items = SyncUtils.getPhoneList(custItem.getPhone());
-//        if(items.length >= 2){
-//          custTrdPerson.setMobileNum(items[0]);
-//          custTrdPerson.setTelNum( String.join(",",Arrays.copyOf(items, 1)));
-//        }else{
-//          custTrdPerson.setMobileNum(items[0]);
-//          custTrdPerson.setTelNum(items[0]);
-//        }
-      }
-      if(!StringUtils.isEmpty(custItem.getAddress())){
-        initDataQuality += 1;
-      }
-
-        custTrdPerson.setEmail(custItem.getEmail());
-        custTrdPerson.setName(custItem.getName());
-        custTrdPerson.setDataStatus(custItem.getDataStatus());
-        custTrdPerson.setDataQuality(initDataQuality);
-    }
-
-  private <T> void makeRelationWithCity(T custItem, String citys) throws Exception {
-      if(StringUtils.isEmpty(citys) || citys.equalsIgnoreCase("null")){
-        log.error("custItem's citys:{}", citys);
-        return;
-      }
-    String[] cities = citys.split(",");
-    for(String city: cities){
-      String cityCode = getCodeByCityCode(city);
-      if(!StringUtils.isEmpty(cityCode)){
-        if(custItem instanceof CustTrdCmpy){
-          CustTrdCmpy custTrdCmpy = (CustTrdCmpy) custItem;
-          makeInterestInfo(custTrdCmpy, cityCode);
-        }else if(custItem instanceof  CustTrdPerson){
-          CustTrdPerson custTrdPerson = (CustTrdPerson) custItem;
-          makeInterestInfo(custTrdPerson, cityCode);
-        }
-
-      }
-    }
-  }
-
-
-
-  private   <T> void makeInterestInfo (T custItem, String city) {
-
-    CustIntrstInfo custIntrstInfo = new CustIntrstInfo();
-    CustIntrstInfoExample custIntrstInfoExample = new CustIntrstInfoExample();
-    boolean isPerson = false;
-    if(custItem instanceof CustTrdPerson){
-      CustTrdPerson custTrdPerson = (CustTrdPerson) custItem;
-      custIntrstInfoExample.createCriteria().andCustIdEqualTo(custTrdPerson.getId()).andCustTypeEqualTo(CustTypeEnum.PERSON.getId());
-      isPerson = true;
-
-    }else if(custItem instanceof CustTrdCmpy){
-      CustTrdCmpy custTrdCmpy = (CustTrdCmpy) custItem;
-      custIntrstInfoExample.createCriteria().andCustIdEqualTo(custTrdCmpy.getId()).andCustTypeEqualTo(CustTypeEnum.COMPANY.getId());
-
-      isPerson = false;
-    }
-    List<CustIntrstInfo> custIntrstInfos = custIntrstInfoMapper.selectByExample(custIntrstInfoExample);
-    Set<String> interestCities = custIntrstInfos.stream().map(item -> item.getIntrstCity()).collect(Collectors.toSet());
-    if(interestCities.contains(city)){
-      log.info("relation ship already established");
-    }else{
-      if(isPerson){
-        CustTrdPerson custTrdPerson = (CustTrdPerson) custItem;
-        custIntrstInfo.setCustId(custTrdPerson.getId());
-        custIntrstInfo.setCustType(CustTypeEnum.PERSON.getId());
-
-      }else{
-        CustTrdCmpy custTrdCmpy = (CustTrdCmpy) custItem;
-        custIntrstInfo.setCustId(custTrdCmpy.getId());
-        custIntrstInfo.setCustType(CustTypeEnum.COMPANY.getId());
-
-      }
-      custIntrstInfo.setIntrstCity(city);
-      custIntrstInfoMapper.insertSelective(custIntrstInfo);
-    }
-  }
-
-  private String getCodeByCityCode(String cityName) throws Exception {
-      if(StringUtils.isEmpty(cityName) || cityName.equalsIgnoreCase("null")){
-        log.error(" invalid city name:{}", cityName);
-        return null;
-      }
-        CustRegionExample custRegionExample = new CustRegionExample();
-        custRegionExample.createCriteria().andNameEqualTo(cityName);
-        List<CustRegion> custRegions = custRegionMapper.selectByExample(custRegionExample);
-        if(CollectionUtils.isEmpty(custRegions)){
-          if(cityName.contains("市")){
-            cityName = cityName.substring(0, cityName.indexOf("市"));
-            return getCodeByCityCode(cityName);
-          }else{
-            log.error("",ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_REGION_NAME, cityName));
-            return null;
-//            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_REGION_NAME, cityName);
-          }
-
-        }else if(custRegions.size() > 1){
-          log.error("",ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_REGION_NAME, String.format
-              ("There is more than one name like:%s code is:%s", cityName, custRegions.stream().map(item -> item.getId().toString()).collect(Collectors.joining(",")))));
-          return null;
-//            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_REGION_NAME, String.format
-//                    ("There is more than one name like:%s code is:%s", cityName, custRegions.stream().map(item -> item.getId().toString()).collect(Collectors.joining(","))));
-        }
-        return custRegions.get(0).getId().toString();
-    }
-
-
-//    private void ProcessTrdInfoData(TrdInfoFromSync trdInfoFromSync) {
-//        trdInfoFromSync.getList().stream().forEach(trdItem -> {
-//            try {
-//                processTrdInfoItem(trdItem);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        });
-//
-//    }
-
-//    private void processTrdInfoItem(TrdInfoFromSync.TrdItem trdItem) throws Exception {
-//        CustTrdInfo custTrdInfo = new CustTrdInfo();
-//        custTrdInfo.setBuyerType(SyncEnumUtils.convertTo(BuyerTypeSyncEnum.lookupByDisplayNameUtil(trdItem.getBuyerType())).getId());
-//        updateOrModifyBuyer(trdItem.getId());
-//
-//    }
-
-    private void updateOrModifyBuyer(String id) {
-    }
-
-    private TrdInfoFromSync getTrdInfoList(TrdInfoSyncTypeEnum trdInfoTypeEnum, int pageNum){
-
-        return restTemplate.getForEntity(String.format(getTrdInfoByBuyerType, trdInfoTypeEnum.getId(), pageNum), TrdInfoFromSync.class).getBody();
-    }
-
-    private PageWrapperResp<CustInfoFromSync> getCustList(int pageNum, String province){
-//      String provEncod = encodeUtf8(province);
-      String url = String.format(getDebtCust, pageNum, province);
-        return restTemplate.exchange(url, HttpMethod.GET, null,
-            new ParameterizedTypeReference<PageWrapperResp<CustInfoFromSync>>() {}).getBody();
-    }
-
-  private PageWrapperResp<TrdInfoFromSync> getTrdInfoByCust(String originCustId, int pageNum){
-
-    return restTemplate.exchange(String.format(getTrdInfoDetailByCust, originCustId, pageNum), HttpMethod.GET, null,
-        new ParameterizedTypeReference<PageWrapperResp<TrdInfoFromSync>>() {}).getBody();
-  }
-
-    public void cleanUp(){
-      mongoTemplate.dropCollection(ImportCustRecord.class);
-    }
 
   /**
-   * 将字符串转换成UTF-8编码
-   * @param str
+   * use id to sync company info
+   * @param trdInfoFromSync
    * @return
    */
-  public static String encodeUtf8(String str){
-    String encode = "";
-    try{
-      encode = URLEncoder.encode(str, "UTF-8");
-    }catch(Exception e){
-      encode = str;
-      log.info("将字符串[" + str + "]转换成UTF-8格式化出错！");
+
+  private Long syncCmpyInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer) {
+    CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
+        trdInfoFromSync.getSellerIdPrep());
+    if( null == custCmpyInfoFromSync){
+      log.error("Failed to get {} cmpy info with id:{} of trd:{}", isBuyer? "buyer":"seller", isBuyer?
+          trdInfoFromSync.getBuyerIdPrep():
+          trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
+      return -1L;
     }
-    return encode;
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    int action = -1;
+    Date updateTime = AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime());
+    if(CollectionUtils.isEmpty(custTrdCmpyList)){
+      //make new cmpy info
+      action = 1;
+    }else if(updateTime.after(custTrdCmpyList.get(0).getUpdateTime())){
+      //update cmpy info
+      action = 2;
+    }else{
+      log.info("no change for this cmpyInfo:{} record time:{}", custTrdCmpyList.get(0).getUpdateTime(), custCmpyInfoFromSync.getUpdateTime());
+      return custTrdCmpyList.get(0).getId();
+    }
+    CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
+    copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
+    if(action == 1){
+      if(isBuyer){
+        custTrdCmpy.setDataQuality(checkBasicDataQuality(custTrdCmpy));
+      }
+      custTrdCmpyMapper.insertSelective(custTrdCmpy);
+
+    }else if(action == 2 ){
+      custTrdCmpy = custTrdCmpyList.get(0);
+      if(isBuyer){
+        int count = getTrdCntForCmpy(custTrdCmpy.getId()).intValue();
+        custTrdCmpy.setDataQuality(count <= 0 || custTrdCmpy.getDataQuality() < 0 ? -1 :
+            custTrdCmpy.getDataQuality() + 1);
+      }
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+    }
+    return custTrdCmpy.getId();
+
   }
-}
+  private Long getTrdCntForCmpy(Long cmpyId){
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(cmpyId).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+    return custTrdInfoMapper.countByExample(custTrdInfoExample);
+  }
+
+  private Long getTrdCntForPerson(Long personId){
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(personId).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+    return custTrdInfoMapper.countByExample(custTrdInfoExample);
+  }
+
+  private int checkBasicDataQuality(CustTrdCmpy custTrdCmpy){
+    int dataQuality = 0;
+    if (StringUtils.isEmpty(custTrdCmpy.getAnnuReptAddr())) {
+      dataQuality = dataQuality;
+    } else {
+      dataQuality++;
+    }
+
+    if (StringUtils.isEmpty(custTrdCmpy.getAnnuReptPhone())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+
+    if (StringUtils.isEmpty(custTrdCmpy.getCmpyPhone())) {
+      dataQuality = dataQuality ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdCmpy.getAnnuReptAddr())) {
+      dataQuality = dataQuality;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdCmpy.getLegalReptive())) {
+      dataQuality = dataQuality;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    if (StringUtils.isEmpty(custTrdCmpy.getUniSocialCode())) {
+      dataQuality = dataQuality;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+
+    //key information cannot be null
+    if (StringUtils.isEmpty(custTrdCmpy.getCmpyName())) {
+      dataQuality = -1 ;
+    } else {
+      dataQuality = dataQuality + 1;
+    }
+    return dataQuality;
+  }
+  private void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy){
+    custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
+    custTrdCmpy.setAnnuReptPhone(custCmpyInfoFromSync.getAnnuReptPhone());
+    custTrdCmpy.setCmpyAddr(custCmpyInfoFromSync.getCmpyAddr());
+    custTrdCmpy.setCmpyName(StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyName())? null: custCmpyInfoFromSync.getCmpyName());
+    custTrdCmpy.setCmpyPhone(custCmpyInfoFromSync.getCmpyPhone());
+    custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
+    custTrdCmpy.setLegalReptive(custCmpyInfoFromSync.getLegalReptive());
+    custTrdCmpy.setUniSocialCode(custCmpyInfoFromSync.getUniSocialCode());
+    custTrdCmpy.setUpdateTime(AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime()));
+
+  }
+  /**
+   * copy information from trdInfoFromSync to custTrdInfo
+   * except buyerId and sellerId
+   * the buyerId and sellId will be handled in other function
+   * @param trdInfoFromSync
+   * @param custTrdInfo
+   */
+
+  private void copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
+//    custTrdInfo.setSellerId(sellerRecord.getId());
+    custTrdInfo.setTotalAmount(trdInfoFromSync.getTotalAmount().longValue());
+    if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
+      custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
+    }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+      custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
+    }
+    if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
+      custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
+    }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+      custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
+    }
+
+    custTrdInfo.setInfoId(trdInfoFromSync.getId());
+    custTrdInfo.setTrdType(trdInfoFromSync.getTrdType());
+    custTrdInfo.setInfoTitle(StringUtils.isEmpty(trdInfoFromSync.getTrdTitle())? null:trdInfoFromSync.getTrdTitle() );
+    if(trdInfoFromSync.getTrdDate() != null ){
+      custTrdInfo.setTrdDate(AmcDateUtils.toDate(trdInfoFromSync.getTrdDate()));
+    }
+
+    if(trdInfoFromSync.getUpdateDate() != null ){
+      custTrdInfo.setUpdateTime(AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate()));
+    }
+    custTrdInfo.setInfoUrl(trdInfoFromSync.getUrl());
+    custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
+    custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep());
+    custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
+    custTrdInfo.setTrdAmount(trdInfoFromSync.getTrdAmountPrep());
+    custTrdInfo.setTrdContactorName(trdInfoFromSync.getLinkMan());
+    custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getLinkAddress());
+
+  }
+
+
+ }
+
+

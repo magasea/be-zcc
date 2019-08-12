@@ -15,7 +15,7 @@
     <result column="addr" jdbcType="VARCHAR" property="addr" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
-    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
   </resultMap>
@@ -79,7 +79,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, 
-    addr, notes, create_by, create_date, data_status, data_quality
+    addr, notes, create_by, update_time, data_status, data_quality
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -119,12 +119,12 @@
     insert into CUST_TRD_PERSON (name, age_range, gender, 
       mobile_num, tel_num, email, id_card_num, 
       province, city, addr, notes, 
-      create_by, create_date, data_status, 
+      create_by, update_time, data_status, 
       data_quality)
     values (#{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, #{gender,jdbcType=INTEGER}, 
       #{mobileNum,jdbcType=CHAR}, #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, 
       #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR}, 
-      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{dataStatus,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{dataStatus,jdbcType=INTEGER}, 
       #{dataQuality,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
@@ -169,8 +169,8 @@
       <if test="createBy != null">
         create_by,
       </if>
-      <if test="createDate != null">
-        create_date,
+      <if test="updateTime != null">
+        update_time,
       </if>
       <if test="dataStatus != null">
         data_status,
@@ -216,8 +216,8 @@
       <if test="createBy != null">
         #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="createDate != null">
-        #{createDate,jdbcType=TIMESTAMP},
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="dataStatus != null">
         #{dataStatus,jdbcType=INTEGER},
@@ -275,8 +275,8 @@
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=BIGINT},
       </if>
-      <if test="record.createDate != null">
-        create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.dataStatus != null">
         data_status = #{record.dataStatus,jdbcType=INTEGER},
@@ -304,7 +304,7 @@
       addr = #{record.addr,jdbcType=VARCHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=BIGINT},
-      create_date = #{record.createDate,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER}
     <if test="_parameter != null">
@@ -350,8 +350,8 @@
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="createDate != null">
-        create_date = #{createDate,jdbcType=TIMESTAMP},
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
       <if test="dataStatus != null">
         data_status = #{dataStatus,jdbcType=INTEGER},
@@ -376,7 +376,7 @@
       addr = #{addr,jdbcType=VARCHAR},
       notes = #{notes,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=BIGINT},
-      create_date = #{createDate,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}

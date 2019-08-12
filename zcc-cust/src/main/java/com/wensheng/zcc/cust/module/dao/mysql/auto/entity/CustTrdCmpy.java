@@ -1,5 +1,7 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
+import java.util.Date;
+
 public class CustTrdCmpy {
     private Long id;
 
@@ -20,6 +22,8 @@ public class CustTrdCmpy {
     private Integer dataStatus;
 
     private Integer dataQuality;
+
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -99,5 +103,13 @@ public class CustTrdCmpy {
 
     public void setDataQuality(Integer dataQuality) {
         this.dataQuality = dataQuality;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

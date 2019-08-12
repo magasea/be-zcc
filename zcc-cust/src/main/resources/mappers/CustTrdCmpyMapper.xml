@@ -12,6 +12,7 @@
     <result column="annu_rept_addr" jdbcType="VARCHAR" property="annuReptAddr" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,7 +74,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, cmpy_addr, annu_rept_phone, 
-    annu_rept_addr, data_status, data_quality
+    annu_rept_addr, data_status, data_quality, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
@@ -112,12 +113,12 @@
     </selectKey>
     insert into CUST_TRD_CMPY (cmpy_name, uni_social_code, legal_reptive, 
       cmpy_phone, cmpy_addr, annu_rept_phone, 
-      annu_rept_addr, data_status, data_quality
-      )
+      annu_rept_addr, data_status, data_quality, 
+      update_time)
     values (#{cmpyName,jdbcType=CHAR}, #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, 
       #{cmpyPhone,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, 
-      #{annuReptAddr,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}
-      )
+      #{annuReptAddr,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -152,6 +153,9 @@
       <if test="dataQuality != null">
         data_quality,
       </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpyName != null">
@@ -180,6 +184,9 @@
       </if>
       <if test="dataQuality != null">
         #{dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -222,6 +229,9 @@
       <if test="record.dataQuality != null">
         data_quality = #{record.dataQuality,jdbcType=INTEGER},
       </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -238,7 +248,8 @@
       annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
       annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
-      data_quality = #{record.dataQuality,jdbcType=INTEGER}
+      data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -273,6 +284,9 @@
       <if test="dataQuality != null">
         data_quality = #{dataQuality,jdbcType=INTEGER},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -286,7 +300,8 @@
       annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
       annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
       data_status = #{dataStatus,jdbcType=INTEGER},
-      data_quality = #{dataQuality,jdbcType=INTEGER}
+      data_quality = #{dataQuality,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">

@@ -190,7 +190,7 @@
     <modules>
         <module>zcc-sso</module>
         <module>zcc-amc</module>
-        <module>zcc-cust</module>
+        <module>zcc-cust</module> 
         <module>zcc-wechat</module>
         <module>zcc-log</module>
         <module>zcc-common</module>

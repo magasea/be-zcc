@@ -29,7 +29,7 @@ public class CustTrdPerson {
 
     private Long createBy;
 
-    private Date createDate;
+    private Date updateTime;
 
     private Integer dataStatus;
 
@@ -139,12 +139,12 @@ public class CustTrdPerson {
         this.createBy = createBy;
     }
 
-    public Date getCreateDate() {
-        return createDate;
+    public Date getUpdateTime() {
+        return updateTime;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 
     public Integer getDataStatus() {

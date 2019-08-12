@@ -125,13 +125,22 @@ logging:
         com:
             wensheng: TRACE
         root: WARN
+cust:
+    syncUrls:
+        debtTradeResources: http://10.20.201.42:8085/debtTradeResources/getJson?page=%d&pageSize=%d&trdProvinceCode=%s
+        getCompanyInfoById: http://10.20.201.42:8085/debtTradeCompanys/getCompanyInfoById/%s
+        #        http://10.20.201.42:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
+        getCompanyInfoByUpdateTime: http://10.20.201.42:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?updateFromDate=%s&updateToDate=%s
+        getPersonInfoById: http://10.20.201.42:8085/debtTradePersons/getPersonInfoById/%s
+        #        http://10.20.201.42:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
+        getPersonInfoByUpdateTime: http://10.20.201.42:8085/debtTradePersons/getPersonInfoByUpdateTime?updateFromDate=%s&updateToDate=%s
 
 
 env:
     env-hint: test
     dbhost: 10.20.100.70
-    rpchost: 10.20.100.236
+    rpchost: 10.20.100.235
     kfkhost: 10.20.100.238
     oauth2:
-        host: 10.20.100.236
+        host: 10.20.100.235
         authLink: http://${env.oauth2.host}:10002

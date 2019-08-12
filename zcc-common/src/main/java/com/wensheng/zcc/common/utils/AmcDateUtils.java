@@ -9,6 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.Locale;
 /**
@@ -52,5 +53,26 @@ public class AmcDateUtils {
     return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
         .toLocalDate();
   }
+  public static LocalDate toLocalDate(Long timestamp){
+    return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.of("UTC")).toLocalDate();
+  }
 
+  public static Date toDate(Long timestamp){
+    if(String.valueOf(timestamp).length() <= 11){
+      return new Date(timestamp*1000);
+    }
+    return new Date(timestamp);
+  }
+
+  public static Date getDateMonthsDiff(int months){
+    Date date = Date.from(ZonedDateTime.now().minusMonths(months).toInstant());
+    return date;
+  }
+
+  public static String getDateStrMonthsDiff(int months){
+    Date date = getDateMonthsDiff(months);
+    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    String strDate = dateFormat.format(date);
+    return strDate;
+  }
 }

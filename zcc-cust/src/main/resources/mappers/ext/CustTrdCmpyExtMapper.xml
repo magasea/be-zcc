@@ -69,7 +69,7 @@
     ${prefix}total_amount as ${alias}total_amount,
     ${prefix}trd_status as ${alias}trd_status,
     ${prefix}trd_date as ${alias}trd_date,
-    ${prefix}info_time as ${alias}info_time,
+    ${prefix}update_time as ${alias}update_time,
     ${prefix}notes as ${alias}notes,
     ${prefix}buyer_type as ${alias}buyer_type,
     ${prefix}buyer_id as ${alias}buyer_id,

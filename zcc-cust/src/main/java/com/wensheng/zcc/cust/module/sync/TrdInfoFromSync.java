@@ -7,34 +7,28 @@ import java.util.List;
 @Data
 public class TrdInfoFromSync {
 
-    String address;
-    String buyer;
-    Long createTime;
-    String customerId;
-    String customerName;
-    Integer dataStatus;
-    String debtId;
-    String firstAdd;
     String id;
-    String instrestCity;
-    Integer intScale;
-    Integer invType;
-    String name;
-    String page;
-    String personId;
-    String personName;
-    String rows;
-    String seller;
-    String title;
-    String tradeArea;
-    Long tradeTime;
-    Long trdAmount;
-    String trdAmountOrig;
-    String trdCity;
-    String trdCityName;
-    String trdProvince;
-    String trdProvinceName;
-    Long updateTime;
+    int trdType;
+    String trdTitle;
+    int packCount;
+    String debtProvincePrep;
+    String debtProvinceNamePrep;
+    String debtCityPrep;
+    String debtCityNamePrep;
+    String trdAmount;
+    Long trdAmountPrep;
+    Double baseAmount;
+    Double interestAmount;
+    Double totalAmount;
+    Long trdDate;
+    String trdContentPrep;
+    String linkMan;
+    String linkAddress;
+    String sellerIdPrep;
+    int sellerTypePrep;
+    String buyerIdPrep;
+    int buyerTypePrep;
+    Long updateDate;
     String url;
 
 }

@@ -197,5 +197,5 @@ env:
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
     oauth2:
-        host: 10.20.100.236
+        host: 10.20.100.235
         authLink: http://${env.oauth2.host}:10002

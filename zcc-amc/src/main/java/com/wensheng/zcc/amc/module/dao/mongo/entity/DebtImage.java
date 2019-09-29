@@ -17,6 +17,8 @@ public class DebtImage {
     String description;
     @Indexed(unique = true)
     String ossPath;
+    String wechatPath;
+    String mediaId;
     String originalName;
     int tag; //是否位置图， 其它图片
     Boolean isToOss = false;//是否同步到OSS

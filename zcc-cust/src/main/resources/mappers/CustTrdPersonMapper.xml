@@ -3,6 +3,7 @@
 <mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="orig_id" jdbcType="CHAR" property="origId" />
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="age_range" jdbcType="INTEGER" property="ageRange" />
     <result column="gender" jdbcType="INTEGER" property="gender" />
@@ -15,9 +16,10 @@
     <result column="addr" jdbcType="VARCHAR" property="addr" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -78,8 +80,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, 
-    addr, notes, create_by, update_time, data_status, data_quality
+    id, orig_id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, 
+    city, addr, notes, create_by, create_date, data_status, data_quality, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -116,16 +118,18 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_PERSON (name, age_range, gender, 
-      mobile_num, tel_num, email, id_card_num, 
-      province, city, addr, notes, 
-      create_by, update_time, data_status, 
-      data_quality)
-    values (#{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, #{gender,jdbcType=INTEGER}, 
-      #{mobileNum,jdbcType=CHAR}, #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, 
-      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR}, 
-      #{createBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}, #{dataStatus,jdbcType=INTEGER}, 
-      #{dataQuality,jdbcType=INTEGER})
+    insert into CUST_TRD_PERSON (orig_id, name, age_range, 
+      gender, mobile_num, tel_num, 
+      email, id_card_num, province, 
+      city, addr, notes, create_by, 
+      create_date, data_status, data_quality, 
+      update_time)
+    values (#{origId,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, 
+      #{gender,jdbcType=INTEGER}, #{mobileNum,jdbcType=CHAR}, #{telNum,jdbcType=CHAR}, 
+      #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -133,6 +137,9 @@
     </selectKey>
     insert into CUST_TRD_PERSON
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="origId != null">
+        orig_id,
+      </if>
       <if test="name != null">
         name,
       </if>
@@ -169,8 +176,8 @@
       <if test="createBy != null">
         create_by,
       </if>
-      <if test="updateTime != null">
-        update_time,
+      <if test="createDate != null">
+        create_date,
       </if>
       <if test="dataStatus != null">
         data_status,
@@ -178,8 +185,14 @@
       <if test="dataQuality != null">
         data_quality,
       </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="origId != null">
+        #{origId,jdbcType=CHAR},
+      </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
@@ -216,14 +229,17 @@
       <if test="createBy != null">
         #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
+      <if test="createDate != null">
+        #{createDate,jdbcType=TIMESTAMP},
       </if>
       <if test="dataStatus != null">
         #{dataStatus,jdbcType=INTEGER},
       </if>
       <if test="dataQuality != null">
         #{dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -238,6 +254,9 @@
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.origId != null">
+        orig_id = #{record.origId,jdbcType=CHAR},
       </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
@@ -275,14 +294,17 @@
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=BIGINT},
       </if>
-      <if test="record.updateTime != null">
-        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      <if test="record.createDate != null">
+        create_date = #{record.createDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.dataStatus != null">
         data_status = #{record.dataStatus,jdbcType=INTEGER},
       </if>
       <if test="record.dataQuality != null">
         data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -292,6 +314,7 @@
   <update id="updateByExample" parameterType="map">
     update CUST_TRD_PERSON
     set id = #{record.id,jdbcType=BIGINT},
+      orig_id = #{record.origId,jdbcType=CHAR},
       name = #{record.name,jdbcType=CHAR},
       age_range = #{record.ageRange,jdbcType=INTEGER},
       gender = #{record.gender,jdbcType=INTEGER},
@@ -304,9 +327,10 @@
       addr = #{record.addr,jdbcType=VARCHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=BIGINT},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      create_date = #{record.createDate,jdbcType=TIMESTAMP},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
-      data_quality = #{record.dataQuality,jdbcType=INTEGER}
+      data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -314,6 +338,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     update CUST_TRD_PERSON
     <set>
+      <if test="origId != null">
+        orig_id = #{origId,jdbcType=CHAR},
+      </if>
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
@@ -350,8 +377,8 @@
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=BIGINT},
       </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      <if test="createDate != null">
+        create_date = #{createDate,jdbcType=TIMESTAMP},
       </if>
       <if test="dataStatus != null">
         data_status = #{dataStatus,jdbcType=INTEGER},
@@ -359,12 +386,16 @@
       <if test="dataQuality != null">
         data_quality = #{dataQuality,jdbcType=INTEGER},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     update CUST_TRD_PERSON
-    set name = #{name,jdbcType=CHAR},
+    set orig_id = #{origId,jdbcType=CHAR},
+      name = #{name,jdbcType=CHAR},
       age_range = #{ageRange,jdbcType=INTEGER},
       gender = #{gender,jdbcType=INTEGER},
       mobile_num = #{mobileNum,jdbcType=CHAR},
@@ -376,9 +407,10 @@
       addr = #{addr,jdbcType=VARCHAR},
       notes = #{notes,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=BIGINT},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
       data_status = #{dataStatus,jdbcType=INTEGER},
-      data_quality = #{dataQuality,jdbcType=INTEGER}
+      data_quality = #{dataQuality,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">

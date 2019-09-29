@@ -136,8 +136,10 @@
     ,
     cts.name as cts_seller_name
     from CUST_TRD_INFO cti
-    left join CUST_TRD_SELLER cts
-    on cts.id = cti.seller_id
+
+      left join CUST_TRD_SELLER cts
+      on cts.id = cti.seller_id
+
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

@@ -1,5 +1,7 @@
 server:
   port: 10001
+  tomcat:
+    basedir: ${env.image-repo}
 grpc:
   server:
     port: 10011
@@ -132,6 +134,10 @@ baidu:
     appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
     getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
 
+sso:
+  ssoUserDetailUrl: http://${env.amcssohost}:10002/amc/user/sso/getUserDetailsById/%d
+  ssoUserTokenUrl: http://${env.amcssohost}:10002/amc/zcc/sso/getTokenByMobilephone/%s
+
 # end::wechatConfig
 
 env:
@@ -139,6 +145,7 @@ env:
   dbhost: 10.20.100.70
   kfkhost: 10.20.100.238
   rpchost: localhost
+  amcssohost: localhost
   dbusername: root
   dbpasswd: wensheng
   mongodb-host: 10.20.100.235

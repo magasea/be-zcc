@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;

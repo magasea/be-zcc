@@ -20,6 +20,7 @@ import com.wensheng.zcc.wechat.module.vo.Article;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.MaterialPreviewReq;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
+import com.wensheng.zcc.wechat.module.vo.WXMenu;
 import com.wensheng.zcc.wechat.module.vo.WXMsgCPRCheckResult;
 import com.wensheng.zcc.wechat.module.vo.WXCopyrightCheckResults;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialBatch;
@@ -33,15 +34,9 @@ import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXMaterialService;
 import com.wensheng.zcc.wechat.service.WXUserService;
-import java.awt.Image;
-import java.awt.image.BufferedImage;
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URI;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -54,9 +49,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import javax.imageio.ImageIO;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -126,6 +119,18 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   @Value("${weixin.msg_group_del_url}")
   String msgGroupDelUrl;
 
+//
+//  menu_create_url: https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s
+//  menu_query_url: https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info?access_token=%s
+//  menu_del_url: https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s
+
+  @Value("${weixin.menu_create_url}")
+      String menuCreateUrl;
+  @Value("${weixin.menu_query_url}")
+      String menuQueryUrl;
+  @Value("${weixin.menu_del_url}")
+      String menuDelUrl;
+
   String resizeParam = "?x-oss-process=image/resize,w_800";
 
   String resizeParamSmall = "?x-oss-process=image/resize,w_800/quality,Q_50";
@@ -177,7 +182,7 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   }
 
   public String addNewMaterial(List<Article> articles) throws Exception {
-    log.info(gson.toJson(articles));
+//    log.info(gson.toJson(articles));
     String token = wxBasicService.getPublicToken();
     String url = String.format(materialAddNewUrl, token);
     HttpHeaders headers = getHttpJsonHeader();
@@ -560,6 +565,16 @@ public class WXMaterialServiceImpl implements WXMaterialService {
   }
 
 
+  public GeneralResp menuCreate(WXMenu menu){
+    String token = wxBasicService.getPublicToken();
+    String url = String.format(menuCreateUrl, token);
+
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<WXMenu> entity = new HttpEntity<WXMenu>(menu, headers);
+
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, GeneralResp.class);
+    return (GeneralResp) response.getBody();
+  }
 
 
   public GeneralResp delGrpMsg(Long msgId, Long articleIdx){
@@ -658,6 +673,8 @@ public class WXMaterialServiceImpl implements WXMaterialService {
     String mediaId;
 
   }
+
+
 
 
 

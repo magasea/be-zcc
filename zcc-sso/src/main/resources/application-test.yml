@@ -119,10 +119,15 @@ logging:
         com:
             wensheng: TRACE
         root: WARN
+sso:
+    host: ${env.ssohost}
+    port: 11002
+    url: http://${sso.host}:${sso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
 
 env:
     name: test
     dbhost: 10.20.100.70
+    ssohost: 10.20.100.235
     dbusername: root
     dbpasswd: wensheng
     kfkhost: 10.20.100.238

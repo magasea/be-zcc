@@ -22,6 +22,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -49,6 +50,9 @@ import org.springframework.util.CollectionUtils;
 @Configuration
 @Slf4j
 public class AmcAspect {
+  //要求自动pass提交审核到审核通过
+  boolean autoPassReview = true;
+
   @Autowired
   ZccRulesService zccRulesService;
 
@@ -79,6 +83,8 @@ public class AmcAspect {
         throw new Exception(String.format("actionId:%s with current publishState:%s is not applicable",
             baseActionVo.getEditActionId(), amcDebt.getPublishState() ));
       }
+
+
     }
   }
 
@@ -166,7 +172,9 @@ public class AmcAspect {
 
       Long userId = -1L;
 
-      if(authentication.getDetails() != null && ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails() != null){
+      if(authentication.getDetails() != null ){
+        if(! (authentication.getDetails() instanceof LinkedHashMap)
+          && ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails() != null){
         Map details = (Map) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
         if(details.containsKey("userId")){
           userId = Long.valueOf( String.format("%d",details.get("userId")));
@@ -174,6 +182,17 @@ public class AmcAspect {
 
         }
 
+      }else if(authentication.getDetails() instanceof LinkedHashMap){
+          Map details = (LinkedHashMap) authentication.getDetails();
+          if(details.containsKey("userId")){
+            userId = Long.valueOf( String.format("%d",details.get("userId")));
+            amcUserOperation.setUserId(userId);
+
+          }
+        }else{
+          log.error("Failed to detect the instance of authentication.getDetails():{}, so no user id found" ,
+              authentication.getDetails());
+        }
       }
       amcUserOperation.setUserName(authentication.getPrincipal().toString());
       if(gotActionObject){
@@ -253,6 +272,12 @@ public class AmcAspect {
           zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(actionId),
               PublishStateEnum.lookupByDisplayStatusUtil( debtVo.getPublishState() ));
       log.info("will update debt publish state from:{} to {}", debtVo.getPublishState(), publishStateEnum.getStatus());
+      if(autoPassReview && (publishStateEnum.getStatus() == PublishStateEnum.RECORD_CHECK_WAIT.getStatus() ||
+          publishStateEnum.getStatus() == PublishStateEnum.DRAFT_CHECK_WAIT.getStatus())){
+        publishStateEnum = PublishStateEnum.PUBLISHED;
+        log.info("will update debt publish state from:{} to {} because auto pass", debtVo.getPublishState(),
+            publishStateEnum.getStatus());
+      }
       debtVo.setUpdateBy(userId);
       debtVo.setPublishState(publishStateEnum.getStatus());
     }

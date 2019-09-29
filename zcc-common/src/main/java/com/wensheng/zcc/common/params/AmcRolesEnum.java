@@ -1,4 +1,4 @@
-package com.wensheng.zcc.sso.module.helper;
+package com.wensheng.zcc.common.params;
 
 import com.wensheng.zcc.common.utils.base.EnumUtils;
 import java.util.function.Function;
@@ -13,6 +13,15 @@ public enum AmcRolesEnum {
   ROLE_AMC_USER("ROLE_AMC_USER", 3),
   ROLE_ZCC_CLIENT("ROLE_ZCC_CLIENT", 4),
   ROLE_LAWYER("ROLE_LAWYER", 5),
+  // new define of roles
+  ROLE_AMC_LOCAL_VISITOR("ROLE_AMC_LOCAL_VISITOR", 6),
+  ROLE_AMC_VISITOR("ROLE_AMC_VISITOR", 7),
+  ROLE_AMC_STUFF("ROLE_AMC_STUFF", 8),
+  ROLE_AMC_LOCAL_STUFF("ROLE_AMC_LOCAL_STUFF", 9),
+  ROLE_AMC_LOCAL_ADMIN("ROLE_AMC_LOCAL_ADMIN", 10),
+  //  ROLE_AMC_ADMIN("ROLE_AMC_ADMIN", 10),
+  ROLE_CO_ADMIN("ROLE_CO_ADMIN", 11),
+//  ROLE_SYSTEM_ADMIN("ROLE_AMC_LOCAL_VISITOR", 12),
   ;
   AmcRolesEnum(String name , int id){
     this.name = name;

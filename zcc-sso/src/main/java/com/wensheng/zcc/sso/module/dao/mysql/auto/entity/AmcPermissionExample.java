@@ -233,6 +233,66 @@ public class AmcPermissionExample {
             addCriterion("name not between", value1, value2, "name");
             return (Criteria) this;
         }
+
+        public Criteria andPermIdIsNull() {
+            addCriterion("perm_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdIsNotNull() {
+            addCriterion("perm_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdEqualTo(Integer value) {
+            addCriterion("perm_id =", value, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdNotEqualTo(Integer value) {
+            addCriterion("perm_id <>", value, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdGreaterThan(Integer value) {
+            addCriterion("perm_id >", value, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdGreaterThanOrEqualTo(Integer value) {
+            addCriterion("perm_id >=", value, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdLessThan(Integer value) {
+            addCriterion("perm_id <", value, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdLessThanOrEqualTo(Integer value) {
+            addCriterion("perm_id <=", value, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdIn(List<Integer> values) {
+            addCriterion("perm_id in", values, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdNotIn(List<Integer> values) {
+            addCriterion("perm_id not in", values, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdBetween(Integer value1, Integer value2) {
+            addCriterion("perm_id between", value1, value2, "permId");
+            return (Criteria) this;
+        }
+
+        public Criteria andPermIdNotBetween(Integer value1, Integer value2) {
+            addCriterion("perm_id not between", value1, value2, "permId");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

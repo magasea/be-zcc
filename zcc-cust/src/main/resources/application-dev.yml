@@ -120,13 +120,13 @@ logging:
         root: WARN
 cust:
     syncUrls:
-        debtTradeResources: http://10.20.100.228:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
-        getCompanyInfoById: http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoById/%s
-#        http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
-        getCompanyInfoByUpdateTime: http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
-        getPersonInfoById: http://10.20.100.228:8085/debtTradePersons/getPersonInfoById/%s
-#        http://10.20.100.228:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
-        getPersonInfoByUpdateTime: http://10.20.100.228:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+        debtTradeResources: http://10.20.200.100:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
+        getCompanyInfoById: http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoById/%s
+#        http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
+        getCompanyInfoByUpdateTime: http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+        getPersonInfoById: http://10.20.200.100:8085/debtTradePersons/getPersonInfoById/%s
+#        http://10.20.200.100:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
+        getPersonInfoByUpdateTime: http://10.20.200.100:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
 
 
 env:

@@ -14,8 +14,8 @@ public interface CustTrdInfoExtMapper {
 
     List<CustTrdInfo> selectByExampleWithRowbounds(CustTrdInfoExample example, RowBounds rowBounds);
 
-    List<CustTrdInfoExt> selectByExample(CustTrdInfoExample example);
 
+    List<CustTrdInfoExt> selectByExample(CustTrdInfoExample example);
     CustTrdInfo selectByPrimaryKey(Long id);
 
 

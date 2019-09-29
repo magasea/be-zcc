@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.util.TokenUtil;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -32,6 +34,9 @@ public class TokenController {
 
     @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
     private String amcAdminClientId;
+
+    @Autowired
+    AmcSsoService amcSsoService;
 
     @RequestMapping(method = RequestMethod.POST, value = "/oauth/token/revokeById/{tokenId}")
     @ResponseBody
@@ -71,4 +76,23 @@ public class TokenController {
         return tokenId;
     }
 
+    @RequestMapping(method = RequestMethod.GET, value ="/amc/zcc/sso/getTokenByUserId/{userId}")
+    @ResponseBody
+    public OAuth2AccessToken getTokenByUserId(@PathVariable Long userId)
+    {
+        return amcSsoService.generateToken(userId);
+    }
+
+    @RequestMapping(method = RequestMethod.GET, value ="/amc/zcc/sso/getTokenByMobilephone/{mobilephone}")
+    @ResponseBody
+    public OAuth2AccessToken getTokenByUserId(@PathVariable String mobilephone)
+    {
+        return amcSsoService.generateToken(mobilephone);
+    }
+
+  @RequestMapping(method = RequestMethod.POST, value ="/amc/zcc/sso/exchangeTokenFromSSO")
+  @ResponseBody
+  public OAuth2AccessToken getTokenBySSOToken(@RequestParam String acccessToken) throws Exception {
+    return amcSsoService.generateTokenFromToken(acccessToken);
+  }
 }

@@ -5,6 +5,8 @@ public class AmcPermission {
 
     private String name;
 
+    private Integer permId;
+
     public Long getId() {
         return id;
     }
@@ -19,5 +21,13 @@ public class AmcPermission {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public Integer getPermId() {
+        return permId;
+    }
+
+    public void setPermId(Integer permId) {
+        this.permId = permId;
     }
 }

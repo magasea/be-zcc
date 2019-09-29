@@ -12,6 +12,7 @@ import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
+import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,6 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -52,6 +54,9 @@ public class AmcUserController {
 
   @Autowired
   AmcBasicService amcBasicService;
+
+  @Autowired
+  AmcSsoService amcSsoService;
 
   @Autowired
   private ConsumerTokenServices tokenServices;
@@ -293,6 +298,13 @@ public class AmcUserController {
       amcBasicUsers.add(amcBasicUser);
     }
     return amcBasicUsers;
+  }
+
+  @RequestMapping(value = "/sso/getUserDetailsById/{userId}", method = RequestMethod.POST)
+  @ResponseBody
+  public UserDetails getUserDetailsById(@PathVariable Long userId){
+
+    return amcSsoService.getUserDetailByUserId(userId);
   }
 
   @Data

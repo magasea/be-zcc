@@ -12,6 +12,7 @@ import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialItem;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialMod;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialPreviewResp;
+import com.wensheng.zcc.wechat.module.vo.WXMenu;
 import com.wensheng.zcc.wechat.module.vo.WXMsgGroupResp;
 import com.wensheng.zcc.wechat.module.vo.WXMsgGroupTagReq;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
@@ -249,6 +250,15 @@ public class WechatMaterialController {
 
 
     return wxMaterialService.querySentMsg();
+
+  }
+
+  @RequestMapping(value = "/material/createMenu", method = RequestMethod.POST)
+  @ResponseBody
+  public GeneralResp createMenu(@RequestBody WXMenu wxMenu) throws Exception {
+
+
+    return wxMaterialService.menuCreate(wxMenu);
 
   }
 }

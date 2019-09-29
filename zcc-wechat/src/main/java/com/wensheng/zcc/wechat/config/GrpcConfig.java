@@ -10,6 +10,7 @@ import io.grpc.ManagedChannelBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.ServerInterceptors;
+import io.grpc.protobuf.services.ProtoReflectionService;
 import java.io.IOException;
 import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,6 +74,7 @@ public class GrpcConfig {
         Arrays.asList(IllegalArgumentException.class, Exception.class, RuntimeException.class));
     Server server = ServerBuilder.forPort(grpcPort)
         .addService(ServerInterceptors.intercept(wechatGrpcService, unknownStatusDescriptionInterceptor))
+        .addService(ProtoReflectionService.newInstance())
         .build();
 
     return server;

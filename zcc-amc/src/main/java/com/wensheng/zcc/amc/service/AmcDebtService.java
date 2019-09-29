@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
+import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
@@ -37,6 +38,7 @@ public interface AmcDebtService {
   public List<AmcDebt> queryAllByUserId( Long userId);
 
   public AmcDebtExtVo get(Long amcDebtId) throws Exception;
+  public List<AmcDebtExtVo> getByIds(List<Long> amcDebtIds) throws Exception;
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
@@ -105,5 +107,5 @@ public interface AmcDebtService {
     void setRecomm(List<Long> debtIds, int id);
 
   public List<Long> getDebtIdsByPackIds(List<Long> debtPackIds);
-
+  List<AmcDebtUploadImg2WXRlt> uploadAmcDebtImage2WechatByIds(List<Long> debtIds);
   }

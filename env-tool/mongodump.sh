@@ -6,5 +6,3 @@ mongodump --host 10.20.100.238 --port 27017 --db wszcc_cust --out /home/chenwei/
 mongodump --host 10.20.100.238 --port 27017 --db wszcc_wechat --out /home/chenwei/tmp/mongoback/mongodump-wszcc-wechat-`date +%Y-%m-%d`
 cd /home/chenwei/tmp/mongoback/
 tar zcvf mongodump-`date +%Y-%m-%d`.tar.gz *-`date +%Y-%m-%d`
-
-

@@ -58,11 +58,11 @@
     ${prefix}update_date as update_date
   </sql>
   <sql id="Role_Column_List">
-    ${prefix}id as ${alias}id,
+    ${prefix}role_id as ${alias}role_id,
     ${prefix}name as ${alias}name
   </sql>
   <sql id="Perm_Column_List">
-    ${prefix}id as ${alias}id,
+    ${prefix}perm_id as ${alias}perm_id,
     ${prefix}name as ${alias}name
   </sql>
   <select id="selectByExtExample" parameterType="Long"
@@ -77,9 +77,9 @@
       refid="Perm_Column_List"><property name="prefix" value="ap."/><property name="alias" value="perm_"/></include>
     from AMC_USER au
     left join AMC_USER_ROLE aur on au.id = aur.user_id
-    left join AMC_ROLE ar on aur.role_id = ar.id
+    left join AMC_ROLE ar on aur.role_id = ar.role_id
     left join AMC_ROLE_PERMISSION arp on arp.role_id = aur.role_id
-    left join AMC_PERMISSION ap on arp.permission_id = ap.id
+    left join AMC_PERMISSION ap on arp.permission_id = ap.perm_id
     where au.id = #{id}
   </select>
 

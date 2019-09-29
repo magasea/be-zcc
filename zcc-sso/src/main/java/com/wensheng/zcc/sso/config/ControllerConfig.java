@@ -29,9 +29,19 @@ public class ControllerConfig implements WebMvcConfigurer {
 
   @Override
   public void addCorsMappings(CorsRegistry registry) {
-    registry.addMapping("/**");
+    registry.addMapping("/**").allowedOrigins("*")
+        .allowedMethods("PUT", "DELETE", "GET", "POST")
+        .allowedHeaders("*")
+        .exposedHeaders("access-control-allow-headers",
+            "access-control-expose-headers",
+            "access-control-allow-methods",
+            "access-control-allow-origin",
+            "access-control-max-age",
+            "X-Frame-Options",
+            "Authorization",
+            "refresh_token")
+        .allowCredentials(false).maxAge(3600);
   }
-
 
   @Override
   public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {

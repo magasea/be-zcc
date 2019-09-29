@@ -90,7 +90,7 @@ spring:
     cache:
         cache-names: TOKEN
         caffeine:
-            spec: maximumSize=500, expireAfterAccess=5400s
+            spec: maximumSize=500, expireAfterAccess=600s
     servlet:
         multipart:
             enabled: true
@@ -155,6 +155,10 @@ weixin:
     msg_group_del_url: https://api.weixin.qq.com/cgi-bin/message/mass/delete?access_token=%s
     msg_group_get_url: https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=%s
 
+    menu_create_url: https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s
+    menu_query_url: https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info?access_token=%s
+    menu_del_url: https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s
+
 baidu:
     logis:
         appName: amc-lgs
@@ -193,8 +197,8 @@ env:
     rpchost: localhost
     pubhost: 101.132.27.96
     pubport: 5444
-    mongodb-host: 10.20.100.235
-    image-repo: /backup/temp
+    mongodb-host: 10.20.100.238
+    image-repo: /mnt/backup/temp
     oauth2:
         host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

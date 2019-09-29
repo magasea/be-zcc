@@ -154,6 +154,11 @@ weixin:
     msg_group_send_openid_url: https://api.weixin.qq.com/cgi-bin/message/mass/send?access_token=%s
     msg_group_del_url: https://api.weixin.qq.com/cgi-bin/message/mass/delete?access_token=%s
     msg_group_get_url: https://api.weixin.qq.com/cgi-bin/message/mass/get?access_token=%s
+
+    menu_create_url: https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s
+    menu_query_url: https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info?access_token=%s
+    menu_del_url: https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s
+
 baidu:
     logis:
         appName: amc-lgs

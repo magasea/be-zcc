@@ -1,11 +1,11 @@
 package com.wensheng.zcc.sso.aop;
 
+import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
-import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.List;

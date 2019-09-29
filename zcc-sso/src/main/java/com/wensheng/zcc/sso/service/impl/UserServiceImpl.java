@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
@@ -15,7 +16,6 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
-import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
 import com.wensheng.zcc.sso.service.UserService;
@@ -27,7 +27,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -163,6 +162,52 @@ public class UserServiceImpl implements UserService {
 //
 //    tokenServices.createAccessToken( authenticationManagerBean.authenticate(authentication) )
     return null;
+  }
+
+  @Override
+  public UserDetails loadUserByUserId(Long userId) throws UsernameNotFoundException {
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andIdEqualTo(userId);
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    if(CollectionUtils.isEmpty(amcUsers)){
+      throw new UsernameNotFoundException(AmcExceptions.NO_SUCHUSER.toString());
+    }
+    List<String> authorities = getPermissions(amcUsers.get(0));
+
+    List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
+    authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
+    boolean userEnabled = amcUsers.get(0).getValid().equals(AmcUserValidEnum.VALID.getId());
+    AmcUserDetail amcUserDetail = new AmcUserDetail(amcUsers.get(0).getMobilePhone(),"",userEnabled, userEnabled,userEnabled,
+        userEnabled,grantedAuthorityAuthorities);
+    AmcBeanUtils.copyProperties(amcUsers.get(0), amcUserDetail);
+
+//    UserDetails userDetails =
+//        User.builder().authorities(grantedAuthorityAuthorities).username(amcUsers.get(0).getMobilePhone()).password(amcUsers.get(0).getPassword()).disabled(!amcUsers.get(0).getValid().equals(
+//        AmcUserValidEnum.VALID.getId())).build();
+    return amcUserDetail;
+  }
+
+  @Override
+  public UserDetails loadUserByUserPhone(String phoneNum) throws UsernameNotFoundException {
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andMobilePhoneEqualTo(phoneNum);
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    if(CollectionUtils.isEmpty(amcUsers)){
+      throw new UsernameNotFoundException(AmcExceptions.NO_SUCHUSER.toString());
+    }
+    List<String> authorities = getPermissions(amcUsers.get(0));
+
+    List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
+    authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
+    boolean userEnabled = amcUsers.get(0).getValid().equals(AmcUserValidEnum.VALID.getId());
+    AmcUserDetail amcUserDetail = new AmcUserDetail(amcUsers.get(0).getMobilePhone(),"",userEnabled, userEnabled,userEnabled,
+        userEnabled,grantedAuthorityAuthorities);
+    AmcBeanUtils.copyProperties(amcUsers.get(0), amcUserDetail);
+
+//    UserDetails userDetails =
+//        User.builder().authorities(grantedAuthorityAuthorities).username(amcUsers.get(0).getMobilePhone()).password(amcUsers.get(0).getPassword()).disabled(!amcUsers.get(0).getValid().equals(
+//        AmcUserValidEnum.VALID.getId())).build();
+    return amcUserDetail;
   }
 
 

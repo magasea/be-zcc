@@ -1,16 +1,16 @@
 #!/bin/bash
-#export JAVA_HOME=/home/sunht/workingTools/jdk1.8.0_191
-#export JAVA_HOME=/home/sunht/workingTools/jdk-12
-export JAVA_HOME=/home/sunht/workingTools/jdk-10.0.2
+#export JAVA_HOME=/home/chenwei/workingTools/jdk1.8.0_191
+#export JAVA_HOME=/home/chenwei/workingTools/jdk-12
+export JAVA_HOME=/home/chenwei/workingTools/jdk-10.0.2
 export PATH=${JAVA_HOME}/bin:${PATH}
 export LANG=en_US.utf8
 export JAVA_OPTS="-Dsun.jnu.encoding=UTF-8 -Dfile.encoding=UTF-8"
-execJarName_amc=/home/sunht/working/zcc/zcc-amc-0.1-SNAPSHOT.jar
-execJarName_sso=/home/sunht/working/zcc/zcc-sso-0.1-SNAPSHOT.jar
-execJarName_log=/home/sunht/working/zcc/zcc-log-0.1-SNAPSHOT.jar
-execJarName_cust=/home/sunht/working/zcc/zcc-cust-0.1-SNAPSHOT.jar
-execJarName_wechat=/home/sunht/working/zcc/zcc-wechat-0.1-SNAPSHOT.jar
-execJarName_comnfunc=/home/sunht/working/zcc/zcc-comn-func-0.1-SNAPSHOT.jar
+execJarName_amc=/home/chenwei/working/zcc/zcc-amc-0.1-SNAPSHOT.jar
+execJarName_sso=/home/chenwei/working/zcc/zcc-sso-0.1-SNAPSHOT.jar
+execJarName_log=/home/chenwei/working/zcc/zcc-log-0.1-SNAPSHOT.jar
+execJarName_cust=/home/chenwei/working/zcc/zcc-cust-0.1-SNAPSHOT.jar
+execJarName_wechat=/home/chenwei/working/zcc/zcc-wechat-0.1-SNAPSHOT.jar
+execJarName_comnfunc=/home/chenwei/working/zcc/zcc-comn-func-0.1-SNAPSHOT.jar
 pattern_amc=zcc-amc
 pattern_sso=zcc-sso
 pattern_log=zcc-log

@@ -53,8 +53,8 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     @Qualifier("authenticationManagerBean")
     private AuthenticationManager authenticationManager;
 
-//    private int accessTokenValidSeconds = 3600;
-    private int accessTokenValidSeconds = 150;
+    private int accessTokenValidSeconds = 3600;
+//    private int accessTokenValidSeconds = 150;
 
     private int refreshTokenValidSeconds = 2592000;
 
@@ -161,6 +161,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     }
 
     @Bean
+    @Primary
     public TokenStore tokenStore() {
         JdbcTokenStore jdbcTokenStore =  new AmcJdbcTokenStore(dataSource);
         return jdbcTokenStore;
@@ -168,6 +169,7 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     }
 
     @Bean
+    @Primary
     public JwtAccessTokenConverter accessTokenConverter() {
         final JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
         converter.setSigningKey("wenshengamc#1234567890");

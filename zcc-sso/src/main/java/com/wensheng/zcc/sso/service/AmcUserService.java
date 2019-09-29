@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service;
 
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
@@ -50,4 +51,6 @@ public interface AmcUserService {
 
   List<AmcUser> searchUserByPhone(String mobilePhone);
   List<AmcUser> searchUserByName(String name);
+
+  boolean updateOrInsertSSOUser(List<SSOAmcUser> ssoAmcUsers);
 }

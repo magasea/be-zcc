@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.ext;
 
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -17,6 +18,7 @@ public class AmcDebtExt  {
   AmcDebt debtInfo;
 
   List<AmcAsset> amcAssets ;
+
 
 
   List<AmcDebtor> amcDebtors;

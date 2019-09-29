@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
+import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
@@ -335,6 +336,21 @@ public class AmcDebtController {
     return amcDebtVo;
   }
 
+  @RequestMapping(value = "/api/amcid/{id}/debt/getIds", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcDebtExtVo> queryDebtByIds(@RequestParam("debtId") List<Long> debtIds)
+      throws Exception {
+
+    if(CollectionUtils.isEmpty(debtIds)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("debtIds is empty"));
+    }
+    List<AmcDebtExtVo>  amcDebtExtVoes = amcDebtService.getByIds(debtIds);
+
+
+
+    return amcDebtExtVoes;
+  }
+
 
   @RequestMapping(value = "/api/amcid/{id}/debt/get", method = RequestMethod.POST)
   @ResponseBody
@@ -344,20 +360,7 @@ public class AmcDebtController {
 
     AmcDebtExtVo amcDebtExtVo = amcDebtService.get(debtId);
 
-    try {
-      AmcInfo amcInfo = amcDebtService.getAmcInfo(debtId);
 
-      List<AmcDebtor> amcDebtors = amcDebtService.getDebtors(debtId);
-
-
-      AmcOrigCreditor origCreditor = amcDebtService.getOriginCreditor(debtId);
-      amcDebtExtVo.setAmcInfos(amcInfo);
-      amcDebtExtVo.setAmcDebtors(amcDebtors);
-      amcDebtExtVo.setOrigCreditor(origCreditor);
-
-    } catch (Exception ex) {
-      log.error("failed to get creditor or grantor", ex);
-    }
 
     return amcDebtExtVo;
   }
@@ -649,6 +652,14 @@ public class AmcDebtController {
   public Map<String, List<Long>> getAllDebtTitles() throws Exception {
 
     return amcDebtService.getAllTitles();
+
+  }
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/upload2wx", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcDebtUploadImg2WXRlt> upload2Wx(@RequestBody List<Long> debtIds) throws Exception {
+
+    return amcDebtService.uploadAmcDebtImage2WechatByIds(debtIds);
 
   }
 }

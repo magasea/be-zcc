@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.service.impl;
 import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
+import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceBlockingStub;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceImplBase;
 import io.grpc.ManagedChannel;
@@ -22,5 +23,9 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
   public com.wenshengamc.zcc.wechat.UploadImg2WechatResp uploadImage2Wechat(com.wenshengamc.zcc.wechat.UploadImg2WechatReq request) {
     return wechatServiceStub.uploadImage2Wechat(request);
+  }
+
+  public UploadDebtImg2WechatResp uploadDebtImage2Wechat(com.wenshengamc.zcc.wechat.UploadDebtImg2WechatReq request) {
+    return wechatServiceStub.uploadDebtImage2Wechat(request);
   }
 }

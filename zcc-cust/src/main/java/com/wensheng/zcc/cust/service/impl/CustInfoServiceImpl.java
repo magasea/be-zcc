@@ -189,7 +189,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(cityName, city2Counts.get(cityName)+1);
         }
       }
-      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
@@ -297,7 +297,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(cityName, city2Counts.get(cityName)+1);
         }
       }
-      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount > 0? totalAmount: -1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
@@ -349,7 +349,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       Map<Integer, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
-        totalAmount += custTrdInfo.getTotalAmount();
+        totalAmount += custTrdInfo.getTotalAmount() > 0 ? custTrdInfo.getTotalAmount() :
+            custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0 ;
         cities.add(custTrdInfo.getTrdCity());
         if(custTrdInfo.getTrdType() == null){
           continue;
@@ -366,7 +367,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(custTrdInfo.getTrdCity(), city2Counts.get(custTrdInfo.getTrdCity())+1);
         }
       }
-      custTrdInfoVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
       custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);
@@ -391,7 +392,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       Map<Integer, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
-        totalAmount += custTrdInfo.getTotalAmount();
+        totalAmount += custTrdInfo.getTotalAmount() > 0? custTrdInfo.getTotalAmount():
+            custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0;
         cities.add(custTrdInfo.getTrdCity());
         if(custTrdInfo.getTrdType() == null){
           continue;
@@ -407,7 +409,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(custTrdInfo.getTrdCity(), city2Counts.get(custTrdInfo.getTrdCity())+1);
         }
       }
-      custTrdInfoVo.setTrdTotalAmount( totalAmount);
+      custTrdInfoVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
       custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);

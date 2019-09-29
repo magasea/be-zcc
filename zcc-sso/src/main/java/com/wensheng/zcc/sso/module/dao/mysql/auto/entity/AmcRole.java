@@ -5,6 +5,8 @@ public class AmcRole {
 
     private String name;
 
+    private Integer roleId;
+
     public Long getId() {
         return id;
     }
@@ -19,5 +21,13 @@ public class AmcRole {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public Integer getRoleId() {
+        return roleId;
+    }
+
+    public void setRoleId(Integer roleId) {
+        this.roleId = roleId;
     }
 }

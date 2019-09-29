@@ -99,12 +99,14 @@ public class SyncServiceImpl implements SyncService {
     @Autowired
     CustIntrstInfoMapper custIntrstInfoMapper;
 
+    @Autowired
+    CustTrdSellerMapper custTrdSellerMapper;
 
     @Autowired
   CustTrdInfoMapper custTrdInfoMapper;
 
-    @Autowired
-  CustTrdSellerMapper custTrdSellerMapper;
+//    @Autowired
+//  CustTrdSellerMapper custTrdSellerMapper;
 
     private Gson gson = new Gson();
     @Value("${cust.syncUrls.debtTradeResources}")
@@ -124,7 +126,7 @@ public class SyncServiceImpl implements SyncService {
 
     String[] provinceCodes = {"350000"};
 
-    boolean isTest = true;
+  boolean isTest = true;
 
     @PostConstruct
     void init(){
@@ -146,7 +148,14 @@ public class SyncServiceImpl implements SyncService {
 
   public CustPersonInfoFromSync getPersonInfoById(String id){
     String url = String.format(getPersonInfoById, id);
-    return restTemplate.getForEntity(url, CustPersonInfoFromSync.class).getBody();
+    log.info(url);
+    CustPersonInfoFromSync custPersonInfoFromSync = null;
+    try{
+      custPersonInfoFromSync = restTemplate.getForEntity(url, CustPersonInfoFromSync.class).getBody();
+    }catch (Exception ex){
+      log.error("Got error:", ex);
+    }
+    return custPersonInfoFromSync;
   }
 
   public PageWrapperResp<CustCmpyInfoFromSync> getCustCmpyInfoByDate(int pageNum, int pageSize, String fromDate,
@@ -167,7 +176,7 @@ public class SyncServiceImpl implements SyncService {
 
   }
 
-//  @Scheduled(cron = "${spring.task.scheduling.cronExprTrd}")
+  @Scheduled(cron = "${spring.task.scheduling.cronExprTrd}")
   @Override
   public void syncWithTrdInfo(){
       for (String provinceCode: provinceCodes){
@@ -226,7 +235,7 @@ public class SyncServiceImpl implements SyncService {
     if(CollectionUtils.isEmpty(custTrdPeople)){
       //make new person
       action = 1;
-    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime) || isTest){
+    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime) ){
       //update person
       action = 2;
     }else{
@@ -341,7 +350,7 @@ public class SyncServiceImpl implements SyncService {
       action = 1;
     }else{
       //update trdInfo
-      if(custTrdInfos.get(0).getUpdateTime().before(updateDate)){
+      if(custTrdInfos.get(0).getUpdateTime().before(updateDate) || isTest){
         action = 2;
       }else{
         log.info("Db record dateTime:{} , current sync info dateTime:{}", custTrdInfos.get(0).getUpdateTime(),
@@ -355,10 +364,10 @@ public class SyncServiceImpl implements SyncService {
     copySyncTrd2TrdInfo(trdInfoFromSync, custTrdInfo);
     Long buyerId = -1L ;
     if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
-      buyerId = syncCmpyInfoById(trdInfoFromSync, true);
+      buyerId = syncCmpyInfoById(trdInfoFromSync, true, action == 1);
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
     }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
-      buyerId = syncPersonInfoById(trdInfoFromSync, true);
+      buyerId = syncPersonInfoById(trdInfoFromSync, true, action == 1);
       custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
     }
     if(buyerId < 0){
@@ -369,10 +378,10 @@ public class SyncServiceImpl implements SyncService {
 
     Long sellerId = -1L;
     if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
-      sellerId = syncCmpyInfoById(trdInfoFromSync, false);
+      sellerId = syncCmpyInfoById(trdInfoFromSync, false, action == 1);
       custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
     }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
-      sellerId = syncPersonInfoById(trdInfoFromSync, false);
+      sellerId = syncPersonInfoById(trdInfoFromSync, false, action == 1);
       custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
     }
     if(sellerId < 0){
@@ -392,10 +401,13 @@ public class SyncServiceImpl implements SyncService {
     }else{
       log.error("action:{}", action);
     }
+    log.info("[trd id:{} originId:{}] [buyer id:{} originId:{}] [seller id:{} originId:{}] ",
+        custTrdInfo.getId(), trdInfoFromSync.getId(), custTrdInfo.getBuyerId(), trdInfoFromSync.getBuyerIdPrep(),
+        custTrdInfo.getSellerId(), trdInfoFromSync.getSellerIdPrep());
 
   }
 
-  private Long syncPersonInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer) {
+  private Long syncPersonInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
       CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep());
     if( null == custPersonInfoFromSync){
@@ -404,6 +416,44 @@ public class SyncServiceImpl implements SyncService {
           trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
       return -1L;
     }
+    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    int sellPersonAction = -1;
+    if(!isBuyer){
+      //handle this info into CUST_TRD_SELLER table
+      CustTrdSellerExample custTrdSellerExample = new CustTrdSellerExample();
+      custTrdSellerExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
+          custPersonInfoFromSync.getName()).andMobileNumEqualTo(StringUtils.isEmpty(
+              custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum());
+      List<CustTrdSeller> custTrdSellers =  custTrdSellerMapper.selectByExample(custTrdSellerExample);
+
+      if(CollectionUtils.isEmpty(custTrdSellers)){
+        //make new seller person
+        sellPersonAction = 1;
+      }else if(custTrdSellers.get(0).getUpdateTime().before(updateTime)||isNewTrd){
+        //update seller person
+        sellPersonAction = 2;
+      }else{
+        log.info("no change for this personInfo:{} current record time:{}", custTrdSellers.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
+        return custTrdSellers.get(0).getId();
+      }
+
+      CustTrdSeller custTrdSeller = new CustTrdSeller();
+
+      if(sellPersonAction == 1){
+        copyPersonSync2SellerInfo(custPersonInfoFromSync, custTrdSeller);
+        custTrdSellerMapper.insertSelective(custTrdSeller);
+
+      }else if(sellPersonAction == 2 ){
+        custTrdSeller = custTrdSellers.get(0);
+        copyPersonSync2SellerInfo(custPersonInfoFromSync, custTrdSeller);
+        custTrdSellerMapper.updateByPrimaryKeySelective(custTrdSeller);
+      }
+      return custTrdSeller.getId();
+    }
+
+
+
+
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
     custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
         custPersonInfoFromSync.getName()).andMobileNumEqualTo(
@@ -411,11 +461,11 @@ public class SyncServiceImpl implements SyncService {
         andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
     List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
     int action = -1;
-    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+
     if(CollectionUtils.isEmpty(custTrdPeople)){
       //make new person
       action = 1;
-    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime)|| isTest){
+    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime)|| isNewTrd || custTrdPeople.get(0).getDataQuality() <= 2){
       //update person
       action = 2;
     }else{
@@ -434,11 +484,30 @@ public class SyncServiceImpl implements SyncService {
       custTrdPerson = custTrdPeople.get(0);
       if(isBuyer){
         int count = getTrdCntForPerson(custTrdPerson.getId()).intValue();
-        custTrdPerson.setDataQuality(count <= 0 || custTrdPerson.getDataQuality() < 0 ? -1: custTrdPerson.getDataQuality()+1);
+        if(isNewTrd){
+          int basicQuality = checkBasicDataQuality(custTrdPerson);
+          if(basicQuality <= 0){
+            custTrdPerson.setDataQuality( (count + 1)/2);
+          }else{
+            custTrdPerson.setDataQuality(custTrdPerson.getDataQuality()+1);
+          }
+        }
       }
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     }
     return custTrdPerson.getId();
+  }
+
+  private void copyPersonSync2SellerInfo(CustPersonInfoFromSync custPersonInfoFromSync, CustTrdSeller custTrdSeller) {
+    custTrdSeller.setAddr(custPersonInfoFromSync.getAddress());
+    custTrdSeller.setMobileNum(custPersonInfoFromSync.getMobileNum());
+    custTrdSeller.setName(custPersonInfoFromSync.getName());
+    custTrdSeller.setOrigId(custPersonInfoFromSync.getId());
+    custTrdSeller.setProvinceCode(custPersonInfoFromSync.getProvinceCode());
+    custTrdSeller.setCityCode(custPersonInfoFromSync.getCityCode());
+    custTrdSeller.setTel(custPersonInfoFromSync.getTelNum());
+    custTrdSeller.setType(CustTypeEnum.PERSON.getId());
+    custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime()));
   }
 
   private int checkBasicDataQuality(CustTrdPerson custTrdPerson) {
@@ -518,7 +587,7 @@ public class SyncServiceImpl implements SyncService {
    * @return
    */
 
-  private Long syncCmpyInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer) {
+  private Long syncCmpyInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
     CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
         trdInfoFromSync.getSellerIdPrep());
     if( null == custCmpyInfoFromSync){
@@ -527,6 +596,37 @@ public class SyncServiceImpl implements SyncService {
           trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
       return -1L;
     }
+
+    if(!isBuyer){
+      CustTrdSellerExample custTrdSellerExample = new CustTrdSellerExample();
+      custTrdSellerExample.createCriteria().andNameEqualTo(custCmpyInfoFromSync.getCmpyName());
+      List<CustTrdSeller> custTrdSellers = custTrdSellerMapper.selectByExample(custTrdSellerExample);
+      int sellerAction = -1;
+      Date updateTime = AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime());
+      if(CollectionUtils.isEmpty(custTrdSellers)){
+        //make new sell info
+        sellerAction = 1;
+      }else if(updateTime.after(custTrdSellers.get(0).getUpdateTime())){
+        //update seller info
+        sellerAction = 2;
+      }else{
+        log.info("no change for this cmpyInfo:{} record time:{}", custTrdSellers.get(0).getUpdateTime(), custCmpyInfoFromSync.getUpdateTime());
+        return custTrdSellers.get(0).getId();
+      }
+      CustTrdSeller custTrdSeller = new CustTrdSeller();
+
+      if(sellerAction == 1){
+        copyCmpySync2SellerInfo(custCmpyInfoFromSync, custTrdSeller);
+        custTrdSellerMapper.insertSelective(custTrdSeller);
+
+      }else if(sellerAction == 2 || isNewTrd){
+        custTrdSeller = custTrdSellers.get(0);
+        copyCmpySync2SellerInfo(custCmpyInfoFromSync, custTrdSeller);
+        custTrdSellerMapper.updateByPrimaryKeySelective(custTrdSeller);
+      }
+      return custTrdSeller.getId();
+    }
+
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
@@ -535,7 +635,7 @@ public class SyncServiceImpl implements SyncService {
     if(CollectionUtils.isEmpty(custTrdCmpyList)){
       //make new cmpy info
       action = 1;
-    }else if(updateTime.after(custTrdCmpyList.get(0).getUpdateTime())){
+    }else if(updateTime.after(custTrdCmpyList.get(0).getUpdateTime()) || isNewTrd || custTrdCmpyList.get(0).getDataQuality() <= 2){
       //update cmpy info
       action = 2;
     }else{
@@ -554,14 +654,33 @@ public class SyncServiceImpl implements SyncService {
       custTrdCmpy = custTrdCmpyList.get(0);
       if(isBuyer){
         int count = getTrdCntForCmpy(custTrdCmpy.getId()).intValue();
-        custTrdCmpy.setDataQuality(count <= 0 || custTrdCmpy.getDataQuality() < 0 ? -1 :
-            custTrdCmpy.getDataQuality() + 1);
+        if(isNewTrd){
+          int basicQuality = checkBasicDataQuality(custTrdCmpy);
+          if(basicQuality <= 0){
+            custTrdCmpy.setDataQuality( (count + 1)/2);
+          }else{
+            custTrdCmpy.setDataQuality(custTrdCmpy.getDataQuality()+1);
+          }
+        }
       }
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }
     return custTrdCmpy.getId();
 
   }
+
+  private void copyCmpySync2SellerInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdSeller custTrdSeller) {
+    custTrdSeller.setTel(custCmpyInfoFromSync.getAnnuReptPhone());
+    custTrdSeller.setMobileNum(custCmpyInfoFromSync.getCmpyPhone());
+    custTrdSeller.setOrigId(custCmpyInfoFromSync.getId());
+    custTrdSeller.setCityCode(custCmpyInfoFromSync.getCityCode());
+    custTrdSeller.setProvinceCode(custCmpyInfoFromSync.getProvinceCode());
+    custTrdSeller.setAddr(custCmpyInfoFromSync.getCmpyAddr());
+    custTrdSeller.setType(CustTypeEnum.COMPANY.getId());
+    custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime()));
+    custTrdSeller.setName(custCmpyInfoFromSync.getCmpyName());
+  }
+
   private Long getTrdCntForCmpy(Long cmpyId){
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andBuyerIdEqualTo(cmpyId).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
@@ -644,7 +763,8 @@ public class SyncServiceImpl implements SyncService {
 
   private void copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
 //    custTrdInfo.setSellerId(sellerRecord.getId());
-    custTrdInfo.setTotalAmount(trdInfoFromSync.getTotalAmount().longValue());
+    custTrdInfo.setTotalAmount(trdInfoFromSync.getTotalAmount().longValue() > 0?
+        trdInfoFromSync.getTotalAmount().longValue(): Long.valueOf(trdInfoFromSync.getTrdAmountPrep()));
     if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
     }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
@@ -670,7 +790,6 @@ public class SyncServiceImpl implements SyncService {
     custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
     custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep());
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
-    custTrdInfo.setTrdAmount(trdInfoFromSync.getTrdAmountPrep());
     custTrdInfo.setTrdContactorName(trdInfoFromSync.getLinkMan());
     custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getLinkAddress());
 

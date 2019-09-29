@@ -12,10 +12,24 @@ message AmcAssetImage {
     repeated string amcAssetImages = 3;
 }
 
-message WechatAssetImage {
-  string amcAssetImage = 1;
-  string wechatAssetImage = 2;
+message AmcDebtImage {
+  int64 amcDebtId = 1;
+  string amcDebtMainImage =2;
+  repeated string amcDebtImages = 3;
+  repeated AmcAssetImage amcAssetImages = 4;
 }
+
+message  WechatDebtImage {
+
+}
+
+
+message WechatAssetImage {
+  int64 amcAssetId = 1;
+  string amcAssetImage = 2;
+  string wechatAssetImage = 3;
+}
+
 
 message ImageUploadResult {
   int64 amcAssetId = 1;
@@ -24,17 +38,34 @@ message ImageUploadResult {
   repeated WechatAssetImage wechatAssetImages = 4;
 }
 
+message DebtImageUploadResult {
+  int64 amcDebtId = 1;
+  string amcDebtImageUrl = 2;
+  string debtMediaId = 3;
+  string debtMediaIdUrl = 4;
+
+  repeated WechatAssetImage wechatAssetImages = 5;
+}
+
 message UploadImg2WechatReq {
     repeated AmcAssetImage amcAssetImages = 1;
 }
 
-
+message UploadDebtImg2WechatReq {
+  repeated AmcDebtImage amcDebtImages = 1;
+}
 
 message UploadImg2WechatResp {
     repeated ImageUploadResult results =1;
 }
 
+message UploadDebtImg2WechatResp {
+  repeated DebtImageUploadResult results =1;
+}
+
 service WechatGrpcService {
   rpc uploadImage2Wechat(UploadImg2WechatReq) returns (UploadImg2WechatResp);
+
+  rpc uploadDebtImage2Wechat(UploadDebtImg2WechatReq) returns (UploadDebtImg2WechatResp);
 
 }

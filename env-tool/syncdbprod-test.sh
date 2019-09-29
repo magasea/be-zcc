@@ -1,5 +1,14 @@
 #!/bin/bash
 # part 1
+echo '#!/bin/bash' > ./mongodump.sh
+echo '[ ! -d /home/chenwei/tmp/mongoback  ] && mkdir -p /home/chenwei/tmp/mongoback' >> ./mongodump.sh
+echo 'mongodump --host 10.20.100.238 --port 27017 --db wszcc --out /home/chenwei/tmp/mongoback/mongodump-wszcc-`date +%Y-%m-%d`' >> ./mongodump.sh
+echo 'mongodump --host 10.20.100.238 --port 27017 --db wszcc_log --out /home/chenwei/tmp/mongoback/mongodump-wszcc-log-`date +%Y-%m-%d`' >> ./mongodump.sh
+echo 'mongodump --host 10.20.100.238 --port 27017 --db wszcc_cust --out /home/chenwei/tmp/mongoback/mongodump-wszcc-cust-`date +%Y-%m-%d`' >> ./mongodump.sh
+echo 'mongodump --host 10.20.100.238 --port 27017 --db wszcc_wechat --out /home/chenwei/tmp/mongoback/mongodump-wszcc-wechat-`date +%Y-%m-%d`' >> ./mongodump.sh
+echo 'cd /home/chenwei/tmp/mongoback/' >> ./mongodump.sh
+echo 'tar zcvf mongodump-`date +%Y-%m-%d`.tar.gz *-`date +%Y-%m-%d`' >> ./mongodump.sh
+
 ssh chenwei@10.20.100.238 '[ ! -d /home/chenwei/tmp ] && mkdir -p /home/chenwei/tmp'
 scp ./mongodump.sh chenwei@10.20.100.238:/home/chenwei/tmp/mongodump.sh
 ssh chenwei@10.20.100.238 'chmod 755 /home/chenwei/tmp/mongodump.sh && /home/chenwei/tmp/mongodump.sh'

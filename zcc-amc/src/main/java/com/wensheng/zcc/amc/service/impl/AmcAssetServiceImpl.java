@@ -47,6 +47,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.apache.kafka.common.protocol.types.Field.Str;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -675,6 +676,29 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return result;
     }
 
+    @Override
+    public Map<Long, Map<Long, List<AssetImage>>> getAssetImgsByDebtIds(List<Long> debtIds) {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdIn(debtIds);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+
+        Map<Long, Map<Long, List<AssetImage>>> amcAssetMap = new HashMap<>();
+        for(AmcAsset amcAsset: amcAssets){
+            if(!amcAssetMap.containsKey(amcAsset.getDebtId())){
+                amcAssetMap.put(amcAsset.getDebtId(), new HashMap());
+            }
+            Query query = new Query();
+            query.addCriteria(Criteria.where("amcAssetId").in(amcAsset.getId()));
+            List<AssetImage> amcAssetImages = wszccTemplate.find(query, AssetImage.class);
+            amcAssetMap.get(amcAsset.getDebtId()).put(amcAsset.getId(), amcAssetImages);
+            query = null;
+        }
+
+
+
+        return amcAssetMap;
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
@@ -824,6 +848,24 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
         //3. save it into asset additional info
 
+    }
+
+    @Override
+    public Map<Long, AssetAdditional> getAssetAdditions(Long amcDebtId) {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebtId);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        if(CollectionUtils.isEmpty(amcAssets)){
+            log.error("No asset available for debtId:{}", amcDebtId);
+            return null;
+        }
+        List<Long> assetIds = amcAssets.stream().map(item -> item.getId()).collect(Collectors.toList());
+        Query query = new Query();
+        query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
+        List<AssetAdditional> assetAdditionals =  wszccTemplate.find(query, AssetAdditional.class);
+        Map<Long, AssetAdditional> assetAdditionalMap =
+            assetAdditionals.stream().collect(Collectors.toMap(item-> (item.getAmcAssetId()), item-> item));
+        return assetAdditionalMap;
     }
 
     public void findGeoAndUpdate(Map<Long, AddressTmp> addresses){

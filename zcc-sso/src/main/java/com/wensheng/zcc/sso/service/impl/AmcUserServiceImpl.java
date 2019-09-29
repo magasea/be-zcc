@@ -1,8 +1,8 @@
 package com.wensheng.zcc.sso.service.impl;
 
-import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
-import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
+import com.wensheng.zcc.common.params.AmcRolesEnum;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
@@ -14,10 +14,8 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
-import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample.Criteria;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
-import com.wensheng.zcc.sso.module.helper.AmcRolesEnum;
 import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.util.UserUtils;
@@ -28,8 +26,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field.Str;
-import org.hibernate.annotations.Cache;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -283,6 +279,40 @@ public class AmcUserServiceImpl implements AmcUserService {
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
 
     return amcUsers;
+  }
+
+  @Override
+  public boolean updateOrInsertSSOUser(List<SSOAmcUser> ssoAmcUsers) {
+    AmcUserExample amcUserExample = new AmcUserExample();
+    for(SSOAmcUser ssoAmcUser: ssoAmcUsers){
+
+      amcUserExample.createCriteria().andMobilePhoneEqualTo(ssoAmcUser.getMobilePhone());
+      List<AmcUser>  amcUsers = amcUserMapper.selectByExample(amcUserExample);
+      if(CollectionUtils.isEmpty(amcUsers)){
+        //insert new user in db
+        AmcUser amcUser = new AmcUser();
+        AmcBeanUtils.copyProperties(ssoAmcUser, amcUser);
+        amcUserMapper.insertSelective(amcUser);
+        amcUser = null;
+      }else{
+        //update user in db
+        AmcUser amcUser = amcUsers.get(0);
+        amcUser.setCompanyId(ssoAmcUser.getCompanyId());
+        amcUser.setDeptId(ssoAmcUser.getDeptId());
+        amcUser.setLgroup(ssoAmcUser.getLgroup());
+        amcUser.setTitle(ssoAmcUser.getTitle());
+        amcUser.setLocation(ssoAmcUser.getLocation());
+        amcUser.setNickName(ssoAmcUser.getNickName());
+        amcUser.setUserName(ssoAmcUser.getUserName());
+        amcUser.setValid(ssoAmcUser.getValid());
+        amcUserMapper.updateByPrimaryKeySelective(amcUser);
+      }
+      amcUserExample = null;
+      amcUserExample = new AmcUserExample();
+
+    }
+    return true;
+
   }
 
   private AmcUser createUserAndRole(AmcUser amcUser, AmcRolesEnum amcRolesEnum){

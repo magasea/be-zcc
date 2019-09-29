@@ -16,6 +16,8 @@ import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
@@ -29,9 +31,11 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
+import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
 import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
@@ -47,6 +51,12 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wenshengamc.zcc.wechat.AmcAssetImage;
+import com.wenshengamc.zcc.wechat.AmcDebtImage;
+import com.wenshengamc.zcc.wechat.DebtImageUploadResult;
+import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatReq;
+import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
+import com.wenshengamc.zcc.wechat.WechatAssetImage;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -54,6 +64,7 @@ import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -61,8 +72,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -88,7 +97,7 @@ import org.springframework.util.StringUtils;
 @CacheConfig(cacheNames = {"DEBT"})
 public class AmcDebtServiceImpl implements AmcDebtService {
 
-  Logger logger = LoggerFactory.getLogger(getClass());
+  
 
   @Autowired
   AmcHelperService amcHelperService;
@@ -138,6 +147,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Autowired
   AmcOssFileService amcOssFileService;
 
+  @Autowired
+  WechatGrpcService wechatGrpcService;
 
 
   @Override
@@ -160,7 +171,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
           try {
             if(!debtImageItem.getOssPath().equals(ossPath)){
-              logger.info("now need delete history main image");
+              log.info("now need delete history main image");
               amcOssFileService.delFileInOss(debtImageItem.getOssPath());
               wszccTemplate.remove(debtImageItem);
             }
@@ -308,9 +319,44 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setDebtImage(debtImages.get(0));
     }
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
+
+    AmcInfo amcInfo = getAmcInfo(amcDebtId);
+
+    List<AmcDebtor> amcDebtors = getDebtors(amcDebtId);
+
+
+    AmcOrigCreditor origCreditor = getOriginCreditor(amcDebtId);
+    Map<Long, AssetAdditional> assetAdditionalMap = getAssetAdditions(amcDebtId);
+    for( AmcAssetVo amcAssetVo:  amcDebtExtVo.getAmcDebtVo().getAssetVos()){
+        if(assetAdditionalMap.containsKey(amcAssetVo.getId())){
+          amcAssetVo.setAssetAdditional(assetAdditionalMap.get(amcAssetVo.getId()));
+        }
+    }
+
+    amcDebtExtVo.setAmcInfos(amcInfo);
+    amcDebtExtVo.setAmcDebtors(amcDebtors);
+    amcDebtExtVo.setOrigCreditor(origCreditor);
     return amcDebtExtVo;
   }
 
+  private Map<Long, AssetAdditional> getAssetAdditions(Long amcDebtId) {
+
+    return amcAssetService.getAssetAdditions(amcDebtId);
+  }
+
+  @Override
+  public List<AmcDebtExtVo> getByIds(List<Long> amcDebtIds) throws Exception {
+    List<AmcDebtExtVo> amcDebtExtVos = new ArrayList<>();
+    for(Long amcDebtId: amcDebtIds){
+      try{
+        AmcDebtExtVo amcDebtExtVo = get(amcDebtId);
+        amcDebtExtVos.add(amcDebtExtVo);
+      }catch (Exception ex){
+        log.error("Met error when try to get debt by:{}", amcDebtId, ex);
+      }
+    }
+    return amcDebtExtVos;
+  }
 
 
   @Override
@@ -435,7 +481,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     try{
       amcDebtExample.setOrderByClause(SQLUtils.getOrderBy(orderBy, rowBounds));
     }catch (Exception ex){
-      logger.error("there is no orderBy params:" + ex.getMessage());
+      log.error("there is no orderBy params:" + ex.getMessage());
     }
 
 
@@ -490,7 +536,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       String orderByStr = SQLUtils.getOrderBy(orderBy, rowBounds);
       amcDebtExample.setOrderByClause(orderByStr);
     }catch (Exception ex){
-      logger.error("there is no orderBy params:" + ex.getMessage());
+      log.error("there is no orderBy params:" + ex.getMessage());
     }
 
 
@@ -922,6 +968,143 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     return amcDebts.stream().map(item -> item.getId()).collect(Collectors.toList());
   }
+
+  @Override
+  public List<AmcDebtUploadImg2WXRlt> uploadAmcDebtImage2WechatByIds(List<Long> debtIds) {
+
+
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("debtId").in(debtIds));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    Map<Long, Map<Long, List<AssetImage>>> assetImageMap = amcAssetService.getAssetImgsByDebtIds(debtIds);
+    Map<Long, List<String>> debtImageMap = new HashMap<>();
+    for(DebtImage debtImage: debtImages){
+      if(!debtImageMap.containsKey(debtImage.getDebtId())){
+        debtImageMap.put(debtImage.getDebtId(), new ArrayList<String>());
+      }
+      debtImageMap.get(debtImage.getDebtId()).add(debtImage.getOssPath());
+    }
+    for(Long debtId : debtIds){
+      if(!debtImageMap.containsKey(debtId)){
+        log.error("Havent found image for debtId:{}", debtId);
+
+        debtImageMap.put(debtId, new ArrayList<>());
+      }
+    }
+//    for(Map.Entry<Long, Map<Long,List<AssetImage>>> entry: assetImageMap.entrySet()){
+//      if(!debtImageMap.containsKey(entry.getKey())){
+//        debtImageMap.put(entry.getKey(), new ArrayList<String>());
+//      }
+//      if(CollectionUtils.isEmpty(entry.getValue())){
+//        entry.getValue().forEach( item -> debtImageMap.get(entry.getKey()).add(item.getOssPath()));
+//      }
+//
+//    }
+
+    UploadDebtImg2WechatReq.Builder builder = UploadDebtImg2WechatReq.newBuilder();
+
+    Iterator it = debtImageMap.entrySet().iterator();
+    AmcDebtImage.Builder imagesBuilder = AmcDebtImage.newBuilder();
+    for (Map.Entry<Long, List<String>> pair: debtImageMap.entrySet()) {
+
+      imagesBuilder.clear();
+      imagesBuilder.setAmcDebtId(pair.getKey());
+      if(!CollectionUtils.isEmpty(pair.getValue())){
+        imagesBuilder.setAmcDebtMainImage(pair.getValue().get(0));
+      }
+
+      if(assetImageMap.containsKey(pair.getKey())){
+        Map<Long, List<AssetImage>> assetImages = assetImageMap.get(pair.getKey());
+
+        if(!CollectionUtils.isEmpty(assetImages)){
+          AmcAssetImage.Builder assetImageBuilder =  AmcAssetImage.newBuilder();
+          for(Map.Entry<Long, List<AssetImage>> entry: assetImages.entrySet()){
+            assetImageBuilder.clear();
+            assetImageBuilder.setAmcAssetId(entry.getKey());
+            if(!CollectionUtils.isEmpty(entry.getValue())){
+              List<String> assetImageUrls = entry.getValue().stream().map(item -> item.getOssPath()).collect(Collectors.toList());
+              assetImageBuilder.addAllAmcAssetImages(assetImageUrls);
+              imagesBuilder.addAmcAssetImages(assetImageBuilder);
+            }
+
+          }
+
+        }
+      }
+
+
+
+      builder.addAmcDebtImages(imagesBuilder);
+
+
+
+    }
+    UploadDebtImg2WechatResp resp = wechatGrpcService.uploadDebtImage2Wechat(builder.build());
+    List<AmcDebtUploadImg2WXRlt> result = new ArrayList<AmcDebtUploadImg2WXRlt>();
+
+    Query querySubItem = null ;
+    for(DebtImageUploadResult item: resp.getResultsList()){
+      Long debtId = item.getAmcDebtId();
+      AmcDebtUploadImg2WXRlt amcDebtUploadImg2WXRlt = new AmcDebtUploadImg2WXRlt();
+      amcDebtUploadImg2WXRlt.setDebtId(debtId);
+      amcDebtUploadImg2WXRlt.setMediaId(item.getDebtMediaId());
+      amcDebtUploadImg2WXRlt.setWechatUrl(item.getDebtMediaIdUrl());
+      amcDebtUploadImg2WXRlt.setAssetImgs(new HashMap<>());
+
+      if(StringUtils.isEmpty(item.getAmcDebtImageUrl())){
+        log.error("no image for this debtId:{}", debtId);
+      }
+
+
+
+      querySubItem = new Query();
+      querySubItem.addCriteria(Criteria.where("debtId").is(debtId).and("ossPath").is(item.getAmcDebtImageUrl()));
+
+      List<DebtImage> debtImageList = wszccTemplate.find(querySubItem, DebtImage.class);
+      if(CollectionUtils.isEmpty(debtImageList)){
+        log.error("failed to find image for debtId:{} and ossPath:{}", debtId,
+            item.getAmcDebtImageUrl());
+      }else{
+        debtImageList.get(0).setWechatPath(item.getDebtMediaIdUrl());
+        debtImageList.get(0).setMediaId(item.getDebtMediaId());
+        wszccTemplate.save(debtImageList.get(0));
+      }
+
+
+        for(WechatAssetImage subItem: item.getWechatAssetImagesList()){
+          if(!StringUtils.isEmpty(subItem.getAmcAssetImage())){
+            querySubItem = new Query();
+            querySubItem.addCriteria(Criteria.where("amcAssetId").is(subItem.getAmcAssetId()).and("ossPath").is(subItem.getAmcAssetImage()));
+
+            List<AssetImage> assetImageList = wszccTemplate.find(querySubItem, AssetImage.class);
+            if(CollectionUtils.isEmpty(assetImageList)){
+              log.error("failed to find image for amcAssetId:{} and ossPath:{}", subItem.getAmcAssetId(), subItem.getAmcAssetImage());
+            }else{
+              assetImageList.get(0).setWechatPath(subItem.getWechatAssetImage());
+//                     if( ImageClassEnum.MAIN.getId() == assetImageList.get(0).getTag() && !StringUtils.isEmpty(item.getMediaId())){
+//                         assetImageList.get(0).setMediaId(item.getMediaId());
+//                     }
+              wszccTemplate.save(assetImageList.get(0));
+              if( !amcDebtUploadImg2WXRlt.getAssetImgs().containsKey(subItem.getAmcAssetId())){
+                amcDebtUploadImg2WXRlt.getAssetImgs().put(subItem.getAmcAssetId(), new ArrayList<>());
+              }
+              amcDebtUploadImg2WXRlt.getAssetImgs().get(subItem.getAmcAssetId()).add(subItem.getWechatAssetImage());
+            }
+          }
+
+        }
+
+        result.add(amcDebtUploadImg2WXRlt);
+
+
+
+    }
+
+    return result;
+  }
+
+
 
   public AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();

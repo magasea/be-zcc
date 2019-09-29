@@ -5,6 +5,8 @@ import java.util.Date;
 public class CustTrdPerson {
     private Long id;
 
+    private String origId;
+
     private String name;
 
     private Integer ageRange;
@@ -29,11 +31,13 @@ public class CustTrdPerson {
 
     private Long createBy;
 
-    private Date updateTime;
+    private Date createDate;
 
     private Integer dataStatus;
 
     private Integer dataQuality;
+
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -41,6 +45,14 @@ public class CustTrdPerson {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getOrigId() {
+        return origId;
+    }
+
+    public void setOrigId(String origId) {
+        this.origId = origId == null ? null : origId.trim();
     }
 
     public String getName() {
@@ -139,12 +151,12 @@ public class CustTrdPerson {
         this.createBy = createBy;
     }
 
-    public Date getUpdateTime() {
-        return updateTime;
+    public Date getCreateDate() {
+        return createDate;
     }
 
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
+    public void setCreateDate(Date createDate) {
+        this.createDate = createDate;
     }
 
     public Integer getDataStatus() {
@@ -161,5 +173,13 @@ public class CustTrdPerson {
 
     public void setDataQuality(Integer dataQuality) {
         this.dataQuality = dataQuality;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

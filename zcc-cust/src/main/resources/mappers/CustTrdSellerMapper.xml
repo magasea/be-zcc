@@ -4,10 +4,15 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="name" jdbcType="CHAR" property="name" />
-    <result column="url" jdbcType="CHAR" property="url" />
+    <result column="orig_id" jdbcType="CHAR" property="origId" />
     <result column="addr" jdbcType="CHAR" property="addr" />
     <result column="tel" jdbcType="CHAR" property="tel" />
+    <result column="mobile_num" jdbcType="CHAR" property="mobileNum" />
+    <result column="province_code" jdbcType="CHAR" property="provinceCode" />
+    <result column="city_code" jdbcType="CHAR" property="cityCode" />
     <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,7 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, url, addr, tel, type
+    id, name, orig_id, addr, tel, mobile_num, province_code, city_code, type, create_time, 
+    update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample" resultMap="BaseResultMap">
     select
@@ -105,10 +111,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_SELLER (name, url, addr, tel, 
-      type)
-    values (#{name,jdbcType=CHAR}, #{url,jdbcType=CHAR}, #{addr,jdbcType=CHAR}, #{tel,jdbcType=CHAR}, 
-      #{type,jdbcType=INTEGER})
+    insert into CUST_TRD_SELLER (name, orig_id, addr, tel, 
+      mobile_num, province_code, city_code, 
+      type, create_time, update_time
+      )
+    values (#{name,jdbcType=CHAR}, #{origId,jdbcType=CHAR}, #{addr,jdbcType=CHAR}, #{tel,jdbcType=CHAR}, 
+      #{mobileNum,jdbcType=CHAR}, #{provinceCode,jdbcType=CHAR}, #{cityCode,jdbcType=CHAR}, 
+      #{type,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -119,8 +129,8 @@
       <if test="name != null">
         name,
       </if>
-      <if test="url != null">
-        url,
+      <if test="origId != null">
+        orig_id,
       </if>
       <if test="addr != null">
         addr,
@@ -128,16 +138,31 @@
       <if test="tel != null">
         tel,
       </if>
+      <if test="mobileNum != null">
+        mobile_num,
+      </if>
+      <if test="provinceCode != null">
+        province_code,
+      </if>
+      <if test="cityCode != null">
+        city_code,
+      </if>
       <if test="type != null">
         type,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateTime != null">
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
-      <if test="url != null">
-        #{url,jdbcType=CHAR},
+      <if test="origId != null">
+        #{origId,jdbcType=CHAR},
       </if>
       <if test="addr != null">
         #{addr,jdbcType=CHAR},
@@ -145,8 +170,23 @@
       <if test="tel != null">
         #{tel,jdbcType=CHAR},
       </if>
+      <if test="mobileNum != null">
+        #{mobileNum,jdbcType=CHAR},
+      </if>
+      <if test="provinceCode != null">
+        #{provinceCode,jdbcType=CHAR},
+      </if>
+      <if test="cityCode != null">
+        #{cityCode,jdbcType=CHAR},
+      </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -165,8 +205,8 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
-      <if test="record.url != null">
-        url = #{record.url,jdbcType=CHAR},
+      <if test="record.origId != null">
+        orig_id = #{record.origId,jdbcType=CHAR},
       </if>
       <if test="record.addr != null">
         addr = #{record.addr,jdbcType=CHAR},
@@ -174,8 +214,23 @@
       <if test="record.tel != null">
         tel = #{record.tel,jdbcType=CHAR},
       </if>
+      <if test="record.mobileNum != null">
+        mobile_num = #{record.mobileNum,jdbcType=CHAR},
+      </if>
+      <if test="record.provinceCode != null">
+        province_code = #{record.provinceCode,jdbcType=CHAR},
+      </if>
+      <if test="record.cityCode != null">
+        city_code = #{record.cityCode,jdbcType=CHAR},
+      </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -186,10 +241,15 @@
     update CUST_TRD_SELLER
     set id = #{record.id,jdbcType=BIGINT},
       name = #{record.name,jdbcType=CHAR},
-      url = #{record.url,jdbcType=CHAR},
+      orig_id = #{record.origId,jdbcType=CHAR},
       addr = #{record.addr,jdbcType=CHAR},
       tel = #{record.tel,jdbcType=CHAR},
-      type = #{record.type,jdbcType=INTEGER}
+      mobile_num = #{record.mobileNum,jdbcType=CHAR},
+      province_code = #{record.provinceCode,jdbcType=CHAR},
+      city_code = #{record.cityCode,jdbcType=CHAR},
+      type = #{record.type,jdbcType=INTEGER},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -200,8 +260,8 @@
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
-      <if test="url != null">
-        url = #{url,jdbcType=CHAR},
+      <if test="origId != null">
+        orig_id = #{origId,jdbcType=CHAR},
       </if>
       <if test="addr != null">
         addr = #{addr,jdbcType=CHAR},
@@ -209,8 +269,23 @@
       <if test="tel != null">
         tel = #{tel,jdbcType=CHAR},
       </if>
+      <if test="mobileNum != null">
+        mobile_num = #{mobileNum,jdbcType=CHAR},
+      </if>
+      <if test="provinceCode != null">
+        province_code = #{provinceCode,jdbcType=CHAR},
+      </if>
+      <if test="cityCode != null">
+        city_code = #{cityCode,jdbcType=CHAR},
+      </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -218,10 +293,15 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     update CUST_TRD_SELLER
     set name = #{name,jdbcType=CHAR},
-      url = #{url,jdbcType=CHAR},
+      orig_id = #{origId,jdbcType=CHAR},
       addr = #{addr,jdbcType=CHAR},
       tel = #{tel,jdbcType=CHAR},
-      type = #{type,jdbcType=INTEGER}
+      mobile_num = #{mobileNum,jdbcType=CHAR},
+      province_code = #{provinceCode,jdbcType=CHAR},
+      city_code = #{cityCode,jdbcType=CHAR},
+      type = #{type,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample" resultMap="BaseResultMap">

@@ -586,72 +586,72 @@ public class AmcWechatUserExample {
         }
 
         public Criteria andLocationIsNull() {
-            addCriterion("city is null");
+            addCriterion("location is null");
             return (Criteria) this;
         }
 
         public Criteria andLocationIsNotNull() {
-            addCriterion("city is not null");
+            addCriterion("location is not null");
             return (Criteria) this;
         }
 
         public Criteria andLocationEqualTo(String value) {
-            addCriterion("city =", value, "city");
+            addCriterion("location =", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotEqualTo(String value) {
-            addCriterion("city <>", value, "city");
+            addCriterion("location <>", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationGreaterThan(String value) {
-            addCriterion("city >", value, "city");
+            addCriterion("location >", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationGreaterThanOrEqualTo(String value) {
-            addCriterion("city >=", value, "city");
+            addCriterion("location >=", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationLessThan(String value) {
-            addCriterion("city <", value, "city");
+            addCriterion("location <", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationLessThanOrEqualTo(String value) {
-            addCriterion("city <=", value, "city");
+            addCriterion("location <=", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationLike(String value) {
-            addCriterion("city like", value, "city");
+            addCriterion("location like", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotLike(String value) {
-            addCriterion("city not like", value, "city");
+            addCriterion("location not like", value, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationIn(List<String> values) {
-            addCriterion("city in", values, "city");
+            addCriterion("location in", values, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotIn(List<String> values) {
-            addCriterion("city not in", values, "city");
+            addCriterion("location not in", values, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationBetween(String value1, String value2) {
-            addCriterion("city between", value1, value2, "city");
+            addCriterion("location between", value1, value2, "location");
             return (Criteria) this;
         }
 
         public Criteria andLocationNotBetween(String value1, String value2) {
-            addCriterion("city not between", value1, value2, "city");
+            addCriterion("location not between", value1, value2, "location");
             return (Criteria) this;
         }
 

@@ -1,5 +1,7 @@
 server:
   port: 10001
+  tomcat:
+    basedir: ${env.image-repo}
 grpc:
   server:
     port: 10011
@@ -129,11 +131,14 @@ baidu:
     appId: 16178564
     appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
     getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
-
+sso:
+  ssoUserDetailUrl: http://${env.amcssohost}:10002/amc/user/sso/getUserDetailsById/%d
+  ssoUserTokenUrl: http://${env.amcssohost}:10002/amc/zcc/sso/getTokenByMobilephone/%s
 env:
   name: prod
   dbhost: 10.20.100.238
   dbusername: amcuser
+  amcssohost: localhost
   rpchost: localhost
   dbpasswd: Wensheng#123
   kfkhost: 10.20.100.238

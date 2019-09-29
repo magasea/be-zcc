@@ -88,7 +88,8 @@ spring:
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
-            cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+            cronExprTrd: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+            cronExprCust: 0 0 7,11,12,13,14,15,16,17,18,19,20,0 * * *
 mybatis:
     type-aliases-package: com.wensheng.zcc.cust.module
     mapper-locations:
@@ -125,14 +126,13 @@ logging:
         root: WARN
 cust:
     syncUrls:
-        debtTradeResources: http://10.20.201.42:8085/debtTradeResources/getJson?page=%d&pageSize=%d&trdProvinceCode=%s
-        getCompanyInfoById: http://10.20.201.42:8085/debtTradeCompanys/getCompanyInfoById/%s
-        #        http://10.20.201.42:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
-        getCompanyInfoByUpdateTime: http://10.20.201.42:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?updateFromDate=%s&updateToDate=%s
-        getPersonInfoById: http://10.20.201.42:8085/debtTradePersons/getPersonInfoById/%s
-        #        http://10.20.201.42:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
-        getPersonInfoByUpdateTime: http://10.20.201.42:8085/debtTradePersons/getPersonInfoByUpdateTime?updateFromDate=%s&updateToDate=%s
-
+      debtTradeResources: http://10.20.200.100:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
+      getCompanyInfoById: http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoById/%s
+      #        http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
+      getCompanyInfoByUpdateTime: http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+      getPersonInfoById: http://10.20.200.100:8085/debtTradePersons/getPersonInfoById/%s
+      #        http://10.20.200.100:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
+      getPersonInfoByUpdateTime: http://10.20.200.100:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
 
 env:
     env-hint: prod

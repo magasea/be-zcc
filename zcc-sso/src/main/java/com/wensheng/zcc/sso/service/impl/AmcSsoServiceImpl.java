@@ -406,6 +406,7 @@ public class AmcSsoServiceImpl implements AmcSsoService {
     amcUser.setUserCname((String)defaultClaims.get("usercname"));
     amcUser.setMobilePhone((String)defaultClaims.get("mobilephone"));
     amcUser.setDeptId(Long.valueOf((Integer)defaultClaims.get("deptId")));
+    amcUser.setCompanyId(Long.valueOf((Integer)defaultClaims.get("cmpyid")));
     amcUser.setTitle((Integer)defaultClaims.get("title"));
     amcUser.setLocation((Integer)defaultClaims.get("location"));
     amcUser.setLgroup((Integer)defaultClaims.get("lgroup"));

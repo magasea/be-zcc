@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.common.params.AmcCmpyEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
@@ -111,10 +112,33 @@ public class AmcUserController {
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcUser> getAmcUsers( @PathVariable Long amcId){
+  public AmcPage<AmcUserExt> getAmcUsers( @PathVariable Long amcId, @RequestBody  QueryParam queryParam) {
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+    if (CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("id", Direction.DESC);
+      orderByParam.put("user_name", Direction.DESC);
+      orderByParam.put("update_date", Direction.DESC);
+    }
+    if(null == amcId || amcId < 0){
+      amcId = Long.valueOf(AmcCmpyEnum.CMPY_WENSHENG.getId());
+    }
+    List<AmcUserExt> queryResults = null;
+    Long totalCount = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    try{
 
-    List<AmcUser> amcUserResult = amcUserService.getAmcUsers(amcId);
-    return amcUserResult;
+      queryResults = amcUserService.queryAmcUserPage(amcId, offset, queryParam.getPageInfo().getSize(), queryParam,
+          orderByParam);
+      totalCount = amcUserService.queryAmcUserCount(amcId, queryParam);
+
+
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(queryResults, totalCount );
 
   }
 

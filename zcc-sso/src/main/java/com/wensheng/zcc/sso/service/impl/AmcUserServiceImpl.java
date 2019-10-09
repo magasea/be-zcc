@@ -6,6 +6,7 @@ import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
@@ -46,6 +47,7 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 /**
  * @author chenwei on 3/14/19
@@ -84,6 +86,8 @@ public class AmcUserServiceImpl implements AmcUserService {
   @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
   private String amcAdminClientId;
 
+  private final String defaultPasswd = "wensheng";
+
 
   @Override
   @CacheEvict
@@ -112,11 +116,15 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Override
   public AmcUser createUser(AmcUser amcUser) {
+    boolean isInDb = false;
 
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     if(CollectionUtils.isEmpty(amcUsers)){
+      if(StringUtils.isEmpty(amcUser.getPassword())){
+        amcUser.setPassword( UserUtils.getEncode( String.format("%s-%s",defaultPasswd, AmcDateUtils.getFormatedDate())));
+      }
       int cnt = amcUserMapper.insertSelective(amcUser);
       if(cnt > 0){
         log.info("Insert new user with mobile phone:{}", amcUser.getMobilePhone());
@@ -136,11 +144,16 @@ public class AmcUserServiceImpl implements AmcUserService {
       }
 
       amcUserMapper.updateByPrimaryKeySelective(amcUsers.get(0));
+      isInDb = true;
     }
 
     if(amcUser.getDeptId() > 0 && amcUser.getTitle() > 0){
       AmcUserRole amcUserRole = new AmcUserRole();
-      amcUserRole.setUserId(amcUser.getId());
+      if(isInDb){
+        amcUserRole.setUserId(amcUser.getId());
+      }else{
+        amcUserRole.setUserId(amcUsers.get(0).getId());
+      }
       AmcRolesEnum amcRolesEnum =
           UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),
               AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle()));
@@ -224,7 +237,17 @@ public class AmcUserServiceImpl implements AmcUserService {
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     return amcUsers;
   }
-
+  @AmcUserQueryChecker
+  @Override
+  public List<AmcUserExt> getSubAmcUsers(AmcUserExample amcUserExample) {
+    List<AmcUserExt> amcUsers = amcUserExtMapper.selectByExtWithRowboundsExample(amcUserExample);
+    return amcUsers;
+  }
+  @AmcUserQueryChecker
+  @Override
+  public Long countSubAmcUsers(AmcUserExample amcUserExample) {
+    return amcUserMapper.countByExample(amcUserExample);
+  }
   @Override
   public List<AmcUserRole> getAmcUserRoles(Long userId) {
     AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
@@ -381,6 +404,30 @@ public class AmcUserServiceImpl implements AmcUserService {
 
     return amcUserMapper.countByExample(amcUserExample);
 
+  }
+
+  @Override
+  public List<AmcUserExt> queryAmcUserPage(Long amcId, int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) {
+    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
+    amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
+    RowBounds rowBounds = new RowBounds(offset, size);
+    try{
+      amcUserExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam, rowBounds));
+    }catch (Exception ex){
+      log.error("set order by exception:", ex);
+    }
+    List<AmcUserExt> amcUsers = getSubAmcUsers(amcUserExample);
+    amcUsers.forEach(item -> item.getAmcUser().setPassword(""));
+    return amcUsers;
+  }
+
+  @Override
+  public Long queryAmcUserCount(Long amcId, QueryParam queryParam) {
+
+    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
+    amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
+    return countSubAmcUsers(amcUserExample);
   }
 
   private AmcUser createUserAndRole(AmcUser amcUser, AmcRolesEnum amcRolesEnum){

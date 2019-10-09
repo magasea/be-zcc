@@ -49,6 +49,12 @@ public class AmcDateUtils {
         .build();
   }
 
+  public static String getFormatedDate(){
+    Date date = new Date();
+    String modifiedDate= new SimpleDateFormat("yyMMdd").format(date);
+    return modifiedDate;
+  }
+
   public static LocalDate toLocalDate(Timestamp timestamp) {
     return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp.getSeconds(), timestamp.getNanos()), ZoneId.of("UTC"))
         .toLocalDate();

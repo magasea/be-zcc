@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.common.params.AmcCmpyEnum;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
@@ -70,6 +71,16 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+  @RequestMapping(value = "/amcCompanies", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getAmcCompanies(){
 
+    List<String> result = new ArrayList<>();
+    for(AmcCmpyEnum amcCmpyEnum : AmcCmpyEnum.values()){
+      result.add(String.format("%d:%s:%s", amcCmpyEnum.getId(), amcCmpyEnum.getName(), amcCmpyEnum.getCname()
+      ));
+    }
+    return result;
+  }
 
 }

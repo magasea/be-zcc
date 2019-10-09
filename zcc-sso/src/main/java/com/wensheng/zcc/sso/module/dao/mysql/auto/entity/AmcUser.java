@@ -7,6 +7,8 @@ public class AmcUser {
 
     private String userName;
 
+    private String userCname;
+
     private String password;
 
     private String mobilePhone;
@@ -15,11 +17,11 @@ public class AmcUser {
 
     private Long deptId;
 
+    private Integer lgroup;
+
     private Long companyId;
 
     private Integer location;
-
-    private Integer lgroup;
 
     private Integer valid;
 
@@ -49,6 +51,14 @@ public class AmcUser {
 
     public void setUserName(String userName) {
         this.userName = userName == null ? null : userName.trim();
+    }
+
+    public String getUserCname() {
+        return userCname;
+    }
+
+    public void setUserCname(String userCname) {
+        this.userCname = userCname == null ? null : userCname.trim();
     }
 
     public String getPassword() {
@@ -83,6 +93,14 @@ public class AmcUser {
         this.deptId = deptId;
     }
 
+    public Integer getLgroup() {
+        return lgroup;
+    }
+
+    public void setLgroup(Integer lgroup) {
+        this.lgroup = lgroup;
+    }
+
     public Long getCompanyId() {
         return companyId;
     }
@@ -97,14 +115,6 @@ public class AmcUser {
 
     public void setLocation(Integer location) {
         this.location = location;
-    }
-
-    public Integer getLgroup() {
-        return lgroup;
-    }
-
-    public void setLgroup(Integer lgroup) {
-        this.lgroup = lgroup;
     }
 
     public Integer getValid() {

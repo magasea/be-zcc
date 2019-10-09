@@ -15,8 +15,6 @@ import org.springframework.security.web.context.SecurityContextPersistenceFilter
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Autowired
-	CustomFilter customFilter;
 
 
 
@@ -36,13 +34,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// @formatter:on
     }
 
-	@Bean
-	public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(CustomFilter customFilter) {
-		FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<OAuth2ClientContextFilter>();
-		registration.setFilter(customFilter);
-		registration.setOrder(-100);
-		return registration;
-	}
+//	@Bean
+//	public FilterRegistrationBean<OAuth2ClientContextFilter> oauth2ClientFilterRegistration(CustomFilter customFilter) {
+//		FilterRegistrationBean<OAuth2ClientContextFilter> registration = new FilterRegistrationBean<OAuth2ClientContextFilter>();
+////		registration.setFilter(customFilter);
+////		registration.setOrder(-100);
+//		return registration;
+//	}
 
 
 

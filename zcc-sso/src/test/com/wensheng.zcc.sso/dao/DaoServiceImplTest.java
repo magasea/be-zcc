@@ -248,6 +248,50 @@ public class DaoServiceImplTest {
     amcRolePermissions.add(amcRolePermission);
 
 
+    //ROLE_AMC_LOCAL_STUFF
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_DEBTASSET_VIEW.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_DEBTASSET_MOD.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
+
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_OPLOG_VIEW.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATPUB_VIEW.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATPUB_MOD.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
+
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_DEBT_OFFSLF.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
+
+
+    amcRolePermission = new AmcRolePermission();
+    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId()));
+    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_SCOPE_LOCATION.getId()));
+    amcRolePermissions.add(amcRolePermission);
+
     //ROLE_AMC_LOCAL_ADMINx`
 
 

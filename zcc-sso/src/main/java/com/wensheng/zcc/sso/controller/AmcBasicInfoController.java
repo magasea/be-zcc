@@ -4,7 +4,7 @@ import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
-import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.ArrayList;
 import java.util.List;

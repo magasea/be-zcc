@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service;
 
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
@@ -7,8 +8,11 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
-import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
+import com.wensheng.zcc.sso.service.util.QueryParam;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Sort.Direction;
 
 /**
  * @author chenwei on 3/14/19
@@ -53,4 +57,9 @@ public interface AmcUserService {
   List<AmcUser> searchUserByName(String name);
 
   boolean updateOrInsertSSOUser(List<SSOAmcUser> ssoAmcUsers);
+
+  List<AmcUserExt> queryUserPage(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam);
+
+  Long queryUserCount(QueryParam queryParam);
+
 }

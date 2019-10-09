@@ -1,4 +1,4 @@
-package com.wensheng.zcc.sso.module.helper;
+package com.wensheng.zcc.common.params.sso;
 
 import com.wensheng.zcc.common.utils.base.EnumUtils;
 import java.util.function.Function;

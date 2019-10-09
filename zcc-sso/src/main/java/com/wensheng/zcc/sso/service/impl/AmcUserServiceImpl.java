@@ -1,6 +1,9 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.params.AmcRolesEnum;
+import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
+import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
@@ -9,6 +12,7 @@ import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.ext.AmcUserExtMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
@@ -16,21 +20,26 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
-import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.service.AmcUserService;
+import com.wensheng.zcc.sso.service.util.QueryParam;
+import com.wensheng.zcc.sso.service.util.SQLUtils;
 import com.wensheng.zcc.sso.service.util.UserUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
@@ -49,6 +58,10 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Autowired
   AmcUserMapper amcUserMapper;
+
+
+  @Autowired
+  AmcUserExtMapper amcUserExtMapper;
 
   @Autowired
   AmcUserRoleMapper amcUserRoleMapper;
@@ -99,12 +112,42 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Override
   public AmcUser createUser(AmcUser amcUser) {
-    int cnt = amcUserMapper.insertSelective(amcUser);
-    if(cnt > 0){
-      return amcUser;
+
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    if(CollectionUtils.isEmpty(amcUsers)){
+      int cnt = amcUserMapper.insertSelective(amcUser);
+      if(cnt > 0){
+        log.info("Insert new user with mobile phone:{}", amcUser.getMobilePhone());
+      }else{
+        log.error("Insert new user with mobile phone:{} failed", amcUser.getMobilePhone());
+        return null;
+      }
     }else{
-      log.error(String.format("Failed to insert user"));
+      if(amcUser.getDeptId() > 0){
+        amcUsers.get(0).setDeptId(amcUser.getDeptId());
+      }
+      if(amcUser.getTitle() > 0){
+        amcUsers.get(0).setTitle(amcUser.getTitle());
+      }
+      if(amcUser.getLgroup() > 0){
+        amcUsers.get(0).setLgroup(amcUser.getLgroup());
+      }
+
+      amcUserMapper.updateByPrimaryKeySelective(amcUsers.get(0));
     }
+
+    if(amcUser.getDeptId() > 0 && amcUser.getTitle() > 0){
+      AmcUserRole amcUserRole = new AmcUserRole();
+      amcUserRole.setUserId(amcUser.getId());
+      AmcRolesEnum amcRolesEnum =
+          UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),
+              AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle()));
+      amcUserRole.setRoleId(Long.valueOf(amcRolesEnum.getId()));
+      amcUserRoleMapper.insertSelective(amcUserRole);
+    }
+
     return amcUser;
   }
 
@@ -312,6 +355,31 @@ public class AmcUserServiceImpl implements AmcUserService {
 
     }
     return true;
+
+  }
+
+  @Override
+  public List<AmcUserExt> queryUserPage(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) {
+    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
+    RowBounds rowBounds = new RowBounds(offset, size);
+    try{
+
+      amcUserExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam, rowBounds));
+    }catch (Exception ex){
+      log.error("set order by exception:", ex);
+    }
+    List<AmcUserExt> amcUsers = amcUserExtMapper.selectByExtWithRowboundsExample(amcUserExample);
+    amcUsers.forEach(item -> item.getAmcUser().setPassword(""));
+
+    return amcUsers;
+  }
+
+  @Override
+  public Long queryUserCount(QueryParam queryParam) {
+    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
+
+    return amcUserMapper.countByExample(amcUserExample);
 
   }
 

@@ -18,6 +18,8 @@ public class AmcUserDetail extends User {
 
   private String userName;
 
+  private String userCname;
+
   private String password;
 
   private String mobilePhone;

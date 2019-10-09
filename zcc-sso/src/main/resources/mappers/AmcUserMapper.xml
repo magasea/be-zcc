@@ -4,13 +4,14 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="user_name" jdbcType="VARCHAR" property="userName" />
+    <result column="user_cname" jdbcType="CHAR" property="userCname" />
     <result column="password" jdbcType="VARCHAR" property="password" />
     <result column="mobile_phone" jdbcType="CHAR" property="mobilePhone" />
     <result column="email" jdbcType="VARCHAR" property="email" />
     <result column="dept_id" jdbcType="BIGINT" property="deptId" />
+    <result column="lgroup" jdbcType="INTEGER" property="lgroup" />
     <result column="company_id" jdbcType="BIGINT" property="companyId" />
     <result column="location" jdbcType="INTEGER" property="location" />
-    <result column="lgroup" jdbcType="INTEGER" property="lgroup" />
     <result column="valid" jdbcType="INTEGER" property="valid" />
     <result column="title" jdbcType="INTEGER" property="title" />
     <result column="nick_name" jdbcType="CHAR" property="nickName" />
@@ -78,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_name, password, mobile_phone, email, dept_id, company_id, location, lgroup, 
-    valid, title, nick_name, create_by, create_date, update_by, update_date
+    id, user_name, user_cname, password, mobile_phone, email, dept_id, lgroup, company_id, 
+    location, valid, title, nick_name, create_by, create_date, update_by, update_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultMap="BaseResultMap">
     select
@@ -116,18 +117,18 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_USER (user_name, password, mobile_phone, 
-      email, dept_id, company_id, 
-      location, lgroup, valid, 
-      title, nick_name, create_by, 
-      create_date, update_by, update_date
-      )
-    values (#{userName,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{mobilePhone,jdbcType=CHAR}, 
-      #{email,jdbcType=VARCHAR}, #{deptId,jdbcType=BIGINT}, #{companyId,jdbcType=BIGINT}, 
-      #{location,jdbcType=INTEGER}, #{lgroup,jdbcType=INTEGER}, #{valid,jdbcType=INTEGER}, 
-      #{title,jdbcType=INTEGER}, #{nickName,jdbcType=CHAR}, #{createBy,jdbcType=BIGINT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}
-      )
+    insert into AMC_USER (user_name, user_cname, password, 
+      mobile_phone, email, dept_id, 
+      lgroup, company_id, location, 
+      valid, title, nick_name, 
+      create_by, create_date, update_by, 
+      update_date)
+    values (#{userName,jdbcType=VARCHAR}, #{userCname,jdbcType=CHAR}, #{password,jdbcType=VARCHAR}, 
+      #{mobilePhone,jdbcType=CHAR}, #{email,jdbcType=VARCHAR}, #{deptId,jdbcType=BIGINT}, 
+      #{lgroup,jdbcType=INTEGER}, #{companyId,jdbcType=BIGINT}, #{location,jdbcType=INTEGER}, 
+      #{valid,jdbcType=INTEGER}, #{title,jdbcType=INTEGER}, #{nickName,jdbcType=CHAR}, 
+      #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -137,6 +138,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="userName != null">
         user_name,
+      </if>
+      <if test="userCname != null">
+        user_cname,
       </if>
       <if test="password != null">
         password,
@@ -150,14 +154,14 @@
       <if test="deptId != null">
         dept_id,
       </if>
+      <if test="lgroup != null">
+        lgroup,
+      </if>
       <if test="companyId != null">
         company_id,
       </if>
       <if test="location != null">
         location,
-      </if>
-      <if test="lgroup != null">
-        lgroup,
       </if>
       <if test="valid != null">
         valid,
@@ -185,6 +189,9 @@
       <if test="userName != null">
         #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="userCname != null">
+        #{userCname,jdbcType=CHAR},
+      </if>
       <if test="password != null">
         #{password,jdbcType=VARCHAR},
       </if>
@@ -197,14 +204,14 @@
       <if test="deptId != null">
         #{deptId,jdbcType=BIGINT},
       </if>
+      <if test="lgroup != null">
+        #{lgroup,jdbcType=INTEGER},
+      </if>
       <if test="companyId != null">
         #{companyId,jdbcType=BIGINT},
       </if>
       <if test="location != null">
         #{location,jdbcType=INTEGER},
-      </if>
-      <if test="lgroup != null">
-        #{lgroup,jdbcType=INTEGER},
       </if>
       <if test="valid != null">
         #{valid,jdbcType=INTEGER},
@@ -244,6 +251,9 @@
       <if test="record.userName != null">
         user_name = #{record.userName,jdbcType=VARCHAR},
       </if>
+      <if test="record.userCname != null">
+        user_cname = #{record.userCname,jdbcType=CHAR},
+      </if>
       <if test="record.password != null">
         password = #{record.password,jdbcType=VARCHAR},
       </if>
@@ -256,14 +266,14 @@
       <if test="record.deptId != null">
         dept_id = #{record.deptId,jdbcType=BIGINT},
       </if>
+      <if test="record.lgroup != null">
+        lgroup = #{record.lgroup,jdbcType=INTEGER},
+      </if>
       <if test="record.companyId != null">
         company_id = #{record.companyId,jdbcType=BIGINT},
       </if>
       <if test="record.location != null">
         location = #{record.location,jdbcType=INTEGER},
-      </if>
-      <if test="record.lgroup != null">
-        lgroup = #{record.lgroup,jdbcType=INTEGER},
       </if>
       <if test="record.valid != null">
         valid = #{record.valid,jdbcType=INTEGER},
@@ -295,13 +305,14 @@
     update AMC_USER
     set id = #{record.id,jdbcType=BIGINT},
       user_name = #{record.userName,jdbcType=VARCHAR},
+      user_cname = #{record.userCname,jdbcType=CHAR},
       password = #{record.password,jdbcType=VARCHAR},
       mobile_phone = #{record.mobilePhone,jdbcType=CHAR},
       email = #{record.email,jdbcType=VARCHAR},
       dept_id = #{record.deptId,jdbcType=BIGINT},
+      lgroup = #{record.lgroup,jdbcType=INTEGER},
       company_id = #{record.companyId,jdbcType=BIGINT},
       location = #{record.location,jdbcType=INTEGER},
-      lgroup = #{record.lgroup,jdbcType=INTEGER},
       valid = #{record.valid,jdbcType=INTEGER},
       title = #{record.title,jdbcType=INTEGER},
       nick_name = #{record.nickName,jdbcType=CHAR},
@@ -319,6 +330,9 @@
       <if test="userName != null">
         user_name = #{userName,jdbcType=VARCHAR},
       </if>
+      <if test="userCname != null">
+        user_cname = #{userCname,jdbcType=CHAR},
+      </if>
       <if test="password != null">
         password = #{password,jdbcType=VARCHAR},
       </if>
@@ -331,14 +345,14 @@
       <if test="deptId != null">
         dept_id = #{deptId,jdbcType=BIGINT},
       </if>
+      <if test="lgroup != null">
+        lgroup = #{lgroup,jdbcType=INTEGER},
+      </if>
       <if test="companyId != null">
         company_id = #{companyId,jdbcType=BIGINT},
       </if>
       <if test="location != null">
         location = #{location,jdbcType=INTEGER},
-      </if>
-      <if test="lgroup != null">
-        lgroup = #{lgroup,jdbcType=INTEGER},
       </if>
       <if test="valid != null">
         valid = #{valid,jdbcType=INTEGER},
@@ -367,13 +381,14 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser">
     update AMC_USER
     set user_name = #{userName,jdbcType=VARCHAR},
+      user_cname = #{userCname,jdbcType=CHAR},
       password = #{password,jdbcType=VARCHAR},
       mobile_phone = #{mobilePhone,jdbcType=CHAR},
       email = #{email,jdbcType=VARCHAR},
       dept_id = #{deptId,jdbcType=BIGINT},
+      lgroup = #{lgroup,jdbcType=INTEGER},
       company_id = #{companyId,jdbcType=BIGINT},
       location = #{location,jdbcType=INTEGER},
-      lgroup = #{lgroup,jdbcType=INTEGER},
       valid = #{valid,jdbcType=INTEGER},
       title = #{title,jdbcType=INTEGER},
       nick_name = #{nickName,jdbcType=CHAR},

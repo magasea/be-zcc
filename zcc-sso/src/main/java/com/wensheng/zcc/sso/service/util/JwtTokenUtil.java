@@ -1,8 +1,12 @@
 package com.wensheng.zcc.sso.service.util;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwsHeader;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.SigningKeyResolver;
+import io.jsonwebtoken.SigningKeyResolverAdapter;
+import io.jsonwebtoken.impl.TextCodec;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
@@ -61,4 +65,6 @@ public class JwtTokenUtil implements Serializable {
     final String username = getUsernameFromToken(token);
     return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
   }
+
+
 }

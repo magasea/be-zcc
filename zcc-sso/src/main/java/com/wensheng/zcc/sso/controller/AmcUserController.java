@@ -1,5 +1,8 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -8,23 +11,24 @@ import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
-import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.AmcUserService;
+import com.wensheng.zcc.sso.service.util.QueryParam;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import javax.annotation.Resource;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -147,10 +151,33 @@ public class AmcUserController {
   @PreAuthorize("hasRole('SYSTEM_ADMIN')")
   @RequestMapping(value = "/amc-user/allUsers", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcUser> getAllUsers( ){
+  public AmcPage<AmcUserExt> getAllUsers( @RequestBody QueryParam queryParam){
 
-    List<AmcUser> amcUserResult = amcUserService.getAllUsers();
-    return amcUserResult;
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+
+
+    if (CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("id", Direction.DESC);
+      orderByParam.put("user_name", Direction.DESC);
+      orderByParam.put("update_date", Direction.DESC);
+    }
+    List<AmcUserExt> queryResults = null;
+    Long totalCount = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    try{
+
+      queryResults = amcUserService.queryUserPage(offset, queryParam.getPageInfo().getSize(), queryParam,
+          orderByParam);
+      totalCount = amcUserService.queryUserCount(queryParam);
+
+
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(queryResults, totalCount );
 
   }
   @AmcUserModifyChecker

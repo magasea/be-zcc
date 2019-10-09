@@ -62,7 +62,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 import com.google.gson.TypeAdapterFactory;
-@Component
+//@Component
 public class CustomFilter extends OAuth2ClientContextFilter {
 
   @Autowired
@@ -124,7 +124,7 @@ public class CustomFilter extends OAuth2ClientContextFilter {
     if(detailsParam.containsKey("mobilephone") && null != detailsParam.get("mobilephone")){
       String mobilephone = (String) detailsParam.get("mobilephone");
       LocalToken oauthAccessToken = getTokenFromSso((HttpServletRequest)request, mobilephone);
-      System.out.println(oauthAccessToken);
+//      System.out.println(oauthAccessToken);
       OAuth2Authentication oAuth2AuthenticationUpdate =
           tokenStore.readAuthentication(oauthAccessToken.getAccessToken());
 

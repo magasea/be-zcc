@@ -16,7 +16,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
-import com.wensheng.zcc.sso.module.helper.AmcUserValidEnum;
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
 import com.wensheng.zcc.sso.service.UserService;
 import java.time.Instant;

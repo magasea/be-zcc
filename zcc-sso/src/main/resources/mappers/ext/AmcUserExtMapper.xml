@@ -43,6 +43,7 @@
   <sql id="User_Column_List">
     ${prefix}id as id,
     ${prefix}user_name as user_name,
+    ${prefix}user_cname as user_cname,
     ${prefix}password as password,
     ${prefix}mobile_phone as mobile_phone,
     ${prefix}email as email,
@@ -83,4 +84,27 @@
     where au.id = #{id}
   </select>
 
+
+  <select id="selectByExtWithRowboundsExample"
+    parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultMap="BaseExtResultMap">
+    select
+    <include refid="User_Column_List"><property name="prefix" value="au."/></include>
+    ,
+    <include
+      refid="Role_Column_List"><property name="prefix" value="ar."/><property name="alias" value="role_"/></include>
+    ,
+    <include
+      refid="Perm_Column_List"><property name="prefix" value="ap."/><property name="alias" value="perm_"/></include>
+    from AMC_USER au
+    left join AMC_USER_ROLE aur on au.id = aur.user_id
+    left join AMC_ROLE ar on aur.role_id = ar.role_id
+    left join AMC_ROLE_PERMISSION arp on arp.role_id = aur.role_id
+    left join AMC_PERMISSION ap on arp.permission_id = ap.perm_id
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
 </mapper>

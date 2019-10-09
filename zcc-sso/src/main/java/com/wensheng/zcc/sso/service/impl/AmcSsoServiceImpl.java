@@ -4,19 +4,27 @@ import com.google.api.Page;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.params.PageInfo;
+import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
+import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.KafkaService;
 import com.wensheng.zcc.sso.service.UserService;
 import com.wensheng.zcc.sso.service.util.JwtTokenUtil;
+import com.wensheng.zcc.sso.service.util.UserUtils;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.DefaultClaims;
 import java.security.AlgorithmParameters;
 import java.security.Security;
@@ -47,7 +55,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -105,6 +115,9 @@ public class AmcSsoServiceImpl implements AmcSsoService {
 
   @Autowired
   KafkaService kafkaService;
+
+  @Autowired
+  SecretService secretService;
 
   @Autowired
   JwtTokenUtil jwtTokenUtil;
@@ -339,23 +352,72 @@ public class AmcSsoServiceImpl implements AmcSsoService {
 
   @Override
   public OAuth2AccessToken generateTokenFromToken(String acccessToken) throws Exception {
-    String token = acccessToken.replace("[", "");
-    token = token.replace("]", "");
-    DefaultClaims claims = (DefaultClaims) jwtTokenUtil.getAllClaimsFromToken(token);
-//    OAuth2Authentication oAuth2Authentication = tokenServices.loadAuthentication(acccessToken);
-    Map<String, Object> detailsParam =
-        new HashMap<>();
-    detailsParam.put("mobilephone","");
-    accessTokenConverter.getAccessTokenConverter().extractAccessToken(acccessToken, detailsParam);
-    if(detailsParam.containsKey("mobilephone") && null != detailsParam.get("mobilephone")) {
-      String mobilephone = (String) detailsParam.get("mobilephone");
-      OAuth2AccessToken oauthAccessToken = generateToken(mobilephone);
+//    String token = acccessToken.replace("[", "");
+//    token = token.replace("]", "");
+//    DefaultClaims claims = (DefaultClaims) jwtTokenUtil.getAllClaimsFromToken(token);
+////    OAuth2Authentication oAuth2Authentication = tokenServices.loadAuthentication(acccessToken);
+//    Map<String, Object> detailsParam =
+//        new HashMap<>();
+//    detailsParam.put("mobilephone","");
+//    accessTokenConverter.getAccessTokenConverter().extractAccessToken(acccessToken, detailsParam);
+//    if(detailsParam.containsKey("mobilephone") && null != detailsParam.get("mobilephone")) {
+//      String mobilephone = (String) detailsParam.get("mobilephone");
+//      OAuth2AccessToken oauthAccessToken = generateToken(mobilephone);
+//      return oauthAccessToken;
+//    }else{
+//      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_SSO_TOKEN, "no mobilephone there");
+//    }
+
+    Jws<Claims> jws = Jwts.parser()
+        .setSigningKeyResolver(secretService.getSigningKeyResolver())
+        .parseClaimsJws(acccessToken);
+
+    DefaultClaims defaultClaims = (DefaultClaims) jws.getBody();
+    if(defaultClaims.containsKey("mobilephone")){
+      String mobilephone = (String)defaultClaims.get("mobilephone");
+      OAuth2AccessToken oauthAccessToken = null;
+      try{
+        oauthAccessToken = generateToken(mobilephone);
+      }catch (Exception ex){
+        log.error("failed to generateToken", ex);
+      }
+      if(oauthAccessToken == null && defaultClaims.containsKey("deptId") && defaultClaims.containsKey("title")
+          && defaultClaims.containsKey("location") && defaultClaims.containsKey("lgroup")){
+        if( (Integer)defaultClaims.get("deptId") > 0 && (Integer)defaultClaims.get("title") > 0){
+          createUserFromSSO(defaultClaims);
+          oauthAccessToken = generateToken(mobilephone);
+        }
+      }
       return oauthAccessToken;
-    }else{
-      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_SSO_TOKEN, "no mobilephone there");
+    }
+    throw new BadCredentialsException("this token is not valid");
+
+
+  }
+
+  private boolean createUserFromSSO(DefaultClaims defaultClaims){
+    //create the user from sso
+    //1. create user
+    //2. find the match role
+    //3. get token for this user
+
+    AmcUser amcUser = new AmcUser();
+    amcUser.setUserName((String)defaultClaims.get("username"));
+    amcUser.setUserCname((String)defaultClaims.get("usercname"));
+    amcUser.setMobilePhone((String)defaultClaims.get("mobilephone"));
+    amcUser.setDeptId(Long.valueOf((Integer)defaultClaims.get("deptId")));
+    amcUser.setTitle((Integer)defaultClaims.get("title"));
+    amcUser.setLocation((Integer)defaultClaims.get("location"));
+    amcUser.setLgroup((Integer)defaultClaims.get("lgroup"));
+    amcUser.setNickName((String)defaultClaims.get("nickName"));
+    amcUser.setValid(AmcUserValidEnum.VALID.getId());
+    AmcUser result = amcUserService.createUser(amcUser);
+
+    if(null == result){
+      return false;
     }
 
-
+    return true;
   }
 
   @Data

@@ -2,6 +2,8 @@ package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcCmpyEnum;
+import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
@@ -60,14 +62,14 @@ public class AmcBasicInfoController {
     return result;
   }
 
-  @RequestMapping(value = "/amcBranchLocations", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcLocations", method = RequestMethod.POST)
   @ResponseBody
   public List<String> getAmcBranchLocations(){
 
     List<String> result = new ArrayList<>();
-    for(AmcBranchLocationEnum amcBranchLocationEnum : AmcBranchLocationEnum.values()){
-      result.add(String.format("%d:%s:%s", amcBranchLocationEnum.getId(), amcBranchLocationEnum.getName(),
-          amcBranchLocationEnum.getCname()));
+    for(AmcLocationEnum amcLocationEnum : AmcLocationEnum.values()){
+      result.add(String.format("%d:%s:%s", amcLocationEnum.getId(), amcLocationEnum.getName(),
+          amcLocationEnum.getCname()));
     }
     return result;
   }
@@ -82,5 +84,15 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+  @RequestMapping(value = "/amcDepts", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getAmcDepts(){
 
+    List<String> result = new ArrayList<>();
+    for(AmcDeptEnum amcDeptEnum : AmcDeptEnum.values()){
+      result.add(String.format("%d:%s:%s", amcDeptEnum.getId(), amcDeptEnum.getName(), amcDeptEnum.getCname()
+      ));
+    }
+    return result;
+  }
 }

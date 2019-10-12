@@ -788,7 +788,12 @@ public class SyncServiceImpl implements SyncService {
     }
     custTrdInfo.setInfoUrl(trdInfoFromSync.getUrl());
     custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
-    custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep());
+    if(StringUtils.isEmpty(trdInfoFromSync.getDebtCityPrep())){
+      log.info("DebtCityPrep is empty so we use DebtProvincePrep in city field with:{}",trdInfoFromSync.getDebtProvincePrep() );
+      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtProvincePrep());
+    }else{
+      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep());
+    }
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
     custTrdInfo.setTrdContactorName(trdInfoFromSync.getLinkMan());
     custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getLinkAddress());

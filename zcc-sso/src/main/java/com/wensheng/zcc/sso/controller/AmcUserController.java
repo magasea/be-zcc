@@ -9,9 +9,12 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.aop.AmcUserCreateChecker;
 import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
+import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
+import com.wensheng.zcc.sso.aop.LogExecutionTime;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
@@ -19,6 +22,7 @@ import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.util.QueryParam;
+import com.wensheng.zcc.sso.service.util.SQLUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +31,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort.Direction;
@@ -108,8 +113,16 @@ public class AmcUserController {
 
     return "succeed";
   }
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or  hasPermission(#amcId,'PERM_AMCACCOUNT_VIEW')")
+  @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsersTest", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
+
+  public List<AmcUser> getAmcUsersTest( @PathVariable Long amcId) {
+    return amcUserService.getAmcUsers(amcId);
+  }
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId,'PERM_AMCACCOUNT_VIEW')")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers", method = RequestMethod.POST)
   @ResponseBody
   public AmcPage<AmcUserExt> getAmcUsers( @PathVariable Long amcId, @RequestBody  QueryParam queryParam) {
@@ -125,13 +138,17 @@ public class AmcUserController {
     List<AmcUserExt> queryResults = null;
     Long totalCount = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
+    amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
+    totalCount = amcUserService.queryAmcUserCount(amcUserExample);
     try{
-
-      queryResults = amcUserService.queryAmcUserPage(amcId, offset, queryParam.getPageInfo().getSize(), queryParam,
-          orderByParam);
-      totalCount = amcUserService.queryAmcUserCount(amcId, queryParam);
-
-
+      RowBounds rowBounds = new RowBounds(offset, queryParam.getPageInfo().getSize());
+      try{
+        amcUserExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam, rowBounds));
+      }catch (Exception ex){
+        log.error("set order by exception:", ex);
+      }
+      queryResults = amcUserService.queryAmcUserPage(amcUserExample);
     }catch (Exception ex){
       log.error("got error when query:"+ex.getMessage());
       throw ex;
@@ -265,13 +282,12 @@ public class AmcUserController {
 
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#companyId, 'AMC_VIEW')")
   @RequestMapping(value = "/amc/amc-company/{companyId}/company", method = RequestMethod.POST)
   @ResponseBody
-  public AmcCompany queryCompany(@PathVariable Long companyId){
+  public AmcCmpyEnum queryCompany(@PathVariable Long companyId){
 
-    AmcCompany amcCompanyResult = amcBasicService.queryCompany(companyId);
-    return amcCompanyResult;
+    AmcCmpyEnum amcCmpyEnum = AmcCmpyEnum.lookupByDisplayIdUtil(companyId.intValue());
+    return amcCmpyEnum;
 
   }
 

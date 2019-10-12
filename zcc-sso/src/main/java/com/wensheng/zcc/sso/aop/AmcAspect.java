@@ -8,6 +8,8 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
 import com.wensheng.zcc.sso.service.AmcUserService;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -20,8 +22,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
+import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -29,6 +33,7 @@ import org.springframework.util.CollectionUtils;
  * @project zcc-backend
  */
 @Aspect
+@Component
 @EnableAspectJAutoProxy
 @Configuration
 @Slf4j
@@ -68,11 +73,11 @@ public class AmcAspect {
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     AmcUserDetail amcUserDetail = (AmcUserDetail) authentication.getPrincipal();
-
-    if(amcUserDetail.getId() != null && 0 < amcUserDetail.getId() && authentication.getAuthorities().contains(
-        AmcRolesEnum.ROLE_AMC_ADMIN.getName())){
-      log.info("It is amc_admin query, so only local users can be selected");
-      amcUserExample.createCriteria().andDeptIdEqualTo(amcUserDetail.getDeptId()).andLocationEqualTo(amcUserDetail.getLocation());
+    AmcUserExample.Criteria criteria = amcUserExample.or();
+    if(amcUserDetail.getId() != null && 0 < amcUserDetail.getId() && (amcUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AmcRolesEnum.ROLE_AMC_LOCAL_ADMIN.getName()))||
+        amcUserDetail.getAuthorities().contains(new SimpleGrantedAuthority(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getName())))){
+      log.info("It is local admin and local visitor query, so only local users can be selected");
+      criteria.andDeptIdEqualTo(amcUserDetail.getDeptId()).andLocationEqualTo(amcUserDetail.getLocation());
 
     }
 
@@ -136,5 +141,15 @@ public class AmcAspect {
   private Object callReturn(ProceedingJoinPoint joinPoint) throws Throwable {
     return joinPoint.proceed();
   }
+
+  @Around("@annotation(LogExecutionTime)")
+  public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{
+    final long start = System.currentTimeMillis();
+    final Object proceed = joinPoint.proceed();
+    final long executime = System.currentTimeMillis() - start;
+    log.info(String.format("%s executed in %d ms", joinPoint.getSignature(), executime));
+    return proceed;
+  }
+
 
 }

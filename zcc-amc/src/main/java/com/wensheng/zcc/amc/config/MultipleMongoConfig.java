@@ -22,10 +22,10 @@ public class MultipleMongoConfig {
     private final MultipleMongoProperties mongoProperties;
 
 
-    @Bean(name = PrimaryMongoConfig.MONGO_TEMPLATE)
-    public MongoTemplate originalMongoTemplate() throws Exception {
-        return new MongoTemplate(originalFactory(this.mongoProperties.getOriginal()));
-    }
+//    @Bean(name = PrimaryMongoConfig.MONGO_TEMPLATE)
+//    public MongoTemplate originalMongoTemplate() throws Exception {
+//        return new MongoTemplate(originalFactory(this.mongoProperties.getOriginal()));
+//    }
 
     @Primary
     @Bean(name = SecondaryMongoConfig.MONGO_TEMPLATE)
@@ -33,11 +33,11 @@ public class MultipleMongoConfig {
         return new MongoTemplate(wszccFactory(this.mongoProperties.getWszcc()));
     }
 
-    @Bean
-    public MongoDbFactory originalFactory(final MongoProperties mongo) throws Exception {
-        return new SimpleMongoDbFactory(new MongoClient(mongo.getHost(), mongo.getPort()),
-                mongo.getDatabase());
-    }
+//    @Bean
+//    public MongoDbFactory originalFactory(final MongoProperties mongo) throws Exception {
+//        return new SimpleMongoDbFactory(new MongoClient(mongo.getHost(), mongo.getPort()),
+//                mongo.getDatabase());
+//    }
 
     @Bean
     public MongoDbFactory wszccFactory(final MongoProperties mongo) throws Exception {

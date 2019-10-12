@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.config;
 
+import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
 import java.io.Serializable;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -20,13 +21,16 @@ public class SecurityPermissionEvaluator implements PermissionEvaluator {
     if ((auth == null) || (targetDomainObject == null) || !(permission instanceof String)){
       return false;
     }
-    String targetType = targetDomainObject.getClass().getSimpleName().toUpperCase();
-    if(targetType.equals("LONG")){
-      return hasPrivilege(auth, String.format("PERM_%s",targetDomainObject),
-          permission.toString().toUpperCase());
-    }else{
-      return hasPrivilege(auth, targetType, permission.toString().toUpperCase());
+    AmcUserDetail amcUserDetail = (AmcUserDetail) auth.getPrincipal();
+    if(amcUserDetail == null){
+      return false;
     }
+    if( amcUserDetail.getCompanyId().longValue() != (Long) targetDomainObject){
+      return false;
+    }
+
+    return hasPrivilege(auth, permission.toString().toUpperCase());
+
 
   }
 
@@ -45,6 +49,17 @@ public class SecurityPermissionEvaluator implements PermissionEvaluator {
         if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
           return true;
         }
+      }
+    }
+    return false;
+  }
+
+  private boolean hasPrivilege(Authentication auth,  String permission) {
+    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
+
+      if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
+        return true;
+
       }
     }
     return false;

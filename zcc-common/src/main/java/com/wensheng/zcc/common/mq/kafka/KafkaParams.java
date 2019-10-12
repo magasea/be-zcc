@@ -13,5 +13,7 @@ public class KafkaParams {
   public static final String MQ_TOPIC_WECHAT_USERLOCATION = "topic_wechat_userLocation";
   public static final String MQ_TOPIC_AMC_USEROPER = "topic_amc_userOper";
   public static final String MQ_TOPIC_WECHAT_USERCREATE = "topic_wechat_usercreate";
+  public static final String MQ_TOPIC_SSO_USERCHANGED = "topic_sso_userchanged";
+
 
 }

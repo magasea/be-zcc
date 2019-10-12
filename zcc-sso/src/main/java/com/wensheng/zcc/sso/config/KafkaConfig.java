@@ -1,16 +1,21 @@
 package com.wensheng.zcc.sso.config;
 
-import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.GsonSerializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
+import org.springframework.kafka.core.ConsumerFactory;
+import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
 import org.springframework.kafka.core.DefaultKafkaProducerFactory;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.kafka.core.ProducerFactory;
@@ -55,6 +60,19 @@ public class KafkaConfig {
     return new NewTopic(MQ_TOPIC_WECHAT_USERLOCATION, 3, (short) 1);
   }
 
+
+  @Bean
+  public ConsumerFactory<? super String, ? super Object> baAmcUserFactory() {
+    GsonDeserializer gsonDeserializer = new GsonDeserializer<>();
+    Map<String, String> config = new HashMap<>();
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, AmcUser.class.getName());
+    gsonDeserializer.configure(config, false);
+    gsonDeserializer.close();
+    return new DefaultKafkaConsumerFactory<>(
+        kafkaProperties.buildConsumerProperties(), new StringDeserializer(), gsonDeserializer
+    );
+  }
+
   // Consumer configuration
 
   // If you only need one kind of deserialization, you only need to set the
@@ -73,6 +91,25 @@ public class KafkaConfig {
 //
 //        return props;
 //    }
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, byte[]> baAmcUserListenerFactory() {
+
+    ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(baAmcUserFactory());
+//    MessageConverter messageConverter = new BytesJsonMessageConverter();
+//    factory.setMessageConverter(messageConverter);
+    return factory;
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, Object> kafkaListenerContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, Object> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(baAmcUserFactory());
+
+    return factory;
+  }
 
 
 }

@@ -41,7 +41,7 @@ public interface AmcUserService {
   List<AmcUser> getAmcUsers(Long amcId);
   List<AmcUser> getAmcUsers(AmcUserExample amcUserExample);
   List<AmcUserExt> getSubAmcUsers(AmcUserExample amcUserExample);
-  public Long countSubAmcUsers(AmcUserExample amcUserExample) ;
+  Long countSubAmcUsers(AmcUserExample amcUserExample) ;
 
   List<AmcUserRole> getAmcUserRoles(Long userId);
 
@@ -64,8 +64,7 @@ public interface AmcUserService {
 
   Long queryUserCount(QueryParam queryParam);
 
-  List<AmcUserExt> queryAmcUserPage(Long amcId, int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam);
+  List<AmcUserExt> queryAmcUserPage(AmcUserExample amcUserExample);
 
-  Long queryAmcUserCount(Long amcIdm, QueryParam queryParam);
+  Long queryAmcUserCount(AmcUserExample amcUserExample);
 }

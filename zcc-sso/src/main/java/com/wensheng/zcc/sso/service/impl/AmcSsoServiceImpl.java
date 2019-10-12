@@ -269,6 +269,8 @@ public class AmcSsoServiceImpl implements AmcSsoService {
   }
 
 
+
+
   public String decodePhone(String encryptedData, String iv, String sessionKey){
     try {
       byte[] sessionKeyBytes = Base64.decode(sessionKey);
@@ -376,11 +378,11 @@ public class AmcSsoServiceImpl implements AmcSsoService {
     if(defaultClaims.containsKey("mobilephone")){
       String mobilephone = (String)defaultClaims.get("mobilephone");
       OAuth2AccessToken oauthAccessToken = null;
-      try{
-        oauthAccessToken = generateToken(mobilephone);
-      }catch (Exception ex){
-        log.error("failed to generateToken", ex);
-      }
+//      try{
+//        oauthAccessToken = generateToken(mobilephone);
+//      }catch (Exception ex){
+//        log.error("failed to generateToken", ex);
+//      }
       if(oauthAccessToken == null && defaultClaims.containsKey("deptId") && defaultClaims.containsKey("title")
           && defaultClaims.containsKey("location") && defaultClaims.containsKey("lgroup")){
         if( (Integer)defaultClaims.get("deptId") > 0 && (Integer)defaultClaims.get("title") > 0){

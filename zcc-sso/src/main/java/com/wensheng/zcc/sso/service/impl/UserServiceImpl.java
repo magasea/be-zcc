@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         userEnabled,grantedAuthorityAuthorities);
     AmcBeanUtils.copyProperties(amcUsers.get(0), amcUserDetail);
 
-//    UserDetails userDetails =
+//    UserDetails userDetails =generateTokenByMobilephone
 //        User.builder().authorities(grantedAuthorityAuthorities).username(amcUsers.get(0).getMobilePhone()).password(amcUsers.get(0).getPassword()).disabled(!amcUsers.get(0).getValid().equals(
 //        AmcUserValidEnum.VALID.getId())).build();
     return amcUserDetail;
@@ -109,19 +109,19 @@ public class UserServiceImpl implements UserService {
 //      authorities.add(String.format("PERM_%s_READ",amcUser.getCompanyId()));
 //      isAmcOper = true;
 //    }
-    boolean isCompanyUser = false;
-    if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
-      isCompanyUser = true;
-    }
+//    boolean isCompanyUser = false;
+//    if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0){
+//      isCompanyUser = true;
+//    }
     StringBuilder sb = new StringBuilder();
     for(AmcPermission amcPermission: amcUserExt.getAmcPermissions()){
-      sb.setLength(0);
-      if(amcPermission.getName().contains("AMC") && isCompanyUser){
-        sb.append("PERM_").append(amcUser.getCompanyId()).append("_").append(amcPermission.getName().substring("PERM_".length()));
-        authorities.add(sb.toString());
-      }else{
+//      sb.setLength(0);
+//      if(amcPermission.getName().contains("AMC") && isCompanyUser){
+//        sb.append("PERM_").append(amcUser.getCompanyId()).append("_").append(amcPermission.getName().substring("PERM_".length()));
+//        authorities.add(sb.toString());
+//      }else{
         authorities.add(amcPermission.getName());
-      }
+//      }
     }
     for(AmcRole amcRole: amcUserExt.getAmcRoles()){
       authorities.add(amcRole.getName());

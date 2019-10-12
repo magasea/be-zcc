@@ -156,8 +156,8 @@ public class DaoServiceImplTest {
     amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATPUB_VIEW.getId()));
     amcRolePermissions.add(amcRolePermission);
     amcRolePermission = new AmcRolePermission();
-    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
-    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATCUST_VIEW.getId()));
+//    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
+//    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATCUST_VIEW.getId()));
     amcRolePermissions.add(amcRolePermission);
     amcRolePermission = new AmcRolePermission();
     amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
@@ -191,8 +191,8 @@ public class DaoServiceImplTest {
     amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATPUB_VIEW.getId()));
     amcRolePermissions.add(amcRolePermission);
     amcRolePermission = new AmcRolePermission();
-    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_VISITOR.getId()));
-    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATCUST_VIEW.getId()));
+//    amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_VISITOR.getId()));
+//    amcRolePermission.setPermissionId(Long.valueOf(AmcPermEnum.PERM_WECHATCUST_VIEW.getId()));
     amcRolePermissions.add(amcRolePermission);
     amcRolePermission = new AmcRolePermission();
     amcRolePermission.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_VISITOR.getId()));

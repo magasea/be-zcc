@@ -4,6 +4,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import java.util.List;
+import java.util.Set;
 import lombok.Data;
 
 /**
@@ -14,7 +15,7 @@ import lombok.Data;
 public class AmcUserExt {
   Long id;
   AmcUser amcUser;
-  List<AmcRole> amcRoles;
-  List<AmcPermission> amcPermissions;
+  Set<AmcRole> amcRoles;
+  Set<AmcPermission> amcPermissions;
 
 }

@@ -11,7 +11,7 @@ public enum AmcCmpyEnum {
   CMPY_WENSHENG("CMPY_WENSHENG","上海文盛资产管理股份有限公司", 1),
   CMPY_JIAWO("CMPY_JIAWO","嘉沃", 2),
   CMPY_GAOSHENG("CMPY_GAOSHENG","高盛", 3),
-  CMPY_ZHUHAI("RISKCTRL_DEPT","珠海", 3),
+  CMPY_ZHUHAI("RISKCTRL_DEPT","珠海", 4),
 
   ;
   private String name;

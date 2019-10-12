@@ -260,7 +260,7 @@ public class AmcDebtController {
   }
 
   @EditActionChecker
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') ")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') ")
   @RequestMapping(value = "/api/amcid/{amcid}/debt/del", method = RequestMethod.POST)
   @ResponseBody
   public void delAmcDebt(@RequestBody BaseActionVo<Long> debtIdBaseActionVo) throws Exception {
@@ -269,9 +269,9 @@ public class AmcDebtController {
 
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','AMC_ADMIN','AMC_USER')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission (#id, 'PERM_DEBTASSET_MOD')")
   @ResponseBody
-  public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo) throws Exception {
+  public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo, @PathVariable Long id) throws Exception {
 
     AmcDebt amcDebt = new AmcDebt();
     AmcDebtCreateVo createVo = baseCreateVo.getContent();
@@ -365,7 +365,7 @@ public class AmcDebtController {
     return amcDebtExtVo;
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'PERM_DEBTASSET_MOD')")
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/update", method = RequestMethod.POST)
   @ResponseBody
@@ -394,7 +394,7 @@ public class AmcDebtController {
     return amcDebtVo;
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'PERM_DEBT_RECOM')")
   @RequestMapping(value = "/api/amcid/{id}/debt/recommDebt", method = RequestMethod.POST)
   @ResponseBody
   public void recommDebt(@RequestBody BaseActionVo<List<Long>> amcDebtUpdateRecommdAct, @PathVariable Long id, @RequestParam IsRecommandEnum isRecommandEnum)

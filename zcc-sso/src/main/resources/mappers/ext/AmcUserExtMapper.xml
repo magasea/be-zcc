@@ -84,6 +84,17 @@
     where au.id = #{id}
   </select>
 
+  <select id="selectIdsByExtWithRowboundsExample"
+    parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultType="Long">
+    select id
+    from AMC_USER
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
 
   <select id="selectByExtWithRowboundsExample"
     parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample" resultMap="BaseExtResultMap">
@@ -102,6 +113,9 @@
     left join AMC_PERMISSION ap on arp.permission_id = ap.perm_id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
+    </if>
+    <if test="whereClause != null">
+      where ${whereClause}
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}

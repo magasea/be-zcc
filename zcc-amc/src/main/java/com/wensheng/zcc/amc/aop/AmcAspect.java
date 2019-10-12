@@ -15,11 +15,13 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.SSO2AMCEnumUtils;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -123,7 +125,8 @@ public class AmcAspect {
         (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
     if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
       Integer locationId = (Integer) detailsParam.get("location");
-      AmcBranchLocationEnum locationEnum = AmcBranchLocationEnum.lookupByIdUtil(locationId) ;
+      AmcBranchLocationEnum locationEnum =
+          SSO2AMCEnumUtils.getFromSSOLocationEnum(AmcLocationEnum.lookupByDisplayIdUtil(locationId)) ;
       if(null != locationEnum){
         List<AmcDebtpack>  amcDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum.getCname());
         if(!CollectionUtils.isEmpty(amcDebtpacks)){

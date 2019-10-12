@@ -8,6 +8,7 @@ import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
+import com.wensheng.zcc.sso.aop.LogExecutionTime;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
@@ -22,12 +23,16 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExtExample;
+import com.wensheng.zcc.sso.service.AmcTokenService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.util.QueryParam;
 import com.wensheng.zcc.sso.service.util.SQLUtils;
 import com.wensheng.zcc.sso.service.util.UserUtils;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -88,6 +93,8 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   private final String defaultPasswd = "wensheng";
 
+  @Autowired
+  AmcTokenService amcTokenService;
 
   @Override
   @CacheEvict
@@ -117,13 +124,18 @@ public class AmcUserServiceImpl implements AmcUserService {
   @Override
   public AmcUser createUser(AmcUser amcUser) {
     boolean isInDb = false;
+    boolean needUpdateDb = false;
+    boolean needUpdatePrivilege = false;
 
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
+
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     if(CollectionUtils.isEmpty(amcUsers)){
       if(StringUtils.isEmpty(amcUser.getPassword())){
         amcUser.setPassword( UserUtils.getEncode( String.format("%s-%s",defaultPasswd, AmcDateUtils.getFormatedDate())));
+        amcUser.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
+        needUpdatePrivilege = true;
       }
       int cnt = amcUserMapper.insertSelective(amcUser);
       if(cnt > 0){
@@ -133,23 +145,43 @@ public class AmcUserServiceImpl implements AmcUserService {
         return null;
       }
     }else{
-      if(amcUser.getDeptId() > 0){
-        amcUsers.get(0).setDeptId(amcUser.getDeptId());
-      }
-      if(amcUser.getTitle() > 0){
-        amcUsers.get(0).setTitle(amcUser.getTitle());
-      }
-      if(amcUser.getLgroup() > 0){
-        amcUsers.get(0).setLgroup(amcUser.getLgroup());
-      }
 
-      amcUserMapper.updateByPrimaryKeySelective(amcUsers.get(0));
+      if(amcUser.getDeptId() > 0 && amcUser.getDeptId() != amcUsers.get(0).getDeptId()){
+        amcUsers.get(0).setDeptId(amcUser.getDeptId());
+        needUpdateDb = true;
+        needUpdatePrivilege = true;
+      }
+      if(amcUser.getTitle() > 0 && amcUser.getTitle() != amcUsers.get(0).getTitle()){
+        amcUsers.get(0).setTitle(amcUser.getTitle());
+        needUpdateDb = true;
+        needUpdatePrivilege = true;
+      }
+      if(amcUser.getLocation() > 0 && amcUser.getLocation() != amcUsers.get(0).getLocation()){
+        amcUsers.get(0).setLocation(amcUser.getLocation());
+        needUpdateDb = true;
+      }
+      if(amcUser.getLgroup() > 0 && amcUser.getLgroup() != amcUsers.get(0).getLgroup()){
+        amcUsers.get(0).setLgroup(amcUser.getLgroup());
+        needUpdateDb = true;
+      }
+      if(amcUser.getCompanyId() > 0 && amcUser.getCompanyId() != amcUsers.get(0).getCompanyId()){
+        amcUsers.get(0).setCompanyId(amcUser.getCompanyId());
+        needUpdateDb = true;
+        needUpdatePrivilege = true;
+      }
+//      if(StringUtils.isEmpty(amcUsers.get(0).getPassword())){
+
+        amcUsers.get(0).setUpdateDate(java.sql.Date.valueOf(LocalDate.now()));
+//      }
+      if(needUpdateDb){
+        amcUserMapper.updateByPrimaryKeySelective(amcUsers.get(0));
+      }
       isInDb = true;
     }
 
-    if(amcUser.getDeptId() > 0 && amcUser.getTitle() > 0){
+    if(needUpdatePrivilege){
       AmcUserRole amcUserRole = new AmcUserRole();
-      if(isInDb){
+      if(!isInDb){
         amcUserRole.setUserId(amcUser.getId());
       }else{
         amcUserRole.setUserId(amcUsers.get(0).getId());
@@ -158,10 +190,36 @@ public class AmcUserServiceImpl implements AmcUserService {
           UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),
               AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle()));
       amcUserRole.setRoleId(Long.valueOf(amcRolesEnum.getId()));
-      amcUserRoleMapper.insertSelective(amcUserRole);
-    }
+      AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+      amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUserRole.getUserId());
 
-    return amcUser;
+      List<AmcUserRole> amcUserRoles =  amcUserRoleMapper.selectByExample(amcUserRoleExample);
+      boolean hasRoleAlready = false;
+      if(CollectionUtils.isEmpty(amcUserRoles)){
+        hasRoleAlready = false;
+      }else if(amcUserRoles.size() >= 1){
+
+        for(AmcUserRole amcUserRoleItem: amcUserRoles){
+          if(amcUserRoleItem.getRoleId() != amcUserRole.getRoleId()){
+            amcUserRoleMapper.deleteByPrimaryKey(amcUserRoleItem.getId());
+          }else{
+            hasRoleAlready = true;
+          }
+        }
+
+      }
+      if(!hasRoleAlready){
+        amcUserRoleMapper.insertSelective(amcUserRole);
+      }
+    }
+    if(needUpdateDb || needUpdatePrivilege){
+      amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
+    }
+    if(!isInDb){
+      return amcUser;
+    }else{
+      return amcUsers.get(0);
+    }
   }
 
   @Override
@@ -223,6 +281,7 @@ public class AmcUserServiceImpl implements AmcUserService {
   }
 
   @Override
+  @LogExecutionTime
   public List<AmcUser> getAmcUsers(Long amcId) {
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
@@ -231,19 +290,28 @@ public class AmcUserServiceImpl implements AmcUserService {
     return amcUsers;
   }
 
-  @AmcUserQueryChecker
+
   @Override
+  @AmcUserQueryChecker
   public List<AmcUser> getAmcUsers(AmcUserExample amcUserExample){
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     return amcUsers;
   }
-  @AmcUserQueryChecker
+
+
   @Override
   public List<AmcUserExt> getSubAmcUsers(AmcUserExample amcUserExample) {
-    List<AmcUserExt> amcUsers = amcUserExtMapper.selectByExtWithRowboundsExample(amcUserExample);
+    List<Long> ids = amcUserExtMapper.selectIdsByExtWithRowboundsExample(amcUserExample);
+    AmcUserExtExample amcUserExampleNew = new AmcUserExtExample();
+    StringBuilder sb = new StringBuilder(" au.id in ( ");
+    ids.forEach(item -> sb.append(item).append(","));
+    sb.setLength(sb.length() -1);
+    sb.append(")");
+    amcUserExampleNew.setWhereClause(sb.toString());
+    List<AmcUserExt> amcUsers = amcUserExtMapper.selectByExtWithRowboundsExample(amcUserExampleNew);
     return amcUsers;
   }
-  @AmcUserQueryChecker
+
   @Override
   public Long countSubAmcUsers(AmcUserExample amcUserExample) {
     return amcUserMapper.countByExample(amcUserExample);
@@ -407,27 +475,21 @@ public class AmcUserServiceImpl implements AmcUserService {
   }
 
   @Override
-  public List<AmcUserExt> queryAmcUserPage(Long amcId, int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam) {
-    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
-    amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
-    RowBounds rowBounds = new RowBounds(offset, size);
-    try{
-      amcUserExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam, rowBounds));
-    }catch (Exception ex){
-      log.error("set order by exception:", ex);
-    }
-    List<AmcUserExt> amcUsers = getSubAmcUsers(amcUserExample);
+  @LogExecutionTime
+  public List<AmcUserExt> queryAmcUserPage(AmcUserExample amcUserExample) {
+
+    List<AmcUserExt> amcUsers = this.getSubAmcUsers(amcUserExample);
+    List<AmcUser> amcUsers1 = this.getAmcUsers(amcUserExample);
     amcUsers.forEach(item -> item.getAmcUser().setPassword(""));
     return amcUsers;
   }
 
   @Override
-  public Long queryAmcUserCount(Long amcId, QueryParam queryParam) {
+  @AmcUserQueryChecker
+  public Long queryAmcUserCount(AmcUserExample amcUserExample) {
 
-    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
-    amcUserExample.createCriteria().andCompanyIdEqualTo(amcId);
-    return countSubAmcUsers(amcUserExample);
+
+    return this.countSubAmcUsers(amcUserExample);
   }
 
   private AmcUser createUserAndRole(AmcUser amcUser, AmcRolesEnum amcRolesEnum){

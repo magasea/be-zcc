@@ -31,6 +31,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
         additionalInfo.put("userId", amcUserDetail.getId());
         additionalInfo.put("location", amcUserDetail.getLocation());
         additionalInfo.put("deptId", amcUserDetail.getDeptId());
+        additionalInfo.put("cmpyId", amcUserDetail.getCompanyId());
 //        }
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);

@@ -12,6 +12,7 @@ import java.util.List;
 public interface AmcUserExtMapper extends AmcUserMapper {
   AmcUserExt  selectByExtExample(Long id);
   List<AmcUserExt> selectByExtWithRowboundsExample(AmcUserExample example);
+  List<Long> selectIdsByExtWithRowboundsExample(AmcUserExample example);
 
 }
 

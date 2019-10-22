@@ -30,7 +30,6 @@ public class KafkaConfig {
   @Autowired
   private KafkaProperties kafkaProperties;
 
-  private String MQ_TOPIC_WECHAT_USERLOCATION = KafkaParams.MQ_TOPIC_WECHAT_USERLOCATION;
 
   // Producer configuration
 
@@ -55,11 +54,15 @@ public class KafkaConfig {
     return new KafkaTemplate<>(producerFactory());
   }
 
-  @Bean
-  public NewTopic adviceTopic() {
-    return new NewTopic(MQ_TOPIC_WECHAT_USERLOCATION, 3, (short) 1);
-  }
 
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, String> kafkaListenerStringContainerFactory() {
+    ConcurrentKafkaListenerContainerFactory<String, String> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(baAmcUserFactory());
+
+    return factory;
+  }
 
   @Bean
   public ConsumerFactory<? super String, ? super Object> baAmcUserFactory() {

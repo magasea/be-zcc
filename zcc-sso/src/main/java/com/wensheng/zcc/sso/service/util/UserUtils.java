@@ -52,6 +52,9 @@ public class UserUtils {
             log.error("No match for user of dept:{} with title:{}", amcDept, titleEnum);
             return AmcRolesEnum.ROLE_AMC_LOCAL_STUFF;
         }
+      case RISKCTRL_DEPT:
+      case ESTATE_DEPT:
+      case EQUITY_DEPT:
       case HEADQUARTER_DEPT:
         switch (titleEnum){
           case TITLE_MGR:

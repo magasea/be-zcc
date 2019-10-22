@@ -53,7 +53,7 @@ spring:
                         authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
                         redirectUris: admin,http://${env.oauth2.host}:10003/amc/login, http://${env.oauth2.host}:8080/login/oauth2/code/custom, http://${env.oauth2.host}:8080/ui-thymeleaf/login/oauth2/code/custom, http://${env.oauth2.host}:8080/authorize/oauth2/code/bael, http://${env.oauth2.host}:8080/login/oauth2/code/bael
                     amc-cust-client:
-                        client-id: amcCustClientId
+                        client-id: amcClientId
                         secret: secret
                         scopes: amcClient,read,write
                         redirectUris: client,http://${env.oauth2.host}:10003/amc/login
@@ -82,7 +82,13 @@ spring:
             cronExprTrd: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
             cronExprCust: 0 0 7,11,12,13,14,15,16,17,18,19,20,0 * * *
 
-
+    servlet:
+        multipart:
+            enabled: true
+            file-size-threshold: 1MB
+            max-request-size: 10MB
+            max-file-size: 200MB
+            location: ${env.image-repo}
 
 mybatis:
     type-aliases-package: com.wensheng.zcc.cust.module
@@ -122,6 +128,7 @@ cust:
     syncUrls:
         debtTradeResources: http://10.20.200.100:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
         getCompanyInfoById: http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoById/%s
+        getTrdById: http://10.20.200.100:8085/debts/get/%s
 #        http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
         getCompanyInfoByUpdateTime: http://10.20.200.100:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
         getPersonInfoById: http://10.20.200.100:8085/debtTradePersons/getPersonInfoById/%s
@@ -134,6 +141,7 @@ env:
     dbhost: 10.20.100.70
     rpchost: localhost
     kfkhost: 10.20.100.238
+    image-repo: /disk/temp
     oauth2:
         host: localhost
         authLink: http://${env.oauth2.host}:10002

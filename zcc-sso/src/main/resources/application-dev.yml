@@ -89,6 +89,9 @@ mongodb:
         port: 27017
         database: wszcc_sso
 
+kafka:
+    topic-sso-userchanged: topic_sso_userchanged_${env.name}
+
 weixin:
 #    appId: wxdb885be2c95a5b32
 #    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b

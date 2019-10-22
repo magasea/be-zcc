@@ -4,6 +4,8 @@ import com.google.gson.Gson;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
+import com.wensheng.zcc.cust.service.SyncService;
+import java.text.ParseException;
 import java.util.List;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +24,8 @@ public class ScriptSysServiceImplTest {
   @Autowired
   CustRegionMapper custRegionMapper;
 
-
+  @Autowired
+  SyncService syncService;
 
   @Test
   public void exportMapping(){
@@ -35,4 +38,17 @@ public class ScriptSysServiceImplTest {
 
   }
 
+  @Test
+  public void makeUpdateTrdDate() throws ParseException {
+    syncService.makeUpDataForMissDateOfTrade();
+  }
+  @Test
+  public void makeUpdateProvince() throws ParseException {
+    syncService.makeUpDataForProvinceCodeOfTrade();
+  }
+
+  @Test
+  public void checkTrdProvinceConsist() throws ParseException {
+    syncService.makeCheckProvinceCodeOfTrade();
+  }
 }

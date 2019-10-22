@@ -56,6 +56,7 @@ public class ExceptionUtils {
 
     INVALID_USER_OPERATION(1032, "Invalid user operation", "不合规的用户操作"),
     INVALID_SSO_TOKEN(1033, "Invalid SSO Token", "不合规的SSO Token"),
+    FAILED_TO_STOREFILE(1034, "Failed to store file", "文件保存失败"),
     ;
     int code;
     String name;

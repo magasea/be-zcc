@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 /**
@@ -44,24 +45,30 @@ public class SecurityPermissionEvaluator implements PermissionEvaluator {
   }
 
   private boolean hasPrivilege(Authentication auth, String targetType, String permission) {
-    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
-      if (grantedAuth.getAuthority().startsWith(targetType)) {
-        if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
-          return true;
-        }
-      }
+//    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
+//      if (grantedAuth.getAuthority().startsWith(targetType)) {
+//        if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
+//          return true;
+//        }
+//      }
+//    }
+    if(auth.getAuthorities().contains(new SimpleGrantedAuthority(permission))){
+      return true;
     }
     return false;
   }
 
   private boolean hasPrivilege(Authentication auth,  String permission) {
-    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
-
-      if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
-        return true;
-
-      }
+    if(auth.getAuthorities().contains(new SimpleGrantedAuthority(permission))){
+      return true;
     }
+//    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
+//
+//      if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
+//        return true;
+//
+//      }
+//    }
     return false;
   }
 }

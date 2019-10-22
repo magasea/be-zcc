@@ -2,6 +2,8 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
@@ -14,6 +16,7 @@ import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.ExcelGenerator;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,10 +24,14 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -47,6 +54,9 @@ public class CustInfoController {
 
   @Autowired
   SyncService syncService;
+
+  @Autowired
+  ExcelGenerator excelGenerator;
 
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
@@ -101,6 +111,7 @@ public class CustInfoController {
   }
 
 
+  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/getCustTrdInfo", method = RequestMethod.POST)
   @ResponseBody
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
@@ -142,8 +153,9 @@ public class CustInfoController {
 
   }
 
+  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)
-  public ResponseEntity<InputStreamResource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
+  public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
 
 
@@ -171,18 +183,18 @@ public class CustInfoController {
             orderByParam);
       }
 
+    File output = excelGenerator.customersToExcel(queryResults);
+    Resource resource = new UrlResource(output.toPath().toUri());
+    if(resource.exists()) {
+      return ResponseEntity.ok()
+          .contentType(MediaType.parseMediaType("application/octet-stream"))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+          .body(resource);
+    } else {
+      throw new Exception("File not found " + output.toPath());
+    }
 
 
-    ByteArrayInputStream in = ExcelGenerator.customersToExcel(queryResults);
-    // return IOUtils.toByteArray(in);
-
-    HttpHeaders headers = new HttpHeaders();
-    headers.add("Content-Disposition", "attachment; filename=custs.xlsx");
-
-    return ResponseEntity
-        .ok()
-        .headers(headers)
-        .body(new InputStreamResource(in));
   }
 
 

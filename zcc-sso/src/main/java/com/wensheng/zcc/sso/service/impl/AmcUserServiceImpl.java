@@ -452,7 +452,7 @@ public class AmcUserServiceImpl implements AmcUserService {
   @Override
   public List<AmcUserExt> queryUserPage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) {
-    AmcUserExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
+    AmcUserExtExample amcUserExample = SQLUtils.getAmcUserExample(queryParam);
     RowBounds rowBounds = new RowBounds(offset, size);
     try{
 

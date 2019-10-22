@@ -9,7 +9,9 @@ import com.wensheng.zcc.cust.service.TrdInfoService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 /**
@@ -53,6 +55,25 @@ public class TradInfoController {
   public void doSynchronization() throws Exception {
     syncService.syncWithTrdInfo();
   }
+  @RequestMapping(value = "/makeUpData/trdDate", method = RequestMethod.GET)
+  @ResponseBody
+  public void makeupDataTrdDate() throws Exception {
+    syncService.makeUpDataForMissDateOfTrade();
+  }
+  @RequestMapping(value = "/makeUpData/province", method = RequestMethod.GET)
+  @ResponseBody
+  public void makeupDataProvince() throws Exception {
+    syncService.makeCheckProvinceCodeOfTrade();
+  }
 
 
+  @RequestMapping(value = "/makeUpData/companyById", method = RequestMethod.POST)
+  @ResponseBody
+  public void makeUpBuyerCmpyInfo(@RequestBody List<String> ids) throws Exception {
+    if(!CollectionUtils.isEmpty(ids)){
+      for(String id: ids){
+        syncService.updateBuyerCompanyInfoByIds(id);
+      }
+    }
+  }
 }

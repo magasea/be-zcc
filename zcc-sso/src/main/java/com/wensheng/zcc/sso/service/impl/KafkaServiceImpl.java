@@ -1,13 +1,25 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.google.gson.Gson;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
+import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
+import com.wensheng.zcc.sso.service.AmcTokenService;
 import com.wensheng.zcc.sso.service.KafkaService;
+import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,17 +27,25 @@ import org.springframework.stereotype.Service;
  * @project miniapp-backend
  */
 @Service
+@Slf4j
 public class KafkaServiceImpl implements KafkaService {
   @Autowired
   KafkaTemplate kafkaTemplate;
 
+  @Autowired
+  MongoTemplate wszccTemplate;
+
   @Value("${env.name}")
   String env;
 
+  @Autowired
+  AmcTokenService amcTokenService;
 
   private String MQ_TOPIC_WECHAT_USERLOCATION = null;
   private String MQ_TOPIC_WECHAT_USERCREATE = null;
 
+
+  private Gson gson = new Gson();
 
 
   @PostConstruct
@@ -43,5 +63,33 @@ public class KafkaServiceImpl implements KafkaService {
   @Override
   public void send(AmcWechatUser amcWechatUser) {
     kafkaTemplate.send(MQ_TOPIC_WECHAT_USERCREATE, amcWechatUser);
+  }
+
+
+  private static String typeIdHeader(Headers headers) {
+    return StreamSupport.stream(headers.spliterator(), false)
+        .filter(header -> header.key().equals("__TypeId__"))
+        .findFirst().map(header -> new String(header.value())).orElse("N/A");
+  }
+
+
+  @KafkaListener( topics = "${kafka.topic-sso-userchanged}", clientIdPrefix = "zcc-sso",
+      containerFactory = "kafkaListenerStringContainerFactory")
+  public void listenUserOperation(ConsumerRecord<String, WechatUserLocation> cr,
+      @Payload AmcUser payload) {
+    log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),
+        typeIdHeader(cr.headers()), payload, cr.toString());
+    String gsonStr = null;
+    try{
+      gsonStr = gson.toJson(payload);
+      AmcUser amcUser = new AmcUser();
+      AmcBeanUtils.copyProperties(payload, amcUser);
+      amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
+//      wszccTemplate.save(amcUser);
+
+    }catch (Exception ex){
+      log.error("Failed to handle:{}", gsonStr, ex);
+    }
+
   }
 }

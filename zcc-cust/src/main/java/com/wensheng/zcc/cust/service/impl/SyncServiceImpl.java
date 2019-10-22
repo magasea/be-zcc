@@ -2,19 +2,13 @@ package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustIntrstInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
-import com.wensheng.zcc.cust.module.dao.mongo.ImportCustRecord;
-import com.wensheng.zcc.cust.module.dao.mongo.ImportTrdInfoRecord;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfo;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustIntrstInfoExample;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -25,37 +19,26 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
-import com.wensheng.zcc.cust.module.helper.sync.TrdInfoSyncTypeEnum;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
-import com.wensheng.zcc.cust.module.sync.CustInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.CustPersonInfoFromSync;
+import com.wensheng.zcc.cust.module.sync.CustTrdInfoTempSync;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
-import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.SyncService;
-import io.grpc.netty.shaded.io.netty.util.internal.StringUtil;
-import java.net.URLEncoder;
 import java.text.ParseException;
-import java.time.ZoneId;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.annotation.Order;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -105,6 +88,8 @@ public class SyncServiceImpl implements SyncService {
     @Autowired
   CustTrdInfoMapper custTrdInfoMapper;
 
+    private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
+
 //    @Autowired
 //  CustTrdSellerMapper custTrdSellerMapper;
 
@@ -124,7 +109,8 @@ public class SyncServiceImpl implements SyncService {
     @Value("${cust.syncUrls.getPersonInfoByUpdateTime}")
     private String getPersonInfoByUpdateTime;
 
-    String[] provinceCodes = {"350000"};
+//  String[] provinceCodes = {"350000"};
+  String[] provinceCodes = {"110000"};
 
   boolean isTest = true;
 
@@ -178,6 +164,7 @@ public class SyncServiceImpl implements SyncService {
 
   @Scheduled(cron = "${spring.task.scheduling.cronExprTrd}")
   @Override
+  @LogExecutionTime
   public void syncWithTrdInfo(){
       for (String provinceCode: provinceCodes){
         syncTrdInfoForProvince(provinceCode);
@@ -308,6 +295,7 @@ public class SyncServiceImpl implements SyncService {
 
     }else if(action == 2 ){
       custTrdCmpy = custTrdCmpyList.get(0);
+      copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }
     return false;
@@ -343,7 +331,7 @@ public class SyncServiceImpl implements SyncService {
     int action = -1;
     Date updateDate = AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate());
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.createCriteria().andInfoUrlEqualTo(trdInfoFromSync.getUrl());
+    custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getId());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
     if(CollectionUtils.isEmpty(custTrdInfos)){
       //make new trdInfo
@@ -789,14 +777,103 @@ public class SyncServiceImpl implements SyncService {
     custTrdInfo.setInfoUrl(trdInfoFromSync.getUrl());
     custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
     if(StringUtils.isEmpty(trdInfoFromSync.getDebtCityPrep())){
-      log.info("DebtCityPrep is empty so we use DebtProvincePrep in city field with:{}",trdInfoFromSync.getDebtProvincePrep() );
-      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtProvincePrep());
+      log.error("DebtCityPrep is empty {} of the trd  id:{}",
+          trdInfoFromSync.getDebtProvincePrep(), trdInfoFromSync.getId() );
+//      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtProvincePrep());
     }else{
       custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep());
     }
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
     custTrdInfo.setTrdContactorName(trdInfoFromSync.getLinkMan());
     custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getLinkAddress());
+
+  }
+//http://10.20.200.100:8085/debts/get/3a7cd9cf68c5effc316981d6537d1595
+@Override
+  public boolean makeUpDataForMissDateOfTrade() throws ParseException {
+
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.createCriteria().andTrdDateLessThan(AmcDateUtils.getDateFromStr("1902-01-01 00:00:00"));
+
+    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(custTrdInfoExample);
+
+    for(CustTrdInfo custTrdInfo : custTrdInfos){
+      CustTrdInfoTempSync custTrdInfoTempSync = getTrdFromSyncById(custTrdInfo.getInfoId());
+      if(custTrdInfoTempSync != null && custTrdInfoTempSync.getUpdateTime() != null ){
+        custTrdInfo.setTrdDate(AmcDateUtils.toDate(custTrdInfoTempSync.getUpdateTime()));
+        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+      }
+
+    }
+    return true;
+
+  }
+
+  @Override
+  public boolean makeUpDataForProvinceCodeOfTrade() throws ParseException {
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.createCriteria().andTrdProvinceIsNull();
+    custTrdInfoExample.or().andTrdProvinceEqualTo("");
+    custTrdInfoExample.or().andTrdProvinceEqualTo("-1");
+    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(custTrdInfoExample);
+    for(CustTrdInfo custTrdInfo : custTrdInfos){
+      CustTrdInfoTempSync custTrdInfoTempSync = getTrdFromSyncById(custTrdInfo.getInfoId());
+      if(custTrdInfoTempSync != null && !StringUtils.isEmpty(custTrdInfoTempSync.getProvinceCode() ) ){
+        log.info("now set trdProvince to :{}", custTrdInfoTempSync.getProvinceCode());
+        custTrdInfo.setTrdProvince(custTrdInfoTempSync.getProvinceCode());
+        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+      }
+
+    }
+    return false;
+  }
+
+  @Override
+  public boolean makeCheckProvinceCodeOfTrade() throws ParseException {
+
+
+    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(null);
+    String provinceCode = null;
+    for(CustTrdInfo custTrdInfo : custTrdInfos){
+//      System.out.println(custTrdInfo.getTrdProvince().substring(0,2));
+      provinceCode = custTrdInfo.getTrdProvince().substring(0,2);
+      if(!custTrdInfo.getTrdCity().startsWith(provinceCode)){
+        log.error("province code:{} city code:{} infoId:{}", custTrdInfo.getTrdProvince(), custTrdInfo.getTrdCity(),
+            custTrdInfo.getInfoId());
+      }
+
+
+    }
+    return true;
+
+  }
+
+  private CustTrdInfoTempSync getTrdFromSyncById(String id){
+
+    String url = String.format(makeTrdDataUrl, id);
+    CustTrdInfoTempSync custTrdInfoTempSync = null;
+    try{
+      custTrdInfoTempSync = restTemplate.getForEntity(url, CustTrdInfoTempSync.class).getBody();
+    }catch (Exception ex){
+      log.error("Error handling:{}",  id, ex);
+    }
+    return custTrdInfoTempSync;
+
+  }
+
+  public void updateBuyerCompanyInfoByIds(String id){
+    CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(id);
+    CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
+    copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    if(CollectionUtils.isEmpty(custTrdCmpyList)){
+      log.error("there is no such company in db, just ignore it:{}", id);
+    }else{
+      copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpyList.get(0));
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyList.get(0));
+    }
 
   }
 

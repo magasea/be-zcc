@@ -9,6 +9,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -34,6 +35,7 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
@@ -67,6 +69,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Autowired
   CustRegionMapper custRegionMapper;
+
+  @Value("${env.image-repo}")
+  String fileBase;
+
 
   @Autowired
   MongoTemplate mongoTemplate;
@@ -155,14 +161,28 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   private List<CustTrdInfoExcelVo> convertCmpyToExcelVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
     List<CustTrdInfoExcelVo> custTrdInfoExcelVos = new ArrayList<>();
+    StringBuilder sbAddress = new StringBuilder();
+    StringBuilder sbPhone = new StringBuilder();
     for(CustTrdCmpyTrdExt custTrdCmpyTrdExt: custTrdCmpyTrdExts){
+      sbAddress.setLength(0);
+      sbPhone.setLength(0);
       CustTrdInfoExcelVo custTrdInfoExcelVo = new CustTrdInfoExcelVo();
       custTrdInfoExcelVo.setCustId(custTrdCmpyTrdExt.getId());
-      custTrdInfoExcelVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr(),
-          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr()));
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr().equals("-1")){
+        sbAddress.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr()).append(";");
+      }
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr().equals("-1")){
+        sbAddress.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr());
+      }
+      custTrdInfoExcelVo.setAddress(sbAddress.toString());
       custTrdInfoExcelVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
-      custTrdInfoExcelVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone(),
-          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()));
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
+        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()).append(";");
+      }
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
+        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone());
+      }
+      custTrdInfoExcelVo.setPhone(sbPhone.toString());
       custTrdInfoExcelVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
       Long totalAmount = 0L;
 
@@ -182,7 +202,11 @@ public class CustInfoServiceImpl implements CustInfoService {
         }else{
           invest2Counts.put(trdTypeName, invest2Counts.get(trdTypeName)+1);
         }
-        cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+        if(StringUtils.isEmpty(custTrdInfo.getTrdCity()) || custTrdInfo.getTrdCity().equals("-1")){
+          cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdProvince())).getName();
+        }else{
+          cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+        }
         if(!city2Counts.containsKey(cityName)){
           city2Counts.put(cityName, 1);
         }else {
@@ -277,7 +301,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       Long totalAmount = 0L;
       Map<String, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
-      String cityName;
+      String cityName= "";
       String trdTypeName;
       for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
         totalAmount += custTrdInfo.getTotalAmount();
@@ -285,7 +309,17 @@ public class CustInfoServiceImpl implements CustInfoService {
           continue;
         }
         trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
-        cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+        if(!StringUtils.isEmpty(custTrdInfo.getTrdCity()) && Long.valueOf(custTrdInfo.getTrdCity()) > -1L){
+          CustRegion custRegion = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity()));
+          if(null != custRegion){
+            cityName = custRegion.getName();
+          }else{
+            log.error("Failed to get cityName for :{}", custTrdInfo.getTrdCity());
+          }
+        }else{
+          log.error("Failed to get cityName for :{}", custTrdInfo.getTrdCity());
+        }
+
         if(!invest2Counts.containsKey(trdTypeName)){
           invest2Counts.put(trdTypeName, 1);
         }else{
@@ -479,6 +513,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     return custInfoGeoNear;
   }
+
+
 
 
 }

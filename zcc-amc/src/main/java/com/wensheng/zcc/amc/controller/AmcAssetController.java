@@ -140,11 +140,11 @@ public class AmcAssetController {
 
 
   @EditActionChecker
-  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','AMC_ADMIN','AMC_USER')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD') ")
   @RequestMapping(value = "/amcid/{amcid}/asset/add", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo addAmcAsset(
-      @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
+      @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo, @PathVariable Long amcid) throws Exception {
     AmcAsset amcAsset = getAssetFromVo(amcAssetVo.getContent());
     amcAsset.setPublishState(PublishStateEnum.DRAFT.getStatus());
 
@@ -156,7 +156,7 @@ public class AmcAssetController {
     return assetVo;
   }
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcid, 'AMC_CRUD')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcid}/asset/setRecomm", method = RequestMethod.POST)
   @ResponseBody
   public void recommAmcAsset(
@@ -175,10 +175,11 @@ public class AmcAssetController {
 
 
   @EditActionChecker
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcid}/asset/update", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetVo updateAmcAsset(
-      @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo) throws Exception {
+      @RequestBody BaseActionVo<AmcAssetVo> amcAssetVo, @PathVariable Long amcid) throws Exception {
     AmcAsset amcAsset = getAssetFromVo(amcAssetVo.getContent());
     AmcAssetVo assetVo = amcAssetService.update(amcAsset);
     amcAssetVo.getContent().getAssetAdditional().setAmcAssetId(assetVo.getId());
@@ -226,9 +227,10 @@ public class AmcAssetController {
     return amcAsset;
   }
 
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcid}/asset/image/add", headers = "Content-Type= multipart/form-data",method = RequestMethod.POST)
   @ResponseBody
-  public List<AssetImage> addAmcAssetImage(
+  public List<AssetImage> addAmcAssetImage( @PathVariable Long amcid,
        @RequestParam("assetId") Long assetId, @RequestParam("isToOss") Boolean isToOss,
       @RequestParam("imageClass") Integer tag, @RequestParam("actionId") Long actionId, @RequestParam(value = "description",
       required = false) String description,
@@ -238,6 +240,7 @@ public class AmcAssetController {
 //      throw ExceptionUtils.getAmcException(AmcExceptions.LIMTEXCEED_UPLOADFILENUMBER,
 //          "upload "+uploadingImages.length + " files at same time");
 //    }
+    log.info("upload image:{}", uploadingImages);
     if(assetId == null){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"amcAssetId missing");
     }
@@ -342,16 +345,16 @@ public class AmcAssetController {
     }
   }
 
-
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcid}/asset/del", method = RequestMethod.POST)
   @ResponseBody
-  public void delAmcAsset(@RequestBody BaseActionVo<Long> delAssetBaseActionVo ) throws Exception{
+  public void delAmcAsset(@RequestBody BaseActionVo<Long> delAssetBaseActionVo , @PathVariable Long amcid) throws Exception{
     amcAssetService.delAsset(delAssetBaseActionVo.getContent());
   }
-
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/amcid/{amcid}/asset/image/del", method = RequestMethod.POST)
   @ResponseBody
-  public void delAmcAssetImage(@RequestBody BaseActionVo<List<AssetImage>> assetImagesVo ) throws Exception{
+  public void delAmcAssetImage(@RequestBody BaseActionVo<List<AssetImage>> assetImagesVo , @PathVariable Long amcid) throws Exception{
     for(AssetImage assetImage: assetImagesVo.getContent()){
 
       amcOssFileService.delFileInOss(assetImage.getOssPath());

@@ -44,8 +44,8 @@ public class SwaggerConfig {
 //        .build();
 //  }
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
-  private String amcAdminClientId;
+  @Value("${spring.security.oauth2.client.registration.amc-client.client-id}")
+  private String amcClientId;
 
 
   @Value("${spring.security.oauth2.client.registration.amc-admin.secret}")
@@ -124,7 +124,7 @@ public class SwaggerConfig {
 
   @Bean
   public SecurityConfiguration securityInfo() {
-    return new SecurityConfiguration(amcAdminClientId, amcAdminSecret, "", "", "", ApiKeyVehicle.HEADER, "", " ");
+    return new SecurityConfiguration(amcClientId, amcAdminSecret, "", "", "", ApiKeyVehicle.HEADER, "", " ");
   }
 
   private ApiInfo apiInfo() {

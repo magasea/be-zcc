@@ -5,6 +5,7 @@ import java.io.Serializable;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,11 +24,10 @@ public class SecurityPermissionEvaluator implements PermissionEvaluator {
     }
     String targetType = targetDomainObject.getClass().getSimpleName().toUpperCase();
     if(targetType.equals("LONG")){
-      return hasPrivilege(auth, String.format("PERM_%s",targetDomainObject), ((String) permission).toUpperCase());
-    }
-
-    else {
-      return true;
+      return hasPrivilege(auth, String.format("PERM_%s",targetDomainObject),
+          permission.toString().toUpperCase());
+    }else{
+      return hasPrivilege(auth, targetType, permission.toString().toUpperCase());
     }
 
   }
@@ -42,13 +42,9 @@ public class SecurityPermissionEvaluator implements PermissionEvaluator {
   }
 
   private boolean hasPrivilege(Authentication auth, String targetType, String permission) {
-    for (GrantedAuthority grantedAuth : auth.getAuthorities()) {
-      if (grantedAuth.getAuthority().startsWith(targetType)) {
-        if (grantedAuth.getAuthority().toUpperCase().contains(permission)) {
-          return true;
-        }
-      }
-    }
-    return false;
+    boolean result = false;
+    result = auth.getAuthorities().contains(new SimpleGrantedAuthority(permission.toUpperCase()));
+
+    return result;
   }
 }

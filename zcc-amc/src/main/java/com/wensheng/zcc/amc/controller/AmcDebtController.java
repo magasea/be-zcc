@@ -197,10 +197,12 @@ public class AmcDebtController {
 
   @EditActionChecker
   @LogExecutionTime
-  @RequestMapping(value = "/api/amcid/{amcId}/debt/image/add", headers = "Content-Type= multipart/form-data",method =
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission"
+      + "(#amcid, 'PERM_AMC_CRUD')")
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/image/add", headers = "Content-Type= multipart/form-data",method =
       RequestMethod.POST)
   @ResponseBody
-  public List<DebtImage> uploadDebtImage(@PathVariable(name = "amcId") Integer amcId,
+  public List<DebtImage> uploadDebtImage(@PathVariable Long amcid,
       @RequestParam("debtId") Long debtId,
       @RequestParam("desc") String desc,
       @RequestParam("images") MultipartFile uploadingImage) throws Exception {
@@ -250,11 +252,11 @@ public class AmcDebtController {
     return debtImages;
 
   }
-
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')  or hasPermission(#amcid, 'PERM_AMC_CRUD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/api/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
   @Transactional
-  public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo) throws Exception {
+  public void delAmcDebtImage(@RequestBody BaseActionVo<DebtImage> debtImageBaseActionVo, @PathVariable Long amcid) throws Exception {
     amcOssFileService.delFileInOss(debtImageBaseActionVo.getContent().getOssPath());
     amcDebtService.delImage(debtImageBaseActionVo.getContent());
   }
@@ -269,7 +271,7 @@ public class AmcDebtController {
 
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission (#id, 'PERM_DEBTASSET_MOD')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @ResponseBody
   public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo, @PathVariable Long id) throws Exception {
 
@@ -454,7 +456,7 @@ public class AmcDebtController {
       amcDebtService.connDebt2Persons(amcDebtCreateVo.getNewPersons(), amcDebtId);
     }
   }
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'AMC_CRUD')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#id, 'PERM_DEBTASSET_MOD')")
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/updateState", method = RequestMethod.POST)
   @ResponseBody
@@ -474,7 +476,7 @@ public class AmcDebtController {
   }
 
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')")
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/reviewDebt", method = RequestMethod.POST)
   @ResponseBody
@@ -492,7 +494,7 @@ public class AmcDebtController {
   }
 
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')")
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/reviewBatchDebt", method = RequestMethod.POST)
   @ResponseBody
@@ -536,7 +538,7 @@ public class AmcDebtController {
   }
 
 
-  @PreAuthorize("hasRole('SYSTEM_ADMIN')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')")
   @RequestMapping(value = "/api/amcid/{id}/debtsOfCurrUser", method = RequestMethod.POST)
   @ResponseBody
   @LogExecutionTime

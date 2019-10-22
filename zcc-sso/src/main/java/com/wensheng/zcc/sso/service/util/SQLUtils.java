@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.service.util;
 
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample.Criteria;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExtExample;
 import java.util.Map;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.data.domain.Sort.Direction;
@@ -11,8 +12,8 @@ import org.springframework.util.StringUtils;
 
 public class SQLUtils {
 
-  public static AmcUserExample getAmcUserExample(QueryParam queryParam) {
-    AmcUserExample amcUserExample = new AmcUserExample();
+  public static AmcUserExtExample getAmcUserExample(QueryParam queryParam) {
+    AmcUserExtExample amcUserExample = new AmcUserExtExample();
     Criteria criteria = amcUserExample.createCriteria();
     if( queryParam.getDeptId() > 0 ){
       criteria.andDeptIdEqualTo( Long.valueOf(queryParam.getDeptId()));

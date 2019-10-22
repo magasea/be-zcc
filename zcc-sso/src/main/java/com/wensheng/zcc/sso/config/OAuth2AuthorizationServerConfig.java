@@ -66,11 +66,21 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
     private String amcAdminSecret;
 
 
+    @Value("${spring.security.oauth2.client.registration.amc-client.client-id}")
+    private String amcClientId;
+
+
+    @Value("${spring.security.oauth2.client.registration.amc-client.secret}")
+    private String amcClientSecret;
+
     @Value("${spring.security.oauth2.client.registration.amc-admin.scopes}")
     private String amcAdminScopes;
 
     @Value("${spring.security.oauth2.client.registration.amc-admin.authorizedGrantTypes}")
     private String amcAdminAuthorizedGrantTypes;
+
+    @Value("${spring.security.oauth2.client.registration.amc-client.authorizedGrantTypes}")
+    private String amcClientAuthorizedGrantTypes;
 
     @Value("${spring.security.oauth2.client.registration.amc-admin.redirectUris}")
     private String amcAdminRedirectUris;
@@ -114,11 +124,9 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
 
                 .and().withClient("testImplicitClientId").authorizedGrantTypes("implicit").scopes("read", "write", "foo", "bar").autoApprove(true).redirectUris("xxx")
 //            .and().withClient(amcWechatClientId).authorizedGrantTypes(amcWechatAuthorizedGrantTypes.replace(" ","").split(",")).scopes(amcWechatScopes.replace(" ", "").split(",")).autoApprove(true).redirectUris(amcWechatRedirectUris.split(","))
-                .and().withClient(amcAdminClientId).secret(passwordEncoder.encode(amcAdminSecret))
-            .authorizedGrantTypes(amcAdminAuthorizedGrantTypes.replace(" ","").split(",")).scopes(amcAdminScopes.replace(" ","").split(
-                ","))
-            .autoApprove(false).redirectUris(amcAdminRedirectUris.split(","))
-            .accessTokenValiditySeconds(accessTokenValidSeconds).refreshTokenValiditySeconds(refreshTokenValidSeconds)
+                .and().withClient(amcAdminClientId).secret(passwordEncoder.encode(amcAdminSecret)).authorizedGrantTypes(amcAdminAuthorizedGrantTypes.replace(" ","").split(",")).scopes(amcAdminScopes.replace(" ","").split(",")).autoApprove(false).redirectUris(amcAdminRedirectUris.split(",")).accessTokenValiditySeconds(accessTokenValidSeconds).refreshTokenValiditySeconds(refreshTokenValidSeconds)
+            .and().withClient(amcClientId).secret(passwordEncoder.encode(amcClientSecret)).authorizedGrantTypes(amcClientAuthorizedGrantTypes.replace(" ","").split(",")).scopes(amcAdminScopes.replace(" ","").split(",")).autoApprove(false).redirectUris(amcAdminRedirectUris.split(",")).accessTokenValiditySeconds(accessTokenValidSeconds).refreshTokenValiditySeconds(refreshTokenValidSeconds)
+
         ;
 
     }

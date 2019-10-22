@@ -3,11 +3,16 @@ package com.wensheng.zcc.cust.utils;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -18,15 +23,28 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
+
+@Service
+@Slf4j
 public class ExcelGenerator {
 
+  @Value("${env.image-repo}")
+  String fileBase;
 
-
-    public static ByteArrayInputStream customersToExcel(List<CustTrdInfoExcelVo> custTrdInfoExcelVos) throws IOException {
+    public  File customersToExcel(List<CustTrdInfoExcelVo> custTrdInfoExcelVos) throws IOException {
       String[] COLUMNs = {"#", "投资人名称", "投资偏好类型", "偏好地区","交易总额(元)","联系方式","联系地址"};
+      Long timeStamp = System.currentTimeMillis();
       try(
           Workbook workbook = new XSSFWorkbook();
+          // Write the output to a file
+          FileOutputStream fileOut = new FileOutputStream(fileBase+File.separator+String.format("custInfo-%s.xlsx",
+              timeStamp));
+
+
           ByteArrayOutputStream out = new ByteArrayOutputStream();
       ){
         CreationHelper createHelper = workbook.getCreationHelper();
@@ -63,20 +81,38 @@ public class ExcelGenerator {
           row.createCell(1).setCellValue(custTrdInfoExcelVo.getCustName());
           row.createCell(2).setCellValue(getStringFromMap(custTrdInfoExcelVo.getInvestType2Counts()));
           row.createCell(3).setCellValue(getStringFromMap(custTrdInfoExcelVo.getIntrestCities()));
-          row.createCell(4).setCellValue(custTrdInfoExcelVo.getTrdTotalAmount());
+          if(custTrdInfoExcelVo.getTrdTotalAmount() > 0){
+            row.createCell(4).setCellValue(custTrdInfoExcelVo.getTrdTotalAmount());
+          }else{
+            log.error("The totalAmount:{}  of custId:{} is not valid", custTrdInfoExcelVo.getTrdTotalAmount(),
+                custTrdInfoExcelVo.getCustId());
+            row.createCell(4);
+          }
+
           row.getCell(4).setCellStyle(custCellStyle);
-          row.createCell(5).setCellValue(custTrdInfoExcelVo.getPhone());
+          if(StringUtils.isEmpty(custTrdInfoExcelVo.getPhone()) || custTrdInfoExcelVo.getPhone().contains("-1;")){
+            log.error("The phone info:{} of custId:{} is not valid", custTrdInfoExcelVo.getPhone(),
+                custTrdInfoExcelVo.getCustId());
+            row.createCell(5);
+          }else{
+            row.createCell(5).setCellValue(custTrdInfoExcelVo.getPhone());
+          }
           row.createCell(6).setCellValue(custTrdInfoExcelVo.getAddress());
 
         }
 
-        workbook.write(out);
-        return new ByteArrayInputStream(out.toByteArray());
+        workbook.write(fileOut);
+//        fileOut.close();
+//
+//        // Closing the workbook
+//        workbook.close();
+        return new File(fileBase+File.separator+String.format("custInfo-%s.xlsx",
+            timeStamp));
       }
 
   }
 
-  private static String getStringFromMap(Map<String, Integer> param){
+  private  String getStringFromMap(Map<String, Integer> param){
       StringBuilder sb = new StringBuilder();
       Iterator<Entry<String, Integer>> iterator = param.entrySet().iterator();
       while(iterator.hasNext()){

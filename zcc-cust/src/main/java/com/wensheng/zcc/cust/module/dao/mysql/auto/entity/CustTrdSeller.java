@@ -5,19 +5,21 @@ import java.util.Date;
 public class CustTrdSeller {
     private Long id;
 
+    private String origId;
+
     private String name;
 
-    private String origId;
+    private String provinceCode;
+
+    private String cityCode;
+
+    private String url;
 
     private String addr;
 
     private String tel;
 
     private String mobileNum;
-
-    private String provinceCode;
-
-    private String cityCode;
 
     private Integer type;
 
@@ -33,6 +35,14 @@ public class CustTrdSeller {
         this.id = id;
     }
 
+    public String getOrigId() {
+        return origId;
+    }
+
+    public void setOrigId(String origId) {
+        this.origId = origId == null ? null : origId.trim();
+    }
+
     public String getName() {
         return name;
     }
@@ -41,12 +51,28 @@ public class CustTrdSeller {
         this.name = name == null ? null : name.trim();
     }
 
-    public String getOrigId() {
-        return origId;
+    public String getProvinceCode() {
+        return provinceCode;
     }
 
-    public void setOrigId(String origId) {
-        this.origId = origId == null ? null : origId.trim();
+    public void setProvinceCode(String provinceCode) {
+        this.provinceCode = provinceCode == null ? null : provinceCode.trim();
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode == null ? null : cityCode.trim();
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url == null ? null : url.trim();
     }
 
     public String getAddr() {
@@ -71,22 +97,6 @@ public class CustTrdSeller {
 
     public void setMobileNum(String mobileNum) {
         this.mobileNum = mobileNum == null ? null : mobileNum.trim();
-    }
-
-    public String getProvinceCode() {
-        return provinceCode;
-    }
-
-    public void setProvinceCode(String provinceCode) {
-        this.provinceCode = provinceCode == null ? null : provinceCode.trim();
-    }
-
-    public String getCityCode() {
-        return cityCode;
-    }
-
-    public void setCityCode(String cityCode) {
-        this.cityCode = cityCode == null ? null : cityCode.trim();
     }
 
     public Integer getType() {

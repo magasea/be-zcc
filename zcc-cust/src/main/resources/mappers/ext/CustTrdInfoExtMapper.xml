@@ -26,9 +26,9 @@
     <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
     <result column="seller_type" jdbcType="INTEGER" property="sellerType" />
     <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
+    <result column="seller_name" jdbcType="CHAR" property="sellerName" />
     <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />
     <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
-    <result column="cts_seller_name"  property="sellerName" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -120,6 +120,7 @@
     ${prefix}buyer_id as buyer_id,
     ${prefix}seller_type as seller_type,
     ${prefix}seller_id as seller_id,
+    ${prefix}seller_name as seller_name,
     ${prefix}trd_contactor_name as trd_contactor_name,
     ${prefix}trd_contactor_addr as trd_contactor_addr
   </sql>
@@ -133,13 +134,7 @@
     <include refid="Base_List">
      <property name="prefix" value="cti."/>
     </include>
-    ,
-    cts.name as cts_seller_name
-    from CUST_TRD_INFO cti
-
-      left join CUST_TRD_SELLER cts
-      on cts.id = cti.seller_id
-
+    from CUST_TRD_INFO as cti
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

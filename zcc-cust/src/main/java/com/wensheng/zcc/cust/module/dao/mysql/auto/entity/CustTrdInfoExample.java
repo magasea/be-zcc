@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 public class CustTrdInfoExample {
@@ -103,6 +104,32 @@ public class CustTrdInfoExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
+            if (value == null) {
+                throw new RuntimeException("Value for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value.getTime()), property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
+            if (values == null || values.size() == 0) {
+                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
+            }
+            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
+            Iterator<Date> iter = values.iterator();
+            while (iter.hasNext()) {
+                dateList.add(new java.sql.Date(iter.next().getTime()));
+            }
+            addCriterion(condition, dateList, property);
+        }
+
+        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
+            if (value1 == null || value2 == null) {
+                throw new RuntimeException("Between values for " + property + " cannot be null");
+            }
+            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
         }
 
         public Criteria andIdIsNull() {
@@ -1216,52 +1243,52 @@ public class CustTrdInfoExample {
         }
 
         public Criteria andTrdDateEqualTo(Date value) {
-            addCriterion("trd_date =", value, "trdDate");
+            addCriterionForJDBCDate("trd_date =", value, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateNotEqualTo(Date value) {
-            addCriterion("trd_date <>", value, "trdDate");
+            addCriterionForJDBCDate("trd_date <>", value, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateGreaterThan(Date value) {
-            addCriterion("trd_date >", value, "trdDate");
+            addCriterionForJDBCDate("trd_date >", value, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateGreaterThanOrEqualTo(Date value) {
-            addCriterion("trd_date >=", value, "trdDate");
+            addCriterionForJDBCDate("trd_date >=", value, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateLessThan(Date value) {
-            addCriterion("trd_date <", value, "trdDate");
+            addCriterionForJDBCDate("trd_date <", value, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateLessThanOrEqualTo(Date value) {
-            addCriterion("trd_date <=", value, "trdDate");
+            addCriterionForJDBCDate("trd_date <=", value, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateIn(List<Date> values) {
-            addCriterion("trd_date in", values, "trdDate");
+            addCriterionForJDBCDate("trd_date in", values, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateNotIn(List<Date> values) {
-            addCriterion("trd_date not in", values, "trdDate");
+            addCriterionForJDBCDate("trd_date not in", values, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateBetween(Date value1, Date value2) {
-            addCriterion("trd_date between", value1, value2, "trdDate");
+            addCriterionForJDBCDate("trd_date between", value1, value2, "trdDate");
             return (Criteria) this;
         }
 
         public Criteria andTrdDateNotBetween(Date value1, Date value2) {
-            addCriterion("trd_date not between", value1, value2, "trdDate");
+            addCriterionForJDBCDate("trd_date not between", value1, value2, "trdDate");
             return (Criteria) this;
         }
 
@@ -1632,6 +1659,76 @@ public class CustTrdInfoExample {
 
         public Criteria andSellerIdNotBetween(Long value1, Long value2) {
             addCriterion("seller_id not between", value1, value2, "sellerId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameIsNull() {
+            addCriterion("seller_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameIsNotNull() {
+            addCriterion("seller_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameEqualTo(String value) {
+            addCriterion("seller_name =", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameNotEqualTo(String value) {
+            addCriterion("seller_name <>", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameGreaterThan(String value) {
+            addCriterion("seller_name >", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameGreaterThanOrEqualTo(String value) {
+            addCriterion("seller_name >=", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameLessThan(String value) {
+            addCriterion("seller_name <", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameLessThanOrEqualTo(String value) {
+            addCriterion("seller_name <=", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameLike(String value) {
+            addCriterion("seller_name like", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameNotLike(String value) {
+            addCriterion("seller_name not like", value, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameIn(List<String> values) {
+            addCriterion("seller_name in", values, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameNotIn(List<String> values) {
+            addCriterion("seller_name not in", values, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameBetween(String value1, String value2) {
+            addCriterion("seller_name between", value1, value2, "sellerName");
+            return (Criteria) this;
+        }
+
+        public Criteria andSellerNameNotBetween(String value1, String value2) {
+            addCriterion("seller_name not between", value1, value2, "sellerName");
             return (Criteria) this;
         }
 

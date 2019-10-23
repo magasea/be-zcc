@@ -76,4 +76,10 @@ public class TradInfoController {
       }
     }
   }
+
+  @RequestMapping(value = "/refactData/patchSellName", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchSellName() throws Exception {
+    syncService.updateSellerNameFromCTS();
+  }
 }

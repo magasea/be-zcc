@@ -26,11 +26,11 @@ import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.SyncService;
 import java.text.ParseException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -877,7 +877,36 @@ public class SyncServiceImpl implements SyncService {
 
   }
 
+  @Override
+  public void updateSellerNameFromCTS() {
+    RowBounds rowBounds = null;
+    Long count =  custTrdInfoMapper.countByExample(null);
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.setOrderByClause("id DESC");
+    for(int idx = 0; idx < count/100; idx ++){
+      rowBounds = new RowBounds(idx*100, 100);
 
- }
+      List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExampleWithRowbounds(custTrdInfoExample, rowBounds);
+      updateCustTrdInfos(custTrdInfos);
+    }
+
+  }
+
+  private void updateCustTrdInfos(List<CustTrdInfo> custTrdInfos) {
+    for(CustTrdInfo custTrdInfo: custTrdInfos){
+
+      CustTrdSeller custTrdSeller =  custTrdSellerMapper.selectByPrimaryKey(custTrdInfo.getSellerId());
+      if(custTrdSeller == null){
+        log.error("Failed to get seller for id:{} of custTrdInfo:{}", custTrdInfo.getSellerId(), custTrdInfo.getId());
+        continue;
+      }else{
+        custTrdInfo.setSellerName(custTrdSeller.getName());
+        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+      }
+    }
+  }
+
+
+}
 
 

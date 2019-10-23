@@ -3,13 +3,14 @@
 <mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="CHAR" property="name" />
     <result column="orig_id" jdbcType="CHAR" property="origId" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="province_code" jdbcType="CHAR" property="provinceCode" />
+    <result column="city_code" jdbcType="CHAR" property="cityCode" />
+    <result column="url" jdbcType="CHAR" property="url" />
     <result column="addr" jdbcType="CHAR" property="addr" />
     <result column="tel" jdbcType="CHAR" property="tel" />
     <result column="mobile_num" jdbcType="CHAR" property="mobileNum" />
-    <result column="province_code" jdbcType="CHAR" property="provinceCode" />
-    <result column="city_code" jdbcType="CHAR" property="cityCode" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -73,7 +74,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, orig_id, addr, tel, mobile_num, province_code, city_code, type, create_time, 
+    id, orig_id, name, province_code, city_code, url, addr, tel, mobile_num, type, create_time, 
     update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample" resultMap="BaseResultMap">
@@ -111,14 +112,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_SELLER (name, orig_id, addr, tel, 
-      mobile_num, province_code, city_code, 
-      type, create_time, update_time
-      )
-    values (#{name,jdbcType=CHAR}, #{origId,jdbcType=CHAR}, #{addr,jdbcType=CHAR}, #{tel,jdbcType=CHAR}, 
-      #{mobileNum,jdbcType=CHAR}, #{provinceCode,jdbcType=CHAR}, #{cityCode,jdbcType=CHAR}, 
-      #{type,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into CUST_TRD_SELLER (orig_id, name, province_code, 
+      city_code, url, addr, tel, 
+      mobile_num, type, create_time, 
+      update_time)
+    values (#{origId,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{provinceCode,jdbcType=CHAR}, 
+      #{cityCode,jdbcType=CHAR}, #{url,jdbcType=CHAR}, #{addr,jdbcType=CHAR}, #{tel,jdbcType=CHAR}, 
+      #{mobileNum,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -126,11 +127,20 @@
     </selectKey>
     insert into CUST_TRD_SELLER
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="origId != null">
+        orig_id,
+      </if>
       <if test="name != null">
         name,
       </if>
-      <if test="origId != null">
-        orig_id,
+      <if test="provinceCode != null">
+        province_code,
+      </if>
+      <if test="cityCode != null">
+        city_code,
+      </if>
+      <if test="url != null">
+        url,
       </if>
       <if test="addr != null">
         addr,
@@ -140,12 +150,6 @@
       </if>
       <if test="mobileNum != null">
         mobile_num,
-      </if>
-      <if test="provinceCode != null">
-        province_code,
-      </if>
-      <if test="cityCode != null">
-        city_code,
       </if>
       <if test="type != null">
         type,
@@ -158,11 +162,20 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="origId != null">
+        #{origId,jdbcType=CHAR},
+      </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
-      <if test="origId != null">
-        #{origId,jdbcType=CHAR},
+      <if test="provinceCode != null">
+        #{provinceCode,jdbcType=CHAR},
+      </if>
+      <if test="cityCode != null">
+        #{cityCode,jdbcType=CHAR},
+      </if>
+      <if test="url != null">
+        #{url,jdbcType=CHAR},
       </if>
       <if test="addr != null">
         #{addr,jdbcType=CHAR},
@@ -172,12 +185,6 @@
       </if>
       <if test="mobileNum != null">
         #{mobileNum,jdbcType=CHAR},
-      </if>
-      <if test="provinceCode != null">
-        #{provinceCode,jdbcType=CHAR},
-      </if>
-      <if test="cityCode != null">
-        #{cityCode,jdbcType=CHAR},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -202,11 +209,20 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.origId != null">
+        orig_id = #{record.origId,jdbcType=CHAR},
+      </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
-      <if test="record.origId != null">
-        orig_id = #{record.origId,jdbcType=CHAR},
+      <if test="record.provinceCode != null">
+        province_code = #{record.provinceCode,jdbcType=CHAR},
+      </if>
+      <if test="record.cityCode != null">
+        city_code = #{record.cityCode,jdbcType=CHAR},
+      </if>
+      <if test="record.url != null">
+        url = #{record.url,jdbcType=CHAR},
       </if>
       <if test="record.addr != null">
         addr = #{record.addr,jdbcType=CHAR},
@@ -216,12 +232,6 @@
       </if>
       <if test="record.mobileNum != null">
         mobile_num = #{record.mobileNum,jdbcType=CHAR},
-      </if>
-      <if test="record.provinceCode != null">
-        province_code = #{record.provinceCode,jdbcType=CHAR},
-      </if>
-      <if test="record.cityCode != null">
-        city_code = #{record.cityCode,jdbcType=CHAR},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
@@ -240,13 +250,14 @@
   <update id="updateByExample" parameterType="map">
     update CUST_TRD_SELLER
     set id = #{record.id,jdbcType=BIGINT},
-      name = #{record.name,jdbcType=CHAR},
       orig_id = #{record.origId,jdbcType=CHAR},
+      name = #{record.name,jdbcType=CHAR},
+      province_code = #{record.provinceCode,jdbcType=CHAR},
+      city_code = #{record.cityCode,jdbcType=CHAR},
+      url = #{record.url,jdbcType=CHAR},
       addr = #{record.addr,jdbcType=CHAR},
       tel = #{record.tel,jdbcType=CHAR},
       mobile_num = #{record.mobileNum,jdbcType=CHAR},
-      province_code = #{record.provinceCode,jdbcType=CHAR},
-      city_code = #{record.cityCode,jdbcType=CHAR},
       type = #{record.type,jdbcType=INTEGER},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
@@ -257,11 +268,20 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     update CUST_TRD_SELLER
     <set>
+      <if test="origId != null">
+        orig_id = #{origId,jdbcType=CHAR},
+      </if>
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
-      <if test="origId != null">
-        orig_id = #{origId,jdbcType=CHAR},
+      <if test="provinceCode != null">
+        province_code = #{provinceCode,jdbcType=CHAR},
+      </if>
+      <if test="cityCode != null">
+        city_code = #{cityCode,jdbcType=CHAR},
+      </if>
+      <if test="url != null">
+        url = #{url,jdbcType=CHAR},
       </if>
       <if test="addr != null">
         addr = #{addr,jdbcType=CHAR},
@@ -271,12 +291,6 @@
       </if>
       <if test="mobileNum != null">
         mobile_num = #{mobileNum,jdbcType=CHAR},
-      </if>
-      <if test="provinceCode != null">
-        province_code = #{provinceCode,jdbcType=CHAR},
-      </if>
-      <if test="cityCode != null">
-        city_code = #{cityCode,jdbcType=CHAR},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
@@ -292,13 +306,14 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller">
     update CUST_TRD_SELLER
-    set name = #{name,jdbcType=CHAR},
-      orig_id = #{origId,jdbcType=CHAR},
+    set orig_id = #{origId,jdbcType=CHAR},
+      name = #{name,jdbcType=CHAR},
+      province_code = #{provinceCode,jdbcType=CHAR},
+      city_code = #{cityCode,jdbcType=CHAR},
+      url = #{url,jdbcType=CHAR},
       addr = #{addr,jdbcType=CHAR},
       tel = #{tel,jdbcType=CHAR},
       mobile_num = #{mobileNum,jdbcType=CHAR},
-      province_code = #{provinceCode,jdbcType=CHAR},
-      city_code = #{cityCode,jdbcType=CHAR},
       type = #{type,jdbcType=INTEGER},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP}

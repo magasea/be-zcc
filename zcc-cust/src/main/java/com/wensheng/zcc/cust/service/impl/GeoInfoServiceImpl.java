@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -37,11 +38,12 @@ public class GeoInfoServiceImpl implements GeoInfoService {
   BasicInfoService basicInfoService;
 
   @Override
+  @Scheduled(cron = "${spring.task.scheduling.cronExprGeo}")
   public void searchGeoInfoForTrd() {
     int offset = 0;
     int pageSize = 20;
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.setOrderByClause("order by id asc");
+    custTrdInfoExample.setOrderByClause("id asc");
     RowBounds rowBounds = new RowBounds(offset, pageSize);
     boolean stop = false;
     String regionName = null;
@@ -78,6 +80,10 @@ public class GeoInfoServiceImpl implements GeoInfoService {
         custTrdGeo.setCustTrdInfoId(custTrdInfo.getId());
         custTrdGeo.setBuyerId(custTrdInfo.getBuyerId());
         custTrdGeo.setBuyerType(custTrdInfo.getBuyerType());
+        custTrdGeo.setAmount(custTrdInfo.getTotalAmount());
+        custTrdGeo.setTitle(custTrdInfo.getInfoTitle());
+        custTrdGeo.setTrdCity(custTrdInfo.getTrdCity());
+        custTrdGeo.setUrl(custTrdInfo.getInfoUrl());
         custTrdGeo.setUpdateTime(updateTime);
         mongoTemplate.save(custTrdGeo);
 

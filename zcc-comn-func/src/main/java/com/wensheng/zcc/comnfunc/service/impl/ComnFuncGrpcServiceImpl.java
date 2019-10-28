@@ -25,6 +25,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -68,6 +69,7 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 
   }
   @Override
+  @Scheduled(cron = "${spring.scheduling}")
   public void getGeoByAddress(com.wenshengamc.zcc.comnfunc.gaodegeo.Address request,
       io.grpc.stub.StreamObserver<com.wenshengamc.zcc.common.Common.GeoJson> responseObserver) {
     List<GaodeGeoQueryVal> gaodeGeoQueryVals = null;

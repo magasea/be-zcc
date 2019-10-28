@@ -79,8 +79,8 @@ spring:
 #            port: 27017
     task:
         scheduling:
-            thread-name-prefix: synchWithScrapySystem
-            cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+            thread-name-prefix: amcscheduler-worker
+            cronExpr: 0 0 6,12,18,0 * * *
     cache:
         cache-names: TOKEN
         caffeine:

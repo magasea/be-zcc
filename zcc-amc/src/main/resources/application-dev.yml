@@ -89,8 +89,8 @@ spring:
       location: ${env.image-repo}
   task:
     scheduling:
-      thread-name-prefix: synchWithScrapySystem
-      cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+      thread-name-prefix: amcscheduler-worker
+      cronExpr: 0 0 6,12,18,0 * * *
   cache:
     cache-names: DEBTPACK, DEBT
     caffeine:
@@ -104,9 +104,9 @@ mybatis:
 
 project:
   params:
-    debt_image_path: ${env.image-repo}/debt/images/
-    asset_image_path: ${env.image-repo}/asset/images/
-    qrcode_image_path: ${env.image-repo}/qrcode/images/
+    debt_image_path: ${env.image-repo}/${env.name}/debt/images/
+    asset_image_path: ${env.image-repo}/${env.name}/asset/images/
+    qrcode_image_path: ${env.image-repo}/${env.name}/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC

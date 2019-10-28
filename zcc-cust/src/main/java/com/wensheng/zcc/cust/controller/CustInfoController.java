@@ -198,6 +198,7 @@ public class CustInfoController {
   }
 
 
+  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_ADMIN')")
   @RequestMapping(value = "/getCustInfoGeoNear", method = RequestMethod.POST)
   @ResponseBody
   public List<CustInfoGeoNear> getCustInfoGeoNear(@RequestBody GeoJsonPoint geoJsonPoint) throws Exception {

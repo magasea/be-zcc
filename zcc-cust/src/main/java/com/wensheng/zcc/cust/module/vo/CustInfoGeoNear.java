@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 @Data
 public class CustInfoGeoNear {
   GeoJsonPoint geoJsonPoint;
-  List<CustTrdCmpy> custTrdCmpyList;
-  List<CustTrdPerson> custTrdPersonList;
+  List<CustTrdCmpyExtVo> custTrdCmpyList;
+  List<CustTrdPersonExtVo> custTrdPersonList;
   Integer[] disttance;
 }

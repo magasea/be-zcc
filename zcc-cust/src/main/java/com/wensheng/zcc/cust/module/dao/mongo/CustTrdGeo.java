@@ -18,6 +18,10 @@ public class CustTrdGeo {
   Long buyerId;
   @Indexed
   Long custTrdInfoId;
+  String title;
+  String url;
+  Long amount;
+  String trdCity;
   Integer buyerType;
   @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
   GeoJsonPoint location;

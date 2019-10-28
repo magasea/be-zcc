@@ -55,6 +55,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -99,7 +100,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Transactional
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
-
+        delMongoForAmcAsset(amcAsset.getId());
          AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
         if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
@@ -328,6 +329,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             try {
                 for (AssetImage assetImage : assetImages) {
                     amcOssFileService.delFileInOss(assetImage.getOssPath());
+                    wszccTemplate.remove(assetImage);
                 }
             }catch (Exception ex){
                 log.error("Failed to delete ossFile:", ex);
@@ -814,6 +816,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
 
+
+    @Override
+    @Scheduled(cron = "${spring.task.scheduling.cronExpr}")
     public void checkGeoInfoWorker(){
         //1. travers asset table get address
         int offset = 0;

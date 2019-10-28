@@ -1,7 +1,6 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
-import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
@@ -22,8 +21,10 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
 import java.util.ArrayList;
@@ -32,6 +33,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +41,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
-import org.springframework.data.mongodb.core.MongoAction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.NearQuery;
@@ -479,37 +480,65 @@ public class CustInfoServiceImpl implements CustInfoService {
     GeoResults<CustTrdGeo> custTrdGeoGeoResults =
         mongoTemplate.geoNear( nearQuery, CustTrdGeo.class);
     if(CollectionUtils.isEmpty(custTrdGeoGeoResults.getContent())){
-      log.error("failed to find trdInfo nearby in 100KM range");
-    }else{
-      log.info("Distance is too near, so no record need to be record");
+      if(distances != null && distances.length >=2 ){
+        log.error("failed to find trdInfo nearby in {} - {} range", distances[0], distances[1]);
+      }else{
+        log.error("failed to find trdInfo with wrong distance param:{}", distances);
+      }
     }
-
-    List<Long> cmpyIds = new ArrayList<>();
-    List<Long> personIds = new ArrayList<>();
+    HashMap<Long,  List<CustTrdGeo>> cmpyIds = new HashMap<>();
+    HashMap<Long, List<CustTrdGeo>> personIds = new HashMap<>();
     for(GeoResult<CustTrdGeo> custTrdGeoGeoResult: custTrdGeoGeoResults.getContent()){
       CustTrdGeo item = custTrdGeoGeoResult.getContent();
       if(item.getBuyerType() == CustTypeEnum.COMPANY.getId() ||
           item.getBuyerType() == CustTypeEnum.BANK.getId()){
-        cmpyIds.add(item.getBuyerId());
+        if(!cmpyIds.containsKey(item.getBuyerId())){
+          cmpyIds.put(item.getBuyerId(), new ArrayList<CustTrdGeo>());
+        }
+        cmpyIds.get(item.getBuyerId()).add(item);
       }else if(item.getBuyerType() == CustTypeEnum.PERSON.getId()){
-        personIds.add(item.getBuyerId());
+        if(!personIds.containsKey(item.getBuyerId())){
+          personIds.put(item.getBuyerId(), new ArrayList<>());
+        }
+        personIds.get(item.getBuyerId()).add(item);
       }else{
         log.error("this buyer type is not handled:{}", item.getBuyerType());
       }
     }
     if(!CollectionUtils.isEmpty(cmpyIds)){
+      custInfoGeoNear.setCustTrdCmpyList(new ArrayList<>());
       CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
-      custTrdCmpyExample.createCriteria().andIdIn(cmpyIds);
+      custTrdCmpyExample.createCriteria().andIdIn(cmpyIds.keySet().stream().collect(Collectors.toList()));
       List<CustTrdCmpy> custTrdCmpyList =  custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
-      custInfoGeoNear.setCustTrdCmpyList(custTrdCmpyList);
+      for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
+        if((StringUtils.isEmpty(custTrdCmpy.getCmpyPhone())||custTrdCmpy.getCmpyPhone().equals("-1"))
+            &&(StringUtils.isEmpty(custTrdCmpy.getAnnuReptPhone())||custTrdCmpy.getAnnuReptPhone().equals("-1")) ){
+          log.error("Ignore not useful info for cmpy:{}", custTrdCmpy.getId());
+          continue;
+        }
+        CustTrdCmpyExtVo custTrdCmpyExtVo = new CustTrdCmpyExtVo();
+        custTrdCmpyExtVo.setCustTrdCmpy(custTrdCmpy);
+        custTrdCmpyExtVo.setCustTrdInfos(cmpyIds.get(custTrdCmpy.getId()));
+        custInfoGeoNear.getCustTrdCmpyList().add(custTrdCmpyExtVo);
+      }
+
     }
 
     if(!CollectionUtils.isEmpty(personIds)){
+      custInfoGeoNear.setCustTrdPersonList( new ArrayList<>());
       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-      custTrdPersonExample.createCriteria().andIdIn(personIds);
+      custTrdPersonExample.createCriteria().andIdIn(personIds.keySet().stream().collect(Collectors.toList()));
       List<CustTrdPerson> custTrdPersonList =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
-      custInfoGeoNear.setCustTrdPersonList(custTrdPersonList);
-
+      for(CustTrdPerson custTrdPerson: custTrdPersonList){
+        if(StringUtils.isEmpty(custTrdPerson.getMobileNum())||custTrdPerson.getMobileNum().equals("-1")){
+          log.error("Ignore not useful info for custTrdPerson:{}", custTrdPerson.getId());
+          continue;
+        }
+        CustTrdPersonExtVo custTrdPersonExtVo = new CustTrdPersonExtVo();
+        custTrdPersonExtVo.setCustTrdPerson(custTrdPerson);
+        custTrdPersonExtVo.setCustTrdInfos(personIds.get(custTrdPerson.getId()));
+        custInfoGeoNear.getCustTrdPersonList().add(custTrdPersonExtVo);
+      }
     }
     return custInfoGeoNear;
   }

@@ -8,13 +8,14 @@ import com.wensheng.zcc.sso.service.AmcUserService;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.util.CollectionUtils;
-
+@Slf4j
 public class CustomTokenEnhancer implements TokenEnhancer {
 
 
@@ -32,6 +33,7 @@ public class CustomTokenEnhancer implements TokenEnhancer {
         additionalInfo.put("location", amcUserDetail.getLocation());
         additionalInfo.put("deptId", amcUserDetail.getDeptId());
         additionalInfo.put("cmpyId", amcUserDetail.getCompanyId());
+        log.info("cmpyId:{}", amcUserDetail.getCompanyId());
 //        }
 
         ((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(additionalInfo);

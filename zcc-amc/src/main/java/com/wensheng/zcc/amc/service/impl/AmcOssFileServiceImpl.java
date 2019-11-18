@@ -2,6 +2,10 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.common.auth.DefaultCredentialProvider;
+import com.aliyun.oss.model.CopyObjectRequest;
+import com.aliyun.oss.model.CopyObjectResult;
+import com.aliyun.oss.model.DownloadFileRequest;
+import com.aliyun.oss.model.DownloadFileResult;
 import com.aliyun.oss.model.OSSObjectSummary;
 import com.aliyun.oss.model.ObjectListing;
 import com.aliyun.oss.model.PutObjectResult;
@@ -52,6 +56,12 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
   @Value("${project.params.bucket_name}")
   String bucketName;
+
+  @Value("${project.params.oss_end_point_bak}")
+  String ossEndPointBak;
+
+  @Value("${project.params.bucket_name_bak}")
+  String bucketNameBak;
 
   OSSClient ossClient;
 
@@ -105,6 +115,27 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
     for (OSSObjectSummary s : sums) {
       System.out.println("\t" + s.getKey());
+    }
+
+  }
+
+  @Override
+  public void backUpOssFiles() {
+    ObjectListing objectListing = ossClient.listObjects(bucketName);
+    List<OSSObjectSummary> sums = objectListing.getObjectSummaries();
+    StringBuilder sb = new StringBuilder(debtImageRepo).append(File.separatorChar).append("back").append(File.separatorChar);
+    for (OSSObjectSummary s : sums) {
+      log.info("before copy:{}",s.getKey());
+      DownloadFileRequest downloadFileRequest = new DownloadFileRequest(bucketName, s.getKey(), String.format("%s%s",
+       sb, s.getKey()),1000000   );
+      try {
+        DownloadFileResult downloadFileResult = ossClient.downloadFile(downloadFileRequest);
+
+      } catch (Throwable throwable) {
+        throwable.printStackTrace();
+      }
+
+
     }
 
   }

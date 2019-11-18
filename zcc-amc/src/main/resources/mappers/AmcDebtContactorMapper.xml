@@ -9,6 +9,7 @@
     <result column="location" jdbcType="INTEGER" property="location" />
     <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, branch_id, name, nikname, location, phone_number, notes
+    id, branch_id, name, nikname, location, phone_number, notes, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
@@ -107,11 +108,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_DEBT_CONTACTOR (branch_id, name, nikname, 
-      location, phone_number, notes
-      )
+      location, phone_number, notes, 
+      update_time)
     values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{nikname,jdbcType=CHAR}, 
-      #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}
-      )
+      #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -137,6 +138,9 @@
       <if test="notes != null">
         notes,
       </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="branchId != null">
@@ -156,6 +160,9 @@
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -189,6 +196,9 @@
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -202,7 +212,8 @@
       nikname = #{record.nikname,jdbcType=CHAR},
       location = #{record.location,jdbcType=INTEGER},
       phone_number = #{record.phoneNumber,jdbcType=CHAR},
-      notes = #{record.notes,jdbcType=VARCHAR}
+      notes = #{record.notes,jdbcType=VARCHAR},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -228,6 +239,9 @@
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -238,7 +252,8 @@
       nikname = #{nikname,jdbcType=CHAR},
       location = #{location,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=CHAR},
-      notes = #{notes,jdbcType=VARCHAR}
+      notes = #{notes,jdbcType=VARCHAR},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">

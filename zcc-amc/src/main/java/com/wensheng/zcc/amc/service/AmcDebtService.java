@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 /**
  * @author chenwei on 1/4/19
@@ -108,4 +109,8 @@ public interface AmcDebtService {
 
   public List<Long> getDebtIdsByPackIds(List<Long> debtPackIds);
   List<AmcDebtUploadImg2WXRlt> uploadAmcDebtImage2WechatByIds(List<Long> debtIds);
-  }
+
+  public void searchGeoInfoForDebtByCourt();
+
+  List<AmcDebtExtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint);
+}

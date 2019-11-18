@@ -3,8 +3,11 @@ server:
   tomcat:
     basedir: ${env.image-repo}
 grpc:
-  server:
-    port: 10011
+  enabled: true
+  port: 10011
+  in-process-server-name: amcGrpcServ
+
+  #    server:
   client:
     wechat:
       host: ${env.rpchost}
@@ -12,7 +15,9 @@ grpc:
     comnfunc:
       host: ${env.rpchost}
       port: 10016
-
+    recm:
+      host: ${env.recmhost}
+      port: 10018
 logging:
     level:
         com:
@@ -91,8 +96,9 @@ spring:
     scheduling:
       thread-name-prefix: amcscheduler-worker
       cronExpr: 0 0 6,12,18,0 * * *
+      cronExprSSO: 0 0 6,9,11,12,14,15,18,0 * * *
   cache:
-    cache-names: DEBTPACK, DEBT
+    cache-names: DEBTPACK, DEBT, ASSET
     caffeine:
       spec: maximumSize=500, expireAfterAccess=120s
 
@@ -111,6 +117,8 @@ project:
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
     bucket_name: ws-zcc
+    oss_end_point_bak: oss-cn-shanghai.aliyuncs.com
+    bucket_name_bak: ws-zccbak
 
 ---
 # tag::wechatConfig
@@ -137,7 +145,10 @@ baidu:
 sso:
   ssoUserDetailUrl: http://${env.amcssohost}:10002/amc/user/sso/getUserDetailsById/%d
   ssoUserTokenUrl: http://${env.amcssohost}:10002/amc/zcc/sso/getTokenByMobilephone/%s
-
+wssso:
+  host: ${env.ws-sso-host}
+  port: 11002
+  url: http://${wssso.host}:${wssso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
 # end::wechatConfig
 
 env:
@@ -145,7 +156,9 @@ env:
   dbhost: 10.20.100.70
   kfkhost: 10.20.100.238
   rpchost: localhost
+  ws-sso-host: localhost
   amcssohost: localhost
+  recmhost: 10.20.100.228
   dbusername: root
   dbpasswd: wensheng
   mongodb-host: 10.20.100.235

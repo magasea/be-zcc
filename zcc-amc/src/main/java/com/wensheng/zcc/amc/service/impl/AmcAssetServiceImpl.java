@@ -17,6 +17,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
+import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -49,12 +50,19 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.kafka.common.protocol.types.Field.Str;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metric;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Ne;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.data.mongodb.repository.Near;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -67,6 +75,7 @@ import org.springframework.util.StringUtils;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"DEBTPACK"})
 public class AmcAssetServiceImpl implements AmcAssetService {
     @Autowired
     AmcAssetMapper amcAssetMapper;
@@ -435,19 +444,6 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssetMapper.countByExample(amcAssetExample);
     }
 
-    @Override
-    public List<AmcAssetVo> queryForHomePage(int size) {
-        //query AssetImage to get top sizes images containing asset ids
-        Query query = new Query();
-//        query.addCriteria(Criteria.where("amcAssetId").is())
-
-        //query amcAssetMapper to get top size amcAssets which is not deleted
-
-
-        //join them
-
-        return null;
-    }
 
     @Override
     public Map<String, List<Long>> getAllAssetTitles() {
@@ -825,8 +821,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         int pageSize = 20;
         RowBounds rowBounds = new RowBounds(offset, pageSize);
         boolean stop = false;
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.setOrderByClause("id desc");
         while(!stop){
-            List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(null, rowBounds);
+            List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
             rowBounds = null;
             if(CollectionUtils.isEmpty(amcAssets)){
                 log.info("geo info finding finished");
@@ -873,13 +871,50 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return assetAdditionalMap;
     }
 
+    @Override
+    @Cacheable
+    public List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception {
+
+        List<AmcAssetGeoNear> assetGeoNears = new ArrayList<>();
+        assetGeoNears.add(queryNearByAssets(geoJsonPoint, new Integer[]{0, 100}));
+        assetGeoNears.add(queryNearByAssets(geoJsonPoint, new Integer[]{100, 200}));
+        assetGeoNears.add(queryNearByAssets(geoJsonPoint, new Integer[]{200, 300}));
+        assetGeoNears.add(queryNearByAssets(geoJsonPoint, new Integer[]{300}));
+
+        return assetGeoNears;
+    }
+
+    private AmcAssetGeoNear queryNearByAssets(GeoJsonPoint geoJsonPoint, Integer[] distances) throws Exception {
+        if(distances == null || distances.length < 1){
+            throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, "invalid distances params");
+        }
+        AmcAssetGeoNear amcAssetGeoNear = new AmcAssetGeoNear();
+        amcAssetGeoNear.setDistanceRange(distances);
+        NearQuery nearQuery = null;
+        if(distances.length == 1){
+            nearQuery = NearQuery.near(geoJsonPoint).inKilometers().minDistance(distances[0]);
+        }else{
+            nearQuery = NearQuery.near(geoJsonPoint).inKilometers().maxDistance(distances[1]).minDistance(distances[0]);
+        }
+        GeoResults<AssetAdditional> assetAdditionalGeoResults = wszccTemplate.geoNear(nearQuery, AssetAdditional.class);
+        if(assetAdditionalGeoResults != null && ( distances.length == 2 ?
+            assetAdditionalGeoResults.getAverageDistance().getValue() < distances[1] :
+            assetAdditionalGeoResults.getAverageDistance().getValue() > distances[0])){
+            List<Long> assetIds =
+                assetAdditionalGeoResults.getContent().stream().map(item -> item.getContent().getAmcAssetId()).collect(
+                    Collectors.toList());
+            amcAssetGeoNear.setAmcAssetVoList(getAssetsByIds(assetIds));
+        }
+        return amcAssetGeoNear;
+    }
+
     public void findGeoAndUpdate(Map<Long, AddressTmp> addresses){
 
         Query query = null;
 
         for (Map.Entry<Long, AddressTmp> mapElement : addresses.entrySet()) {
             Long assetId = mapElement.getKey();
-            Address.Builder aBuilder = Address.newBuilder();
+                Address.Builder aBuilder = Address.newBuilder();
             String addressVal = mapElement.getValue().getAddress();
             if(StringUtils.isEmpty(addressVal)){
                 log.error(" the address is empty:{} of amcId:{}", addressVal, assetId );

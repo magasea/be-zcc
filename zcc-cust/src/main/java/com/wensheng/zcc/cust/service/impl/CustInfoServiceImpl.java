@@ -472,20 +472,22 @@ public class CustInfoServiceImpl implements CustInfoService {
     NearQuery nearQuery = null;
     if(0 == distances[0] ){
       nearQuery =
-          NearQuery.near(geoJsonPoint).maxDistance(distances[1]).inKilometers();
+          NearQuery.near(geoJsonPoint).minDistance(0.0).maxDistance(distances[1]).inKilometers();
     }else{
       nearQuery =
           NearQuery.near(geoJsonPoint).minDistance(distances[0]).maxDistance(distances[1]).inKilometers();
     }
     GeoResults<CustTrdGeo> custTrdGeoGeoResults =
         mongoTemplate.geoNear( nearQuery, CustTrdGeo.class);
-    if(CollectionUtils.isEmpty(custTrdGeoGeoResults.getContent())){
+    if(CollectionUtils.isEmpty(custTrdGeoGeoResults.getContent()) || custTrdGeoGeoResults.getAverageDistance().getValue() > distances[1]){
       if(distances != null && distances.length >=2 ){
         log.error("failed to find trdInfo nearby in {} - {} range", distances[0], distances[1]);
+        return custInfoGeoNear;
       }else{
         log.error("failed to find trdInfo with wrong distance param:{}", distances);
       }
     }
+
     HashMap<Long,  List<CustTrdGeo>> cmpyIds = new HashMap<>();
     HashMap<Long, List<CustTrdGeo>> personIds = new HashMap<>();
     for(GeoResult<CustTrdGeo> custTrdGeoGeoResult: custTrdGeoGeoResults.getContent()){

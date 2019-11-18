@@ -55,6 +55,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -322,6 +323,7 @@ public class AmcSsoServiceImpl implements AmcSsoService {
   }
 
   @Override
+  @Scheduled(cron = "task.scheduling.cronExpr")
   public boolean syncUserWithSSO() {
     SSOQueryParam ssoQueryParam = new SSOQueryParam();
     PageInfo pageInfo = new PageInfo();

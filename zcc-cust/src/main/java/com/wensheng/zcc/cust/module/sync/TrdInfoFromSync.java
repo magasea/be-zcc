@@ -12,23 +12,27 @@ public class TrdInfoFromSync {
     String trdTitle;
     int packCount;
     String debtProvincePrep;
-    String debtProvinceNamePrep;
     String debtCityPrep;
-    String debtCityNamePrep;
+    String trdProvincePrep;
     String trdAmount;
     Long trdAmountPrep;
-    Double baseAmount;
-    Double interestAmount;
-    Double totalAmount;
     Long trdDate;
     String trdContentPrep;
-    String linkMan;
-    String linkAddress;
     String sellerIdPrep;
     int sellerTypePrep;
+    String sellerContactManPrep;
+    String sellerContactPhonePrep;
+    String sellerContactEmailPrep;
+    String sellerContactAddressPrep;
+    String sellerContactIDCardPrep;
     String buyerIdPrep;
     int buyerTypePrep;
+    String buyerContactManPrep;
+    String buyerContactPhonePrep;
+    String buyerContactEmailPrep;
+    String buyerContactAddressPrep;
+    String buyerContactIDCardPrep;
     Long updateDate;
-    String url;
+    String trdContentOss;
 
 }

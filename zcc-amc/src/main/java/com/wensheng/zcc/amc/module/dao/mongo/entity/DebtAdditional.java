@@ -2,6 +2,9 @@ package com.wensheng.zcc.amc.module.dao.mongo.entity;
 
 import lombok.Data;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJson;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.IndexDirection;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -19,4 +22,6 @@ public class DebtAdditional {
     Integer likeCount	=0;			// 点赞次数
     Integer watchCount	=0;			// 关注次数
     Integer commentCount =0;			// 评论次数
+    @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+    GeoJson location;
 }

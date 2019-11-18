@@ -14,6 +14,7 @@ import com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
+import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.geo.GeoJson;
@@ -32,6 +33,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
+@GRpcService
 public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServiceImplBase {
 
 

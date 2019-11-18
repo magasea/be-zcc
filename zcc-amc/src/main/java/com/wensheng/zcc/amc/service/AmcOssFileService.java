@@ -19,4 +19,6 @@ public interface AmcOssFileService {
 
   public void listFilesOnOss(ImagePathClassEnum imagePathClassEnum);
 
+  public void backUpOssFiles();
+
 }

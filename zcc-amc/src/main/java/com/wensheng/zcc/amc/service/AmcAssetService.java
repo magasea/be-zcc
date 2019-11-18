@@ -8,12 +8,14 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
+import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 /**
  * @author chenwei on 12/5/18
@@ -49,7 +51,6 @@ public interface AmcAssetService {
 
     Long getAssetCount(Map<String, Object> queryParam) throws Exception;
 
-    public List<AmcAssetVo> queryForHomePage(int size);
 
     Map<String, List<Long>> getAllAssetTitles();
 
@@ -73,4 +74,6 @@ public interface AmcAssetService {
   public void checkGeoInfoWorker();
 
   Map<Long, AssetAdditional> getAssetAdditions(Long amcDebtId);
+
+  List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
 }

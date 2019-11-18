@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
@@ -30,6 +31,7 @@ import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -109,19 +111,16 @@ public class AmcAssetController {
     return queryResults;
   }
 
-  @RequestMapping(value = "/amcid/{amcid}/assets/recommand", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/queryAssetByGeopoint", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcAssetVo> getAmcAssets(
-      @RequestBody(required = false) Integer size) throws Exception {
-//    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
+  @LogExecutionTime
+  public List<AmcAssetGeoNear> queryAssetByGeopoint(
+      @RequestBody GeoJsonPoint jsonPoint ) throws Exception {
 
+    List<AmcAssetGeoNear> queryResults = amcAssetService.queryByGeopoint(jsonPoint);
 
-
-    List<AmcAssetVo> amcAssetVos = amcAssetService.queryForHomePage(size);
-
-    return amcAssetVos;
+    return queryResults;
   }
-
 
 
   @RequestMapping(value = "/amcid/{amcid}/asset/allTitles", method = RequestMethod.POST)

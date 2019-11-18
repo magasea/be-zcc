@@ -111,7 +111,7 @@ public class CustInfoController {
   }
 
 
-  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
   @RequestMapping(value = "/getCustTrdInfo", method = RequestMethod.POST)
   @ResponseBody
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
@@ -153,7 +153,7 @@ public class CustInfoController {
 
   }
 
-  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
+//  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)
   public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
@@ -198,7 +198,8 @@ public class CustInfoController {
   }
 
 
-  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_ADMIN')")
+  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_SYSTEM_ADMIN', 'ROLE_CO_ADMIN') or hasPermission(null, "
+      + "'PERM_INVCUST_VIEW')")
   @RequestMapping(value = "/getCustInfoGeoNear", method = RequestMethod.POST)
   @ResponseBody
   public List<CustInfoGeoNear> getCustInfoGeoNear(@RequestBody GeoJsonPoint geoJsonPoint) throws Exception {

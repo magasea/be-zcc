@@ -90,6 +90,7 @@ public class GaoDeServiceImpl implements GaoDeService {
     return true;
   }
 
+  @Override
   public List<GaodeGeoQueryVal> getGeoInfoFromAddress(String address,  String city) throws Exception {
 
 
@@ -108,8 +109,8 @@ public class GaoDeServiceImpl implements GaoDeService {
       log.error("Failed to get geo info for :{} and city:{}", address, city);
       throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
     }
-    System.out.println(results.get(0).getStreet());
-    System.out.println(results.get(0).getDistrict());
+    System.out.println(results.get(0).getLocation());
+    System.out.println(results.get(0).getCityCode());
 //    List<GaodeGeoQueryVal> results = new ArrayList();
     return results;
 

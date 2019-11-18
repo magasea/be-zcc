@@ -1,5 +1,7 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
+import java.util.Date;
+
 public class AmcDebtContactor {
     private Long id;
 
@@ -14,6 +16,8 @@ public class AmcDebtContactor {
     private String phoneNumber;
 
     private String notes;
+
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -69,5 +73,13 @@ public class AmcDebtContactor {
 
     public void setNotes(String notes) {
         this.notes = notes == null ? null : notes.trim();
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

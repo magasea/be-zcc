@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
@@ -30,6 +31,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
@@ -51,6 +53,9 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wenshengamc.zcc.common.Common.GeoJson;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.wechat.AmcAssetImage;
 import com.wenshengamc.zcc.wechat.AmcDebtImage;
 import com.wenshengamc.zcc.wechat.DebtImageUploadResult;
@@ -70,8 +75,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -79,10 +86,15 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.GeoResult;
+import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -149,6 +161,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   WechatGrpcService wechatGrpcService;
+
+  @Autowired
+  CurtInfoMapper curtInfoMapper;
+
+  @Autowired
+  ComnFuncServiceBlockingStub comnfuncServiceStub;
 
 
   @Override
@@ -1104,6 +1122,103 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return result;
   }
 
+  @Override
+  @Scheduled(cron = "${spring.task.scheduling.cronExpr}")
+  public void searchGeoInfoForDebtByCourt() {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.setOrderByClause("id desc");
+    int offset = 0;
+    int pageSize = 20;
+    Long count = amcDebtMapper.countByExample(null);
+    RowBounds rowBounds = null;
+    Map<Long, Long> debt2Court = new HashMap<>();
+    for(;offset  < count;){
+      rowBounds = new RowBounds(offset, pageSize);
+      List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+      if(!CollectionUtils.isEmpty(amcDebts)){
+        offset += pageSize;
+      }else{
+        break;
+      }
+      amcDebts.forEach(item -> debt2Court.put(item.getId(), item.getCourtId()));
+      handleCourtGeoInfo(debt2Court);
+    }
+
+
+
+  }
+
+  @Override
+  public List<AmcDebtExtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint) {
+    NearQuery nearQuery =  NearQuery.near(geoJsonPoint).maxDistance(0.0).maxDistance(1000).inKilometers();
+    GeoResults<DebtAdditional> debtAdditionalGeoResults = wszccTemplate.geoNear(nearQuery, DebtAdditional.class);
+    List<AmcDebtExtVo> amcDebtVos = new ArrayList<>();
+    for(GeoResult<DebtAdditional> geoResult: debtAdditionalGeoResults.getContent()) {
+      try {
+        AmcDebtExtVo amcDebtExtVo = get(geoResult.getContent().getAmcDebtId());
+        amcDebtVos.add(amcDebtExtVo);
+      } catch (Exception e) {
+        log.error("Failed to get amcDebtExtVo ", e);
+      }
+    }
+    return amcDebtVos;
+  }
+
+  private void handleCourtGeoInfo(Map<Long, Long> debt2Courts) {
+    long courtId = -1;
+    Iterator<Map.Entry<Long, Long>> iterator = debt2Courts.entrySet().iterator();
+    HashMap<Long, AddressTmp> courtAddress = new HashMap<>();
+    while (iterator.hasNext()){
+      Map.Entry<Long, Long> item = iterator.next();
+      courtId = item.getValue();
+      if(courtId > 0){
+        CurtInfo curtInfo =  curtInfoMapper.selectByPrimaryKey(courtId);
+        if(curtInfo == null){
+          log.error("cannot find courtInfo by :{}", courtId);
+          continue;
+        }
+        AddressTmp addressTmp = new AddressTmp(curtInfo.getCurtName(), curtInfo.getCurtCity());
+        courtAddress.put(item.getKey(), addressTmp);
+      }
+    }
+    updateGeoInfo4Debt(courtAddress);
+
+  }
+
+  private void updateGeoInfo4Debt(HashMap<Long, AddressTmp> courtAddress) {
+    Query query = new Query();
+    for (Map.Entry<Long, AddressTmp> mapElement : courtAddress.entrySet()) {
+      Long debtId = mapElement.getKey();
+      Address.Builder aBuilder = Address.newBuilder();
+      String courtName = mapElement.getValue().getCourtName();
+      if(StringUtils.isEmpty(courtName)){
+        log.error(" the courtName is empty:{} of amcId:{}", courtName, debtId );
+      }
+      aBuilder.setAddress(courtName);
+      aBuilder.setCity(mapElement.getValue().getCity());
+      GeoJson geoJson;
+      try{
+        geoJson = comnfuncServiceStub.getGeoByAddress(aBuilder.build());
+      }catch (Exception ex){
+        log.error("", ex);
+        continue;
+      }
+
+
+      query = new Query();
+      query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+      List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
+      if(CollectionUtils.isEmpty(debtAdditionals)){
+        log.error("Failed to find debtAdditionals by:{}", debtId);
+        query = null;
+        continue;
+      }
+      debtAdditionals.get(0).setLocation(new GeoJsonPoint(geoJson.getCoordinates(0), geoJson.getCoordinates(1)));
+      wszccTemplate.save(debtAdditionals.get(0));
+      query = null;
+    }
+
+  }
 
 
   public AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
@@ -1171,5 +1286,16 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtExample;
   }
 
+  @Data
 
+  class AddressTmp{
+    String courtName;
+    String city;
+
+    AddressTmp(String courtName, String city){
+      this.courtName = courtName;
+      this.city = city;
+
+    }
+  }
 }

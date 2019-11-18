@@ -38,6 +38,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -252,7 +253,7 @@ public class AmcDebtController {
     return debtImages;
 
   }
-  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')  or hasPermission(#amcid, 'PERM_AMC_CRUD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')  or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/api/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
   @Transactional
@@ -270,10 +271,11 @@ public class AmcDebtController {
   }
 
   @EditActionChecker
-  @RequestMapping(value = "/api/amcid/{id}/debt/create", method = RequestMethod.POST)
-  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/create", method = RequestMethod.POST)
+  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission"
+      + "(#amcid, 'PERM_AMC_CRUD')")
   @ResponseBody
-  public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo, @PathVariable Long id) throws Exception {
+  public AmcDebtVo createDebt(@RequestBody BaseActionVo<AmcDebtCreateVo> baseCreateVo, @PathVariable Long amcid) throws Exception {
 
     AmcDebt amcDebt = new AmcDebt();
     AmcDebtCreateVo createVo = baseCreateVo.getContent();
@@ -663,5 +665,19 @@ public class AmcDebtController {
 
     return amcDebtService.uploadAmcDebtImage2WechatByIds(debtIds);
 
+  }
+
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/updateGeo4Debts", method = RequestMethod.POST)
+  @ResponseBody
+  public void updateGeo4Debts() throws Exception {
+
+     amcDebtService.searchGeoInfoForDebtByCourt();
+
+  }
+
+  @RequestMapping(value = "/getDebtGeoNear", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcDebtExtVo> getDebtGeoNear(@RequestBody GeoJsonPoint geoJsonPoint) throws Exception {
+    return amcDebtService.queryAllNearByDebts(geoJsonPoint);
   }
 }

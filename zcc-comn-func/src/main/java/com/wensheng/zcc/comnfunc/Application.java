@@ -11,7 +11,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 @MapperScan(basePackages = "com.wensheng.zcc.comnfunc.dao.mysql")
-public class Application implements CommandLineRunner {
+public class Application  {
 
     @Autowired
     ApplicationContext applicationContext;
@@ -22,12 +22,12 @@ public class Application implements CommandLineRunner {
 
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        Server server = applicationContext.getBean(Server.class);
-        System.out.println("Starting server...");
-        server.start();
-        System.out.println("Server started!");
-        server.awaitTermination();
-    }
+//    @Override
+//    public void run(String... args) throws Exception {
+//        Server server = applicationContext.getBean(Server.class);
+//        System.out.println("Starting server...");
+//        server.start();
+//        System.out.println("Server started!");
+//        server.awaitTermination();
+//    }
 }

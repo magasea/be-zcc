@@ -27,7 +27,9 @@ import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.SyncService;
 import java.text.ParseException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -109,10 +111,17 @@ public class SyncServiceImpl implements SyncService {
     @Value("${cust.syncUrls.getPersonInfoByUpdateTime}")
     private String getPersonInfoByUpdateTime;
 
-//  String[] provinceCodes = {"350000"};
-  String[] provinceCodes = {"110000"};
+//  String[] provinceCodes = {"350000000000"};
+  String[] provinceCodes = {"110000000000"};
+
+  Map<String, String> errorTrdInfos;
+  Map<String, String> errCmpyInfos;
+  Map<String, String> errPersonInfos;
 
   boolean isTest = true;
+  int pageForLog = 0;
+
+
 
     @PostConstruct
     void init(){
@@ -304,10 +313,15 @@ public class SyncServiceImpl implements SyncService {
 
 
   private void syncTrdInfoForProvince(String provinceCode) {
+      errorTrdInfos = new HashMap<>();
+      errCmpyInfos = new HashMap<>();
+      errPersonInfos = new HashMap<>();
+      pageForLog = 0;
       int pageNum = 0;
       int pageSize = 20;
       boolean haveNext = true;
       while(haveNext){
+        pageForLog = pageNum;
         PageWrapperResp<TrdInfoFromSync> pageWrapperResp = getTradeInfosByProvince(provinceCode, pageNum, pageSize);
         if(pageWrapperResp.getPages() < pageNum || CollectionUtils.isEmpty(pageWrapperResp.getList())){
           haveNext = false;
@@ -320,8 +334,31 @@ public class SyncServiceImpl implements SyncService {
           pageNum++;
         }
       }
+      log.info("===========================================start error "
+          + "summary=========================================");
+      if(!CollectionUtils.isEmpty(errorTrdInfos)){
+        errorTrdInfos.forEach((k, v) ->
+        log.error("trdInfo id:{}, error msg:{}", k,v));
+      }
 
 
+
+    if(!CollectionUtils.isEmpty(errCmpyInfos)){
+      errCmpyInfos.forEach((k, v) ->
+          log.error("cmpy id:{}, error msg:{}", k,v));
+    }
+
+    if(!CollectionUtils.isEmpty(errPersonInfos)){
+      errPersonInfos.forEach((k, v) ->
+          log.error("person id:{}, error msg:{}", k,v));
+    }
+    log.info("===========================================end error "
+        + "summary=========================================");
+
+    errorTrdInfos.clear();
+    errPersonInfos.clear();
+    errCmpyInfos.clear();
+    pageForLog = 0;
   }
 
 
@@ -402,6 +439,14 @@ public class SyncServiceImpl implements SyncService {
       log.error("Failed to get {} person info with id:{} with trd id:{}", isBuyer?"buyer":"seller", isBuyer?
           trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
+        errorTrdInfos.put(trdInfoFromSync.getId(),"");
+      }
+      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
+          errorTrdInfos.get(trdInfoFromSync.getId()),
+          String.format("Failed to get %s person info with id:%s with trd id:%s", isBuyer?"buyer":"seller", isBuyer?
+              trdInfoFromSync.getBuyerIdPrep():
+              trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
       return -1L;
     }
     Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
@@ -464,6 +509,11 @@ public class SyncServiceImpl implements SyncService {
     copyPersonSync2PersonInfo(custPersonInfoFromSync, custTrdPerson);
     if(action == 1){
       if(isBuyer){
+        int quality = checkBasicDataQuality(custTrdPerson);
+        if(quality <= 1){
+          errPersonInfos.put(custPersonInfoFromSync.getId(), String.format("data quality too low:%s",
+              custPersonInfoFromSync.toString()));
+        }
         custTrdPerson.setDataQuality(checkBasicDataQuality(custTrdPerson));
       }
       custTrdPersonMapper.insertSelective(custTrdPerson);
@@ -582,6 +632,14 @@ public class SyncServiceImpl implements SyncService {
       log.error("Failed to get {} cmpy info with id:{} of trd:{}", isBuyer? "buyer":"seller", isBuyer?
           trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
+        errorTrdInfos.put(trdInfoFromSync.getId(),"");
+      }
+      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
+      errorTrdInfos.get(trdInfoFromSync.getId()),String.format("Failed to get %s cmpy info with id:%s of trd:%s",
+              isBuyer? "buyer":"seller", isBuyer?
+                  trdInfoFromSync.getBuyerIdPrep():
+                  trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
       return -1L;
     }
 
@@ -634,7 +692,11 @@ public class SyncServiceImpl implements SyncService {
     copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
     if(action == 1){
       if(isBuyer){
-        custTrdCmpy.setDataQuality(checkBasicDataQuality(custTrdCmpy));
+        int quality = checkBasicDataQuality(custTrdCmpy);
+        if(quality < 4){
+          errCmpyInfos.put(custCmpyInfoFromSync.getId(), String.format("basic quality low:%s",custCmpyInfoFromSync.toString()));
+        }
+        custTrdCmpy.setDataQuality(quality);
       }
       custTrdCmpyMapper.insertSelective(custTrdCmpy);
 
@@ -751,8 +813,7 @@ public class SyncServiceImpl implements SyncService {
 
   private void copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
 //    custTrdInfo.setSellerId(sellerRecord.getId());
-    custTrdInfo.setTotalAmount(trdInfoFromSync.getTotalAmount().longValue() > 0?
-        trdInfoFromSync.getTotalAmount().longValue(): Long.valueOf(trdInfoFromSync.getTrdAmountPrep()));
+    custTrdInfo.setTotalAmount( Long.valueOf(trdInfoFromSync.getTrdAmountPrep()));
     if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
     }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
@@ -774,18 +835,44 @@ public class SyncServiceImpl implements SyncService {
     if(trdInfoFromSync.getUpdateDate() != null ){
       custTrdInfo.setUpdateTime(AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate()));
     }
-    custTrdInfo.setInfoUrl(trdInfoFromSync.getUrl());
-    custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
+    custTrdInfo.setInfoUrl(trdInfoFromSync.getTrdContentOss());
+    if(StringUtils.isEmpty(trdInfoFromSync.getTrdProvincePrep())){
+      log.error("trdInfoFromSync.getTrdProvincePrep() is empty");
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
+        errorTrdInfos.put(trdInfoFromSync.getId(), "");
+      }
+      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
+          errorTrdInfos.get(trdInfoFromSync.getId()),
+          "trdInfoFromSync.getTrdProvincePrep() is empty"));
+      return;
+    }
+    if(!trdInfoFromSync.getTrdProvincePrep().endsWith("000000")){
+      log.error("getTrdProvincePrep:{}", trdInfoFromSync.getTrdProvincePrep());
+    }
+    custTrdInfo.setTrdProvince(trdInfoFromSync.getTrdProvincePrep().substring(0, 6));
+
+//    custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
     if(StringUtils.isEmpty(trdInfoFromSync.getDebtCityPrep())){
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
+        errorTrdInfos.put(trdInfoFromSync.getId(), "");
+      }
       log.error("DebtCityPrep is empty {} of the trd  id:{}",
           trdInfoFromSync.getDebtProvincePrep(), trdInfoFromSync.getId() );
-//      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtProvincePrep());
+      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s",
+       pageForLog,   errorTrdInfos.get(trdInfoFromSync.getId()),
+            "trdInfoFromSync.getDebtCityPrep() is empty"));
     }else{
-      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep());
+      if(!trdInfoFromSync.getDebtCityPrep().endsWith("000000")){
+        log.error("getDebtCityPrep:{}", trdInfoFromSync.getDebtCityPrep());
+        errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s",
+         pageForLog,   errorTrdInfos.get(trdInfoFromSync.getId()),
+            String.format("trdInfoFromSync.getDebtCityPrep() is %s",trdInfoFromSync.getDebtCityPrep())));
+      }
+      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep().substring(0, 6));
     }
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
-    custTrdInfo.setTrdContactorName(trdInfoFromSync.getLinkMan());
-    custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getLinkAddress());
+    custTrdInfo.setTrdContactorName(trdInfoFromSync.getBuyerContactManPrep());
+    custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getBuyerContactAddressPrep());
 
   }
 //http://10.20.200.100:8085/debts/get/3a7cd9cf68c5effc316981d6537d1595

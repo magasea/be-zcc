@@ -73,6 +73,12 @@ spring:
         cache-names: TOKEN,USER
         caffeine:
             spec: maximumSize=500, expireAfterAccess=120s
+    task:
+        scheduling:
+            thread-name-prefix: syncWitSSO
+            cronExpr: 0 0 6,12,15,18,23 * * *
+
+
 mybatis:
     type-aliases-package: com.wensheng.zcc.sso.module
     mapper-locations:

@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class GrpcConfig {
 
-  @Value("${grpc.server.port}")
+  @Value("${grpc.port}")
   int grpcPort;
 
   @Autowired

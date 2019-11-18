@@ -3,8 +3,9 @@ server:
   tomcat:
     basedir: ${env.image-repo}
 grpc:
-  server:
-    port: 10011
+  enabled: true
+  port: 10011
+  in-process-server-name: amcGrpcServ
   client:
     wechat:
       host: ${env.rpchost}
@@ -12,6 +13,9 @@ grpc:
     comnfunc:
       host: ${env.rpchost}
       port: 10016
+    recm:
+      host: ${env.recmhost}
+      port: 10018
 logging:
   level:
     com:
@@ -90,6 +94,7 @@ spring:
     scheduling:
       thread-name-prefix: amcscheduler-worker
       cronExpr: 0 0 6,12,18,0 * * *
+      cronExprSSO: 0 0 6,9,11,12,14,15,18,0 * * *
   cache:
     cache-names: DEBTPACK, DEBT
     caffeine:
@@ -109,7 +114,8 @@ project:
     oss_key_id: LTAIr4FuhRp7SciF
     oss_key_secret: jTtg1M1J39fTJewIwNDNnz09rGeBzC
     bucket_name: ws-zcc
-
+    oss_end_point_bak: oss-cn-shanghai.aliyuncs.com
+    bucket_name_bak: ws-zccbak
 ---
 # tag::wechatConfig
 wechat:
@@ -130,16 +136,23 @@ baidu:
     appAK: LMZGzYuSmmBvE5IS5EMdEsUGROx7r2G8
     appId: 16178564
     appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
-    getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
+    getGeoURL: http://api.map.baidu.com/geocoder/v3/?address=%s&output=json&ak=%s&sn=%s
 sso:
   ssoUserDetailUrl: http://${env.amcssohost}:10002/amc/user/sso/getUserDetailsById/%d
   ssoUserTokenUrl: http://${env.amcssohost}:10002/amc/zcc/sso/getTokenByMobilephone/%s
+wssso:
+  host: ${env.ws-sso-host}
+  port: 11002
+  url: http://${wssso.host}:${wssso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
+
 env:
   name: prod
   dbhost: 10.20.100.238
+  recmhost: 10.20.100.236
   dbusername: amcuser
   amcssohost: localhost
   rpchost: localhost
+  ws-sso-host: 10.20.100.238
   dbpasswd: Wensheng#123
   kfkhost: 10.20.100.238
   mongodb-host: 10.20.100.238

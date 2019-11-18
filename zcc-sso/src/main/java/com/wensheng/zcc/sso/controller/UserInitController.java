@@ -5,6 +5,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.vo.LoginVo;
 import com.wensheng.zcc.sso.module.vo.UserCreateVo;
+import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.PhoneMsgService;
 import com.wensheng.zcc.sso.service.UserService;
 import com.wensheng.zcc.sso.service.util.VerifyCodeUtil;
@@ -45,6 +46,9 @@ public class UserInitController {
 
   @Autowired
   UserService userService;
+
+  @Autowired
+  AmcSsoService amcSsoService;
 
   @RequestMapping(value = "/user/verifycode")
   public boolean verifyVCode(String vcode){
@@ -148,5 +152,8 @@ public class UserInitController {
 //    return responseEntity;
   }
 
-  
+  @RequestMapping(value="/syncUserFromSSO",method= RequestMethod.GET)
+  public void syncUserFromSSO() throws IOException {
+    amcSsoService.syncUserWithSSO();
+  }
 }

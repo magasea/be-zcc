@@ -50,6 +50,8 @@ service ComnFuncService {
 
   rpc getGeoByAddress(Address) returns (wenshengamc.zcc.common.GeoJson);
 
+  rpc getAddressByGeoPoint(wenshengamc.zcc.common.GeoJson) returns (Address);
+
   rpc getWXPublicToken(WXPubTokenReq) returns (WXPubTokenResp);
 
 }

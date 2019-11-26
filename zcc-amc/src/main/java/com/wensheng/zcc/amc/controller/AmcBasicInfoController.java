@@ -1,7 +1,9 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.EditActionChecker;
+import com.wensheng.zcc.amc.aop.QueryContactorChecker;
 import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.impl.AmcBaiDuLogisQuery;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcPage;
@@ -57,7 +59,8 @@ public class AmcBasicInfoController {
   @Autowired
   AmcAssetService amcAssetService;
 
-
+  @Autowired
+  AmcContactorService amcContactorService;
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
@@ -234,6 +237,7 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/amcid/{amcId}/amccontactors", method = RequestMethod.POST)
   @ResponseBody
+  @QueryContactorChecker
   public AmcPage<AmcDebtContactor> getAmcDebtContactors( @RequestBody PageInfo pageable) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
@@ -245,12 +249,12 @@ public class AmcBasicInfoController {
     int offset = PageReqRepHelper.getOffset(pageable);
     try {
       queryResults = amcHelperService.getAllAmcDebtContactor(Long.valueOf(offset), pageable.getSize(),
-          orderByParam);
+          orderByParam, pageable.getLocation());
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
-    Long totalCount = amcHelperService.getPersonTotalCount();
+    Long totalCount = amcHelperService.getPersonTotalCount(pageable.getLocation());
 //
 //    Page<AmcDebtContactor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
     return PageReqRepHelper.getAmcPage(queryResults, totalCount);
@@ -302,6 +306,13 @@ public class AmcBasicInfoController {
   public void checkGeoInfo(){
 
    amcAssetService.checkGeoInfoWorker();
+  }
+
+  @RequestMapping(value = "/syncContactorWithSSO", method = RequestMethod.POST)
+  @ResponseBody
+  public void syncContactorWithSSO(){
+
+    amcContactorService.syncContactorWithSSO();
   }
 
 }

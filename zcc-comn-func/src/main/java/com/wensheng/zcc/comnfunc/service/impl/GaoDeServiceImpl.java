@@ -1,14 +1,18 @@
 package com.wensheng.zcc.comnfunc.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.GaoDeReGeoResult;
 import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryResp;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
 import com.wensheng.zcc.comnfunc.utils.SSLUtil;
+import com.wenshengamc.zcc.common.Common.GeoJson;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -43,7 +47,8 @@ public class GaoDeServiceImpl implements GaoDeService {
   @Value("${gaode.geocoder}")
   private String geoCoderUrl;
 
-
+  @Value("${gaode.regeocoder}")
+  private String regeoCoderUrl;
 
   private RestTemplate restTemplate  = new RestTemplate();
 
@@ -114,6 +119,19 @@ public class GaoDeServiceImpl implements GaoDeService {
 //    List<GaodeGeoQueryVal> results = new ArrayList();
     return results;
 
+  }
+
+  @Override
+  public GaodeRegeoQueryVal getAddressFromGeoPoint(LatLng latLng) throws Exception {
+    StringBuilder sb = new StringBuilder();
+    sb.append(latLng.getLat()).append(",").append(latLng.getLng());
+    String gaodeUrl = String.format(regeoCoderUrl, sb.toString());
+    ResponseEntity<GaodeRegeoQueryResp> resp =  restTemplate.exchange(gaodeUrl.toString(), HttpMethod.GET, null,
+        GaodeRegeoQueryResp.class);
+
+    GaodeRegeoQueryVal gaoRegeoResult = resp.getBody().getRegeocode();
+
+    return gaoRegeoResult;
   }
 
 

@@ -15,6 +15,7 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.ZccRulesService;
+import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
@@ -125,8 +126,8 @@ public class AmcAspect {
         (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
     if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
       Integer locationId = (Integer) detailsParam.get("location");
-      AmcBranchLocationEnum locationEnum =
-          SSO2AMCEnumUtils.getFromSSOLocationEnum(AmcLocationEnum.lookupByDisplayIdUtil(locationId)) ;
+      AmcLocationEnum locationEnum =
+          AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
       if(null != locationEnum){
         List<AmcDebtpack>  amcDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum.getCname());
         if(!CollectionUtils.isEmpty(amcDebtpacks)){
@@ -138,6 +139,34 @@ public class AmcAspect {
     }
     return joinPoint.proceed(new Object[]{queryParam});
   }
+
+  @Around("@annotation(QueryContactorChecker)")
+  public Object aroundQueryContactor(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
+      log.error("it is web user");
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+    log.info(authentication.getDetails().toString());
+    Map<String, Object> detailsParam =
+        (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
+    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
+      Integer locationId = (Integer) detailsParam.get("location");
+
+      AmcLocationEnum locationEnum =
+          AmcLocationEnum.lookupByDisplayIdUtil(locationId); ;
+      if(null != locationEnum){
+          PageInfo pageInfo = (PageInfo) joinPoint.getArgs()[0];
+          if(pageInfo.getLocation() < 0){
+            pageInfo.setLocation(locationEnum.getId());
+          }
+      }
+    }
+    return joinPoint.proceed(joinPoint.getArgs());
+  }
+
 
   @Around("@annotation(EditActionChecker))")
   public Object testAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {

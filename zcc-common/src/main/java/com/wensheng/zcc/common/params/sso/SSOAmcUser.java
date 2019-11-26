@@ -8,6 +8,7 @@ public class SSOAmcUser {
   private Long id;
 
   private String userName;
+  private String userCname;
 
   private String mobilePhone;
 

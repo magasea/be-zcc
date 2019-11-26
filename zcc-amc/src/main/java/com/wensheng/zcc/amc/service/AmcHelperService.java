@@ -17,9 +17,10 @@ public interface AmcHelperService {
 
   public AmcDebtContactor updatePerson(AmcDebtContactor AmcDebtContactor);
 
-  public List<AmcDebtContactor> getAllAmcDebtContactor(Long offset, int size,  Map<String, Direction> orderByParam) throws Exception;
+  public List<AmcDebtContactor> getAllAmcDebtContactor(Long offset, int size, Map<String, Direction> orderByParam,
+      int location) throws Exception;
 
-  Long getPersonTotalCount();
+  Long getPersonTotalCount(int location);
 
     void deletePersons(Long[] contactorIds) throws Exception;
 }

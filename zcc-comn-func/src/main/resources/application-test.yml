@@ -127,6 +127,7 @@ gaode:
     key: 0c53a687090bf18a7394ffc66a0b6432
     geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
     geocoder: https://restapi.amap.com/v3/geocode/geo?address=%s&key=${gaode.key}
+    regeocoder: https://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&poitype=&radius=&extensions=base&batch=false&roadlevel=0
 
 
 

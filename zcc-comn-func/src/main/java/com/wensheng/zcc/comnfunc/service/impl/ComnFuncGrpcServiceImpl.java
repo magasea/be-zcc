@@ -1,39 +1,31 @@
 package com.wensheng.zcc.comnfunc.service.impl;
 
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
-
+import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
 import com.wensheng.zcc.comnfunc.service.WXBasicService;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq;
 import java.util.List;
-import java.util.Map;
-import javax.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.mongodb.core.geo.GeoJson;
+
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.http.converter.json.GsonHttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
 
 @Service
 @GRpcService
+@Slf4j
 public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServiceImplBase {
 
 
@@ -104,6 +96,26 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 
     responseObserver.onNext(WXPubTokenResp.newBuilder().setWxPubToken(token).build());
 
+    responseObserver.onCompleted();
+  }
+
+  @Override
+  public void getAddressByGeoPoint(com.wenshengamc.zcc.common.Common.GeoJson request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.Address> responseObserver)  {
+    LatLng latLng = new LatLng();
+    latLng.setLat(request.getCoordinates(0));
+    latLng.setLng(request.getCoordinates(1));
+    GaodeRegeoQueryVal gaodeRegeoQueryVal = null;
+    try {
+      gaodeRegeoQueryVal = gaoDeService.getAddressFromGeoPoint(latLng);
+    } catch (Exception e) {
+      log.error("Exception:", e);
+      responseObserver.onError(e);
+    }
+    Address.Builder aBuilder = Address.newBuilder();
+    aBuilder.setAddress(gaodeRegeoQueryVal.getAddressComponent().getProvince());
+//    aBuilder.setCity(gaodeRegeoQueryVal.getAddressComponent().getCity());
+    responseObserver.onNext(aBuilder.build());
     responseObserver.onCompleted();
   }
 

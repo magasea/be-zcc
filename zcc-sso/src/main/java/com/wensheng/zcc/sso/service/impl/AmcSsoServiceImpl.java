@@ -10,6 +10,7 @@ import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
 import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
@@ -346,8 +347,15 @@ public class AmcSsoServiceImpl implements AmcSsoService {
         pageNum  = -1 ;
         break;
       }
-
-      amcUserService.updateOrInsertSSOUser(resp.getContent());
+      List<SSOAmcUser> ssoAmcUsers = resp.getContent();
+      AmcUser amcUser = new AmcUser();
+      if(!CollectionUtils.isEmpty(ssoAmcUsers)){
+        for(SSOAmcUser ssoAmcUser: ssoAmcUsers){
+          amcUser = new AmcUser();
+          AmcBeanUtils.copyProperties(ssoAmcUser, amcUser);
+          amcUserService.createUser(amcUser);
+        }
+      }
     }
 
 

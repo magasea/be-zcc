@@ -1,6 +1,8 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
+import com.wenshengamc.zcc.common.Common.GeoJson;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenReq;
 import com.wenshengamc.zcc.wechat.AmcAssetImage;
@@ -29,6 +31,13 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
 
     return comnFuncPubServiceStub.getWXPublicToken(WXPubTokenReq.newBuilder().build()).getWxPubToken();
 
+  }
+
+  public String getProvinceByGeopoint(LatLng latLng){
+    GeoJson.Builder gjBuilder = GeoJson.newBuilder();
+    gjBuilder.addCoordinates(latLng.getLat());
+    gjBuilder.addCoordinates( latLng.getLng() );
+    return comnFuncPubServiceStub.getAddressByGeoPoint(gjBuilder.build()).getAddress();
   }
 
 

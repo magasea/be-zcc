@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.http.HttpEntity;
@@ -308,6 +309,7 @@ public class WXUserServiceImpl implements WXUserService {
 //      Circle area = new Circle(new Point(wxUserGeoInfo.getLatitude(),  wxUserGeoInfo.getLongitude()),
 //          new Distance(10, Metrics.KILOMETERS));
       NearQuery nearQuery = NearQuery.near(geoJsonPoint).maxDistance(100.00).inKilometers();
+      Aggregation aggregation = Aggregation.newAggregation();
       GeoResults<WXUserGeoRecord> wxUserGeoRecordGeoResults =
           mongoTemplate.geoNear( nearQuery, WXUserGeoRecord.class);
       if(CollectionUtils.isEmpty(wxUserGeoRecordGeoResults.getContent())){

@@ -17,7 +17,6 @@ import java.util.WeakHashMap;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.kafka.common.protocol.types.Field;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
@@ -63,16 +62,25 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   }
 
   @Override
-  public List<AmcDebtContactor> getAllAmcDebtContactor(Long offset, int size, Map<String, Direction> orderByParam) throws Exception {
+  public List<AmcDebtContactor> getAllAmcDebtContactor(Long offset, int size, Map<String, Direction> orderByParam,
+      int location) throws Exception {
     RowBounds rowBounds = new RowBounds(offset.intValue(), size);
     AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    if(location > 0){
+      amcDebtContactorExample.createCriteria().andLocationEqualTo(location);
+    }
     amcDebtContactorExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
     return amcDebtContactorMapper.selectByExampleWithRowbounds(amcDebtContactorExample, rowBounds);
   }
 
   @Override
-  public Long getPersonTotalCount() {
-    return amcDebtContactorMapper.countByExample(null);
+  public Long getPersonTotalCount(int location) {
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+
+    if(location > 0){
+      amcDebtContactorExample.createCriteria().andLocationEqualTo(location);
+    }
+    return amcDebtContactorMapper.countByExample(amcDebtContactorExample);
   }
 
   @Override

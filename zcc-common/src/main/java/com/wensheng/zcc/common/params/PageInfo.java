@@ -15,6 +15,7 @@ public class PageInfo implements PageableDefault {
   int offset;
   int size;
   int page;
+  int location = -1;
   Direction direction;
   String[] sort;
   int total;

@@ -145,8 +145,22 @@ public class AmcUserServiceImpl implements AmcUserService {
         return null;
       }
     }else{
+      AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+      amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(0).getId());
+      List<AmcUserRole> amcUserRoleList =  amcUserRoleMapper.selectByExample(amcUserRoleExample);
+      if(CollectionUtils.isEmpty(amcUserRoleList) ){
+        needUpdatePrivilege = true;
+      }
+      if(! amcUsers.get(0).getUserCname().equals(amcUser.getUserCname())){
+        amcUsers.get(0).setUserCname(amcUser.getUserCname());
+        needUpdateDb = true;
+      }
+      if(!amcUsers.get(0).getUserName().equals(amcUser.getUserName())){
+        amcUsers.get(0).setUserName(amcUser.getUserName());
+        needUpdateDb = true;
+      }
 
-      if(amcUser.getDeptId() > 0 && amcUser.getDeptId() != amcUsers.get(0).getDeptId()){
+      if(amcUsers.get(0).getDeptId() > 0 && amcUser.getDeptId() != amcUsers.get(0).getDeptId()){
         amcUsers.get(0).setDeptId(amcUser.getDeptId());
         needUpdateDb = true;
         needUpdatePrivilege = true;
@@ -185,6 +199,13 @@ public class AmcUserServiceImpl implements AmcUserService {
         amcUserRole.setUserId(amcUser.getId());
       }else{
         amcUserRole.setUserId(amcUsers.get(0).getId());
+      }
+      AmcDeptEnum amcDeptEnum =  AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue());
+      AmcSSOTitleEnum amcSSOTitleEnum = AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle());
+      if(amcDeptEnum == null || amcSSOTitleEnum == null){
+        log.error("Failed find valild dept enum or ssoTitle enum for user:{} deptId:{} title:{}", amcUser.getId(),
+            amcUser.getDeptId(), amcUser.getTitle());
+        return amcUser;
       }
       AmcRolesEnum amcRolesEnum =
           UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),

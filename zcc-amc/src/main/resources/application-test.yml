@@ -83,6 +83,10 @@ spring:
 
   kafka:
     bootstrap-servers: ${env.kfkhost}:9092
+    consumer:
+      group-id: grp-zcc-amc
+      auto-offset-reset: earliest
+    topic-sso-userchanged: topic_sso_userchanged_${env.name}
   servlet:
     multipart:
       enabled: true
@@ -99,6 +103,11 @@ spring:
     cache-names: DEBTPACK, DEBT
     caffeine:
       spec: maximumSize=500, expireAfterAccess=120s
+  messages:
+    encoding: UTF-8
+    basename: locale/message
+
+
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
   mapper-locations:

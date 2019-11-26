@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -89,38 +90,81 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
   }
 
+  @Override
+  public void syncContactorWithNewUser(SSOAmcUser amcUser) {
+    if( ! (AmcDeptEnum.BUSINESS_DEPT.getId() ==  amcUser.getDeptId().intValue())){
+      log.info("ignore none business dept user");
+      return;
+    }
+    if(amcUser.getMobilePhone().equals("-1")|| amcUser.getUserName().equals("-1")||
+        StringUtils.isEmpty(amcUser.getUserName()) || StringUtils.isEmpty(amcUser.getMobilePhone()) || amcUser.getUserCname().equals("-1")
+        || StringUtils.isEmpty(amcUser.getUserCname())){
+      log.info("not correct user info");
+      return;
+    }
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.createCriteria().andPhoneNumberEqualTo(amcUser.getMobilePhone());
+    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper.selectByExample(amcDebtContactorExample);
+
+    if(CollectionUtils.isEmpty(amcDebtContactors)){
+      log.info("need insert new created user");
+
+    }else{
+      log.error("there is duplicate user, no need to create");
+      return;
+    }
+    AmcDebtContactor amcDebtContactor = new AmcDebtContactor();
+    amcDebtContactor.setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
+    amcDebtContactor.setPhoneNumber(amcUser.getMobilePhone());
+    amcDebtContactor.setNikname(String.format("%s经理", amcUser.getUserCname().substring(0, 1)));
+    amcDebtContactor.setLocation(amcUser.getLocation());
+    amcDebtContactor.setName(amcUser.getUserCname());
+    amcDebtContactorMapper.insertSelective(amcDebtContactor);
+  }
+
   private void updateOrInsertContactor(List<SSOAmcUser> ssoAmcUsers) {
     AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
     AmcDebtContactor amcDebtContactor = null;
     for(SSOAmcUser ssoAmcUser: ssoAmcUsers){
       amcDebtContactorExample.clear();
       amcDebtContactor = null;
+      if(ssoAmcUser.getMobilePhone().equals("-1")|| ssoAmcUser.getUserName().equals("-1")||
+          StringUtils.isEmpty(ssoAmcUser.getUserName()) || StringUtils.isEmpty(ssoAmcUser.getMobilePhone()) || ssoAmcUser.getUserCname().equals("-1")
+        || StringUtils.isEmpty(ssoAmcUser.getUserCname())){
+        continue;
+      }
       amcDebtContactorExample.createCriteria().andPhoneNumberEqualTo(ssoAmcUser.getMobilePhone());
       List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper.selectByExample(amcDebtContactorExample);
       if(CollectionUtils.isEmpty(amcDebtContactors)){
         log.info("Need insert user for {}", ssoAmcUser.getMobilePhone());
         amcDebtContactor = new AmcDebtContactor();
-        amcDebtContactor.setName(ssoAmcUser.getUserName());
+        amcDebtContactor.setName(ssoAmcUser.getUserCname());
         amcDebtContactor.setLocation(ssoAmcUser.getLocation());
-        amcDebtContactor.setNikname(ssoAmcUser.getUserName());
+        amcDebtContactor.setPhoneNumber(ssoAmcUser.getMobilePhone());
+        log.info(ssoAmcUser.getUserName());
+        amcDebtContactor.setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
+        amcDebtContactor.setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
         amcDebtContactorMapper.insertSelective(amcDebtContactor);
       }else{
         if(amcDebtContactors.size() > 1){
           log.error("There is duplicate user with phone:{}, need make it clean", ssoAmcUser.getMobilePhone());
           amcDebtContactorMapper.deleteByExample(amcDebtContactorExample);
           amcDebtContactor = new AmcDebtContactor();
-          amcDebtContactor.setName(ssoAmcUser.getUserName());
+          amcDebtContactor.setName(ssoAmcUser.getUserCname());
           amcDebtContactor.setLocation(ssoAmcUser.getLocation());
-          amcDebtContactor.setNikname(ssoAmcUser.getUserName());
+          amcDebtContactor.setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
+          amcDebtContactor.setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
+          amcDebtContactor.setPhoneNumber(ssoAmcUser.getMobilePhone());
           amcDebtContactorMapper.insertSelective(amcDebtContactor);
         }else{
-          if(amcDebtContactors.get(0).getUpdateTime().before(AmcDateUtils.getDateMonthsDiff(1))){
+//          if(amcDebtContactors.get(0).getUpdateTime().before(AmcDateUtils.getDateMonthsDiff(1))){
             log.info("it is one month early record, need update");
             amcDebtContactors.get(0).setLocation(ssoAmcUser.getLocation());
-            amcDebtContactors.get(0).setName(ssoAmcUser.getUserName());
+            amcDebtContactors.get(0).setName(ssoAmcUser.getUserCname());
+            amcDebtContactors.get(0).setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
             amcDebtContactors.get(0).setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
             amcDebtContactorMapper.updateByPrimaryKey(amcDebtContactors.get(0));
-          }
+//          }
         }
       }
 

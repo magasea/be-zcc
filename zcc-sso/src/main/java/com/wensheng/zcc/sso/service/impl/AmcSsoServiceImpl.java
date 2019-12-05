@@ -14,8 +14,17 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcSpecUserMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleRuleMapper;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample;
+import com.wensheng.zcc.sso.module.vo.AmcSpecialUserVo;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.AmcUserService;
@@ -45,6 +54,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -160,6 +170,14 @@ public class AmcSsoServiceImpl implements AmcSsoService {
   @Autowired
   JwtAccessTokenConverter jwtAccessTokenConverter;
 
+  @Autowired
+  AmcSpecUserMapper amcSpecUserMapper;
+
+  @Autowired
+  AmcUserRoleRuleMapper amcUserRoleRuleMapper;
+
+  @Autowired
+  AmcUserMapper amcUserMapper;
 
   public static final int INIT_VECTOR_LENGTH = 16;
 
@@ -405,6 +423,117 @@ public class AmcSsoServiceImpl implements AmcSsoService {
     throw new BadCredentialsException("this token is not valid");
 
 
+  }
+
+  @Override
+  public AmcRolesEnum getRoleByUser(AmcDeptEnum amcDept, AmcSSOTitleEnum titleEnum) {
+    return null;
+  }
+
+  @Override
+  public AmcRolesEnum getRoleByUserAndMobile(AmcDeptEnum amcDept, AmcSSOTitleEnum titleEnum, String mobileNum) {
+    return null;
+  }
+
+  @Override
+  public String modifySpecUser(Long userId, List<Long> permIds, Long currentUser) {
+    AmcSpecUserExample amcSpecUserExample = new AmcSpecUserExample();
+    amcSpecUserExample.createCriteria().andUserIdEqualTo(userId);
+    amcSpecUserMapper.deleteByExample(amcSpecUserExample);
+    if(CollectionUtils.isEmpty(permIds)){
+      log.error("Empty permIds for user:{}", userId);
+      return String.format("%d deleted",userId);
+    }else{
+      for(Long permId: permIds){
+        AmcSpecUser amcSpecUser = new AmcSpecUser();
+        amcSpecUser.setPermId(permId.intValue());
+        amcSpecUser.setUpdateBy(currentUser);
+        amcSpecUser.setUserId(userId);
+        amcSpecUserMapper.insert(amcSpecUser);
+      }
+    }
+
+    return String.format("%d modified",userId);
+  }
+
+  @Override
+  public List<AmcSpecialUserVo> getSpecUser(){
+    List<AmcSpecUser> amcSpecUsers =  amcSpecUserMapper.selectByExample(null);
+    List<AmcSpecialUserVo> amcSpecialUserVos = new ArrayList<>();
+    if(CollectionUtils.isEmpty(amcSpecUsers)){
+      return new ArrayList<>();
+    }else{
+      Set<Long> ids = amcSpecUsers.stream().map(item -> item.getId()).collect(Collectors.toSet());
+
+      AmcUserExample amcUserExample = new AmcUserExample();
+      amcUserExample.createCriteria().andIdIn(ids.stream().collect(Collectors.toList()));
+      List<AmcUser> amcUsers =  amcUserMapper.selectByExample(amcUserExample);
+      Map<Long, List<Long>> userId2PermIds = new HashMap<>();
+      for(AmcSpecUser amcSpecUser: amcSpecUsers){
+        if(!userId2PermIds.containsKey(amcSpecUser.getUserId())){
+          userId2PermIds.put(amcSpecUser.getUserId(), new ArrayList<Long>());
+        }
+        userId2PermIds.get(amcSpecUser.getUserId()).add(Long.valueOf(amcSpecUser.getPermId()));
+      }
+      AmcSpecialUserVo amcSpecialUserVo;
+      for(AmcUser amcUser: amcUsers){
+        amcSpecialUserVo = new AmcSpecialUserVo();
+        amcSpecialUserVo.setAmcUser(amcUser);
+        amcSpecialUserVo.setPermIds(userId2PermIds.get(amcUser.getId()));
+        amcSpecialUserVos.add(amcSpecialUserVo);
+        amcSpecialUserVo = null;
+      }
+    }
+    return amcSpecialUserVos;
+  }
+
+  @Override
+  public List<AmcUserRoleRule> getZccRoleRules() {
+    AmcUserRoleRuleExample amcUserRoleRuleExample = new AmcUserRoleRuleExample();
+    amcUserRoleRuleExample.setOrderByClause(" id desc ");
+    List<AmcUserRoleRule> amcUserRoleRules = amcUserRoleRuleMapper.selectByExample(amcUserRoleRuleExample);
+    return amcUserRoleRules;
+  }
+
+  @Override
+  public String createZccRoleRules(List<AmcUserRoleRule> amcUserRoleRules, Long userId) {
+    StringBuilder sb = new StringBuilder();
+    if(CollectionUtils.isEmpty(amcUserRoleRules)){
+      return "empty amcUserRoleRules";
+    }
+    AmcUserRoleRuleExample amcUserRoleRuleExample = new AmcUserRoleRuleExample();
+
+    for(AmcUserRoleRule amcUserRoleRule: amcUserRoleRules){
+      amcUserRoleRuleExample.clear();
+      amcUserRoleRuleExample.createCriteria().andDeptIdEqualTo(amcUserRoleRule.getDeptId()).andTitleEqualTo(amcUserRoleRule.getTitle());
+      List<AmcUserRoleRule> amcUserRoleRulesHistory =  amcUserRoleRuleMapper.selectByExample(amcUserRoleRuleExample);
+      amcUserRoleRule.setUpdateBy(userId);
+      if(CollectionUtils.isEmpty(amcUserRoleRulesHistory)){
+        //insert
+        amcUserRoleRuleMapper.insert(amcUserRoleRule);
+        sb.append(amcUserRoleRule.getId()).append(";");
+      }else{
+        //update
+        amcUserRoleRulesHistory.get(0).setRoleId(amcUserRoleRule.getRoleId());
+        amcUserRoleRuleMapper.updateByPrimaryKey(amcUserRoleRulesHistory.get(0));
+        sb.append(amcUserRoleRulesHistory.get(0).getId()).append(";");
+      }
+    }
+    return sb.toString();
+  }
+
+  @Override
+  public String modifyZccRoleRules(List<AmcUserRoleRule> amcUserRoleRules, Long userId) {
+    StringBuilder sb = new StringBuilder();
+    if(CollectionUtils.isEmpty(amcUserRoleRules)){
+      return "empty amcUserRoleRules";
+    }
+    for(AmcUserRoleRule amcUserRoleRule: amcUserRoleRules) {
+      amcUserRoleRule.setUpdateBy(userId);
+      amcUserRoleRuleMapper.updateByPrimaryKey(amcUserRoleRule);
+      sb.append(amcUserRoleRule.getId()).append(";");
+    }
+    return sb.toString();
   }
 
   private boolean createUserFromSSO(DefaultClaims defaultClaims){

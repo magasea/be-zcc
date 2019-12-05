@@ -68,18 +68,18 @@ public class GrpcConfig {
     return comnFuncService;
   }
 
-  @Bean
-  Server server() throws InterruptedException, IOException {
-    UnknownStatusDescriptionInterceptor unknownStatusDescriptionInterceptor = new UnknownStatusDescriptionInterceptor(
-        Arrays.asList(IllegalArgumentException.class, Exception.class, RuntimeException.class));
-    Server server = ServerBuilder.forPort(grpcPort)
-        .addService(ServerInterceptors.intercept(wechatGrpcService, unknownStatusDescriptionInterceptor))
-        .addService(ProtoReflectionService.newInstance())
-        .build();
-
-    return server;
-
-  }
+//  @Bean
+//  Server server() throws InterruptedException, IOException {
+//    UnknownStatusDescriptionInterceptor unknownStatusDescriptionInterceptor = new UnknownStatusDescriptionInterceptor(
+//        Arrays.asList(IllegalArgumentException.class, Exception.class, RuntimeException.class));
+//    Server server = ServerBuilder.forPort(grpcPort)
+//        .addService(ServerInterceptors.intercept(wechatGrpcService, unknownStatusDescriptionInterceptor))
+//        .addService(ProtoReflectionService.newInstance())
+//        .build();
+//
+//    return server;
+//
+//  }
 
 
 }

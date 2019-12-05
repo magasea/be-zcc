@@ -9,14 +9,17 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.aop.AmcUserCreateChecker;
 import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
-import com.wensheng.zcc.sso.aop.AmcUserQueryChecker;
 import com.wensheng.zcc.sso.aop.LogExecutionTime;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcDept;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.vo.AmcCmpyDeptVo;
+import com.wensheng.zcc.sso.module.vo.AmcSpecialUserVo;
+import com.wensheng.zcc.sso.module.vo.RolePermVo;
 import com.wensheng.zcc.sso.module.vo.UserRoleModifyVo;
 import com.wensheng.zcc.sso.service.AmcBasicService;
 import com.wensheng.zcc.sso.service.AmcSsoService;
@@ -177,7 +180,7 @@ public class AmcUserController {
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or (hasRole('AMC_ADMIN') and hasPermission(#amcId,'crud_amcuser'))")
   @RequestMapping(value = "/amcid/{amcId}/amc-user/amcUsers/searchByName", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcUser> searchAmcUserByName( @PathVariable Long amcId, @RequestParam("name") String name)
+  public List<AmcUser> searchAmcUserByName( @PathVariable Long amcId, @RequestBody String name)
       throws Exception {
     if(StringUtils.isEmpty(name)){
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,
@@ -374,12 +377,63 @@ public class AmcUserController {
     return amcSsoService.getUserDetailByUserId(userId);
   }
 
+  @RequestMapping(value = "/sso/specialUser/mod", method =  RequestMethod.POST)
+  @ResponseBody
+  public String modSpecialUser(@RequestBody Long userId, @RequestBody List<Long> permIds){
+    long currentUser = -1L;
+    return amcSsoService.modifySpecUser(userId, permIds, currentUser);
+  }
+
+  @RequestMapping(value = "/sso/specialUser/get", method =  RequestMethod.POST)
+  @ResponseBody
+  public List<AmcSpecialUserVo> getSpecialUser(){
+
+    return amcSsoService.getSpecUser();
+  }
+
+  @RequestMapping(value = "/sso/userRoleRules/get", method =  RequestMethod.POST)
+  @ResponseBody
+  public List<AmcUserRoleRule> getZccRoleRules(){
+
+    return amcSsoService.getZccRoleRules();
+  }
+
+  @RequestMapping(value = "/sso/userRoleRules/create", method =  RequestMethod.POST)
+  @ResponseBody
+  public String  createZccRoleRules(@RequestBody List<AmcUserRoleRule> amcUserRoleRules){
+    Long userId = -1L;
+    return amcSsoService.createZccRoleRules(amcUserRoleRules, userId);
+  }
+
+
+  @RequestMapping(value = "/sso/userRoleRules/modify", method =  RequestMethod.POST)
+  @ResponseBody
+  public String  modifyZccRoleRules(@RequestBody List<AmcUserRoleRule> amcUserRoleRules){
+    Long userId = -1L;
+    return amcSsoService.modifyZccRoleRules(amcUserRoleRules, userId);
+  }
+
+  @RequestMapping(value = "/sso/roleperms/get", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcRolePermission> getAmcRolePerms(){
+    List<AmcRolePermission> amcRolePermissions = amcUserService.getAmcRolePerms();
+    return amcRolePermissions;
+  }
+
+  @RequestMapping(value = "/sso/roleperms/createAndUpdate", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean createAndUpdate(@RequestBody RolePermVo rolePermVo){
+    return amcUserService.updateOrCreateRolePerms(rolePermVo.getRolePerms());
+
+  }
+
   @Data
   class AmcBasicUser{
     Long id;
     String userName;
     String mobilePhone;
   }
+
 
 
 

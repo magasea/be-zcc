@@ -26,6 +26,9 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
   @Autowired
       @Qualifier("comnFuncPubService")
   ComnFuncServiceBlockingStub comnFuncPubServiceStub;
+  @Autowired
+  @Qualifier("comnFuncService")
+  ComnFuncServiceBlockingStub comnFuncServiceStub;
 
   public String getWXPubToken(){
 
@@ -35,9 +38,10 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
 
   public String getProvinceByGeopoint(LatLng latLng){
     GeoJson.Builder gjBuilder = GeoJson.newBuilder();
-    gjBuilder.addCoordinates(latLng.getLat());
+
     gjBuilder.addCoordinates( latLng.getLng() );
-    return comnFuncPubServiceStub.getAddressByGeoPoint(gjBuilder.build()).getAddress();
+    gjBuilder.addCoordinates(latLng.getLat());
+    return comnFuncServiceStub.getAddressByGeoPoint(gjBuilder.build()).getAddress();
   }
 
 

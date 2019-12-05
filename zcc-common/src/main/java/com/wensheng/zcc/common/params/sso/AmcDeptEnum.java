@@ -18,6 +18,10 @@ public enum AmcDeptEnum {
   FINANCE_DEPT("FINANCE_DEPT","财务部门",8),
   PERSONNEL_DEPT("PERSONNEL_DEPT","人事部门",9),
 
+  SPECIAL_ZCC_SYS("SPECIAL_ZCC_SYS", "债查查特殊部门", -9),
+  SPECIAL_ZCC_CO("SPECIAL_ZCC_SYS", "债查查特殊部门", -10),
+
+
   ;
   private String name;
   private String cname;

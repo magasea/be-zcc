@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.sso.dao.mysql.mapper.AmcCompanyMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
+<mapper namespace="com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleRuleMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="name" jdbcType="CHAR" property="name" />
-    <result column="cname" jdbcType="CHAR" property="cname" />
-    <result column="description" jdbcType="VARCHAR" property="description" />
+    <result column="dept_id" jdbcType="INTEGER" property="deptId" />
+    <result column="title" jdbcType="INTEGER" property="title" />
+    <result column="role_id" jdbcType="INTEGER" property="roleId" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -66,16 +68,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, cname, description
+    id, dept_id, title, role_id, update_by, update_time
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompanyExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_COMPANY
+    from AMC_USER_ROLE_RULE
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -86,76 +88,94 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_COMPANY
+    from AMC_USER_ROLE_RULE
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_COMPANY
+    delete from AMC_USER_ROLE_RULE
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompanyExample">
-    delete from AMC_COMPANY
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample">
+    delete from AMC_USER_ROLE_RULE
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
+  <insert id="insert" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_COMPANY (name, cname, description
-      )
-    values (#{name,jdbcType=CHAR}, #{cname,jdbcType=CHAR}, #{description,jdbcType=VARCHAR}
-      )
+    insert into AMC_USER_ROLE_RULE (dept_id, title, role_id, 
+      update_by, update_time)
+    values (#{deptId,jdbcType=INTEGER}, #{title,jdbcType=INTEGER}, #{roleId,jdbcType=INTEGER}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_COMPANY
+    insert into AMC_USER_ROLE_RULE
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        name,
+      <if test="deptId != null">
+        dept_id,
       </if>
-      <if test="cname != null">
-        cname,
+      <if test="title != null">
+        title,
       </if>
-      <if test="description != null">
-        description,
+      <if test="roleId != null">
+        role_id,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="name != null">
-        #{name,jdbcType=CHAR},
+      <if test="deptId != null">
+        #{deptId,jdbcType=INTEGER},
       </if>
-      <if test="cname != null">
-        #{cname,jdbcType=CHAR},
+      <if test="title != null">
+        #{title,jdbcType=INTEGER},
       </if>
-      <if test="description != null">
-        #{description,jdbcType=VARCHAR},
+      <if test="roleId != null">
+        #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompanyExample" resultType="java.lang.Long">
-    select count(*) from AMC_COMPANY
+  <select id="countByExample" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample" resultType="java.lang.Long">
+    select count(*) from AMC_USER_ROLE_RULE
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_COMPANY
+    update AMC_USER_ROLE_RULE
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.name != null">
-        name = #{record.name,jdbcType=CHAR},
+      <if test="record.deptId != null">
+        dept_id = #{record.deptId,jdbcType=INTEGER},
       </if>
-      <if test="record.cname != null">
-        cname = #{record.cname,jdbcType=CHAR},
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=INTEGER},
       </if>
-      <if test="record.description != null">
-        description = #{record.description,jdbcType=VARCHAR},
+      <if test="record.roleId != null">
+        role_id = #{record.roleId,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -163,45 +183,55 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_COMPANY
+    update AMC_USER_ROLE_RULE
     set id = #{record.id,jdbcType=BIGINT},
-      name = #{record.name,jdbcType=CHAR},
-      cname = #{record.cname,jdbcType=CHAR},
-      description = #{record.description,jdbcType=VARCHAR}
+      dept_id = #{record.deptId,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=INTEGER},
+      role_id = #{record.roleId,jdbcType=INTEGER},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
-    update AMC_COMPANY
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule">
+    update AMC_USER_ROLE_RULE
     <set>
-      <if test="name != null">
-        name = #{name,jdbcType=CHAR},
+      <if test="deptId != null">
+        dept_id = #{deptId,jdbcType=INTEGER},
       </if>
-      <if test="cname != null">
-        cname = #{cname,jdbcType=CHAR},
+      <if test="title != null">
+        title = #{title,jdbcType=INTEGER},
       </if>
-      <if test="description != null">
-        description = #{description,jdbcType=VARCHAR},
+      <if test="roleId != null">
+        role_id = #{roleId,jdbcType=INTEGER},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany">
-    update AMC_COMPANY
-    set name = #{name,jdbcType=CHAR},
-      cname = #{cname,jdbcType=CHAR},
-      description = #{description,jdbcType=VARCHAR}
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule">
+    update AMC_USER_ROLE_RULE
+    set dept_id = #{deptId,jdbcType=INTEGER},
+      title = #{title,jdbcType=INTEGER},
+      role_id = #{roleId,jdbcType=INTEGER},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompanyExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_COMPANY
+    from AMC_USER_ROLE_RULE
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

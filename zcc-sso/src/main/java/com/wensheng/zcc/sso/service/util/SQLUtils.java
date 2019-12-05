@@ -15,19 +15,25 @@ public class SQLUtils {
   public static AmcUserExtExample getAmcUserExample(QueryParam queryParam) {
     AmcUserExtExample amcUserExample = new AmcUserExtExample();
     Criteria criteria = amcUserExample.createCriteria();
+
+    Criteria criteriaOrCName = amcUserExample.or();
+    if(!StringUtils.isEmpty(queryParam.getName())){
+      StringBuilder sb = new StringBuilder().append("%").append(queryParam.getName()).append("%");
+      criteriaOrCName.andUserCnameLike(sb.toString());
+      criteria.andUserNameLike(sb.toString());
+    }
     if( queryParam.getDeptId() > 0 ){
       criteria.andDeptIdEqualTo( Long.valueOf(queryParam.getDeptId()));
+      criteriaOrCName.andDeptIdEqualTo( Long.valueOf(queryParam.getDeptId()));
     }
     if(queryParam.getLocation() > 0){
       criteria.andLocationEqualTo(queryParam.getLocation());
+      criteriaOrCName.andLocationEqualTo(queryParam.getLocation());
+
     }
     if(!StringUtils.isEmpty(queryParam.getMobilePhone())){
       criteria.andMobilePhoneEqualTo(queryParam.getMobilePhone());
-    }
-    if(!StringUtils.isEmpty(queryParam.getName())){
-      StringBuilder sb = new StringBuilder().append("%").append(queryParam.getName()).append("%");
-      criteria.andUserNameLike(sb.toString());
-      criteria.andNickNameLike(sb.toString());
+      criteriaOrCName.andMobilePhoneEqualTo(queryParam.getMobilePhone());
     }
     return amcUserExample;
   }

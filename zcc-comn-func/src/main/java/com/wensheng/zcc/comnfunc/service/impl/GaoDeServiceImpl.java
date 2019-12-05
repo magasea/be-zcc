@@ -126,6 +126,7 @@ public class GaoDeServiceImpl implements GaoDeService {
     StringBuilder sb = new StringBuilder();
     sb.append(latLng.getLat()).append(",").append(latLng.getLng());
     String gaodeUrl = String.format(regeoCoderUrl, sb.toString());
+
     ResponseEntity<GaodeRegeoQueryResp> resp =  restTemplate.exchange(gaodeUrl.toString(), HttpMethod.GET, null,
         GaodeRegeoQueryResp.class);
 

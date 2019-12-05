@@ -3,6 +3,7 @@ package com.wensheng.zcc.wechat.controller;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.service.WXBasicService;
+import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
 import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl;
 import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.TagInfoExt;
@@ -36,6 +37,9 @@ public class WechatUserController {
 
   @Autowired
   WXMaterialServiceImpl wxMaterialService;
+
+  @Autowired
+  WXUserService wxUserService;
 
   @RequestMapping(value = "/check", method = RequestMethod.GET)
   @ResponseBody
@@ -113,6 +117,16 @@ public class WechatUserController {
     return  wxService.getWechatPublicUserTag();
 
   }
+
+  @RequestMapping(value = "/tag/tagUserWithGeo", method = RequestMethod.GET)
+  @ResponseBody
+  public void tagUserWithGeo ()
+  {
+
+      wxService.tagUserTask();
+
+  }
+
   @RequestMapping(value = "/tag/create-user-tag", method = RequestMethod.POST)
   @ResponseBody
   public String createUsersTag(@RequestParam("tagName") String tagName)

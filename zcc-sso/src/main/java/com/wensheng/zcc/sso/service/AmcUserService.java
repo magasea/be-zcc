@@ -27,6 +27,7 @@ public interface AmcUserService {
   List<AmcRole> getAmcRoles();
 
   List<AmcRolePermission> getAmcRolePerms();
+  boolean updateOrCreateRolePerms(Map<Long, List<Long>> amcRolePermissions);
 
   AmcUser createAmcAdmin(AmcUser amcUser);
 

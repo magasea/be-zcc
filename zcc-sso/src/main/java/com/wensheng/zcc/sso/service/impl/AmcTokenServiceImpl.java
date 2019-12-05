@@ -4,6 +4,7 @@ import com.wensheng.zcc.sso.service.AmcTokenService;
 import java.util.Collection;
 import javax.annotation.Resource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;

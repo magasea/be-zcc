@@ -2,14 +2,19 @@ package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.params.AmcPermEnum;
 import com.wensheng.zcc.common.params.AmcRolesEnum;
+import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
+import com.wensheng.zcc.common.params.sso.AmcSSORolesEnum;
+import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleRuleMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermissionExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRoleExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.Test;
@@ -39,6 +44,9 @@ public class DaoServiceImplTest {
 
   @Autowired
   AmcRoleMapper amcRoleMapper;
+
+  @Autowired
+  AmcUserRoleRuleMapper amcUserRoleRuleMapper;
 
   @Test
   public void initPermPerms() {
@@ -72,6 +80,195 @@ public class DaoServiceImplTest {
         amcRoleMapper.updateByExampleSelective(amcRole, amcRoleExample);
       }
       amcRole = null;
+    }
+  }
+
+  @Test
+  public void initUserProperties2RoleRule(){
+    List<AmcUserRoleRule> amcUserRoleRules = new ArrayList<>();
+    //业务部门
+    AmcUserRoleRule amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_LOCAL_STUFF.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_LOCAL_ADMIN.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    // 技术部门
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.TECH_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_ADMIN.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.TECH_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_ADMIN.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_ADMIN.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    // 其它部门
+    // 股权
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.EQUITY_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.EQUITY_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.EQUITY_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+
+    // 地产
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.ESTATE_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.ESTATE_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.ESTATE_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    // 总部
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.HEADQUARTER_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.HEADQUARTER_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.HEADQUARTER_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+
+    // 风控
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.RISKCTRL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.RISKCTRL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.RISKCTRL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    // 财务
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.FINANCE_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.FINANCE_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.FINANCE_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    // 人事
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.PERSONNEL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.PERSONNEL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.PERSONNEL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+
+    // 人事
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.PERSONNEL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.PERSONNEL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    amcUserRoleRule = new AmcUserRoleRule();
+    amcUserRoleRule.setDeptId(AmcDeptEnum.PERSONNEL_DEPT.getId());
+    amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
+    amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
+    amcUserRoleRules.add(amcUserRoleRule);
+
+    for(AmcUserRoleRule amcUserRoleRuleItem: amcUserRoleRules){
+      try{
+
+        amcUserRoleRuleMapper.insertSelective(amcUserRoleRuleItem);
+      }catch (Exception ex){
+        ex.printStackTrace();
+      }
+
     }
   }
 

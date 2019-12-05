@@ -14,17 +14,21 @@ import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleRuleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.ext.AmcUserExtMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermission;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRolePermissionExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleExample;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExt;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.ext.AmcUserExtExample;
 import com.wensheng.zcc.sso.service.AmcTokenService;
+import com.wensheng.zcc.sso.service.AmcUserRoleRuleService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.util.QueryParam;
 import com.wensheng.zcc.sso.service.util.SQLUtils;
@@ -81,6 +85,12 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Autowired
   AmcPermissionMapper amcPermissionMapper;
+
+  @Autowired
+  AmcUserRoleRuleMapper amcUserRoleRuleMapper;
+
+  @Autowired
+  AmcUserRoleRuleService amcUserRoleRuleService;
 
   @Resource(name = "tokenServices")
   private ConsumerTokenServices tokenServices;
@@ -200,17 +210,29 @@ public class AmcUserServiceImpl implements AmcUserService {
       }else{
         amcUserRole.setUserId(amcUsers.get(0).getId());
       }
-      AmcDeptEnum amcDeptEnum =  AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue());
-      AmcSSOTitleEnum amcSSOTitleEnum = AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle());
-      if(amcDeptEnum == null || amcSSOTitleEnum == null){
-        log.error("Failed find valild dept enum or ssoTitle enum for user:{} deptId:{} title:{}", amcUser.getId(),
-            amcUser.getDeptId(), amcUser.getTitle());
-        return amcUser;
+
+      List<Integer> roleIds =  amcUserRoleRuleService.getRolesByDeptAndTitle(amcUser.getDeptId().intValue(),
+          amcUser.getTitle());
+      if(CollectionUtils.isEmpty(roleIds)){
+        log.error("Database based role control logic is not yet ready !!");
+
+        AmcDeptEnum amcDeptEnum =  AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue());
+        AmcSSOTitleEnum amcSSOTitleEnum = AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle());
+        if(amcDeptEnum == null || amcSSOTitleEnum == null){
+          log.error("Failed find valild dept enum or ssoTitle enum for user:{} deptId:{} title:{}", amcUser.getId(),
+              amcUser.getDeptId(), amcUser.getTitle());
+          return amcUser;
+        }
+        AmcRolesEnum amcRolesEnum =
+            UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),
+                AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle()));
+
+        amcUserRole.setRoleId(Long.valueOf(amcRolesEnum.getId()));
+      }else{
+        amcUserRole.setRoleId(Long.valueOf(roleIds.get(0)));
       }
-      AmcRolesEnum amcRolesEnum =
-          UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),
-              AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle()));
-      amcUserRole.setRoleId(Long.valueOf(amcRolesEnum.getId()));
+
+
       AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
       amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUserRole.getUserId());
 
@@ -252,6 +274,35 @@ public class AmcUserServiceImpl implements AmcUserService {
   public List<AmcRolePermission> getAmcRolePerms() {
     return amcRolePermissionMapper.selectByExample(null);
   }
+
+  @Override
+  public boolean updateOrCreateRolePerms(Map<Long, List<Long>> amcRolePermissions) {
+    AmcRolePermissionExample amcRolePermissionExample = new AmcRolePermissionExample();
+    if(CollectionUtils.isEmpty(amcRolePermissions)){
+      log.error("Empty amcRolePermissons from client");
+      return false;
+    }
+    AmcRolePermission amcRolePermission;
+    for(Map.Entry<Long, List<Long>> entry: amcRolePermissions.entrySet()){
+      amcRolePermissionExample.clear();
+      amcRolePermissionExample.createCriteria().andRoleIdEqualTo(entry.getKey());
+      amcRolePermissionMapper.deleteByExample(amcRolePermissionExample);
+      if(CollectionUtils.isEmpty(entry.getValue())){
+        log.error("empty perm list for the role:{}", entry.getKey());
+        continue;
+      }
+      amcRolePermission = new AmcRolePermission();
+      amcRolePermission.setRoleId(entry.getKey());
+      for(Long permId: entry.getValue()){
+        amcRolePermission.setPermissionId(permId);
+        amcRolePermissionMapper.insertSelective(amcRolePermission);
+      }
+      amcRolePermission = null;
+    }
+    return true;
+  }
+
+
 
   @Override
   public AmcUser createAmcAdmin(AmcUser amcUser) {
@@ -323,6 +374,10 @@ public class AmcUserServiceImpl implements AmcUserService {
   @Override
   public List<AmcUserExt> getSubAmcUsers(AmcUserExample amcUserExample) {
     List<Long> ids = amcUserExtMapper.selectIdsByExtWithRowboundsExample(amcUserExample);
+    if(CollectionUtils.isEmpty(ids)){
+      log.error("no user meet critier in example:{}", amcUserExample.toString());
+      return new ArrayList<AmcUserExt>();
+    }
     AmcUserExtExample amcUserExampleNew = new AmcUserExtExample();
     StringBuilder sb = new StringBuilder(" au.id in ( ");
     ids.forEach(item -> sb.append(item).append(","));
@@ -359,6 +414,8 @@ public class AmcUserServiceImpl implements AmcUserService {
     amcUsers.stream().forEach(amcUser -> amcUser.setPassword(""));
     return amcUsers;
   }
+
+
 
   @CacheEvict
   @Override
@@ -500,7 +557,7 @@ public class AmcUserServiceImpl implements AmcUserService {
   public List<AmcUserExt> queryAmcUserPage(AmcUserExample amcUserExample) {
 
     List<AmcUserExt> amcUsers = this.getSubAmcUsers(amcUserExample);
-    List<AmcUser> amcUsers1 = this.getAmcUsers(amcUserExample);
+//    List<AmcUser> amcUsers1 = this.getAmcUsers(amcUserExample);
     amcUsers.forEach(item -> item.getAmcUser().setPassword(""));
     return amcUsers;
   }

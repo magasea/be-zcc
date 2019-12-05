@@ -15,21 +15,20 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @MapperScan({"com.wensheng.zcc.wechat.dao.mysql.mapper"})
 @EnableScheduling
 @EnableCaching
-public class Application implements CommandLineRunner {
-    @Autowired
-    ApplicationContext context;
+public class Application {
+
 
     public static void main(String[] args) throws IOException, InterruptedException {
         SpringApplication.run(Application.class, args);
 
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        Server server = context.getBean(Server.class);
-        System.out.println("Starting server...");
-        server.start();
-        System.out.println("Server started!");
-        server.awaitTermination();
-    }
+//    @Override
+//    public void run(String... args) throws Exception {
+//        Server server = context.getBean(Server.class);
+//        System.out.println("Starting server...");
+//        server.start();
+//        System.out.println("Server started!");
+//        server.awaitTermination();
+//    }
 }

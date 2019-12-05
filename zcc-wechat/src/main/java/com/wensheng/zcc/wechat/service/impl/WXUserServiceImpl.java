@@ -1,11 +1,16 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import static org.springframework.data.geo.Metrics.KILOMETERS;
+
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
+import com.wensheng.zcc.common.module.LatLng;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
@@ -13,6 +18,7 @@ import com.wensheng.zcc.wechat.module.vo.TagCreate;
 import com.wensheng.zcc.wechat.module.vo.TagDel;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
+import com.wensheng.zcc.wechat.module.vo.WechatTagVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import java.io.IOException;
@@ -29,11 +35,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -41,6 +51,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
@@ -90,6 +101,8 @@ public class WXUserServiceImpl implements WXUserService {
   MongoTemplate mongoTemplate;
 
 
+  @Autowired
+  ComnfuncGrpcService comnfuncGrpcService;
 
 
   private Gson gson = new Gson();
@@ -146,7 +159,7 @@ public class WXUserServiceImpl implements WXUserService {
     HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<UserListReq> entity = new HttpEntity<>( userListReq, headers);
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+//    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
     List<WechatUser> data =(List) ((Map)response.getBody()).get("user_info_list");
     return data;
   }
@@ -157,13 +170,15 @@ public class WXUserServiceImpl implements WXUserService {
     String url = String.format(getUserTagsUrl, token );
     HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<?> entity = new HttpEntity<>(headers);
-    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
-    List<TagInfoExt> data =(List) ((Map)response.getBody()).get("tags");
+
+    ResponseEntity<TagInfoResp> response =
+        restTemplate.exchange(url, HttpMethod.POST, entity, TagInfoResp.class);
+//    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    List<TagInfoExt> data =response.getBody().getTags();
     return data;
   }
 
-  public synchronized void createWechatPublicUserTag(String tagName){
+  public synchronized long createWechatPublicUserTag(String tagName){
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(createUserTagUrl, token );
@@ -175,8 +190,9 @@ public class WXUserServiceImpl implements WXUserService {
     tag.setName(tagName);
     tagMap.put("tag", tag);
     HttpEntity<Map> entity = new HttpEntity<Map>(tagMap, headers);
-    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    ResponseEntity<WechatTag> response = restTemplate.exchange(url, HttpMethod.POST, entity, WechatTag.class);
+//    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    return response.getBody().getId();
 
   }
 
@@ -309,14 +325,29 @@ public class WXUserServiceImpl implements WXUserService {
 //      Circle area = new Circle(new Point(wxUserGeoInfo.getLatitude(),  wxUserGeoInfo.getLongitude()),
 //          new Distance(10, Metrics.KILOMETERS));
       NearQuery nearQuery = NearQuery.near(geoJsonPoint).maxDistance(100.00).inKilometers();
-      Aggregation aggregation = Aggregation.newAggregation();
-      GeoResults<WXUserGeoRecord> wxUserGeoRecordGeoResults =
-          mongoTemplate.geoNear( nearQuery, WXUserGeoRecord.class);
-      if(CollectionUtils.isEmpty(wxUserGeoRecordGeoResults.getContent())){
+//      Aggregation aggregation = Aggregation.newAggregation(WXUserGeoInfo.class, nearQuery);
+//      Point point = new Point(wxUserGeoInfo.getLongitude(), wxUserGeoInfo.getLatitude());
+//      mongoTemplate.query(WXUserGeoRecord.class).as(WXUserGeoRecord.class).near(NearQuery.near(geoJsonPoint,
+//          KILOMETERS).maxDistance(100.00)).matching(Query.query(Criteria.where(
+//          "openId").is(wxUserGeoRecord.getOpenId()))
+//      ).all().all();
+      Query query = new Query();
+      query.addCriteria(Criteria.where("openId").is(wxUserGeoRecord.getOpenId()));
+      List<WXUserGeoRecord> wxUserGeoRecords = mongoTemplate.find(query, WXUserGeoRecord.class);
+      if(CollectionUtils.isEmpty(wxUserGeoRecords)){
         mongoTemplate.save(wxUserGeoRecord);
-      }else{
-        log.info("Distance is too near, so no record need to be record");
+      }else {
+        double distance = GeoUtils.distanceWithoutEL(
+            wxUserGeoInfo.getLatitude(), ((GeoJsonPoint)wxUserGeoRecords.get(0).getLocation()).getY(),wxUserGeoInfo.getLongitude(),
+            ((GeoJsonPoint)wxUserGeoRecords.get(0).getLocation()).getX());
+        if(distance < 100.00){
+          log.error("needn't update geo info for this user");
+          return null;
+        }else{
+          mongoTemplate.save(wxUserGeoRecord);
+        }
       }
+
 
     } catch (IOException e) {
       log.error(String.format("Failed to parse:%s", xmlLocation), e);
@@ -326,6 +357,61 @@ public class WXUserServiceImpl implements WXUserService {
     return null;
   }
 
+  @Override
+  @Scheduled(cron = "${spring.task.scheduling.cronTagUserExpr}")
+  public void tagUserTask(){
+    Query query = new Query();
+    query.addCriteria(Criteria.where("createTime").gte(AmcDateUtils.getDateMonthsDiff(3)));
+    List<WXUserGeoRecord> wxUserGeoRecords = mongoTemplate.find(query, WXUserGeoRecord.class);
+    if(CollectionUtils.isEmpty(wxUserGeoRecords)){
+      return;
+    }else{
+      LatLng latLng = new LatLng();
+      for(WXUserGeoRecord wxUserGeoRecord: wxUserGeoRecords){
+        latLng.setLng(((GeoJsonPoint)wxUserGeoRecord.getLocation()).getCoordinates().get(0));
+        latLng.setLat(((GeoJsonPoint)wxUserGeoRecord.getLocation()).getCoordinates().get(1));
+        String province =  comnfuncGrpcService.getProvinceByGeopoint(latLng);
+        tagUser(wxUserGeoRecord.getOpenId(), province);
+      }
+    }
+  }
+
+  private void tagUser(String openId, String province) {
+    List<TagInfoExt> tagInfoExts = getWechatPublicUserTag();
+    List<String> openIds = new ArrayList<>();
+    openIds.add(openId);
+    Long tagId = -1L;
+    boolean hasTagAlready = false;
+    for(TagInfoExt tagInfoExt: tagInfoExts){
+      if(StringUtils.isEmpty(tagInfoExt.getName())){
+        continue;
+      }
+      if(tagInfoExt.getName().equals(province)){
+        hasTagAlready = true;
+        tagId = tagInfoExt.getId();
+      }
+    }
+    if(!hasTagAlready){
+      log.info("need create tag:{}", province);
+      try{
+        List<Long> historyTagIds =  getTagOfUser(openId);
+
+
+        for(Long historyTagId: historyTagIds){
+          untagWechatPublicUserBatch(openIds, historyTagId);
+        }
+      }catch (Exception ex){
+        log.error("get tag of user error:", ex);
+      }
+
+      tagId =  createWechatPublicUserTag(province);
+      tagWechatPublicUserBatch(openIds, tagId);
+    }else{
+      tagWechatPublicUserBatch(openIds, tagId);
+    }
+
+    return;
+  }
 
 
   @Data
@@ -361,8 +447,12 @@ public class WXUserServiceImpl implements WXUserService {
   }
 
   @Data
-  public class TagInfoExt extends WechatTag {
+  public class TagInfoExt extends WechatTagVo {
     Long count;
+  }
+
+  @Data class TagInfoResp extends GeneralResp{
+    List<TagInfoExt> tags;
   }
 
 

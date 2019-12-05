@@ -87,6 +87,7 @@ spring:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
             cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
+            cronTagUserExpr: 0 0 23 * * *
     cache:
         cache-names: TOKEN
         caffeine:

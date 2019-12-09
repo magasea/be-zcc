@@ -15,6 +15,8 @@ public class CustTrdPerson {
 
     private String mobileNum;
 
+    private String historyMobileNum;
+
     private String telNum;
 
     private String email;
@@ -27,6 +29,8 @@ public class CustTrdPerson {
 
     private String addr;
 
+    private String historyAddr;
+
     private String notes;
 
     private Long createBy;
@@ -38,6 +42,8 @@ public class CustTrdPerson {
     private Integer dataQuality;
 
     private Date updateTime;
+
+    private Long updateBy;
 
     public Long getId() {
         return id;
@@ -85,6 +91,14 @@ public class CustTrdPerson {
 
     public void setMobileNum(String mobileNum) {
         this.mobileNum = mobileNum == null ? null : mobileNum.trim();
+    }
+
+    public String getHistoryMobileNum() {
+        return historyMobileNum;
+    }
+
+    public void setHistoryMobileNum(String historyMobileNum) {
+        this.historyMobileNum = historyMobileNum == null ? null : historyMobileNum.trim();
     }
 
     public String getTelNum() {
@@ -135,6 +149,14 @@ public class CustTrdPerson {
         this.addr = addr == null ? null : addr.trim();
     }
 
+    public String getHistoryAddr() {
+        return historyAddr;
+    }
+
+    public void setHistoryAddr(String historyAddr) {
+        this.historyAddr = historyAddr == null ? null : historyAddr.trim();
+    }
+
     public String getNotes() {
         return notes;
     }
@@ -181,5 +203,13 @@ public class CustTrdPerson {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
     }
 }

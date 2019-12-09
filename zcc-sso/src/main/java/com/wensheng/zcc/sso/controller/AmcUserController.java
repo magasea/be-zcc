@@ -379,9 +379,9 @@ public class AmcUserController {
 
   @RequestMapping(value = "/sso/specialUser/mod", method =  RequestMethod.POST)
   @ResponseBody
-  public String modSpecialUser(@RequestBody Long userId, @RequestBody List<Long> permIds){
+  public String modSpecialUser(@RequestBody AmcSpecialUserVo amcSpecialUserVo){
     long currentUser = -1L;
-    return amcSsoService.modifySpecUser(userId, permIds, currentUser);
+    return amcSsoService.modifySpecUser(amcSpecialUserVo.getAmcUser().getId(), amcSpecialUserVo.getPermIds(), currentUser);
   }
 
   @RequestMapping(value = "/sso/specialUser/get", method =  RequestMethod.POST)

@@ -445,6 +445,76 @@ public class CustTrdCmpyExample {
             return (Criteria) this;
         }
 
+        public Criteria andHistoryCmpyPhoneIsNull() {
+            addCriterion("history_cmpy_phone is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneIsNotNull() {
+            addCriterion("history_cmpy_phone is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneEqualTo(String value) {
+            addCriterion("history_cmpy_phone =", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneNotEqualTo(String value) {
+            addCriterion("history_cmpy_phone <>", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneGreaterThan(String value) {
+            addCriterion("history_cmpy_phone >", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneGreaterThanOrEqualTo(String value) {
+            addCriterion("history_cmpy_phone >=", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneLessThan(String value) {
+            addCriterion("history_cmpy_phone <", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneLessThanOrEqualTo(String value) {
+            addCriterion("history_cmpy_phone <=", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneLike(String value) {
+            addCriterion("history_cmpy_phone like", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneNotLike(String value) {
+            addCriterion("history_cmpy_phone not like", value, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneIn(List<String> values) {
+            addCriterion("history_cmpy_phone in", values, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneNotIn(List<String> values) {
+            addCriterion("history_cmpy_phone not in", values, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneBetween(String value1, String value2) {
+            addCriterion("history_cmpy_phone between", value1, value2, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyPhoneNotBetween(String value1, String value2) {
+            addCriterion("history_cmpy_phone not between", value1, value2, "historyCmpyPhone");
+            return (Criteria) this;
+        }
+
         public Criteria andCmpyAddrIsNull() {
             addCriterion("cmpy_addr is null");
             return (Criteria) this;
@@ -512,6 +582,76 @@ public class CustTrdCmpyExample {
 
         public Criteria andCmpyAddrNotBetween(String value1, String value2) {
             addCriterion("cmpy_addr not between", value1, value2, "cmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrIsNull() {
+            addCriterion("history_cmpy_addr is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrIsNotNull() {
+            addCriterion("history_cmpy_addr is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrEqualTo(String value) {
+            addCriterion("history_cmpy_addr =", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrNotEqualTo(String value) {
+            addCriterion("history_cmpy_addr <>", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrGreaterThan(String value) {
+            addCriterion("history_cmpy_addr >", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrGreaterThanOrEqualTo(String value) {
+            addCriterion("history_cmpy_addr >=", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrLessThan(String value) {
+            addCriterion("history_cmpy_addr <", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrLessThanOrEqualTo(String value) {
+            addCriterion("history_cmpy_addr <=", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrLike(String value) {
+            addCriterion("history_cmpy_addr like", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrNotLike(String value) {
+            addCriterion("history_cmpy_addr not like", value, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrIn(List<String> values) {
+            addCriterion("history_cmpy_addr in", values, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrNotIn(List<String> values) {
+            addCriterion("history_cmpy_addr not in", values, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrBetween(String value1, String value2) {
+            addCriterion("history_cmpy_addr between", value1, value2, "historyCmpyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryCmpyAddrNotBetween(String value1, String value2) {
+            addCriterion("history_cmpy_addr not between", value1, value2, "historyCmpyAddr");
             return (Criteria) this;
         }
 
@@ -832,6 +972,66 @@ public class CustTrdCmpyExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNull() {
+            addCriterion("update_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNotNull() {
+            addCriterion("update_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByEqualTo(Long value) {
+            addCriterion("update_by =", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotEqualTo(Long value) {
+            addCriterion("update_by <>", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThan(Long value) {
+            addCriterion("update_by >", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("update_by >=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThan(Long value) {
+            addCriterion("update_by <", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThanOrEqualTo(Long value) {
+            addCriterion("update_by <=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIn(List<Long> values) {
+            addCriterion("update_by in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotIn(List<Long> values) {
+            addCriterion("update_by not in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByBetween(Long value1, Long value2) {
+            addCriterion("update_by between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotBetween(Long value1, Long value2) {
+            addCriterion("update_by not between", value1, value2, "updateBy");
             return (Criteria) this;
         }
     }

@@ -15,12 +15,13 @@ public class SQLUtils {
   public static AmcUserExtExample getAmcUserExample(QueryParam queryParam) {
     AmcUserExtExample amcUserExample = new AmcUserExtExample();
     Criteria criteria = amcUserExample.createCriteria();
-
+    boolean hasOrCriteria = false;
     Criteria criteriaOrCName = amcUserExample.or();
     if(!StringUtils.isEmpty(queryParam.getName())){
       StringBuilder sb = new StringBuilder().append("%").append(queryParam.getName()).append("%");
       criteriaOrCName.andUserCnameLike(sb.toString());
       criteria.andUserNameLike(sb.toString());
+      hasOrCriteria = true;
     }
     if( queryParam.getDeptId() > 0 ){
       criteria.andDeptIdEqualTo( Long.valueOf(queryParam.getDeptId()));
@@ -34,6 +35,9 @@ public class SQLUtils {
     if(!StringUtils.isEmpty(queryParam.getMobilePhone())){
       criteria.andMobilePhoneEqualTo(queryParam.getMobilePhone());
       criteriaOrCName.andMobilePhoneEqualTo(queryParam.getMobilePhone());
+    }
+    if(!hasOrCriteria){
+      criteriaOrCName.getCriteria().clear();
     }
     return amcUserExample;
   }

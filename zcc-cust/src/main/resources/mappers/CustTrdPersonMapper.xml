@@ -8,18 +8,21 @@
     <result column="age_range" jdbcType="INTEGER" property="ageRange" />
     <result column="gender" jdbcType="INTEGER" property="gender" />
     <result column="mobile_num" jdbcType="CHAR" property="mobileNum" />
+    <result column="history_mobile_num" jdbcType="VARCHAR" property="historyMobileNum" />
     <result column="tel_num" jdbcType="CHAR" property="telNum" />
     <result column="email" jdbcType="CHAR" property="email" />
     <result column="id_card_num" jdbcType="CHAR" property="idCardNum" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="addr" jdbcType="VARCHAR" property="addr" />
+    <result column="history_addr" jdbcType="VARCHAR" property="historyAddr" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -80,8 +83,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, orig_id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, 
-    city, addr, notes, create_by, create_date, data_status, data_quality, update_time
+    id, orig_id, name, age_range, gender, mobile_num, history_mobile_num, tel_num, email, 
+    id_card_num, province, city, addr, history_addr, notes, create_by, create_date, data_status, 
+    data_quality, update_time, update_by
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -119,17 +123,19 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into CUST_TRD_PERSON (orig_id, name, age_range, 
-      gender, mobile_num, tel_num, 
-      email, id_card_num, province, 
-      city, addr, notes, create_by, 
-      create_date, data_status, data_quality, 
-      update_time)
+      gender, mobile_num, history_mobile_num, 
+      tel_num, email, id_card_num, province, 
+      city, addr, history_addr, 
+      notes, create_by, create_date, 
+      data_status, data_quality, update_time, 
+      update_by)
     values (#{origId,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, 
-      #{gender,jdbcType=INTEGER}, #{mobileNum,jdbcType=CHAR}, #{telNum,jdbcType=CHAR}, 
-      #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{notes,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, 
-      #{createDate,jdbcType=TIMESTAMP}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{gender,jdbcType=INTEGER}, #{mobileNum,jdbcType=CHAR}, #{historyMobileNum,jdbcType=VARCHAR}, 
+      #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{historyAddr,jdbcType=VARCHAR}, 
+      #{notes,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
+      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -152,6 +158,9 @@
       <if test="mobileNum != null">
         mobile_num,
       </if>
+      <if test="historyMobileNum != null">
+        history_mobile_num,
+      </if>
       <if test="telNum != null">
         tel_num,
       </if>
@@ -169,6 +178,9 @@
       </if>
       <if test="addr != null">
         addr,
+      </if>
+      <if test="historyAddr != null">
+        history_addr,
       </if>
       <if test="notes != null">
         notes,
@@ -188,6 +200,9 @@
       <if test="updateTime != null">
         update_time,
       </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="origId != null">
@@ -204,6 +219,9 @@
       </if>
       <if test="mobileNum != null">
         #{mobileNum,jdbcType=CHAR},
+      </if>
+      <if test="historyMobileNum != null">
+        #{historyMobileNum,jdbcType=VARCHAR},
       </if>
       <if test="telNum != null">
         #{telNum,jdbcType=CHAR},
@@ -223,6 +241,9 @@
       <if test="addr != null">
         #{addr,jdbcType=VARCHAR},
       </if>
+      <if test="historyAddr != null">
+        #{historyAddr,jdbcType=VARCHAR},
+      </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
       </if>
@@ -240,6 +261,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -270,6 +294,9 @@
       <if test="record.mobileNum != null">
         mobile_num = #{record.mobileNum,jdbcType=CHAR},
       </if>
+      <if test="record.historyMobileNum != null">
+        history_mobile_num = #{record.historyMobileNum,jdbcType=VARCHAR},
+      </if>
       <if test="record.telNum != null">
         tel_num = #{record.telNum,jdbcType=CHAR},
       </if>
@@ -287,6 +314,9 @@
       </if>
       <if test="record.addr != null">
         addr = #{record.addr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.historyAddr != null">
+        history_addr = #{record.historyAddr,jdbcType=VARCHAR},
       </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
@@ -306,6 +336,9 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -319,18 +352,21 @@
       age_range = #{record.ageRange,jdbcType=INTEGER},
       gender = #{record.gender,jdbcType=INTEGER},
       mobile_num = #{record.mobileNum,jdbcType=CHAR},
+      history_mobile_num = #{record.historyMobileNum,jdbcType=VARCHAR},
       tel_num = #{record.telNum,jdbcType=CHAR},
       email = #{record.email,jdbcType=CHAR},
       id_card_num = #{record.idCardNum,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
       addr = #{record.addr,jdbcType=VARCHAR},
+      history_addr = #{record.historyAddr,jdbcType=VARCHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_date = #{record.createDate,jdbcType=TIMESTAMP},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -353,6 +389,9 @@
       <if test="mobileNum != null">
         mobile_num = #{mobileNum,jdbcType=CHAR},
       </if>
+      <if test="historyMobileNum != null">
+        history_mobile_num = #{historyMobileNum,jdbcType=VARCHAR},
+      </if>
       <if test="telNum != null">
         tel_num = #{telNum,jdbcType=CHAR},
       </if>
@@ -370,6 +409,9 @@
       </if>
       <if test="addr != null">
         addr = #{addr,jdbcType=VARCHAR},
+      </if>
+      <if test="historyAddr != null">
+        history_addr = #{historyAddr,jdbcType=VARCHAR},
       </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
@@ -389,6 +431,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -399,18 +444,21 @@
       age_range = #{ageRange,jdbcType=INTEGER},
       gender = #{gender,jdbcType=INTEGER},
       mobile_num = #{mobileNum,jdbcType=CHAR},
+      history_mobile_num = #{historyMobileNum,jdbcType=VARCHAR},
       tel_num = #{telNum,jdbcType=CHAR},
       email = #{email,jdbcType=CHAR},
       id_card_num = #{idCardNum,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
       addr = #{addr,jdbcType=VARCHAR},
+      history_addr = #{historyAddr,jdbcType=VARCHAR},
       notes = #{notes,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=BIGINT},
       create_date = #{createDate,jdbcType=TIMESTAMP},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">

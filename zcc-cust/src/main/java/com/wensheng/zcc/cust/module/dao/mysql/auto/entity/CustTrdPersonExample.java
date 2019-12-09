@@ -495,6 +495,76 @@ public class CustTrdPersonExample {
             return (Criteria) this;
         }
 
+        public Criteria andHistoryMobileNumIsNull() {
+            addCriterion("history_mobile_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumIsNotNull() {
+            addCriterion("history_mobile_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumEqualTo(String value) {
+            addCriterion("history_mobile_num =", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumNotEqualTo(String value) {
+            addCriterion("history_mobile_num <>", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumGreaterThan(String value) {
+            addCriterion("history_mobile_num >", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumGreaterThanOrEqualTo(String value) {
+            addCriterion("history_mobile_num >=", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumLessThan(String value) {
+            addCriterion("history_mobile_num <", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumLessThanOrEqualTo(String value) {
+            addCriterion("history_mobile_num <=", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumLike(String value) {
+            addCriterion("history_mobile_num like", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumNotLike(String value) {
+            addCriterion("history_mobile_num not like", value, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumIn(List<String> values) {
+            addCriterion("history_mobile_num in", values, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumNotIn(List<String> values) {
+            addCriterion("history_mobile_num not in", values, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumBetween(String value1, String value2) {
+            addCriterion("history_mobile_num between", value1, value2, "historyMobileNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryMobileNumNotBetween(String value1, String value2) {
+            addCriterion("history_mobile_num not between", value1, value2, "historyMobileNum");
+            return (Criteria) this;
+        }
+
         public Criteria andTelNumIsNull() {
             addCriterion("tel_num is null");
             return (Criteria) this;
@@ -915,6 +985,76 @@ public class CustTrdPersonExample {
             return (Criteria) this;
         }
 
+        public Criteria andHistoryAddrIsNull() {
+            addCriterion("history_addr is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrIsNotNull() {
+            addCriterion("history_addr is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrEqualTo(String value) {
+            addCriterion("history_addr =", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrNotEqualTo(String value) {
+            addCriterion("history_addr <>", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrGreaterThan(String value) {
+            addCriterion("history_addr >", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrGreaterThanOrEqualTo(String value) {
+            addCriterion("history_addr >=", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrLessThan(String value) {
+            addCriterion("history_addr <", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrLessThanOrEqualTo(String value) {
+            addCriterion("history_addr <=", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrLike(String value) {
+            addCriterion("history_addr like", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrNotLike(String value) {
+            addCriterion("history_addr not like", value, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrIn(List<String> values) {
+            addCriterion("history_addr in", values, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrNotIn(List<String> values) {
+            addCriterion("history_addr not in", values, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrBetween(String value1, String value2) {
+            addCriterion("history_addr between", value1, value2, "historyAddr");
+            return (Criteria) this;
+        }
+
+        public Criteria andHistoryAddrNotBetween(String value1, String value2) {
+            addCriterion("history_addr not between", value1, value2, "historyAddr");
+            return (Criteria) this;
+        }
+
         public Criteria andNotesIsNull() {
             addCriterion("notes is null");
             return (Criteria) this;
@@ -1282,6 +1422,66 @@ public class CustTrdPersonExample {
 
         public Criteria andUpdateTimeNotBetween(Date value1, Date value2) {
             addCriterion("update_time not between", value1, value2, "updateTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNull() {
+            addCriterion("update_by is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIsNotNull() {
+            addCriterion("update_by is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByEqualTo(Long value) {
+            addCriterion("update_by =", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotEqualTo(Long value) {
+            addCriterion("update_by <>", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThan(Long value) {
+            addCriterion("update_by >", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByGreaterThanOrEqualTo(Long value) {
+            addCriterion("update_by >=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThan(Long value) {
+            addCriterion("update_by <", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByLessThanOrEqualTo(Long value) {
+            addCriterion("update_by <=", value, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByIn(List<Long> values) {
+            addCriterion("update_by in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotIn(List<Long> values) {
+            addCriterion("update_by not in", values, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByBetween(Long value1, Long value2) {
+            addCriterion("update_by between", value1, value2, "updateBy");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateByNotBetween(Long value1, Long value2) {
+            addCriterion("update_by not between", value1, value2, "updateBy");
             return (Criteria) this;
         }
     }

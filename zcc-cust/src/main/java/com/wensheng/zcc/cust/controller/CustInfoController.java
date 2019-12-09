@@ -11,6 +11,7 @@ import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.SyncService;
@@ -82,11 +83,29 @@ public class CustInfoController {
 
   }
 
+
+
   @RequestMapping(value = "/getPerson", method = RequestMethod.POST)
   @ResponseBody
   public CustTrdPerson getPerson(@RequestParam Long personId){
 
     return custInfoService.getPerson(personId);
+
+  }
+
+  @RequestMapping(value = "/getPersonEditable", method = RequestMethod.POST)
+  @ResponseBody
+  public CustTrdPersonVo getPersonEditable(@RequestParam Long personId){
+
+    return custInfoService.getPersonEditable(personId);
+
+  }
+
+  @RequestMapping(value = "/custPerson/mod", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean modCustPerson(@RequestBody CustTrdPersonVo custTrdPersonVo){
+
+    return custInfoService.modCustPerson(custTrdPersonVo);
 
   }
 

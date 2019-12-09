@@ -605,7 +605,10 @@ public class SyncServiceImpl implements SyncService {
 
   private void copyPersonSync2PersonInfo(CustPersonInfoFromSync custPersonInfoFromSync, CustTrdPerson custTrdPerson) {
     custTrdPerson.setAddr(custPersonInfoFromSync.getAddress());
-    custTrdPerson.setCity(StringUtils.isEmpty(custPersonInfoFromSync.getCityCode())? null:custPersonInfoFromSync.getCityCode());
+    custTrdPerson.setCity(StringUtils.isEmpty(custPersonInfoFromSync.getCityCode())? null:
+        custPersonInfoFromSync.getCityCode().length() >= 11 ? custPersonInfoFromSync.getCityCode().substring(0, 6):
+            custPersonInfoFromSync.getCityCode());
+
     custTrdPerson.setEmail(custPersonInfoFromSync.getEmail());
     custTrdPerson.setGender(custPersonInfoFromSync.getGender());
     custTrdPerson.setIdCardNum(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())?null:

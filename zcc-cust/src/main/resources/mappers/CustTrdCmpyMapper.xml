@@ -7,12 +7,15 @@
     <result column="uni_social_code" jdbcType="VARCHAR" property="uniSocialCode" />
     <result column="legal_reptive" jdbcType="VARCHAR" property="legalReptive" />
     <result column="cmpy_phone" jdbcType="CHAR" property="cmpyPhone" />
+    <result column="history_cmpy_phone" jdbcType="VARCHAR" property="historyCmpyPhone" />
     <result column="cmpy_addr" jdbcType="VARCHAR" property="cmpyAddr" />
+    <result column="history_cmpy_addr" jdbcType="VARCHAR" property="historyCmpyAddr" />
     <result column="annu_rept_phone" jdbcType="CHAR" property="annuReptPhone" />
     <result column="annu_rept_addr" jdbcType="VARCHAR" property="annuReptAddr" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,8 +76,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, cmpy_addr, annu_rept_phone, 
-    annu_rept_addr, data_status, data_quality, update_time
+    id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, history_cmpy_phone, cmpy_addr, 
+    history_cmpy_addr, annu_rept_phone, annu_rept_addr, data_status, data_quality, update_time, 
+    update_by
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
@@ -112,13 +116,15 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into CUST_TRD_CMPY (cmpy_name, uni_social_code, legal_reptive, 
-      cmpy_phone, cmpy_addr, annu_rept_phone, 
-      annu_rept_addr, data_status, data_quality, 
-      update_time)
+      cmpy_phone, history_cmpy_phone, cmpy_addr, 
+      history_cmpy_addr, annu_rept_phone, annu_rept_addr, 
+      data_status, data_quality, update_time, 
+      update_by)
     values (#{cmpyName,jdbcType=CHAR}, #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, 
-      #{cmpyPhone,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, 
-      #{annuReptAddr,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{cmpyPhone,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyAddr,jdbcType=VARCHAR}, 
+      #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, 
+      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -138,8 +144,14 @@
       <if test="cmpyPhone != null">
         cmpy_phone,
       </if>
+      <if test="historyCmpyPhone != null">
+        history_cmpy_phone,
+      </if>
       <if test="cmpyAddr != null">
         cmpy_addr,
+      </if>
+      <if test="historyCmpyAddr != null">
+        history_cmpy_addr,
       </if>
       <if test="annuReptPhone != null">
         annu_rept_phone,
@@ -156,6 +168,9 @@
       <if test="updateTime != null">
         update_time,
       </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpyName != null">
@@ -170,8 +185,14 @@
       <if test="cmpyPhone != null">
         #{cmpyPhone,jdbcType=CHAR},
       </if>
+      <if test="historyCmpyPhone != null">
+        #{historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
       <if test="cmpyAddr != null">
         #{cmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="historyCmpyAddr != null">
+        #{historyCmpyAddr,jdbcType=VARCHAR},
       </if>
       <if test="annuReptPhone != null">
         #{annuReptPhone,jdbcType=CHAR},
@@ -187,6 +208,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -214,8 +238,14 @@
       <if test="record.cmpyPhone != null">
         cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
       </if>
+      <if test="record.historyCmpyPhone != null">
+        history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
       <if test="record.cmpyAddr != null">
         cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.historyCmpyAddr != null">
+        history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
       </if>
       <if test="record.annuReptPhone != null">
         annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
@@ -232,6 +262,9 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -244,12 +277,15 @@
       uni_social_code = #{record.uniSocialCode,jdbcType=VARCHAR},
       legal_reptive = #{record.legalReptive,jdbcType=VARCHAR},
       cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
+      history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
       cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
+      history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
       annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -269,8 +305,14 @@
       <if test="cmpyPhone != null">
         cmpy_phone = #{cmpyPhone,jdbcType=CHAR},
       </if>
+      <if test="historyCmpyPhone != null">
+        history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
       <if test="cmpyAddr != null">
         cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="historyCmpyAddr != null">
+        history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
       </if>
       <if test="annuReptPhone != null">
         annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
@@ -287,6 +329,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -296,12 +341,15 @@
       uni_social_code = #{uniSocialCode,jdbcType=VARCHAR},
       legal_reptive = #{legalReptive,jdbcType=VARCHAR},
       cmpy_phone = #{cmpyPhone,jdbcType=CHAR},
+      history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
       cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
+      history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
       annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">

@@ -11,6 +11,7 @@ import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
@@ -40,6 +41,7 @@ import java.security.AlgorithmParameters;
 import java.security.Security;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,6 +85,7 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.util.comparator.ComparableComparator;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -449,7 +452,8 @@ public class AmcSsoServiceImpl implements AmcSsoService {
         amcSpecUser.setPermId(permId.intValue());
         amcSpecUser.setUpdateBy(currentUser);
         amcSpecUser.setUserId(userId);
-        amcSpecUserMapper.insert(amcSpecUser);
+        amcSpecUser.setUpdateDate(AmcDateUtils.getCurrentDate());
+        amcSpecUserMapper.insertSelective(amcSpecUser);
       }
     }
 
@@ -458,12 +462,13 @@ public class AmcSsoServiceImpl implements AmcSsoService {
 
   @Override
   public List<AmcSpecialUserVo> getSpecUser(){
+
     List<AmcSpecUser> amcSpecUsers =  amcSpecUserMapper.selectByExample(null);
     List<AmcSpecialUserVo> amcSpecialUserVos = new ArrayList<>();
     if(CollectionUtils.isEmpty(amcSpecUsers)){
       return new ArrayList<>();
     }else{
-      Set<Long> ids = amcSpecUsers.stream().map(item -> item.getId()).collect(Collectors.toSet());
+      Set<Long> ids = amcSpecUsers.stream().map(item -> item.getUserId()).collect(Collectors.toSet());
 
       AmcUserExample amcUserExample = new AmcUserExample();
       amcUserExample.createCriteria().andIdIn(ids.stream().collect(Collectors.toList()));
@@ -484,6 +489,7 @@ public class AmcSsoServiceImpl implements AmcSsoService {
         amcSpecialUserVo = null;
       }
     }
+    Collections.sort(amcSpecialUserVos);
     return amcSpecialUserVos;
   }
 

@@ -81,4 +81,8 @@ public class AmcDateUtils {
     String strDate = dateFormat.format(date);
     return strDate;
   }
+
+  public static Date getCurrentDate() {
+    return new Date(System.currentTimeMillis());
+  }
 }

@@ -1,9 +1,14 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
@@ -12,6 +17,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
@@ -25,6 +31,7 @@ import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
 import java.util.ArrayList;
@@ -35,6 +42,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -71,9 +79,14 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Autowired
   CustRegionMapper custRegionMapper;
 
+  @Autowired
+  CustTrdInfoMapper custTrdInfoMapper;
+
   @Value("${env.image-repo}")
   String fileBase;
 
+  static final String SEP_INDICATOR_EDITABLE = "|$|";
+  static final String SEP_INDICATOR_ORIGINAL = "|#|";
 
   @Autowired
   MongoTemplate mongoTemplate;
@@ -368,6 +381,50 @@ public class CustInfoServiceImpl implements CustInfoService {
     return custTrdPersonMapper.selectByPrimaryKey(personId);
   }
 
+  @Override
+  public CustTrdPersonVo getPersonEditable(Long personId) {
+    CustTrdPerson custTrdPerson =  custTrdPersonMapper.selectByPrimaryKey(personId);
+    CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
+    AmcBeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
+    if(!StringUtils.isEmpty(custTrdPerson.getHistoryMobileNum()) && custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)){
+      List<String> listEditable =
+          Lists.newArrayList(Splitter.on(SEP_INDICATOR_EDITABLE).split(custTrdPerson.getHistoryMobileNum()));
+      if(!CollectionUtils.isEmpty(listEditable)){
+        for(int idx = listEditable.size() -1; idx >= 0 ; idx--){
+          if(listEditable.get(idx).contains(SEP_INDICATOR_ORIGINAL)){
+            String[] origMobileNums =  listEditable.get(idx).split(SEP_INDICATOR_ORIGINAL);
+            custTrdPersonVo.setOriginPhoneNum(origMobileNums[1]);
+            listEditable.set(idx, origMobileNums[0]);
+            break;
+          }
+        }
+      }
+      custTrdPersonVo.setHistoryPhoneNums(listEditable);
+    }else{
+      custTrdPersonVo.setOriginPhoneNum(custTrdPerson.getMobileNum());
+    }
+
+    if(!StringUtils.isEmpty(custTrdPerson.getHistoryAddr()) && custTrdPerson.getHistoryAddr().contains(SEP_INDICATOR_EDITABLE)){
+      List<String> listEditableAddrs =
+          Lists.newArrayList(Splitter.on(SEP_INDICATOR_EDITABLE).split(custTrdPerson.getHistoryAddr()));
+      if(!CollectionUtils.isEmpty(listEditableAddrs)){
+        for(int idx = listEditableAddrs.size() -1; idx >= 0 ; idx--){
+          if(listEditableAddrs.get(idx).contains(SEP_INDICATOR_ORIGINAL)){
+            String[] origAddrs =  listEditableAddrs.get(idx).split(SEP_INDICATOR_ORIGINAL);
+            custTrdPersonVo.setOriginPhoneNum(origAddrs[1]);
+            listEditableAddrs.set(idx, origAddrs[0]);
+            break;
+          }
+        }
+      }
+      custTrdPersonVo.setHistoryAddrs(listEditableAddrs);
+    }else{
+      custTrdPersonVo.setOriginAddrs(custTrdPerson.getAddr());
+    }
+
+    return custTrdPersonVo;
+  }
+
   private List<CustTrdInfoVo> convertCmpyToVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
     List<CustTrdInfoVo> custTrdInfoVos = new ArrayList<>();
     for(CustTrdCmpyTrdExt custTrdCmpyTrdExt: custTrdCmpyTrdExts){
@@ -460,6 +517,66 @@ public class CustInfoServiceImpl implements CustInfoService {
     custInfoGeoNears.add(queryNearByCusts(geoJsonPoint, new Integer[]{200, 300}));
     return custInfoGeoNears;
   }
+
+  @Override
+  public boolean modCustPerson(CustTrdPersonVo custTrdPersonVo) {
+    if(CollectionUtils.isEmpty(custTrdPersonVo.getHistoryAddrs())){
+      log.error("no history addrs");
+      custTrdPersonVo.setHistoryAddr(null);
+    }else{
+      StringBuilder historyAddrs =
+          new StringBuilder(Joiner.on(SEP_INDICATOR_EDITABLE).join(custTrdPersonVo.getHistoryAddrs()));
+      historyAddrs.append(SEP_INDICATOR_ORIGINAL).append(custTrdPersonVo.getOriginAddrs());
+      custTrdPersonVo.setHistoryAddr(historyAddrs.toString());
+    }
+    if(CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
+      log.error("no history mobiles");
+      custTrdPersonVo.setHistoryMobileNum(null);
+    }else{
+      StringBuilder historyMobileNums =
+          new StringBuilder(Joiner.on(SEP_INDICATOR_EDITABLE).join(custTrdPersonVo.getHistoryPhoneNums()));
+      historyMobileNums.append(SEP_INDICATOR_ORIGINAL).append(custTrdPersonVo.getOriginPhoneNum());
+      custTrdPersonVo.setHistoryAddr(historyMobileNums.toString());
+    }
+
+    updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobileNum(),
+        custTrdPersonVo.getName(), custTrdPersonVo.getId());
+    return false;
+  }
+  private boolean updateCustPersonTrdRelations(List<String> histPhoneNumList, String phoneNum, String custName,
+      Long currentCustPersonId){
+    // find origin cust and search the trd info of the cust, update the trd info ref buyer id to the
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    custTrdPersonExample.createCriteria().andMobileNumEqualTo(phoneNum).andNameEqualTo(custName);
+    List<CustTrdPerson> custTrdPeople = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    if(CollectionUtils.isEmpty(custTrdPeople)){
+      return true;
+    }
+    List<CustTrdPerson> merged = new ArrayList();
+    for(String custHistPhone: histPhoneNumList){
+      custTrdPersonExample.clear();
+      custTrdPersonExample.createCriteria().andMobileNumEqualTo(custHistPhone).andNameEqualTo(custName);
+      List<CustTrdPerson> custTrdPeopleHistory = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+      merged =  ListUtils.union(custTrdPeople, custTrdPeopleHistory);
+    }
+    custTrdPeople = merged.stream().filter(item -> item.getId() != currentCustPersonId).collect(Collectors.toList());
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    for(CustTrdPerson custTrdPerson: custTrdPeople){
+      custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPerson.getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+      List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+      if(CollectionUtils.isEmpty(custTrdInfos)){
+        continue;
+      }else{
+        for(CustTrdInfo custTrdInfo: custTrdInfos){
+          custTrdInfo.setBuyerId(currentCustPersonId);
+          custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+        }
+      }
+    }
+    return true;
+  }
+
+
 
   public CustInfoGeoNear queryNearByCusts(GeoJsonPoint geoJsonPoint, Integer[] distances ){
 

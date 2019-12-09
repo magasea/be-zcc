@@ -13,7 +13,11 @@ public class CustTrdCmpy {
 
     private String cmpyPhone;
 
+    private String historyCmpyPhone;
+
     private String cmpyAddr;
+
+    private String historyCmpyAddr;
 
     private String annuReptPhone;
 
@@ -24,6 +28,8 @@ public class CustTrdCmpy {
     private Integer dataQuality;
 
     private Date updateTime;
+
+    private Long updateBy;
 
     public Long getId() {
         return id;
@@ -65,12 +71,28 @@ public class CustTrdCmpy {
         this.cmpyPhone = cmpyPhone == null ? null : cmpyPhone.trim();
     }
 
+    public String getHistoryCmpyPhone() {
+        return historyCmpyPhone;
+    }
+
+    public void setHistoryCmpyPhone(String historyCmpyPhone) {
+        this.historyCmpyPhone = historyCmpyPhone == null ? null : historyCmpyPhone.trim();
+    }
+
     public String getCmpyAddr() {
         return cmpyAddr;
     }
 
     public void setCmpyAddr(String cmpyAddr) {
         this.cmpyAddr = cmpyAddr == null ? null : cmpyAddr.trim();
+    }
+
+    public String getHistoryCmpyAddr() {
+        return historyCmpyAddr;
+    }
+
+    public void setHistoryCmpyAddr(String historyCmpyAddr) {
+        this.historyCmpyAddr = historyCmpyAddr == null ? null : historyCmpyAddr.trim();
     }
 
     public String getAnnuReptPhone() {
@@ -111,5 +133,13 @@ public class CustTrdCmpy {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
     }
 }

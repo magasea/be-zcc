@@ -1,17 +1,21 @@
 package com.wensheng.zcc.sso.service.impl;
 
+import com.wensheng.zcc.common.params.AmcPermEnum;
 import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcSpecUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.ext.AmcUserExtMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcRoleExample;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUser;
+import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
@@ -57,6 +61,9 @@ public class UserServiceImpl implements UserService {
 
   @Autowired
   AmcRoleMapper amcRoleMapper;
+
+  @Autowired
+  AmcSpecUserMapper amcSpecUserMapper;
 
   @Autowired
   PasswordEncoder passwordEncoder;
@@ -128,6 +135,14 @@ public class UserServiceImpl implements UserService {
 //      if(isAmcOper && amcRole.getName().equals(AmcRolesEnum.ROLE_AMC_ADMIN.name())){
 //        authorities.add(String.format("PERM_%s_WRITE",amcUser.getCompanyId()));
 //      }
+    }
+    AmcSpecUserExample amcSpecUserExample = new AmcSpecUserExample();
+    amcSpecUserExample.createCriteria().andUserIdEqualTo(amcUser.getId());
+    List<AmcSpecUser> amcSpecUsers = amcSpecUserMapper.selectByExample(amcSpecUserExample);
+    if(!CollectionUtils.isEmpty(amcSpecUsers)){
+      for(AmcSpecUser amcSpecUser: amcSpecUsers){
+        authorities.add(AmcPermEnum.lookupByDisplayIdUtil(amcSpecUser.getPermId().intValue()).getName());
+      }
     }
     return authorities;
 

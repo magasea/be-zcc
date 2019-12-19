@@ -12,7 +12,7 @@ public enum AmcDeptEnum {
   ESTATE_DEPT("ESTATE_DEPT","地产部门", 2),
   RISKCTRL_DEPT("RISKCTRL_DEPT","风控部门", 3),
   EQUITY_DEPT("EQUITY_DEPT","股权部门", 4),
-  HEADQUARTER_DEPT("HEADQUARTER_DEPT","总部",5),
+  ALL_CMPY("ALL_CMPY","全公司",5),
   TECH_DEPT("TECH_DEPT","技术部门",6),
   OUTSIDE("OUTSIDE","公司外部合作伙伴等",7),
   FINANCE_DEPT("FINANCE_DEPT","财务部门",8),

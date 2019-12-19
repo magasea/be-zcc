@@ -405,9 +405,14 @@ public class SyncServiceImpl implements SyncService {
     if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
       sellerId = syncCmpyInfoById(trdInfoFromSync, false, action == 1);
       custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
+      CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
+      custTrdInfo.setSellerName(custTrdSeller.getName());
+
     }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
       sellerId = syncPersonInfoById(trdInfoFromSync, false, action == 1);
       custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
+      CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
+      custTrdInfo.setSellerName(custTrdSeller.getName());
     }
     if(sellerId < 0){
       log.error("Failed to sync trd seller with id:{}", trdInfoFromSync.getSellerIdPrep());
@@ -620,6 +625,9 @@ public class SyncServiceImpl implements SyncService {
     custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
     Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
     custTrdPerson.setUpdateTime(updateTime);
+
+    //add logic to check the person have been updated by wensheng stuff with their information
+
   }
 
   /**

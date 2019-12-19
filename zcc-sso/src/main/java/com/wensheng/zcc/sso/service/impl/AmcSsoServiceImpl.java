@@ -17,6 +17,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcSpecUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
+import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserRoleRuleMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUserExample;
@@ -28,6 +29,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample;
 import com.wensheng.zcc.sso.module.vo.AmcSpecialUserVo;
 import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.service.AmcSsoService;
+import com.wensheng.zcc.sso.service.AmcTokenService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.KafkaService;
 import com.wensheng.zcc.sso.service.UserService;
@@ -181,6 +183,12 @@ public class AmcSsoServiceImpl implements AmcSsoService {
 
   @Autowired
   AmcUserMapper amcUserMapper;
+
+  @Autowired
+  AmcUserRoleMapper amcUserRoleMapper;
+
+  @Autowired
+  AmcTokenService amcTokenService;
 
   public static final int INIT_VECTOR_LENGTH = 16;
 
@@ -525,6 +533,8 @@ public class AmcSsoServiceImpl implements AmcSsoService {
         sb.append(amcUserRoleRulesHistory.get(0).getId()).append(";");
       }
     }
+    amcUserRoleMapper.deleteByExample(null);
+    amcTokenService.revokeTokenAll();
     return sb.toString();
   }
 
@@ -539,6 +549,8 @@ public class AmcSsoServiceImpl implements AmcSsoService {
       amcUserRoleRuleMapper.updateByPrimaryKey(amcUserRoleRule);
       sb.append(amcUserRoleRule.getId()).append(";");
     }
+    amcUserRoleMapper.deleteByExample(null);
+    amcTokenService.revokeTokenAll();
     return sb.toString();
   }
 

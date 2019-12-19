@@ -55,7 +55,7 @@ public class UserUtils {
       case RISKCTRL_DEPT:
       case ESTATE_DEPT:
       case EQUITY_DEPT:
-      case HEADQUARTER_DEPT:
+      case ALL_CMPY:
         switch (titleEnum){
           case TITLE_MGR:
           case TITLE_LDR:

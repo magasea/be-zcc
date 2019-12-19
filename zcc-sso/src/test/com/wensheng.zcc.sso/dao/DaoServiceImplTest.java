@@ -166,19 +166,19 @@ public class DaoServiceImplTest {
 
     // 总部
     amcUserRoleRule = new AmcUserRoleRule();
-    amcUserRoleRule.setDeptId(AmcDeptEnum.HEADQUARTER_DEPT.getId());
+    amcUserRoleRule.setDeptId(AmcDeptEnum.ALL_CMPY.getId());
     amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_MGR.getId());
     amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
     amcUserRoleRules.add(amcUserRoleRule);
 
     amcUserRoleRule = new AmcUserRoleRule();
-    amcUserRoleRule.setDeptId(AmcDeptEnum.HEADQUARTER_DEPT.getId());
+    amcUserRoleRule.setDeptId(AmcDeptEnum.ALL_CMPY.getId());
     amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_LDR.getId());
     amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
     amcUserRoleRules.add(amcUserRoleRule);
 
     amcUserRoleRule = new AmcUserRoleRule();
-    amcUserRoleRule.setDeptId(AmcDeptEnum.HEADQUARTER_DEPT.getId());
+    amcUserRoleRule.setDeptId(AmcDeptEnum.ALL_CMPY.getId());
     amcUserRoleRule.setTitle(AmcSSOTitleEnum.TITLE_STAFF.getId());
     amcUserRoleRule.setRoleId(AmcRolesEnum.ROLE_AMC_VISITOR.getId());
     amcUserRoleRules.add(amcUserRoleRule);

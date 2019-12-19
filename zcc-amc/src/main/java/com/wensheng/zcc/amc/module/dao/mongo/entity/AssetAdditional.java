@@ -1,5 +1,7 @@
 package com.wensheng.zcc.amc.module.dao.mongo.entity;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.wensheng.zcc.amc.config.GeoJsonDeserializer;
 import lombok.Data;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.geo.GeoJson;
@@ -26,5 +28,6 @@ public class AssetAdditional {
     Integer commentCount =0;			// 评论次数
     int isRecommanded = 1; //是否推荐
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
-    GeoJson location;
+    @JsonDeserialize(using = GeoJsonDeserializer.class)
+    private GeoJson location = null;
 }

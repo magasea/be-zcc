@@ -1,7 +1,6 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.google.common.base.Joiner;
-import com.google.common.base.Splitter;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -88,6 +87,8 @@ public class CustInfoServiceImpl implements CustInfoService {
   static final String SEP_INDICATOR_EDITABLE = "|$|";
   static final String SEP_INDICATOR_ORIGINAL = "|#|";
 
+  static final String SEP_INDICATOR_EDITABLE_USED = "\\|\\$\\|";
+  static final String SEP_INDICATOR_ORIGINAL_USED = "\\|#\\|";
   @Autowired
   MongoTemplate mongoTemplate;
 
@@ -386,13 +387,19 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdPerson custTrdPerson =  custTrdPersonMapper.selectByPrimaryKey(personId);
     CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
     AmcBeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
-    if(!StringUtils.isEmpty(custTrdPerson.getHistoryMobileNum()) && custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)){
-      List<String> listEditable =
-          Lists.newArrayList(Splitter.on(SEP_INDICATOR_EDITABLE).split(custTrdPerson.getHistoryMobileNum()));
+    if(!StringUtils.isEmpty(custTrdPerson.getHistoryMobileNum()) && (custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)
+    ||custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_ORIGINAL))){
+      List<String> listEditable = new ArrayList<>();
+      if(custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)){
+        listEditable = Lists.newArrayList(custTrdPerson.getHistoryMobileNum().split(SEP_INDICATOR_EDITABLE_USED));
+
+      }else{
+        listEditable.add(custTrdPerson.getHistoryMobileNum());
+      }
       if(!CollectionUtils.isEmpty(listEditable)){
         for(int idx = listEditable.size() -1; idx >= 0 ; idx--){
           if(listEditable.get(idx).contains(SEP_INDICATOR_ORIGINAL)){
-            String[] origMobileNums =  listEditable.get(idx).split(SEP_INDICATOR_ORIGINAL);
+            String[] origMobileNums =  listEditable.get(idx).split(SEP_INDICATOR_ORIGINAL_USED);
             custTrdPersonVo.setOriginPhoneNum(origMobileNums[1]);
             listEditable.set(idx, origMobileNums[0]);
             break;
@@ -404,14 +411,21 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdPersonVo.setOriginPhoneNum(custTrdPerson.getMobileNum());
     }
 
-    if(!StringUtils.isEmpty(custTrdPerson.getHistoryAddr()) && custTrdPerson.getHistoryAddr().contains(SEP_INDICATOR_EDITABLE)){
-      List<String> listEditableAddrs =
-          Lists.newArrayList(Splitter.on(SEP_INDICATOR_EDITABLE).split(custTrdPerson.getHistoryAddr()));
+    if(!StringUtils.isEmpty(custTrdPerson.getHistoryAddr())
+        &&(custTrdPerson.getHistoryAddr().contains(SEP_INDICATOR_EDITABLE) || custTrdPerson.getHistoryAddr().contains(SEP_INDICATOR_ORIGINAL))){
+      List<String> listEditableAddrs = new ArrayList<>();
+      if(custTrdPerson.getHistoryAddr().contains(SEP_INDICATOR_EDITABLE)){
+        listEditableAddrs =
+            Lists.newArrayList(custTrdPerson.getHistoryAddr().split(SEP_INDICATOR_EDITABLE_USED));
+      }else{
+        listEditableAddrs.add(custTrdPerson.getHistoryAddr());
+      }
+
       if(!CollectionUtils.isEmpty(listEditableAddrs)){
         for(int idx = listEditableAddrs.size() -1; idx >= 0 ; idx--){
           if(listEditableAddrs.get(idx).contains(SEP_INDICATOR_ORIGINAL)){
-            String[] origAddrs =  listEditableAddrs.get(idx).split(SEP_INDICATOR_ORIGINAL);
-            custTrdPersonVo.setOriginPhoneNum(origAddrs[1]);
+            String[] origAddrs =  listEditableAddrs.get(idx).split(SEP_INDICATOR_ORIGINAL_USED);
+            custTrdPersonVo.setOriginAddrs(origAddrs[1]);
             listEditableAddrs.set(idx, origAddrs[0]);
             break;
           }
@@ -522,7 +536,7 @@ public class CustInfoServiceImpl implements CustInfoService {
   public boolean modCustPerson(CustTrdPersonVo custTrdPersonVo) {
     if(CollectionUtils.isEmpty(custTrdPersonVo.getHistoryAddrs())){
       log.error("no history addrs");
-      custTrdPersonVo.setHistoryAddr(null);
+      custTrdPersonVo.setHistoryAddr(custTrdPersonVo.getOriginAddrs());
     }else{
       StringBuilder historyAddrs =
           new StringBuilder(Joiner.on(SEP_INDICATOR_EDITABLE).join(custTrdPersonVo.getHistoryAddrs()));
@@ -531,17 +545,23 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     if(CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
       log.error("no history mobiles");
-      custTrdPersonVo.setHistoryMobileNum(null);
+      custTrdPersonVo.setHistoryMobileNum(custTrdPersonVo.getOriginPhoneNum());
     }else{
       StringBuilder historyMobileNums =
           new StringBuilder(Joiner.on(SEP_INDICATOR_EDITABLE).join(custTrdPersonVo.getHistoryPhoneNums()));
       historyMobileNums.append(SEP_INDICATOR_ORIGINAL).append(custTrdPersonVo.getOriginPhoneNum());
-      custTrdPersonVo.setHistoryAddr(historyMobileNums.toString());
+      custTrdPersonVo.setHistoryMobileNum(historyMobileNums.toString());
     }
 
-    updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobileNum(),
-        custTrdPersonVo.getName(), custTrdPersonVo.getId());
-    return false;
+    if(null != custTrdPersonVo.getHistoryPhoneNums() && !CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
+      updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobileNum(),
+          custTrdPersonVo.getName(), custTrdPersonVo.getId());
+    }
+
+    CustTrdPerson custTrdPerson = new CustTrdPerson();
+    AmcBeanUtils.copyProperties(custTrdPersonVo, custTrdPerson);
+    custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
+    return true;
   }
   private boolean updateCustPersonTrdRelations(List<String> histPhoneNumList, String phoneNum, String custName,
       Long currentCustPersonId){

@@ -32,4 +32,13 @@ public class AmcTokenServiceImpl implements AmcTokenService {
     }
     return true;
   }
+
+  @Override
+  public boolean revokeTokenAll() {
+    Collection<OAuth2AccessToken> accessTokens = tokenStore.findTokensByClientId(amcClientId);
+    for(OAuth2AccessToken oAuth2AccessToken : accessTokens){
+      tokenServices.revokeToken(oAuth2AccessToken.getValue());
+    }
+    return true;
+  }
 }

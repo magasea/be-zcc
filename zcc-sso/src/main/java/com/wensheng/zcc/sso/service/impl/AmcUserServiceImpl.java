@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.params.AmcRolesEnum;
+import com.wensheng.zcc.common.params.AmcSpecialUserEnum;
 import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
 import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
@@ -133,6 +134,21 @@ public class AmcUserServiceImpl implements AmcUserService {
 
   @Override
   public AmcUser createUser(AmcUser amcUser) {
+
+    if(!StringUtils.isEmpty(amcUser.getUserName()) && (amcUser.getUserName().equals(AmcSpecialUserEnum.SYSTEM_ADMIN1.getName()) ||
+        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.SYSTEM_ADMIN1.getMobileNum()) ||
+        amcUser.getUserName().equals(AmcSpecialUserEnum.SYSTEM_ADMIN2.getName()) ||
+        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.SYSTEM_ADMIN2.getMobileNum())||
+
+        amcUser.getUserName().equals(AmcSpecialUserEnum.ZCC_SYSTEM_ADMIN.getName()) ||
+        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.ZCC_SYSTEM_ADMIN.getMobileNum())
+    )){
+      return makeSpecuser(amcUser, AmcRolesEnum.ROLE_SYSTEM_ADMIN);
+    }else if(!StringUtils.isEmpty(amcUser.getUserName()) && (amcUser.getUserName().equals(AmcSpecialUserEnum.ZCC_CO_ADMIN.getName()) ||
+        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.ZCC_CO_ADMIN.getMobileNum()))){
+      return makeSpecuser(amcUser, AmcRolesEnum.ROLE_CO_ADMIN);
+    }
+
     boolean isInDb = false;
     boolean needUpdateDb = false;
     boolean needUpdatePrivilege = false;
@@ -263,6 +279,91 @@ public class AmcUserServiceImpl implements AmcUserService {
     }else{
       return amcUsers.get(0);
     }
+  }
+
+  private AmcUser makeSpecuser(AmcUser amcUser, AmcRolesEnum roleEnum) {
+
+    //check if user exist
+    AmcUserExample amcUserExample = new AmcUserExample();
+    amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
+//    amcUserExample.or().andUserNameEqualTo(amcUser.getUserName());
+    List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
+    if(CollectionUtils.isEmpty(amcUsers)){
+      //need create user
+      amcUser.setPassword( UserUtils.getEncode( String.format("%s-%s",defaultPasswd, AmcDateUtils.getFormatedDate())));
+      amcUser.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
+      int cnt = amcUserMapper.insertSelective(amcUser);
+      if(cnt > 0){
+        log.info("Insert new user with mobile phone:{}", amcUser.getMobilePhone());
+      }else{
+        log.error("Insert new user with mobile phone:{} failed", amcUser.getMobilePhone());
+        return null;
+      }
+    }else{
+      AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+      if(amcUsers.size() > 1){
+        //delete redundent user
+        for(int idx = 0; idx < amcUsers.size(); idx ++){
+          if(idx == 0){
+            continue;
+          }
+          amcUserMapper.deleteByPrimaryKey(amcUsers.get(idx).getId());
+          amcUserRoleExample.clear();
+          amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(idx).getId());
+          amcUserRoleMapper.deleteByExample(amcUserRoleExample);
+        }
+
+      }
+
+      amcUserRoleExample.clear();
+      amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(0).getId());
+      List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
+
+      if(CollectionUtils.isEmpty(amcUserRoles)){
+        //need make the spec user with spec role
+        AmcUserRole amcUserRole = new AmcUserRole();
+        amcUserRole.setUserId(amcUsers.get(0).getId());
+        switch (roleEnum){
+          case ROLE_CO_ADMIN:
+            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_CO_ADMIN.getId()));
+            break;
+          case ROLE_SYSTEM_ADMIN:
+            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()));
+            break;
+          default:
+            log.error("Failed to determin role for:{}", roleEnum);
+            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
+        }
+        amcUserRoleMapper.insertSelective(amcUserRole);
+      }else{
+        //check if user role correct
+        for(AmcUserRole amcUserRole: amcUserRoles){
+          if(amcUserRole.getRoleId() == AmcRolesEnum.ROLE_CO_ADMIN.getId() || amcUserRole.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId() ){
+            //no need to update
+            return amcUsers.get(0);
+          }
+        }
+        log.error("The spec user doen't have default roles");
+        amcUserRoleMapper.deleteByExample(amcUserRoleExample);
+        //need make the spec user with spec role
+        AmcUserRole amcUserRole = new AmcUserRole();
+        amcUserRole.setUserId(amcUsers.get(0).getId());
+        switch (roleEnum){
+          case ROLE_CO_ADMIN:
+            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_CO_ADMIN.getId()));
+            break;
+          case ROLE_SYSTEM_ADMIN:
+            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()));
+            break;
+          default:
+            log.error("Failed to determin role for:{}", roleEnum);
+            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
+        }
+      }
+    }
+    log.error("Failed to handle the spec user correctlly");
+    return amcUser;
+
   }
 
   @Override
@@ -469,6 +570,8 @@ public class AmcUserServiceImpl implements AmcUserService {
     List<AmcPermission> amcPermissions = amcPermissionMapper.selectByExample(null);
     return amcPermissions;
   }
+
+
 
   @Override
   public List<AmcUser> searchUserByPhone(String mobilePhone) {

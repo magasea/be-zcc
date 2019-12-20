@@ -17,6 +17,7 @@ public class TrdInfoFromSync {
     String trdAmount;
     Long trdAmountPrep;
     Long trdDate;
+    Long publishDate;
     String trdContentPrep;
     String sellerIdPrep;
     int sellerTypePrep;

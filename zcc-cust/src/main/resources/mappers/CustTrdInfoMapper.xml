@@ -20,6 +20,7 @@
     <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
+    <result column="pub_date" jdbcType="TIMESTAMP" property="pubDate" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
@@ -93,8 +94,9 @@
   <sql id="Base_Column_List">
     id, item_type, trd_type, info_title, pack_count, info_id, info_source, info_website, 
     info_url, trd_province, trd_city, trd_amount_orig, trd_amount, base_amount, interest_amount, 
-    total_amount, trd_status, trd_date, update_time, notes, buyer_type, buyer_id, seller_type, 
-    seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, data_quality
+    total_amount, trd_status, trd_date, pub_date, update_time, notes, buyer_type, buyer_id, 
+    seller_type, seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, 
+    data_quality
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -136,21 +138,21 @@
       info_website, info_url, trd_province, 
       trd_city, trd_amount_orig, trd_amount, 
       base_amount, interest_amount, total_amount, 
-      trd_status, trd_date, update_time, 
-      notes, buyer_type, buyer_id, 
-      seller_type, seller_id, seller_name, 
-      trd_contactor_name, trd_contactor_addr, data_status, 
-      data_quality)
+      trd_status, trd_date, pub_date, 
+      update_time, notes, buyer_type, 
+      buyer_id, seller_type, seller_id, 
+      seller_name, trd_contactor_name, trd_contactor_addr, 
+      data_status, data_quality)
     values (#{itemType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, 
       #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
       #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
       #{trdCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
       #{baseAmount,jdbcType=BIGINT}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
-      #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
-      #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, 
-      #{trdContactorName,jdbcType=CHAR}, #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, 
-      #{dataQuality,jdbcType=INTEGER})
+      #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{pubDate,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, 
+      #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, 
+      #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, #{trdContactorAddr,jdbcType=CHAR}, 
+      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -208,6 +210,9 @@
       </if>
       <if test="trdDate != null">
         trd_date,
+      </if>
+      <if test="pubDate != null">
+        pub_date,
       </if>
       <if test="updateTime != null">
         update_time,
@@ -294,6 +299,9 @@
       </if>
       <if test="trdDate != null">
         #{trdDate,jdbcType=DATE},
+      </if>
+      <if test="pubDate != null">
+        #{pubDate,jdbcType=TIMESTAMP},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
@@ -393,6 +401,9 @@
       <if test="record.trdDate != null">
         trd_date = #{record.trdDate,jdbcType=DATE},
       </if>
+      <if test="record.pubDate != null">
+        pub_date = #{record.pubDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -451,6 +462,7 @@
       total_amount = #{record.totalAmount,jdbcType=BIGINT},
       trd_status = #{record.trdStatus,jdbcType=INTEGER},
       trd_date = #{record.trdDate,jdbcType=DATE},
+      pub_date = #{record.pubDate,jdbcType=TIMESTAMP},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       notes = #{record.notes,jdbcType=VARCHAR},
       buyer_type = #{record.buyerType,jdbcType=INTEGER},
@@ -520,6 +532,9 @@
       <if test="trdDate != null">
         trd_date = #{trdDate,jdbcType=DATE},
       </if>
+      <if test="pubDate != null">
+        pub_date = #{pubDate,jdbcType=TIMESTAMP},
+      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -575,6 +590,7 @@
       total_amount = #{totalAmount,jdbcType=BIGINT},
       trd_status = #{trdStatus,jdbcType=INTEGER},
       trd_date = #{trdDate,jdbcType=DATE},
+      pub_date = #{pubDate,jdbcType=TIMESTAMP},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
       notes = #{notes,jdbcType=VARCHAR},
       buyer_type = #{buyerType,jdbcType=INTEGER},

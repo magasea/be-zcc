@@ -39,6 +39,8 @@ public class CustTrdInfo {
 
     private Date trdDate;
 
+    private Date pubDate;
+
     private Date updateTime;
 
     private String notes;
@@ -203,6 +205,14 @@ public class CustTrdInfo {
 
     public void setTrdDate(Date trdDate) {
         this.trdDate = trdDate;
+    }
+
+    public Date getPubDate() {
+        return pubDate;
+    }
+
+    public void setPubDate(Date pubDate) {
+        this.pubDate = pubDate;
     }
 
     public Date getUpdateTime() {

@@ -882,8 +882,18 @@ public class SyncServiceImpl implements SyncService {
       custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep().substring(0, 6));
     }
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
-    custTrdInfo.setTrdContactorName(trdInfoFromSync.getBuyerContactManPrep());
-    custTrdInfo.setTrdContactorAddr(trdInfoFromSync.getBuyerContactAddressPrep());
+    custTrdInfo.setTrdContactorName(trdInfoFromSync.getSellerContactManPrep());
+    StringBuilder sb = new StringBuilder();
+    if(!StringUtils.isEmpty(trdInfoFromSync.getSellerContactPhonePrep())){
+      sb.append(trdInfoFromSync.getSellerContactPhonePrep()).append(" ").append(trdInfoFromSync.getSellerContactAddressPrep());
+    }else if(!StringUtils.isEmpty(trdInfoFromSync.getSellerContactAddressPrep())){
+      sb.append(trdInfoFromSync.getSellerContactAddressPrep());
+    }
+    if(sb.length() > 0){
+      custTrdInfo.setTrdContactorAddr(sb.toString());
+    }
+
+    custTrdInfo.setPubDate(AmcDateUtils.toDate(trdInfoFromSync.getPublishDate()));
 
   }
 //http://10.20.200.100:8085/debts/get/3a7cd9cf68c5effc316981d6537d1595

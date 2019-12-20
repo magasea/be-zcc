@@ -1292,6 +1292,66 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andPubDateIsNull() {
+            addCriterion("pub_date is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateIsNotNull() {
+            addCriterion("pub_date is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateEqualTo(Date value) {
+            addCriterion("pub_date =", value, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateNotEqualTo(Date value) {
+            addCriterion("pub_date <>", value, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateGreaterThan(Date value) {
+            addCriterion("pub_date >", value, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateGreaterThanOrEqualTo(Date value) {
+            addCriterion("pub_date >=", value, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateLessThan(Date value) {
+            addCriterion("pub_date <", value, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateLessThanOrEqualTo(Date value) {
+            addCriterion("pub_date <=", value, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateIn(List<Date> values) {
+            addCriterion("pub_date in", values, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateNotIn(List<Date> values) {
+            addCriterion("pub_date not in", values, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateBetween(Date value1, Date value2) {
+            addCriterion("pub_date between", value1, value2, "pubDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPubDateNotBetween(Date value1, Date value2) {
+            addCriterion("pub_date not between", value1, value2, "pubDate");
+            return (Criteria) this;
+        }
+
         public Criteria andUpdateTimeIsNull() {
             addCriterion("update_time is null");
             return (Criteria) this;

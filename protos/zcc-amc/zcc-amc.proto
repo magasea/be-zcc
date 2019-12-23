@@ -1,0 +1,57 @@
+// recommend template protobuf
+syntax = 'proto3';
+package com.wenshengamc.zcc.recm;
+service Recommend{
+	rpc notifyModify(Notice) returns (ErrCode){}		//数据变动,发送消息
+	rpc userTrace(Trace) returns (ErrCode){}			//用户的轨迹
+
+	rpc loadOneRaw(Notice) returns (RawData){}			//加载单个数据
+	rpc loadAllRaw(Notice) returns (stream RawData){}	//加载全部的数据
+
+	rpc userReco(CurState) returns (RecResult){}		//推荐
+
+}
+
+message ErrCode{
+	string code = 1;	//编码 000是正常 其他是异常
+	string msg = 2;		//解释
+}
+
+message Notice{
+	string evt = 1;		//事件
+	string type = 2;	//所属类型 抵押物/债权
+	string id = 3;		//id
+	string msg = 4;		//其他...
+}
+
+message Trace{
+	string user = 1;		//用户
+	string type = 2;		//抵押物/债权...
+	string id = 3;			//访问抵押物的id
+	int64 time = 4;			//long 类型的时间
+	string geoPoint = 5;	//地理坐标
+	string msg = 6;			//其他的消息
+}
+message RawData{
+	string code = 1;		//返回的错误码
+	string msg = 2;			//返回的错误信息
+	string type = 3;		//类型 债权/抵押物等
+	string id = 4;			//唯一主键 保持唯一的东西
+	string content = 5;		// json化的原始数据
+}
+
+message CurState{
+	string user = 1;				//用户
+	string strategy = 2;			//是首页推荐还是个性推荐
+	string type = 3;				//类型 抵押物/债权
+	string id = 4;					//当前访问的抵押物id
+	repeated string excludes = 5;	//已经访问过的列表(排除列表)
+}
+
+message RecResult{
+	string code = 1;				//结果状态
+	string msg = 2;					//结果细信息
+	string type = 3;				//推荐出的类型
+	repeated string id = 4;			//推荐结果的id
+}
+

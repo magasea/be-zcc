@@ -85,6 +85,7 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.util.comparator.ComparableComparator;
@@ -510,6 +511,7 @@ public class AmcSsoServiceImpl implements AmcSsoService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public String createZccRoleRules(List<AmcUserRoleRule> amcUserRoleRules, Long userId) {
     StringBuilder sb = new StringBuilder();
     if(CollectionUtils.isEmpty(amcUserRoleRules)){
@@ -539,14 +541,20 @@ public class AmcSsoServiceImpl implements AmcSsoService {
   }
 
   @Override
-  public String modifyZccRoleRules(List<AmcUserRoleRule> amcUserRoleRules, Long userId) {
+  @Transactional(rollbackFor = Exception.class)
+  public synchronized String  modifyZccRoleRules(List<AmcUserRoleRule> amcUserRoleRules, Long userId) {
     StringBuilder sb = new StringBuilder();
+    amcUserRoleRuleMapper.deleteByExample(null);
     if(CollectionUtils.isEmpty(amcUserRoleRules)){
+      log.error("danger operation delete all dept role mapping");
+
       return "empty amcUserRoleRules";
     }
+
+
     for(AmcUserRoleRule amcUserRoleRule: amcUserRoleRules) {
       amcUserRoleRule.setUpdateBy(userId);
-      amcUserRoleRuleMapper.updateByPrimaryKey(amcUserRoleRule);
+      amcUserRoleRuleMapper.insertSelective(amcUserRoleRule);
       sb.append(amcUserRoleRule.getId()).append(";");
     }
     amcUserRoleMapper.deleteByExample(null);

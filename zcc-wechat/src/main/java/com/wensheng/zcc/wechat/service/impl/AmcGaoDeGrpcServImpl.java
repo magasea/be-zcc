@@ -32,7 +32,7 @@ import org.springframework.web.client.RestTemplate;
 public class AmcGaoDeGrpcServImpl {
 
   @Autowired
-  @Qualifier("comnFuncService")
+  @Qualifier("comnFuncStub")
   ComnFuncServiceBlockingStub comnFuncService;
 
 

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.google.common.collect.Lists;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcCmpyEnum;
 import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
@@ -86,9 +87,18 @@ public class AmcBasicInfoController {
 
     List<String> result = new ArrayList<>();
     for(AmcDeptEnum amcDeptEnum : AmcDeptEnum.values()){
-      result.add(String.format("%d:%s:%s", amcDeptEnum.getId(), amcDeptEnum.getName(), amcDeptEnum.getCname()
+      result.add(String.format("%d:%s:%s:%s", amcDeptEnum.getId(), amcDeptEnum.getName(), amcDeptEnum.getCname(),
+          amcDeptEnum.isUsed()
       ));
     }
     return result;
+  }
+
+  @RequestMapping(value = "/amcDeptsEnums", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcDeptEnum[] getAmcDeptsEnums(){
+
+    return AmcDeptEnum.values();
+
   }
 }

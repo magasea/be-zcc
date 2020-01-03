@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -35,6 +36,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 /**
@@ -42,6 +45,7 @@ import org.springframework.util.CollectionUtils;
  * @project zcc-backend
  */
 @Service("userService")
+@Slf4j
 public class UserServiceImpl implements UserService {
 
   @Autowired
@@ -107,6 +111,7 @@ public class UserServiceImpl implements UserService {
     return amcUserDetail;
   }
   @Override
+  @Transactional(isolation = Isolation.READ_COMMITTED)
   public List<String> getPermissions(AmcUser amcUser){
 
     AmcUserExt amcUserExt = amcUserExtMapper.selectByExtExample(amcUser.getId());
@@ -129,6 +134,9 @@ public class UserServiceImpl implements UserService {
 //      }else{
         authorities.add(amcPermission.getName());
 //      }
+    }
+    if(CollectionUtils.isEmpty(authorities)){
+      log.error("there is empty collection in authorities, need determine authroity manually");
     }
     for(AmcRole amcRole: amcUserExt.getAmcRoles()){
       authorities.add(amcRole.getName());

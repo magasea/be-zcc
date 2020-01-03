@@ -82,4 +82,10 @@ public class TradInfoController {
   public void patchSellName() throws Exception {
     syncService.updateSellerNameFromCTS();
   }
+
+  @RequestMapping(value = "/refactData/patchTrdUrl", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchTrdUrl() throws Exception {
+    syncService.patchTrdUrl();
+  }
 }

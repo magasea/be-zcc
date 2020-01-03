@@ -54,13 +54,13 @@ public class GrpcConfig {
     return managedChannelBuilder.build();
   }
 
- @Bean(name = "comnFuncService")
+ @Bean(name = "comnFuncStub")
  @Primary
  ComnFuncServiceBlockingStub comnFuncServiceStub(ManagedChannel comnFuncChanel){
    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService = ComnFuncServiceGrpc.newBlockingStub(comnFuncChanel);
    return comnFuncService;
  }
-  @Bean(name = "comnFuncPubService")
+  @Bean(name = "comnFuncPubStub")
   ComnFuncServiceBlockingStub comnFuncPubServiceStub(){
     ManagedChannel managedChannel = comnFuncPubChannel();
     ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService =

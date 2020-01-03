@@ -20,6 +20,7 @@
     <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
     <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
+    <result column="pub_date" jdbcType="DATE" property="pubDate" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
@@ -114,6 +115,7 @@
     ${prefix}total_amount as total_amount,
     ${prefix}trd_status as trd_status,
     ${prefix}trd_date as trd_date,
+    ${prefix}pub_date as pub_date,
     ${prefix}update_time as update_time,
     ${prefix}notes as notes,
     ${prefix}buyer_type as buyer_type,

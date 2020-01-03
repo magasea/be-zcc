@@ -121,6 +121,8 @@ public class SyncServiceImpl implements SyncService {
   boolean isTest = true;
   int pageForLog = 0;
 
+  private final static String originUrlDomainName = "cl.wenshengamc.com";
+  private final static String updatedUrlDomainName = "cl.wsamc.com";
 
 
     @PostConstruct
@@ -550,7 +552,10 @@ public class SyncServiceImpl implements SyncService {
     custTrdSeller.setCityCode(custPersonInfoFromSync.getCityCode());
     custTrdSeller.setTel(custPersonInfoFromSync.getTelNum());
     custTrdSeller.setType(CustTypeEnum.PERSON.getId());
-    custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime()));
+    custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
+    if(custPersonInfoFromSync.getUpdateTime() != null && custPersonInfoFromSync.getUpdateTime() > 0){
+      custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime()));
+    }
   }
 
   private int checkBasicDataQuality(CustTrdPerson custTrdPerson) {
@@ -738,7 +743,10 @@ public class SyncServiceImpl implements SyncService {
     custTrdSeller.setProvinceCode(custCmpyInfoFromSync.getProvinceCode());
     custTrdSeller.setAddr(custCmpyInfoFromSync.getCmpyAddr());
     custTrdSeller.setType(CustTypeEnum.COMPANY.getId());
-    custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime()));
+    custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
+    if(null != custCmpyInfoFromSync.getUpdateTime() && custCmpyInfoFromSync.getUpdateTime() > 0){
+      custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime()));
+    }
     custTrdSeller.setName(custCmpyInfoFromSync.getCmpyName());
   }
 
@@ -824,6 +832,11 @@ public class SyncServiceImpl implements SyncService {
 
   private void copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
 //    custTrdInfo.setSellerId(sellerRecord.getId());
+    //make default value
+    custTrdInfo.setPubDate(AmcDateUtils.getDataBaseDefaultOldDate());
+    custTrdInfo.setTrdDate(AmcDateUtils.getDataBaseDefaultOldDate());
+    custTrdInfo.setTrdContactorAddr("-1");
+    custTrdInfo.setTrdContactorName("-1");
     custTrdInfo.setTotalAmount( Long.valueOf(trdInfoFromSync.getTrdAmountPrep()));
     if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
@@ -839,11 +852,14 @@ public class SyncServiceImpl implements SyncService {
     custTrdInfo.setInfoId(trdInfoFromSync.getId());
     custTrdInfo.setTrdType(trdInfoFromSync.getTrdType());
     custTrdInfo.setInfoTitle(StringUtils.isEmpty(trdInfoFromSync.getTrdTitle())? null:trdInfoFromSync.getTrdTitle() );
-    if(trdInfoFromSync.getTrdDate() != null ){
+    if(trdInfoFromSync.getTrdDate() != null && trdInfoFromSync.getTrdDate() > 0L ){
       custTrdInfo.setTrdDate(AmcDateUtils.toDate(trdInfoFromSync.getTrdDate()));
     }
+    if(trdInfoFromSync.getPublishDate() != null && trdInfoFromSync.getPublishDate() > 0L){
+      custTrdInfo.setPubDate(AmcDateUtils.toDate(trdInfoFromSync.getPublishDate()));
+    }
 
-    if(trdInfoFromSync.getUpdateDate() != null ){
+    if(trdInfoFromSync.getUpdateDate() != null && trdInfoFromSync.getUpdateDate() > 0L ){
       custTrdInfo.setUpdateTime(AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate()));
     }
     custTrdInfo.setInfoUrl(trdInfoFromSync.getTrdContentOss());
@@ -882,7 +898,7 @@ public class SyncServiceImpl implements SyncService {
       custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep().substring(0, 6));
     }
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
-    custTrdInfo.setTrdContactorName(trdInfoFromSync.getSellerContactManPrep());
+    custTrdInfo.setTrdContactorName(StringUtils.isEmpty(trdInfoFromSync.getSellerContactManPrep()) ? "-1": trdInfoFromSync.getSellerContactManPrep());
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(trdInfoFromSync.getSellerContactPhonePrep())){
       sb.append(trdInfoFromSync.getSellerContactPhonePrep()).append(" ").append(trdInfoFromSync.getSellerContactAddressPrep());
@@ -893,7 +909,7 @@ public class SyncServiceImpl implements SyncService {
       custTrdInfo.setTrdContactorAddr(sb.toString());
     }
 
-    custTrdInfo.setPubDate(AmcDateUtils.toDate(trdInfoFromSync.getPublishDate()));
+
 
   }
 //http://10.20.200.100:8085/debts/get/3a7cd9cf68c5effc316981d6537d1595
@@ -998,6 +1014,31 @@ public class SyncServiceImpl implements SyncService {
       updateCustTrdInfos(custTrdInfos);
     }
 
+  }
+
+  @Override
+  public void patchTrdUrl() {
+    RowBounds rowBounds = null;
+    Long count =  custTrdInfoMapper.countByExample(null);
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.setOrderByClause("id DESC");
+    for(int idx = 0; idx < count/100; idx ++){
+      rowBounds = new RowBounds(idx*100, 100);
+
+      List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExampleWithRowbounds(custTrdInfoExample, rowBounds);
+      patchTrdInfo(custTrdInfos);
+    }
+  }
+
+  private void patchTrdInfo(List<CustTrdInfo> custTrdInfos) {
+    for(CustTrdInfo custTrdInfo: custTrdInfos){
+      if(!StringUtils.isEmpty(custTrdInfo.getInfoUrl()) && custTrdInfo.getInfoUrl().contains(originUrlDomainName)){
+        log.info(custTrdInfo.getInfoUrl());
+        custTrdInfo.setInfoUrl(custTrdInfo.getInfoUrl().replace(originUrlDomainName, updatedUrlDomainName));
+        log.info(custTrdInfo.getInfoUrl());
+        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+      }
+    }
   }
 
   private void updateCustTrdInfos(List<CustTrdInfo> custTrdInfos) {

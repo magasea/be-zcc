@@ -24,4 +24,6 @@ public interface WechatService {
   WechatLoginResult loginWechatOpenPlatform(String code);
 
   WechatUserInfo getWechatUserInfo(String openId, String accessToken);
+
+  WechatLoginResult loginPubWechat(String code);
 }

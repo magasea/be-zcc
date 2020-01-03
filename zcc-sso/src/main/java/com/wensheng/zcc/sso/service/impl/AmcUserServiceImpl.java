@@ -359,6 +359,8 @@ public class AmcUserServiceImpl implements AmcUserService {
             log.error("Failed to determin role for:{}", roleEnum);
             amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
         }
+        amcUserRoleMapper.insertSelective(amcUserRole);
+        amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
       }
     }
     log.error("Failed to handle the spec user correctlly");

@@ -18,4 +18,6 @@ public interface SyncService {
    */
   public void updateSellerNameFromCTS();
 
+  void patchTrdUrl();
+
 }

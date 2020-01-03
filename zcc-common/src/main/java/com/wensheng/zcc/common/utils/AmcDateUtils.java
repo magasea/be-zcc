@@ -10,8 +10,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
+
 /**
  * @author chenwei on 1/2/19
  * @project zcc-backend
@@ -45,8 +48,8 @@ public class AmcDateUtils {
     Instant instant = localDate.atStartOfDay().toInstant(ZoneOffset.UTC);
     return Timestamp.newBuilder()
         .setSeconds(instant.getEpochSecond())
-        .setNanos(instant.getNano())
-        .build();
+        .setNanos(instant.getNano()).build()
+        ;
   }
 
   public static String getFormatedDate(){
@@ -63,11 +66,20 @@ public class AmcDateUtils {
     return LocalDateTime.ofInstant(Instant.ofEpochSecond(timestamp), ZoneId.of("UTC")).toLocalDate();
   }
 
+  public static Date getDataBaseDefaultOldDate(){
+    Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone(ZoneId.systemDefault()));
+    calendar.set(1900, 0,1, 0 , 0, 0);
+    return calendar.getTime();
+  }
+
   public static Date toDate(Long timestamp){
+    long timeStampLocal = timestamp;
     if(String.valueOf(timestamp).length() <= 11){
-      return new Date(timestamp*1000);
+      timeStampLocal = timestamp*1000;
     }
-    return new Date(timestamp);
+    return Date.from(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStampLocal), ZoneId.of("UTC")).atZone(ZoneId.of(
+        "Asia/Shanghai")).toInstant());
+
   }
 
   public static Date getDateMonthsDiff(int months){

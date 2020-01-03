@@ -71,6 +71,9 @@ public class WechatServiceImpl implements WechatService {
   @Value("${weixin.open.loginUrl}")
   String loginOpenUrl;
 
+  @Value("${weixin.pub.loginUrl}")
+  String loginPubUrl;
+
   @Value("${weixin.open.getUserInfoUrl}")
   String getUserInfoUrl;
 
@@ -275,6 +278,22 @@ public class WechatServiceImpl implements WechatService {
     log.info(String.format("got response from wechat:%s", info));
 
     return responseEntity.getBody();
+  }
+
+  @Override
+  public WechatLoginResult loginPubWechat(String code) {
+    String loginWechatUrl = String.format(loginPubUrl, code);
+    ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
+        WechatCode2SessionVo.class);
+    String info = gson.toJson(responseEntity.getBody());
+    log.info(String.format("got response from wechat:%s", info));
+    WechatLoginResult wechatLoginResult = new WechatLoginResult();
+    wechatLoginResult.setResp(info);
+    if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
+      wechatLoginResult.setOAuth2AccessToken(generateToken(responseEntity.getBody()));
+    }
+    CUWechatUser((responseEntity.getBody()));
+    return wechatLoginResult;
   }
 
   private OAuth2AccessToken generateToken(WechatCode2SessionVo wechatCode2SessionVo){

@@ -17,14 +17,15 @@ pattern_log=zcc-log
 pattern_cust=zcc-cust
 pattern_wechat=zcc-wechat
 pattern_comnfunc=zcc-comn-func
-
+export LC_ALL=en_GB.UTF-8
 killProcess() {
     echo "$1"
     result=`ps -ef | grep "$1" | grep -v grep | awk '{print $2}'| wc -l`
     echo "now thre is $result process like:$1 are running"
     if [ $result -gt 0 ]; then
-        echo "to kill process with pattern:$1 and pid:$result"
-        kill $(ps -ef | grep "$1" | grep -v grep | awk '{print $2}')
+        process_id=`ps -ef | grep "$1" | grep -v grep | awk '{print $2}'`
+        echo "to kill process with pattern:$1 and pid:$process_id"
+        kill -9 $process_id
     fi
 }
 
@@ -43,6 +44,15 @@ echo ${execJarName_wechat}
 echo ${execJarName_comnfunc}
 
 sleep 5
+
+killProcess ${pattern_amc}
+killProcess ${pattern_sso}
+killProcess ${pattern_log}
+killProcess ${pattern_cust}
+killProcess ${pattern_wechat}
+killProcess ${pattern_comnfunc}
+
+
 nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
 nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &
 nohup java -jar -Dspring.profiles.active=test ${execJarName_log} &>loger.log &

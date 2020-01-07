@@ -5,6 +5,12 @@ import lombok.Data;
 
 @Data
 public class Neighborhood {
-  List<String> name;
-  List<Integer> type;
+  List<NeighborhoodItem> neighborhood;
+
+
+}
+@Data
+class NeighborhoodItem{
+  String name;
+  String type;
 }

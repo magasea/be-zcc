@@ -20,6 +20,7 @@ public class GaodeGeoQueryVal {
   Building building;
   String adcode;
   Object street;
+  String number;
   String location;
   String level;
 

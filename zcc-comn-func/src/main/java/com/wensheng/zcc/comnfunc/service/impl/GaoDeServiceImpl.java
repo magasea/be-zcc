@@ -104,6 +104,8 @@ public class GaoDeServiceImpl implements GaoDeService {
     if(!StringUtils.isEmpty(city)){
       geoStr.append(String.format("&city=%s", city));
     }
+    ResponseEntity<Object> respTest =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+        Object.class);
 
     ResponseEntity<GaodeGeoQueryResp> resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
         GaodeGeoQueryResp.class);

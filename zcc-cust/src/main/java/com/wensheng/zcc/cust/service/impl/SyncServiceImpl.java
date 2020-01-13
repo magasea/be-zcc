@@ -121,6 +121,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   boolean isTest = true;
   int pageForLog = 0;
+  ThreadLocal<Boolean>  isInSync = new ThreadLocal<>();
 
   private final static String originUrlDomainName = "cl.wenshengamc.com";
   private final static String updatedUrlDomainName = "cl.wsamc.com";
@@ -129,6 +130,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     @PostConstruct
     void init(){
       restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+      isInSync.set(false);
     }
 
     public PageWrapperResp<TrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
@@ -178,8 +180,18 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   @Override
   @LogExecutionTime
   public void syncWithTrdInfo(){
-      for (String provinceCode: provinceCodes){
-        syncTrdInfoForProvince(provinceCode);
+      try{
+        if(isInSync.get()){
+          log.info("It is current in synchronization");
+          return;
+        }else{
+          isInSync.set(true);
+        }
+        for (String provinceCode: provinceCodes){
+          syncTrdInfoForProvince(provinceCode);
+        }
+      }finally {
+        isInSync.set(false);
       }
     }
 //  @Scheduled(cron = "${spring.task.scheduling.cronExprCust}")

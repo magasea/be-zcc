@@ -112,7 +112,7 @@ public class SyncServiceImpl implements SyncService {
     private String getPersonInfoByUpdateTime;
 
 //  String[] provinceCodes = {"350000000000"};
-String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000"};
+String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000",""};
 //  String[] provinceCodes = {"110000000000"};
 
   Map<String, String> errorTrdInfos;
@@ -366,7 +366,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-  private void handleTrdInfo(TrdInfoFromSync trdInfoFromSync) {
+  private void  handleTrdInfo(TrdInfoFromSync trdInfoFromSync) {
 
     int action = -1;
     Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateDate());
@@ -449,7 +449,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   }
 
-  private Long syncPersonInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
+  private synchronized Long syncPersonInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
       CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep());
     if( null == custPersonInfoFromSync){
@@ -481,7 +481,25 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         sellPersonAction = 1;
       }else if(custTrdSellers.get(0).getUpdateTime().before(updateTime)||isNewTrd){
         //update seller person
+        if(custTrdSellers.size() > 1){
+          CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+          for(int idx = 0; idx < custTrdSellers.size(); idx ++){
+            if(idx == 0){
+              continue;
+            }
+            //before delete check the related trd info
+            custTrdInfoExample.clear();
+            custTrdInfoExample.createCriteria().andSellerIdEqualTo(custTrdSellers.get(idx).getId()).andSellerTypeEqualTo(CustTypeEnum.PERSON.getId());
+            List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+            for(CustTrdInfo custTrdInfoOld: custTrdInfos){
+              custTrdInfoOld.setSellerId(custTrdSellers.get(0).getId());
+              custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
+            }
+            custTrdSellerMapper.deleteByPrimaryKey(custTrdSellers.get(idx).getId());
+          }
+        }
         sellPersonAction = 2;
+
       }else{
         log.info("no change for this personInfo:{} current record time:{}", custTrdSellers.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
         return custTrdSellers.get(0).getId();
@@ -518,6 +536,23 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime)|| isNewTrd || custTrdPeople.get(0).getDataQuality() <= 2){
       //update person
       action = 2;
+      if(custTrdPeople.size() > 0){
+        CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+        for(int idx = 0; idx < custTrdPeople.size(); idx ++){
+          if(idx == 0){
+            continue;
+          }
+          //before delete check the related trd info
+          custTrdInfoExample.clear();
+          custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPeople.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+          List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+          for(CustTrdInfo custTrdInfoOld: custTrdInfos){
+            custTrdInfoOld.setBuyerId(custTrdPeople.get(0).getId());
+            custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
+          }
+          custTrdPersonMapper.deleteByPrimaryKey(custTrdPeople.get(idx).getId());
+        }
+      }
     }else{
       log.info("no change for this personInfo:{} current record time:{}", custTrdPeople.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
       return custTrdPeople.get(0).getId();
@@ -680,7 +715,27 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         sellerAction = 1;
       }else if(updateTime.after(custTrdSellers.get(0).getUpdateTime())){
         //update seller info
+
         sellerAction = 2;
+        if(custTrdSellers.size() > 0){
+          CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+          for(int idx = 0; idx < custTrdSellers.size(); idx++){
+            if(idx == 0){
+              continue;
+            }
+            //before delete check the related id in trdInfo and update it with current cmpy id
+            custTrdInfoExample.clear();
+            custTrdInfoExample.createCriteria().andSellerIdEqualTo(custTrdSellers.get(idx).getId()).andSellerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+            List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+            if(!CollectionUtils.isEmpty(custTrdInfos)){
+              for(CustTrdInfo custTrdInfoOld: custTrdInfos){
+                custTrdInfoOld.setSellerId(custTrdSellers.get(0).getId());
+                custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
+              }
+            }
+            custTrdSellerMapper.deleteByPrimaryKey(custTrdSellers.get(idx).getId());
+          }
+        }
       }else{
         log.info("no change for this cmpyInfo:{} record time:{}", custTrdSellers.get(0).getUpdateTime(), custCmpyInfoFromSync.getUpdateTime());
         return custTrdSellers.get(0).getId();
@@ -709,6 +764,25 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       action = 1;
     }else if(updateTime.after(custTrdCmpyList.get(0).getUpdateTime()) || isNewTrd || custTrdCmpyList.get(0).getDataQuality() <= 2){
       //update cmpy info
+      if(custTrdCmpyList.size() > 1){
+        CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+        for(int idx = 0; idx < custTrdCmpyList.size(); idx++){
+          if(idx == 0){
+            continue;
+          }
+          //before delete check the related id in trdInfo and update it with current cmpy id
+          custTrdInfoExample.clear();
+          custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdCmpyList.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+          List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+          if(!CollectionUtils.isEmpty(custTrdInfos)){
+            for(CustTrdInfo custTrdInfoOld: custTrdInfos){
+              custTrdInfoOld.setBuyerId(custTrdCmpyList.get(0).getId());
+              custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
+            }
+          }
+          custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpyList.get(idx).getId());
+        }
+      }
       action = 2;
     }else{
       log.info("no change for this cmpyInfo:{} record time:{}", custTrdCmpyList.get(0).getUpdateTime(), custCmpyInfoFromSync.getUpdateTime());

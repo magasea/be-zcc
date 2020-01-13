@@ -380,6 +380,15 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       //update trdInfo
       if(custTrdInfos.get(0).getUpdateTime().before(updateDate) || isTest){
         action = 2;
+        if(custTrdInfos.size() > 1){
+          for(int idx = 0; idx < custTrdInfos.size() ; idx++){
+            if(idx == 0){
+              continue;
+            }else{
+              custTrdInfoMapper.deleteByPrimaryKey(custTrdInfos.get(idx).getId());
+            }
+          }
+        }
       }else{
         log.info("Db record dateTime:{} , current sync info dateTime:{}", custTrdInfos.get(0).getUpdateTime(),
             updateDate);

@@ -182,17 +182,17 @@ public class SyncServiceImpl implements SyncService {
   @LogExecutionTime
   public void syncWithTrdInfo(){
       try{
-        if(isInSync.get() != null && isInSync.get()){
-          log.info("It is current in synchronization");
-          return;
-        }else{
-          isInSync.set(true);
-        }
+//        if(isInSync.get() != null && isInSync.get()){
+//          log.info("It is current in synchronization");
+//          return;
+//        }else{
+//          isInSync.set(true);
+//        }
         for (String provinceCode: provinceCodes){
           syncTrdInfoForProvince(provinceCode);
         }
       }finally {
-        isInSync.set(false);
+//        isInSync.set(false);
       }
     }
 //  @Scheduled(cron = "${spring.task.scheduling.cronExprCust}")

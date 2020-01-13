@@ -112,8 +112,8 @@ public class SyncServiceImpl implements SyncService {
     private String getPersonInfoByUpdateTime;
 
 //  String[] provinceCodes = {"350000000000"};
-//String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000","110000000000","370000000000"};
-  String[] provinceCodes = {"230000000000","220000000000"};
+String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000","110000000000","370000000000"};
+//  String[] provinceCodes = {"230000000000","220000000000"};
 //  String[] provinceCodes = {"110000000000"};
 
   Map<String, String> errorTrdInfos;

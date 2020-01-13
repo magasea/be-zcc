@@ -41,4 +41,4 @@ kafka:
 
 env:
   env-prefix: test
-  kafka-host: 10.20.100.238
+  kafka-host: 10.20.100.235

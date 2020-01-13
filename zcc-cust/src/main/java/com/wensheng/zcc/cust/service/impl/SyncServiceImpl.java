@@ -112,7 +112,7 @@ public class SyncServiceImpl implements SyncService {
     private String getPersonInfoByUpdateTime;
 
 //  String[] provinceCodes = {"350000000000"};
-  String[] provinceCodes = {"110000000000"};
+  String[] provinceCodes = {"110000000000","130000000000","370000000000","410000000000"};
 
   Map<String, String> errorTrdInfos;
   Map<String, String> errCmpyInfos;

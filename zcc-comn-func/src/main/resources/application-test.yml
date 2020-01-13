@@ -11,9 +11,9 @@ spring:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
-        password: wensheng
+        password: ${env.dbpassword}
         url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-        username: wenshengcust
+        username: ${env.dbusername}
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
         maxActive: 20
@@ -150,8 +150,10 @@ logging:
 
 env:
     env-hint: test
-    dbhost: 10.20.100.70
-    kfkhost: 10.20.100.238
+    dbhost: 10.20.100.235
+    dbusername: wswxworker
+    dbpassword: Wsamc@12345
+    kfkhost: 10.20.100.235
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
     oauth2:

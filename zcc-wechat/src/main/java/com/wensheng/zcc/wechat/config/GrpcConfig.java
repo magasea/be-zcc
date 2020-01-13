@@ -37,10 +37,8 @@ public class GrpcConfig {
   @Value("${grpc.server.port}")
   int grpcPort;
 
-  @Autowired
-  WechatGrpcService wechatGrpcService;
 
-  @Primary
+
  @Bean(name = "comnFuncChannel")
   ManagedChannel comnFuncChannel(){
    ManagedChannelBuilder managedChannelBuilder = ManagedChannelBuilder.forAddress(comnfuncHost, comnfuncPort).usePlaintext();
@@ -54,19 +52,19 @@ public class GrpcConfig {
     return managedChannelBuilder.build();
   }
 
- @Bean(name = "comnFuncStub")
- @Primary
- ComnFuncServiceBlockingStub comnFuncServiceStub(ManagedChannel comnFuncChanel){
-   ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService = ComnFuncServiceGrpc.newBlockingStub(comnFuncChanel);
-   return comnFuncService;
- }
-  @Bean(name = "comnFuncPubStub")
-  ComnFuncServiceBlockingStub comnFuncPubServiceStub(){
-    ManagedChannel managedChannel = comnFuncPubChannel();
-    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService =
-        ComnFuncServiceGrpc.newBlockingStub(managedChannel);
-    return comnFuncService;
-  }
+// @Bean(name = "comnFuncStub")
+// @Primary
+// ComnFuncServiceBlockingStub comnFuncServiceStub(ManagedChannel comnFuncChanel){
+//   ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService = ComnFuncServiceGrpc.newBlockingStub(comnFuncChanel);
+//   return comnFuncService;
+// }
+//  @Bean(name = "comnFuncPubStub")
+//  ComnFuncServiceBlockingStub comnFuncPubServiceStub(){
+//    ManagedChannel managedChannel = comnFuncPubChannel();
+//    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService =
+//        ComnFuncServiceGrpc.newBlockingStub(managedChannel);
+//    return comnFuncService;
+//  }
 
 //  @Bean
 //  Server server() throws InterruptedException, IOException {

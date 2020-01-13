@@ -6,13 +6,16 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.GeoUtils;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.TagCreate;
 import com.wensheng.zcc.wechat.module.vo.TagDel;
@@ -104,6 +107,9 @@ public class WXUserServiceImpl implements WXUserService {
   @Autowired
   ComnfuncGrpcService comnfuncGrpcService;
 
+  @Autowired
+  WechatUserMapper wechatUserMapper;
+
 
   private Gson gson = new Gson();
 
@@ -163,6 +169,9 @@ public class WXUserServiceImpl implements WXUserService {
     List<WechatUser> data =(List) ((Map)response.getBody()).get("user_info_list");
     return data;
   }
+
+
+
 
   public List<TagInfoExt> getWechatPublicUserTag(){
     String token = wxBasicService.getPublicToken();
@@ -341,7 +350,7 @@ public class WXUserServiceImpl implements WXUserService {
             wxUserGeoInfo.getLatitude(), ((GeoJsonPoint)wxUserGeoRecords.get(0).getLocation()).getY(),wxUserGeoInfo.getLongitude(),
             ((GeoJsonPoint)wxUserGeoRecords.get(0).getLocation()).getX());
         if(distance < 100.00){
-          log.error("needn't update geo info for this user");
+          log.error("needn't update geo info for this user:{}", wxUserGeoInfo.getFromUserName());
           return null;
         }else{
           mongoTemplate.save(wxUserGeoRecord);
@@ -372,6 +381,53 @@ public class WXUserServiceImpl implements WXUserService {
         latLng.setLat(((GeoJsonPoint)wxUserGeoRecord.getLocation()).getCoordinates().get(1));
         String province =  comnfuncGrpcService.getProvinceByGeopoint(latLng);
         tagUser(wxUserGeoRecord.getOpenId(), province);
+      }
+    }
+  }
+
+  @Override
+  @Scheduled(cron = "${spring.task.scheduling.cronTagUserExpr}")
+  public void syncUserInfoFromWX() {
+    String token = wxBasicService.getPublicToken();
+
+    UserListReq userListReq = new UserListReq();
+    userListReq.setUser_list(new ArrayList<>());
+
+    String url = String.format(getPublicUsersInfoUrl, token );
+    HttpHeaders headers = getHttpJsonHeader();
+    HttpEntity<UserListReq> entity = new HttpEntity<>( userListReq, headers);
+    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+//    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+
+    List<WechatUser> data =(List) ((Map)response.getBody()).get("user_info_list");
+    pubDataInDb(data);
+    int count = 0;
+    while(data.size() > 10000){
+
+      String finalOpenId = data.get(data.size() - 1).getOpenId();
+      String nextUrl = String.format(getPublicUsersInfoUrl, token, finalOpenId);
+      response = restTemplate.exchange(nextUrl, HttpMethod.POST, entity, Map.class);
+      data =(List) ((Map)response.getBody()).get("user_info_list");
+      pubDataInDb(data);
+      count ++;
+      if(count > 100){
+        log.error("Please check why it take more than 100 times");
+        break;
+      }
+    }
+
+  }
+
+  private void pubDataInDb(List<WechatUser> data) {
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    for(WechatUser wechatUser: data){
+      wechatUserExample.createCriteria().andOpenIdEqualTo(wechatUser.getOpenId());
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(CollectionUtils.isEmpty(wechatUsers)){
+        wechatUserMapper.insertSelective(wechatUser);
+      }else{
+        AmcBeanUtils.copyProperties(wechatUser, wechatUsers.get(0));
+        wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
       }
     }
   }

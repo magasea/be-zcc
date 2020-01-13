@@ -149,7 +149,7 @@ logging:
 
 env:
     env-hint: prod
-    dbhost: 10.20.100.70
+    dbhost: 10.20.100.238
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp

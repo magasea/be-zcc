@@ -65,7 +65,13 @@ public class GeoInfoServiceImpl implements GeoInfoService {
           log.error("", e);
           continue;
         }
-        GeoJsonPoint geoJsonPoint = comnfuncGrpcService.getGeoInfoFromAddress(regionName, regionName);
+        GeoJsonPoint geoJsonPoint = null;
+        try {
+          geoJsonPoint = comnfuncGrpcService.getGeoInfoFromAddress(regionName, regionName);
+        } catch (Exception e) {
+          e.printStackTrace();
+          continue;
+        }
         query = new Query();
         query.addCriteria(Criteria.where("custTrdInfoId").is(custTrdInfo.getId()));
         List<CustTrdGeo> custTrdGeos = mongoTemplate.find(query, CustTrdGeo.class);

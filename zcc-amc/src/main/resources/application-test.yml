@@ -87,6 +87,8 @@ spring:
       group-id: grp-zcc-amc
       auto-offset-reset: earliest
     topic-sso-userchanged: topic_sso_userchanged_${env.name}
+    topic-amc-debt-create: topic_amc_debt_create_${env.name}
+    topic-amc-asset-create: topic_amc_asset_create_${env.name}
   servlet:
     multipart:
       enabled: true
@@ -155,16 +157,16 @@ wssso:
   url: http://${wssso.host}:${wssso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
 env:
   name: test
-  dbhost: 10.20.100.70
-  dbusername: root
+  dbhost: 10.20.100.235
+  dbusername: wsamcworker
   rpchost: localhost
   amcssohost: localhost
-  dbpasswd: wensheng
-  kfkhost: 10.20.100.238
+  dbpasswd: Wsamc@12345
+  kfkhost: 10.20.100.235
   ws-sso-host: 10.20.100.235
   recmhost: 10.20.100.228
   mongodb-host: 10.20.100.235
-  image-repo: /backup/temp
+  image-repo: /home/chenwei/backup/temp
   oauth2:
     host: 10.20.100.235
     authLink: http://${env.oauth2.host}:10002

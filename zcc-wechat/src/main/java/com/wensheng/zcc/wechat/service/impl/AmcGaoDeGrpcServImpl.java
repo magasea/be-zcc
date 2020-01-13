@@ -6,8 +6,10 @@ import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wenshengamc.zcc.common.Common.GeoJson;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq;
+import io.grpc.ManagedChannel;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -16,6 +18,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -31,12 +34,13 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class AmcGaoDeGrpcServImpl {
 
+
+  ComnFuncServiceBlockingStub comnFuncStub;
+
+
   @Autowired
-  @Qualifier("comnFuncStub")
-  ComnFuncServiceBlockingStub comnFuncService;
-
-
-
+  @Qualifier("comnFuncChannel")
+  ManagedChannel comnFuncChannel;
 
   private RestTemplate restTemplate  = new RestTemplate();
 
@@ -47,7 +51,7 @@ public class AmcGaoDeGrpcServImpl {
 
   @PostConstruct
   void init(){
-
+    comnFuncStub = ComnFuncServiceGrpc.newBlockingStub(comnFuncChannel);
   }
 
   public boolean getAddressFromGeoPoint(WXUserGeoRecord wxUserGeoRecord){
@@ -57,7 +61,7 @@ public class AmcGaoDeGrpcServImpl {
     AmcBeanUtils.copyProperties(wxUserGeoRecord.getLocation(), geoJsonBuilder);
     geoJsonBuilder.addAllCoordinates( wxUserGeoRecord.getLocation().getCoordinates());
     wxUserGeoReqOrBuilder.setLocation(geoJsonBuilder);
-    WXUserGeoReq resp = comnFuncService.getAddress(wxUserGeoReqOrBuilder.build() );
+    WXUserGeoReq resp = comnFuncStub.getAddress(wxUserGeoReqOrBuilder.build() );
 
 
     wxUserGeoRecord.setAddress(resp.getAddress());

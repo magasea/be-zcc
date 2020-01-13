@@ -7,4 +7,6 @@ public interface WXBasicService {
   public String getPublicToken();
 
   String checkWechatResp(Long timeStamp, String nonce, String echostr, String signature) throws AesException, ParserConfigurationException;
+
+
 }

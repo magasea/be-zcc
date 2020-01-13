@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
@@ -40,6 +42,12 @@ public class KafkaServiceImpl implements KafkaService {
 
   private String MQ_TOPIC_AMC_USEROPER = null;
 
+  @Value("${spring.kafka.topic-amc-debt-create}")
+  private String mqTopicDebtCreate;
+
+  @Value("${spring.kafka.topic-amc-asset-create}")
+  private String mqTopicAssetCreate;
+
   @PostConstruct
   void init(){
     MQ_TOPIC_AMC_USEROPER = String.format("%s_%s",KafkaParams.MQ_TOPIC_AMC_USEROPER, env);
@@ -50,6 +58,16 @@ public class KafkaServiceImpl implements KafkaService {
   @Override
   public void send(AmcUserOperation amcUserOperation) {
     kafkaTemplate.send(MQ_TOPIC_AMC_USEROPER, amcUserOperation);
+  }
+
+  @Override
+  public void sendDebtCreate(AmcDebtVo amcDebtVo) {
+    kafkaTemplate.send(mqTopicDebtCreate, amcDebtVo);
+  }
+
+  @Override
+  public void sendAssetCreate(AmcAssetVo amcAssetVo) {
+    kafkaTemplate.send(mqTopicAssetCreate, amcAssetVo);
   }
 
   private static String typeIdHeader(Headers headers) {

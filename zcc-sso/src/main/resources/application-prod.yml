@@ -64,7 +64,7 @@ spring:
 
     kafka:
         consumer:
-            group-id: grp-zcc-logger
+            group-id: grp-zcc-sso
             auto-offset-reset: earliest
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different

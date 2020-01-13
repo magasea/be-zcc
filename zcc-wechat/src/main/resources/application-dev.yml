@@ -15,9 +15,9 @@ spring:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
-        password: wensheng
+        password: Wsamc@12345
         url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-        username: wenshengcust
+        username: wswxworker
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
         maxActive: 20
@@ -164,6 +164,8 @@ weixin:
     menu_query_url: https://api.weixin.qq.com/cgi-bin/get_current_selfmenu_info?access_token=%s
     menu_del_url: https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s
 
+    get_ticket_url: https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi
+
 baidu:
     logis:
         appName: amc-lgs
@@ -199,11 +201,11 @@ logging:
 
 env:
     env-hint: dev
-    dbhost: 10.20.100.70
+    dbhost: 10.20.100.235
     rpchost: localhost
     pubhost: 101.132.27.96
     pubport: 5444
-    kfkhost: 10.20.100.238
+    kfkhost: 10.20.100.235
     mongodb-host: 10.20.100.235
     image-repo: /disk/temp
     oauth2:

@@ -153,7 +153,7 @@ logging:
 
 env:
     env-hint: dev
-    dbhost: 10.20.100.70
+    dbhost: 10.20.100.235
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /disk/temp

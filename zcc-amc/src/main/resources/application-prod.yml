@@ -87,6 +87,8 @@ spring:
       group-id: grp-zcc-amc
       auto-offset-reset: earliest
     topic-sso-userchanged: topic_sso_userchanged_${env.name}
+    topic-amc-debt-create: topic_amc_debt_create_${env.name}
+    topic-amc-asset-create: topic_amc_asset_create_${env.name}
   servlet:
     multipart:
       enabled: true

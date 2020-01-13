@@ -65,4 +65,55 @@ public class SHA1 {
 			throw new AesException(AesException.ComputeSignatureError);
 		}
 	}
+
+	/**
+	 * 用SHA1算法生成安全签名
+	 * @param token 票据
+	 * @param timestamp 时间戳
+	 * @param nonce 随机字符串
+	 * @param encrypt 密文
+	 * @return 安全签名
+	 * @throws AesException
+	 */
+	public static String getSHAFixSort(String token, String timestamp, String nonce, String encrypt) throws AesException
+	{
+
+		StringBuilder sb = new StringBuilder(String.format("jsapi_ticket=%s", token));
+		sb.append("&").append(String.format("noncestr=%s",nonce)).append("&").append(String.format("timestamp=%s",
+				timestamp)).append("&").append(String.format("url=%s",encrypt));
+		try {
+//			String[] array = null;
+//			if(StringUtils.isEmpty(encrypt)){
+//				array = new String[] { token, timestamp, nonce };
+//			}else{
+//				array = new String[] { token, timestamp, nonce, encrypt };
+//			}
+//
+//			StringBuffer sb = new StringBuffer();
+//			// 字符串排序
+//			Arrays.sort(array);
+//			for (int i = 0; i < array.length; i++) {
+//				sb.append(array[i]);
+//			}
+			String str = sb.toString();
+			// SHA1签名生成
+			MessageDigest md = MessageDigest.getInstance("SHA-1");
+			md.update(str.getBytes());
+			byte[] digest = md.digest();
+
+			StringBuffer hexstr = new StringBuffer();
+			String shaHex = "";
+			for (int i = 0; i < digest.length; i++) {
+				shaHex = Integer.toHexString(digest[i] & 0xFF);
+				if (shaHex.length() < 2) {
+					hexstr.append(0);
+				}
+				hexstr.append(shaHex);
+			}
+			return hexstr.toString();
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new AesException(AesException.ComputeSignatureError);
+		}
+	}
 }

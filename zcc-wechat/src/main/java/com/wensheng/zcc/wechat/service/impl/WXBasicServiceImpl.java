@@ -89,6 +89,8 @@ public class WXBasicServiceImpl implements WXBasicService {
 //    return afterDecrpt;
   }
 
+
+
   @Cacheable(unless = "#result == null")
   public String getPublicToken(){
     String url = String.format(getPublicTokenUrl, appId, appSecret );

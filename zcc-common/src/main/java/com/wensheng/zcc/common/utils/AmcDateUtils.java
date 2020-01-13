@@ -1,5 +1,7 @@
 package com.wensheng.zcc.common.utils;
 
+import static java.time.temporal.ChronoUnit.HOURS;
+
 import com.wenshengamc.zcc.common.Common.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -72,15 +75,22 @@ public class AmcDateUtils {
     return calendar.getTime();
   }
 
-  public static Date toDate(Long timestamp){
+  public static Date toUTCDate(Long timestamp){
     long timeStampLocal = timestamp;
     if(String.valueOf(timestamp).length() <= 11){
       timeStampLocal = timestamp*1000;
     }
-    return Date.from(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStampLocal), ZoneId.of("UTC")).atZone(ZoneId.of(
-        "Asia/Shanghai")).toInstant());
+    return Date.from(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStampLocal), ZoneId.of(
+        "UTC")).atZone(ZoneId.of(
+        "UTC")).toInstant().plus(8, HOURS));
 
   }
+
+  public static Date toLocalDateTime(Long timestamp){
+    ZoneId defaultZoneId = ZoneId.systemDefault();
+    return Date.from(toLocalDate(timestamp).atStartOfDay(defaultZoneId).toInstant());
+  }
+
 
   public static Date getDateMonthsDiff(int months){
     Date date = Date.from(ZonedDateTime.now().minusMonths(months).toInstant());

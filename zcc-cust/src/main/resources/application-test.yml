@@ -15,7 +15,7 @@ spring:
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
         password: ${env.dbpassword}
-        url: jdbc:mysql://${env.dbhost}:3306/ZCC_CUST?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+        url: jdbc:mysql://${env.dbhost}:3306/ZCC_CUST?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai
         username: ${env.dbusername}
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
@@ -143,11 +143,12 @@ logging:
         root: WARN
 cust:
     syncUrls:
-        debtTradeResources: http://10.20.100.228:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
-        getCompanyInfoById: http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoById/%s
+        debtTradeResources: http://10.20.200.45:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
+        debtTradeResourcesWithDate: http://10.20.100.228:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s&updateFromDate=%s&updateToDate=%s
+        getCompanyInfoById: http://10.20.200.45:8085/debtTradeCompanys/getCompanyInfoById/%s
         #        http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
         getCompanyInfoByUpdateTime: http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
-        getPersonInfoById: http://10.20.100.228:8085/debtTradePersons/getPersonInfoById/%s
+        getPersonInfoById: http://10.20.200.45:8085/debtTradePersons/getPersonInfoById/%s
         #        http://10.20.100.228:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
         getPersonInfoByUpdateTime: http://10.20.100.228:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
 

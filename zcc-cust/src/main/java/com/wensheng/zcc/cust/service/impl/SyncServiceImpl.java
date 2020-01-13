@@ -112,7 +112,8 @@ public class SyncServiceImpl implements SyncService {
     private String getPersonInfoByUpdateTime;
 
 //  String[] provinceCodes = {"350000000000"};
-  String[] provinceCodes = {"110000000000","130000000000","370000000000","410000000000"};
+String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000"};
+//  String[] provinceCodes = {"110000000000"};
 
   Map<String, String> errorTrdInfos;
   Map<String, String> errCmpyInfos;
@@ -229,7 +230,7 @@ public class SyncServiceImpl implements SyncService {
         andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
     List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
     int action = -1;
-    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     if(CollectionUtils.isEmpty(custTrdPeople)){
       //make new person
       action = 1;
@@ -287,7 +288,7 @@ public class SyncServiceImpl implements SyncService {
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
     int action = -1;
-    Date updateTime = AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime());
+    Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
     if(CollectionUtils.isEmpty(custTrdCmpyList)){
       //make new cmpy info
       action = 1;
@@ -368,7 +369,7 @@ public class SyncServiceImpl implements SyncService {
   private void handleTrdInfo(TrdInfoFromSync trdInfoFromSync) {
 
     int action = -1;
-    Date updateDate = AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate());
+    Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateDate());
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getId());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
@@ -456,7 +457,7 @@ public class SyncServiceImpl implements SyncService {
               trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
       return -1L;
     }
-    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     int sellPersonAction = -1;
     if(!isBuyer){
       //handle this info into CUST_TRD_SELLER table
@@ -554,7 +555,7 @@ public class SyncServiceImpl implements SyncService {
     custTrdSeller.setType(CustTypeEnum.PERSON.getId());
     custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
     if(custPersonInfoFromSync.getUpdateTime() != null && custPersonInfoFromSync.getUpdateTime() > 0){
-      custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime()));
+      custTrdSeller.setUpdateTime(AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime()));
     }
   }
 
@@ -628,7 +629,7 @@ public class SyncServiceImpl implements SyncService {
     custTrdPerson.setName(StringUtils.isEmpty(custPersonInfoFromSync.getName())? null: custPersonInfoFromSync.getName());
     custTrdPerson.setProvince(custPersonInfoFromSync.getProvince());
     custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
-    Date updateTime = AmcDateUtils.toDate(custPersonInfoFromSync.getUpdateTime());
+    Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     custTrdPerson.setUpdateTime(updateTime);
 
     //add logic to check the person have been updated by wensheng stuff with their information
@@ -664,7 +665,7 @@ public class SyncServiceImpl implements SyncService {
       custTrdSellerExample.createCriteria().andNameEqualTo(custCmpyInfoFromSync.getCmpyName());
       List<CustTrdSeller> custTrdSellers = custTrdSellerMapper.selectByExample(custTrdSellerExample);
       int sellerAction = -1;
-      Date updateTime = AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime());
+      Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
       if(CollectionUtils.isEmpty(custTrdSellers)){
         //make new sell info
         sellerAction = 1;
@@ -693,7 +694,7 @@ public class SyncServiceImpl implements SyncService {
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
     int action = -1;
-    Date updateTime = AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime());
+    Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
     if(CollectionUtils.isEmpty(custTrdCmpyList)){
       //make new cmpy info
       action = 1;
@@ -745,7 +746,7 @@ public class SyncServiceImpl implements SyncService {
     custTrdSeller.setType(CustTypeEnum.COMPANY.getId());
     custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
     if(null != custCmpyInfoFromSync.getUpdateTime() && custCmpyInfoFromSync.getUpdateTime() > 0){
-      custTrdSeller.setUpdateTime(AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime()));
+      custTrdSeller.setUpdateTime(AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime()));
     }
     custTrdSeller.setName(custCmpyInfoFromSync.getCmpyName());
   }
@@ -819,7 +820,7 @@ public class SyncServiceImpl implements SyncService {
     custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
     custTrdCmpy.setLegalReptive(custCmpyInfoFromSync.getLegalReptive());
     custTrdCmpy.setUniSocialCode(custCmpyInfoFromSync.getUniSocialCode());
-    custTrdCmpy.setUpdateTime(AmcDateUtils.toDate(custCmpyInfoFromSync.getUpdateTime()));
+    custTrdCmpy.setUpdateTime(AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime()));
 
   }
   /**
@@ -853,14 +854,15 @@ public class SyncServiceImpl implements SyncService {
     custTrdInfo.setTrdType(trdInfoFromSync.getTrdType());
     custTrdInfo.setInfoTitle(StringUtils.isEmpty(trdInfoFromSync.getTrdTitle())? null:trdInfoFromSync.getTrdTitle() );
     if(trdInfoFromSync.getTrdDate() != null && trdInfoFromSync.getTrdDate() > 0L ){
-      custTrdInfo.setTrdDate(AmcDateUtils.toDate(trdInfoFromSync.getTrdDate()));
+      custTrdInfo.setTrdDate(AmcDateUtils.toUTCDate(trdInfoFromSync.getTrdDate()));
     }
     if(trdInfoFromSync.getPublishDate() != null && trdInfoFromSync.getPublishDate() > 0L){
-      custTrdInfo.setPubDate(AmcDateUtils.toDate(trdInfoFromSync.getPublishDate()));
+      custTrdInfo.setPubDate(AmcDateUtils.toUTCDate(trdInfoFromSync.getPublishDate()));
+
     }
 
     if(trdInfoFromSync.getUpdateDate() != null && trdInfoFromSync.getUpdateDate() > 0L ){
-      custTrdInfo.setUpdateTime(AmcDateUtils.toDate(trdInfoFromSync.getUpdateDate()));
+      custTrdInfo.setUpdateTime(AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateDate()));
     }
     custTrdInfo.setInfoUrl(trdInfoFromSync.getTrdContentOss());
     if(StringUtils.isEmpty(trdInfoFromSync.getTrdProvincePrep())){
@@ -924,7 +926,7 @@ public class SyncServiceImpl implements SyncService {
     for(CustTrdInfo custTrdInfo : custTrdInfos){
       CustTrdInfoTempSync custTrdInfoTempSync = getTrdFromSyncById(custTrdInfo.getInfoId());
       if(custTrdInfoTempSync != null && custTrdInfoTempSync.getUpdateTime() != null ){
-        custTrdInfo.setTrdDate(AmcDateUtils.toDate(custTrdInfoTempSync.getUpdateTime()));
+        custTrdInfo.setTrdDate(AmcDateUtils.toUTCDate(custTrdInfoTempSync.getUpdateTime()));
         custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
       }
 

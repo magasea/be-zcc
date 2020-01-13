@@ -1,11 +1,8 @@
 package com.wensheng.zcc.common.utils;
 
-import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
-
 import java.util.Date;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -21,8 +18,16 @@ public class AmcDateUtilsTest {
 
   @Test
   public void getDateFromTimeStamp() {
-    Date date = AmcDateUtils.toDate(1576684800000L);
+    Date date = AmcDateUtils.toUTCDate(1578240000000L);
     System.out.println(date.toString());
   }
+
+  @Test
+  public void getLocalDateFromTimestamp(){
+    Date date = AmcDateUtils.toLocalDateTime(1578240000L);
+    System.out.println(date.toString());
+
+  }
+
 
 }

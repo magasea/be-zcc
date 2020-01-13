@@ -114,7 +114,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       return;
     }
     AmcDebtContactor amcDebtContactor = new AmcDebtContactor();
-    amcDebtContactor.setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
+    amcDebtContactor.setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
     amcDebtContactor.setPhoneNumber(amcUser.getMobilePhone());
     amcDebtContactor.setNikname(String.format("%s经理", amcUser.getUserCname().substring(0, 1)));
     amcDebtContactor.setLocation(amcUser.getLocation());
@@ -143,7 +143,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         amcDebtContactor.setPhoneNumber(ssoAmcUser.getMobilePhone());
         log.info(ssoAmcUser.getUserName());
         amcDebtContactor.setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
-        amcDebtContactor.setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
+        amcDebtContactor.setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
         amcDebtContactorMapper.insertSelective(amcDebtContactor);
       }else{
         if(amcDebtContactors.size() > 1){
@@ -153,7 +153,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
           amcDebtContactor.setName(ssoAmcUser.getUserCname());
           amcDebtContactor.setLocation(ssoAmcUser.getLocation());
           amcDebtContactor.setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
-          amcDebtContactor.setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
+          amcDebtContactor.setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
           amcDebtContactor.setPhoneNumber(ssoAmcUser.getMobilePhone());
           amcDebtContactorMapper.insertSelective(amcDebtContactor);
         }else{
@@ -162,7 +162,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             amcDebtContactors.get(0).setLocation(ssoAmcUser.getLocation());
             amcDebtContactors.get(0).setName(ssoAmcUser.getUserCname());
             amcDebtContactors.get(0).setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
-            amcDebtContactors.get(0).setUpdateTime(AmcDateUtils.toDate(Instant.now().getEpochSecond()));
+            amcDebtContactors.get(0).setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
             amcDebtContactorMapper.updateByPrimaryKey(amcDebtContactors.get(0));
 //          }
         }

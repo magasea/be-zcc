@@ -182,7 +182,7 @@ public class SyncServiceImpl implements SyncService {
   @LogExecutionTime
   public void syncWithTrdInfo(){
       try{
-        if(isInSync.get()){
+        if(isInSync.get() != null && isInSync.get()){
           log.info("It is current in synchronization");
           return;
         }else{

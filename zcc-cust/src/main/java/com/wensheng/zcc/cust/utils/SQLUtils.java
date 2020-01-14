@@ -66,7 +66,7 @@ public class SQLUtils {
       sb.append(ALIAS_CUST_TRD_INFO);
       if(queryParam.getCity().endsWith("000")){
         sb.append(".").append("trd_city like '").append(queryParam.getCity().substring(0,
-            queryParam.getCity().length() -3)).append("%'");
+            queryParam.getCity().length() -4)).append("%'");
       }else{
         sb.append(".").append("trd_city =" ).append(queryParam.getCity());
       }

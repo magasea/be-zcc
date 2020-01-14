@@ -126,7 +126,7 @@ public class CustInfoController {
   @RequestMapping(value = "/doSynchronization", method = RequestMethod.GET)
   @ResponseBody
   public void doSynchronization() throws Exception {
-    syncService.syncCustInfo();
+     syncService.syncCustInfo();
   }
 
 

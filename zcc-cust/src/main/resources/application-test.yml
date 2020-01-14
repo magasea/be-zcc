@@ -90,7 +90,7 @@ spring:
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
-            cronExprTrd: 0 0 6,12,18,23 * * *
+            cronExprTrd: 0 0 5,1,23 * * *
             cronExprCust: 0 0 7,13,19,0 * * *
             cronExprGeo: 0 0 7,13,19,0 * * *
             pool:
@@ -144,13 +144,13 @@ logging:
 cust:
     syncUrls:
         debtTradeResources: http://10.20.200.45:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
-        debtTradeResourcesWithDate: http://10.20.100.228:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s&updateFromDate=%s&updateToDate=%s
+        debtTradeResourcesWithDate: http://10.20.200.45:8085/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s&updateFromDate=%s&updateToDate=%s
         getCompanyInfoById: http://10.20.200.45:8085/debtTradeCompanys/getCompanyInfoById/%s
-        #        http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
-        getCompanyInfoByUpdateTime: http://10.20.100.228:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+        #        http://10.20.200.45:8085/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
+        getCompanyInfoByUpdateTime: http://10.20.200.45:8085/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
         getPersonInfoById: http://10.20.200.45:8085/debtTradePersons/getPersonInfoById/%s
-        #        http://10.20.100.228:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
-        getPersonInfoByUpdateTime: http://10.20.100.228:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+        #        http://10.20.200.45:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
+        getPersonInfoByUpdateTime: http://10.20.200.45:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
 
 
 env:
@@ -160,7 +160,7 @@ env:
     dbpassword: Wsamc@12345
     rpchost: 10.20.100.235
     kfkhost: 10.20.100.235
-    image-repo: /backup/temp
+    image-repo: /home/chenwei/working/zcc/temp
     oauth2:
         host: 10.20.100.235
         authLink: http://${env.oauth2.host}:10002

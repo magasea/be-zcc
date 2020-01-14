@@ -25,6 +25,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 
@@ -36,6 +37,9 @@ public class ExcelGenerator {
   String fileBase;
 
     public  File customersToExcel(List<CustTrdInfoExcelVo> custTrdInfoExcelVos) throws IOException {
+      File file = new File(fileBase);
+      boolean dirCreated = file.mkdir();
+
       String[] COLUMNs = {"#", "投资人名称", "投资偏好类型", "偏好地区","交易总额(元)","联系方式","联系地址"};
       Long timeStamp = System.currentTimeMillis();
       try(
@@ -113,6 +117,10 @@ public class ExcelGenerator {
   }
 
   private  String getStringFromMap(Map<String, Integer> param){
+      if(CollectionUtils.isEmpty(param)){
+        log.error(" it is empty param:{}", param);
+        return "";
+      }
       StringBuilder sb = new StringBuilder();
       Iterator<Entry<String, Integer>> iterator = param.entrySet().iterator();
       while(iterator.hasNext()){

@@ -18,16 +18,10 @@ public class AmcDateUtilsTest {
 
   @Test
   public void getDateFromTimeStamp() {
-    Date date = AmcDateUtils.toUTCDate(1578240000000L);
+    Date date = AmcDateUtils.toUTCDate(1575043200000L);
     System.out.println(date.toString());
   }
 
-  @Test
-  public void getLocalDateFromTimestamp(){
-    Date date = AmcDateUtils.toLocalDateTime(1578240000L);
-    System.out.println(date.toString());
-
-  }
 
 
 }

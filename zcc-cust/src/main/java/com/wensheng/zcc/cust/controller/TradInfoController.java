@@ -50,10 +50,10 @@ public class TradInfoController {
     return result;
   }
 
-  @RequestMapping(value = "/doSynchronization", method = RequestMethod.GET)
+  @RequestMapping(value = "/doSynchronization", method = RequestMethod.POST)
   @ResponseBody
-  public void doSynchronization() throws Exception {
-    syncService.syncWithTrdInfo();
+  public String doSynchronization(@RequestBody List<String> provinces) throws Exception {
+    return syncService.syncWithTrdInfo(provinces);
   }
   @RequestMapping(value = "/makeUpData/trdDate", method = RequestMethod.GET)
   @ResponseBody

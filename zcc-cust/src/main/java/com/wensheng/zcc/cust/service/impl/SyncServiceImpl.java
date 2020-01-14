@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
@@ -26,6 +27,7 @@ import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.SyncService;
 import java.text.ParseException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -114,7 +116,7 @@ public class SyncServiceImpl implements SyncService {
 //  String[] provinceCodes = {"350000000000"};
 String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000","110000000000","370000000000"};
 //  String[] provinceCodes = {"230000000000","220000000000","210000000000"};
-//  String[] provinceCodes = {"110000000000"};
+//  String[] provinceCodes = {"130000000000"};
 
   Map<String, String> errorTrdInfos;
   Map<String, String> errCmpyInfos;
@@ -122,7 +124,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   boolean isTest = true;
   int pageForLog = 0;
-  ThreadLocal<Boolean>  isInSync = new ThreadLocal<>();
+  static volatile Boolean  isInSync = false;
 
   private final static String originUrlDomainName = "cl.wenshengamc.com";
   private final static String updatedUrlDomainName = "cl.wsamc.com";
@@ -131,7 +133,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     @PostConstruct
     void init(){
       restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
-      isInSync.set(false);
+      isInSync = false;
     }
 
     public PageWrapperResp<TrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
@@ -177,23 +179,75 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   }
 
-  @Scheduled(cron = "${spring.task.scheduling.cronExprTrd}")
+  @Override
+    @Scheduled(cron = "${spring.task.scheduling.cronExprTrd}")
+  @LogExecutionTime
+  public  String syncWithTrdInfoSchedule(){
+
+    synchronized(isInSync){
+
+      if( isInSync){
+        log.info("It is current in synchronization");
+        return "It is current in synchronization";
+      }else{
+        isInSync = true;
+      }
+      synchronized (isInSync){
+
+
+        try{
+          for (String provinceCode: provinceCodes){
+            syncTrdInfoForProvince(provinceCode);
+          }
+        }catch(Exception ex){
+          log.error(" error:", ex);
+          isInSync = false;
+          return "error:"+ex.getMessage();
+        }finally {
+          isInSync = false;
+        }
+      }
+
+    }
+    isInSync = false;
+    return "Successed";
+  }
+
+
   @Override
   @LogExecutionTime
-  public void syncWithTrdInfo(){
-      try{
-//        if(isInSync.get() != null && isInSync.get()){
-//          log.info("It is current in synchronization");
-//          return;
-//        }else{
-//          isInSync.set(true);
-//        }
-        for (String provinceCode: provinceCodes){
-          syncTrdInfoForProvince(provinceCode);
-        }
-      }finally {
-//        isInSync.set(false);
+  public  String syncWithTrdInfo(List<String> provinces){
+
+      synchronized(isInSync){
+
+          if( isInSync){
+            log.info("It is current in synchronization");
+            return "It is current in synchronization";
+          }else{
+            isInSync = true;
+          }
+          synchronized (isInSync){
+            if(!CollectionUtils.isEmpty(provinces)){
+              provinceCodes = provinces.toArray(new String[provinces.size()]);
+              log.info("Begin to syn :{}", Arrays.toString(provinceCodes));
+            }
+
+            try{
+              for (String provinceCode: provinceCodes){
+                syncTrdInfoForProvince(provinceCode);
+              }
+            }catch(Exception ex){
+              log.error(" error:", ex);
+              isInSync = false;
+              return "error:"+ex.getMessage();
+            }finally {
+              isInSync = false;
+            }
+          }
+
       }
+      isInSync = false;
+      return "Successed";
     }
 //  @Scheduled(cron = "${spring.task.scheduling.cronExprCust}")
   @Override
@@ -205,7 +259,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
       needSyncTrdInfoBaseOnPersonInfo = syncCustPersonInfo(province);
       if(needSyncTrdInfoBaseOnCmpyInfo || needSyncTrdInfoBaseOnPersonInfo){
-        syncWithTrdInfo();
+        syncWithTrdInfo(null);
       }
     }
   }
@@ -350,7 +404,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
           pageNum++;
         }
       }
-      log.info("===========================================start error "
+      log.info("===========================================start error " + provinceCode
           + "summary=========================================");
       if(!CollectionUtils.isEmpty(errorTrdInfos)){
         errorTrdInfos.forEach((k, v) ->
@@ -368,7 +422,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       errPersonInfos.forEach((k, v) ->
           log.error("person id:{}, error msg:{}", k,v));
     }
-    log.info("===========================================end error "
+    log.info("===========================================end error " + provinceCode
         + "summary=========================================");
 
     errorTrdInfos.clear();
@@ -429,6 +483,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     Long sellerId = -1L;
     if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
       sellerId = syncCmpyInfoById(trdInfoFromSync, false, action == 1);
+      if(sellerId < 0){
+        log.error("sellerId:{}", sellerId);
+        return;
+      }
       custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
       CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
       custTrdInfo.setSellerName(custTrdSeller.getName());

@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionDetailMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
@@ -13,6 +14,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -77,6 +79,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Autowired
   CustRegionMapper custRegionMapper;
+
+  @Autowired
+  CustRegionDetailMapper custRegionDetailMapper;
+
 
   @Autowired
   CustTrdInfoMapper custTrdInfoMapper;
@@ -206,6 +212,23 @@ public class CustInfoServiceImpl implements CustInfoService {
       String cityName = null;
       String trdTypeName = null;
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
+        if(StringUtils.isEmpty(custTrdInfo.getTrdCity()) || custTrdInfo.getTrdCity().equals("-1")){
+          if(StringUtils.isEmpty(custTrdInfo.getTrdProvince()) || custTrdInfo.getTrdProvince().equals("-1")){
+            log.error("custTrdInfo:{} haven't valid city :{} or province :{} just ignore it ", custTrdInfo.getId(),
+                custTrdInfo.getTrdCity(), custTrdInfo.getTrdProvince());
+            continue;
+          }
+          cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdProvince())).getName();
+        }else{
+          try{
+            cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+          }catch (Exception ex){
+            log.error("Failed to find city for:{}", custTrdInfo.getTrdCity());
+            continue;
+          }
+
+        }
+
         totalAmount += custTrdInfo.getTotalAmount();
 
         if(custTrdInfo.getTrdType() == null){
@@ -217,11 +240,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         }else{
           invest2Counts.put(trdTypeName, invest2Counts.get(trdTypeName)+1);
         }
-        if(StringUtils.isEmpty(custTrdInfo.getTrdCity()) || custTrdInfo.getTrdCity().equals("-1")){
-          cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdProvince())).getName();
-        }else{
-          cityName = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
-        }
+
         if(!city2Counts.containsKey(cityName)){
           city2Counts.put(cityName, 1);
         }else {
@@ -325,7 +344,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
         trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
         if(!StringUtils.isEmpty(custTrdInfo.getTrdCity()) && Long.valueOf(custTrdInfo.getTrdCity()) > -1L){
-          CustRegion custRegion = custRegionMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity()));
+          CustRegionDetail custRegion =
+              custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity()));
           if(null != custRegion){
             cityName = custRegion.getName();
           }else{

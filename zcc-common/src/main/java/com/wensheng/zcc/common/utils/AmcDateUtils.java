@@ -82,7 +82,7 @@ public class AmcDateUtils {
     }
     return Date.from(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStampLocal), ZoneId.of(
         "UTC")).atZone(ZoneId.of(
-        "UTC")).toInstant().plus(8, HOURS));
+        "UTC")).toInstant());
 
   }
 

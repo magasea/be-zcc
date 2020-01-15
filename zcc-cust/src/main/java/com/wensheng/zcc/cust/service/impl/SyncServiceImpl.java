@@ -493,14 +493,15 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
       sellerId = syncPersonInfoById(trdInfoFromSync, false, action == 1);
+      if(sellerId < 0){
+        log.error("Failed to sync trd seller with id:{}", trdInfoFromSync.getSellerIdPrep());
+        return;
+      }
       custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
       CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
       custTrdInfo.setSellerName(custTrdSeller.getName());
     }
-    if(sellerId < 0){
-      log.error("Failed to sync trd seller with id:{}", trdInfoFromSync.getSellerIdPrep());
-      return;
-    }
+
     custTrdInfo.setSellerId(sellerId);
     if(action == 1){
       //make new trdInfo
@@ -535,6 +536,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
           String.format("Failed to get %s person info with id:%s with trd id:%s", isBuyer?"buyer":"seller", isBuyer?
               trdInfoFromSync.getBuyerIdPrep():
               trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
+      return -1L;
+    }
+    if(StringUtils.isEmpty(custPersonInfoFromSync.getName())){
+      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
+          errorTrdInfos.get(trdInfoFromSync.getId()),
+          String.format("get %s person info with id:%s with trd id:%s and the person have name:{}", isBuyer?"buyer":
+              "seller", isBuyer? trdInfoFromSync.getBuyerIdPrep(): trdInfoFromSync.getSellerIdPrep(),
+              trdInfoFromSync.getId()), custPersonInfoFromSync.getName()));
       return -1L;
     }
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());

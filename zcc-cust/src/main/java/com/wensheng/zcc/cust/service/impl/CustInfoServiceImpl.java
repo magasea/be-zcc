@@ -173,11 +173,35 @@ public class CustInfoServiceImpl implements CustInfoService {
     return custTrdCmpyTrdExts;
   }
 
+
+
   @Override
   public List<CustTrdInfoExcelVo> queryCmpyTrade(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam)
       throws Exception {
-    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy( offset,  size,  queryParam,  orderByParam);
-    return convertCmpyToExcelVoes(custTrdCmpyTrdExts);
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExtsTotal = new ArrayList<>();
+    if(size > 20 && offset == 0 ){
+      log.info("need to make the results into pages");
+      int pageSize = 10;
+      int cnt = 0;
+      while(cnt >= 0 ){
+        List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy( offset,  pageSize,  queryParam,  orderByParam);
+        if(custTrdCmpyTrdExts.size() < pageSize || cnt*pageSize >= size ){
+          //it is last one
+          cnt = -2;
+          custTrdCmpyTrdExtsTotal.addAll(custTrdCmpyTrdExts);
+          break;
+        }
+        cnt ++;
+        offset = offset + pageSize;
+
+        custTrdCmpyTrdExtsTotal.addAll(custTrdCmpyTrdExts);
+      }
+
+    }else{
+      custTrdCmpyTrdExtsTotal = queryCmpy( offset,  size,  queryParam,  orderByParam);
+    }
+
+    return convertCmpyToExcelVoes(custTrdCmpyTrdExtsTotal);
   }
 
   private List<CustTrdInfoExcelVo> convertCmpyToExcelVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
@@ -197,10 +221,10 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       custTrdInfoExcelVo.setAddress(sbAddress.toString());
       custTrdInfoExcelVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
-      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
         sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()).append(";");
       }
-      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
         sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone());
       }
       custTrdInfoExcelVo.setPhone(sbPhone.toString());
@@ -274,12 +298,32 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExtsTotal = new ArrayList<>();
+    if(size > 20 && offset == 0 ){
+      log.info("need to make the results into pages");
+      int pageSize = 10;
+      int cnt = 0;
+      while(cnt >= 0 ){
+        List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson( offset,  pageSize,  queryParam,  orderByParam);
+        if(custTrdPersonTrdExts.size() < pageSize || cnt >= size || cnt*pageSize >= size ){
+          //it is last one
+          cnt = -2;
+          custTrdPersonTrdExtsTotal.addAll(custTrdPersonTrdExts);
+          break;
+        }
+        cnt ++;
+        offset = offset + pageSize;
+
+        custTrdPersonTrdExtsTotal.addAll(custTrdPersonTrdExts);
+      }
+
+    }else{
+      custTrdPersonTrdExtsTotal = queryPerson( offset,  size,  queryParam,  orderByParam);
+    }
 
 
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
 
-
-    return convertPersonToVoes(custTrdPersonTrdExts);
+    return convertPersonToVoes(custTrdPersonTrdExtsTotal);
   }
 
   private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
@@ -461,20 +505,20 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   private List<CustTrdInfoVo> convertCmpyToVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
     List<CustTrdInfoVo> custTrdInfoVos = new ArrayList<>();
-    for(CustTrdCmpyTrdExt custTrdCmpyTrdExt: custTrdCmpyTrdExts){
+    for(int idx = 0 ; idx < custTrdCmpyTrdExts.size(); idx ++){
       CustTrdInfoVo custTrdInfoVo = new CustTrdInfoVo();
-      custTrdInfoVo.setCustId(custTrdCmpyTrdExt.getId());
-      custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyAddr(),
-          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptAddr()));
-      custTrdInfoVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
-      custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone(),
-          custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()));
-      custTrdInfoVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
+      custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
+      custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
+          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
+      custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
       Long totalAmount = 0L;
       Set<String> cities = new HashSet<>();
       Map<Integer, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
-      for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
+      for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExts.get(idx).getCustTrdInfoList()){
         totalAmount += custTrdInfo.getTotalAmount() > 0 ? custTrdInfo.getTotalAmount() :
             custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0 ;
         cities.add(custTrdInfo.getTrdCity());

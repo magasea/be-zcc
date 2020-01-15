@@ -105,6 +105,6 @@ public class AmcDateUtils {
   }
 
   public static Date getCurrentDate() {
-    return new Date(System.currentTimeMillis());
+     return Date.from(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")).atZone(ZoneId.of("UTC")).toInstant());
   }
 }

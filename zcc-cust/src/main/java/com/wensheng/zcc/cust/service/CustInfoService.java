@@ -34,7 +34,8 @@ public interface CustInfoService {
 
   Long getCmpyTradeCount(QueryParam queryParam);
 
-  List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam)
+  List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam)
       throws Exception;
 
   List<CustTrdInfoExcelVo> queryPersonTrade(int offset, int size,  QueryParam queryParam, Map<String, Direction> orderByParam) throws Exception;

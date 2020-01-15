@@ -286,12 +286,13 @@ public class AmcUserServiceImpl implements AmcUserService {
     //check if user exist
     AmcUserExample amcUserExample = new AmcUserExample();
     amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
+    AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
 //    amcUserExample.or().andUserNameEqualTo(amcUser.getUserName());
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     if(CollectionUtils.isEmpty(amcUsers)){
       //need create user
       amcUser.setPassword( UserUtils.getEncode( String.format("%s-%s",defaultPasswd, AmcDateUtils.getFormatedDate())));
-      amcUser.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
+      amcUser.setCreateDate(AmcDateUtils.getCurrentDate());
       int cnt = amcUserMapper.insertSelective(amcUser);
       if(cnt > 0){
         log.info("Insert new user with mobile phone:{}", amcUser.getMobilePhone());
@@ -299,12 +300,14 @@ public class AmcUserServiceImpl implements AmcUserService {
         log.error("Insert new user with mobile phone:{} failed", amcUser.getMobilePhone());
         return null;
       }
-    }else{
-      AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
-      if(amcUsers.size() > 1){
+      //just for easy coding
+      amcUsers.add(amcUser);
+    }else {
+
+      if (amcUsers.size() > 1) {
         //delete redundent user
-        for(int idx = 0; idx < amcUsers.size(); idx ++){
-          if(idx == 0){
+        for (int idx = 0; idx < amcUsers.size(); idx++) {
+          if (idx == 0) {
             continue;
           }
           amcUserMapper.deleteByPrimaryKey(amcUsers.get(idx).getId());
@@ -314,56 +317,55 @@ public class AmcUserServiceImpl implements AmcUserService {
         }
 
       }
-
-      amcUserRoleExample.clear();
-      amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(0).getId());
-      List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
-
-      if(CollectionUtils.isEmpty(amcUserRoles)){
-        //need make the spec user with spec role
-        AmcUserRole amcUserRole = new AmcUserRole();
-        amcUserRole.setUserId(amcUsers.get(0).getId());
-        switch (roleEnum){
-          case ROLE_CO_ADMIN:
-            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_CO_ADMIN.getId()));
-            break;
-          case ROLE_SYSTEM_ADMIN:
-            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()));
-            break;
-          default:
-            log.error("Failed to determin role for:{}", roleEnum);
-            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
-        }
-        amcUserRoleMapper.insertSelective(amcUserRole);
-      }else{
-        //check if user role correct
-        for(AmcUserRole amcUserRole: amcUserRoles){
-          if(amcUserRole.getRoleId() == AmcRolesEnum.ROLE_CO_ADMIN.getId() || amcUserRole.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId() ){
-            //no need to update
-            return amcUsers.get(0);
-          }
-        }
-        log.error("The spec user doen't have default roles");
-        amcUserRoleMapper.deleteByExample(amcUserRoleExample);
-        //need make the spec user with spec role
-        AmcUserRole amcUserRole = new AmcUserRole();
-        amcUserRole.setUserId(amcUsers.get(0).getId());
-        switch (roleEnum){
-          case ROLE_CO_ADMIN:
-            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_CO_ADMIN.getId()));
-            break;
-          case ROLE_SYSTEM_ADMIN:
-            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()));
-            break;
-          default:
-            log.error("Failed to determin role for:{}", roleEnum);
-            amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
-        }
-        amcUserRoleMapper.insertSelective(amcUserRole);
-        amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
-      }
     }
-    log.error("Failed to handle the spec user correctlly");
+    amcUserRoleExample.clear();
+    amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(0).getId());
+    List<AmcUserRole> amcUserRoles = amcUserRoleMapper.selectByExample(amcUserRoleExample);
+
+    if (CollectionUtils.isEmpty(amcUserRoles)) {
+      //need make the spec user with spec role
+      AmcUserRole amcUserRole = new AmcUserRole();
+      amcUserRole.setUserId(amcUsers.get(0).getId());
+      switch (roleEnum) {
+        case ROLE_CO_ADMIN:
+          amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_CO_ADMIN.getId()));
+          break;
+        case ROLE_SYSTEM_ADMIN:
+          amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()));
+          break;
+        default:
+          log.error("Failed to determin role for:{}", roleEnum);
+          amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
+      }
+      amcUserRoleMapper.insertSelective(amcUserRole);
+    } else {
+      //check if user role correct
+      for (AmcUserRole amcUserRole : amcUserRoles) {
+        if (amcUserRole.getRoleId() == AmcRolesEnum.ROLE_CO_ADMIN.getId()
+            || amcUserRole.getRoleId() == AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()) {
+          //no need to update
+          return amcUsers.get(0);
+        }
+      }
+      log.error("The spec user doen't have default roles");
+      amcUserRoleMapper.deleteByExample(amcUserRoleExample);
+      //need make the spec user with spec role
+      AmcUserRole amcUserRole = new AmcUserRole();
+      amcUserRole.setUserId(amcUsers.get(0).getId());
+      switch (roleEnum) {
+        case ROLE_CO_ADMIN:
+          amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_CO_ADMIN.getId()));
+          break;
+        case ROLE_SYSTEM_ADMIN:
+          amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_SYSTEM_ADMIN.getId()));
+          break;
+        default:
+          log.error("Failed to determin role for:{}", roleEnum);
+          amcUserRole.setRoleId(Long.valueOf(AmcRolesEnum.ROLE_AMC_LOCAL_VISITOR.getId()));
+      }
+      amcUserRoleMapper.insertSelective(amcUserRole);
+      amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
+    }
     return amcUser;
 
   }

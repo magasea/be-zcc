@@ -695,6 +695,66 @@ public class AmcUserExample {
             return (Criteria) this;
         }
 
+        public Criteria andSsoUserIdIsNull() {
+            addCriterion("sso_user_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdIsNotNull() {
+            addCriterion("sso_user_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdEqualTo(Long value) {
+            addCriterion("sso_user_id =", value, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdNotEqualTo(Long value) {
+            addCriterion("sso_user_id <>", value, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdGreaterThan(Long value) {
+            addCriterion("sso_user_id >", value, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("sso_user_id >=", value, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdLessThan(Long value) {
+            addCriterion("sso_user_id <", value, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdLessThanOrEqualTo(Long value) {
+            addCriterion("sso_user_id <=", value, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdIn(List<Long> values) {
+            addCriterion("sso_user_id in", values, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdNotIn(List<Long> values) {
+            addCriterion("sso_user_id not in", values, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdBetween(Long value1, Long value2) {
+            addCriterion("sso_user_id between", value1, value2, "ssoUserId");
+            return (Criteria) this;
+        }
+
+        public Criteria andSsoUserIdNotBetween(Long value1, Long value2) {
+            addCriterion("sso_user_id not between", value1, value2, "ssoUserId");
+            return (Criteria) this;
+        }
+
         public Criteria andLocationIsNull() {
             addCriterion("location is null");
             return (Criteria) this;

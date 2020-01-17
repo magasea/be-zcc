@@ -21,6 +21,8 @@ public class AmcUser {
 
     private Long companyId;
 
+    private Long ssoUserId;
+
     private Integer location;
 
     private Integer valid;
@@ -107,6 +109,14 @@ public class AmcUser {
 
     public void setCompanyId(Long companyId) {
         this.companyId = companyId;
+    }
+
+    public Long getSsoUserId() {
+        return ssoUserId;
+    }
+
+    public void setSsoUserId(Long ssoUserId) {
+        this.ssoUserId = ssoUserId;
     }
 
     public Integer getLocation() {

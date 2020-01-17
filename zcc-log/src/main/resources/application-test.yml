@@ -38,7 +38,7 @@ spring:
 kafka:
   topic-wechat-userlocation: topic_wechat_userLocation_${env.env-prefix}
   topic_amc_useroper: topic_amc_userOper_${env.env-prefix}
-
+  topic_amc_login: topic_amc_userLogin_${env.env-prefix}
 env:
   env-prefix: test
   kafka-host: 10.20.100.235

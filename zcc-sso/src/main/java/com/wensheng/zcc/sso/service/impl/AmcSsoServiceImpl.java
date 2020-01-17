@@ -1,6 +1,5 @@
 package com.wensheng.zcc.sso.service.impl;
 
-import com.google.api.Page;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.wensheng.zcc.common.params.AmcPage;
@@ -12,8 +11,6 @@ import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcSpecUserMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcUserMapper;
@@ -23,18 +20,15 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcSpecUserExample;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserExample;
-import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRuleExample;
 import com.wensheng.zcc.sso.module.vo.AmcSpecialUserVo;
-import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.AmcTokenService;
 import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.KafkaService;
 import com.wensheng.zcc.sso.service.UserService;
 import com.wensheng.zcc.sso.service.util.JwtTokenUtil;
-import com.wensheng.zcc.sso.service.util.UserUtils;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
@@ -53,12 +47,10 @@ import javax.annotation.PostConstruct;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletRequest;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.util.encoders.Base64;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -73,7 +65,6 @@ import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConve
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
@@ -88,7 +79,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.util.comparator.ComparableComparator;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -383,6 +373,7 @@ public class AmcSsoServiceImpl implements AmcSsoService {
         for(SSOAmcUser ssoAmcUser: ssoAmcUsers){
           amcUser = new AmcUser();
           AmcBeanUtils.copyProperties(ssoAmcUser, amcUser);
+          amcUser.setSsoUserId(ssoAmcUser.getId());
           amcUserService.createUser(amcUser);
         }
       }
@@ -578,12 +569,14 @@ public class AmcSsoServiceImpl implements AmcSsoService {
     amcUser.setLocation((Integer)defaultClaims.get("location"));
     amcUser.setLgroup((Integer)defaultClaims.get("lgroup"));
     amcUser.setNickName((String)defaultClaims.get("nickName"));
+    amcUser.setSsoUserId((Long.valueOf((int)defaultClaims.get("userId"))));
     amcUser.setValid(AmcUserValidEnum.VALID.getId());
     AmcUser result = amcUserService.createUser(amcUser);
 
     if(null == result){
       return false;
     }
+    kafkaService.send(kafkaService.getLoginTopic(), amcUser);
 
     return true;
   }

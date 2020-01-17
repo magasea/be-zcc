@@ -36,6 +36,7 @@ import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -298,32 +299,12 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExtsTotal = new ArrayList<>();
-    if(size > 20 && offset == 0 ){
-      log.info("need to make the results into pages");
-      int pageSize = 10;
-      int cnt = 0;
-      while(cnt >= 0 ){
-        List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson( offset,  pageSize,  queryParam,  orderByParam);
-        if(custTrdPersonTrdExts.size() < pageSize || cnt >= size || cnt*pageSize >= size ){
-          //it is last one
-          cnt = -2;
-          custTrdPersonTrdExtsTotal.addAll(custTrdPersonTrdExts);
-          break;
-        }
-        cnt ++;
-        offset = offset + pageSize;
-
-        custTrdPersonTrdExtsTotal.addAll(custTrdPersonTrdExts);
-      }
-
-    }else{
-      custTrdPersonTrdExtsTotal = queryPerson( offset,  size,  queryParam,  orderByParam);
-    }
 
 
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
 
-    return convertPersonToVoes(custTrdPersonTrdExtsTotal);
+
+    return convertPersonToVoes(custTrdPersonTrdExts);
   }
 
   private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
@@ -359,10 +340,32 @@ public class CustInfoServiceImpl implements CustInfoService {
   public List<CustTrdInfoExcelVo> queryPersonTrade(int offset, int size,  QueryParam queryParam, Map<String,
       Direction> orderByParam)
       throws Exception {
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
+
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExtsTotal = new ArrayList<>();
+    if(size > 20 && offset == 0 ){
+      log.info("need to make the results into pages");
+      int pageSize = 10;
+      int cnt = 0;
+      while(cnt >= 0 ){
+        List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson( offset,  pageSize,  queryParam,  orderByParam);
+        if(custTrdPersonTrdExts.size() < pageSize  || cnt*pageSize >= size ){
+          //it is last one
+          cnt = -2;
+          custTrdPersonTrdExtsTotal.addAll(custTrdPersonTrdExts);
+          break;
+        }
+        cnt ++;
+        offset = offset + pageSize;
+
+        custTrdPersonTrdExtsTotal.addAll(custTrdPersonTrdExts);
+      }
+
+    }else{
+      custTrdPersonTrdExtsTotal = queryPerson( offset,  size,  queryParam,  orderByParam);
+    }
 
 
-    return convertPersonToExcelVoes(custTrdPersonTrdExts);
+    return convertPersonToExcelVoes(custTrdPersonTrdExtsTotal);
   }
 
   private List<CustTrdInfoExcelVo> convertPersonToExcelVoes(List<CustTrdPersonTrdExt> custTrdPersonTrdExts) {
@@ -627,6 +630,23 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     return true;
   }
+
+  @Override
+  public List<CustTrdCmpy> getCmpyFromDate(Date beginDate) {
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.createCriteria().andCreateTimeGreaterThan(beginDate);
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    return custTrdCmpyList;
+  }
+
+  @Override
+  public List<CustTrdPerson> getPersonFromDate(Date beginDate) {
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(beginDate);
+    List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    return custTrdPersonList;
+  }
+
   private boolean updateCustPersonTrdRelations(List<String> histPhoneNumList, String phoneNum, String custName,
       Long currentCustPersonId){
     // find origin cust and search the trd info of the cust, update the trd info ref buyer id to the

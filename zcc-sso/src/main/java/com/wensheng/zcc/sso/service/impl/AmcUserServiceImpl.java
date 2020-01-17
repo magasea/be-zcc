@@ -157,7 +157,14 @@ public class AmcUserServiceImpl implements AmcUserService {
     amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
 
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
-    if(CollectionUtils.isEmpty(amcUsers)){
+    List<AmcUser> amcUsersWithSSOId = new ArrayList<>();
+    if(amcUser.getSsoUserId() != null && amcUser.getSsoUserId() != -1L){
+      amcUserExample.clear();
+      amcUserExample.createCriteria().andSsoUserIdEqualTo(amcUser.getSsoUserId());
+      amcUsersWithSSOId = amcUserMapper.selectByExample(amcUserExample);
+
+    }
+    if(CollectionUtils.isEmpty(amcUsers) && CollectionUtils.isEmpty(amcUsersWithSSOId)){
       if(StringUtils.isEmpty(amcUser.getPassword())){
         amcUser.setPassword( UserUtils.getEncode( String.format("%s-%s",defaultPasswd, AmcDateUtils.getFormatedDate())));
         amcUser.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
@@ -171,6 +178,15 @@ public class AmcUserServiceImpl implements AmcUserService {
         return null;
       }
     }else{
+      if(CollectionUtils.isEmpty(amcUsers) && !CollectionUtils.isEmpty(amcUsersWithSSOId)){
+        //update the mobile info with the current amc sso user
+        amcUsersWithSSOId.get(0).setMobilePhone(amcUser.getMobilePhone());
+        amcUserMapper.updateByPrimaryKeySelective(amcUsersWithSSOId.get(0));
+        if(amcUsersWithSSOId.size() > 1){
+          log.error("There is multiple zcc amc user with the same sso user id:{} need to be handle carefully",
+              amcUser.getSsoUserId());
+        }
+      }
       AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
       amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(0).getId());
       List<AmcUserRole> amcUserRoleList =  amcUserRoleMapper.selectByExample(amcUserRoleExample);

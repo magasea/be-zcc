@@ -49,6 +49,7 @@
     ${prefix}email as email,
     ${prefix}dept_id as dept_id,
     ${prefix}company_id as company_id,
+    ${prefix}sso_user_id as sso_user_id,
     ${prefix}valid as valid,
     ${prefix}title as title,
     ${prefix}nick_name as nick_name,

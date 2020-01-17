@@ -648,6 +648,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         custTrdPerson.setDataQuality(checkBasicDataQuality(custTrdPerson));
       }
+      custTrdPerson.setCreateTime(AmcDateUtils.getCurrentDate());
       custTrdPersonMapper.insertSelective(custTrdPerson);
 
     }else if(action == 2 ){
@@ -677,9 +678,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdSeller.setCityCode(custPersonInfoFromSync.getCityCode());
     custTrdSeller.setTel(custPersonInfoFromSync.getTelNum());
     custTrdSeller.setType(CustTypeEnum.PERSON.getId());
-    custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
+
     if(custPersonInfoFromSync.getUpdateTime() != null && custPersonInfoFromSync.getUpdateTime() > 0){
       custTrdSeller.setUpdateTime(AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime()));
+    }else{
+      custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
     }
   }
 
@@ -755,6 +758,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     custTrdPerson.setUpdateTime(updateTime);
+    custTrdPerson.setSyncTime(AmcDateUtils.getCurrentDate());
 
     //add logic to check the person have been updated by wensheng stuff with their information
 
@@ -878,6 +882,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         custTrdCmpy.setDataQuality(quality);
       }
+      custTrdCmpy.setCreateTime(AmcDateUtils.getCurrentDate());
       custTrdCmpyMapper.insertSelective(custTrdCmpy);
 
     }else if(action == 2 ){
@@ -907,9 +912,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdSeller.setProvinceCode(custCmpyInfoFromSync.getProvinceCode());
     custTrdSeller.setAddr(custCmpyInfoFromSync.getCmpyAddr());
     custTrdSeller.setType(CustTypeEnum.COMPANY.getId());
-    custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
     if(null != custCmpyInfoFromSync.getUpdateTime() && custCmpyInfoFromSync.getUpdateTime() > 0){
       custTrdSeller.setUpdateTime(AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime()));
+    }else{
+      custTrdSeller.setUpdateTime(AmcDateUtils.getDataBaseDefaultOldDate());
     }
     custTrdSeller.setName(custCmpyInfoFromSync.getCmpyName());
   }
@@ -984,6 +990,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdCmpy.setLegalReptive(custCmpyInfoFromSync.getLegalReptive());
     custTrdCmpy.setUniSocialCode(custCmpyInfoFromSync.getUniSocialCode());
     custTrdCmpy.setUpdateTime(AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime()));
+    custTrdCmpy.setSyncTime(AmcDateUtils.getCurrentDate());
 
   }
   /**

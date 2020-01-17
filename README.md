@@ -18,3 +18,4 @@ custmer information from wangwei(scripy system) or from business department inpu
 log system for record information in daily business
 use kafka message tool to receive the log information
 
+

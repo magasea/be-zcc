@@ -7,6 +7,7 @@ import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
@@ -51,4 +52,7 @@ public interface CustInfoService {
   public List<CustInfoGeoNear> queryAllNearByCusts(GeoJsonPoint geoJsonPoint);
 
   boolean modCustPerson(CustTrdPersonVo custTrdPersonVo);
+
+  List<CustTrdCmpy> getCmpyFromDate(Date beginDate);
+  List<CustTrdPerson> getPersonFromDate(Date beginDate);
 }

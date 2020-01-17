@@ -17,12 +17,13 @@
     <result column="addr" jdbcType="VARCHAR" property="addr" />
     <result column="history_addr" jdbcType="VARCHAR" property="historyAddr" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
-    <result column="create_by" jdbcType="BIGINT" property="createBy" />
-    <result column="create_date" jdbcType="TIMESTAMP" property="createDate" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="sync_time" jdbcType="TIMESTAMP" property="syncTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -84,8 +85,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, orig_id, name, age_range, gender, mobile_num, history_mobile_num, tel_num, email, 
-    id_card_num, province, city, addr, history_addr, notes, create_by, create_date, data_status, 
-    data_quality, update_time, update_by
+    id_card_num, province, city, addr, history_addr, notes, data_status, data_quality, 
+    update_time, update_by, create_time, create_by, sync_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -126,16 +127,16 @@
       gender, mobile_num, history_mobile_num, 
       tel_num, email, id_card_num, province, 
       city, addr, history_addr, 
-      notes, create_by, create_date, 
-      data_status, data_quality, update_time, 
-      update_by)
+      notes, data_status, data_quality, 
+      update_time, update_by, create_time, 
+      create_by, sync_time)
     values (#{origId,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, 
       #{gender,jdbcType=INTEGER}, #{mobileNum,jdbcType=CHAR}, #{historyMobileNum,jdbcType=VARCHAR}, 
       #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
       #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{historyAddr,jdbcType=VARCHAR}, 
-      #{notes,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, #{createDate,jdbcType=TIMESTAMP}, 
-      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT})
+      #{notes,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -185,12 +186,6 @@
       <if test="notes != null">
         notes,
       </if>
-      <if test="createBy != null">
-        create_by,
-      </if>
-      <if test="createDate != null">
-        create_date,
-      </if>
       <if test="dataStatus != null">
         data_status,
       </if>
@@ -202,6 +197,15 @@
       </if>
       <if test="updateBy != null">
         update_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="syncTime != null">
+        sync_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -247,12 +251,6 @@
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
       </if>
-      <if test="createBy != null">
-        #{createBy,jdbcType=BIGINT},
-      </if>
-      <if test="createDate != null">
-        #{createDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="dataStatus != null">
         #{dataStatus,jdbcType=INTEGER},
       </if>
@@ -264,6 +262,15 @@
       </if>
       <if test="updateBy != null">
         #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="syncTime != null">
+        #{syncTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -321,12 +328,6 @@
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
-      <if test="record.createBy != null">
-        create_by = #{record.createBy,jdbcType=BIGINT},
-      </if>
-      <if test="record.createDate != null">
-        create_date = #{record.createDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="record.dataStatus != null">
         data_status = #{record.dataStatus,jdbcType=INTEGER},
       </if>
@@ -338,6 +339,15 @@
       </if>
       <if test="record.updateBy != null">
         update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.syncTime != null">
+        sync_time = #{record.syncTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     <if test="_parameter != null">
@@ -361,12 +371,13 @@
       addr = #{record.addr,jdbcType=VARCHAR},
       history_addr = #{record.historyAddr,jdbcType=VARCHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
-      create_by = #{record.createBy,jdbcType=BIGINT},
-      create_date = #{record.createDate,jdbcType=TIMESTAMP},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      update_by = #{record.updateBy,jdbcType=BIGINT}
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      sync_time = #{record.syncTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -416,12 +427,6 @@
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
-      <if test="createBy != null">
-        create_by = #{createBy,jdbcType=BIGINT},
-      </if>
-      <if test="createDate != null">
-        create_date = #{createDate,jdbcType=TIMESTAMP},
-      </if>
       <if test="dataStatus != null">
         data_status = #{dataStatus,jdbcType=INTEGER},
       </if>
@@ -433,6 +438,15 @@
       </if>
       <if test="updateBy != null">
         update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="syncTime != null">
+        sync_time = #{syncTime,jdbcType=TIMESTAMP},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -453,12 +467,13 @@
       addr = #{addr,jdbcType=VARCHAR},
       history_addr = #{historyAddr,jdbcType=VARCHAR},
       notes = #{notes,jdbcType=VARCHAR},
-      create_by = #{createBy,jdbcType=BIGINT},
-      create_date = #{createDate,jdbcType=TIMESTAMP},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
-      update_by = #{updateBy,jdbcType=BIGINT}
+      update_by = #{updateBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=BIGINT},
+      sync_time = #{syncTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">

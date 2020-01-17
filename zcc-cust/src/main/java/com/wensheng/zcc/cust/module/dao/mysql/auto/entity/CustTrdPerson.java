@@ -33,10 +33,6 @@ public class CustTrdPerson {
 
     private String notes;
 
-    private Long createBy;
-
-    private Date createDate;
-
     private Integer dataStatus;
 
     private Integer dataQuality;
@@ -44,6 +40,12 @@ public class CustTrdPerson {
     private Date updateTime;
 
     private Long updateBy;
+
+    private Date createTime;
+
+    private Long createBy;
+
+    private Date syncTime;
 
     public Long getId() {
         return id;
@@ -165,22 +167,6 @@ public class CustTrdPerson {
         this.notes = notes == null ? null : notes.trim();
     }
 
-    public Long getCreateBy() {
-        return createBy;
-    }
-
-    public void setCreateBy(Long createBy) {
-        this.createBy = createBy;
-    }
-
-    public Date getCreateDate() {
-        return createDate;
-    }
-
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
-    }
-
     public Integer getDataStatus() {
         return dataStatus;
     }
@@ -211,5 +197,29 @@ public class CustTrdPerson {
 
     public void setUpdateBy(Long updateBy) {
         this.updateBy = updateBy;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public Date getSyncTime() {
+        return syncTime;
+    }
+
+    public void setSyncTime(Date syncTime) {
+        this.syncTime = syncTime;
     }
 }

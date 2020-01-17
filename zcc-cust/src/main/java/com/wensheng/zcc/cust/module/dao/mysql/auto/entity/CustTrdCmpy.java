@@ -31,6 +31,12 @@ public class CustTrdCmpy {
 
     private Long updateBy;
 
+    private Date createTime;
+
+    private Long createBy;
+
+    private Date syncTime;
+
     public Long getId() {
         return id;
     }
@@ -141,5 +147,29 @@ public class CustTrdCmpy {
 
     public void setUpdateBy(Long updateBy) {
         this.updateBy = updateBy;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
+    }
+
+    public Long getCreateBy() {
+        return createBy;
+    }
+
+    public void setCreateBy(Long createBy) {
+        this.createBy = createBy;
+    }
+
+    public Date getSyncTime() {
+        return syncTime;
+    }
+
+    public void setSyncTime(Date syncTime) {
+        this.syncTime = syncTime;
     }
 }

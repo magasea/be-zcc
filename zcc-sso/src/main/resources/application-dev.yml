@@ -97,6 +97,8 @@ mongodb:
 
 kafka:
     topic-sso-userchanged: topic_sso_userchanged_${env.name}
+    topic_amc_login: topic_amc_userLogin_${env.env-prefix}
+
 
 weixin:
 #    appId: wxdb885be2c95a5b32

@@ -35,6 +35,9 @@ public class KafkaServiceImpl implements KafkaService {
   @Autowired
   MongoTemplate wszccTemplate;
 
+  @Value("${kafka.topic_amc_login}")
+  String topicAmcLogin;
+
   @Value("${env.name}")
   String env;
 
@@ -65,6 +68,11 @@ public class KafkaServiceImpl implements KafkaService {
     kafkaTemplate.send(MQ_TOPIC_WECHAT_USERCREATE, amcWechatUser);
   }
 
+  @Override
+  public void send(String topic, AmcUser amcUser) {
+    kafkaTemplate.send(topic, amcUser);
+  }
+
 
   private static String typeIdHeader(Headers headers) {
     return StreamSupport.stream(headers.spliterator(), false)
@@ -91,5 +99,9 @@ public class KafkaServiceImpl implements KafkaService {
       log.error("Failed to handle:{}", gsonStr, ex);
     }
 
+  }
+
+  public String getLoginTopic(){
+    return topicAmcLogin;
   }
 }

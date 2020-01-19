@@ -6,6 +6,7 @@ import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
+import com.wensheng.zcc.common.params.AmcUser;
 import java.util.HashMap;
 import java.util.Map;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -135,6 +136,18 @@ public class KafkaConfig {
   }
 
   @Bean
+  public ConsumerFactory<String, byte[]> userLoginConsumerFactory() {
+    GsonDeserializer gsonDeserializer = new GsonDeserializer<>();
+    Map<String, String> config = new HashMap<>();
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, AmcUser.class.getName());
+    gsonDeserializer.configure(config, false);
+    gsonDeserializer.close();
+    return new DefaultKafkaConsumerFactory<>(
+        kafkaProperties.buildConsumerProperties(), new StringDeserializer(), gsonDeserializer
+    );
+  }
+
+  @Bean
   public ConcurrentKafkaListenerContainerFactory<String, byte[]> baUserLocationContainerFactory() {
 
     ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
@@ -164,6 +177,17 @@ public class KafkaConfig {
     ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
         new ConcurrentKafkaListenerContainerFactory<>();
     factory.setConsumerFactory(baAmcUserOpConsumerFactory());
+//    MessageConverter messageConverter = new BytesJsonMessageConverter();
+//    factory.setMessageConverter(messageConverter);
+    return factory;
+  }
+
+  @Bean
+  public ConcurrentKafkaListenerContainerFactory<String, byte[]> userLoginContainerFactory() {
+
+    ConcurrentKafkaListenerContainerFactory<String, byte[]> factory =
+        new ConcurrentKafkaListenerContainerFactory<>();
+    factory.setConsumerFactory(userLoginConsumerFactory());
 //    MessageConverter messageConverter = new BytesJsonMessageConverter();
 //    factory.setMessageConverter(messageConverter);
     return factory;

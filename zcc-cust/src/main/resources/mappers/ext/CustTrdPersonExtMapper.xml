@@ -68,7 +68,7 @@
   </sql>
 <!--  <sql id="Base_Column_List">-->
 <!--    id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, -->
-<!--    addr, notes, create_by, create_date-->
+<!--    addr, notes, create_by, create_time-->
 <!--  </sql>-->
 
   <sql id="Base_Column_List">
@@ -85,7 +85,7 @@
     ${prefix}addr as addr,
     ${prefix}notes as notes,
     ${prefix}create_by as create_by,
-    ${prefix}create_date as create_date,
+    ${prefix}create_time as create_time,
     ${prefix}data_status as data_status,
         ${prefix}data_quality as data_quality
 

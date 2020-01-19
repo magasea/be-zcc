@@ -32,6 +32,8 @@ public class AmcUserDetail extends User {
 
   private Integer location;
 
+  private Long ssoUserId;
+
   private Integer valid;
 
   private Integer title;

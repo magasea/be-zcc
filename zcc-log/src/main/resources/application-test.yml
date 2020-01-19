@@ -33,7 +33,17 @@ spring:
       host: 10.20.100.235
       port: 27017
 
+  security:
+    oauth2:
+      client:
+        registration:
 
+          amc-cust-client:
+            client-id: amcClientId
+            secret: secret
+            scopes: amcClient,read,write
+            redirectUris: client,http://${env.oauth2.host}:10003/amc/login
+            authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
 kafka:
   topic-wechat-userlocation: topic_wechat_userLocation_${env.env-prefix}
@@ -42,3 +52,6 @@ kafka:
 env:
   env-prefix: test
   kafka-host: 10.20.100.235
+  oauth2:
+    host: localhost
+    authLink: http://${env.oauth2.host}:10002

@@ -12,6 +12,7 @@ import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
+import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.SyncService;
@@ -19,6 +20,7 @@ import com.wensheng.zcc.cust.utils.ExcelGenerator;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -225,5 +227,10 @@ public class CustInfoController {
     return custInfoService.queryAllNearByCusts(geoJsonPoint);
   }
 
+  @RequestMapping(value = "/getCustCountByTimeStart", method = RequestMethod.POST)
+  @ResponseBody
+  public CustsCountByTime getCustCountByTime(@RequestBody LocalDateTime startTime) throws Exception {
+    return custInfoService.getCustCountByTime(startTime);
+  }
 
 }

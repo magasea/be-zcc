@@ -17,6 +17,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import org.apache.tomcat.jni.Local;
 
 /**
  * @author chenwei on 1/2/19
@@ -106,5 +107,9 @@ public class AmcDateUtils {
 
   public static Date getCurrentDate() {
      return Date.from(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")).atZone(ZoneId.of("UTC")).toInstant());
+  }
+
+  public static Date getDateFromLocalDate(LocalDateTime localDateTime){
+    return Date.from(localDateTime.atZone(ZoneId.of("UTC")).toInstant());
   }
 }

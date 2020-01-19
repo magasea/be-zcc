@@ -32,7 +32,17 @@ spring:
       database: wszcc_log
       host: 10.20.100.235
       port: 27017
+  security:
+    oauth2:
+      client:
+        registration:
 
+          amc-cust-client:
+            client-id: amcClientId
+            secret: secret
+            scopes: amcClient,read,write
+            redirectUris: client,http://${env.oauth2.host}:10003/amc/login
+            authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
 
 kafka:
@@ -42,4 +52,7 @@ kafka:
 
 env:
   env-prefix: dev
-  kafka-host: 10.20.100.238
+  kafka-host: 10.20.100.235
+  oauth2:
+    host: localhost
+    authLink: http://${env.oauth2.host}:10002

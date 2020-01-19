@@ -4,6 +4,7 @@ import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionDetailMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
@@ -33,8 +34,10 @@ import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
+import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -645,6 +648,25 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(beginDate);
     List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
     return custTrdPersonList;
+  }
+
+  @Override
+  public CustsCountByTime getCustCountByTime(LocalDateTime startTime) {
+    Date startDate = AmcDateUtils.getDateFromLocalDate(startTime);
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.createCriteria().andCreateTimeGreaterThan(startDate);
+    List<CustTrdCmpy> custTrdCmpyList =  custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(startDate);
+
+    List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+
+    CustsCountByTime custsCountByTime = new CustsCountByTime();
+    custsCountByTime.setStartTime(startTime);
+    custsCountByTime.setNewCustCmpiesByStartTime(custTrdCmpyList);
+    custsCountByTime.setNewCustPersonByStartTime(custTrdPersonList);
+    return custsCountByTime;
   }
 
   private boolean updateCustPersonTrdRelations(List<String> histPhoneNumList, String phoneNum, String custName,

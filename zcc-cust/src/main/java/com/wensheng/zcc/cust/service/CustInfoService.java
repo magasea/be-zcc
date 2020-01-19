@@ -7,6 +7,8 @@ import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
+import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -55,4 +57,6 @@ public interface CustInfoService {
 
   List<CustTrdCmpy> getCmpyFromDate(Date beginDate);
   List<CustTrdPerson> getPersonFromDate(Date beginDate);
+
+  CustsCountByTime getCustCountByTime(LocalDateTime startTime);
 }

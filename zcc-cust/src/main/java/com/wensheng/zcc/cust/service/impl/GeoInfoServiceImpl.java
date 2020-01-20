@@ -60,7 +60,7 @@ public class GeoInfoServiceImpl implements GeoInfoService {
       for(CustTrdInfo custTrdInfo: custTrdInfoList){
 
         try {
-          regionName = basicInfoService.getRegionNameByCode(Long.valueOf(custTrdInfo.getTrdCity()));
+          regionName = basicInfoService.getRegionNameByCode(Long.valueOf(custTrdInfo.getDebtCity()));
         } catch (Exception e) {
           log.error("", e);
           continue;
@@ -88,7 +88,7 @@ public class GeoInfoServiceImpl implements GeoInfoService {
         custTrdGeo.setBuyerType(custTrdInfo.getBuyerType());
         custTrdGeo.setAmount(custTrdInfo.getTotalAmount());
         custTrdGeo.setTitle(custTrdInfo.getInfoTitle());
-        custTrdGeo.setTrdCity(custTrdInfo.getTrdCity());
+        custTrdGeo.setDebtCity(custTrdInfo.getDebtCity());
         custTrdGeo.setUrl(custTrdInfo.getInfoUrl());
         custTrdGeo.setUpdateTime(updateTime);
         mongoTemplate.save(custTrdGeo);

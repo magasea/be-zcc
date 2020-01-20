@@ -1,6 +1,8 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.vo.recom.Cust4Asset;
+import com.wensheng.zcc.cust.module.vo.recom.Cust4Debt;
 import com.wensheng.zcc.cust.service.RecommService;
 import java.util.Arrays;
 import java.util.List;
@@ -22,9 +24,16 @@ public class AmcServiceController {
 
   @RequestMapping(value = "/queryDebtCust", method = RequestMethod.POST)
   @ResponseBody
-  public List<Object> queryDebtCust(@RequestBody Long debtId){
+  public Cust4Debt queryDebtCust(@RequestBody Long debtId){
 
-    return recommService.queryDebtCusts(Arrays.asList(debtId));
+    return recommService.queryDebtCusts(debtId);
+  }
+
+  @RequestMapping(value = "/queryAssetCust", method = RequestMethod.POST)
+  @ResponseBody
+  public Cust4Asset queryAssetCust(@RequestBody Long assetId){
+
+    return recommService.queryAssetCusts(assetId);
   }
 
 }

@@ -14,7 +14,6 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
@@ -240,18 +239,18 @@ public class CustInfoServiceImpl implements CustInfoService {
       String cityName = null;
       String trdTypeName = null;
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
-        if(StringUtils.isEmpty(custTrdInfo.getTrdCity()) || custTrdInfo.getTrdCity().equals("-1")){
+        if(StringUtils.isEmpty(custTrdInfo.getDebtCity()) || custTrdInfo.getDebtCity().equals("-1")){
           if(StringUtils.isEmpty(custTrdInfo.getTrdProvince()) || custTrdInfo.getTrdProvince().equals("-1")){
             log.error("custTrdInfo:{} haven't valid city :{} or province :{} just ignore it ", custTrdInfo.getId(),
-                custTrdInfo.getTrdCity(), custTrdInfo.getTrdProvince());
+                custTrdInfo.getDebtCity(), custTrdInfo.getTrdProvince());
             continue;
           }
           cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdProvince())).getName();
         }else{
           try{
-            cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity())).getName();
+            cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getDebtCity())).getName();
           }catch (Exception ex){
-            log.error("Failed to find city for:{}", custTrdInfo.getTrdCity());
+            log.error("Failed to find city for:{}", custTrdInfo.getDebtCity());
             continue;
           }
 
@@ -393,16 +392,16 @@ public class CustInfoServiceImpl implements CustInfoService {
           continue;
         }
         trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
-        if(!StringUtils.isEmpty(custTrdInfo.getTrdCity()) && Long.valueOf(custTrdInfo.getTrdCity()) > -1L){
+        if(!StringUtils.isEmpty(custTrdInfo.getDebtCity()) && Long.valueOf(custTrdInfo.getDebtCity()) > -1L){
           CustRegionDetail custRegion =
-              custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdCity()));
+              custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getDebtCity()));
           if(null != custRegion){
             cityName = custRegion.getName();
           }else{
-            log.error("Failed to get cityName for :{}", custTrdInfo.getTrdCity());
+            log.error("Failed to get cityName for :{}", custTrdInfo.getDebtCity());
           }
         }else{
-          log.error("Failed to get cityName for :{}", custTrdInfo.getTrdCity());
+          log.error("Failed to get cityName for :{}", custTrdInfo.getDebtCity());
         }
 
         if(!invest2Counts.containsKey(trdTypeName)){
@@ -527,7 +526,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExts.get(idx).getCustTrdInfoList()){
         totalAmount += custTrdInfo.getTotalAmount() > 0 ? custTrdInfo.getTotalAmount() :
             custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0 ;
-        cities.add(custTrdInfo.getTrdCity());
+        cities.add(custTrdInfo.getDebtCity());
         if(custTrdInfo.getTrdType() == null){
           continue;
         }
@@ -537,10 +536,10 @@ public class CustInfoServiceImpl implements CustInfoService {
           invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
         }
 
-        if(!city2Counts.containsKey(custTrdInfo.getTrdCity())){
-          city2Counts.put(custTrdInfo.getTrdCity(), 1);
+        if(!city2Counts.containsKey(custTrdInfo.getDebtCity())){
+          city2Counts.put(custTrdInfo.getDebtCity(), 1);
         }else {
-          city2Counts.put(custTrdInfo.getTrdCity(), city2Counts.get(custTrdInfo.getTrdCity())+1);
+          city2Counts.put(custTrdInfo.getDebtCity(), city2Counts.get(custTrdInfo.getDebtCity())+1);
         }
       }
       custTrdInfoVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
@@ -570,7 +569,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
         totalAmount += custTrdInfo.getTotalAmount() > 0? custTrdInfo.getTotalAmount():
             custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0;
-        cities.add(custTrdInfo.getTrdCity());
+        cities.add(custTrdInfo.getDebtCity());
         if(custTrdInfo.getTrdType() == null){
           continue;
         }
@@ -579,10 +578,10 @@ public class CustInfoServiceImpl implements CustInfoService {
         }else{
           invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
         }
-        if(!city2Counts.containsKey(custTrdInfo.getTrdCity())){
-          city2Counts.put(custTrdInfo.getTrdCity(), 1);
+        if(!city2Counts.containsKey(custTrdInfo.getDebtCity())){
+          city2Counts.put(custTrdInfo.getDebtCity(), 1);
         }else {
-          city2Counts.put(custTrdInfo.getTrdCity(), city2Counts.get(custTrdInfo.getTrdCity())+1);
+          city2Counts.put(custTrdInfo.getDebtCity(), city2Counts.get(custTrdInfo.getDebtCity())+1);
         }
       }
       custTrdInfoVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);

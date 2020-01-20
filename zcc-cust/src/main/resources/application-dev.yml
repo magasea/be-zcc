@@ -143,6 +143,12 @@ cust:
 #        http://10.20.200.45:8085/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
         getPersonInfoByUpdateTime: http://10.20.200.45:8085/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
 
+recom:
+    urls:
+        getAssetCusts: http://${env.recomhost}:${env.recomport}/api/sug/asset2investor/%s
+        getDebtCusts: http://${env.recomhost}:${env.recomport}/api/sug/debt2investor/%s
+        getCombinedCustByDebt: http://${env.recomhost}:${env.recomport}/api/sug/debtAndAsset2investor/%s
+
 
 env:
     env-hint: dev
@@ -151,6 +157,8 @@ env:
     dbpasswd: Wsamc@12345
     rpchost: localhost
     kfkhost: 10.20.100.238
+    recomhost: 10.20.100.236
+    recomport: 7654
     image-repo: /disk/temp
     oauth2:
         host: localhost

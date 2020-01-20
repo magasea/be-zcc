@@ -722,6 +722,76 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andDebtProvinceIsNull() {
+            addCriterion("debt_province is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceIsNotNull() {
+            addCriterion("debt_province is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceEqualTo(String value) {
+            addCriterion("debt_province =", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceNotEqualTo(String value) {
+            addCriterion("debt_province <>", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceGreaterThan(String value) {
+            addCriterion("debt_province >", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceGreaterThanOrEqualTo(String value) {
+            addCriterion("debt_province >=", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceLessThan(String value) {
+            addCriterion("debt_province <", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceLessThanOrEqualTo(String value) {
+            addCriterion("debt_province <=", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceLike(String value) {
+            addCriterion("debt_province like", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceNotLike(String value) {
+            addCriterion("debt_province not like", value, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceIn(List<String> values) {
+            addCriterion("debt_province in", values, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceNotIn(List<String> values) {
+            addCriterion("debt_province not in", values, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceBetween(String value1, String value2) {
+            addCriterion("debt_province between", value1, value2, "debtProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtProvinceNotBetween(String value1, String value2) {
+            addCriterion("debt_province not between", value1, value2, "debtProvince");
+            return (Criteria) this;
+        }
+
         public Criteria andTrdProvinceIsNull() {
             addCriterion("trd_province is null");
             return (Criteria) this;
@@ -792,73 +862,73 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityIsNull() {
-            addCriterion("trd_city is null");
+        public Criteria andDebtCityIsNull() {
+            addCriterion("debt_city is null");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityIsNotNull() {
-            addCriterion("trd_city is not null");
+        public Criteria andDebtCityIsNotNull() {
+            addCriterion("debt_city is not null");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityEqualTo(String value) {
-            addCriterion("trd_city =", value, "trdCity");
+        public Criteria andDebtCityEqualTo(String value) {
+            addCriterion("debt_city =", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotEqualTo(String value) {
-            addCriterion("trd_city <>", value, "trdCity");
+        public Criteria andDebtCityNotEqualTo(String value) {
+            addCriterion("debt_city <>", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityGreaterThan(String value) {
-            addCriterion("trd_city >", value, "trdCity");
+        public Criteria andDebtCityGreaterThan(String value) {
+            addCriterion("debt_city >", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityGreaterThanOrEqualTo(String value) {
-            addCriterion("trd_city >=", value, "trdCity");
+        public Criteria andDebtCityGreaterThanOrEqualTo(String value) {
+            addCriterion("debt_city >=", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityLessThan(String value) {
-            addCriterion("trd_city <", value, "trdCity");
+        public Criteria andDebtCityLessThan(String value) {
+            addCriterion("debt_city <", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityLessThanOrEqualTo(String value) {
-            addCriterion("trd_city <=", value, "trdCity");
+        public Criteria andDebtCityLessThanOrEqualTo(String value) {
+            addCriterion("debt_city <=", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityLike(String value) {
-            addCriterion("trd_city like", value, "trdCity");
+        public Criteria andDebtCityLike(String value) {
+            addCriterion("debt_city like", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotLike(String value) {
-            addCriterion("trd_city not like", value, "trdCity");
+        public Criteria andDebtCityNotLike(String value) {
+            addCriterion("debt_city not like", value, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityIn(List<String> values) {
-            addCriterion("trd_city in", values, "trdCity");
+        public Criteria andDebtCityIn(List<String> values) {
+            addCriterion("debt_city in", values, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotIn(List<String> values) {
-            addCriterion("trd_city not in", values, "trdCity");
+        public Criteria andDebtCityNotIn(List<String> values) {
+            addCriterion("debt_city not in", values, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityBetween(String value1, String value2) {
-            addCriterion("trd_city between", value1, value2, "trdCity");
+        public Criteria andDebtCityBetween(String value1, String value2) {
+            addCriterion("debt_city between", value1, value2, "debtCity");
             return (Criteria) this;
         }
 
-        public Criteria andTrdCityNotBetween(String value1, String value2) {
-            addCriterion("trd_city not between", value1, value2, "trdCity");
+        public Criteria andDebtCityNotBetween(String value1, String value2) {
+            addCriterion("debt_city not between", value1, value2, "debtCity");
             return (Criteria) this;
         }
 

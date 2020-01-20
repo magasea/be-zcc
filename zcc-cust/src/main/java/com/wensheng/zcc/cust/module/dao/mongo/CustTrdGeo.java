@@ -21,7 +21,7 @@ public class CustTrdGeo {
   String title;
   String url;
   Long amount;
-  String trdCity;
+  String debtCity;
   Integer buyerType;
   @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
   GeoJsonPoint location;

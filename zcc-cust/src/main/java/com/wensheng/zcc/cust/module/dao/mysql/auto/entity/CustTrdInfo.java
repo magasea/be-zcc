@@ -21,9 +21,11 @@ public class CustTrdInfo {
 
     private String infoUrl;
 
+    private String debtProvince;
+
     private String trdProvince;
 
-    private String trdCity;
+    private String debtCity;
 
     private String trdAmountOrig;
 
@@ -135,6 +137,14 @@ public class CustTrdInfo {
         this.infoUrl = infoUrl == null ? null : infoUrl.trim();
     }
 
+    public String getDebtProvince() {
+        return debtProvince;
+    }
+
+    public void setDebtProvince(String debtProvince) {
+        this.debtProvince = debtProvince == null ? null : debtProvince.trim();
+    }
+
     public String getTrdProvince() {
         return trdProvince;
     }
@@ -143,12 +153,12 @@ public class CustTrdInfo {
         this.trdProvince = trdProvince == null ? null : trdProvince.trim();
     }
 
-    public String getTrdCity() {
-        return trdCity;
+    public String getDebtCity() {
+        return debtCity;
     }
 
-    public void setTrdCity(String trdCity) {
-        this.trdCity = trdCity == null ? null : trdCity.trim();
+    public void setDebtCity(String debtCity) {
+        this.debtCity = debtCity == null ? null : debtCity.trim();
     }
 
     public String getTrdAmountOrig() {

@@ -9,17 +9,19 @@ import java.util.function.Function;
  */
 public enum CustTypeEnum {
 
-  NO_INFO(-1, "不确定"),
-  PERSON(1, "个人"),
-  COMPANY(2, "公司"),
-  BANK(3, "银行"),
+  NO_INFO(-1, "不确定", "NOT SURE"),
+  PERSON(1, "个人", "PERSON"),
+  COMPANY(2, "公司", "COMPANY"),
+  BANK(3, "银行", "BANK"),
   ;
 
   private int id;
   private String name;
-  CustTypeEnum(int id, String name){
+  private String ename;
+  CustTypeEnum(int id, String name, String ename){
     this.id = id;
     this.name = name;
+    this.ename = ename;
   }
 
   private static final Function<String, CustTypeEnum> func =
@@ -27,6 +29,15 @@ public enum CustTypeEnum {
   public static CustTypeEnum lookupByDisplayNameUtil(String name) {
     return func.apply(name);
   }
+
+
+  private static final Function<String, CustTypeEnum> funcEname =
+      EnumUtils.lookupMap(CustTypeEnum.class, e -> e.getEname());
+  public static CustTypeEnum lookupByDisplayENameUtil(String ename) {
+    return funcEname.apply(ename);
+  }
+
+
 
   private static final Function<Integer, CustTypeEnum> funcId =
       EnumUtils.lookupMap(CustTypeEnum.class, e -> e.getId());
@@ -39,5 +50,8 @@ public enum CustTypeEnum {
 
   public String getName() {
     return name;
+  }
+  public String getEname() {
+    return ename;
   }
 }

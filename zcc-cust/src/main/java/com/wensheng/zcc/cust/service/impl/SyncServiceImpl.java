@@ -28,6 +28,7 @@ import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.SyncService;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -40,7 +41,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -115,7 +119,7 @@ public class SyncServiceImpl implements SyncService {
 
 //  String[] provinceCodes = {"350000000000"};
 String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000","110000000000",
-    "370000000000","330000000000"};
+    "370000000000","330000000000", "360000000000"};
 //  String[] provinceCodes = {"230000000000","220000000000","210000000000"};
 //  String[] provinceCodes = {"130000000000"};
 
@@ -133,7 +137,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     @PostConstruct
     void init(){
-      restTemplate.getMessageConverters().add(new GsonHttpMessageConverter());
+      GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+      gsonHttpMessageConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL) );
+      restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+      restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2XmlHttpMessageConverter);
+      restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
       isInSync = false;
     }
 
@@ -1050,8 +1058,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       log.error("getTrdProvincePrep:{}", trdInfoFromSync.getTrdProvincePrep());
     }
     custTrdInfo.setTrdProvince(trdInfoFromSync.getTrdProvincePrep().substring(0, 6));
+    custTrdInfo.setDebtProvince(trdInfoFromSync.getDebtProvincePrep().substring(0, 6));
 
-//    custTrdInfo.setTrdProvince(trdInfoFromSync.getDebtProvincePrep());
     if(StringUtils.isEmpty(trdInfoFromSync.getDebtCityPrep())){
       if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
         errorTrdInfos.put(trdInfoFromSync.getId(), "");
@@ -1068,7 +1076,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
          pageForLog,   errorTrdInfos.get(trdInfoFromSync.getId()),
             String.format("trdInfoFromSync.getDebtCityPrep() is %s",trdInfoFromSync.getDebtCityPrep())));
       }
-      custTrdInfo.setTrdCity(trdInfoFromSync.getDebtCityPrep().substring(0, 6));
+      custTrdInfo.setDebtCity(trdInfoFromSync.getDebtCityPrep().substring(0, 6));
     }
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
     custTrdInfo.setTrdContactorName(StringUtils.isEmpty(trdInfoFromSync.getSellerContactManPrep()) ? "-1": trdInfoFromSync.getSellerContactManPrep());
@@ -1134,8 +1142,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     for(CustTrdInfo custTrdInfo : custTrdInfos){
 //      System.out.println(custTrdInfo.getTrdProvince().substring(0,2));
       provinceCode = custTrdInfo.getTrdProvince().substring(0,2);
-      if(!custTrdInfo.getTrdCity().startsWith(provinceCode)){
-        log.error("province code:{} city code:{} infoId:{}", custTrdInfo.getTrdProvince(), custTrdInfo.getTrdCity(),
+      if(!custTrdInfo.getDebtCity().startsWith(provinceCode)){
+        log.error("province code:{} city code:{} infoId:{}", custTrdInfo.getTrdProvince(), custTrdInfo.getDebtCity(),
             custTrdInfo.getInfoId());
       }
 

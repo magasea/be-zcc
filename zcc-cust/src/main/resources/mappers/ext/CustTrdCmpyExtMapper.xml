@@ -61,7 +61,7 @@
     ${prefix}info_website as ${alias}info_website,
     ${prefix}info_url as ${alias}info_url,
     ${prefix}trd_province as ${alias}trd_province,
-    ${prefix}trd_city as ${alias}trd_city,
+    ${prefix}debt_city as ${alias}debt_city,
     ${prefix}trd_amount_orig as ${alias}trd_amount_orig,
     ${prefix}trd_amount as ${alias}trd_amount,
     ${prefix}base_amount as ${alias}base_amount,

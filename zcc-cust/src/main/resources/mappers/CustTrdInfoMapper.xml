@@ -11,8 +11,9 @@
     <result column="info_source" jdbcType="VARCHAR" property="infoSource" />
     <result column="info_website" jdbcType="VARCHAR" property="infoWebsite" />
     <result column="info_url" jdbcType="VARCHAR" property="infoUrl" />
+    <result column="debt_province" jdbcType="CHAR" property="debtProvince" />
     <result column="trd_province" jdbcType="CHAR" property="trdProvince" />
-    <result column="trd_city" jdbcType="CHAR" property="trdCity" />
+    <result column="debt_city" jdbcType="CHAR" property="debtCity" />
     <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />
     <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />
     <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
@@ -93,10 +94,10 @@
   </sql>
   <sql id="Base_Column_List">
     id, item_type, trd_type, info_title, pack_count, info_id, info_source, info_website, 
-    info_url, trd_province, trd_city, trd_amount_orig, trd_amount, base_amount, interest_amount, 
-    total_amount, trd_status, trd_date, pub_date, update_time, notes, buyer_type, buyer_id, 
-    seller_type, seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, 
-    data_quality
+    info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, base_amount, 
+    interest_amount, total_amount, trd_status, trd_date, pub_date, update_time, notes, 
+    buyer_type, buyer_id, seller_type, seller_id, seller_name, trd_contactor_name, trd_contactor_addr, 
+    data_status, data_quality
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -135,24 +136,26 @@
     </selectKey>
     insert into CUST_TRD_INFO (item_type, trd_type, info_title, 
       pack_count, info_id, info_source, 
-      info_website, info_url, trd_province, 
-      trd_city, trd_amount_orig, trd_amount, 
-      base_amount, interest_amount, total_amount, 
-      trd_status, trd_date, pub_date, 
-      update_time, notes, buyer_type, 
-      buyer_id, seller_type, seller_id, 
-      seller_name, trd_contactor_name, trd_contactor_addr, 
-      data_status, data_quality)
+      info_website, info_url, debt_province, 
+      trd_province, debt_city, trd_amount_orig, 
+      trd_amount, base_amount, interest_amount, 
+      total_amount, trd_status, trd_date, 
+      pub_date, update_time, notes, 
+      buyer_type, buyer_id, seller_type, 
+      seller_id, seller_name, trd_contactor_name, 
+      trd_contactor_addr, data_status, data_quality
+      )
     values (#{itemType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, 
       #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
-      #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
-      #{trdCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
-      #{baseAmount,jdbcType=BIGINT}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
-      #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{pubDate,jdbcType=TIMESTAMP}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, 
-      #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, 
-      #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, #{trdContactorAddr,jdbcType=CHAR}, 
-      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER})
+      #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{debtProvince,jdbcType=CHAR}, 
+      #{trdProvince,jdbcType=CHAR}, #{debtCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, 
+      #{trdAmount,jdbcType=BIGINT}, #{baseAmount,jdbcType=BIGINT}, #{interestAmount,jdbcType=BIGINT}, 
+      #{totalAmount,jdbcType=BIGINT}, #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, 
+      #{pubDate,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, 
+      #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, 
+      #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, 
+      #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -184,11 +187,14 @@
       <if test="infoUrl != null">
         info_url,
       </if>
+      <if test="debtProvince != null">
+        debt_province,
+      </if>
       <if test="trdProvince != null">
         trd_province,
       </if>
-      <if test="trdCity != null">
-        trd_city,
+      <if test="debtCity != null">
+        debt_city,
       </if>
       <if test="trdAmountOrig != null">
         trd_amount_orig,
@@ -273,11 +279,14 @@
       <if test="infoUrl != null">
         #{infoUrl,jdbcType=VARCHAR},
       </if>
+      <if test="debtProvince != null">
+        #{debtProvince,jdbcType=CHAR},
+      </if>
       <if test="trdProvince != null">
         #{trdProvince,jdbcType=CHAR},
       </if>
-      <if test="trdCity != null">
-        #{trdCity,jdbcType=CHAR},
+      <if test="debtCity != null">
+        #{debtCity,jdbcType=CHAR},
       </if>
       <if test="trdAmountOrig != null">
         #{trdAmountOrig,jdbcType=CHAR},
@@ -374,11 +383,14 @@
       <if test="record.infoUrl != null">
         info_url = #{record.infoUrl,jdbcType=VARCHAR},
       </if>
+      <if test="record.debtProvince != null">
+        debt_province = #{record.debtProvince,jdbcType=CHAR},
+      </if>
       <if test="record.trdProvince != null">
         trd_province = #{record.trdProvince,jdbcType=CHAR},
       </if>
-      <if test="record.trdCity != null">
-        trd_city = #{record.trdCity,jdbcType=CHAR},
+      <if test="record.debtCity != null">
+        debt_city = #{record.debtCity,jdbcType=CHAR},
       </if>
       <if test="record.trdAmountOrig != null">
         trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
@@ -453,8 +465,9 @@
       info_source = #{record.infoSource,jdbcType=VARCHAR},
       info_website = #{record.infoWebsite,jdbcType=VARCHAR},
       info_url = #{record.infoUrl,jdbcType=VARCHAR},
+      debt_province = #{record.debtProvince,jdbcType=CHAR},
       trd_province = #{record.trdProvince,jdbcType=CHAR},
-      trd_city = #{record.trdCity,jdbcType=CHAR},
+      debt_city = #{record.debtCity,jdbcType=CHAR},
       trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{record.trdAmount,jdbcType=BIGINT},
       base_amount = #{record.baseAmount,jdbcType=BIGINT},
@@ -505,11 +518,14 @@
       <if test="infoUrl != null">
         info_url = #{infoUrl,jdbcType=VARCHAR},
       </if>
+      <if test="debtProvince != null">
+        debt_province = #{debtProvince,jdbcType=CHAR},
+      </if>
       <if test="trdProvince != null">
         trd_province = #{trdProvince,jdbcType=CHAR},
       </if>
-      <if test="trdCity != null">
-        trd_city = #{trdCity,jdbcType=CHAR},
+      <if test="debtCity != null">
+        debt_city = #{debtCity,jdbcType=CHAR},
       </if>
       <if test="trdAmountOrig != null">
         trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
@@ -581,8 +597,9 @@
       info_source = #{infoSource,jdbcType=VARCHAR},
       info_website = #{infoWebsite,jdbcType=VARCHAR},
       info_url = #{infoUrl,jdbcType=VARCHAR},
+      debt_province = #{debtProvince,jdbcType=CHAR},
       trd_province = #{trdProvince,jdbcType=CHAR},
-      trd_city = #{trdCity,jdbcType=CHAR},
+      debt_city = #{debtCity,jdbcType=CHAR},
       trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{trdAmount,jdbcType=BIGINT},
       base_amount = #{baseAmount,jdbcType=BIGINT},

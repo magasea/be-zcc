@@ -154,9 +154,9 @@ cust:
 
 recom:
     urls:
-        getAssetCusts: http://${env.recomhost}:${env.recomport}/api/sug/asset2investor
-        getDebtCusts: http://${env.recomhost}:${env.recomport}/api/sug/debt2investor
-        getCombinedCustByDebt: http://${env.recomhost}:${env.recomport}/api/sug/debtAndAsset2investor
+        getAssetCusts: http://${env.recomhost}:${env.recomport}/api/sug/asset2investor/%s
+        getDebtCusts: http://${env.recomhost}:${env.recomport}/api/sug/debt2investor/%s
+        getCombinedCustByDebt: http://${env.recomhost}:${env.recomport}/api/sug/debtAndAsset2investor/%s
 
 
 env:

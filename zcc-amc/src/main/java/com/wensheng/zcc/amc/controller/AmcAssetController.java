@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
+import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
@@ -60,6 +61,9 @@ public class AmcAssetController {
 
   @Autowired
   AmcOssFileService amcOssFileService;
+
+  @Autowired
+  KafkaService kafkaService;
 
   @RequestMapping(value = "/amcid/{amcid}/assets", method = RequestMethod.POST)
   @ResponseBody
@@ -152,6 +156,7 @@ public class AmcAssetController {
     AssetAdditional assetAdditional =
         amcAssetService.createOrUpdateAssetAddition(amcAssetVo.getContent().getAssetAdditional());
     assetVo.setAssetAdditional(assetAdditional);
+    kafkaService.sendAssetCreate(assetVo);
     return assetVo;
   }
 

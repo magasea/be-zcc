@@ -65,10 +65,10 @@ public class SQLUtils {
       sb.append(" and ");
       sb.append(ALIAS_CUST_TRD_INFO);
       if(queryParam.getCity().endsWith("000")){
-        sb.append(".").append("trd_city like '").append(queryParam.getCity().substring(0,
+        sb.append(".").append("debt_city like '").append(queryParam.getCity().substring(0,
             queryParam.getCity().length() -4)).append("%'");
       }else{
-        sb.append(".").append("trd_city =" ).append(queryParam.getCity());
+        sb.append(".").append("debt_city =" ).append(queryParam.getCity());
       }
     }
     if(!CollectionUtils.isEmpty(queryParam.getInvestScales())){

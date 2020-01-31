@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
+import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
@@ -35,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -77,6 +79,10 @@ public class AmcDebtController {
 
   @Autowired
   ZccRulesService zccRulesService;
+
+
+  @Autowired
+  KafkaService kafkaService;
 
 
 //  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
@@ -336,6 +342,8 @@ public class AmcDebtController {
     if(createVo.getDebtAdditional() != null && createVo.getDebtAdditional().getDesc() != null){
       amcDebtService.saveDebtDesc(createVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
     }
+
+    kafkaService.sendDebtCreate(amcDebtVo);
 
     return amcDebtVo;
   }

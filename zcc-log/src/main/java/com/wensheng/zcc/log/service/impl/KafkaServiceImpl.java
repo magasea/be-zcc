@@ -169,4 +169,57 @@ public class KafkaServiceImpl implements KafkaService {
     }
 
   }
+
+
+  @KafkaListener( topics = "${kafka.topic_amc_login}", clientIdPrefix = "zcc-log",
+      containerFactory = "userLoginContainerFactory")
+  public void listenDebtCreate(ConsumerRecord<String, AmcUser> cr,
+      @Payload AmcUser payload) {
+    log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),
+        typeIdHeader(cr.headers()), payload, cr.toString());
+    String gsonStr = null;
+    try{
+      gsonStr = gson.toJson(payload);
+      AmcUser amcUser = new AmcUser();
+      AmcBeanUtils.copyProperties(payload, amcUser);
+      AmcUserLogin amcUserLogin = new AmcUserLogin();
+      Query query = new Query();
+      if(amcUser.getSsoUserId() == null || amcUser.getSsoUserId() < 0){
+        log.error("the user info is not valid");
+        return;
+      }
+      query.addCriteria(Criteria.where("amcUser.ssoUserId").is(amcUser.getSsoUserId()));
+      List<AmcUserLogin> amcUserLoginList = wszccTemplate.find(query, AmcUserLogin.class);
+      if(CollectionUtils.isEmpty(amcUserLoginList)){
+        //need insert new record for this user
+        amcUserLogin.setAmcUser(amcUser);
+
+      }else{
+        amcUserLogin = amcUserLoginList.get(0);
+      }
+      if(amcUserLogin.getCurrLoginTime() == null){
+
+        amcUserLogin.setCurrLoginTime(AmcDateUtils.getLocalDateTime());
+        if(amcUserLogin.getLastLoginTime() == null){
+          amcUserLogin.setLastLoginTime(AmcDateUtils.getLocalDateTime());
+        }
+        wszccTemplate.save(amcUserLogin);
+        return;
+      }
+
+
+      if(AmcDateUtils.getLocalDateTime().toEpochSecond(ZoneOffset.UTC) - DAY_SECONDS > amcUserLogin.getCurrLoginTime().toEpochSecond(
+          ZoneOffset.UTC)){
+        //it is old time need update record
+        amcUserLogin.setLastLoginTime(amcUserLogin.getCurrLoginTime());
+        amcUserLogin.setCurrLoginTime(AmcDateUtils.getLocalDateTime());
+        wszccTemplate.save(amcUserLogin);
+      }
+
+    }catch (Exception ex){
+      log.error("Failed to handle:{}", gsonStr, ex);
+    }
+
+  }
+
 }

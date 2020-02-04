@@ -88,9 +88,12 @@ public class WXToolServiceImpl implements WXToolService {
     String fixRandomStr = "WENSHENGAMC";
     Long timeStamp = Instant.now().getEpochSecond();
     String signatureLocal = SHA1.getSHAFixSort(ticket, timeStamp.toString(), fixRandomStr,url);
-    wxSign4Url.setRandomStr(randomStr);
+    wxSign4Url.setRandomStr(fixRandomStr);
     wxSign4Url.setSignKey(signatureLocal);
     wxSign4Url.setTimeStamp(timeStamp);
+    wxSign4Url.setUrl(url);
+    wxSign4Url.setTicket(ticket);
+    wxSign4Url.setAccessToken(token);
     return wxSign4Url;
 
   }

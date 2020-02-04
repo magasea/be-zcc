@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -24,7 +25,7 @@ public class WechatToolController {
 
   @RequestMapping(value = "/makeSign4Url", method = RequestMethod.POST)
   @ResponseBody
-  public WXSign4Url makeSign4Url(@RequestBody String url) throws Exception {
+  public WXSign4Url makeSign4Url(@RequestParam String url) throws Exception {
 
     return wxToolService.makeSignKey(url);
   }

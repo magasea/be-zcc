@@ -25,7 +25,7 @@ public class WechatToolController {
 
   @RequestMapping(value = "/makeSign4Url", method = RequestMethod.POST)
   @ResponseBody
-  public WXSign4Url makeSign4Url(@RequestParam String url) throws Exception {
+  public WXSign4Url makeSign4Url(@RequestBody String url) throws Exception {
 
     return wxToolService.makeSignKey(url);
   }

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import lombok.Data;
@@ -12,7 +13,7 @@ import org.springframework.security.core.userdetails.User;
  * @project miniapp-backend
  */
 @Data
-public class AmcUserDetail extends User {
+public class AmcUserDetail extends User implements Serializable {
 
   private Long id;
 

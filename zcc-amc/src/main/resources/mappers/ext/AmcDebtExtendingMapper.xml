@@ -92,8 +92,8 @@
   ${prefix}county as ${alias}county,
   ${prefix}street as ${alias}street,
   ${prefix}building_name as ${alias}building_name,
-  ${prefix}gps_lng as ${alias}gps_lng,
-  ${prefix}gps_lat as ${alias}gps_lat,
+--   ${prefix}gps_lng as ${alias}gps_lng,
+--   ${prefix}gps_lat as ${alias}gps_lat,
   ${prefix}created_by as ${alias}created_by,
   ${prefix}created_date as ${alias}created_date,
   ${prefix}amc_contactor_id as ${alias}amc_contactor_id

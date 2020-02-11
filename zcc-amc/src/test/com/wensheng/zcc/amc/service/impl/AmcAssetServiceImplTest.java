@@ -218,9 +218,9 @@ public class AmcAssetServiceImplTest {
         ;
 //        assetAdditional.setAmcContact2(originItem.getAmcContact2());
         ;
-        assetAdditional.setAmcNotes(originItem.getAmcNotes());
-        ;
-        assetAdditional.setBidLink(originItem.getBidLink());
+//        assetAdditional.setAmcNotes(originItem.getAmcNotes());
+//        ;
+//        assetAdditional.setBidLink(originItem.getBidLink());
         ;
         assetAdditional.setCommentCount(originItem.getCommentCount());
         ;
@@ -236,20 +236,20 @@ public class AmcAssetServiceImplTest {
         ;
         assetAdditional.setDescription(originItem.getDescription());
         ;
-        assetAdditional.setEndDate(originItem.getEndDate());
+//        assetAdditional.setEndDate(originItem.getEndDate());
         ;
-        assetAdditional.setGpsLat(originItem.getGpsLat());
-        assetAdditional.setGpsLng(originItem.getGpsLng());
-        assetAdditional.setKeywords(originItem.getKeywords());
+//        assetAdditional.setGpsLat(originItem.getGpsLat());
+//        assetAdditional.setGpsLng(originItem.getGpsLng());
+//        assetAdditional.setKeywords(originItem.getKeywords());
         assetAdditional.setLikeCount(originItem.getLikeCount());
-        assetAdditional.setLinkUrl(originItem.getLinkUrl());
-        assetAdditional.setMainPic(originItem.getMainPic());
-        assetAdditional.setOtherCatalog(originItem.getOtherCatalog());
+//        assetAdditional.setLinkUrl(originItem.getLinkUrl());
+//        assetAdditional.setMainPic(originItem.getMainPic());
+//        assetAdditional.setOtherCatalog(originItem.getOtherCatalog());
 //        assetAdditional.setIsRecommanded(originItem.isRecommanded());
-        assetAdditional.setReportPath(originItem.getReportPath());
+//        assetAdditional.setReportPath(originItem.getReportPath());
         assetAdditional.setWatchCount(originItem.getWatchCount());
-        assetAdditional.setStartDate(originItem.getStartDate());
-        assetAdditional.setZipCode(originItem.getZipCode());
+//        assetAdditional.setStartDate(originItem.getStartDate());
+//        assetAdditional.setZipCode(originItem.getZipCode());
         secondaryMongoTemplate.save(assetAdditional);
 
     }

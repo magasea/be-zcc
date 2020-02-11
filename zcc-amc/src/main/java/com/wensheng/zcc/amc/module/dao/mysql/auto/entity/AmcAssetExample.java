@@ -1342,6 +1342,76 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
+        public Criteria andCommunityNameIsNull() {
+            addCriterion("community_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameIsNotNull() {
+            addCriterion("community_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameEqualTo(String value) {
+            addCriterion("community_name =", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameNotEqualTo(String value) {
+            addCriterion("community_name <>", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameGreaterThan(String value) {
+            addCriterion("community_name >", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameGreaterThanOrEqualTo(String value) {
+            addCriterion("community_name >=", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameLessThan(String value) {
+            addCriterion("community_name <", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameLessThanOrEqualTo(String value) {
+            addCriterion("community_name <=", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameLike(String value) {
+            addCriterion("community_name like", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameNotLike(String value) {
+            addCriterion("community_name not like", value, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameIn(List<String> values) {
+            addCriterion("community_name in", values, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameNotIn(List<String> values) {
+            addCriterion("community_name not in", values, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameBetween(String value1, String value2) {
+            addCriterion("community_name between", value1, value2, "communityName");
+            return (Criteria) this;
+        }
+
+        public Criteria andCommunityNameNotBetween(String value1, String value2) {
+            addCriterion("community_name not between", value1, value2, "communityName");
+            return (Criteria) this;
+        }
+
         public Criteria andBuildingNameIsNull() {
             addCriterion("building_name is null");
             return (Criteria) this;
@@ -1412,143 +1482,73 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngIsNull() {
-            addCriterion("gps_lng is null");
+        public Criteria andIndustrialParkIsNull() {
+            addCriterion("industrial_park is null");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngIsNotNull() {
-            addCriterion("gps_lng is not null");
+        public Criteria andIndustrialParkIsNotNull() {
+            addCriterion("industrial_park is not null");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngEqualTo(String value) {
-            addCriterion("gps_lng =", value, "gpsLng");
+        public Criteria andIndustrialParkEqualTo(String value) {
+            addCriterion("industrial_park =", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngNotEqualTo(String value) {
-            addCriterion("gps_lng <>", value, "gpsLng");
+        public Criteria andIndustrialParkNotEqualTo(String value) {
+            addCriterion("industrial_park <>", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngGreaterThan(String value) {
-            addCriterion("gps_lng >", value, "gpsLng");
+        public Criteria andIndustrialParkGreaterThan(String value) {
+            addCriterion("industrial_park >", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngGreaterThanOrEqualTo(String value) {
-            addCriterion("gps_lng >=", value, "gpsLng");
+        public Criteria andIndustrialParkGreaterThanOrEqualTo(String value) {
+            addCriterion("industrial_park >=", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngLessThan(String value) {
-            addCriterion("gps_lng <", value, "gpsLng");
+        public Criteria andIndustrialParkLessThan(String value) {
+            addCriterion("industrial_park <", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngLessThanOrEqualTo(String value) {
-            addCriterion("gps_lng <=", value, "gpsLng");
+        public Criteria andIndustrialParkLessThanOrEqualTo(String value) {
+            addCriterion("industrial_park <=", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngLike(String value) {
-            addCriterion("gps_lng like", value, "gpsLng");
+        public Criteria andIndustrialParkLike(String value) {
+            addCriterion("industrial_park like", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngNotLike(String value) {
-            addCriterion("gps_lng not like", value, "gpsLng");
+        public Criteria andIndustrialParkNotLike(String value) {
+            addCriterion("industrial_park not like", value, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngIn(List<String> values) {
-            addCriterion("gps_lng in", values, "gpsLng");
+        public Criteria andIndustrialParkIn(List<String> values) {
+            addCriterion("industrial_park in", values, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngNotIn(List<String> values) {
-            addCriterion("gps_lng not in", values, "gpsLng");
+        public Criteria andIndustrialParkNotIn(List<String> values) {
+            addCriterion("industrial_park not in", values, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngBetween(String value1, String value2) {
-            addCriterion("gps_lng between", value1, value2, "gpsLng");
+        public Criteria andIndustrialParkBetween(String value1, String value2) {
+            addCriterion("industrial_park between", value1, value2, "industrialPark");
             return (Criteria) this;
         }
 
-        public Criteria andGpsLngNotBetween(String value1, String value2) {
-            addCriterion("gps_lng not between", value1, value2, "gpsLng");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatIsNull() {
-            addCriterion("gps_lat is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatIsNotNull() {
-            addCriterion("gps_lat is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatEqualTo(String value) {
-            addCriterion("gps_lat =", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatNotEqualTo(String value) {
-            addCriterion("gps_lat <>", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatGreaterThan(String value) {
-            addCriterion("gps_lat >", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatGreaterThanOrEqualTo(String value) {
-            addCriterion("gps_lat >=", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatLessThan(String value) {
-            addCriterion("gps_lat <", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatLessThanOrEqualTo(String value) {
-            addCriterion("gps_lat <=", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatLike(String value) {
-            addCriterion("gps_lat like", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatNotLike(String value) {
-            addCriterion("gps_lat not like", value, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatIn(List<String> values) {
-            addCriterion("gps_lat in", values, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatNotIn(List<String> values) {
-            addCriterion("gps_lat not in", values, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatBetween(String value1, String value2) {
-            addCriterion("gps_lat between", value1, value2, "gpsLat");
-            return (Criteria) this;
-        }
-
-        public Criteria andGpsLatNotBetween(String value1, String value2) {
-            addCriterion("gps_lat not between", value1, value2, "gpsLat");
+        public Criteria andIndustrialParkNotBetween(String value1, String value2) {
+            addCriterion("industrial_park not between", value1, value2, "industrialPark");
             return (Criteria) this;
         }
 

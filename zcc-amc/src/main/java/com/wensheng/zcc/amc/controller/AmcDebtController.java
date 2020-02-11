@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.service.KafkaService;
+import com.wensheng.zcc.amc.service.impl.AmcPatchServiceImpl;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
@@ -83,6 +84,9 @@ public class AmcDebtController {
 
   @Autowired
   KafkaService kafkaService;
+
+  @Autowired
+  AmcPatchServiceImpl amcPatchService;
 
 
 //  @RequestMapping(value = "/api/amcid/{amcId}/debt/grntcontract/add", method = RequestMethod.POST)
@@ -687,5 +691,11 @@ public class AmcDebtController {
   @ResponseBody
   public List<AmcDebtExtVo> getDebtGeoNear(@RequestBody GeoJsonPoint geoJsonPoint) throws Exception {
     return amcDebtService.queryAllNearByDebts(geoJsonPoint);
+  }
+
+  @RequestMapping(value = "/patchAmcDebtCode", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAmcDebtCode() throws Exception {
+     amcPatchService.patchAmcDebtCode();
   }
 }

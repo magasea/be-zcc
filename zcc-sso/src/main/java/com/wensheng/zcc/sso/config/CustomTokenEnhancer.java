@@ -2,19 +2,15 @@ package com.wensheng.zcc.sso.config;
 
 import static org.apache.commons.lang3.RandomStringUtils.randomAlphabetic;
 
-import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
-import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
-import com.wensheng.zcc.sso.service.AmcUserService;
+import com.wensheng.zcc.common.module.amc.vo.AmcUserDetail;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
-import org.springframework.util.CollectionUtils;
+
 @Slf4j
 public class CustomTokenEnhancer implements TokenEnhancer {
 

@@ -1,10 +1,9 @@
 package com.wensheng.zcc.sso.config;
 
-import com.wensheng.zcc.sso.module.vo.AmcUserDetail;
+import com.wensheng.zcc.common.module.amc.vo.AmcUserDetail;
 import java.io.Serializable;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Component;
 

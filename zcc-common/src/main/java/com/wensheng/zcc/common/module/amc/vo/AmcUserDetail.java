@@ -1,5 +1,6 @@
-package com.wensheng.zcc.sso.module.vo;
+package com.wensheng.zcc.common.module.amc.vo;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Date;
 import lombok.Data;
@@ -12,7 +13,9 @@ import org.springframework.security.core.userdetails.User;
  * @project miniapp-backend
  */
 @Data
-public class AmcUserDetail extends User {
+public class AmcUserDetail extends User implements Serializable {
+
+  private static final long serialVersionUID = 1L;
 
   private Long id;
 
@@ -59,4 +62,6 @@ public class AmcUserDetail extends User {
       Collection<GrantedAuthority> authorities) {
     super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
   }
+
+
 }

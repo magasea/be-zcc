@@ -15,11 +15,10 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcUserExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcUserRole;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcUserExt;
-import com.wensheng.zcc.amc.module.vo.AmcUserDetail;
 import com.wensheng.zcc.amc.service.UserService;
+import com.wensheng.zcc.common.module.amc.vo.AmcUserDetail;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
-
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,7 +79,7 @@ public class UserServiceImpl implements UserService {
     }
     List<String> authorities = getPermissions(amcUsers.get(0));
 
-    List<SimpleGrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
+    List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
     authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
     boolean userEnabled = amcUsers.get(0).getValid().equals(AmcUserValidEnum.VALID.getId());
     AmcUserDetail amcUserDetail = new AmcUserDetail(amcUsers.get(0).getMobilePhone(),"",userEnabled, userEnabled,userEnabled,
@@ -104,7 +103,7 @@ public class UserServiceImpl implements UserService {
     }
     List<String> authorities = getPermissions(amcUsers.get(0));
 
-    List<SimpleGrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
+    List<GrantedAuthority> grantedAuthorityAuthorities = new ArrayList<>();
     authorities.forEach( auth -> grantedAuthorityAuthorities.add(new SimpleGrantedAuthority(auth)));
     boolean userEnabled = amcUsers.get(0).getValid().equals(AmcUserValidEnum.VALID.getId());
     AmcUserDetail amcUserDetail = new AmcUserDetail(amcUsers.get(0).getMobilePhone(),"",userEnabled, userEnabled,userEnabled,

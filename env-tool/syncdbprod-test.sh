@@ -23,10 +23,10 @@ mongorestore --host 10.20.100.235 --port 27017 --drop /home/chenwei/tmp/mongobac
 mongorestore --host 10.20.100.235 --port 27017 --drop /home/chenwei/tmp/mongoback/mongodump-wszcc-wechat-`date +%Y-%m-%d`
 echo '#!/bin/bash' > ./commands.sh
 echo 'cd /home/chenwei/tmp' >> ./commands.sh
-echo 'mysqldump --compatible=ansi -u root -pWensheng@12345678 -B ZCC_AMC > ./zccamc-`date +%Y-%m-%d`.sql' >> ./commands.sh
-echo 'mysqldump --compatible=ansi -u root -pWensheng@12345678 -B ZCC_CUST > ./zcccust-`date +%Y-%m-%d`.sql' >> ./commands.sh
-echo 'mysqldump --compatible=ansi -u root -pWensheng@12345678 -B ZCC_SSO > ./zccsso-`date +%Y-%m-%d`.sql' >> ./commands.sh
-echo 'mysqldump --compatible=ansi -u root -pWensheng@12345678 -B ZCC_WECHAT > ./zccwechat-`date +%Y-%m-%d`.sql' >> ./commands.sh
+echo 'mysqldump --compatible=ansi -u root -pWsamc@12345 -B ZCC_AMC > ./zccamc-`date +%Y-%m-%d`.sql' >> ./commands.sh
+echo 'mysqldump --compatible=ansi -u root -pWsamc@12345 -B ZCC_CUST > ./zcccust-`date +%Y-%m-%d`.sql' >> ./commands.sh
+echo 'mysqldump --compatible=ansi -u root -pWsamc@12345 -B ZCC_SSO > ./zccsso-`date +%Y-%m-%d`.sql' >> ./commands.sh
+echo 'mysqldump --compatible=ansi -u root -pWsamc@12345 -B ZCC_WECHAT > ./zccwechat-`date +%Y-%m-%d`.sql' >> ./commands.sh
 ssh chenwei@10.20.100.238 '[ ! -d /home/chenwei/tmp ] && mkdir -p /home/chenwei/tmp'
 scp ./commands.sh chenwei@10.20.100.238:/home/chenwei/tmp/commands.sh
 ssh chenwei@10.20.100.238 'chmod 755 /home/chenwei/tmp/commands.sh && /home/chenwei/tmp/commands.sh'

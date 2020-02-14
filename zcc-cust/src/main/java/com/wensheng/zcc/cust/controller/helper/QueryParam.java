@@ -11,8 +11,9 @@ public class QueryParam {
   int custType;
   String city;
   String name;
-  Integer trdType;
-  List<Integer> investScales;
+  Integer itemType;
+  List<Integer> investDebtScales;
+  List<Integer> investTrdScales;
   PageInfo pageInfo;
   int exportSize = -1;
 

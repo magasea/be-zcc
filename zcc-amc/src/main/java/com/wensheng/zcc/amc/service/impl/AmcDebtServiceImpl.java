@@ -169,6 +169,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   ComnFuncServiceBlockingStub comnfuncServiceStub;
 
 
+  @Autowired
+  AmcMiscServiceImpl amcMiscService;
+
   @Override
   public synchronized DebtImage  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc,
       ImageClassEnum imageClass) {
@@ -224,6 +227,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @CacheEvict
   public AmcDebtVo create(AmcDebt amcDebt) {
     amcDebtMapper.insertSelective(amcDebt);
+    amcDebt.setZccDebtCode(amcMiscService.generateZccDebtCode(amcDebt.getDebtpackId(), amcDebt.getId()));
+    amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
     return convertDo2Vo(amcDebt);
   }
 

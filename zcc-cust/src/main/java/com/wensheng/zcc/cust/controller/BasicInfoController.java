@@ -6,7 +6,9 @@ import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
+import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PersonSexEnum;
+import com.wensheng.zcc.cust.module.helper.sync.BidTypeEnum;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import com.wensheng.zcc.cust.service.GeoInfoService;
 import java.util.ArrayList;
@@ -50,8 +52,19 @@ public class BasicInfoController {
   public List<String> getInvestTypes(){
 
     List<String> result = new ArrayList<>();
-    for(InvestTypeEnum investTypeEnum : InvestTypeEnum.values()){
-      result.add(String.format("%d:%s", investTypeEnum.getId(), investTypeEnum.getName()));
+    for(ItemTypeEnum itemTypeEnum : ItemTypeEnum.values()){
+      result.add(String.format("%d:%s", itemTypeEnum.getId(), itemTypeEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/itemSubType", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getItemSubType(){
+
+    List<String> result = new ArrayList<>();
+    for(BidTypeEnum bidTypeEnum : BidTypeEnum.values()){
+      result.add(String.format("%d:%s", bidTypeEnum.getId(), bidTypeEnum.getCname()));
     }
     return result;
   }

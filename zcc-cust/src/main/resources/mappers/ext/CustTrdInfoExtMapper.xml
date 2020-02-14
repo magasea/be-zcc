@@ -4,23 +4,22 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_sub_type" jdbcType="INTEGER" property="itemSubType" />
     <result column="trd_type" jdbcType="INTEGER" property="trdType" />
     <result column="info_title" jdbcType="VARCHAR" property="infoTitle" />
     <result column="pack_count" jdbcType="INTEGER" property="packCount" />
     <result column="info_id" jdbcType="CHAR" property="infoId" />
     <result column="info_source" jdbcType="VARCHAR" property="infoSource" />
-    <result column="info_website" jdbcType="VARCHAR" property="infoWebsite" />
     <result column="info_url" jdbcType="VARCHAR" property="infoUrl" />
+    <result column="debt_province" jdbcType="CHAR" property="debtProvince" />
     <result column="trd_province" jdbcType="CHAR" property="trdProvince" />
     <result column="debt_city" jdbcType="CHAR" property="debtCity" />
     <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />
     <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />
-    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
-    <result column="interest_amount" jdbcType="BIGINT" property="interestAmount" />
-    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
+    <result column="total_debt_amount" jdbcType="BIGINT" property="totalDebtAmount" />
     <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
-    <result column="pub_date" jdbcType="DATE" property="pubDate" />
+    <result column="pub_date" jdbcType="TIMESTAMP" property="pubDate" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
@@ -30,6 +29,8 @@
     <result column="seller_name" jdbcType="CHAR" property="sellerName" />
     <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />
     <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -60,59 +61,30 @@
       </foreach>
     </where>
   </sql>
-  <sql id="Update_By_Example_Where_Clause">
-    <where>
-      <foreach collection="example.oredCriteria" item="criteria" separator="or">
-        <if test="criteria.valid">
-          <trim prefix="(" prefixOverrides="and" suffix=")">
-            <foreach collection="criteria.criteria" item="criterion">
-              <choose>
-                <when test="criterion.noValue">
-                  and ${criterion.condition}
-                </when>
-                <when test="criterion.singleValue">
-                  and ${criterion.condition} #{criterion.value}
-                </when>
-                <when test="criterion.betweenValue">
-                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
-                </when>
-                <when test="criterion.listValue">
-                  and ${criterion.condition}
-                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
-                    #{listItem}
-                  </foreach>
-                </when>
-              </choose>
-            </foreach>
-          </trim>
-        </if>
-      </foreach>
-    </where>
-  </sql>
+
   <sql id="Base_Column_List">
-    id, item_type, trd_type, info_title, pack_count, info_id, info_source, info_website, 
-    info_url, trd_province, debt_city, trd_amount_orig, trd_amount, base_amount, interest_amount, 
-    total_amount, trd_status, trd_date, update_time, notes, buyer_type, buyer_id, seller_type,
-    seller_id, trd_contactor_name, trd_contactor_addr
+    id, item_type, item_sub_type, trd_type, info_title, pack_count, info_id, info_source,
+    info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, total_debt_amount,
+    trd_status, trd_date, pub_date, update_time, notes, buyer_type, buyer_id, seller_type,
+    seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, data_quality
   </sql>
 
   <sql id="Base_List">
     ${prefix}id as id,
     ${prefix}item_type as item_type,
+    ${prefix}item_sub_type as item_sub_type,
     ${prefix}trd_type as trd_type,
     ${prefix}info_title as info_title,
     ${prefix}pack_count as pack_count,
     ${prefix}info_id as info_id,
     ${prefix}info_source as info_source,
-    ${prefix}info_website as info_website,
     ${prefix}info_url as info_url,
+    ${prefix}debt_province as debt_province,
     ${prefix}trd_province as trd_province,
     ${prefix}debt_city as debt_city,
     ${prefix}trd_amount_orig as trd_amount_orig,
     ${prefix}trd_amount as trd_amount,
-    ${prefix}base_amount as base_amount,
-    ${prefix}interest_amount as interest_amount,
-    ${prefix}total_amount as total_amount,
+    ${prefix}total_debt_amount as total_debt_amount,
     ${prefix}trd_status as trd_status,
     ${prefix}trd_date as trd_date,
     ${prefix}pub_date as pub_date,
@@ -124,7 +96,9 @@
     ${prefix}seller_id as seller_id,
     ${prefix}seller_name as seller_name,
     ${prefix}trd_contactor_name as trd_contactor_name,
-    ${prefix}trd_contactor_addr as trd_contactor_addr
+    ${prefix}trd_contactor_addr as trd_contactor_addr,
+    ${prefix}data_status as data_status,
+    ${prefix}data_quality as data_quality
   </sql>
 
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
@@ -151,433 +125,9 @@
     from CUST_TRD_INFO
     where id = #{id,jdbcType=BIGINT}
   </select>
-  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from CUST_TRD_INFO
-    where id = #{id,jdbcType=BIGINT}
-  </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample">
-    delete from CUST_TRD_INFO
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into CUST_TRD_INFO (item_type, trd_type, info_title, 
-      pack_count, info_id, info_source, 
-      info_website, info_url, trd_province, 
-      debt_city, trd_amount_orig, trd_amount, 
-      base_amount, interest_amount, total_amount, 
-      trd_status, trd_date, update_time,
-      notes, buyer_type, buyer_id, 
-      seller_type, seller_id, trd_contactor_name, 
-      trd_contactor_addr)
-    values (#{itemType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, 
-      #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
-      #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{trdProvince,jdbcType=CHAR}, 
-      #{debtCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, #{trdAmount,jdbcType=BIGINT}, 
-      #{baseAmount,jdbcType=BIGINT}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
-      #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, #{updateTime,jdbcType=TIMESTAMP},
-      #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
-      #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, #{trdContactorName,jdbcType=CHAR}, 
-      #{trdContactorAddr,jdbcType=CHAR})
-  </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
-    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
-      SELECT LAST_INSERT_ID()
-    </selectKey>
-    insert into CUST_TRD_INFO
-    <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="itemType != null">
-        item_type,
-      </if>
-      <if test="trdType != null">
-        trd_type,
-      </if>
-      <if test="infoTitle != null">
-        info_title,
-      </if>
-      <if test="packCount != null">
-        pack_count,
-      </if>
-      <if test="infoId != null">
-        info_id,
-      </if>
-      <if test="infoSource != null">
-        info_source,
-      </if>
-      <if test="infoWebsite != null">
-        info_website,
-      </if>
-      <if test="infoUrl != null">
-        info_url,
-      </if>
-      <if test="trdProvince != null">
-        trd_province,
-      </if>
-      <if test="debtCity != null">
-        debt_city,
-      </if>
-      <if test="trdAmountOrig != null">
-        trd_amount_orig,
-      </if>
-      <if test="trdAmount != null">
-        trd_amount,
-      </if>
-      <if test="baseAmount != null">
-        base_amount,
-      </if>
-      <if test="interestAmount != null">
-        interest_amount,
-      </if>
-      <if test="totalAmount != null">
-        total_amount,
-      </if>
-      <if test="trdStatus != null">
-        trd_status,
-      </if>
-      <if test="trdDate != null">
-        trd_date,
-      </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
-      <if test="notes != null">
-        notes,
-      </if>
-      <if test="buyerType != null">
-        buyer_type,
-      </if>
-      <if test="buyerId != null">
-        buyer_id,
-      </if>
-      <if test="sellerType != null">
-        seller_type,
-      </if>
-      <if test="sellerId != null">
-        seller_id,
-      </if>
-      <if test="trdContactorName != null">
-        trd_contactor_name,
-      </if>
-      <if test="trdContactorAddr != null">
-        trd_contactor_addr,
-      </if>
-    </trim>
-    <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="itemType != null">
-        #{itemType,jdbcType=INTEGER},
-      </if>
-      <if test="trdType != null">
-        #{trdType,jdbcType=INTEGER},
-      </if>
-      <if test="infoTitle != null">
-        #{infoTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="packCount != null">
-        #{packCount,jdbcType=INTEGER},
-      </if>
-      <if test="infoId != null">
-        #{infoId,jdbcType=CHAR},
-      </if>
-      <if test="infoSource != null">
-        #{infoSource,jdbcType=VARCHAR},
-      </if>
-      <if test="infoWebsite != null">
-        #{infoWebsite,jdbcType=VARCHAR},
-      </if>
-      <if test="infoUrl != null">
-        #{infoUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="trdProvince != null">
-        #{trdProvince,jdbcType=CHAR},
-      </if>
-      <if test="debtCity != null">
-        #{debtCity,jdbcType=CHAR},
-      </if>
-      <if test="trdAmountOrig != null">
-        #{trdAmountOrig,jdbcType=CHAR},
-      </if>
-      <if test="trdAmount != null">
-        #{trdAmount,jdbcType=BIGINT},
-      </if>
-      <if test="baseAmount != null">
-        #{baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="interestAmount != null">
-        #{interestAmount,jdbcType=BIGINT},
-      </if>
-      <if test="totalAmount != null">
-        #{totalAmount,jdbcType=BIGINT},
-      </if>
-      <if test="trdStatus != null">
-        #{trdStatus,jdbcType=INTEGER},
-      </if>
-      <if test="trdDate != null">
-        #{trdDate,jdbcType=DATE},
-      </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="notes != null">
-        #{notes,jdbcType=VARCHAR},
-      </if>
-      <if test="buyerType != null">
-        #{buyerType,jdbcType=INTEGER},
-      </if>
-      <if test="buyerId != null">
-        #{buyerId,jdbcType=BIGINT},
-      </if>
-      <if test="sellerType != null">
-        #{sellerType,jdbcType=INTEGER},
-      </if>
-      <if test="sellerId != null">
-        #{sellerId,jdbcType=BIGINT},
-      </if>
-      <if test="trdContactorName != null">
-        #{trdContactorName,jdbcType=CHAR},
-      </if>
-      <if test="trdContactorAddr != null">
-        #{trdContactorAddr,jdbcType=CHAR},
-      </if>
-    </trim>
-  </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultType="java.lang.Long">
-    select count(*) from CUST_TRD_INFO
-    <if test="_parameter != null">
-      <include refid="Example_Where_Clause" />
-    </if>
-  </select>
-  <update id="updateByExampleSelective" parameterType="map">
-    update CUST_TRD_INFO
-    <set>
-      <if test="record.id != null">
-        id = #{record.id,jdbcType=BIGINT},
-      </if>
-      <if test="record.itemType != null">
-        item_type = #{record.itemType,jdbcType=INTEGER},
-      </if>
-      <if test="record.trdType != null">
-        trd_type = #{record.trdType,jdbcType=INTEGER},
-      </if>
-      <if test="record.infoTitle != null">
-        info_title = #{record.infoTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="record.packCount != null">
-        pack_count = #{record.packCount,jdbcType=INTEGER},
-      </if>
-      <if test="record.infoId != null">
-        info_id = #{record.infoId,jdbcType=CHAR},
-      </if>
-      <if test="record.infoSource != null">
-        info_source = #{record.infoSource,jdbcType=VARCHAR},
-      </if>
-      <if test="record.infoWebsite != null">
-        info_website = #{record.infoWebsite,jdbcType=VARCHAR},
-      </if>
-      <if test="record.infoUrl != null">
-        info_url = #{record.infoUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="record.trdProvince != null">
-        trd_province = #{record.trdProvince,jdbcType=CHAR},
-      </if>
-      <if test="record.debtCity != null">
-        debt_city = #{record.debtCity,jdbcType=CHAR},
-      </if>
-      <if test="record.trdAmountOrig != null">
-        trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
-      </if>
-      <if test="record.trdAmount != null">
-        trd_amount = #{record.trdAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.baseAmount != null">
-        base_amount = #{record.baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.interestAmount != null">
-        interest_amount = #{record.interestAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.totalAmount != null">
-        total_amount = #{record.totalAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.trdStatus != null">
-        trd_status = #{record.trdStatus,jdbcType=INTEGER},
-      </if>
-      <if test="record.trdDate != null">
-        trd_date = #{record.trdDate,jdbcType=DATE},
-      </if>
-      <if test="record.updateTime != null">
-        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.notes != null">
-        notes = #{record.notes,jdbcType=VARCHAR},
-      </if>
-      <if test="record.buyerType != null">
-        buyer_type = #{record.buyerType,jdbcType=INTEGER},
-      </if>
-      <if test="record.buyerId != null">
-        buyer_id = #{record.buyerId,jdbcType=BIGINT},
-      </if>
-      <if test="record.sellerType != null">
-        seller_type = #{record.sellerType,jdbcType=INTEGER},
-      </if>
-      <if test="record.sellerId != null">
-        seller_id = #{record.sellerId,jdbcType=BIGINT},
-      </if>
-      <if test="record.trdContactorName != null">
-        trd_contactor_name = #{record.trdContactorName,jdbcType=CHAR},
-      </if>
-      <if test="record.trdContactorAddr != null">
-        trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR},
-      </if>
-    </set>
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByExample" parameterType="map">
-    update CUST_TRD_INFO
-    set id = #{record.id,jdbcType=BIGINT},
-      item_type = #{record.itemType,jdbcType=INTEGER},
-      trd_type = #{record.trdType,jdbcType=INTEGER},
-      info_title = #{record.infoTitle,jdbcType=VARCHAR},
-      pack_count = #{record.packCount,jdbcType=INTEGER},
-      info_id = #{record.infoId,jdbcType=CHAR},
-      info_source = #{record.infoSource,jdbcType=VARCHAR},
-      info_website = #{record.infoWebsite,jdbcType=VARCHAR},
-      info_url = #{record.infoUrl,jdbcType=VARCHAR},
-      trd_province = #{record.trdProvince,jdbcType=CHAR},
-      debt_city = #{record.debtCity,jdbcType=CHAR},
-      trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
-      trd_amount = #{record.trdAmount,jdbcType=BIGINT},
-      base_amount = #{record.baseAmount,jdbcType=BIGINT},
-      interest_amount = #{record.interestAmount,jdbcType=BIGINT},
-      total_amount = #{record.totalAmount,jdbcType=BIGINT},
-      trd_status = #{record.trdStatus,jdbcType=INTEGER},
-      trd_date = #{record.trdDate,jdbcType=DATE},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      notes = #{record.notes,jdbcType=VARCHAR},
-      buyer_type = #{record.buyerType,jdbcType=INTEGER},
-      buyer_id = #{record.buyerId,jdbcType=BIGINT},
-      seller_type = #{record.sellerType,jdbcType=INTEGER},
-      seller_id = #{record.sellerId,jdbcType=BIGINT},
-      trd_contactor_name = #{record.trdContactorName,jdbcType=CHAR},
-      trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR}
-    <if test="_parameter != null">
-      <include refid="Update_By_Example_Where_Clause" />
-    </if>
-  </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
-    update CUST_TRD_INFO
-    <set>
-      <if test="itemType != null">
-        item_type = #{itemType,jdbcType=INTEGER},
-      </if>
-      <if test="trdType != null">
-        trd_type = #{trdType,jdbcType=INTEGER},
-      </if>
-      <if test="infoTitle != null">
-        info_title = #{infoTitle,jdbcType=VARCHAR},
-      </if>
-      <if test="packCount != null">
-        pack_count = #{packCount,jdbcType=INTEGER},
-      </if>
-      <if test="infoId != null">
-        info_id = #{infoId,jdbcType=CHAR},
-      </if>
-      <if test="infoSource != null">
-        info_source = #{infoSource,jdbcType=VARCHAR},
-      </if>
-      <if test="infoWebsite != null">
-        info_website = #{infoWebsite,jdbcType=VARCHAR},
-      </if>
-      <if test="infoUrl != null">
-        info_url = #{infoUrl,jdbcType=VARCHAR},
-      </if>
-      <if test="trdProvince != null">
-        trd_province = #{trdProvince,jdbcType=CHAR},
-      </if>
-      <if test="debtCity != null">
-        debt_city = #{debtCity,jdbcType=CHAR},
-      </if>
-      <if test="trdAmountOrig != null">
-        trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
-      </if>
-      <if test="trdAmount != null">
-        trd_amount = #{trdAmount,jdbcType=BIGINT},
-      </if>
-      <if test="baseAmount != null">
-        base_amount = #{baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="interestAmount != null">
-        interest_amount = #{interestAmount,jdbcType=BIGINT},
-      </if>
-      <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=BIGINT},
-      </if>
-      <if test="trdStatus != null">
-        trd_status = #{trdStatus,jdbcType=INTEGER},
-      </if>
-      <if test="trdDate != null">
-        trd_date = #{trdDate,jdbcType=DATE},
-      </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="notes != null">
-        notes = #{notes,jdbcType=VARCHAR},
-      </if>
-      <if test="buyerType != null">
-        buyer_type = #{buyerType,jdbcType=INTEGER},
-      </if>
-      <if test="buyerId != null">
-        buyer_id = #{buyerId,jdbcType=BIGINT},
-      </if>
-      <if test="sellerType != null">
-        seller_type = #{sellerType,jdbcType=INTEGER},
-      </if>
-      <if test="sellerId != null">
-        seller_id = #{sellerId,jdbcType=BIGINT},
-      </if>
-      <if test="trdContactorName != null">
-        trd_contactor_name = #{trdContactorName,jdbcType=CHAR},
-      </if>
-      <if test="trdContactorAddr != null">
-        trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR},
-      </if>
-    </set>
-    where id = #{id,jdbcType=BIGINT}
-  </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
-    update CUST_TRD_INFO
-    set item_type = #{itemType,jdbcType=INTEGER},
-      trd_type = #{trdType,jdbcType=INTEGER},
-      info_title = #{infoTitle,jdbcType=VARCHAR},
-      pack_count = #{packCount,jdbcType=INTEGER},
-      info_id = #{infoId,jdbcType=CHAR},
-      info_source = #{infoSource,jdbcType=VARCHAR},
-      info_website = #{infoWebsite,jdbcType=VARCHAR},
-      info_url = #{infoUrl,jdbcType=VARCHAR},
-      trd_province = #{trdProvince,jdbcType=CHAR},
-      debt_city = #{debtCity,jdbcType=CHAR},
-      trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
-      trd_amount = #{trdAmount,jdbcType=BIGINT},
-      base_amount = #{baseAmount,jdbcType=BIGINT},
-      interest_amount = #{interestAmount,jdbcType=BIGINT},
-      total_amount = #{totalAmount,jdbcType=BIGINT},
-      trd_status = #{trdStatus,jdbcType=INTEGER},
-      trd_date = #{trdDate,jdbcType=DATE},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
-      notes = #{notes,jdbcType=VARCHAR},
-      buyer_type = #{buyerType,jdbcType=INTEGER},
-      buyer_id = #{buyerId,jdbcType=BIGINT},
-      seller_type = #{sellerType,jdbcType=INTEGER},
-      seller_id = #{sellerId,jdbcType=BIGINT},
-      trd_contactor_name = #{trdContactorName,jdbcType=CHAR},
-      trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR}
-    where id = #{id,jdbcType=BIGINT}
-  </update>
+
+
+
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
     <if test="distinct">

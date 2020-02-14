@@ -13,7 +13,7 @@
     <result column="total_amount_desc" jdbcType="VARCHAR" property="totalAmountDesc" />
     <result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />
     <result column="court_id" jdbcType="BIGINT" property="courtId" />
-    <result column="amc_debt_code" jdbcType="VARCHAR" property="amcDebtCode" />
+    <result column="zcc_debt_code" jdbcType="VARCHAR" property="zccDebtCode" />
     <result column="publish_state" jdbcType="INTEGER" property="publishState" />
     <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
     <result column="lawsuit_state" jdbcType="INTEGER" property="lawsuitState" />
@@ -92,7 +92,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
-    total_amount_desc, settle_date, court_id, amc_debt_code, publish_state, publish_date, 
+    total_amount_desc, settle_date, court_id, zcc_debt_code, publish_state, publish_date, 
     lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor2_id, 
     is_recommanded, guarant_type, recomm_start_date, recomm_end_date, orig_creditor_id, 
     brief_desc, update_by, update_date, created_by, created_date
@@ -135,7 +135,7 @@
     insert into AMC_DEBT (debtpack_id, amc_id, title, 
       base_amount, base_amount_desc, base_date, 
       total_amount, total_amount_desc, settle_date, 
-      court_id, amc_debt_code, publish_state, 
+      court_id, zcc_debt_code, publish_state, 
       publish_date, lawsuit_state, lawsuit_state_desc, 
       valuation, amc_contactor_id, amc_contactor2_id, 
       is_recommanded, guarant_type, recomm_start_date, 
@@ -145,7 +145,7 @@
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
-      #{courtId,jdbcType=BIGINT}, #{amcDebtCode,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, 
+      #{courtId,jdbcType=BIGINT}, #{zccDebtCode,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, 
       #{publishDate,jdbcType=TIMESTAMP}, #{lawsuitState,jdbcType=INTEGER}, #{lawsuitStateDesc,jdbcType=VARCHAR}, 
       #{valuation,jdbcType=BIGINT}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactor2Id,jdbcType=BIGINT}, 
       #{isRecommanded,jdbcType=INTEGER}, #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, 
@@ -189,8 +189,8 @@
       <if test="courtId != null">
         court_id,
       </if>
-      <if test="amcDebtCode != null">
-        amc_debt_code,
+      <if test="zccDebtCode != null">
+        zcc_debt_code,
       </if>
       <if test="publishState != null">
         publish_state,
@@ -275,8 +275,8 @@
       <if test="courtId != null">
         #{courtId,jdbcType=BIGINT},
       </if>
-      <if test="amcDebtCode != null">
-        #{amcDebtCode,jdbcType=VARCHAR},
+      <if test="zccDebtCode != null">
+        #{zccDebtCode,jdbcType=VARCHAR},
       </if>
       <if test="publishState != null">
         #{publishState,jdbcType=INTEGER},
@@ -373,8 +373,8 @@
       <if test="record.courtId != null">
         court_id = #{record.courtId,jdbcType=BIGINT},
       </if>
-      <if test="record.amcDebtCode != null">
-        amc_debt_code = #{record.amcDebtCode,jdbcType=VARCHAR},
+      <if test="record.zccDebtCode != null">
+        zcc_debt_code = #{record.zccDebtCode,jdbcType=VARCHAR},
       </if>
       <if test="record.publishState != null">
         publish_state = #{record.publishState,jdbcType=INTEGER},
@@ -445,7 +445,7 @@
       total_amount_desc = #{record.totalAmountDesc,jdbcType=VARCHAR},
       settle_date = #{record.settleDate,jdbcType=TIMESTAMP},
       court_id = #{record.courtId,jdbcType=BIGINT},
-      amc_debt_code = #{record.amcDebtCode,jdbcType=VARCHAR},
+      zcc_debt_code = #{record.zccDebtCode,jdbcType=VARCHAR},
       publish_state = #{record.publishState,jdbcType=INTEGER},
       publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
       lawsuit_state = #{record.lawsuitState,jdbcType=INTEGER},
@@ -500,8 +500,8 @@
       <if test="courtId != null">
         court_id = #{courtId,jdbcType=BIGINT},
       </if>
-      <if test="amcDebtCode != null">
-        amc_debt_code = #{amcDebtCode,jdbcType=VARCHAR},
+      <if test="zccDebtCode != null">
+        zcc_debt_code = #{zccDebtCode,jdbcType=VARCHAR},
       </if>
       <if test="publishState != null">
         publish_state = #{publishState,jdbcType=INTEGER},
@@ -569,7 +569,7 @@
       total_amount_desc = #{totalAmountDesc,jdbcType=VARCHAR},
       settle_date = #{settleDate,jdbcType=TIMESTAMP},
       court_id = #{courtId,jdbcType=BIGINT},
-      amc_debt_code = #{amcDebtCode,jdbcType=VARCHAR},
+      zcc_debt_code = #{zccDebtCode,jdbcType=VARCHAR},
       publish_state = #{publishState,jdbcType=INTEGER},
       publish_date = #{publishDate,jdbcType=TIMESTAMP},
       lawsuit_state = #{lawsuitState,jdbcType=INTEGER},

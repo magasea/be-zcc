@@ -242,7 +242,7 @@
 //          custTrdInfo.getBuyerType());
 //      custTrdInfoUpdate.setId(custTrdInfo.getId());
 //      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoUpdate);
-//      return custTrdInfoUpdate.getTotalAmount() > 0;
+//      return custTrdInfoUpdate.getTotalDebtAmount() > 0;
 //
 //  }
 //
@@ -270,7 +270,7 @@
 //    importTrdInfoRecord.setTrdId(custTrdInfo.getId());
 //    mongoTemplate.save(importTrdInfoRecord);
 //    }
-//    return custTrdInfo.getTotalAmount() > 0;
+//    return custTrdInfo.getTotalDebtAmount() > 0;
 //
 //  }
 //
@@ -294,11 +294,11 @@
 //    }
 //
 //    custTrdInfo.setSellerId(sellerRecord.getId());
-//    custTrdInfo.setTotalAmount(trdInfoOrig.getTrdAmount());
+//    custTrdInfo.setTotalDebtAmount(trdInfoOrig.getDebtTotalAmount());
 //    custTrdInfo.setBuyerId(custId);
 //    custTrdInfo.setBuyerType(custType);
 //    custTrdInfo.setInfoId(trdInfoOrig.getId());
-//    custTrdInfo.setTrdType(trdInfoOrig.getInvType());
+//    custTrdInfo.setItemType(trdInfoOrig.getInvType());
 //    custTrdInfo.setInfoTitle(trdInfoOrig.getTitle());
 //    if(trdInfoOrig.getUpdateTime() != null && !trdInfoOrig.getUpdateTime().equals("null")){
 //      custTrdInfo.setInfoTime(new Date(trdInfoOrig.getUpdateTime()));

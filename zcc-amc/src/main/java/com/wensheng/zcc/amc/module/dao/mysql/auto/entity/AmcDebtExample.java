@@ -795,73 +795,73 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeIsNull() {
-            addCriterion("amc_debt_code is null");
+        public Criteria andZccDebtCodeIsNull() {
+            addCriterion("zcc_debt_code is null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeIsNotNull() {
-            addCriterion("amc_debt_code is not null");
+        public Criteria andZccDebtCodeIsNotNull() {
+            addCriterion("zcc_debt_code is not null");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeEqualTo(String value) {
-            addCriterion("amc_debt_code =", value, "amcDebtCode");
+        public Criteria andZccDebtCodeEqualTo(String value) {
+            addCriterion("zcc_debt_code =", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeNotEqualTo(String value) {
-            addCriterion("amc_debt_code <>", value, "amcDebtCode");
+        public Criteria andZccDebtCodeNotEqualTo(String value) {
+            addCriterion("zcc_debt_code <>", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeGreaterThan(String value) {
-            addCriterion("amc_debt_code >", value, "amcDebtCode");
+        public Criteria andZccDebtCodeGreaterThan(String value) {
+            addCriterion("zcc_debt_code >", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeGreaterThanOrEqualTo(String value) {
-            addCriterion("amc_debt_code >=", value, "amcDebtCode");
+        public Criteria andZccDebtCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("zcc_debt_code >=", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeLessThan(String value) {
-            addCriterion("amc_debt_code <", value, "amcDebtCode");
+        public Criteria andZccDebtCodeLessThan(String value) {
+            addCriterion("zcc_debt_code <", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeLessThanOrEqualTo(String value) {
-            addCriterion("amc_debt_code <=", value, "amcDebtCode");
+        public Criteria andZccDebtCodeLessThanOrEqualTo(String value) {
+            addCriterion("zcc_debt_code <=", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeLike(String value) {
-            addCriterion("amc_debt_code like", value, "amcDebtCode");
+        public Criteria andZccDebtCodeLike(String value) {
+            addCriterion("zcc_debt_code like", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeNotLike(String value) {
-            addCriterion("amc_debt_code not like", value, "amcDebtCode");
+        public Criteria andZccDebtCodeNotLike(String value) {
+            addCriterion("zcc_debt_code not like", value, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeIn(List<String> values) {
-            addCriterion("amc_debt_code in", values, "amcDebtCode");
+        public Criteria andZccDebtCodeIn(List<String> values) {
+            addCriterion("zcc_debt_code in", values, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeNotIn(List<String> values) {
-            addCriterion("amc_debt_code not in", values, "amcDebtCode");
+        public Criteria andZccDebtCodeNotIn(List<String> values) {
+            addCriterion("zcc_debt_code not in", values, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeBetween(String value1, String value2) {
-            addCriterion("amc_debt_code between", value1, value2, "amcDebtCode");
+        public Criteria andZccDebtCodeBetween(String value1, String value2) {
+            addCriterion("zcc_debt_code between", value1, value2, "zccDebtCode");
             return (Criteria) this;
         }
 
-        public Criteria andAmcDebtCodeNotBetween(String value1, String value2) {
-            addCriterion("amc_debt_code not between", value1, value2, "amcDebtCode");
+        public Criteria andZccDebtCodeNotBetween(String value1, String value2) {
+            addCriterion("zcc_debt_code not between", value1, value2, "zccDebtCode");
             return (Criteria) this;
         }
 

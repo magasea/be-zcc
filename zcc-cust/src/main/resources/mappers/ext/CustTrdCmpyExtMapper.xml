@@ -53,29 +53,33 @@
   <sql id="cust_trd_info_list">
     ${prefix}id as ${alias}id,
     ${prefix}item_type as ${alias}item_type,
+    ${prefix}item_sub_type as ${alias}item_sub_type,
     ${prefix}trd_type as ${alias}trd_type,
     ${prefix}info_title as ${alias}info_title,
     ${prefix}pack_count as ${alias}pack_count,
     ${prefix}info_id as ${alias}info_id,
     ${prefix}info_source as ${alias}info_source,
-    ${prefix}info_website as ${alias}info_website,
     ${prefix}info_url as ${alias}info_url,
+    ${prefix}debt_province as ${alias}debt_province,
     ${prefix}trd_province as ${alias}trd_province,
     ${prefix}debt_city as ${alias}debt_city,
     ${prefix}trd_amount_orig as ${alias}trd_amount_orig,
     ${prefix}trd_amount as ${alias}trd_amount,
-    ${prefix}base_amount as ${alias}base_amount,
-    ${prefix}interest_amount as ${alias}interest_amount,
-    ${prefix}total_amount as ${alias}total_amount,
+    ${prefix}total_debt_amount as ${alias}total_debt_amount,
     ${prefix}trd_status as ${alias}trd_status,
     ${prefix}trd_date as ${alias}trd_date,
+    ${prefix}pub_date as ${alias}pub_date,
     ${prefix}update_time as ${alias}update_time,
     ${prefix}notes as ${alias}notes,
     ${prefix}buyer_type as ${alias}buyer_type,
     ${prefix}buyer_id as ${alias}buyer_id,
     ${prefix}seller_type as ${alias}seller_type,
     ${prefix}seller_id as ${alias}seller_id,
-    ${prefix}data_status as ${alias}data_status
+    ${prefix}seller_name as ${alias}seller_name,
+    ${prefix}trd_contactor_name as ${alias}trd_contactor_name,
+    ${prefix}trd_contactor_addr as ${alias}trd_contactor_addr,
+    ${prefix}data_status as ${alias}data_status,
+    ${prefix}data_quality as ${alias}data_quality
   </sql>
 
 <!--  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"-->
@@ -176,7 +180,7 @@
       where ${whereClause}
     </if>
     <if test="orderByClause != null">
-      order by ${orderByClause}
+      order by ${orderByClause}CustInfoServiceImpl
     </if>
   </select>
 

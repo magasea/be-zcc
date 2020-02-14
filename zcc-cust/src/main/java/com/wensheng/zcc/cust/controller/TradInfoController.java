@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.service.ScriptSysService;
+import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.service.TrdInfoService;
 import java.util.List;
@@ -31,6 +32,10 @@ public class TradInfoController {
   SyncService syncService;
 
 
+  @Autowired
+  SyncBidService syncBidService;
+
+
   @RequestMapping(value = "/addTrdInfo", method = RequestMethod.POST)
   @ResponseBody
   public CustTrdInfo addTradInfo(@RequestBody CustTrdInfo custTrdInfo){
@@ -54,6 +59,12 @@ public class TradInfoController {
   @ResponseBody
   public String doSynchronization(@RequestBody List<String> provinces) throws Exception {
     return syncService.syncWithTrdInfo(provinces);
+  }
+
+  @RequestMapping(value = "/doBidSynchronization", method = RequestMethod.POST)
+  @ResponseBody
+  public String doBidSynchronization(@RequestBody List<String> provinces) throws Exception {
+    return syncBidService.syncWithTrdInfo(provinces);
   }
   @RequestMapping(value = "/makeUpData/trdDate", method = RequestMethod.GET)
   @ResponseBody
@@ -87,5 +98,11 @@ public class TradInfoController {
   @ResponseBody
   public void patchTrdUrl() throws Exception {
     syncService.patchTrdUrl();
+  }
+
+  @RequestMapping(value = "/refactData/patchTrdContactor", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchTrdContactor() throws Exception {
+    syncService.makeUpBuyerContactorOfTrade();
   }
 }

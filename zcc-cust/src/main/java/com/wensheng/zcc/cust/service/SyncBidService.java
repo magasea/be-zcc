@@ -3,15 +3,12 @@ package com.wensheng.zcc.cust.service;
 import java.text.ParseException;
 import java.util.List;
 
-public interface SyncService {
+public interface SyncBidService {
 
   public String syncWithTrdInfo(List<String> provinces);
   public void syncCustInfo();
 
-  public boolean makeUpDataForMissDateOfTrade() throws ParseException;
-  public boolean makeUpDataForProvinceCodeOfTrade() throws ParseException;
-  public boolean makeCheckProvinceCodeOfTrade() throws ParseException;
-  public boolean makeUpBuyerContactorOfTrade() throws Exception;
+
 
   public void updateBuyerCompanyInfoByIds(String id);
   String syncWithTrdInfoSchedule();

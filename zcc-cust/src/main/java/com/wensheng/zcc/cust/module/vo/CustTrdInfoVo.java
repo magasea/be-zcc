@@ -10,7 +10,9 @@ public class CustTrdInfoVo {
   String custName;
   Map<Integer, Integer> investType2Counts;
   Integer trdCount;
+  Long debtTotalAmount;
   Long trdTotalAmount;
+
   Map<String, Integer> intrestCities;
   String phone;
   String address;

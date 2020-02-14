@@ -21,9 +21,7 @@
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="county" jdbcType="CHAR" property="county" />
     <result column="street" jdbcType="CHAR" property="street" />
-    <result column="community_name" jdbcType="CHAR" property="communityName" />
     <result column="building_name" jdbcType="CHAR" property="buildingName" />
-    <result column="industrial_park" jdbcType="CHAR" property="industrialPark" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
@@ -91,8 +89,8 @@
   <sql id="Base_Column_List">
     id, title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
     zcc_asset_code, valuation, debt_id, area, land_area, land_area_unit, publish_date, 
-    province, city, county, street, community_name, building_name, industrial_park, update_by, 
-    update_date, created_by, created_date, amc_contactor_id
+    province, city, county, street, building_name, update_by, update_date, created_by, 
+    created_date, amc_contactor_id
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -134,19 +132,17 @@
       amc_asset_code, zcc_asset_code, valuation, 
       debt_id, area, land_area, 
       land_area_unit, publish_date, province, 
-      city, county, street, community_name, 
-      building_name, industrial_park, update_by, 
-      update_date, created_by, created_date, 
-      amc_contactor_id)
+      city, county, street, building_name, 
+      update_by, update_date, created_by, 
+      created_date, amc_contactor_id)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
       #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, 
       #{debtId,jdbcType=BIGINT}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
       #{landAreaUnit,jdbcType=INTEGER}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{communityName,jdbcType=CHAR}, 
-      #{buildingName,jdbcType=CHAR}, #{industrialPark,jdbcType=CHAR}, #{updateBy,jdbcType=BIGINT}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}, 
-      #{amcContactorId,jdbcType=BIGINT})
+      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
+      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -208,14 +204,8 @@
       <if test="street != null">
         street,
       </if>
-      <if test="communityName != null">
-        community_name,
-      </if>
       <if test="buildingName != null">
         building_name,
-      </if>
-      <if test="industrialPark != null">
-        industrial_park,
       </if>
       <if test="updateBy != null">
         update_by,
@@ -288,14 +278,8 @@
       <if test="street != null">
         #{street,jdbcType=CHAR},
       </if>
-      <if test="communityName != null">
-        #{communityName,jdbcType=CHAR},
-      </if>
       <if test="buildingName != null">
         #{buildingName,jdbcType=CHAR},
-      </if>
-      <if test="industrialPark != null">
-        #{industrialPark,jdbcType=CHAR},
       </if>
       <if test="updateBy != null">
         #{updateBy,jdbcType=BIGINT},
@@ -380,14 +364,8 @@
       <if test="record.street != null">
         street = #{record.street,jdbcType=CHAR},
       </if>
-      <if test="record.communityName != null">
-        community_name = #{record.communityName,jdbcType=CHAR},
-      </if>
       <if test="record.buildingName != null">
         building_name = #{record.buildingName,jdbcType=CHAR},
-      </if>
-      <if test="record.industrialPark != null">
-        industrial_park = #{record.industrialPark,jdbcType=CHAR},
       </if>
       <if test="record.updateBy != null">
         update_by = #{record.updateBy,jdbcType=BIGINT},
@@ -430,9 +408,7 @@
       city = #{record.city,jdbcType=CHAR},
       county = #{record.county,jdbcType=CHAR},
       street = #{record.street,jdbcType=CHAR},
-      community_name = #{record.communityName,jdbcType=CHAR},
       building_name = #{record.buildingName,jdbcType=CHAR},
-      industrial_park = #{record.industrialPark,jdbcType=CHAR},
       update_by = #{record.updateBy,jdbcType=BIGINT},
       update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
@@ -499,14 +475,8 @@
       <if test="street != null">
         street = #{street,jdbcType=CHAR},
       </if>
-      <if test="communityName != null">
-        community_name = #{communityName,jdbcType=CHAR},
-      </if>
       <if test="buildingName != null">
         building_name = #{buildingName,jdbcType=CHAR},
-      </if>
-      <if test="industrialPark != null">
-        industrial_park = #{industrialPark,jdbcType=CHAR},
       </if>
       <if test="updateBy != null">
         update_by = #{updateBy,jdbcType=BIGINT},
@@ -546,9 +516,7 @@
       city = #{city,jdbcType=CHAR},
       county = #{county,jdbcType=CHAR},
       street = #{street,jdbcType=CHAR},
-      community_name = #{communityName,jdbcType=CHAR},
       building_name = #{buildingName,jdbcType=CHAR},
-      industrial_park = #{industrialPark,jdbcType=CHAR},
       update_by = #{updateBy,jdbcType=BIGINT},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},

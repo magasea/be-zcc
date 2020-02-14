@@ -4,21 +4,19 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="item_type" jdbcType="INTEGER" property="itemType" />
+    <result column="item_sub_type" jdbcType="INTEGER" property="itemSubType" />
     <result column="trd_type" jdbcType="INTEGER" property="trdType" />
     <result column="info_title" jdbcType="VARCHAR" property="infoTitle" />
     <result column="pack_count" jdbcType="INTEGER" property="packCount" />
     <result column="info_id" jdbcType="CHAR" property="infoId" />
     <result column="info_source" jdbcType="VARCHAR" property="infoSource" />
-    <result column="info_website" jdbcType="VARCHAR" property="infoWebsite" />
     <result column="info_url" jdbcType="VARCHAR" property="infoUrl" />
     <result column="debt_province" jdbcType="CHAR" property="debtProvince" />
     <result column="trd_province" jdbcType="CHAR" property="trdProvince" />
     <result column="debt_city" jdbcType="CHAR" property="debtCity" />
     <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />
     <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />
-    <result column="base_amount" jdbcType="BIGINT" property="baseAmount" />
-    <result column="interest_amount" jdbcType="BIGINT" property="interestAmount" />
-    <result column="total_amount" jdbcType="BIGINT" property="totalAmount" />
+    <result column="total_debt_amount" jdbcType="BIGINT" property="totalDebtAmount" />
     <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
     <result column="pub_date" jdbcType="TIMESTAMP" property="pubDate" />
@@ -93,11 +91,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, item_type, trd_type, info_title, pack_count, info_id, info_source, info_website, 
-    info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, base_amount, 
-    interest_amount, total_amount, trd_status, trd_date, pub_date, update_time, notes, 
-    buyer_type, buyer_id, seller_type, seller_id, seller_name, trd_contactor_name, trd_contactor_addr, 
-    data_status, data_quality
+    id, item_type, item_sub_type, trd_type, info_title, pack_count, info_id, info_source, 
+    info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, total_debt_amount, 
+    trd_status, trd_date, pub_date, update_time, notes, buyer_type, buyer_id, seller_type, 
+    seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, data_quality
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -134,28 +131,26 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_INFO (item_type, trd_type, info_title, 
-      pack_count, info_id, info_source, 
-      info_website, info_url, debt_province, 
+    insert into CUST_TRD_INFO (item_type, item_sub_type, trd_type, 
+      info_title, pack_count, info_id, 
+      info_source, info_url, debt_province, 
       trd_province, debt_city, trd_amount_orig, 
-      trd_amount, base_amount, interest_amount, 
-      total_amount, trd_status, trd_date, 
-      pub_date, update_time, notes, 
-      buyer_type, buyer_id, seller_type, 
-      seller_id, seller_name, trd_contactor_name, 
-      trd_contactor_addr, data_status, data_quality
-      )
-    values (#{itemType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, #{infoTitle,jdbcType=VARCHAR}, 
-      #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, #{infoSource,jdbcType=VARCHAR}, 
-      #{infoWebsite,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{debtProvince,jdbcType=CHAR}, 
+      trd_amount, total_debt_amount, trd_status, 
+      trd_date, pub_date, update_time, 
+      notes, buyer_type, buyer_id, 
+      seller_type, seller_id, seller_name, 
+      trd_contactor_name, trd_contactor_addr, data_status, 
+      data_quality)
+    values (#{itemType,jdbcType=INTEGER}, #{itemSubType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, 
+      #{infoTitle,jdbcType=VARCHAR}, #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, 
+      #{infoSource,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{debtProvince,jdbcType=CHAR}, 
       #{trdProvince,jdbcType=CHAR}, #{debtCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, 
-      #{trdAmount,jdbcType=BIGINT}, #{baseAmount,jdbcType=BIGINT}, #{interestAmount,jdbcType=BIGINT}, 
-      #{totalAmount,jdbcType=BIGINT}, #{trdStatus,jdbcType=INTEGER}, #{trdDate,jdbcType=DATE}, 
-      #{pubDate,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, 
-      #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, 
-      #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, 
-      #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}
-      )
+      #{trdAmount,jdbcType=BIGINT}, #{totalDebtAmount,jdbcType=BIGINT}, #{trdStatus,jdbcType=INTEGER}, 
+      #{trdDate,jdbcType=DATE}, #{pubDate,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
+      #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, 
+      #{trdContactorName,jdbcType=CHAR}, #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, 
+      #{dataQuality,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -165,6 +160,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="itemType != null">
         item_type,
+      </if>
+      <if test="itemSubType != null">
+        item_sub_type,
       </if>
       <if test="trdType != null">
         trd_type,
@@ -180,9 +178,6 @@
       </if>
       <if test="infoSource != null">
         info_source,
-      </if>
-      <if test="infoWebsite != null">
-        info_website,
       </if>
       <if test="infoUrl != null">
         info_url,
@@ -202,14 +197,8 @@
       <if test="trdAmount != null">
         trd_amount,
       </if>
-      <if test="baseAmount != null">
-        base_amount,
-      </if>
-      <if test="interestAmount != null">
-        interest_amount,
-      </if>
-      <if test="totalAmount != null">
-        total_amount,
+      <if test="totalDebtAmount != null">
+        total_debt_amount,
       </if>
       <if test="trdStatus != null">
         trd_status,
@@ -258,6 +247,9 @@
       <if test="itemType != null">
         #{itemType,jdbcType=INTEGER},
       </if>
+      <if test="itemSubType != null">
+        #{itemSubType,jdbcType=INTEGER},
+      </if>
       <if test="trdType != null">
         #{trdType,jdbcType=INTEGER},
       </if>
@@ -272,9 +264,6 @@
       </if>
       <if test="infoSource != null">
         #{infoSource,jdbcType=VARCHAR},
-      </if>
-      <if test="infoWebsite != null">
-        #{infoWebsite,jdbcType=VARCHAR},
       </if>
       <if test="infoUrl != null">
         #{infoUrl,jdbcType=VARCHAR},
@@ -294,14 +283,8 @@
       <if test="trdAmount != null">
         #{trdAmount,jdbcType=BIGINT},
       </if>
-      <if test="baseAmount != null">
-        #{baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="interestAmount != null">
-        #{interestAmount,jdbcType=BIGINT},
-      </if>
-      <if test="totalAmount != null">
-        #{totalAmount,jdbcType=BIGINT},
+      <if test="totalDebtAmount != null">
+        #{totalDebtAmount,jdbcType=BIGINT},
       </if>
       <if test="trdStatus != null">
         #{trdStatus,jdbcType=INTEGER},
@@ -362,6 +345,9 @@
       <if test="record.itemType != null">
         item_type = #{record.itemType,jdbcType=INTEGER},
       </if>
+      <if test="record.itemSubType != null">
+        item_sub_type = #{record.itemSubType,jdbcType=INTEGER},
+      </if>
       <if test="record.trdType != null">
         trd_type = #{record.trdType,jdbcType=INTEGER},
       </if>
@@ -376,9 +362,6 @@
       </if>
       <if test="record.infoSource != null">
         info_source = #{record.infoSource,jdbcType=VARCHAR},
-      </if>
-      <if test="record.infoWebsite != null">
-        info_website = #{record.infoWebsite,jdbcType=VARCHAR},
       </if>
       <if test="record.infoUrl != null">
         info_url = #{record.infoUrl,jdbcType=VARCHAR},
@@ -398,14 +381,8 @@
       <if test="record.trdAmount != null">
         trd_amount = #{record.trdAmount,jdbcType=BIGINT},
       </if>
-      <if test="record.baseAmount != null">
-        base_amount = #{record.baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.interestAmount != null">
-        interest_amount = #{record.interestAmount,jdbcType=BIGINT},
-      </if>
-      <if test="record.totalAmount != null">
-        total_amount = #{record.totalAmount,jdbcType=BIGINT},
+      <if test="record.totalDebtAmount != null">
+        total_debt_amount = #{record.totalDebtAmount,jdbcType=BIGINT},
       </if>
       <if test="record.trdStatus != null">
         trd_status = #{record.trdStatus,jdbcType=INTEGER},
@@ -458,21 +435,19 @@
     update CUST_TRD_INFO
     set id = #{record.id,jdbcType=BIGINT},
       item_type = #{record.itemType,jdbcType=INTEGER},
+      item_sub_type = #{record.itemSubType,jdbcType=INTEGER},
       trd_type = #{record.trdType,jdbcType=INTEGER},
       info_title = #{record.infoTitle,jdbcType=VARCHAR},
       pack_count = #{record.packCount,jdbcType=INTEGER},
       info_id = #{record.infoId,jdbcType=CHAR},
       info_source = #{record.infoSource,jdbcType=VARCHAR},
-      info_website = #{record.infoWebsite,jdbcType=VARCHAR},
       info_url = #{record.infoUrl,jdbcType=VARCHAR},
       debt_province = #{record.debtProvince,jdbcType=CHAR},
       trd_province = #{record.trdProvince,jdbcType=CHAR},
       debt_city = #{record.debtCity,jdbcType=CHAR},
       trd_amount_orig = #{record.trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{record.trdAmount,jdbcType=BIGINT},
-      base_amount = #{record.baseAmount,jdbcType=BIGINT},
-      interest_amount = #{record.interestAmount,jdbcType=BIGINT},
-      total_amount = #{record.totalAmount,jdbcType=BIGINT},
+      total_debt_amount = #{record.totalDebtAmount,jdbcType=BIGINT},
       trd_status = #{record.trdStatus,jdbcType=INTEGER},
       trd_date = #{record.trdDate,jdbcType=DATE},
       pub_date = #{record.pubDate,jdbcType=TIMESTAMP},
@@ -497,6 +472,9 @@
       <if test="itemType != null">
         item_type = #{itemType,jdbcType=INTEGER},
       </if>
+      <if test="itemSubType != null">
+        item_sub_type = #{itemSubType,jdbcType=INTEGER},
+      </if>
       <if test="trdType != null">
         trd_type = #{trdType,jdbcType=INTEGER},
       </if>
@@ -511,9 +489,6 @@
       </if>
       <if test="infoSource != null">
         info_source = #{infoSource,jdbcType=VARCHAR},
-      </if>
-      <if test="infoWebsite != null">
-        info_website = #{infoWebsite,jdbcType=VARCHAR},
       </if>
       <if test="infoUrl != null">
         info_url = #{infoUrl,jdbcType=VARCHAR},
@@ -533,14 +508,8 @@
       <if test="trdAmount != null">
         trd_amount = #{trdAmount,jdbcType=BIGINT},
       </if>
-      <if test="baseAmount != null">
-        base_amount = #{baseAmount,jdbcType=BIGINT},
-      </if>
-      <if test="interestAmount != null">
-        interest_amount = #{interestAmount,jdbcType=BIGINT},
-      </if>
-      <if test="totalAmount != null">
-        total_amount = #{totalAmount,jdbcType=BIGINT},
+      <if test="totalDebtAmount != null">
+        total_debt_amount = #{totalDebtAmount,jdbcType=BIGINT},
       </if>
       <if test="trdStatus != null">
         trd_status = #{trdStatus,jdbcType=INTEGER},
@@ -590,21 +559,19 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     update CUST_TRD_INFO
     set item_type = #{itemType,jdbcType=INTEGER},
+      item_sub_type = #{itemSubType,jdbcType=INTEGER},
       trd_type = #{trdType,jdbcType=INTEGER},
       info_title = #{infoTitle,jdbcType=VARCHAR},
       pack_count = #{packCount,jdbcType=INTEGER},
       info_id = #{infoId,jdbcType=CHAR},
       info_source = #{infoSource,jdbcType=VARCHAR},
-      info_website = #{infoWebsite,jdbcType=VARCHAR},
       info_url = #{infoUrl,jdbcType=VARCHAR},
       debt_province = #{debtProvince,jdbcType=CHAR},
       trd_province = #{trdProvince,jdbcType=CHAR},
       debt_city = #{debtCity,jdbcType=CHAR},
       trd_amount_orig = #{trdAmountOrig,jdbcType=CHAR},
       trd_amount = #{trdAmount,jdbcType=BIGINT},
-      base_amount = #{baseAmount,jdbcType=BIGINT},
-      interest_amount = #{interestAmount,jdbcType=BIGINT},
-      total_amount = #{totalAmount,jdbcType=BIGINT},
+      total_debt_amount = #{totalDebtAmount,jdbcType=BIGINT},
       trd_status = #{trdStatus,jdbcType=INTEGER},
       trd_date = #{trdDate,jdbcType=DATE},
       pub_date = #{pubDate,jdbcType=TIMESTAMP},

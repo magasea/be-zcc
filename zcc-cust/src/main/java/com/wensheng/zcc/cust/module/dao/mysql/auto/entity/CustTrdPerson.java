@@ -41,9 +41,9 @@ public class CustTrdPerson {
 
     private Long updateBy;
 
-    private Date createTime;
-
     private Long createBy;
+
+    private Date createTime;
 
     private Date syncTime;
 
@@ -199,20 +199,20 @@ public class CustTrdPerson {
         this.updateBy = updateBy;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
     public Long getCreateBy() {
         return createBy;
     }
 
     public void setCreateBy(Long createBy) {
         this.createBy = createBy;
+    }
+
+    public Date getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(Date createTime) {
+        this.createTime = createTime;
     }
 
     public Date getSyncTime() {

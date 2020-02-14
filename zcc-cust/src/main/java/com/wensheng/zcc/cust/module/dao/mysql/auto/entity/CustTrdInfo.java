@@ -7,6 +7,8 @@ public class CustTrdInfo {
 
     private Integer itemType;
 
+    private Integer itemSubType;
+
     private Integer trdType;
 
     private String infoTitle;
@@ -16,8 +18,6 @@ public class CustTrdInfo {
     private String infoId;
 
     private String infoSource;
-
-    private String infoWebsite;
 
     private String infoUrl;
 
@@ -31,11 +31,7 @@ public class CustTrdInfo {
 
     private Long trdAmount;
 
-    private Long baseAmount;
-
-    private Long interestAmount;
-
-    private Long totalAmount;
+    private Long totalDebtAmount;
 
     private Integer trdStatus;
 
@@ -81,6 +77,14 @@ public class CustTrdInfo {
         this.itemType = itemType;
     }
 
+    public Integer getItemSubType() {
+        return itemSubType;
+    }
+
+    public void setItemSubType(Integer itemSubType) {
+        this.itemSubType = itemSubType;
+    }
+
     public Integer getTrdType() {
         return trdType;
     }
@@ -119,14 +123,6 @@ public class CustTrdInfo {
 
     public void setInfoSource(String infoSource) {
         this.infoSource = infoSource == null ? null : infoSource.trim();
-    }
-
-    public String getInfoWebsite() {
-        return infoWebsite;
-    }
-
-    public void setInfoWebsite(String infoWebsite) {
-        this.infoWebsite = infoWebsite == null ? null : infoWebsite.trim();
     }
 
     public String getInfoUrl() {
@@ -177,28 +173,12 @@ public class CustTrdInfo {
         this.trdAmount = trdAmount;
     }
 
-    public Long getBaseAmount() {
-        return baseAmount;
+    public Long getTotalDebtAmount() {
+        return totalDebtAmount;
     }
 
-    public void setBaseAmount(Long baseAmount) {
-        this.baseAmount = baseAmount;
-    }
-
-    public Long getInterestAmount() {
-        return interestAmount;
-    }
-
-    public void setInterestAmount(Long interestAmount) {
-        this.interestAmount = interestAmount;
-    }
-
-    public Long getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(Long totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setTotalDebtAmount(Long totalDebtAmount) {
+        this.totalDebtAmount = totalDebtAmount;
     }
 
     public Integer getTrdStatus() {

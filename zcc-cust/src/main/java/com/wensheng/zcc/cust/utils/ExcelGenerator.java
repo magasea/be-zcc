@@ -1,22 +1,18 @@
 package com.wensheng.zcc.cust.utils;
 
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
-import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
@@ -85,10 +81,10 @@ public class ExcelGenerator {
           row.createCell(1).setCellValue(custTrdInfoExcelVo.getCustName());
           row.createCell(2).setCellValue(getStringFromMap(custTrdInfoExcelVo.getInvestType2Counts()));
           row.createCell(3).setCellValue(getStringFromMap(custTrdInfoExcelVo.getIntrestCities()));
-          if(custTrdInfoExcelVo.getTrdTotalAmount() > 0){
-            row.createCell(4).setCellValue(custTrdInfoExcelVo.getTrdTotalAmount());
+          if(custTrdInfoExcelVo.getDebtTotalAmount() > 0){
+            row.createCell(4).setCellValue(custTrdInfoExcelVo.getDebtTotalAmount());
           }else{
-            log.error("The totalAmount:{}  of custId:{} is not valid", custTrdInfoExcelVo.getTrdTotalAmount(),
+            log.error("The totalAmount:{}  of custId:{} is not valid", custTrdInfoExcelVo.getDebtTotalAmount(),
                 custTrdInfoExcelVo.getCustId());
             row.createCell(4);
           }

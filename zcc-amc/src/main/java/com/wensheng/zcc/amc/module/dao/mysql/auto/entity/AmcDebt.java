@@ -25,7 +25,7 @@ public class AmcDebt {
 
     private Long courtId;
 
-    private String amcDebtCode;
+    private String zccDebtCode;
 
     private Integer publishState;
 
@@ -149,12 +149,12 @@ public class AmcDebt {
         this.courtId = courtId;
     }
 
-    public String getAmcDebtCode() {
-        return amcDebtCode;
+    public String getZccDebtCode() {
+        return zccDebtCode;
     }
 
-    public void setAmcDebtCode(String amcDebtCode) {
-        this.amcDebtCode = amcDebtCode == null ? null : amcDebtCode.trim();
+    public void setZccDebtCode(String zccDebtCode) {
+        this.zccDebtCode = zccDebtCode == null ? null : zccDebtCode.trim();
     }
 
     public Integer getPublishState() {

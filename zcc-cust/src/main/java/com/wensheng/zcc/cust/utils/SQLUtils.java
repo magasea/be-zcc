@@ -1,8 +1,6 @@
 package com.wensheng.zcc.cust.utils;
 
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
@@ -71,26 +69,26 @@ public class SQLUtils {
         sb.append(".").append("debt_city =" ).append(queryParam.getCity());
       }
     }
-    if(!CollectionUtils.isEmpty(queryParam.getInvestScales())){
-      if(queryParam.getInvestScales().size() == 1 && queryParam.getInvestScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL2.getId() ){
-        sb.append(" and ( cti.total_amount < 10000000 )" );
-      }else if(queryParam.getInvestScales().size() == 1 && queryParam.getInvestScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL5.getId()){
-        sb.append(" and ( cti.total_amount >= 100000000 )" );
+    if(!CollectionUtils.isEmpty(queryParam.getInvestDebtScales())){
+      if(queryParam.getInvestDebtScales().size() == 1 && queryParam.getInvestDebtScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL2.getId() ){
+        sb.append(" and ( cti.total_debt_amount < 10000000 )" );
+      }else if(queryParam.getInvestDebtScales().size() == 1 && queryParam.getInvestDebtScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL5.getId()){
+        sb.append(" and ( cti.total_debt_amount >= 100000000 )" );
       }else{
         InvestScaleEnum leftScale , rightScale;
 
-        if(InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(0)).getAmount() < InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(1)).getAmount()){
-          leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(0));
-          rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(1));
+        if(InvestScaleEnum.lookupByIdUntil(queryParam.getInvestDebtScales().get(0)).getAmount() < InvestScaleEnum.lookupByIdUntil(queryParam.getInvestDebtScales().get(1)).getAmount()){
+          leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestDebtScales().get(0));
+          rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestDebtScales().get(1));
         }else{
-          leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(1));
-          rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestScales().get(2));
+          leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestDebtScales().get(1));
+          rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestDebtScales().get(2));
         }
-        sb.append(" and  ( cti.total_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount()).append(")");
+        sb.append(" and  ( cti.total_debt_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount()).append(")");
       }
     }
-    if(queryParam.getTrdType() != null){
-      sb.append(" and ").append(" cti.trd_type = ").append(queryParam.getTrdType());
+    if(queryParam.getItemType() != null){
+      sb.append(" and ").append(" cti.item_type = ").append(queryParam.getItemType());
     }
 
 

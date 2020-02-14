@@ -105,6 +105,11 @@ public class AmcDateUtils {
     return strDate;
   }
 
+  public static int getCurrentYear(){
+    int year = Calendar.getInstance().get(Calendar.YEAR);
+    return year;
+  }
+
   public static Date getCurrentDate() {
      return Date.from(LocalDateTime.ofInstant(Instant.now(), ZoneId.of("UTC")).atZone(ZoneId.of("UTC")).toInstant());
   }

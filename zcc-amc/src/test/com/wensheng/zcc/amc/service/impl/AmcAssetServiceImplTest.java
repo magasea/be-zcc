@@ -262,21 +262,21 @@ public class AmcAssetServiceImplTest {
         if (originItem.getArea() != null) {
             amcAssetMysql.setArea(AmcNumberUtils.getLongFromStringWithMult100(originItem.getArea()));
         }
-        amcAssetMysql.setBuildingName(originItem.getBuildingName());
+//        amcAssetMysql.setBuildingName(originItem.getBuildingName());
         amcAssetMysql.setCity(originItem.getCity());
         amcAssetMysql.setCounty(originItem.getCounty());
         //debts default only one item
         amcAssetMysql.setDebtId(CollectionUtils.isEmpty(originItem.getDebts()) ? -1L : (Long) originItem.getDebts().get(0));
         amcAssetMysql.setPublishState(PublishStateEnum.lookupByDisplayNameUtil(originItem.getEditStatus()).getStatus());
-        amcAssetMysql.setBuildingName(originItem.getBuildingName());
+//        amcAssetMysql.setBuildingName(originItem.getBuildingName());
         if (originItem.getEstimatedPrice() != null) {
             amcAssetMysql.setValuation(AmcNumberUtils.getLongFromStringWithMult100(originItem.getEstimatedPrice().toString()));
         }
         if (!StringUtils.isEmpty(originItem.getGpsLat())) {
-            amcAssetMysql.setGpsLat(originItem.getGpsLat().toString());
+//            amcAssetMysql.setGpsLat(originItem.getGpsLat().toString());
         }
         if (!StringUtils.isEmpty(originItem.getGpsLng())) {
-            amcAssetMysql.setGpsLng(originItem.getGpsLng().toString());
+//            amcAssetMysql.setGpsLng(originItem.getGpsLng().toString());
         }
 
 
@@ -434,7 +434,7 @@ public class AmcAssetServiceImplTest {
             amcDebt.setAmcContactor2Id(contactId);
         }
         if (!StringUtils.isEmpty(originItem.getAmcDebtCode())) {
-            amcDebt.setAmcDebtCode(originItem.getAmcDebtCode());
+            amcDebt.setZccDebtCode(originItem.getAmcDebtCode());
 
         }
         amcDebt.setBaseAmount(AmcNumberUtils.getLongFromStringWithMult100(originItem.getBaseAmount()));

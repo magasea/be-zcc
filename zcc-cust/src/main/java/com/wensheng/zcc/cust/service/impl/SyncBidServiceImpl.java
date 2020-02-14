@@ -19,15 +19,15 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
+import com.wensheng.zcc.cust.module.helper.sync.BidTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.CustPersonInfoFromSync;
-import com.wensheng.zcc.cust.module.sync.CustTrdInfoTempSync;
+import com.wensheng.zcc.cust.module.sync.BidTrdInfoFromSync;
+import com.wensheng.zcc.cust.module.sync.PageWrapperBidResp;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
-import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
-import com.wensheng.zcc.cust.service.SyncService;
-import java.text.ParseException;
-import java.util.ArrayList;
+import com.wensheng.zcc.cust.service.SyncBidService;
+import com.wensheng.zcc.cust.utils.TypeConvertUtil;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -35,10 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -73,7 +71,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 
-public class SyncServiceImpl implements SyncService {
+public class SyncBidServiceImpl implements SyncBidService {
 
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -104,10 +102,10 @@ public class SyncServiceImpl implements SyncService {
 //  CustTrdSellerMapper custTrdSellerMapper;
 
     private Gson gson = new Gson();
-    @Value("${cust.syncUrls.debtTradeResources}")
-    private String debtTradeResources;
+    @Value("${cust.syncUrls.bidTradeResources}")
+    private String bidTradeResources;
 
-    @Value("${cust.syncUrls.getCompanyInfoById}")
+    @Value("${cust.syncUrls.getBidCompanyInfoById}")
     private String getCompanyInfoById;
 
     @Value("${cust.syncUrls.getCompanyInfoByUpdateTime}")
@@ -119,13 +117,9 @@ public class SyncServiceImpl implements SyncService {
     @Value("${cust.syncUrls.getPersonInfoByUpdateTime}")
     private String getPersonInfoByUpdateTime;
 
-    @Value("${cust.syncUrls.getTrdContactorInfoByTrdId}")
-    private String getTrdContactorInfoByTrdId;
-
 //  String[] provinceCodes = {"350000000000"};
 String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000","110000000000",
-    "370000000000","330000000000", "360000000000","310000000000", "320000000000",
-    "420000000000"};
+    "370000000000","330000000000", "360000000000"};
 //  String[] provinceCodes = {"230000000000","220000000000","210000000000"};
 //  String[] provinceCodes = {"130000000000"};
 
@@ -151,11 +145,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       isInSync = false;
     }
 
-    public PageWrapperResp<TrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
+    public PageWrapperBidResp<BidTrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
 //      String provEncod = encodeUtf8(province);
-        String url = String.format(debtTradeResources, pageNum, pageSize, provinceCode);
+        String url = String.format(bidTradeResources, pageNum, pageSize, provinceCode);
         return restTemplate.exchange(url, HttpMethod.GET, null,
-            new ParameterizedTypeReference<PageWrapperResp<TrdInfoFromSync>>() {}).getBody();
+            new ParameterizedTypeReference<PageWrapperBidResp<BidTrdInfoFromSync>>() {}).getBody();
     }
 
     public CustCmpyInfoFromSync getCmpyInfoById(String id){
@@ -163,11 +157,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return restTemplate.getForEntity(url, CustCmpyInfoFromSync.class).getBody();
     }
 
-
-  public PatchTrdContactor getTrdContactorByTrdId(String id){
-    String url = String.format(getTrdContactorInfoByTrdId, id);
-    return restTemplate.getForEntity(url, PatchTrdContactor.class).getBody();
-  }
 
   public CustPersonInfoFromSync getPersonInfoById(String id){
     String url = String.format(getPersonInfoById, id);
@@ -412,14 +401,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       boolean haveNext = true;
       while(haveNext){
         pageForLog = pageNum;
-        PageWrapperResp<TrdInfoFromSync> pageWrapperResp = getTradeInfosByProvince(provinceCode, pageNum, pageSize);
-        if(pageWrapperResp.getPages() < pageNum || CollectionUtils.isEmpty(pageWrapperResp.getList())){
+        PageWrapperBidResp<BidTrdInfoFromSync> pageWrapperResp = getTradeInfosByProvince(provinceCode, pageNum, pageSize);
+        if(pageWrapperResp.getTotalPage() < pageNum || CollectionUtils.isEmpty(pageWrapperResp.getDataList())){
           haveNext = false;
           continue;
         }
         else{
-          for(TrdInfoFromSync trdInfoFromSync: pageWrapperResp.getList()){
-            handleTrdInfo(trdInfoFromSync);
+          for(BidTrdInfoFromSync bidTrdInfoFromSync: pageWrapperResp.getDataList()){
+            handleTrdInfo(bidTrdInfoFromSync);
           }
           pageNum++;
         }
@@ -453,12 +442,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-  private void  handleTrdInfo(TrdInfoFromSync trdInfoFromSync) {
+  private void  handleTrdInfo(BidTrdInfoFromSync trdInfoFromSync) {
 
     int action = -1;
-    Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateDate());
+    Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateTime());
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getId());
+    custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getAuctionID());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
     if(CollectionUtils.isEmpty(custTrdInfos)){
       //make new trdInfo
@@ -487,42 +476,42 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     CustTrdInfo custTrdInfo = new CustTrdInfo();
     copySyncTrd2TrdInfo(trdInfoFromSync, custTrdInfo);
     Long buyerId = -1L ;
-    if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
+    if(trdInfoFromSync.getBuyerType() == CustTypeSyncEnum.COMPANY.getId()){
       buyerId = syncCmpyInfoById(trdInfoFromSync, true, action == 1);
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
-    }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+    }else if(trdInfoFromSync.getBuyerType() == CustTypeSyncEnum.PERSON.getId()){
       buyerId = syncPersonInfoById(trdInfoFromSync, true, action == 1);
       custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
     }
     if(buyerId < 0){
-      log.error("Failed to sync trd buyer with id:{}", trdInfoFromSync.getBuyerIdPrep());
+      log.error("Failed to sync trd buyer with id:{}", trdInfoFromSync.getBuyerId());
       return;
     }
     custTrdInfo.setBuyerId(buyerId);
 
-    Long sellerId = -1L;
-    if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
-      sellerId = syncCmpyInfoById(trdInfoFromSync, false, action == 1);
-      if(sellerId < 0){
-        log.error("sellerId:{}", sellerId);
-        return;
-      }
-      custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
-      CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
-      custTrdInfo.setSellerName(custTrdSeller.getName());
-
-    }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
-      sellerId = syncPersonInfoById(trdInfoFromSync, false, action == 1);
-      if(sellerId < 0){
-        log.error("Failed to sync trd seller with id:{}", trdInfoFromSync.getSellerIdPrep());
-        return;
-      }
-      custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
-      CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
-      custTrdInfo.setSellerName(custTrdSeller.getName());
-    }
-
-    custTrdInfo.setSellerId(sellerId);
+//    Long sellerId = -1L;
+//    if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
+//      sellerId = syncCmpyInfoById(trdInfoFromSync, false, action == 1);
+//      if(sellerId < 0){
+//        log.error("sellerId:{}", sellerId);
+//        return;
+//      }
+//      custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
+//      CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
+//      custTrdInfo.setSellerName(custTrdSeller.getName());
+//
+//    }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+//      sellerId = syncPersonInfoById(trdInfoFromSync, false, action == 1);
+//      if(sellerId < 0){
+//        log.error("Failed to sync trd seller with id:{}", trdInfoFromSync.getSellerIdPrep());
+//        return;
+//      }
+//      custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
+//      CustTrdSeller custTrdSeller = custTrdSellerMapper.selectByPrimaryKey(sellerId);
+//      custTrdInfo.setSellerName(custTrdSeller.getName());
+//    }
+//
+//    custTrdInfo.setSellerId(sellerId);
     if(action == 1){
       //make new trdInfo
       custTrdInfoMapper.insertSelective(custTrdInfo);
@@ -536,34 +525,52 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       log.error("action:{}", action);
     }
     log.info("[trd id:{} originId:{}] [buyer id:{} originId:{}] [seller id:{} originId:{}] ",
-        custTrdInfo.getId(), trdInfoFromSync.getId(), custTrdInfo.getBuyerId(), trdInfoFromSync.getBuyerIdPrep(),
-        custTrdInfo.getSellerId(), trdInfoFromSync.getSellerIdPrep());
+        custTrdInfo.getId(), trdInfoFromSync.getAuctionID(), custTrdInfo.getBuyerId(), trdInfoFromSync.getBuyerId(),
+        custTrdInfo.getSellerId(), -1);
 
   }
 
-  private synchronized Long syncPersonInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
-      CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
-          trdInfoFromSync.getSellerIdPrep());
+  private synchronized Long syncPersonInfoById(BidTrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
+     if(trdInfoFromSync.getBuyerId().equals("-1")){
+       //insert person with name directlly
+       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+       custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(trdInfoFromSync.getBuyerName())?"-1":
+           trdInfoFromSync.getBuyerName()).andMobileNumEqualTo("-1");
+       List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
+       if(CollectionUtils.isEmpty(custTrdPeople)){
+         CustTrdPerson custTrdPerson = new CustTrdPerson();
+         custTrdPerson.setCreateTime(AmcDateUtils.getCurrentDate());
+         custTrdPerson.setName(trdInfoFromSync.getBuyerName());
+         custTrdPersonMapper.insertSelective(custTrdPerson);
+         return custTrdPerson.getId();
+       }else{
+         return custTrdPeople.get(0).getId();
+       }
+
+     }
+
+      CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerId():
+          "-1");
     if( null == custPersonInfoFromSync){
       log.error("Failed to get {} person info with id:{} with trd id:{}", isBuyer?"buyer":"seller", isBuyer?
-          trdInfoFromSync.getBuyerIdPrep():
-          trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
-      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
-        errorTrdInfos.put(trdInfoFromSync.getId(),"");
+          trdInfoFromSync.getBuyerId():
+          -1, trdInfoFromSync.getAuctionID());
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getAuctionID())){
+        errorTrdInfos.put(trdInfoFromSync.getAuctionID(),"");
       }
-      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
-          errorTrdInfos.get(trdInfoFromSync.getId()),
+      errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s", pageForLog,
+          errorTrdInfos.get(trdInfoFromSync.getAuctionID()),
           String.format("Failed to get %s person info with id:%s with trd id:%s", isBuyer?"buyer":"seller", isBuyer?
-              trdInfoFromSync.getBuyerIdPrep():
-              trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
+              trdInfoFromSync.getBuyerId():
+              -1, trdInfoFromSync.getAuctionID())));
       return -1L;
     }
     if(StringUtils.isEmpty(custPersonInfoFromSync.getName())){
-      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
-          errorTrdInfos.get(trdInfoFromSync.getId()),
+      errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s", pageForLog,
+          errorTrdInfos.get(trdInfoFromSync.getAuctionID()),
           String.format("get %s person info with id:%s with trd id:%s and the person have name:{}", isBuyer?"buyer":
-              "seller", isBuyer? trdInfoFromSync.getBuyerIdPrep(): trdInfoFromSync.getSellerIdPrep(),
-              trdInfoFromSync.getId()), custPersonInfoFromSync.getName()));
+              "seller", isBuyer? trdInfoFromSync.getBuyerId(): -1,
+              trdInfoFromSync.getAuctionID()), custPersonInfoFromSync.getName()));
       return -1L;
     }
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
@@ -658,9 +665,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return custTrdPeople.get(0).getId();
     }
     CustTrdPerson custTrdPerson = new CustTrdPerson();
-    if(action == 2){
-      custTrdPerson = custTrdPeople.get(0);
-    }
     copyPersonSync2PersonInfo(custPersonInfoFromSync, custTrdPerson);
     if(action == 1){
       if(isBuyer){
@@ -793,21 +797,21 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
    * @return
    */
 
-  private Long syncCmpyInfoById(TrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
-    CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
-        trdInfoFromSync.getSellerIdPrep());
+  private Long syncCmpyInfoById(BidTrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
+    CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(isBuyer? trdInfoFromSync.getBuyerId():
+        "-1");
     if( null == custCmpyInfoFromSync){
       log.error("Failed to get {} cmpy info with id:{} of trd:{}", isBuyer? "buyer":"seller", isBuyer?
-          trdInfoFromSync.getBuyerIdPrep():
-          trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
-      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
-        errorTrdInfos.put(trdInfoFromSync.getId(),"");
+          trdInfoFromSync.getBuyerId():
+          -1, trdInfoFromSync.getAuctionID());
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getAuctionID())){
+        errorTrdInfos.put(trdInfoFromSync.getAuctionID(),"");
       }
-      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
-      errorTrdInfos.get(trdInfoFromSync.getId()),String.format("Failed to get %s cmpy info with id:%s of trd:%s",
+      errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s", pageForLog,
+      errorTrdInfos.get(trdInfoFromSync.getAuctionID()),String.format("Failed to get %s cmpy info with id:%s of trd:%s",
               isBuyer? "buyer":"seller", isBuyer?
-                  trdInfoFromSync.getBuyerIdPrep():
-                  trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
+                  trdInfoFromSync.getBuyerId():
+                  -1, trdInfoFromSync.getAuctionID())));
       return -1L;
     }
 
@@ -896,9 +900,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return custTrdCmpyList.get(0).getId();
     }
     CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
-    if(action == 2){
-      custTrdCmpy = custTrdCmpyList.get(0);
-    }
     copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
     if(action == 1){
       if(isBuyer){
@@ -1027,235 +1028,99 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
    * @param custTrdInfo
    */
 
-  private void copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
+  private void copySyncTrd2TrdInfo(BidTrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
 //    custTrdInfo.setSellerId(sellerRecord.getId());
     //make default value
     custTrdInfo.setPubDate(AmcDateUtils.getDataBaseDefaultOldDate());
     custTrdInfo.setTrdDate(AmcDateUtils.getDataBaseDefaultOldDate());
     custTrdInfo.setTrdContactorAddr("-1");
     custTrdInfo.setTrdContactorName("-1");
-    custTrdInfo.setTotalDebtAmount( Long.valueOf(trdInfoFromSync.getTrdAmountPrep()));
-    if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
+    custTrdInfo.setTotalDebtAmount( -1L);
+    custTrdInfo.setTrdAmount(trdInfoFromSync.getTrdAmount());
+    if(trdInfoFromSync.getBuyerType() == CustTypeSyncEnum.COMPANY.getId() ){
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
-    }else if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+    }else if(trdInfoFromSync.getBuyerType() == CustTypeSyncEnum.PERSON.getId()){
       custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
     }
-    if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
-      custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
-    }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
-      custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
-    }
+//    if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.COMPANY.getId() ){
+//      custTrdInfo.setSellerType(CustTypeEnum.COMPANY.getId());
+//    }else if(trdInfoFromSync.getSellerTypePrep() == CustTypeSyncEnum.PERSON.getId()){
+//      custTrdInfo.setSellerType(CustTypeEnum.PERSON.getId());
+//    }
 
-    custTrdInfo.setInfoId(trdInfoFromSync.getId());
-    custTrdInfo.setItemType(trdInfoFromSync.getTrdType());
-    custTrdInfo.setItemSubType(trdInfoFromSync.getTrdType());
-    custTrdInfo.setTrdType(SyncTrdTypeEnum.DEBTPUB.getId());
-
-    custTrdInfo.setInfoTitle(StringUtils.isEmpty(trdInfoFromSync.getTrdTitle())? null:trdInfoFromSync.getTrdTitle() );
+    custTrdInfo.setInfoId(trdInfoFromSync.getAuctionID());
+    custTrdInfo.setTrdType(SyncTrdTypeEnum.AUCTION.getId());
+    custTrdInfo.setItemType(TypeConvertUtil.getItemTypeFromBidtypeEnum(BidTypeEnum.lookupByIdUtil(trdInfoFromSync.getBidType())).getId());
+    custTrdInfo.setItemSubType(trdInfoFromSync.getBidType());
+    custTrdInfo.setInfoTitle(StringUtils.isEmpty(trdInfoFromSync.getAuctionTitle())? null:trdInfoFromSync.getAuctionTitle() );
     if(trdInfoFromSync.getTrdDate() != null && trdInfoFromSync.getTrdDate() > 0L ){
       custTrdInfo.setTrdDate(AmcDateUtils.toUTCDate(trdInfoFromSync.getTrdDate()));
     }
-    if(trdInfoFromSync.getPublishDate() != null && trdInfoFromSync.getPublishDate() > 0L){
-      custTrdInfo.setPubDate(AmcDateUtils.toUTCDate(trdInfoFromSync.getPublishDate()));
+//    if(trdInfoFromSync.getPublishDate() != null && trdInfoFromSync.getPublishDate() > 0L){
+//      custTrdInfo.setPubDate(AmcDateUtils.toUTCDate(trdInfoFromSync.getPublishDate()));
+//
+//    }
 
+    if(trdInfoFromSync.getUpdateTime() != null && trdInfoFromSync.getUpdateTime() > 0L ){
+      custTrdInfo.setUpdateTime(AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateTime()));
     }
-
-    if(trdInfoFromSync.getUpdateDate() != null && trdInfoFromSync.getUpdateDate() > 0L ){
-      custTrdInfo.setUpdateTime(AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateDate()));
-    }
-    custTrdInfo.setInfoUrl(trdInfoFromSync.getTrdContentOss());
-    if(StringUtils.isEmpty(trdInfoFromSync.getTrdProvincePrep())){
-      log.error("trdInfoFromSync.getTrdProvincePrep() is empty");
-      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
-        errorTrdInfos.put(trdInfoFromSync.getId(), "");
+    custTrdInfo.setInfoUrl(trdInfoFromSync.getTrdContentUrl());
+    if(StringUtils.isEmpty(trdInfoFromSync.getTrdProvinceCode())){
+      log.error("trdInfoFromSync.getTrdProvinceCode() is empty");
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getAuctionID())){
+        errorTrdInfos.put(trdInfoFromSync.getAuctionID(), "");
       }
-      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
-          errorTrdInfos.get(trdInfoFromSync.getId()),
-          "trdInfoFromSync.getTrdProvincePrep() is empty"));
+      errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s", pageForLog,
+          errorTrdInfos.get(trdInfoFromSync.getAuctionID()),
+          "trdInfoFromSync.getTrdProvinceCode() is empty"));
       return;
     }
-    if(!trdInfoFromSync.getTrdProvincePrep().endsWith("000000")){
-      log.error("getTrdProvincePrep:{}", trdInfoFromSync.getTrdProvincePrep());
+    if(!trdInfoFromSync.getTrdProvinceCode().endsWith("000000")){
+      log.error("getTrdProvinceCode:{}", trdInfoFromSync.getTrdProvinceCode());
     }
-    custTrdInfo.setTrdProvince(trdInfoFromSync.getTrdProvincePrep().substring(0, 6));
-    custTrdInfo.setDebtProvince(trdInfoFromSync.getDebtProvincePrep().substring(0, 6));
+    custTrdInfo.setTrdProvince(trdInfoFromSync.getTrdProvinceCode().substring(0, 6));
+    custTrdInfo.setDebtProvince(trdInfoFromSync.getBidProvinceCode().substring(0, 6));
 
-    if(StringUtils.isEmpty(trdInfoFromSync.getDebtCityPrep())){
-      if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
-        errorTrdInfos.put(trdInfoFromSync.getId(), "");
+    if(StringUtils.isEmpty(trdInfoFromSync.getBidCityCode())){
+      if(!errorTrdInfos.containsKey(trdInfoFromSync.getAuctionID())){
+        errorTrdInfos.put(trdInfoFromSync.getAuctionID(), "");
       }
-      log.error("DebtCityPrep is empty {} of the trd  id:{}",
-          trdInfoFromSync.getDebtProvincePrep(), trdInfoFromSync.getId() );
-      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s",
-       pageForLog,   errorTrdInfos.get(trdInfoFromSync.getId()),
-            "trdInfoFromSync.getDebtCityPrep() is empty"));
+      log.error("BidCityCode is empty {} of the trd  id:{}",
+          trdInfoFromSync.getBidCityCode(), trdInfoFromSync.getAuctionID() );
+      errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s",
+       pageForLog,   errorTrdInfos.get(trdInfoFromSync.getAuctionID()),
+            "trdInfoFromSync.getBidCityCode() is empty"));
     }else{
-      if(!trdInfoFromSync.getDebtCityPrep().endsWith("000000")){
-        log.error("getDebtCityPrep:{}", trdInfoFromSync.getDebtCityPrep());
-        errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s",
-         pageForLog,   errorTrdInfos.get(trdInfoFromSync.getId()),
-            String.format("trdInfoFromSync.getDebtCityPrep() is %s",trdInfoFromSync.getDebtCityPrep())));
+      if(!trdInfoFromSync.getBidCityCode().endsWith("000000")){
+        log.error("getBidCityCode:{}", trdInfoFromSync.getBidCityCode());
+        errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s",
+         pageForLog,   errorTrdInfos.get(trdInfoFromSync.getAuctionID()),
+            String.format("trdInfoFromSync.getBidCityCode() is %s",trdInfoFromSync.getBidCityCode())));
       }
-      custTrdInfo.setDebtCity(trdInfoFromSync.getDebtCityPrep().substring(0, 6));
+      custTrdInfo.setDebtCity(trdInfoFromSync.getBidCityCode().substring(0, 6));
     }
-    custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
-    custTrdInfo.setTrdContactorName(StringUtils.isEmpty(trdInfoFromSync.getBuyerContactManPrep()) ? "-1":
-        trdInfoFromSync.getBuyerContactManPrep());
-    StringBuilder sb = new StringBuilder();
-    if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactPhonePrep())){
-      sb.append(trdInfoFromSync.getBuyerContactPhonePrep()).append(" ").append(trdInfoFromSync.getBuyerContactAddressPrep());
-    }else if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){
-      sb.append(trdInfoFromSync.getBuyerContactAddressPrep());
-    }
-    if(sb.length() > 0){
-      custTrdInfo.setTrdContactorAddr(sb.toString());
-    }
-
-
-
-  }
-//http://10.20.200.100:8085/debts/get/3a7cd9cf68c5effc316981d6537d1595
-@Override
-  public boolean makeUpDataForMissDateOfTrade() throws ParseException {
-
-    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.createCriteria().andTrdDateLessThan(AmcDateUtils.getDateFromStr("1902-01-01 00:00:00"));
-
-    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(custTrdInfoExample);
-
-    for(CustTrdInfo custTrdInfo : custTrdInfos){
-      CustTrdInfoTempSync custTrdInfoTempSync = getTrdFromSyncById(custTrdInfo.getInfoId());
-      if(custTrdInfoTempSync != null && custTrdInfoTempSync.getUpdateTime() != null ){
-        custTrdInfo.setTrdDate(AmcDateUtils.toUTCDate(custTrdInfoTempSync.getUpdateTime()));
-        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
-      }
-
-    }
-    return true;
-
-  }
-
-  @Override
-  public boolean makeUpDataForProvinceCodeOfTrade() throws ParseException {
-    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.createCriteria().andTrdProvinceIsNull();
-    custTrdInfoExample.or().andTrdProvinceEqualTo("");
-    custTrdInfoExample.or().andTrdProvinceEqualTo("-1");
-    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(custTrdInfoExample);
-    for(CustTrdInfo custTrdInfo : custTrdInfos){
-      CustTrdInfoTempSync custTrdInfoTempSync = getTrdFromSyncById(custTrdInfo.getInfoId());
-      if(custTrdInfoTempSync != null && !StringUtils.isEmpty(custTrdInfoTempSync.getProvinceCode() ) ){
-        log.info("now set trdProvince to :{}", custTrdInfoTempSync.getProvinceCode());
-        custTrdInfo.setTrdProvince(custTrdInfoTempSync.getProvinceCode());
-        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
-      }
-
-    }
-    return false;
-  }
-
-  @Override
-  public boolean makeCheckProvinceCodeOfTrade() throws ParseException {
-
-
-    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(null);
-    String provinceCode = null;
-    for(CustTrdInfo custTrdInfo : custTrdInfos){
-//      System.out.println(custTrdInfo.getTrdProvince().substring(0,2));
-      provinceCode = custTrdInfo.getTrdProvince().substring(0,2);
-      if(!custTrdInfo.getDebtCity().startsWith(provinceCode)){
-        log.error("province code:{} city code:{} infoId:{}", custTrdInfo.getTrdProvince(), custTrdInfo.getDebtCity(),
-            custTrdInfo.getInfoId());
-      }
-
-
-    }
-    return true;
-
-  }
-
-  @Override
-  public boolean makeUpBuyerContactorOfTrade() throws Exception {
-
-
-//    try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
-//      stream.forEach(System.out::println);
+//    custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getDebtTotalAmount());
+//    custTrdInfo.setTrdContactorName(StringUtils.isEmpty(trdInfoFromSync.getSellerContactManPrep()) ? "-1": trdInfoFromSync.getSellerContactManPrep());
+//    StringBuilder sb = new StringBuilder();
+//    if(!StringUtils.isEmpty(trdInfoFromSync.getSellerContactPhonePrep())){
+//      sb.append(trdInfoFromSync.getSellerContactPhonePrep()).append(" ").append(trdInfoFromSync.getSellerContactAddressPrep());
+//    }else if(!StringUtils.isEmpty(trdInfoFromSync.getSellerContactAddressPrep())){
+//      sb.append(trdInfoFromSync.getSellerContactAddressPrep());
 //    }
-    List<String> trdProvinces = new ArrayList<>();
-    for(String province: provinceCodes){
-      trdProvinces.add(province.substring(0, 6));
-    }
-
-    for(String province: trdProvinces){
-      CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-      custTrdInfoExample.setOrderByClause(" id desc ");
-      custTrdInfoExample.createCriteria().andTrdProvinceEqualTo(province).andTrdTypeEqualTo(1);
-
-      Integer offset = 0;
-      Integer pageSize = 100;
-      RowBounds rowBounds = new RowBounds(offset, pageSize);
-      List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExampleWithRowbounds(custTrdInfoExample, rowBounds);
-      StringBuilder sb = new StringBuilder();
-      while(!CollectionUtils.isEmpty(custTrdInfos) && offset < 100000000){
-        for(CustTrdInfo custTrdInfo: custTrdInfos ){
-          PatchTrdContactor patchTrdContactor = null;
-          try{
-            patchTrdContactor =  getTrdContactorByTrdId(custTrdInfo.getInfoId());
-          }catch (Exception ex){
-            log.error("failed to get trd contactor by id:{}", custTrdInfo.getInfoId(), ex);
-            continue;
-          }
-
-          if(!StringUtils.isEmpty(patchTrdContactor.getBuyerMan())){
-            custTrdInfo.setTrdContactorName(patchTrdContactor.getBuyerMan());
-          }
-          sb.setLength(0);
-          if(!StringUtils.isEmpty(patchTrdContactor.getBuyerPhone())){
-            sb.append(patchTrdContactor.getBuyerPhone());
-          }
-          if(!StringUtils.isEmpty(patchTrdContactor.getBuyerAddress())){
-            if(sb.length() > 0) {
-              sb.append(" ");
-            }
-            sb.append(patchTrdContactor.buyerAddress);
-          }
-          if(!StringUtils.isEmpty(patchTrdContactor.getBuyerEmail())){
-            if(sb.length() > 0){
-              sb.append(" ");
-            }
-            sb.append(patchTrdContactor.getBuyerEmail());
-          }
-          custTrdInfo.setTrdContactorAddr(sb.toString());
-          custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
-          sb.setLength(0);
-
-        }
-        offset += pageSize;
-        rowBounds = new RowBounds(offset, pageSize);
-        custTrdInfos = custTrdInfoMapper.selectByExampleWithRowbounds(custTrdInfoExample, rowBounds);
-        rowBounds = null;
-
-      }
-      custTrdInfoExample = null;
-      log.info("province:{} patch finished", province);
-    }
+//    if(sb.length() > 0){
+//      custTrdInfo.setTrdContactorAddr(sb.toString());
+//    }
 
 
-    return false;
-  }
-
-  private CustTrdInfoTempSync getTrdFromSyncById(String id){
-
-    String url = String.format(makeTrdDataUrl, id);
-    CustTrdInfoTempSync custTrdInfoTempSync = null;
-    try{
-      custTrdInfoTempSync = restTemplate.getForEntity(url, CustTrdInfoTempSync.class).getBody();
-    }catch (Exception ex){
-      log.error("Error handling:{}",  id, ex);
-    }
-    return custTrdInfoTempSync;
 
   }
+
+
+
+
+
+
+
 
   public void updateBuyerCompanyInfoByIds(String id){
     CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(id);
@@ -1327,14 +1192,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
   }
 
-  @Data
-  class PatchTrdContactor{
-    String buyerMan;
-    String buyerPhone;
-    String buyerAddress;
-    String buyerEmail;
-    String buyerIdcard;
-  }
 
 }
 

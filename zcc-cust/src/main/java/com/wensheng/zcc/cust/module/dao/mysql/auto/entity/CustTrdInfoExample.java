@@ -252,6 +252,66 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andItemSubTypeIsNull() {
+            addCriterion("item_sub_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeIsNotNull() {
+            addCriterion("item_sub_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeEqualTo(Integer value) {
+            addCriterion("item_sub_type =", value, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeNotEqualTo(Integer value) {
+            addCriterion("item_sub_type <>", value, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeGreaterThan(Integer value) {
+            addCriterion("item_sub_type >", value, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("item_sub_type >=", value, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeLessThan(Integer value) {
+            addCriterion("item_sub_type <", value, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("item_sub_type <=", value, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeIn(List<Integer> values) {
+            addCriterion("item_sub_type in", values, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeNotIn(List<Integer> values) {
+            addCriterion("item_sub_type not in", values, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeBetween(Integer value1, Integer value2) {
+            addCriterion("item_sub_type between", value1, value2, "itemSubType");
+            return (Criteria) this;
+        }
+
+        public Criteria andItemSubTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("item_sub_type not between", value1, value2, "itemSubType");
+            return (Criteria) this;
+        }
+
         public Criteria andTrdTypeIsNull() {
             addCriterion("trd_type is null");
             return (Criteria) this;
@@ -579,76 +639,6 @@ public class CustTrdInfoExample {
 
         public Criteria andInfoSourceNotBetween(String value1, String value2) {
             addCriterion("info_source not between", value1, value2, "infoSource");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteIsNull() {
-            addCriterion("info_website is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteIsNotNull() {
-            addCriterion("info_website is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteEqualTo(String value) {
-            addCriterion("info_website =", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteNotEqualTo(String value) {
-            addCriterion("info_website <>", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteGreaterThan(String value) {
-            addCriterion("info_website >", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteGreaterThanOrEqualTo(String value) {
-            addCriterion("info_website >=", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteLessThan(String value) {
-            addCriterion("info_website <", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteLessThanOrEqualTo(String value) {
-            addCriterion("info_website <=", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteLike(String value) {
-            addCriterion("info_website like", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteNotLike(String value) {
-            addCriterion("info_website not like", value, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteIn(List<String> values) {
-            addCriterion("info_website in", values, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteNotIn(List<String> values) {
-            addCriterion("info_website not in", values, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteBetween(String value1, String value2) {
-            addCriterion("info_website between", value1, value2, "infoWebsite");
-            return (Criteria) this;
-        }
-
-        public Criteria andInfoWebsiteNotBetween(String value1, String value2) {
-            addCriterion("info_website not between", value1, value2, "infoWebsite");
             return (Criteria) this;
         }
 
@@ -1062,183 +1052,63 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountIsNull() {
-            addCriterion("base_amount is null");
+        public Criteria andTotalDebtAmountIsNull() {
+            addCriterion("total_debt_amount is null");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountIsNotNull() {
-            addCriterion("base_amount is not null");
+        public Criteria andTotalDebtAmountIsNotNull() {
+            addCriterion("total_debt_amount is not null");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountEqualTo(Long value) {
-            addCriterion("base_amount =", value, "baseAmount");
+        public Criteria andTotalDebtAmountEqualTo(Long value) {
+            addCriterion("total_debt_amount =", value, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotEqualTo(Long value) {
-            addCriterion("base_amount <>", value, "baseAmount");
+        public Criteria andTotalDebtAmountNotEqualTo(Long value) {
+            addCriterion("total_debt_amount <>", value, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThan(Long value) {
-            addCriterion("base_amount >", value, "baseAmount");
+        public Criteria andTotalDebtAmountGreaterThan(Long value) {
+            addCriterion("total_debt_amount >", value, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountGreaterThanOrEqualTo(Long value) {
-            addCriterion("base_amount >=", value, "baseAmount");
+        public Criteria andTotalDebtAmountGreaterThanOrEqualTo(Long value) {
+            addCriterion("total_debt_amount >=", value, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThan(Long value) {
-            addCriterion("base_amount <", value, "baseAmount");
+        public Criteria andTotalDebtAmountLessThan(Long value) {
+            addCriterion("total_debt_amount <", value, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountLessThanOrEqualTo(Long value) {
-            addCriterion("base_amount <=", value, "baseAmount");
+        public Criteria andTotalDebtAmountLessThanOrEqualTo(Long value) {
+            addCriterion("total_debt_amount <=", value, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountIn(List<Long> values) {
-            addCriterion("base_amount in", values, "baseAmount");
+        public Criteria andTotalDebtAmountIn(List<Long> values) {
+            addCriterion("total_debt_amount in", values, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotIn(List<Long> values) {
-            addCriterion("base_amount not in", values, "baseAmount");
+        public Criteria andTotalDebtAmountNotIn(List<Long> values) {
+            addCriterion("total_debt_amount not in", values, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountBetween(Long value1, Long value2) {
-            addCriterion("base_amount between", value1, value2, "baseAmount");
+        public Criteria andTotalDebtAmountBetween(Long value1, Long value2) {
+            addCriterion("total_debt_amount between", value1, value2, "totalDebtAmount");
             return (Criteria) this;
         }
 
-        public Criteria andBaseAmountNotBetween(Long value1, Long value2) {
-            addCriterion("base_amount not between", value1, value2, "baseAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountIsNull() {
-            addCriterion("interest_amount is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountIsNotNull() {
-            addCriterion("interest_amount is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountEqualTo(Long value) {
-            addCriterion("interest_amount =", value, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountNotEqualTo(Long value) {
-            addCriterion("interest_amount <>", value, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountGreaterThan(Long value) {
-            addCriterion("interest_amount >", value, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountGreaterThanOrEqualTo(Long value) {
-            addCriterion("interest_amount >=", value, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountLessThan(Long value) {
-            addCriterion("interest_amount <", value, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountLessThanOrEqualTo(Long value) {
-            addCriterion("interest_amount <=", value, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountIn(List<Long> values) {
-            addCriterion("interest_amount in", values, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountNotIn(List<Long> values) {
-            addCriterion("interest_amount not in", values, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountBetween(Long value1, Long value2) {
-            addCriterion("interest_amount between", value1, value2, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andInterestAmountNotBetween(Long value1, Long value2) {
-            addCriterion("interest_amount not between", value1, value2, "interestAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountIsNull() {
-            addCriterion("total_amount is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountIsNotNull() {
-            addCriterion("total_amount is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountEqualTo(Long value) {
-            addCriterion("total_amount =", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountNotEqualTo(Long value) {
-            addCriterion("total_amount <>", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountGreaterThan(Long value) {
-            addCriterion("total_amount >", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountGreaterThanOrEqualTo(Long value) {
-            addCriterion("total_amount >=", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountLessThan(Long value) {
-            addCriterion("total_amount <", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountLessThanOrEqualTo(Long value) {
-            addCriterion("total_amount <=", value, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountIn(List<Long> values) {
-            addCriterion("total_amount in", values, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountNotIn(List<Long> values) {
-            addCriterion("total_amount not in", values, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountBetween(Long value1, Long value2) {
-            addCriterion("total_amount between", value1, value2, "totalAmount");
-            return (Criteria) this;
-        }
-
-        public Criteria andTotalAmountNotBetween(Long value1, Long value2) {
-            addCriterion("total_amount not between", value1, value2, "totalAmount");
+        public Criteria andTotalDebtAmountNotBetween(Long value1, Long value2) {
+            addCriterion("total_debt_amount not between", value1, value2, "totalDebtAmount");
             return (Criteria) this;
         }
 

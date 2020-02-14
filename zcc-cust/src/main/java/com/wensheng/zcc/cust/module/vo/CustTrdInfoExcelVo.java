@@ -9,6 +9,7 @@ public class CustTrdInfoExcelVo {
   String custName;
   Map<String, Integer> investType2Counts;
   Integer trdCount;
+  Long debtTotalAmount;
   Long trdTotalAmount;
   Map<String, Integer> intrestCities;
   String phone;

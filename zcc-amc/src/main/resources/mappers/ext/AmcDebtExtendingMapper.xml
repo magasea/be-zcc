@@ -10,11 +10,11 @@
     <!--<result column="base_amount" jdbcType="BIGINT" property="baseAmount" />-->
     <!--<result column="base_amount_desc" jdbcType="VARCHAR" property="baseAmountDesc" />-->
     <!--<result column="base_date" jdbcType="TIMESTAMP" property="baseDate" />-->
-    <!--<result column="total_amount" jdbcType="BIGINT" property="totalAmount" />-->
+    <!--<result column="total_amount" jdbcType="BIGINT" property="totalDebtAmount" />-->
     <!--<result column="total_amount_desc" jdbcType="VARCHAR" property="totalAmountDesc" />-->
     <!--<result column="settle_date" jdbcType="TIMESTAMP" property="settleDate" />-->
     <!--<result column="court_id" jdbcType="BIGINT" property="courtId" />-->
-    <!--<result column="amc_debt_code" jdbcType="VARCHAR" property="amcDebtCode" />-->
+    <!--<result column="amc_debt_code" jdbcType="VARCHAR" property="zccDebtCode" />-->
     <!--<result column="edit_status" jdbcType="INTEGER" property="publishState" />-->
     <!--<result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />-->
     <!--<result column="law_stat_desc" jdbcType="INTEGER" property="lawStatus" />-->
@@ -53,7 +53,7 @@
   ${prefix}total_amount_desc as total_amount_desc,
   ${prefix}settle_date as settle_date,
   ${prefix}court_id as court_id,
-  ${prefix}amc_debt_code as amc_debt_code,
+  ${prefix}zcc_debt_code as zcc_debt_code,
   ${prefix}publish_state as publish_state,
   ${prefix}publish_date as publish_date,
   ${prefix}lawsuit_state as lawsuit_state,

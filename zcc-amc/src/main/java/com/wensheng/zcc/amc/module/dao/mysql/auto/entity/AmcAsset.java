@@ -41,11 +41,7 @@ public class AmcAsset {
 
     private String street;
 
-    private String communityName;
-
     private String buildingName;
-
-    private String industrialPark;
 
     private Long updateBy;
 
@@ -209,28 +205,12 @@ public class AmcAsset {
         this.street = street == null ? null : street.trim();
     }
 
-    public String getCommunityName() {
-        return communityName;
-    }
-
-    public void setCommunityName(String communityName) {
-        this.communityName = communityName == null ? null : communityName.trim();
-    }
-
     public String getBuildingName() {
         return buildingName;
     }
 
     public void setBuildingName(String buildingName) {
         this.buildingName = buildingName == null ? null : buildingName.trim();
-    }
-
-    public String getIndustrialPark() {
-        return industrialPark;
-    }
-
-    public void setIndustrialPark(String industrialPark) {
-        this.industrialPark = industrialPark == null ? null : industrialPark.trim();
     }
 
     public Long getUpdateBy() {

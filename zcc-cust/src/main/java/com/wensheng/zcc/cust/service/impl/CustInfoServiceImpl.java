@@ -26,7 +26,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
-import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
+import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
@@ -232,12 +232,13 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       custTrdInfoExcelVo.setPhone(sbPhone.toString());
       custTrdInfoExcelVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
-      Long totalAmount = 0L;
+      Long debtTotalAmount = 0L;
+      Long trdTotalAmount = 0L;
 
       Map<String, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       String cityName = null;
-      String trdTypeName = null;
+      String itemTypeName = null;
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
         if(StringUtils.isEmpty(custTrdInfo.getDebtCity()) || custTrdInfo.getDebtCity().equals("-1")){
           if(StringUtils.isEmpty(custTrdInfo.getTrdProvince()) || custTrdInfo.getTrdProvince().equals("-1")){
@@ -256,16 +257,17 @@ public class CustInfoServiceImpl implements CustInfoService {
 
         }
 
-        totalAmount += custTrdInfo.getTotalAmount();
+        debtTotalAmount += custTrdInfo.getTotalDebtAmount() > 0 ? custTrdInfo.getTotalDebtAmount():0;
+        trdTotalAmount += custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount():0;
 
-        if(custTrdInfo.getTrdType() == null){
+        if(custTrdInfo.getItemType() == null){
           continue;
         }
-        trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
-        if(!invest2Counts.containsKey(trdTypeName)){
-          invest2Counts.put(trdTypeName, 1);
+        itemTypeName = ItemTypeEnum.lookupByIdUntil(custTrdInfo.getItemType()).getName();
+        if(!invest2Counts.containsKey(itemTypeName)){
+          invest2Counts.put(itemTypeName, 1);
         }else{
-          invest2Counts.put(trdTypeName, invest2Counts.get(trdTypeName)+1);
+          invest2Counts.put(itemTypeName, invest2Counts.get(itemTypeName)+1);
         }
 
         if(!city2Counts.containsKey(cityName)){
@@ -274,7 +276,8 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(cityName, city2Counts.get(cityName)+1);
         }
       }
-      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
+      custTrdInfoExcelVo.setDebtTotalAmount( debtTotalAmount > 0 ? debtTotalAmount: -1);
+      custTrdInfoExcelVo.setTrdTotalAmount(trdTotalAmount > 0? trdTotalAmount:-1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
@@ -381,17 +384,19 @@ public class CustInfoServiceImpl implements CustInfoService {
           custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
           custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
       custTrdInfoExcelVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
-      Long totalAmount = 0L;
+      Long debtTotalAmount = 0L;
+      Long trdTotalAmount = 0L;
       Map<String, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       String cityName= "";
-      String trdTypeName;
+      String itemTypeName;
       for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
-        totalAmount += custTrdInfo.getTotalAmount();
-        if(custTrdInfo.getTrdType() == null){
+        debtTotalAmount += custTrdInfo.getTotalDebtAmount() > 0 ? custTrdInfo.getTotalDebtAmount():0;
+        trdTotalAmount += custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount():0;
+        if(custTrdInfo.getItemType() == null){
           continue;
         }
-        trdTypeName = InvestTypeEnum.lookupByIdUntil(custTrdInfo.getTrdType()).getName();
+        itemTypeName = ItemTypeEnum.lookupByIdUntil(custTrdInfo.getItemType()).getName();
         if(!StringUtils.isEmpty(custTrdInfo.getDebtCity()) && Long.valueOf(custTrdInfo.getDebtCity()) > -1L){
           CustRegionDetail custRegion =
               custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getDebtCity()));
@@ -404,10 +409,10 @@ public class CustInfoServiceImpl implements CustInfoService {
           log.error("Failed to get cityName for :{}", custTrdInfo.getDebtCity());
         }
 
-        if(!invest2Counts.containsKey(trdTypeName)){
-          invest2Counts.put(trdTypeName, 1);
+        if(!invest2Counts.containsKey(itemTypeName)){
+          invest2Counts.put(itemTypeName, 1);
         }else{
-          invest2Counts.put(trdTypeName, invest2Counts.get(trdTypeName)+1);
+          invest2Counts.put(itemTypeName, invest2Counts.get(itemTypeName)+1);
         }
         if(!city2Counts.containsKey(cityName)){
           city2Counts.put(cityName, 1);
@@ -415,7 +420,8 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(cityName, city2Counts.get(cityName)+1);
         }
       }
-      custTrdInfoExcelVo.setTrdTotalAmount( totalAmount > 0? totalAmount: -1);
+      custTrdInfoExcelVo.setDebtTotalAmount( debtTotalAmount > 0? debtTotalAmount: -1);
+      custTrdInfoExcelVo.setTrdTotalAmount( trdTotalAmount > 0? trdTotalAmount: -1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
@@ -519,21 +525,22 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
-      Long totalAmount = 0L;
+      Long totalDebtAmount = 0L;
+      Long totalTrdAmount = 0L;
       Set<String> cities = new HashSet<>();
       Map<Integer, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExts.get(idx).getCustTrdInfoList()){
-        totalAmount += custTrdInfo.getTotalAmount() > 0 ? custTrdInfo.getTotalAmount() :
-            custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0 ;
+        totalDebtAmount += custTrdInfo.getTotalDebtAmount() > 0 ? custTrdInfo.getTotalDebtAmount() : 0 ;
+        totalTrdAmount += custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0;
         cities.add(custTrdInfo.getDebtCity());
-        if(custTrdInfo.getTrdType() == null){
+        if(custTrdInfo.getItemType() == null){
           continue;
         }
-        if(!invest2Counts.containsKey(custTrdInfo.getTrdType())){
-          invest2Counts.put(custTrdInfo.getTrdType(), 1);
+        if(!invest2Counts.containsKey(custTrdInfo.getItemType())){
+          invest2Counts.put(custTrdInfo.getItemType(), 1);
         }else{
-          invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
+          invest2Counts.put(custTrdInfo.getItemType(), invest2Counts.get(custTrdInfo.getItemType())+1);
         }
 
         if(!city2Counts.containsKey(custTrdInfo.getDebtCity())){
@@ -542,7 +549,8 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(custTrdInfo.getDebtCity(), city2Counts.get(custTrdInfo.getDebtCity())+1);
         }
       }
-      custTrdInfoVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
+      custTrdInfoVo.setDebtTotalAmount( totalDebtAmount > 0 ? totalDebtAmount: -1);
+      custTrdInfoVo.setTrdTotalAmount(totalTrdAmount);
       custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);
@@ -562,21 +570,22 @@ public class CustInfoServiceImpl implements CustInfoService {
           custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
           custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
       custTrdInfoVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
-      Long totalAmount = 0L;
+      Long totalDebtAmount = 0L;
+      Long totalTrdAmount = 0L;
       Set<String> cities = new HashSet<>();
       Map<Integer, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       for(CustTrdInfo custTrdInfo: custTrdPersonTrdExt.getCustTrdInfoList()){
-        totalAmount += custTrdInfo.getTotalAmount() > 0? custTrdInfo.getTotalAmount():
-            custTrdInfo.getTrdAmount() > 0 ? custTrdInfo.getTrdAmount() : 0;
+        totalDebtAmount += custTrdInfo.getTotalDebtAmount() > 0? custTrdInfo.getTotalDebtAmount():0;
+        totalTrdAmount += custTrdInfo.getTrdAmount() > 0? custTrdInfo.getTrdAmount():0;
         cities.add(custTrdInfo.getDebtCity());
-        if(custTrdInfo.getTrdType() == null){
+        if(custTrdInfo.getItemType() == null){
           continue;
         }
-        if(!invest2Counts.containsKey(custTrdInfo.getTrdType())){
-          invest2Counts.put(custTrdInfo.getTrdType(), 1);
+        if(!invest2Counts.containsKey(custTrdInfo.getItemType())){
+          invest2Counts.put(custTrdInfo.getItemType(), 1);
         }else{
-          invest2Counts.put(custTrdInfo.getTrdType(), invest2Counts.get(custTrdInfo.getTrdType())+1);
+          invest2Counts.put(custTrdInfo.getItemType(), invest2Counts.get(custTrdInfo.getItemType())+1);
         }
         if(!city2Counts.containsKey(custTrdInfo.getDebtCity())){
           city2Counts.put(custTrdInfo.getDebtCity(), 1);
@@ -584,7 +593,8 @@ public class CustInfoServiceImpl implements CustInfoService {
           city2Counts.put(custTrdInfo.getDebtCity(), city2Counts.get(custTrdInfo.getDebtCity())+1);
         }
       }
-      custTrdInfoVo.setTrdTotalAmount( totalAmount > 0 ? totalAmount: -1);
+      custTrdInfoVo.setDebtTotalAmount( totalDebtAmount > 0 ? totalDebtAmount: -1);
+      custTrdInfoVo.setTrdTotalAmount( totalTrdAmount > 0 ? totalTrdAmount: -1);
       custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);

@@ -39,7 +39,7 @@ public class AmcDebtVo {
 
   private Long courtId;
 
-  private String amcDebtCode;
+  private String zccDebtCode;
 
   private Integer publishState;
 

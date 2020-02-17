@@ -87,6 +87,26 @@ public class SQLUtils {
         sb.append(" and  ( cti.total_debt_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount()).append(")");
       }
     }
+
+    if(!CollectionUtils.isEmpty(queryParam.getInvestTrdScales())){
+      if(queryParam.getInvestTrdScales().size() == 1 && queryParam.getInvestTrdScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL2.getId() ){
+        sb.append(" and ( cti.trd_amount < 10000000 )" );
+      }else if(queryParam.getInvestTrdScales().size() == 1 && queryParam.getInvestTrdScales().get(0) == InvestScaleEnum.INVEST_SCALE_LVL5.getId()){
+        sb.append(" and ( cti.trd_amount >= 100000000 )" );
+      }else{
+        InvestScaleEnum leftScale , rightScale;
+
+        if(InvestScaleEnum.lookupByIdUntil(queryParam.getInvestTrdScales().get(0)).getAmount() < InvestScaleEnum.lookupByIdUntil(queryParam.getInvestTrdScales().get(1)).getAmount()){
+          leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestTrdScales().get(0));
+          rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestTrdScales().get(1));
+        }else{
+          leftScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestTrdScales().get(1));
+          rightScale = InvestScaleEnum.lookupByIdUntil(queryParam.getInvestTrdScales().get(2));
+        }
+        sb.append(" and  ( cti.trd_amount between ").append(leftScale.getAmount()).append(" and ").append(rightScale.getAmount()).append(")");
+      }
+    }
+
     if(queryParam.getItemType() != null){
       sb.append(" and ").append(" cti.item_type = ").append(queryParam.getItemType());
     }

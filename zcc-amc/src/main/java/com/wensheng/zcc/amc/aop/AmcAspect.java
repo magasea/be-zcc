@@ -5,7 +5,7 @@ import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -18,26 +18,20 @@ import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
-import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
-import com.wensheng.zcc.common.utils.SSO2AMCEnumUtils;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
 import org.aspectj.lang.reflect.CodeSignature;
-import org.hibernate.mapping.Join;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -75,7 +69,7 @@ public class AmcAspect {
       + ".wensheng.zcc.amc.module.vo.AmcDebtpackExtVo>, ..)) && args(baseActionVo)")
   public void beforeDoDebtPackAction(BaseActionVo<AmcDebtpackExtVo> baseActionVo) throws Exception {
     log.info("now get the point cut");
-    List<AmcDebt> amcDebts = amcDebtService.queryByDebtpackId(baseActionVo.getContent().getAmcDebtpackInfo().getId());
+    List<AmcDebt> amcDebts = amcDebtService.queryByDebtpackId(baseActionVo.getContent().getZccDebtpackInfo().getId());
     for(AmcDebt amcDebt: amcDebts){
       PublishStateEnum publishStateEnum =
           zccRulesService.runActionAndStatus(EditActionEnum.lookupByDisplayIdUtil(baseActionVo.getEditActionId()),
@@ -129,9 +123,9 @@ public class AmcAspect {
       AmcLocationEnum locationEnum =
           AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
       if(null != locationEnum){
-        List<AmcDebtpack>  amcDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum.getCname());
-        if(!CollectionUtils.isEmpty(amcDebtpacks)){
-          List<Long> amcDebtPackIds = amcDebtpacks.stream().map( item -> item.getId()).collect(Collectors.toList());
+        List<ZccDebtpack> zccDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum);
+        if(!CollectionUtils.isEmpty(zccDebtpacks)){
+          List<Long> amcDebtPackIds = zccDebtpacks.stream().map( item -> item.getId()).collect(Collectors.toList());
           queryParam.setDebtPackIds(amcDebtPackIds);
         }
       }

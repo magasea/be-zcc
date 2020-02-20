@@ -865,6 +865,76 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andAmcDebtCodeIsNull() {
+            addCriterion("amc_debt_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeIsNotNull() {
+            addCriterion("amc_debt_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeEqualTo(String value) {
+            addCriterion("amc_debt_code =", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeNotEqualTo(String value) {
+            addCriterion("amc_debt_code <>", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeGreaterThan(String value) {
+            addCriterion("amc_debt_code >", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("amc_debt_code >=", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeLessThan(String value) {
+            addCriterion("amc_debt_code <", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeLessThanOrEqualTo(String value) {
+            addCriterion("amc_debt_code <=", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeLike(String value) {
+            addCriterion("amc_debt_code like", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeNotLike(String value) {
+            addCriterion("amc_debt_code not like", value, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeIn(List<String> values) {
+            addCriterion("amc_debt_code in", values, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeNotIn(List<String> values) {
+            addCriterion("amc_debt_code not in", values, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeBetween(String value1, String value2) {
+            addCriterion("amc_debt_code between", value1, value2, "amcDebtCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcDebtCodeNotBetween(String value1, String value2) {
+            addCriterion("amc_debt_code not between", value1, value2, "amcDebtCode");
+            return (Criteria) this;
+        }
+
         public Criteria andPublishStateIsNull() {
             addCriterion("publish_state is null");
             return (Criteria) this;
@@ -1592,6 +1662,76 @@ public class AmcDebtExample {
 
         public Criteria andOrigCreditorIdNotBetween(Long value1, Long value2) {
             addCriterion("orig_creditor_id not between", value1, value2, "origCreditorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameIsNull() {
+            addCriterion("orig_creditor_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameIsNotNull() {
+            addCriterion("orig_creditor_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameEqualTo(String value) {
+            addCriterion("orig_creditor_name =", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameNotEqualTo(String value) {
+            addCriterion("orig_creditor_name <>", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameGreaterThan(String value) {
+            addCriterion("orig_creditor_name >", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameGreaterThanOrEqualTo(String value) {
+            addCriterion("orig_creditor_name >=", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameLessThan(String value) {
+            addCriterion("orig_creditor_name <", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameLessThanOrEqualTo(String value) {
+            addCriterion("orig_creditor_name <=", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameLike(String value) {
+            addCriterion("orig_creditor_name like", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameNotLike(String value) {
+            addCriterion("orig_creditor_name not like", value, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameIn(List<String> values) {
+            addCriterion("orig_creditor_name in", values, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameNotIn(List<String> values) {
+            addCriterion("orig_creditor_name not in", values, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameBetween(String value1, String value2) {
+            addCriterion("orig_creditor_name between", value1, value2, "origCreditorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andOrigCreditorNameNotBetween(String value1, String value2) {
+            addCriterion("orig_creditor_name not between", value1, value2, "origCreditorName");
             return (Criteria) this;
         }
 

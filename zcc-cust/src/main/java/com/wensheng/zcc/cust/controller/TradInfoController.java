@@ -1,19 +1,20 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
-import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
-import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.service.TrdInfoService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jmx.export.annotation.ManagedOperationParameter;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
  * @author chenwei on 4/15/19
@@ -50,8 +51,8 @@ public class TradInfoController {
 
   @RequestMapping(value = "/getTrdInfoByCustId", method = RequestMethod.POST)
   @ResponseBody
-  public List<CustTrdInfoExt> getTradInfo(@RequestParam Long custId, @RequestParam CustTypeEnum custTypeEnum){
-    List<CustTrdInfoExt> result = trdInfoService.getTrdInfo(custId, custTypeEnum.getId());
+  public List<CustTrdInfo> getTradInfo(@RequestParam Long custId, @RequestParam CustTypeEnum custTypeEnum){
+    List<CustTrdInfo> result = trdInfoService.getTrdInfo(custId, custTypeEnum.getId());
     return result;
   }
 

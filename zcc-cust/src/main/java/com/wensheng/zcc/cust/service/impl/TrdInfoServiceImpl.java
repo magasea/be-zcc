@@ -1,10 +1,10 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
-import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt;
 import com.wensheng.zcc.cust.service.TrdInfoService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +35,12 @@ public class TrdInfoServiceImpl implements TrdInfoService {
   }
 
   @Override
-  public List<CustTrdInfoExt> getTrdInfo(Long custId, int custType) {
+  public List<CustTrdInfo> getTrdInfo(Long custId, int custType) {
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custId).andBuyerTypeEqualTo(custType);
-    List<CustTrdInfoExt> result = custTrdInfoExtMapper.selectByExample(custTrdInfoExample);
+    List<CustTrdInfo> result = custTrdInfoExtMapper.selectByExample(custTrdInfoExample);
+    //拍卖系统金额精确到分
+    result.stream().forEach(item->item.setTrdAmount(item.getTrdAmount()/100));
     return result;
   }
 }

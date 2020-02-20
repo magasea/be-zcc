@@ -38,6 +38,7 @@ import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -188,6 +189,17 @@ public class CustInfoServiceImpl implements CustInfoService {
       int cnt = 0;
       while(cnt >= 0 ){
         List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy( offset,  pageSize,  queryParam,  orderByParam);
+        if(!StringUtils.isEmpty(queryParam.getCity()) && queryParam.getCity().length() >=5){
+          custTrdCmpyTrdExts.sort(new Comparator<CustTrdCmpyTrdExt>() {
+            @Override
+            public int compare(CustTrdCmpyTrdExt o1, CustTrdCmpyTrdExt o2) {
+              int o1cnt = getCountCustTrdInfoByCityLike(o1.getCustTrdInfoList(), queryParam.getCity().substring(0,2));
+              int o2cnt = getCountCustTrdInfoByCityLike(o2.getCustTrdInfoList(), queryParam.getCity().substring(0,2));
+              return o1cnt - o2cnt;
+            }
+          });
+        }
+
         if(custTrdCmpyTrdExts.size() < pageSize || cnt*pageSize >= size ){
           //it is last one
           cnt = -2;
@@ -205,6 +217,16 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
 
     return convertCmpyToExcelVoes(custTrdCmpyTrdExtsTotal);
+  }
+
+  private int getCountCustTrdInfoByCityLike(List<CustTrdInfo> custTrdInfos,  String provinceCode){
+    int count = 0;
+    for(CustTrdInfo custTrdInfoExt: custTrdInfos){
+      if(custTrdInfoExt.getDebtCity().startsWith(provinceCode)){
+        count +=1;
+      }
+    }
+    return count;
   }
 
   private List<CustTrdInfoExcelVo> convertCmpyToExcelVoes(List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts) {
@@ -238,6 +260,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       Map<String, Integer> invest2Counts = new HashMap<>();
       Map<String, Integer> city2Counts = new HashMap<>();
       String cityName = null;
+      String provinceName = null;
       String itemTypeName = null;
       for(CustTrdInfo custTrdInfo: custTrdCmpyTrdExt.getCustTrdInfoList()){
         if(StringUtils.isEmpty(custTrdInfo.getDebtCity()) || custTrdInfo.getDebtCity().equals("-1")){
@@ -249,7 +272,14 @@ public class CustInfoServiceImpl implements CustInfoService {
           cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getTrdProvince())).getName();
         }else{
           try{
-            cityName = custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getDebtCity())).getName();
+            CustRegionDetail custRegionDetail =
+                custRegionDetailMapper.selectByPrimaryKey(Long.valueOf(custTrdInfo.getDebtCity()));
+            cityName = custRegionDetail.getName();
+            if(cityName.equals("市辖区")){
+              custRegionDetail = custRegionDetailMapper.selectByPrimaryKey(custRegionDetail.getParentId());
+              cityName = custRegionDetail.getName();
+
+            }
           }catch (Exception ex){
             log.error("Failed to find city for:{}", custTrdInfo.getDebtCity());
             continue;
@@ -277,7 +307,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }
       custTrdInfoExcelVo.setDebtTotalAmount( debtTotalAmount > 0 ? debtTotalAmount: -1);
-      custTrdInfoExcelVo.setTrdTotalAmount(trdTotalAmount > 0? trdTotalAmount:-1);
+      //拍卖系统金额精确到分
+      custTrdInfoExcelVo.setTrdTotalAmount(trdTotalAmount > 0? trdTotalAmount/100:-1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
@@ -353,6 +384,17 @@ public class CustInfoServiceImpl implements CustInfoService {
       int cnt = 0;
       while(cnt >= 0 ){
         List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson( offset,  pageSize,  queryParam,  orderByParam);
+        if(!StringUtils.isEmpty(queryParam.getCity()) && queryParam.getCity().length() >=5){
+          custTrdPersonTrdExts.sort(new Comparator<CustTrdPersonTrdExt>() {
+            @Override
+            public int compare(CustTrdPersonTrdExt o1, CustTrdPersonTrdExt o2) {
+              int o1cnt = getCountCustTrdInfoByCityLike(o1.getCustTrdInfoList(), queryParam.getCity().substring(0,2));
+              int o2cnt = getCountCustTrdInfoByCityLike(o2.getCustTrdInfoList(), queryParam.getCity().substring(0,2));
+              return o1cnt - o2cnt;
+            }
+          });
+        }
+
         if(custTrdPersonTrdExts.size() < pageSize  || cnt*pageSize >= size ){
           //it is last one
           cnt = -2;
@@ -421,7 +463,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }
       custTrdInfoExcelVo.setDebtTotalAmount( debtTotalAmount > 0? debtTotalAmount: -1);
-      custTrdInfoExcelVo.setTrdTotalAmount( trdTotalAmount > 0? trdTotalAmount: -1);
+      //拍卖系统金额精确到分
+      custTrdInfoExcelVo.setTrdTotalAmount( trdTotalAmount > 0? trdTotalAmount/100: -1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
@@ -550,7 +593,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }
       custTrdInfoVo.setDebtTotalAmount( totalDebtAmount > 0 ? totalDebtAmount: -1);
-      custTrdInfoVo.setTrdTotalAmount(totalTrdAmount);
+      //拍卖系统金额精确到分
+      custTrdInfoVo.setTrdTotalAmount(totalTrdAmount > 0? totalTrdAmount/100 : -1);
       custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);
@@ -594,7 +638,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }
       custTrdInfoVo.setDebtTotalAmount( totalDebtAmount > 0 ? totalDebtAmount: -1);
-      custTrdInfoVo.setTrdTotalAmount( totalTrdAmount > 0 ? totalTrdAmount: -1);
+      //拍卖系统金额精确到分
+      custTrdInfoVo.setTrdTotalAmount( totalTrdAmount > 0 ? totalTrdAmount/100: -1);
       custTrdInfoVo.setIntrestCities(city2Counts);
       custTrdInfoVo.setInvestType2Counts(invest2Counts);
       custTrdInfoVos.add(custTrdInfoVo);

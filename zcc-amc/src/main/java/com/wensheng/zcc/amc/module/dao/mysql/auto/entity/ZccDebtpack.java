@@ -1,9 +1,11 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
-public class AmcDebtpack {
+public class ZccDebtpack {
     private Long id;
 
     private String title;
+
+    private String packTitle;
 
     private String notes;
 
@@ -12,6 +14,10 @@ public class AmcDebtpack {
     private String amcDebtpackCode;
 
     private Integer packStatus;
+
+    private Long amcCmpyId;
+
+    private Integer area;
 
     public Long getId() {
         return id;
@@ -27,6 +33,14 @@ public class AmcDebtpack {
 
     public void setTitle(String title) {
         this.title = title == null ? null : title.trim();
+    }
+
+    public String getPackTitle() {
+        return packTitle;
+    }
+
+    public void setPackTitle(String packTitle) {
+        this.packTitle = packTitle == null ? null : packTitle.trim();
     }
 
     public String getNotes() {
@@ -59,5 +73,21 @@ public class AmcDebtpack {
 
     public void setPackStatus(Integer packStatus) {
         this.packStatus = packStatus;
+    }
+
+    public Long getAmcCmpyId() {
+        return amcCmpyId;
+    }
+
+    public void setAmcCmpyId(Long amcCmpyId) {
+        this.amcCmpyId = amcCmpyId;
+    }
+
+    public Integer getArea() {
+        return area;
+    }
+
+    public void setArea(Integer area) {
+        this.area = area;
     }
 }

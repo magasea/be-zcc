@@ -1,8 +1,8 @@
 package com.wensheng.zcc.amc.service;
 
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
-import com.wensheng.zcc.amc.module.vo.AmcDebtpackExtVo;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
@@ -13,20 +13,20 @@ import org.springframework.data.domain.Sort.Direction;
  */
 public interface AmcDebtpackService {
 
-  public AmcDebtpack create(AmcDebtpack amcDebtpack) throws Exception;
+  public ZccDebtpack create(ZccDebtpack zccDebtpack) throws Exception;
 
-  public AmcDebtpack del(AmcDebtpack amcDebtpack);
+  public ZccDebtpack del(ZccDebtpack zccDebtpack);
 
-  public AmcDebtpack update(AmcDebtpack amcDebtpack);
+  public ZccDebtpack update(ZccDebtpack zccDebtpack);
 
 
-  public List<AmcDebtpack> queryAll(int offset, int size);
+  public List<ZccDebtpack> queryAll(int offset, int size);
 
-  public AmcDebtpack get(Long amcDebtpackId);
+  public ZccDebtpack get(Long amcDebtpackId);
 
   public boolean exist(Long amcDebtpackId);
 
-  public List<AmcDebtpack> query(AmcDebtpack queryCond, int offset, int size);
+  public List<ZccDebtpack> query(ZccDebtpack queryCond, int offset, int size);
 
 
 
@@ -35,13 +35,13 @@ public interface AmcDebtpackService {
   public List<AmcOrigCreditor> getCreditorByDebtPackId(Long debtPackId);
 
 
-  public List<AmcDebtpack> queryPacksWithLocation(String locationName);
+  public List<ZccDebtpack> queryPacksWithLocation(AmcLocationEnum locationName);
 
 
 
 
 
-  List<AmcDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception;
+  List<ZccDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception;
 
   Long getTotalCnt4Debtpacks();
 

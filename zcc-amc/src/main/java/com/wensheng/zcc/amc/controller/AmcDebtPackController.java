@@ -1,9 +1,9 @@
 package com.wensheng.zcc.amc.controller;
 
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import java.util.List;
@@ -36,23 +36,23 @@ public class AmcDebtPackController {
 
   @RequestMapping(value = "amcid/{amcId}/debtpack/add", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtpack createAmcDebtPack(@RequestBody AmcDebtpack amcDebtpack) throws Exception {
-    return  amcDebtpackService.create(amcDebtpack);
+  public ZccDebtpack createAmcDebtPack(@RequestBody ZccDebtpack zccDebtpack) throws Exception {
+    return  amcDebtpackService.create(zccDebtpack);
   }
 
   @RequestMapping(value = "amcid/{amcId}/debtpacks", method = RequestMethod.POST)
   @ResponseBody
-  public AmcPage<AmcDebtpack> getAllDebtPacks(@RequestBody PageInfo pageable) throws Exception {
+  public AmcPage<ZccDebtpack> getAllDebtPacks(@RequestBody PageInfo pageable) throws Exception {
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(pageable);
     if(CollectionUtils.isEmpty(orderByParam)){
       orderByParam.put("id", Direction.DESC);
     }
 
     int offset = PageReqRepHelper.getOffset(pageable);
-    List<AmcDebtpack> debtpacks =  amcDebtpackService.queryAllDebtPacks(offset, pageable.getSize(), orderByParam);
+    List<ZccDebtpack> debtpacks =  amcDebtpackService.queryAllDebtPacks(offset, pageable.getSize(), orderByParam);
     Long count = amcDebtpackService.getTotalCnt4Debtpacks();
-//    Page<AmcDebtpack> page = PageReqRepHelper.getPageResp(count, debtpacks, pageable);
-    AmcPage<AmcDebtpack> page = new AmcPage<>();
+//    Page<ZccDebtpack> page = PageReqRepHelper.getPageResp(count, debtpacks, pageable);
+    AmcPage<ZccDebtpack> page = new AmcPage<>();
     page.setContent(debtpacks);
     page.setTotal(count);
 
@@ -61,7 +61,7 @@ public class AmcDebtPackController {
 
   @RequestMapping(value = "amcid/{amcId}/debtpack", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtpack getDebtPack(@RequestParam("debtPackId") Long debtPackId) throws Exception {
+  public ZccDebtpack getDebtPack(@RequestParam("debtPackId") Long debtPackId) throws Exception {
 
 
     return amcDebtpackService.get(debtPackId);
@@ -70,10 +70,10 @@ public class AmcDebtPackController {
 
   @RequestMapping(value = "amcid/{amcId}/debtpack/update", method = RequestMethod.POST)
   @ResponseBody
-  public AmcDebtpack updateAmcDebtPack(@RequestBody BaseActionVo<AmcDebtpack>  amcBaseDebtpack) throws Exception {
-    AmcDebtpack amcDebtpack = amcBaseDebtpack.getContent();
-    amcDebtpackService.update(amcDebtpack);
-    return amcDebtpack;
+  public ZccDebtpack updateAmcDebtPack(@RequestBody BaseActionVo<ZccDebtpack>  amcBaseDebtpack) throws Exception {
+    ZccDebtpack zccDebtpack = amcBaseDebtpack.getContent();
+    amcDebtpackService.update(zccDebtpack);
+    return zccDebtpack;
   }
 
 

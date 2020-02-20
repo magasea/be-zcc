@@ -1,13 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
+    <result column="pack_title" jdbcType="CHAR" property="packTitle" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="amc_id" jdbcType="BIGINT" property="amcId" />
     <result column="amc_debtpack_code" jdbcType="CHAR" property="amcDebtpackCode" />
     <result column="pack_status" jdbcType="INTEGER" property="packStatus" />
+    <result column="amc_cmpy_id" jdbcType="BIGINT" property="amcCmpyId" />
+    <result column="area" jdbcType="INTEGER" property="area" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -68,16 +71,17 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, notes, amc_id, amc_debtpack_code, pack_status
+    id, title, pack_title, notes, amc_id, amc_debtpack_code, pack_status, amc_cmpy_id, 
+    area
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpackExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_DEBTPACK
+    from ZCC_DEBTPACK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -88,36 +92,41 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_DEBTPACK
+    from ZCC_DEBTPACK
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_DEBTPACK
+    delete from ZCC_DEBTPACK
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample">
-    delete from AMC_DEBTPACK
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpackExample">
+    delete from ZCC_DEBTPACK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTPACK (title, notes, amc_id, 
-      amc_debtpack_code, pack_status)
-    values (#{title,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{amcId,jdbcType=BIGINT}, 
-      #{amcDebtpackCode,jdbcType=CHAR}, #{packStatus,jdbcType=INTEGER})
+    insert into ZCC_DEBTPACK (title, pack_title, notes, 
+      amc_id, amc_debtpack_code, pack_status, 
+      amc_cmpy_id, area)
+    values (#{title,jdbcType=CHAR}, #{packTitle,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, 
+      #{amcId,jdbcType=BIGINT}, #{amcDebtpackCode,jdbcType=CHAR}, #{packStatus,jdbcType=INTEGER}, 
+      #{amcCmpyId,jdbcType=BIGINT}, #{area,jdbcType=INTEGER})
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBTPACK
+    insert into ZCC_DEBTPACK
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="title != null">
         title,
+      </if>
+      <if test="packTitle != null">
+        pack_title,
       </if>
       <if test="notes != null">
         notes,
@@ -131,10 +140,19 @@
       <if test="packStatus != null">
         pack_status,
       </if>
+      <if test="amcCmpyId != null">
+        amc_cmpy_id,
+      </if>
+      <if test="area != null">
+        area,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
         #{title,jdbcType=CHAR},
+      </if>
+      <if test="packTitle != null">
+        #{packTitle,jdbcType=CHAR},
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
@@ -148,22 +166,31 @@
       <if test="packStatus != null">
         #{packStatus,jdbcType=INTEGER},
       </if>
+      <if test="amcCmpyId != null">
+        #{amcCmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="area != null">
+        #{area,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultType="java.lang.Long">
-    select count(*) from AMC_DEBTPACK
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpackExample" resultType="java.lang.Long">
+    select count(*) from ZCC_DEBTPACK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_DEBTPACK
+    update ZCC_DEBTPACK
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
       <if test="record.title != null">
         title = #{record.title,jdbcType=CHAR},
+      </if>
+      <if test="record.packTitle != null">
+        pack_title = #{record.packTitle,jdbcType=CHAR},
       </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
@@ -177,28 +204,40 @@
       <if test="record.packStatus != null">
         pack_status = #{record.packStatus,jdbcType=INTEGER},
       </if>
+      <if test="record.amcCmpyId != null">
+        amc_cmpy_id = #{record.amcCmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.area != null">
+        area = #{record.area,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_DEBTPACK
+    update ZCC_DEBTPACK
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
+      pack_title = #{record.packTitle,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       amc_id = #{record.amcId,jdbcType=BIGINT},
       amc_debtpack_code = #{record.amcDebtpackCode,jdbcType=CHAR},
-      pack_status = #{record.packStatus,jdbcType=INTEGER}
+      pack_status = #{record.packStatus,jdbcType=INTEGER},
+      amc_cmpy_id = #{record.amcCmpyId,jdbcType=BIGINT},
+      area = #{record.area,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
-    update AMC_DEBTPACK
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack">
+    update ZCC_DEBTPACK
     <set>
       <if test="title != null">
         title = #{title,jdbcType=CHAR},
+      </if>
+      <if test="packTitle != null">
+        pack_title = #{packTitle,jdbcType=CHAR},
       </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
@@ -212,26 +251,35 @@
       <if test="packStatus != null">
         pack_status = #{packStatus,jdbcType=INTEGER},
       </if>
+      <if test="amcCmpyId != null">
+        amc_cmpy_id = #{amcCmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="area != null">
+        area = #{area,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack">
-    update AMC_DEBTPACK
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack">
+    update ZCC_DEBTPACK
     set title = #{title,jdbcType=CHAR},
+      pack_title = #{packTitle,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR},
       amc_id = #{amcId,jdbcType=BIGINT},
       amc_debtpack_code = #{amcDebtpackCode,jdbcType=CHAR},
-      pack_status = #{packStatus,jdbcType=INTEGER}
+      pack_status = #{packStatus,jdbcType=INTEGER},
+      amc_cmpy_id = #{amcCmpyId,jdbcType=BIGINT},
+      area = #{area,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpackExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_DEBTPACK
+    from ZCC_DEBTPACK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

@@ -8,6 +8,7 @@ import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
 import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PersonSexEnum;
+import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.BidTypeEnum;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import com.wensheng.zcc.cust.service.GeoInfoService;
@@ -98,6 +99,17 @@ public class BasicInfoController {
     List<String> result = new ArrayList<>();
     for(CustTypeEnum custTypeEnum : CustTypeEnum.values()){
       result.add(String.format("%d:%s", custTypeEnum.getId(), custTypeEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/trdTypes", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> getTrdTypes(){
+
+    List<String> result = new ArrayList<>();
+    for(SyncTrdTypeEnum syncTrdTypeEnum : SyncTrdTypeEnum.values()){
+      result.add(String.format("%d:%s", syncTrdTypeEnum.getId(), syncTrdTypeEnum.getName()));
     }
     return result;
   }

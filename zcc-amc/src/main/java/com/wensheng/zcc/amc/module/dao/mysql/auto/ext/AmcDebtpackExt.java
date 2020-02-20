@@ -1,6 +1,6 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.ext;
 
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import java.util.List;
 import lombok.Data;
@@ -12,7 +12,7 @@ import lombok.Data;
 @Data
 public class AmcDebtpackExt {
   Long id;
-  AmcDebtpack amcDebtpackInfo;
+  ZccDebtpack zccDebtpackInfo;
   List<AmcOrigCreditor> amcOrigCreditorList;
 
 }

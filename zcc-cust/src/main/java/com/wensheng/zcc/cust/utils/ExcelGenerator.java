@@ -36,7 +36,7 @@ public class ExcelGenerator {
       File file = new File(fileBase);
       boolean dirCreated = file.mkdir();
 
-      String[] COLUMNs = {"#", "投资人名称", "投资偏好类型", "偏好地区","交易总额(元)","联系方式","联系地址"};
+      String[] COLUMNs = {"#", "投资人名称", "投资偏好类型", "偏好地区","债权本息总额(元)","交易总额(元)","联系方式","联系地址"};
       Long timeStamp = System.currentTimeMillis();
       try(
           Workbook workbook = new XSSFWorkbook();
@@ -84,20 +84,32 @@ public class ExcelGenerator {
           if(custTrdInfoExcelVo.getDebtTotalAmount() > 0){
             row.createCell(4).setCellValue(custTrdInfoExcelVo.getDebtTotalAmount());
           }else{
-            log.error("The totalAmount:{}  of custId:{} is not valid", custTrdInfoExcelVo.getDebtTotalAmount(),
+            log.error("The debtTotalAmount:{}  of custId:{} is not valid", custTrdInfoExcelVo.getDebtTotalAmount(),
                 custTrdInfoExcelVo.getCustId());
             row.createCell(4);
           }
 
+
           row.getCell(4).setCellStyle(custCellStyle);
+
+          if(custTrdInfoExcelVo.getTrdTotalAmount() > 0){
+            row.createCell(5).setCellValue(custTrdInfoExcelVo.getTrdTotalAmount());
+          }else{
+            log.error("The trdTotalAmount:{}  of custId:{} is not valid", custTrdInfoExcelVo.getTrdTotalAmount(),
+                custTrdInfoExcelVo.getCustId());
+            row.createCell(5);
+          }
+
+
+          row.getCell(5).setCellStyle(custCellStyle);
           if(StringUtils.isEmpty(custTrdInfoExcelVo.getPhone()) || custTrdInfoExcelVo.getPhone().contains("-1;")){
             log.error("The phone info:{} of custId:{} is not valid", custTrdInfoExcelVo.getPhone(),
                 custTrdInfoExcelVo.getCustId());
-            row.createCell(5);
+            row.createCell(6);
           }else{
-            row.createCell(5).setCellValue(custTrdInfoExcelVo.getPhone());
+            row.createCell(6).setCellValue(custTrdInfoExcelVo.getPhone());
           }
-          row.createCell(6).setCellValue(custTrdInfoExcelVo.getAddress());
+          row.createCell(7).setCellValue(custTrdInfoExcelVo.getAddress());
 
         }
 

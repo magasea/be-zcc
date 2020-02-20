@@ -1,37 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExt">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="item_type" jdbcType="INTEGER" property="itemType" />
-    <result column="item_sub_type" jdbcType="INTEGER" property="itemSubType" />
-    <result column="trd_type" jdbcType="INTEGER" property="trdType" />
-    <result column="info_title" jdbcType="VARCHAR" property="infoTitle" />
-    <result column="pack_count" jdbcType="INTEGER" property="packCount" />
-    <result column="info_id" jdbcType="CHAR" property="infoId" />
-    <result column="info_source" jdbcType="VARCHAR" property="infoSource" />
-    <result column="info_url" jdbcType="VARCHAR" property="infoUrl" />
-    <result column="debt_province" jdbcType="CHAR" property="debtProvince" />
-    <result column="trd_province" jdbcType="CHAR" property="trdProvince" />
-    <result column="debt_city" jdbcType="CHAR" property="debtCity" />
-    <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />
-    <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />
-    <result column="total_debt_amount" jdbcType="BIGINT" property="totalDebtAmount" />
-    <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
-    <result column="trd_date" jdbcType="DATE" property="trdDate" />
-    <result column="pub_date" jdbcType="TIMESTAMP" property="pubDate" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
-    <result column="notes" jdbcType="VARCHAR" property="notes" />
-    <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
-    <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
-    <result column="seller_type" jdbcType="INTEGER" property="sellerType" />
-    <result column="seller_id" jdbcType="BIGINT" property="sellerId" />
-    <result column="seller_name" jdbcType="CHAR" property="sellerName" />
-    <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />
-    <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
-    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
-    <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
-  </resultMap>
+<!--  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">-->
+<!--    <id column="id" jdbcType="BIGINT" property="id" />-->
+<!--    <result column="item_type" jdbcType="INTEGER" property="itemType" />-->
+<!--    <result column="item_sub_type" jdbcType="INTEGER" property="itemSubType" />-->
+<!--    <result column="trd_type" jdbcType="INTEGER" property="trdType" />-->
+<!--    <result column="info_title" jdbcType="VARCHAR" property="infoTitle" />-->
+<!--    <result column="pack_count" jdbcType="INTEGER" property="packCount" />-->
+<!--    <result column="info_id" jdbcType="CHAR" property="infoId" />-->
+<!--    <result column="info_source" jdbcType="VARCHAR" property="infoSource" />-->
+<!--    <result column="info_url" jdbcType="VARCHAR" property="infoUrl" />-->
+<!--    <result column="debt_province" jdbcType="CHAR" property="debtProvince" />-->
+<!--    <result column="trd_province" jdbcType="CHAR" property="trdProvince" />-->
+<!--    <result column="debt_city" jdbcType="CHAR" property="debtCity" />-->
+<!--    <result column="trd_amount_orig" jdbcType="CHAR" property="trdAmountOrig" />-->
+<!--    <result column="trd_amount" jdbcType="BIGINT" property="trdAmount" />-->
+<!--    <result column="total_debt_amount" jdbcType="BIGINT" property="totalDebtAmount" />-->
+<!--    <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />-->
+<!--    <result column="trd_date" jdbcType="DATE" property="trdDate" />-->
+<!--    <result column="pub_date" jdbcType="TIMESTAMP" property="pubDate" />-->
+<!--    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />-->
+<!--    <result column="notes" jdbcType="VARCHAR" property="notes" />-->
+<!--    <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />-->
+<!--    <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />-->
+<!--    <result column="seller_type" jdbcType="INTEGER" property="sellerType" />-->
+<!--    <result column="seller_id" jdbcType="BIGINT" property="sellerId" />-->
+<!--    <result column="seller_name" jdbcType="CHAR" property="sellerName" />-->
+<!--    <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />-->
+<!--    <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />-->
+<!--    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />-->
+<!--    <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />-->
+<!--  </resultMap>-->
   <sql id="Example_Where_Clause">
     <where>
       <foreach collection="oredCriteria" item="criteria" separator="or">
@@ -101,7 +101,8 @@
     ${prefix}data_quality as data_quality
   </sql>
 
-  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample"
+    resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
     select
     <if test="distinct">
       distinct
@@ -119,7 +120,7 @@
       order by ${orderByClause}
     </if>
   </select>
-  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
     from CUST_TRD_INFO
@@ -128,7 +129,8 @@
 
 
 
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
     select
     <if test="distinct">
       distinct

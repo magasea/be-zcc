@@ -3,22 +3,23 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpackExample;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
@@ -36,7 +37,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Autowired
-  AmcDebtpackMapper amcDebtpackMapper;
+  ZccDebtpackMapper zccDebtpackMapper;
 
   @Autowired
   AmcOrigCreditorMapper amcOrigCreditorMapper;
@@ -52,54 +53,54 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Override
   @Transactional
-  public AmcDebtpack create(AmcDebtpack amcDebtpack) throws Exception {
-    amcDebtpackMapper.insertSelective(amcDebtpack);
+  public ZccDebtpack create(ZccDebtpack zccDebtpack) throws Exception {
+    zccDebtpackMapper.insertSelective(zccDebtpack);
 
-    return amcDebtpack;
+    return zccDebtpack;
   }
 
   @Override
-  public AmcDebtpack del(AmcDebtpack amcDebtpack) {
+  public ZccDebtpack del(ZccDebtpack zccDebtpack) {
     return null;
   }
 
   @Override
-  public AmcDebtpack update(AmcDebtpack amcDebtpack) {
-    AmcDebtpack amcDebtpackVo = new AmcDebtpack();
+  public ZccDebtpack update(ZccDebtpack zccDebtpack) {
+    ZccDebtpack zccDebtpackVo = new ZccDebtpack();
 
-    amcDebtpackMapper.updateByPrimaryKey(amcDebtpack);
+    zccDebtpackMapper.updateByPrimaryKey(zccDebtpack);
 
-    return amcDebtpack;
+    return zccDebtpack;
   }
 
 
 
   @Override
-  public List<AmcDebtpack> queryAll(int offset, int size) {
+  public List<ZccDebtpack> queryAll(int offset, int size) {
 
-    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
-    amcDebtpackExample.createCriteria().andIdGreaterThan(0L);
+    ZccDebtpackExample zccDebtpackExample = new ZccDebtpackExample();
+    zccDebtpackExample.createCriteria().andIdGreaterThan(0L);
     RowBounds rowBounds = new RowBounds(offset, size);
-    List<AmcDebtpack> amcDebtpacks = amcDebtpackMapper.selectByExampleWithRowbounds(amcDebtpackExample, rowBounds);
+    List<ZccDebtpack> zccDebtpacks = zccDebtpackMapper.selectByExampleWithRowbounds(zccDebtpackExample, rowBounds);
 
-    return amcDebtpacks;
+    return zccDebtpacks;
   }
 
   @Override
-  public AmcDebtpack get(Long amcDebtpackId) {
-    AmcDebtpack amcDebtpack = amcDebtpackMapper.selectByPrimaryKey(amcDebtpackId);
-       return amcDebtpack;
+  public ZccDebtpack get(Long amcDebtpackId) {
+    ZccDebtpack zccDebtpack = zccDebtpackMapper.selectByPrimaryKey(amcDebtpackId);
+       return zccDebtpack;
   }
 
   @Override
   public boolean exist(Long amcDebtpackId) {
-    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
-    Long count =  amcDebtpackMapper.countByExample(amcDebtpackExample);
+    ZccDebtpackExample zccDebtpackExample = new ZccDebtpackExample();
+    Long count =  zccDebtpackMapper.countByExample(zccDebtpackExample);
     return count > 0;
   }
 
   @Override
-  public List<AmcDebtpack> query(AmcDebtpack queryCond, int offset, int size) {
+  public List<ZccDebtpack> query(ZccDebtpack queryCond, int offset, int size) {
     return null;
   }
 
@@ -123,33 +124,32 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
 
   @Override
   @Cacheable()
-  public List<AmcDebtpack> queryPacksWithLocation(String locationName) {
-    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
-    StringBuilder sb = new StringBuilder();
-    sb.append(locationName.substring(0,2)).append("%");
-    amcDebtpackExample.createCriteria().andTitleLike(sb.toString());
-    List<AmcDebtpack> amcDebtpacks = amcDebtpackMapper.selectByExample(amcDebtpackExample);
-    return amcDebtpacks;
+  public List<ZccDebtpack> queryPacksWithLocation(AmcLocationEnum location) {
+    ZccDebtpackExample zccDebtpackExample = new ZccDebtpackExample();
+
+    zccDebtpackExample.createCriteria().andAreaEqualTo(location.getId());
+    List<ZccDebtpack> zccDebtpacks = zccDebtpackMapper.selectByExample(zccDebtpackExample);
+    return zccDebtpacks;
   }
 
 
   @Override
-  public List<AmcDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception {
+  public List<ZccDebtpack> queryAllDebtPacks(int offset, int size, Map<String, Direction> orderByParam) throws Exception {
 
-      AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
-      amcDebtpackExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
+      ZccDebtpackExample zccDebtpackExample = new ZccDebtpackExample();
+      zccDebtpackExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
       RowBounds rowBounds = new RowBounds(offset, size);
-      List<AmcDebtpack> amcDebtpacks = amcDebtpackMapper.selectByExampleWithRowbounds(amcDebtpackExample,
+      List<ZccDebtpack> zccDebtpacks = zccDebtpackMapper.selectByExampleWithRowbounds(zccDebtpackExample,
           rowBounds);
-      return amcDebtpacks;
+      return zccDebtpacks;
 
 
   }
 
   @Override
   public Long getTotalCnt4Debtpacks() {
-    AmcDebtpackExample amcDebtpackExample = new AmcDebtpackExample();
-    Long count = amcDebtpackMapper.countByExample(amcDebtpackExample);
+    ZccDebtpackExample zccDebtpackExample = new ZccDebtpackExample();
+    Long count = zccDebtpackMapper.countByExample(zccDebtpackExample);
     return count;
   }
 

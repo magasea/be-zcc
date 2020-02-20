@@ -3,7 +3,7 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtpackExtMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtpackExt">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <association property="amcDebtpackInfo"
+    <association property="zccDebtpackInfo"
       resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper.BaseResultMap"/>
     <collection property="amcOrigCreditorList" ofType="AmcOrigCreditor"
       resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper.BaseResultMap"/>

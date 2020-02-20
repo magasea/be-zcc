@@ -268,25 +268,25 @@ public class AmcBasicInfoController {
     return amcHelperService.createPerson(amcPerson);
   }
 
-  @EditActionChecker
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'PERM_DEBTCNTR_MOD')")
-  @RequestMapping(value = "/amcid/{amcId}/amccontactor/update", method = RequestMethod.POST)
-  @ResponseBody
-  public AmcDebtContactor updateAmcDebtContactors(@RequestBody AmcDebtContactor amcPerson, @PathVariable Long amcId){
-    return amcHelperService.updatePerson(amcPerson);
-  }
-
-  @EditActionChecker
-  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'PERM_DEBTCNTR_MOD')")
-  @RequestMapping(value = "/amcid/{amcId}/amccontactor/del", method = RequestMethod.POST)
-  @ResponseBody
-  public String delAmcDebtContactors(@RequestBody Long[] contactorIds, @PathVariable Long amcId) throws Exception {
-    if(contactorIds != null && contactorIds.length > 0){
-      amcHelperService.deletePersons(contactorIds);
-    }
-    return "succeed";
-
-  }
+//  @EditActionChecker
+//  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'PERM_DEBTCNTR_MOD')")
+//  @RequestMapping(value = "/amcid/{amcId}/amccontactor/update", method = RequestMethod.POST)
+//  @ResponseBody
+//  public AmcDebtContactor updateAmcDebtContactors(@RequestBody AmcDebtContactor amcPerson, @PathVariable Long amcId){
+//    return amcHelperService.updatePerson(amcPerson);
+//  }
+//
+//  @EditActionChecker
+//  @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#amcId, 'PERM_DEBTCNTR_MOD')")
+//  @RequestMapping(value = "/amcid/{amcId}/amccontactor/del", method = RequestMethod.POST)
+//  @ResponseBody
+//  public String delAmcDebtContactors(@RequestBody Long[] contactorIds, @PathVariable Long amcId) throws Exception {
+//    if(contactorIds != null && contactorIds.length > 0){
+//      amcHelperService.deletePersons(contactorIds);
+//    }
+//    return "succeed";
+//
+//  }
 
   @RequestMapping(value = "/amcBranchLocations", method = RequestMethod.POST)
   @ResponseBody

@@ -27,6 +27,8 @@ public class AmcDebt {
 
     private String zccDebtCode;
 
+    private String amcDebtCode;
+
     private Integer publishState;
 
     private Date publishDate;
@@ -50,6 +52,8 @@ public class AmcDebt {
     private Date recommEndDate;
 
     private Long origCreditorId;
+
+    private String origCreditorName;
 
     private String briefDesc;
 
@@ -157,6 +161,14 @@ public class AmcDebt {
         this.zccDebtCode = zccDebtCode == null ? null : zccDebtCode.trim();
     }
 
+    public String getAmcDebtCode() {
+        return amcDebtCode;
+    }
+
+    public void setAmcDebtCode(String amcDebtCode) {
+        this.amcDebtCode = amcDebtCode == null ? null : amcDebtCode.trim();
+    }
+
     public Integer getPublishState() {
         return publishState;
     }
@@ -251,6 +263,14 @@ public class AmcDebt {
 
     public void setOrigCreditorId(Long origCreditorId) {
         this.origCreditorId = origCreditorId;
+    }
+
+    public String getOrigCreditorName() {
+        return origCreditorName;
+    }
+
+    public void setOrigCreditorName(String origCreditorName) {
+        this.origCreditorName = origCreditorName == null ? null : origCreditorName.trim();
     }
 
     public String getBriefDesc() {

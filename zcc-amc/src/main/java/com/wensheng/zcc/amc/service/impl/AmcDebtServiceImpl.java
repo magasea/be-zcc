@@ -701,31 +701,48 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Transactional
-  public void connDebt2Debtors(List<Long> debtorIds, Long debtId) {
+  public void connDebt2Debtors(List<AmcDebtor> debtorFrontend, Long debtId) {
 
+    Map<Long, AmcDebtor> debtorMap = new HashMap<>();
+    List<AmcDebtor> newMembers = new ArrayList();
+    for(AmcDebtor amcDebtor : debtorFrontend){
+      amcDebtor.setDebtId(debtId);
+      if(amcDebtor.getId() > 0 ){
+
+        if(debtorMap.containsKey(amcDebtor.getId())){
+          log.error("Duplicated amcDebtor id:{} will just use last one", amcDebtor.getId());
+        }
+        debtorMap.put(amcDebtor.getId(), amcDebtor);
+      }else{
+        amcDebtor.setId(null);
+        newMembers.add(amcDebtor);
+      }
+    }
 
     AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
     amcDebtorExample.createCriteria().andDebtIdEqualTo(debtId);
     List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
+    for(AmcDebtor amcDebtor: amcDebtors){
+      if(debtorMap.containsKey(amcDebtor.getId())){
+        AmcBeanUtils.copyProperties(debtorMap.get(amcDebtor.getId()), amcDebtor);
+        amcDebtorMapper.updateByPrimaryKeySelective(amcDebtor);
+      }else{
+        amcDebtorMapper.deleteByPrimaryKey(amcDebtor.getId());
+      }
+      debtorMap.remove(amcDebtor.getId());
+    }
+    if(!CollectionUtils.isEmpty(debtorMap)){
+      debtorMap.entrySet().forEach(item -> {
+        item.getValue().setId(null);
+        newMembers.add(item.getValue());
+      });
+    }
 
-    Set<Long> updateList = new HashSet<>();
-    Set<Long> historyList = new HashSet<>();
-    debtorIds.forEach(item -> updateList.add(item));
-    amcDebtors.forEach(item -> historyList.add(item.getId()));
-    List<Long> delList = new ArrayList<>();
-    List<Long> addList = new ArrayList<>();
-    if(!CollectionUtils.isEmpty(historyList)){
-      historyList.forEach(historyItem ->{if(!updateList.contains(historyItem)){  delList.add(historyItem);}});
+
+    for(AmcDebtor amcDebtor: newMembers){
+      amcDebtorMapper.insertSelective(amcDebtor);
     }
-    if(!CollectionUtils.isEmpty(updateList)){
-      updateList.forEach(updateItem ->{if(!historyList.contains(updateItem)){  addList.add(updateItem);}});
-    }
-    updateDebtId4Debtors(addList, debtId);
-    amcDebtorExample = new AmcDebtorExample();
-    if(!CollectionUtils.isEmpty(delList)){
-      amcDebtorExample.createCriteria().andIdIn(delList).andDebtIdEqualTo(debtId);
-      amcDebtorMapper.deleteByExample(amcDebtorExample);
-    }
+
 
   }
 

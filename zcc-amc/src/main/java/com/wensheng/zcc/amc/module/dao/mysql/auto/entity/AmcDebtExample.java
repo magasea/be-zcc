@@ -1305,6 +1305,146 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andAmcContactorNameIsNull() {
+            addCriterion("amc_contactor_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameIsNotNull() {
+            addCriterion("amc_contactor_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameEqualTo(String value) {
+            addCriterion("amc_contactor_name =", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameNotEqualTo(String value) {
+            addCriterion("amc_contactor_name <>", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameGreaterThan(String value) {
+            addCriterion("amc_contactor_name >", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameGreaterThanOrEqualTo(String value) {
+            addCriterion("amc_contactor_name >=", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameLessThan(String value) {
+            addCriterion("amc_contactor_name <", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameLessThanOrEqualTo(String value) {
+            addCriterion("amc_contactor_name <=", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameLike(String value) {
+            addCriterion("amc_contactor_name like", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameNotLike(String value) {
+            addCriterion("amc_contactor_name not like", value, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameIn(List<String> values) {
+            addCriterion("amc_contactor_name in", values, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameNotIn(List<String> values) {
+            addCriterion("amc_contactor_name not in", values, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameBetween(String value1, String value2) {
+            addCriterion("amc_contactor_name between", value1, value2, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorNameNotBetween(String value1, String value2) {
+            addCriterion("amc_contactor_name not between", value1, value2, "amcContactorName");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneIsNull() {
+            addCriterion("amc_contactor_phone is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneIsNotNull() {
+            addCriterion("amc_contactor_phone is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneEqualTo(String value) {
+            addCriterion("amc_contactor_phone =", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneNotEqualTo(String value) {
+            addCriterion("amc_contactor_phone <>", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneGreaterThan(String value) {
+            addCriterion("amc_contactor_phone >", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneGreaterThanOrEqualTo(String value) {
+            addCriterion("amc_contactor_phone >=", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneLessThan(String value) {
+            addCriterion("amc_contactor_phone <", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneLessThanOrEqualTo(String value) {
+            addCriterion("amc_contactor_phone <=", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneLike(String value) {
+            addCriterion("amc_contactor_phone like", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneNotLike(String value) {
+            addCriterion("amc_contactor_phone not like", value, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneIn(List<String> values) {
+            addCriterion("amc_contactor_phone in", values, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneNotIn(List<String> values) {
+            addCriterion("amc_contactor_phone not in", values, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneBetween(String value1, String value2) {
+            addCriterion("amc_contactor_phone between", value1, value2, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorPhoneNotBetween(String value1, String value2) {
+            addCriterion("amc_contactor_phone not between", value1, value2, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
         public Criteria andAmcContactor2IdIsNull() {
             addCriterion("amc_contactor2_id is null");
             return (Criteria) this;

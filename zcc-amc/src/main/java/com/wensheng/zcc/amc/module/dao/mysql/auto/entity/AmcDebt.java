@@ -41,6 +41,10 @@ public class AmcDebt {
 
     private Long amcContactorId;
 
+    private String amcContactorName;
+
+    private String amcContactorPhone;
+
     private Long amcContactor2Id;
 
     private Integer isRecommanded;
@@ -215,6 +219,22 @@ public class AmcDebt {
 
     public void setAmcContactorId(Long amcContactorId) {
         this.amcContactorId = amcContactorId;
+    }
+
+    public String getAmcContactorName() {
+        return amcContactorName;
+    }
+
+    public void setAmcContactorName(String amcContactorName) {
+        this.amcContactorName = amcContactorName == null ? null : amcContactorName.trim();
+    }
+
+    public String getAmcContactorPhone() {
+        return amcContactorPhone;
+    }
+
+    public void setAmcContactorPhone(String amcContactorPhone) {
+        this.amcContactorPhone = amcContactorPhone == null ? null : amcContactorPhone.trim();
     }
 
     public Long getAmcContactor2Id() {

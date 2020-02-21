@@ -77,12 +77,8 @@ public class AmcDebtCreateVo implements Serializable {
 
   private Date createdDate;
 
+  private List<AmcDebtor> amcDebtors;
 
-  private List<Long> debtors;
-
-  private List<AmcDebtorCmpy> newCompanies;
-
-  private List<AmcDebtorPerson> newPersons;
 
   private DebtAdditional debtAdditional;
 

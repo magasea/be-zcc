@@ -53,6 +53,10 @@ public class AmcAsset {
 
     private Long amcContactorId;
 
+    private String amcContactorName;
+
+    private String amcContactorPhone;
+
     public Long getId() {
         return id;
     }
@@ -251,5 +255,21 @@ public class AmcAsset {
 
     public void setAmcContactorId(Long amcContactorId) {
         this.amcContactorId = amcContactorId;
+    }
+
+    public String getAmcContactorName() {
+        return amcContactorName;
+    }
+
+    public void setAmcContactorName(String amcContactorName) {
+        this.amcContactorName = amcContactorName == null ? null : amcContactorName.trim();
+    }
+
+    public String getAmcContactorPhone() {
+        return amcContactorPhone;
+    }
+
+    public void setAmcContactorPhone(String amcContactorPhone) {
+        this.amcContactorPhone = amcContactorPhone == null ? null : amcContactorPhone.trim();
     }
 }

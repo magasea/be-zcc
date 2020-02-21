@@ -27,6 +27,8 @@
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
+    <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
+    <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -90,7 +92,7 @@
     id, title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
     zcc_asset_code, valuation, debt_id, area, land_area, land_area_unit, publish_date, 
     province, city, county, street, building_name, update_by, update_date, created_by, 
-    created_date, amc_contactor_id
+    created_date, amc_contactor_id, amc_contactor_name, amc_contactor_phone
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -134,7 +136,8 @@
       land_area_unit, publish_date, province, 
       city, county, street, building_name, 
       update_by, update_date, created_by, 
-      created_date, amc_contactor_id)
+      created_date, amc_contactor_id, amc_contactor_name, 
+      amc_contactor_phone)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
       #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, 
@@ -142,7 +145,8 @@
       #{landAreaUnit,jdbcType=INTEGER}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
       #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
-      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
+      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactorName,jdbcType=CHAR}, 
+      #{amcContactorPhone,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -222,6 +226,12 @@
       <if test="amcContactorId != null">
         amc_contactor_id,
       </if>
+      <if test="amcContactorName != null">
+        amc_contactor_name,
+      </if>
+      <if test="amcContactorPhone != null">
+        amc_contactor_phone,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
@@ -295,6 +305,12 @@
       </if>
       <if test="amcContactorId != null">
         #{amcContactorId,jdbcType=BIGINT},
+      </if>
+      <if test="amcContactorName != null">
+        #{amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorPhone != null">
+        #{amcContactorPhone,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -382,6 +398,12 @@
       <if test="record.amcContactorId != null">
         amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       </if>
+      <if test="record.amcContactorName != null">
+        amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="record.amcContactorPhone != null">
+        amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -413,7 +435,9 @@
       update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
       created_date = #{record.createdDate,jdbcType=TIMESTAMP},
-      amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT}
+      amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
+      amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
+      amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -493,6 +517,12 @@
       <if test="amcContactorId != null">
         amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       </if>
+      <if test="amcContactorName != null">
+        amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorPhone != null">
+        amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -521,7 +551,9 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},
       created_date = #{createdDate,jdbcType=TIMESTAMP},
-      amc_contactor_id = #{amcContactorId,jdbcType=BIGINT}
+      amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
+      amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
+      amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">

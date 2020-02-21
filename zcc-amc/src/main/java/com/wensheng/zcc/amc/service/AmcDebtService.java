@@ -64,7 +64,7 @@ public interface AmcDebtService {
 
   public AmcCmpy update(AmcCmpy amcCmpy);
 
-  public void connDebt2Debtors(List<Long> creditorIds, Long debtId);
+  public void connDebt2Debtors(List<AmcDebtor> amcDebtors, Long debtId);
 
   public void saveDebtDesc(String debtDesc, Long debtId);
 

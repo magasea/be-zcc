@@ -681,4 +681,10 @@ public class AmcDebtController {
   public void patchAmcDebtCode() throws Exception {
      amcPatchService.patchAmcDebtCode();
   }
+
+  @RequestMapping(value = "/patchAmcDebtContactor", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAmcDebtContactor() throws Exception {
+    amcPatchService.patchAmcDebtContactor();
+  }
 }

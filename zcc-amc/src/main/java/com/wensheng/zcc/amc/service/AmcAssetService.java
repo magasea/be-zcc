@@ -76,4 +76,6 @@ public interface AmcAssetService {
   Map<Long, AssetAdditional> getAssetAdditions(Long amcDebtId);
 
   List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
+
+
 }

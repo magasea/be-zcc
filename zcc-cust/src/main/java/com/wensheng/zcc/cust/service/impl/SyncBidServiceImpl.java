@@ -147,9 +147,19 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     public PageWrapperBidResp<BidTrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
 //      String provEncod = encodeUtf8(province);
-        String url = String.format(bidTradeResources, pageNum, pageSize, provinceCode);
+      String url = String.format(bidTradeResources, pageNum, pageSize, provinceCode);
+      try {
+
         return restTemplate.exchange(url, HttpMethod.GET, null,
-            new ParameterizedTypeReference<PageWrapperBidResp<BidTrdInfoFromSync>>() {}).getBody();
+            new ParameterizedTypeReference<PageWrapperBidResp<BidTrdInfoFromSync>>() {
+            }).getBody();
+      }catch (Exception ex){
+        log.error("Failed to get record for pageNum:{} of province:{}", pageNum, provinceCode,  ex);
+        String result = restTemplate.exchange(url, HttpMethod.GET, null,
+            String.class).getBody();
+        log.error(result);
+        return null;
+      }
     }
 
     public CustCmpyInfoFromSync getCmpyInfoById(String id){

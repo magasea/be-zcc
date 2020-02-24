@@ -10,10 +10,12 @@ import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +46,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Autowired
   AmcDebtMapper amcDebtMapper;
+
+
+
 
   @Override
   @Scheduled(cron = "${spring.task.scheduling.cronExprSSO}")
@@ -120,6 +125,34 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     amcDebtContactor.setLocation(amcUser.getLocation());
     amcDebtContactor.setName(amcUser.getUserCname());
     amcDebtContactorMapper.insertSelective(amcDebtContactor);
+  }
+
+  @Override
+  public List<SSOAmcUser> getSsoAmcUsers(SSOQueryParam ssoQueryParam) {
+    List<SSOAmcUser> amcUsers = new ArrayList<>();
+    PageInfo pageInfo = new PageInfo();
+    int pageNum = 1;
+    int pageSize = 20;
+    while(pageNum > 0){
+      pageInfo.setPage(pageNum);
+      pageInfo.setSize(pageSize);
+      HttpHeaders headers = getHttpJsonHeader();
+      ssoQueryParam.setPageInfo(pageInfo);
+      ssoQueryParam.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+      HttpEntity<SSOQueryParam> entity = new HttpEntity<>(ssoQueryParam, headers);
+
+      ResponseEntity response = restTemplate.exchange(ssoUrl, HttpMethod.POST, entity,
+          new ParameterizedTypeReference<AmcPage<SSOAmcUser>>() {} );
+      AmcPage<SSOAmcUser> resp = (AmcPage<SSOAmcUser>) response.getBody();
+      if(!CollectionUtils.isEmpty(resp.getContent())){
+        pageNum = pageNum + 1;
+      }else{
+        pageNum  = -1 ;
+        break;
+      }
+      amcUsers.addAll(resp.getContent());
+    }
+    return amcUsers;
   }
 
   private void updateOrInsertContactor(List<SSOAmcUser> ssoAmcUsers) {

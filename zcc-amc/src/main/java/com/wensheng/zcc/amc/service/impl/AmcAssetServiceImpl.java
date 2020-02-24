@@ -111,12 +111,12 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         amcAssetMapper.insertSelective(amcAsset);
         delMongoForAmcAsset(amcAsset.getId());
          AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
-        if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
-            AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
-            amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
-            AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
-            amcAssetVo.setAmcContactorId(amcDebtContactor);
-        }
+//        if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
+//            AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+//            amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
+//            AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
+//            amcAssetVo.setAmcContactorId(amcDebtContactor);
+//        }
         amcAssetVo.setAssetAdditional(queryAddtional(amcAsset));
 //        amcAssetVo.setAssetImage(queryImage(amcAsset));
         return amcAssetVo;
@@ -241,7 +241,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
             amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
             AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
-            amcAssetVo.setAmcContactorId(amcDebtContactor);
+//            amcAssetVo.setAmcContactorId(amcDebtContactor);
         }
         return amcAssetVo;
     }
@@ -271,7 +271,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
             amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
             AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
-            amcAssetDetailVo.getAmcAssetVo().setAmcContactorId(amcDebtContactor);
+//            amcAssetDetailVo.getAmcAssetVo().setAmcContactorId(amcDebtContactor);
         }
         return amcAssetDetailVo;
     }

@@ -319,11 +319,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     AmcDebtVo amcDebtVo = Dao2VoUtils.convertDo2Vo(amcDebtExts.get(0).getDebtInfo());
     amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExts.get(0).getAmcAssets()));
-    AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
-    AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
-
-    amcDebtVo.setAmcContactorId(amcDebtContactor);
-    amcDebtVo.setAmcContactor2Id(amcDebtContactor2);
+//    AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
+//    AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
+//
+//    amcDebtVo.setAmcContactorId(amcDebtContactor);
+//    amcDebtVo.setAmcContactor2Id(amcDebtContactor2);
 
 
 
@@ -435,13 +435,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
 
     }
-    if(amcDebt.getAmcContactorId() > 0){
-      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
-    }
-
-    if(amcDebt.getAmcContactor2Id() != null && amcDebt.getAmcContactor2Id() > 0){
-      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactor2Id()));
-    }
+//    if(amcDebt.getAmcContactorId() > 0){
+//      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
+//    }
+//
+//    if(amcDebt.getAmcContactor2Id() != null && amcDebt.getAmcContactor2Id() > 0){
+//      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactor2Id()));
+//    }
     return amcDebtVo;
   }
 
@@ -463,13 +463,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getTotalAmount()));
 
     }
-    if(amcDebtExt.getDebtInfo().getAmcContactorId() > 0){
-      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactorId()));
-    }
-
-    if(amcDebtExt.getDebtInfo().getAmcContactor2Id() != null && amcDebtExt.getDebtInfo().getAmcContactor2Id() > 0){
-      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactor2Id()));
-    }
+//    if(amcDebtExt.getDebtInfo().getAmcContactorId() > 0){
+//      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactorId()));
+//    }
+//
+//    if(amcDebtExt.getDebtInfo().getAmcContactor2Id() != null && amcDebtExt.getDebtInfo().getAmcContactor2Id() > 0){
+//      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactor2Id()));
+//    }
 
     if(CollectionUtils.isEmpty(amcDebtExt.getAmcAssets())){
       return amcDebtVo;
@@ -707,7 +707,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     List<AmcDebtor> newMembers = new ArrayList();
     for(AmcDebtor amcDebtor : debtorFrontend){
       amcDebtor.setDebtId(debtId);
-      if(amcDebtor.getId() > 0 ){
+      if(amcDebtor.getId() != null && amcDebtor.getId() > 0 ){
 
         if(debtorMap.containsKey(amcDebtor.getId())){
           log.error("Duplicated amcDebtor id:{} will just use last one", amcDebtor.getId());

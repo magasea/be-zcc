@@ -67,7 +67,11 @@ public class AmcAssetVo {
 
   private Date updateDate;
 
-  private AmcDebtContactor amcContactorId;
+  private String amcContactorName;
+
+  private String amcContactorPhone;
+
+//  private AmcDebtContactor amcContactorId;
 
   AssetAdditional assetAdditional;
 

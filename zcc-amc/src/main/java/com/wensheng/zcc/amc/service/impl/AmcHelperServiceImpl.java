@@ -7,9 +7,12 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.util.List;
 import java.util.Map;
 import java.util.WeakHashMap;
@@ -36,6 +39,9 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   @Autowired
   AmcDebtMapper amcDebtMapper;
 
+  @Autowired
+  AmcContactorService amcContactorService;
+
   private static final Map<Long, AmcDebtContactor> localAmcDebtContactorList = new WeakHashMap<Long, AmcDebtContactor>();
 
   public AmcDebtContactor getAmcDebtContactor(Long id){
@@ -48,6 +54,12 @@ public class AmcHelperServiceImpl implements AmcHelperService {
     }
 
   }
+
+  @Override
+  public List<SSOAmcUser> getSsoUserList(SSOQueryParam ssoQueryParam){
+    return amcContactorService.getSsoAmcUsers(ssoQueryParam);
+  }
+
 
   public AmcDebtContactor createPerson(AmcDebtContactor AmcDebtContactor){
     amcDebtContactorMapper.insertSelective(AmcDebtContactor);

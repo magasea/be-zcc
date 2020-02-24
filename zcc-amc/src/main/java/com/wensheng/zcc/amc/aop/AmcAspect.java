@@ -21,6 +21,7 @@ import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -160,7 +161,32 @@ public class AmcAspect {
     }
     return joinPoint.proceed(joinPoint.getArgs());
   }
+  @Around("@annotation(QuerySSOContactorChecker)")
+  public Object aroundQuerySSOContactor(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
 
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
+      log.error("it is web user");
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+    log.info(authentication.getDetails().toString());
+    Map<String, Object> detailsParam =
+        (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
+    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
+      Integer locationId = (Integer) detailsParam.get("location");
+
+      AmcLocationEnum locationEnum =
+          AmcLocationEnum.lookupByDisplayIdUtil(locationId); ;
+      if(null != locationEnum){
+        SSOQueryParam ssoQueryParam = (SSOQueryParam) joinPoint.getArgs()[0];
+        if(ssoQueryParam.getLocation() <= 0){
+          ssoQueryParam.setLocation(locationEnum.getId());
+        }
+      }
+    }
+    return joinPoint.proceed(joinPoint.getArgs());
+  }
 
   @Around("@annotation(EditActionChecker))")
   public Object testAnnotation(ProceedingJoinPoint joinPoint) throws Throwable {

@@ -225,9 +225,9 @@ public class AmcAssetController {
     if(amcAssetVo.getArea() != null){
       amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
     }
-    if(amcAssetVo.getAmcContactorId() != null && amcAssetVo.getAmcContactorId().getId() > 0){
-      amcAsset.setAmcContactorId(amcAssetVo.getAmcContactorId().getId());
-    }
+//    if(amcAssetVo.getAmcContactorId() != null && amcAssetVo.getAmcContactorId().getId() > 0){
+//      amcAsset.setAmcContactorId(amcAssetVo.getAmcContactorId().getId());
+//    }
     return amcAsset;
   }
 

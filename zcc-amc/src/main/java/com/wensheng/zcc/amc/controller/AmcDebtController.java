@@ -300,28 +300,13 @@ public class AmcDebtController {
     }
 
     //2. check contact person exist
-    if (createVo.getAmcContactorId() == null || createVo.getAmcContactorId() < 0) {
+    if (StringUtils.isEmpty(createVo.getAmcContactorName() ) ||StringUtils.isEmpty(createVo.getAmcContactorPhone() )) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
     }
-    boolean isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContactorId());
-    if (!isAmcContactExist) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-          + "id:%d", createVo.getAmcContactorId()));
-    } else {
-      amcDebt.setAmcContactorId(createVo.getAmcContactorId());
-    }
 
-    if (createVo.getAmcContactor2Id() == null || createVo.getAmcContactor2Id() < 0) {
-      log.info("no amc contactor2");
-    }else{
-      isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContactor2Id());
-      if (!isAmcContactExist) {
-        throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-            + "id:%d", createVo.getAmcContactor2Id()));
-      } else {
-        amcDebt.setAmcContactor2Id(createVo.getAmcContactor2Id());
-      }
-    }
+
+
+
     if(createVo.getTotalAmount() != null){
       amcDebt.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getTotalAmount()));
     }

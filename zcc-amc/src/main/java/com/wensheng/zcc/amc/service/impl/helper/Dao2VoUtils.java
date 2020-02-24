@@ -31,8 +31,8 @@ public class Dao2VoUtils {
 
     AmcAssetVo amcAssetVo = new AmcAssetVo();
     AmcBeanUtils.copyProperties(amcAsset, amcAssetVo);
-    amcAssetVo.setAmcContactorId(new AmcDebtContactor());
-    amcAssetVo.getAmcContactorId().setId(amcAsset.getAmcContactorId());
+//    amcAssetVo.setAmcContactorId(new AmcDebtContactor());
+//    amcAssetVo.getAmcContactorId().setId(amcAsset.getAmcContactorId());
     if(amcAsset.getValuation() != null && amcAsset.getValuation() > 0){
       amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
     }

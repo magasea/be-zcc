@@ -221,7 +221,19 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         amcAssetMapper.updateByExampleSelective(amcAsset, amcAssetExample);
     }
 
-    private void del(AmcAsset amcAsset) {
+  @Override
+  public void updateContactor4Assets(Long debtId, String amcContactorName, String amcContactorPhone) {
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    amcAssetExample.createCriteria().andDebtIdEqualTo(debtId);
+    List<AmcAsset> amcAssets =  amcAssetMapper.selectByExample(amcAssetExample);
+    for(AmcAsset amcAsset: amcAssets){
+      amcAsset.setAmcContactorName(amcContactorName);
+      amcAsset.setAmcContactorPhone(amcContactorPhone);
+      amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+    }
+  }
+
+  private void del(AmcAsset amcAsset) {
 
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         Query query= new Query();
@@ -718,18 +730,18 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("Area")){
                     List<Long> areas = (List) item.getValue();
                     if(areas.get(0) < 0 && areas.get(1) > 0){
-                        criteria.andAreaLessThanOrEqualTo( areas.get(1));
+                        criteria.andBuildingAreaLessThanOrEqualTo( areas.get(1));
                     }else if(areas.get(0) > 0 && areas.get(1) <= 0){
-                        criteria.andAreaGreaterThan(areas.get(0));
+                        criteria.andBuildingAreaGreaterThan(areas.get(0));
                     }else if(areas.get(0) > 0 && areas.get(1) > 0 && areas.get(0) < areas.get(1)){
 
-                        criteria.andAreaLessThanOrEqualTo( areas.get(1));
-                        criteria.andAreaGreaterThan(areas.get(0));
+                        criteria.andBuildingAreaLessThanOrEqualTo( areas.get(1));
+                        criteria.andBuildingAreaGreaterThan(areas.get(0));
                     }
                     else if(areas.get(0) > 0 && areas.get(1) > 0 && areas.get(0) > areas.get(1)){
 
-                        criteria.andAreaLessThanOrEqualTo( areas.get(0));
-                        criteria.andAreaGreaterThan(areas.get(1));
+                        criteria.andBuildingAreaLessThanOrEqualTo( areas.get(0));
+                        criteria.andBuildingAreaGreaterThan(areas.get(1));
                     }
 
                 }
@@ -737,11 +749,11 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(item.getKey().equals("Valuation")){
                     List<Long> valuations = SQLUtils.amountFilterUpdate4DB((List)item.getValue());
                     if(valuations.get(0) < 0 && valuations.get(1) > 0){
-                        criteria.andValuationLessThanOrEqualTo(valuations.get(1));
+                        criteria.andTotalValuationLessThanOrEqualTo(valuations.get(1));
                     }else if(valuations.get(1) < 0 && valuations.get(0) > 0){
-                        criteria.andValuationGreaterThan(valuations.get(0));
+                        criteria.andTotalValuationGreaterThan(valuations.get(0));
                     }else if(valuations.get(0) > 0 && valuations.get(1) > 0){
-                        criteria.andValuationBetween(valuations.get(0), valuations.get(1));
+                        criteria.andTotalValuationBetween(valuations.get(0), valuations.get(1));
                     }else{
                         throw ExceptionUtils
                             .getAmcException(AmcExceptions.INVALID_AMOUNT_RANGE,  String.format("%d,%d",valuations.get(0), valuations.get(1))
@@ -834,7 +846,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 Map<Long, AddressTmp> addresses = new HashMap<>();
                 for(AmcAsset amcAsset : amcAssets){
                     AddressTmp addressTmp = new AddressTmp();
-                    addressTmp.setAddress(amcAsset.getStreet());
+                    addressTmp.setAddress(amcAsset.getAddress());
                     addressTmp.setCity(amcAsset.getCity());
                     addresses.put(amcAsset.getId(), addressTmp);
                 }

@@ -428,7 +428,7 @@ public class AmcDebtController {
       amcDebt.setValuation(
           AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
     }else{
-      log.error("amcDebtVo.getValuation()"+ amcDebtVo.getValuation());
+      log.error("amcDebtVo.getTotalValuation()"+ amcDebtVo.getValuation());
     }
     if(null != amcDebtVo.getTotalAmount()){
       amcDebt

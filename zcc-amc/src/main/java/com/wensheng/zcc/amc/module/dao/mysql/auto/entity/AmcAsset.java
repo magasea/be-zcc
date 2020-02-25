@@ -21,15 +21,19 @@ public class AmcAsset {
 
     private String zccAssetCode;
 
-    private Long valuation;
+    private Long totalValuation;
 
     private Long debtId;
 
-    private Long area;
+    private Long buildingArea;
+
+    private Long buildingUnitPrice;
 
     private Long landArea;
 
     private Integer landAreaUnit;
+
+    private Long landUnitPrice;
 
     private Date publishDate;
 
@@ -39,7 +43,7 @@ public class AmcAsset {
 
     private String county;
 
-    private String street;
+    private String address;
 
     private String buildingName;
 
@@ -56,6 +60,8 @@ public class AmcAsset {
     private String amcContactorName;
 
     private String amcContactorPhone;
+
+    private String note;
 
     public Long getId() {
         return id;
@@ -129,12 +135,12 @@ public class AmcAsset {
         this.zccAssetCode = zccAssetCode == null ? null : zccAssetCode.trim();
     }
 
-    public Long getValuation() {
-        return valuation;
+    public Long getTotalValuation() {
+        return totalValuation;
     }
 
-    public void setValuation(Long valuation) {
-        this.valuation = valuation;
+    public void setTotalValuation(Long totalValuation) {
+        this.totalValuation = totalValuation;
     }
 
     public Long getDebtId() {
@@ -145,12 +151,20 @@ public class AmcAsset {
         this.debtId = debtId;
     }
 
-    public Long getArea() {
-        return area;
+    public Long getBuildingArea() {
+        return buildingArea;
     }
 
-    public void setArea(Long area) {
-        this.area = area;
+    public void setBuildingArea(Long buildingArea) {
+        this.buildingArea = buildingArea;
+    }
+
+    public Long getBuildingUnitPrice() {
+        return buildingUnitPrice;
+    }
+
+    public void setBuildingUnitPrice(Long buildingUnitPrice) {
+        this.buildingUnitPrice = buildingUnitPrice;
     }
 
     public Long getLandArea() {
@@ -167,6 +181,14 @@ public class AmcAsset {
 
     public void setLandAreaUnit(Integer landAreaUnit) {
         this.landAreaUnit = landAreaUnit;
+    }
+
+    public Long getLandUnitPrice() {
+        return landUnitPrice;
+    }
+
+    public void setLandUnitPrice(Long landUnitPrice) {
+        this.landUnitPrice = landUnitPrice;
     }
 
     public Date getPublishDate() {
@@ -201,12 +223,12 @@ public class AmcAsset {
         this.county = county == null ? null : county.trim();
     }
 
-    public String getStreet() {
-        return street;
+    public String getAddress() {
+        return address;
     }
 
-    public void setStreet(String street) {
-        this.street = street == null ? null : street.trim();
+    public void setAddress(String address) {
+        this.address = address == null ? null : address.trim();
     }
 
     public String getBuildingName() {
@@ -271,5 +293,13 @@ public class AmcAsset {
 
     public void setAmcContactorPhone(String amcContactorPhone) {
         this.amcContactorPhone = amcContactorPhone == null ? null : amcContactorPhone.trim();
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 }

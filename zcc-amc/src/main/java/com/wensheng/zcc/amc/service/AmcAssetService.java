@@ -31,6 +31,8 @@ public interface AmcAssetService {
 
     public void updateByDebtState(Long debtId, Integer publishState);
 
+    void updateContactor4Assets(Long id, String amcContactorName, String amcContactorPhone);
+
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception;
 
     public AssetAdditional createOrUpdateAssetAddition(AssetAdditional additional);

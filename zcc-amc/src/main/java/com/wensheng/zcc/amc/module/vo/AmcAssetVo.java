@@ -31,17 +31,21 @@ public class AmcAssetVo {
 
   private String zccAssetCode;
 
-  private BigDecimal valuation;
+  private BigDecimal totalValuation;
 
   private Long debtId;
 
   private BigDecimal startPrice;
 
-  private BigDecimal area;
+  private BigDecimal buildingArea;
+
+  private BigDecimal buildingUnitPrice;
 
   private BigDecimal landArea;
 
   private Integer landAreaUnit;
+
+  private BigDecimal landUnitPrice;
 
   private Date publishDate;
 
@@ -51,7 +55,7 @@ public class AmcAssetVo {
 
   private String county;
 
-  private String street;
+  private String address;
 
   private String buildingName;
 
@@ -70,6 +74,8 @@ public class AmcAssetVo {
   private String amcContactorName;
 
   private String amcContactorPhone;
+
+  private String note;
 
 //  private AmcDebtContactor amcContactorId;
 

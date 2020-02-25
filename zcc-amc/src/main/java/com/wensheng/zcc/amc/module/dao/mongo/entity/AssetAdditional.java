@@ -34,18 +34,19 @@ public class AssetAdditional {
     String industrialPark; //工业园区
     int floor=-1;  //楼层
     int totalFloors=-1; //总楼层
-    int buildingRenovation=-1; //精装修-1，普通装修-2，毛坯-3
+    int renovation =-1; //精装修-1，普通装修-2，毛坯-3
     int elevator = -1; //有 1、无 2
-
     int buildingStructure = -1;//砖混-1；钢混-2；钢构-3；砖木-4；其他-5
-
-
     int landSupplyType; //划拨-1；出让-2
     int landUsageType; //住宅用地-1；商服用地 – 2；工业用地 - 3；采矿用地-4；仓储用地-5；其他用地-6
     int landLevel; //土地级别
     String schoolInfo; //学区房信息（比如：学校名称)
     String transportInfo; //交通信息（比如：地铁站名称）
-    String monthlyRental; //租金
-    String mortgageNum; //抵押编号
+//    String monthlyRental; //租金
+//    String mortgageNum; //抵押编号
+
+    String bidLink; //拍卖链接
+    String warrant; //权证信息
+
 
 }

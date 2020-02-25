@@ -32,7 +32,7 @@
   ${prefix}publish_date as publish_date,
   ${prefix}lawsuit_state as lawsuit_state,
   ${prefix}lawsuit_state_desc as lawsuit_state_desc,
-  ${prefix}valuation as valuation,
+  ${prefix}totalValuation as totalValuation,
   ${prefix}amc_contactor_id as amc_contactor_id,
   ${prefix}amc_contactor2_id as amc_contactor2_id,
   ${prefix}is_recommanded as is_recommanded,
@@ -46,7 +46,7 @@
   ${prefix}created_by as created_by,
   ${prefix}created_date as created_dateishDate" />-->
     <!--<result column="law_stat_desc" jdbcType="INTEGER" property="lawStatus" />-->
-    <!--<result column="estimated_price" jdbcType="BIGINT" property="valuation" />-->
+    <!--<result column="estimated_price" jdbcType="BIGINT" property="totalValuation" />-->
     <!--<result column="amc_contact1" jdbcType="BIGINT" property="amcContact1" />-->
     <!--<result column="amc_contact2" jdbcType="BIGINT" property="amcContact2" />-->
     <!--<result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />-->
@@ -106,29 +106,33 @@
   </sql>
   <sql id="ASSET_Column_List">
   ${prefix}id as ${alias}id,
-  ${prefix}title as ${alias}title ,
+  ${prefix}title as ${alias}title,
   ${prefix}type as ${alias}type,
   ${prefix}sealed_state as ${alias}sealed_state,
+  ${prefix}asset_nature as ${alias}asset_nature,
   ${prefix}publish_state as ${alias}publish_state,
   ${prefix}amc_id as ${alias}amc_id,
   ${prefix}amc_asset_code as ${alias}amc_asset_code,
   ${prefix}zcc_asset_code as ${alias}zcc_asset_code,
-  ${prefix}valuation as ${alias}valuation,
+  ${prefix}total_valuation as ${alias}total_valuation,
   ${prefix}debt_id as ${alias}debt_id,
-  ${prefix}area as ${alias}area,
+  ${prefix}building_area as ${alias}building_area,
   ${prefix}land_area as ${alias}land_area,
   ${prefix}land_area_unit as ${alias}land_area_unit,
   ${prefix}publish_date as ${alias}publish_date,
   ${prefix}province as ${alias}province,
   ${prefix}city as ${alias}city,
   ${prefix}county as ${alias}county,
-  ${prefix}street as ${alias}street,
+  ${prefix}address as ${alias}address,
   ${prefix}building_name as ${alias}building_name,
---   ${prefix}gps_lng as ${alias}gps_lng,
---   ${prefix}gps_lat as ${alias}gps_lat,
+  ${prefix}update_by as ${alias}update_by,
+  ${prefix}update_date as ${alias}update_date,
   ${prefix}created_by as ${alias}created_by,
   ${prefix}created_date as ${alias}created_date,
-  ${prefix}amc_contactor_id as ${alias}amc_contactor_id
+  ${prefix}amc_contactor_id as ${alias}amc_contactor_id,
+  ${prefix}amc_contactor_name as ${alias}amc_contactor_name,
+  ${prefix}amc_contactor_phone as ${alias}amc_contactor_phone,
+  ${prefix}note as ${alias}note
   </sql>
 
   <sql id="DEBTOR_Column_List">

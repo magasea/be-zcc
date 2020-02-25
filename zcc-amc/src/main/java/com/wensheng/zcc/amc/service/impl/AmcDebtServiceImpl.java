@@ -268,9 +268,19 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public AmcDebtVo update(AmcDebt amcDebt) {
+    AmcDebt amcDebtHistory = amcDebtMapper.selectByPrimaryKey(amcDebt.getId());
+    if(!amcDebtHistory.getAmcContactorName().equals(amcDebt.getAmcContactorName()) ||
+        !amcDebtHistory.getAmcContactorPhone().equals(amcDebt.getAmcContactorPhone())){
+      updateContactor4Assets(amcDebt.getId(), amcDebt.getAmcContactorName(), amcDebt.getAmcContactorPhone());
+    }
     int result = amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
     amcAssetService.updateByDebtState(amcDebt.getId(), amcDebt.getPublishState());
+
     return null;
+  }
+
+  private void updateContactor4Assets(Long debtId, String amcContactorName, String amcContactorPhone) {
+    amcAssetService.updateContactor4Assets(debtId, amcContactorName, amcContactorPhone);
   }
 
   @Override

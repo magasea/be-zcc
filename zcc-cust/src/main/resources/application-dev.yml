@@ -133,19 +133,19 @@ logging:
         
 cust:
     syncUrls:
-        bidTradeResources: http://10.20.100.228:8086/auctionTradeInfos/getJson?page=%d&pageSize=%d&trdProvinceCode=%s
-        getBidCompanyInfoById: http://10.20.100.228:8086/debtTradeCompanys/getCompanyInfoById/%s
-        debtTradeResources: http://10.20.100.228:8086/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
-        debtTradeResourcesWithDate: http://10.20.100.228:8086/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s&updateFromDate=%s&updateToDate=%s
-        getCompanyInfoById: http://10.20.100.228:8086/debtTradeCompanys/getCompanyInfoById/%s
-        getTrdById: http://10.20.100.228:8086/debts/get/%s
-#        http://10.20.100.228:8086/debtTradeResources/getJson?trdProvinceCode=110000000000
-#        http://10.20.100.228:8086/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
-        getCompanyInfoByUpdateTime: http://10.20.100.228:8086/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
-        getPersonInfoById: http://10.20.100.228:8086/debtTradePersons/getPersonInfoById/%s
-#        http://10.20.100.228:8086/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
-        getPersonInfoByUpdateTime: http://10.20.100.228:8086/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
-        getTrdContactorInfoByTrdId: http://10.20.100.228:8086/debtTradeResources/getJsonById/%s
+        bidTradeResources: http://10.20.100.252:8086/auctionTradeInfos/getJson?page=%d&pageSize=%d&trdProvinceCode=%s
+        getBidCompanyInfoById: http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoById/%s
+        debtTradeResources: http://10.20.100.252:8086/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
+        debtTradeResourcesWithDate: http://10.20.100.252:8086/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s&updateFromDate=%s&updateToDate=%s
+        getCompanyInfoById: http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoById/%s
+        getTrdById: http://10.20.100.252:8086/debts/get/%s
+#        http://10.20.100.252:8086/debtTradeResources/getJson?trdProvinceCode=110000000000
+#        http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司
+        getCompanyInfoByUpdateTime: http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+        getPersonInfoById: http://10.20.100.252:8086/debtTradePersons/getPersonInfoById/%s
+#        http://10.20.100.252:8086/debtTradePersons/getPersonInfoByNameAndTel/陈新启/13605885631
+        getPersonInfoByUpdateTime: http://10.20.100.252:8086/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
+        getTrdContactorInfoByTrdId: http://10.20.100.252:8086/debtTradeResources/getJsonById/%s
 recom:
     urls:
         getAssetCusts: http://${env.recomhost}:${env.recomport}/api/sug/asset2investor/%s

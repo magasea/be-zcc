@@ -145,13 +145,22 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       isInSync = false;
     }
 
-    public PageWrapperBidResp<BidTrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
+  public PageWrapperBidResp<BidTrdInfoFromSync> getTradeInfosByProvince( String provinceCode, int pageNum, int pageSize){
 //      String provEncod = encodeUtf8(province);
-        String url = String.format(bidTradeResources, pageNum, pageSize, provinceCode);
-        return restTemplate.exchange(url, HttpMethod.GET, null,
-            new ParameterizedTypeReference<PageWrapperBidResp<BidTrdInfoFromSync>>() {}).getBody();
-    }
+    String url = String.format(bidTradeResources, pageNum, pageSize, provinceCode);
+    try {
 
+      return restTemplate.exchange(url, HttpMethod.GET, null,
+          new ParameterizedTypeReference<PageWrapperBidResp<BidTrdInfoFromSync>>() {
+          }).getBody();
+    }catch (Exception ex){
+      log.error("Failed to get record for pageNum:{} of province:{}", pageNum, provinceCode,  ex);
+      String result = restTemplate.exchange(url, HttpMethod.GET, null,
+          String.class).getBody();
+      log.error(result);
+      return null;
+    }
+  }
     public CustCmpyInfoFromSync getCmpyInfoById(String id){
       String url = String.format(getCompanyInfoById, id);
       return restTemplate.getForEntity(url, CustCmpyInfoFromSync.class).getBody();

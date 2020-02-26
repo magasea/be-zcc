@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
@@ -11,5 +12,5 @@ public interface AmcContactorService {
 
   void syncContactorWithNewUser(SSOAmcUser amcUser);
 
-  List<SSOAmcUser> getSsoAmcUsers(SSOQueryParam ssoQueryParam);
+  AmcPage<SSOAmcUser> getSsoAmcUsers(SSOQueryParam ssoQueryParam);
 }

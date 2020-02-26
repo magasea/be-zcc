@@ -128,31 +128,30 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   @Override
-  public List<SSOAmcUser> getSsoAmcUsers(SSOQueryParam ssoQueryParam) {
-    List<SSOAmcUser> amcUsers = new ArrayList<>();
+  public AmcPage<SSOAmcUser> getSsoAmcUsers(SSOQueryParam ssoQueryParam) {
+//    List<SSOAmcUser> amcUsers = new ArrayList<>();
     PageInfo pageInfo = new PageInfo();
     int pageNum = 1;
     int pageSize = 20;
-    while(pageNum > 0){
-      pageInfo.setPage(pageNum);
-      pageInfo.setSize(pageSize);
-      HttpHeaders headers = getHttpJsonHeader();
-      ssoQueryParam.setPageInfo(pageInfo);
-      ssoQueryParam.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
-      HttpEntity<SSOQueryParam> entity = new HttpEntity<>(ssoQueryParam, headers);
-
-      ResponseEntity response = restTemplate.exchange(ssoUrl, HttpMethod.POST, entity,
-          new ParameterizedTypeReference<AmcPage<SSOAmcUser>>() {} );
-      AmcPage<SSOAmcUser> resp = (AmcPage<SSOAmcUser>) response.getBody();
-      if(!CollectionUtils.isEmpty(resp.getContent())){
-        pageNum = pageNum + 1;
-      }else{
-        pageNum  = -1 ;
-        break;
-      }
-      amcUsers.addAll(resp.getContent());
+    if(ssoQueryParam.getPageInfo().getSize() > 0){
+       pageSize = ssoQueryParam.getPageInfo().getSize();
     }
-    return amcUsers;
+//    int pageSize = 20;
+//    while(pageNum > 0){
+    pageInfo.setPage(pageNum);
+    pageInfo.setSize(pageSize);
+    HttpHeaders headers = getHttpJsonHeader();
+    ssoQueryParam.setPageInfo(pageInfo);
+    ssoQueryParam.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+    HttpEntity<SSOQueryParam> entity = new HttpEntity<>(ssoQueryParam, headers);
+
+    ResponseEntity response = restTemplate.exchange(ssoUrl, HttpMethod.POST, entity,
+        new ParameterizedTypeReference<AmcPage<SSOAmcUser>>() {} );
+    AmcPage<SSOAmcUser> resp = (AmcPage<SSOAmcUser>) response.getBody();
+
+
+
+    return resp;
   }
 
   private void updateOrInsertContactor(List<SSOAmcUser> ssoAmcUsers) {

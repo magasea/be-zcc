@@ -1281,8 +1281,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
 
-        if(item.getKey().equals(QueryParamEnum.AmcContactorId.name())){
-          criteria.andAmcContactorIdEqualTo((Long)item.getValue());
+        if(item.getKey().equals(QueryParamEnum.AmcContactorName.name())){
+          StringBuilder sb = new StringBuilder().append("%").append(item.getValue()).append("%");
+          criteria.andAmcContactorNameLike(sb.toString());
         }
 
         if(item.getKey().equals(QueryParamEnum.Title.name())){

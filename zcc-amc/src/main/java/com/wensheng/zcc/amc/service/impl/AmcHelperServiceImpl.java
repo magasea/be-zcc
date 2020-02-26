@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
@@ -56,7 +57,7 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   }
 
   @Override
-  public List<SSOAmcUser> getSsoUserList(SSOQueryParam ssoQueryParam){
+  public AmcPage<SSOAmcUser> getSsoUserList(SSOQueryParam ssoQueryParam){
     return amcContactorService.getSsoAmcUsers(ssoQueryParam);
   }
 

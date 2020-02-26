@@ -266,14 +266,14 @@ public class AmcBasicInfoController {
   @RequestMapping(value = "/amcid/{amcId}/amccontactors4debt", method = RequestMethod.POST)
   @ResponseBody
   @QuerySSOContactorChecker
-  public List<SSOAmcUser> getAmcDebtContactors( @RequestBody SSOQueryParam ssoQueryParam) throws Exception {
+  public AmcPage<SSOAmcUser> getAmcDebtContactors( @RequestBody SSOQueryParam ssoQueryParam) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(ssoQueryParam.getPageInfo());
     if (CollectionUtils.isEmpty(orderByParam)) {
       orderByParam.put("id", Direction.DESC);
     }
 
-    List<SSOAmcUser> queryResults;
+    AmcPage<SSOAmcUser> queryResults;
 
     try {
       queryResults = amcHelperService.getSsoUserList(ssoQueryParam);

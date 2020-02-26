@@ -38,6 +38,7 @@ public class AmcNumberUtilsTest {
     double dexp = 12345678;
     System.out.printf("dexp: %f\n", dexp);
     System.out.printf("dexp: %.00f\n", dexp);
+    System.out.println(String.format("%s%", "test"));
 
   }
 

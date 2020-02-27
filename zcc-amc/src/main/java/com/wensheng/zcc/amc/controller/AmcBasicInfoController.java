@@ -31,6 +31,9 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -49,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/api/basic")
 @Slf4j
+@CacheConfig(cacheNames = {"COURT"})
 public class AmcBasicInfoController {
 
   @Autowired
@@ -65,6 +69,7 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
+  @Cacheable
   public List<CurtInfo> getAllCourtInfo(){
     List<CurtInfo> curtInfos;
     CurtInfoExample curtInfoExample = new CurtInfoExample();

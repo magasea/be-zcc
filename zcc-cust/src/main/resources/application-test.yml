@@ -92,7 +92,7 @@ spring:
             thread-name-prefix: synchWithScrapySystem
             cronExprTrd: 0 0 5,1,23 * * *
             cronExprCust: 0 0 7,13,19,0 * * *
-            cronExprGeo: 0 0 7,13,19,0 * * *
+            cronExprGeo: 0 0 5,23,0 * * *
             pool:
                 size: 3
 

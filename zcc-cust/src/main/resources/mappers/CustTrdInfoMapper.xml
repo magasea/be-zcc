@@ -20,7 +20,6 @@
     <result column="trd_status" jdbcType="INTEGER" property="trdStatus" />
     <result column="trd_date" jdbcType="DATE" property="trdDate" />
     <result column="pub_date" jdbcType="TIMESTAMP" property="pubDate" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="buyer_type" jdbcType="INTEGER" property="buyerType" />
     <result column="buyer_id" jdbcType="BIGINT" property="buyerId" />
@@ -31,6 +30,8 @@
     <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -93,8 +94,9 @@
   <sql id="Base_Column_List">
     id, item_type, item_sub_type, trd_type, info_title, pack_count, info_id, info_source, 
     info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, total_debt_amount, 
-    trd_status, trd_date, pub_date, update_time, notes, buyer_type, buyer_id, seller_type, 
-    seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, data_quality
+    trd_status, trd_date, pub_date, notes, buyer_type, buyer_id, seller_type, seller_id, 
+    seller_name, trd_contactor_name, trd_contactor_addr, data_status, data_quality, update_time, 
+    create_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -136,21 +138,21 @@
       info_source, info_url, debt_province, 
       trd_province, debt_city, trd_amount_orig, 
       trd_amount, total_debt_amount, trd_status, 
-      trd_date, pub_date, update_time, 
-      notes, buyer_type, buyer_id, 
-      seller_type, seller_id, seller_name, 
-      trd_contactor_name, trd_contactor_addr, data_status, 
-      data_quality)
+      trd_date, pub_date, notes, 
+      buyer_type, buyer_id, seller_type, 
+      seller_id, seller_name, trd_contactor_name, 
+      trd_contactor_addr, data_status, data_quality, 
+      update_time, create_time)
     values (#{itemType,jdbcType=INTEGER}, #{itemSubType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, 
       #{infoTitle,jdbcType=VARCHAR}, #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, 
       #{infoSource,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{debtProvince,jdbcType=CHAR}, 
       #{trdProvince,jdbcType=CHAR}, #{debtCity,jdbcType=CHAR}, #{trdAmountOrig,jdbcType=CHAR}, 
       #{trdAmount,jdbcType=BIGINT}, #{totalDebtAmount,jdbcType=BIGINT}, #{trdStatus,jdbcType=INTEGER}, 
-      #{trdDate,jdbcType=DATE}, #{pubDate,jdbcType=TIMESTAMP}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{notes,jdbcType=VARCHAR}, #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, 
-      #{sellerType,jdbcType=INTEGER}, #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, 
-      #{trdContactorName,jdbcType=CHAR}, #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, 
-      #{dataQuality,jdbcType=INTEGER})
+      #{trdDate,jdbcType=DATE}, #{pubDate,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, 
+      #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, 
+      #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, 
+      #{trdContactorAddr,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -209,9 +211,6 @@
       <if test="pubDate != null">
         pub_date,
       </if>
-      <if test="updateTime != null">
-        update_time,
-      </if>
       <if test="notes != null">
         notes,
       </if>
@@ -241,6 +240,12 @@
       </if>
       <if test="dataQuality != null">
         data_quality,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="createTime != null">
+        create_time,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -295,9 +300,6 @@
       <if test="pubDate != null">
         #{pubDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null">
-        #{updateTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
       </if>
@@ -327,6 +329,12 @@
       </if>
       <if test="dataQuality != null">
         #{dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -393,9 +401,6 @@
       <if test="record.pubDate != null">
         pub_date = #{record.pubDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.updateTime != null">
-        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
@@ -426,6 +431,12 @@
       <if test="record.dataQuality != null">
         data_quality = #{record.dataQuality,jdbcType=INTEGER},
       </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -451,7 +462,6 @@
       trd_status = #{record.trdStatus,jdbcType=INTEGER},
       trd_date = #{record.trdDate,jdbcType=DATE},
       pub_date = #{record.pubDate,jdbcType=TIMESTAMP},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       notes = #{record.notes,jdbcType=VARCHAR},
       buyer_type = #{record.buyerType,jdbcType=INTEGER},
       buyer_id = #{record.buyerId,jdbcType=BIGINT},
@@ -461,7 +471,9 @@
       trd_contactor_name = #{record.trdContactorName,jdbcType=CHAR},
       trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
-      data_quality = #{record.dataQuality,jdbcType=INTEGER}
+      data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -520,9 +532,6 @@
       <if test="pubDate != null">
         pub_date = #{pubDate,jdbcType=TIMESTAMP},
       </if>
-      <if test="updateTime != null">
-        update_time = #{updateTime,jdbcType=TIMESTAMP},
-      </if>
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
@@ -553,6 +562,12 @@
       <if test="dataQuality != null">
         data_quality = #{dataQuality,jdbcType=INTEGER},
       </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -575,7 +590,6 @@
       trd_status = #{trdStatus,jdbcType=INTEGER},
       trd_date = #{trdDate,jdbcType=DATE},
       pub_date = #{pubDate,jdbcType=TIMESTAMP},
-      update_time = #{updateTime,jdbcType=TIMESTAMP},
       notes = #{notes,jdbcType=VARCHAR},
       buyer_type = #{buyerType,jdbcType=INTEGER},
       buyer_id = #{buyerId,jdbcType=BIGINT},
@@ -585,7 +599,9 @@
       trd_contactor_name = #{trdContactorName,jdbcType=CHAR},
       trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR},
       data_status = #{dataStatus,jdbcType=INTEGER},
-      data_quality = #{dataQuality,jdbcType=INTEGER}
+      data_quality = #{dataQuality,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">

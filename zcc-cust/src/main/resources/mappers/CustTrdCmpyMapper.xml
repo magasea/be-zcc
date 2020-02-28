@@ -8,6 +8,7 @@
     <result column="legal_reptive" jdbcType="VARCHAR" property="legalReptive" />
     <result column="cmpy_phone" jdbcType="CHAR" property="cmpyPhone" />
     <result column="history_cmpy_phone" jdbcType="VARCHAR" property="historyCmpyPhone" />
+    <result column="cmpy_province" jdbcType="CHAR" property="cmpyProvince" />
     <result column="cmpy_addr" jdbcType="VARCHAR" property="cmpyAddr" />
     <result column="history_cmpy_addr" jdbcType="VARCHAR" property="historyCmpyAddr" />
     <result column="annu_rept_phone" jdbcType="CHAR" property="annuReptPhone" />
@@ -79,9 +80,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, history_cmpy_phone, cmpy_addr, 
-    history_cmpy_addr, annu_rept_phone, annu_rept_addr, data_status, data_quality, update_time, 
-    update_by, create_time, create_by, sync_time
+    id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, history_cmpy_phone, cmpy_province, 
+    cmpy_addr, history_cmpy_addr, annu_rept_phone, annu_rept_addr, data_status, data_quality, 
+    update_time, update_by, create_time, create_by, sync_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
@@ -119,17 +120,17 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into CUST_TRD_CMPY (cmpy_name, uni_social_code, legal_reptive, 
-      cmpy_phone, history_cmpy_phone, cmpy_addr, 
-      history_cmpy_addr, annu_rept_phone, annu_rept_addr, 
-      data_status, data_quality, update_time, 
-      update_by, create_time, create_by, 
-      sync_time)
+      cmpy_phone, history_cmpy_phone, cmpy_province, 
+      cmpy_addr, history_cmpy_addr, annu_rept_phone, 
+      annu_rept_addr, data_status, data_quality, 
+      update_time, update_by, create_time, 
+      create_by, sync_time)
     values (#{cmpyName,jdbcType=CHAR}, #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, 
-      #{cmpyPhone,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyAddr,jdbcType=VARCHAR}, 
-      #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, 
-      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, 
-      #{syncTime,jdbcType=TIMESTAMP})
+      #{cmpyPhone,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyProvince,jdbcType=CHAR}, 
+      #{cmpyAddr,jdbcType=VARCHAR}, #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, 
+      #{annuReptAddr,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -151,6 +152,9 @@
       </if>
       <if test="historyCmpyPhone != null">
         history_cmpy_phone,
+      </if>
+      <if test="cmpyProvince != null">
+        cmpy_province,
       </if>
       <if test="cmpyAddr != null">
         cmpy_addr,
@@ -201,6 +205,9 @@
       </if>
       <if test="historyCmpyPhone != null">
         #{historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyProvince != null">
+        #{cmpyProvince,jdbcType=CHAR},
       </if>
       <if test="cmpyAddr != null">
         #{cmpyAddr,jdbcType=VARCHAR},
@@ -264,6 +271,9 @@
       <if test="record.historyCmpyPhone != null">
         history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
       </if>
+      <if test="record.cmpyProvince != null">
+        cmpy_province = #{record.cmpyProvince,jdbcType=CHAR},
+      </if>
       <if test="record.cmpyAddr != null">
         cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
       </if>
@@ -310,6 +320,7 @@
       legal_reptive = #{record.legalReptive,jdbcType=VARCHAR},
       cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
       history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
+      cmpy_province = #{record.cmpyProvince,jdbcType=CHAR},
       cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
       history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
@@ -342,6 +353,9 @@
       </if>
       <if test="historyCmpyPhone != null">
         history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyProvince != null">
+        cmpy_province = #{cmpyProvince,jdbcType=CHAR},
       </if>
       <if test="cmpyAddr != null">
         cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
@@ -386,6 +400,7 @@
       legal_reptive = #{legalReptive,jdbcType=VARCHAR},
       cmpy_phone = #{cmpyPhone,jdbcType=CHAR},
       history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
+      cmpy_province = #{cmpyProvince,jdbcType=CHAR},
       cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
       history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},

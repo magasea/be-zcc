@@ -15,6 +15,8 @@ public class CustTrdCmpy {
 
     private String historyCmpyPhone;
 
+    private String cmpyProvince;
+
     private String cmpyAddr;
 
     private String historyCmpyAddr;
@@ -83,6 +85,14 @@ public class CustTrdCmpy {
 
     public void setHistoryCmpyPhone(String historyCmpyPhone) {
         this.historyCmpyPhone = historyCmpyPhone == null ? null : historyCmpyPhone.trim();
+    }
+
+    public String getCmpyProvince() {
+        return cmpyProvince;
+    }
+
+    public void setCmpyProvince(String cmpyProvince) {
+        this.cmpyProvince = cmpyProvince == null ? null : cmpyProvince.trim();
     }
 
     public String getCmpyAddr() {

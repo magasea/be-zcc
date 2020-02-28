@@ -1,10 +1,15 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcUserprivMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserprivExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
 import com.wensheng.zcc.cust.service.BasicInfoService;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
@@ -22,6 +27,10 @@ import org.springframework.util.CollectionUtils;
 public class BasicInfoServiceImpl implements BasicInfoService {
   @Autowired
   CustRegionMapper custRegionMapper;
+
+
+  @Autowired
+  CustAmcUserprivMapper amcUserprivMapper;
 
   @Override
   public List<CustRegion> getAllCustRegion() {
@@ -47,6 +56,42 @@ public class BasicInfoServiceImpl implements BasicInfoService {
       throw new Exception(String.format("Failed to find name for code:%s", code));
     }
     return custRegions.get(0).getName();
+  }
+
+  @Cacheable(unless = "#result == null")
+  @Override
+  public List<CustAmcUserpriv> getAmcUserPriv() {
+    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
+
+    List<CustAmcUserpriv> custAmcUserprivs = amcUserprivMapper.selectByExample(amcUserprivExample);
+
+    return custAmcUserprivs;
+  }
+
+  @Override
+  public void  createOrUpdateAmcUserPriv(List<CustAmcUserpriv> custAmcUserprivs) {
+    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
+
+    amcUserprivMapper.deleteByExample(amcUserprivExample);
+
+    for(CustAmcUserpriv custAmcUserpriv: custAmcUserprivs){
+      amcUserprivMapper.insertSelective(custAmcUserpriv);
+    }
+
+    ;
+  }
+  @Cacheable(unless = "#result == null")
+  @Override
+  public Map<String, Integer> getAmcUserPrivMap() {
+    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
+
+    List<CustAmcUserpriv> custAmcUserprivs = amcUserprivMapper.selectByExample(amcUserprivExample);
+
+    Map<String, Integer> userPrivMap = new HashMap<>();
+    for(CustAmcUserpriv custAmcUserpriv: custAmcUserprivs){
+      userPrivMap.put(custAmcUserpriv.getProvince(), custAmcUserpriv.getLocation());
+    }
+    return userPrivMap;
   }
 
 

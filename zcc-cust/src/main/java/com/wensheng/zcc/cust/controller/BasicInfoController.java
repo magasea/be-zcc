@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
@@ -35,6 +36,8 @@ public class BasicInfoController {
 
   @Autowired
   GeoInfoService geoInfoService;
+
+
 
   @RequestMapping(value = "/investScales", method = RequestMethod.POST)
   @ResponseBody
@@ -130,6 +133,14 @@ public class BasicInfoController {
   @ResponseBody
   public void searchGeoInfo4Trd(){
     geoInfoService.searchGeoInfoForTrd();
+
+  }
+
+//  @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN','AMC_LOCAL_ADMIN')")
+  @RequestMapping(value = "/getAmcUserPriv", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustAmcUserpriv> getAmcUserPriv(){
+    basicInfoService.getAmcUserPriv();
 
   }
 }

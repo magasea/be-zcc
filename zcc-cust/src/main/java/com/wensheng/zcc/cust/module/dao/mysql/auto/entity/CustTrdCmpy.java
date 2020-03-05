@@ -25,6 +25,10 @@ public class CustTrdCmpy {
 
     private String annuReptAddr;
 
+    private String favoriteCityUpdate;
+
+    private String favoriteTypeUpdate;
+
     private Integer dataStatus;
 
     private Integer dataQuality;
@@ -125,6 +129,22 @@ public class CustTrdCmpy {
 
     public void setAnnuReptAddr(String annuReptAddr) {
         this.annuReptAddr = annuReptAddr == null ? null : annuReptAddr.trim();
+    }
+
+    public String getFavoriteCityUpdate() {
+        return favoriteCityUpdate;
+    }
+
+    public void setFavoriteCityUpdate(String favoriteCityUpdate) {
+        this.favoriteCityUpdate = favoriteCityUpdate == null ? null : favoriteCityUpdate.trim();
+    }
+
+    public String getFavoriteTypeUpdate() {
+        return favoriteTypeUpdate;
+    }
+
+    public void setFavoriteTypeUpdate(String favoriteTypeUpdate) {
+        this.favoriteTypeUpdate = favoriteTypeUpdate == null ? null : favoriteTypeUpdate.trim();
     }
 
     public Integer getDataStatus() {

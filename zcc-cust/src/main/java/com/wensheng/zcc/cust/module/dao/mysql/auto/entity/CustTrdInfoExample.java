@@ -1812,6 +1812,146 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andTrdContractorPhoneIsNull() {
+            addCriterion("trd_contractor_phone is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneIsNotNull() {
+            addCriterion("trd_contractor_phone is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneEqualTo(String value) {
+            addCriterion("trd_contractor_phone =", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneNotEqualTo(String value) {
+            addCriterion("trd_contractor_phone <>", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneGreaterThan(String value) {
+            addCriterion("trd_contractor_phone >", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneGreaterThanOrEqualTo(String value) {
+            addCriterion("trd_contractor_phone >=", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneLessThan(String value) {
+            addCriterion("trd_contractor_phone <", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneLessThanOrEqualTo(String value) {
+            addCriterion("trd_contractor_phone <=", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneLike(String value) {
+            addCriterion("trd_contractor_phone like", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneNotLike(String value) {
+            addCriterion("trd_contractor_phone not like", value, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneIn(List<String> values) {
+            addCriterion("trd_contractor_phone in", values, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneNotIn(List<String> values) {
+            addCriterion("trd_contractor_phone not in", values, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneBetween(String value1, String value2) {
+            addCriterion("trd_contractor_phone between", value1, value2, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContractorPhoneNotBetween(String value1, String value2) {
+            addCriterion("trd_contractor_phone not between", value1, value2, "trdContractorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressIsNull() {
+            addCriterion("trd_contactor_address is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressIsNotNull() {
+            addCriterion("trd_contactor_address is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressEqualTo(String value) {
+            addCriterion("trd_contactor_address =", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressNotEqualTo(String value) {
+            addCriterion("trd_contactor_address <>", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressGreaterThan(String value) {
+            addCriterion("trd_contactor_address >", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressGreaterThanOrEqualTo(String value) {
+            addCriterion("trd_contactor_address >=", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressLessThan(String value) {
+            addCriterion("trd_contactor_address <", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressLessThanOrEqualTo(String value) {
+            addCriterion("trd_contactor_address <=", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressLike(String value) {
+            addCriterion("trd_contactor_address like", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressNotLike(String value) {
+            addCriterion("trd_contactor_address not like", value, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressIn(List<String> values) {
+            addCriterion("trd_contactor_address in", values, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressNotIn(List<String> values) {
+            addCriterion("trd_contactor_address not in", values, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressBetween(String value1, String value2) {
+            addCriterion("trd_contactor_address between", value1, value2, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorAddressNotBetween(String value1, String value2) {
+            addCriterion("trd_contactor_address not between", value1, value2, "trdContactorAddress");
+            return (Criteria) this;
+        }
+
         public Criteria andDataStatusIsNull() {
             addCriterion("data_status is null");
             return (Criteria) this;

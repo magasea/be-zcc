@@ -44,11 +44,21 @@
     ${prefix}uni_social_code as uni_social_code,
     ${prefix}legal_reptive as legal_reptive,
     ${prefix}cmpy_phone as cmpy_phone,
+    ${prefix}history_cmpy_phone as history_cmpy_phone,
+    ${prefix}cmpy_province as cmpy_province,
     ${prefix}cmpy_addr as cmpy_addr,
+    ${prefix}history_cmpy_addr as history_cmpy_addr,
     ${prefix}annu_rept_phone as annu_rept_phone,
     ${prefix}annu_rept_addr as annu_rept_addr,
+    ${prefix}favorite_city_update as favorite_city_update,
+    ${prefix}favorite_type_update as favorite_type_update,
     ${prefix}data_status as data_status,
-    ${prefix}data_quality as data_quality
+    ${prefix}data_quality as data_quality,
+    ${prefix}update_time as update_time,
+    ${prefix}update_by as update_by,
+    ${prefix}create_time as create_time,
+    ${prefix}create_by as create_by,
+    ${prefix}sync_time as sync_time
   </sql>
   <sql id="cust_trd_info_list">
     ${prefix}id as ${alias}id,
@@ -180,7 +190,7 @@
       where ${whereClause}
     </if>
     <if test="orderByClause != null">
-      order by ${orderByClause}CustInfoServiceImpl
+      order by ${orderByClause}
     </if>
   </select>
 

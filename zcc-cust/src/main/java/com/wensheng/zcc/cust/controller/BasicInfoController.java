@@ -140,7 +140,6 @@ public class BasicInfoController {
   @RequestMapping(value = "/getAmcUserPriv", method = RequestMethod.POST)
   @ResponseBody
   public List<CustAmcUserpriv> getAmcUserPriv(){
-    basicInfoService.getAmcUserPriv();
-
+    return basicInfoService.getAmcUserPriv();
   }
 }

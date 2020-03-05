@@ -865,6 +865,146 @@ public class CustTrdCmpyExample {
             return (Criteria) this;
         }
 
+        public Criteria andFavoriteCityUpdateIsNull() {
+            addCriterion("favorite_city_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateIsNotNull() {
+            addCriterion("favorite_city_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateEqualTo(String value) {
+            addCriterion("favorite_city_update =", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotEqualTo(String value) {
+            addCriterion("favorite_city_update <>", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateGreaterThan(String value) {
+            addCriterion("favorite_city_update >", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("favorite_city_update >=", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateLessThan(String value) {
+            addCriterion("favorite_city_update <", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateLessThanOrEqualTo(String value) {
+            addCriterion("favorite_city_update <=", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateLike(String value) {
+            addCriterion("favorite_city_update like", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotLike(String value) {
+            addCriterion("favorite_city_update not like", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateIn(List<String> values) {
+            addCriterion("favorite_city_update in", values, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotIn(List<String> values) {
+            addCriterion("favorite_city_update not in", values, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateBetween(String value1, String value2) {
+            addCriterion("favorite_city_update between", value1, value2, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotBetween(String value1, String value2) {
+            addCriterion("favorite_city_update not between", value1, value2, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateIsNull() {
+            addCriterion("favorite_type_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateIsNotNull() {
+            addCriterion("favorite_type_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateEqualTo(String value) {
+            addCriterion("favorite_type_update =", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateNotEqualTo(String value) {
+            addCriterion("favorite_type_update <>", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateGreaterThan(String value) {
+            addCriterion("favorite_type_update >", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("favorite_type_update >=", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateLessThan(String value) {
+            addCriterion("favorite_type_update <", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateLessThanOrEqualTo(String value) {
+            addCriterion("favorite_type_update <=", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateLike(String value) {
+            addCriterion("favorite_type_update like", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateNotLike(String value) {
+            addCriterion("favorite_type_update not like", value, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateIn(List<String> values) {
+            addCriterion("favorite_type_update in", values, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateNotIn(List<String> values) {
+            addCriterion("favorite_type_update not in", values, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateBetween(String value1, String value2) {
+            addCriterion("favorite_type_update between", value1, value2, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteTypeUpdateNotBetween(String value1, String value2) {
+            addCriterion("favorite_type_update not between", value1, value2, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
         public Criteria andDataStatusIsNull() {
             addCriterion("data_status is null");
             return (Criteria) this;

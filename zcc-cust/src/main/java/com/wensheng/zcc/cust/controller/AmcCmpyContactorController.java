@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.config.aop.QueryChecker;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.service.SyncService;
@@ -43,12 +44,12 @@ public class AmcCmpyContactorController {
   @Autowired
   AmcContactorService amcContactorService;
 
-  private volatile ConcurrentHashMap<String, String> province
 
   @QueryChecker
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor, String cmpyProvinceCode){
+  public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor, String cmpyProvinceCode)
+      throws Exception {
     amcContactorService.createAmcCmpyContactor(custAmcCmpycontactor);
   }
 
@@ -63,9 +64,13 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/getCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public List<CustAmcCmpycontactor> getCmpyAmcContactor(@RequestBody String cmpyName){
-    return amcContactorService.getCmpyAmcContactor(cmpyName);
+  public List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(@RequestBody Long cmpyId){
+    return amcContactorService.getCmpyAmcContactor(cmpyId);
   }
 
-
+  @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)
+  @ResponseBody
+  public void initCmpyAmcContactor(){
+     amcContactorService.initCmpyAmcContactor();
+  }
 }

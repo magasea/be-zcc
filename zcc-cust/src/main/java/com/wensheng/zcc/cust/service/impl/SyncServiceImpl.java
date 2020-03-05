@@ -672,11 +672,13 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         custTrdPerson.setDataQuality(checkBasicDataQuality(custTrdPerson));
       }
       custTrdPerson.setCreateTime(AmcDateUtils.getCurrentDate());
+      custTrdPerson.setSyncTime(AmcDateUtils.getCurrentDate());
       custTrdPersonMapper.insertSelective(custTrdPerson);
 
     }else if(action == 2 ){
       custTrdPerson = custTrdPeople.get(0);
       if(isBuyer){
+        custTrdPerson.setSyncTime(AmcDateUtils.getCurrentDate());
         int count = getTrdCntForPerson(custTrdPerson.getId()).intValue();
         if(isNewTrd){
           int basicQuality = checkBasicDataQuality(custTrdPerson);
@@ -909,10 +911,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         custTrdCmpy.setDataQuality(quality);
       }
       custTrdCmpy.setCreateTime(AmcDateUtils.getCurrentDate());
+      custTrdCmpy.setSyncTime(AmcDateUtils.getCurrentDate());
       custTrdCmpyMapper.insertSelective(custTrdCmpy);
 
     }else if(action == 2 ){
       custTrdCmpy = custTrdCmpyList.get(0);
+      custTrdCmpy.setSyncTime(AmcDateUtils.getCurrentDate());
       if(isBuyer){
         int count = getTrdCntForCmpy(custTrdCmpy.getId()).intValue();
         if(isNewTrd){
@@ -1103,8 +1107,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         trdInfoFromSync.getBuyerContactManPrep());
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactPhonePrep())){
+
+      custTrdInfo.setTrdContractorPhone(trdInfoFromSync.getBuyerContactPhonePrep());
       sb.append(trdInfoFromSync.getBuyerContactPhonePrep()).append(" ").append(trdInfoFromSync.getBuyerContactAddressPrep());
-    }else if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){
+    }
+    if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){
+      custTrdInfo.setTrdContactorAddress(trdInfoFromSync.getBuyerContactAddressPrep());
       sb.append(trdInfoFromSync.getBuyerContactAddressPrep());
     }
     if(sb.length() > 0){

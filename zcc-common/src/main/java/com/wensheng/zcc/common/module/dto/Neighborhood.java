@@ -5,8 +5,8 @@ import lombok.Data;
 
 @Data
 public class Neighborhood {
-  List<NeighborhoodItem> neighborhood;
-
+  List<String> name;
+  List<String> type;
 
 }
 @Data

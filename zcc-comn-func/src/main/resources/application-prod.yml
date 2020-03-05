@@ -10,6 +10,7 @@ spring:
         exclude:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+            - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
     datasource:
         password: wensheng
         url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true

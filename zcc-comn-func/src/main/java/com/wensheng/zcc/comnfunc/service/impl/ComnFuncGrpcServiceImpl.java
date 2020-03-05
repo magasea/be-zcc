@@ -12,11 +12,11 @@ import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq;
+import io.grpc.Status;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -71,7 +71,11 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
       gaodeGeoQueryVals = gaoDeService.getGeoInfoFromAddress(request.getAddress(),
           request.getCity());
     } catch (Exception e) {
-      responseObserver.onError(e);
+
+      responseObserver.onError(Status.INTERNAL.withDescription(String.format("Failed to get address for :%s",
+          request.getAddress())).withCause(e).asRuntimeException());
+      return;
+
     }
     if(CollectionUtils.isEmpty(gaodeGeoQueryVals) || StringUtils.isEmpty(gaodeGeoQueryVals.get(0).getLocation())){
 

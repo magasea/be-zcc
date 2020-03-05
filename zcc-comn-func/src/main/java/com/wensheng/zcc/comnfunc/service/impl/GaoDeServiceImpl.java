@@ -104,22 +104,34 @@ public class GaoDeServiceImpl implements GaoDeService {
     if(!StringUtils.isEmpty(city)){
       geoStr.append(String.format("&city=%s", city));
     }
-    ResponseEntity<Object> respTest =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
-        Object.class);
+//    ResponseEntity<Object> respTest =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+//        Object.class);
+    GaodeGeoQueryResp gaoDeReGeoResult = null;
+    try{
+      ResponseEntity<GaodeGeoQueryResp> resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+          GaodeGeoQueryResp.class);
 
-    ResponseEntity<GaodeGeoQueryResp> resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
-        GaodeGeoQueryResp.class);
+      gaoDeReGeoResult = resp.getBody();
 
-    GaodeGeoQueryResp gaoDeReGeoResult = resp.getBody();
+    }catch (Exception ex){
+      ex.printStackTrace();
+      ResponseEntity<String> respStr =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+          String.class);
+      log.error("Failed to get geo info for :{} and city:{} from:{}", address, city, respStr);
+      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+    }
     List<GaodeGeoQueryVal> results = new ArrayList(gaoDeReGeoResult.getGeocodes());
     if(CollectionUtils.isEmpty(results)){
-      log.error("Failed to get geo info for :{} and city:{}", address, city);
+      ResponseEntity<String> respStr =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+          String.class);
+      log.error("Failed to get geo info for :{} and city:{} from:{}", address, city, respStr);
       throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
     }
     System.out.println(results.get(0).getLocation());
     System.out.println(results.get(0).getCityCode());
 //    List<GaodeGeoQueryVal> results = new ArrayList();
     return results;
+
 
   }
 
@@ -129,7 +141,7 @@ public class GaoDeServiceImpl implements GaoDeService {
     sb.append(latLng.getLat()).append(",").append(latLng.getLng());
     String gaodeUrl = String.format(regeoCoderUrl, sb.toString());
 
-    ResponseEntity<GaodeRegeoQueryResp> resp =  restTemplate.exchange(gaodeUrl.toString(), HttpMethod.GET, null,
+    ResponseEntity<GaodeRegeoQueryResp> resp =  restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
         GaodeRegeoQueryResp.class);
 
     GaodeRegeoQueryVal gaoRegeoResult = resp.getBody().getRegeocode();

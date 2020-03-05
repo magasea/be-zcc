@@ -14,13 +14,14 @@ public class GaodeGeoQueryVal {
   String province;
   @SerializedName("citycode")
   String cityCode;
+  String city;
   Object district;
   List<Object> township;
   Neighborhood neighborhood;
   Building building;
   String adcode;
-  Object street;
-  String number;
+  String[] street;
+  String[] number;
   String location;
   String level;
 

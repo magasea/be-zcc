@@ -15,6 +15,9 @@
     <result column="annu_rept_addr" jdbcType="VARCHAR" property="annuReptAddr" />
     <result column="favorite_city_update" jdbcType="CHAR" property="favoriteCityUpdate" />
     <result column="favorite_type_update" jdbcType="CHAR" property="favoriteTypeUpdate" />
+    <result column="fav_type_note" jdbcType="CHAR" property="favTypeNote" />
+    <result column="cmpy_type" jdbcType="INTEGER" property="cmpyType" />
+    <result column="note" jdbcType="CHAR" property="note" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -84,8 +87,8 @@
   <sql id="Base_Column_List">
     id, cmpy_name, uni_social_code, legal_reptive, cmpy_phone, history_cmpy_phone, cmpy_province, 
     cmpy_addr, history_cmpy_addr, annu_rept_phone, annu_rept_addr, favorite_city_update, 
-    favorite_type_update, data_status, data_quality, update_time, update_by, create_time, 
-    create_by, sync_time
+    favorite_type_update, fav_type_note, cmpy_type, note, data_status, data_quality, 
+    update_time, update_by, create_time, create_by, sync_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
     select
@@ -126,6 +129,7 @@
       cmpy_phone, history_cmpy_phone, cmpy_province, 
       cmpy_addr, history_cmpy_addr, annu_rept_phone, 
       annu_rept_addr, favorite_city_update, favorite_type_update, 
+      fav_type_note, cmpy_type, note, 
       data_status, data_quality, update_time, 
       update_by, create_time, create_by, 
       sync_time)
@@ -133,6 +137,7 @@
       #{cmpyPhone,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyProvince,jdbcType=CHAR}, 
       #{cmpyAddr,jdbcType=VARCHAR}, #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, 
       #{annuReptAddr,jdbcType=VARCHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, 
+      #{favTypeNote,jdbcType=CHAR}, #{cmpyType,jdbcType=INTEGER}, #{note,jdbcType=CHAR}, 
       #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, 
       #{syncTime,jdbcType=TIMESTAMP})
@@ -178,6 +183,15 @@
       </if>
       <if test="favoriteTypeUpdate != null">
         favorite_type_update,
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note,
+      </if>
+      <if test="cmpyType != null">
+        cmpy_type,
+      </if>
+      <if test="note != null">
+        note,
       </if>
       <if test="dataStatus != null">
         data_status,
@@ -237,6 +251,15 @@
       </if>
       <if test="favoriteTypeUpdate != null">
         #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="cmpyType != null">
+        #{cmpyType,jdbcType=INTEGER},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=CHAR},
       </if>
       <if test="dataStatus != null">
         #{dataStatus,jdbcType=INTEGER},
@@ -309,6 +332,15 @@
       <if test="record.favoriteTypeUpdate != null">
         favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
       </if>
+      <if test="record.favTypeNote != null">
+        fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="record.cmpyType != null">
+        cmpy_type = #{record.cmpyType,jdbcType=INTEGER},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=CHAR},
+      </if>
       <if test="record.dataStatus != null">
         data_status = #{record.dataStatus,jdbcType=INTEGER},
       </if>
@@ -350,6 +382,9 @@
       annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
       favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
       favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      cmpy_type = #{record.cmpyType,jdbcType=INTEGER},
+      note = #{record.note,jdbcType=CHAR},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -400,6 +435,15 @@
       <if test="favoriteTypeUpdate != null">
         favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
       </if>
+      <if test="favTypeNote != null">
+        fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="cmpyType != null">
+        cmpy_type = #{cmpyType,jdbcType=INTEGER},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=CHAR},
+      </if>
       <if test="dataStatus != null">
         data_status = #{dataStatus,jdbcType=INTEGER},
       </if>
@@ -438,6 +482,9 @@
       annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
       favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
       favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      cmpy_type = #{cmpyType,jdbcType=INTEGER},
+      note = #{note,jdbcType=CHAR},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},

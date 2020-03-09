@@ -10,6 +10,7 @@ public class QueryParam {
 
   int custType;
   String city;
+  String custCity;
   String name;
   Integer itemType = -1;
   Integer trdType = -1;
@@ -17,6 +18,7 @@ public class QueryParam {
   List<Integer> investTrdScales;
   PageInfo pageInfo;
   int exportSize = -1;
+  boolean allowNoTrd = false;
 
 
 

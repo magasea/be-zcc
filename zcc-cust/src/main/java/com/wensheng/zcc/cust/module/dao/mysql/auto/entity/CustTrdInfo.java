@@ -55,7 +55,7 @@ public class CustTrdInfo {
 
     private String trdContactorAddr;
 
-    private String trdContractorPhone;
+    private String trdContactorPhone;
 
     private String trdContactorAddress;
 
@@ -275,12 +275,12 @@ public class CustTrdInfo {
         this.trdContactorAddr = trdContactorAddr == null ? null : trdContactorAddr.trim();
     }
 
-    public String getTrdContractorPhone() {
-        return trdContractorPhone;
+    public String getTrdContactorPhone() {
+        return trdContactorPhone;
     }
 
-    public void setTrdContractorPhone(String trdContractorPhone) {
-        this.trdContractorPhone = trdContractorPhone == null ? null : trdContractorPhone.trim();
+    public void setTrdContactorPhone(String trdContactorPhone) {
+        this.trdContactorPhone = trdContactorPhone == null ? null : trdContactorPhone.trim();
     }
 
     public String getTrdContactorAddress() {

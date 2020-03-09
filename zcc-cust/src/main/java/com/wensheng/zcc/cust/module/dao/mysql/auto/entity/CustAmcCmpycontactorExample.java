@@ -515,6 +515,76 @@ public class CustAmcCmpycontactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andCountyIsNull() {
+            addCriterion("county is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyIsNotNull() {
+            addCriterion("county is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyEqualTo(String value) {
+            addCriterion("county =", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyNotEqualTo(String value) {
+            addCriterion("county <>", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyGreaterThan(String value) {
+            addCriterion("county >", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyGreaterThanOrEqualTo(String value) {
+            addCriterion("county >=", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyLessThan(String value) {
+            addCriterion("county <", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyLessThanOrEqualTo(String value) {
+            addCriterion("county <=", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyLike(String value) {
+            addCriterion("county like", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyNotLike(String value) {
+            addCriterion("county not like", value, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyIn(List<String> values) {
+            addCriterion("county in", values, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyNotIn(List<String> values) {
+            addCriterion("county not in", values, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyBetween(String value1, String value2) {
+            addCriterion("county between", value1, value2, "county");
+            return (Criteria) this;
+        }
+
+        public Criteria andCountyNotBetween(String value1, String value2) {
+            addCriterion("county not between", value1, value2, "county");
+            return (Criteria) this;
+        }
+
         public Criteria andAddressIsNull() {
             addCriterion("address is null");
             return (Criteria) this;
@@ -725,6 +795,76 @@ public class CustAmcCmpycontactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andBranchCmpyIsNull() {
+            addCriterion("branch_cmpy is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyIsNotNull() {
+            addCriterion("branch_cmpy is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyEqualTo(String value) {
+            addCriterion("branch_cmpy =", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyNotEqualTo(String value) {
+            addCriterion("branch_cmpy <>", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyGreaterThan(String value) {
+            addCriterion("branch_cmpy >", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyGreaterThanOrEqualTo(String value) {
+            addCriterion("branch_cmpy >=", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyLessThan(String value) {
+            addCriterion("branch_cmpy <", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyLessThanOrEqualTo(String value) {
+            addCriterion("branch_cmpy <=", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyLike(String value) {
+            addCriterion("branch_cmpy like", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyNotLike(String value) {
+            addCriterion("branch_cmpy not like", value, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyIn(List<String> values) {
+            addCriterion("branch_cmpy in", values, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyNotIn(List<String> values) {
+            addCriterion("branch_cmpy not in", values, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyBetween(String value1, String value2) {
+            addCriterion("branch_cmpy between", value1, value2, "branchCmpy");
+            return (Criteria) this;
+        }
+
+        public Criteria andBranchCmpyNotBetween(String value1, String value2) {
+            addCriterion("branch_cmpy not between", value1, value2, "branchCmpy");
+            return (Criteria) this;
+        }
+
         public Criteria andHistoryCmpyIsNull() {
             addCriterion("history_cmpy is null");
             return (Criteria) this;
@@ -792,216 +932,6 @@ public class CustAmcCmpycontactorExample {
 
         public Criteria andHistoryCmpyNotBetween(String value1, String value2) {
             addCriterion("history_cmpy not between", value1, value2, "historyCmpy");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameIsNull() {
-            addCriterion("recorder_name is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameIsNotNull() {
-            addCriterion("recorder_name is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameEqualTo(String value) {
-            addCriterion("recorder_name =", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameNotEqualTo(String value) {
-            addCriterion("recorder_name <>", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameGreaterThan(String value) {
-            addCriterion("recorder_name >", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameGreaterThanOrEqualTo(String value) {
-            addCriterion("recorder_name >=", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameLessThan(String value) {
-            addCriterion("recorder_name <", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameLessThanOrEqualTo(String value) {
-            addCriterion("recorder_name <=", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameLike(String value) {
-            addCriterion("recorder_name like", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameNotLike(String value) {
-            addCriterion("recorder_name not like", value, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameIn(List<String> values) {
-            addCriterion("recorder_name in", values, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameNotIn(List<String> values) {
-            addCriterion("recorder_name not in", values, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameBetween(String value1, String value2) {
-            addCriterion("recorder_name between", value1, value2, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andRecorderNameNotBetween(String value1, String value2) {
-            addCriterion("recorder_name not between", value1, value2, "recorderName");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepIsNull() {
-            addCriterion("favorite_city_prep is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepIsNotNull() {
-            addCriterion("favorite_city_prep is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepEqualTo(String value) {
-            addCriterion("favorite_city_prep =", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepNotEqualTo(String value) {
-            addCriterion("favorite_city_prep <>", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepGreaterThan(String value) {
-            addCriterion("favorite_city_prep >", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepGreaterThanOrEqualTo(String value) {
-            addCriterion("favorite_city_prep >=", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepLessThan(String value) {
-            addCriterion("favorite_city_prep <", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepLessThanOrEqualTo(String value) {
-            addCriterion("favorite_city_prep <=", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepLike(String value) {
-            addCriterion("favorite_city_prep like", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepNotLike(String value) {
-            addCriterion("favorite_city_prep not like", value, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepIn(List<String> values) {
-            addCriterion("favorite_city_prep in", values, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepNotIn(List<String> values) {
-            addCriterion("favorite_city_prep not in", values, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepBetween(String value1, String value2) {
-            addCriterion("favorite_city_prep between", value1, value2, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteCityPrepNotBetween(String value1, String value2) {
-            addCriterion("favorite_city_prep not between", value1, value2, "favoriteCityPrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepIsNull() {
-            addCriterion("favorite_type_prep is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepIsNotNull() {
-            addCriterion("favorite_type_prep is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepEqualTo(String value) {
-            addCriterion("favorite_type_prep =", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepNotEqualTo(String value) {
-            addCriterion("favorite_type_prep <>", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepGreaterThan(String value) {
-            addCriterion("favorite_type_prep >", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepGreaterThanOrEqualTo(String value) {
-            addCriterion("favorite_type_prep >=", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepLessThan(String value) {
-            addCriterion("favorite_type_prep <", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepLessThanOrEqualTo(String value) {
-            addCriterion("favorite_type_prep <=", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepLike(String value) {
-            addCriterion("favorite_type_prep like", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepNotLike(String value) {
-            addCriterion("favorite_type_prep not like", value, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepIn(List<String> values) {
-            addCriterion("favorite_type_prep in", values, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepNotIn(List<String> values) {
-            addCriterion("favorite_type_prep not in", values, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepBetween(String value1, String value2) {
-            addCriterion("favorite_type_prep between", value1, value2, "favoriteTypePrep");
-            return (Criteria) this;
-        }
-
-        public Criteria andFavoriteTypePrepNotBetween(String value1, String value2) {
-            addCriterion("favorite_type_prep not between", value1, value2, "favoriteTypePrep");
             return (Criteria) this;
         }
 
@@ -1142,6 +1072,146 @@ public class CustAmcCmpycontactorExample {
 
         public Criteria andFavoriteTypeUpdateNotBetween(String value1, String value2) {
             addCriterion("favorite_type_update not between", value1, value2, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteIsNull() {
+            addCriterion("fav_type_note is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteIsNotNull() {
+            addCriterion("fav_type_note is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteEqualTo(String value) {
+            addCriterion("fav_type_note =", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteNotEqualTo(String value) {
+            addCriterion("fav_type_note <>", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteGreaterThan(String value) {
+            addCriterion("fav_type_note >", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteGreaterThanOrEqualTo(String value) {
+            addCriterion("fav_type_note >=", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteLessThan(String value) {
+            addCriterion("fav_type_note <", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteLessThanOrEqualTo(String value) {
+            addCriterion("fav_type_note <=", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteLike(String value) {
+            addCriterion("fav_type_note like", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteNotLike(String value) {
+            addCriterion("fav_type_note not like", value, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteIn(List<String> values) {
+            addCriterion("fav_type_note in", values, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteNotIn(List<String> values) {
+            addCriterion("fav_type_note not in", values, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteBetween(String value1, String value2) {
+            addCriterion("fav_type_note between", value1, value2, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavTypeNoteNotBetween(String value1, String value2) {
+            addCriterion("fav_type_note not between", value1, value2, "favTypeNote");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteIsNull() {
+            addCriterion("note is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteIsNotNull() {
+            addCriterion("note is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteEqualTo(String value) {
+            addCriterion("note =", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteNotEqualTo(String value) {
+            addCriterion("note <>", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteGreaterThan(String value) {
+            addCriterion("note >", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteGreaterThanOrEqualTo(String value) {
+            addCriterion("note >=", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteLessThan(String value) {
+            addCriterion("note <", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteLessThanOrEqualTo(String value) {
+            addCriterion("note <=", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteLike(String value) {
+            addCriterion("note like", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteNotLike(String value) {
+            addCriterion("note not like", value, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteIn(List<String> values) {
+            addCriterion("note in", values, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteNotIn(List<String> values) {
+            addCriterion("note not in", values, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteBetween(String value1, String value2) {
+            addCriterion("note between", value1, value2, "note");
+            return (Criteria) this;
+        }
+
+        public Criteria andNoteNotBetween(String value1, String value2) {
+            addCriterion("note not between", value1, value2, "note");
             return (Criteria) this;
         }
 

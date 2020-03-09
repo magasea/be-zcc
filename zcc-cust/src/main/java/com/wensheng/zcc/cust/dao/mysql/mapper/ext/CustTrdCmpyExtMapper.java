@@ -16,9 +16,13 @@ public interface CustTrdCmpyExtMapper {
     List<CustTrdCmpyTrdExt> selectByExample(CustTrdCmpyExample example);
 
     List<Long> selectByPreFilter(CustTrdCmpyExample example);
+    List<Long> selectByPreFilterAllowNoTrd(CustTrdCmpyExample example);
 
     List<CustTrdCmpyTrdExt> selectByFilter(CustTrdCmpyExample example);
 
     Long countByFilter(CustTrdCmpyExample example   );
+    Long countByFilterAllowNoTrd(CustTrdCmpyExample example   );
+
+    List<Map> selectDuplicateNameCmpy();
 
 }

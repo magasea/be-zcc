@@ -48,7 +48,7 @@ public class AmcCmpyContactorController {
   @QueryChecker
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor, String cmpyProvinceCode)
+  public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor)
       throws Exception {
     amcContactorService.createAmcCmpyContactor(custAmcCmpycontactor);
   }
@@ -57,7 +57,7 @@ public class AmcCmpyContactorController {
   @QueryChecker
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor, String cmpyProvinceCode){
+  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor){
     amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
   }
 

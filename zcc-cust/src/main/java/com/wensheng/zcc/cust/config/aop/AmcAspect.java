@@ -2,6 +2,10 @@ package com.wensheng.zcc.cust.config.aop;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import java.util.List;
 import java.util.Map;
@@ -50,21 +54,21 @@ public class AmcAspect {
   @Around("@annotation(QueryChecker) ")
   public Object aroundDoQuery(ProceedingJoinPoint joinPoint) throws Throwable {
     log.info("now get the point cut");
-    if(joinPoint.getArgs().length < 2 || StringUtils.isEmpty(joinPoint.getArgs()[1])){
+    if(joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null){
       log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
       return joinPoint.proceed(joinPoint.getArgs());
     }
-    String province = (String) joinPoint.getArgs()[1];
+    CustAmcCmpycontactor custAmcCmpycontactor = (CustAmcCmpycontactor) joinPoint.getArgs()[0];
+    String province = custAmcCmpycontactor.getProvince();
     Map<String, Integer> userPrivMap = basicInfoService.getAmcUserPrivMap();
     if(!userPrivMap.containsKey(province)){
-      log.error("cannot process for province:{}", joinPoint.getArgs()[1]);
+      log.error("cannot process for province:{}", joinPoint.getArgs());
       return joinPoint.proceed(joinPoint.getArgs());
     }
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
-      log.error("it is web user");
-      return joinPoint.proceed(joinPoint.getArgs());
+      throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
     }
     log.info(authentication.getDetails().toString());
     Map<String, Object> detailsParam =
@@ -85,6 +89,21 @@ public class AmcAspect {
         throw new Exception(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
             locationUserEnum.getCname(), designedLocationEnum.getCname()));
       }
+    }
+
+    if(detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")){
+      Long ssoUserId = (Long) detailsParam.get("ssoUserId");
+      if(joinPoint.getSignature().toString().startsWith("add") || joinPoint.getSignature().toString().startsWith(
+          "create")){
+        custAmcCmpycontactor.setCreateBy(ssoUserId);
+        custAmcCmpycontactor.setCreateTime(AmcDateUtils.getCurrentDate());
+      }
+      if(joinPoint.getSignature().toString().startsWith("update") || joinPoint.getSignature().toString().startsWith(
+          "mod")){
+        custAmcCmpycontactor.setUpdateBy(ssoUserId);
+        custAmcCmpycontactor.setUpdateTime(AmcDateUtils.getCurrentDate());
+      }
+
     }
     return joinPoint.proceed(joinPoint.getArgs());
   }

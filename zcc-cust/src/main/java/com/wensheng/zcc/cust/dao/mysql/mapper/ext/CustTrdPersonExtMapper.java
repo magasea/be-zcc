@@ -16,6 +16,8 @@ public interface CustTrdPersonExtMapper {
     List<CustTrdPersonTrdExt> selectByExample(CustTrdPersonExample examples);
     List<CustTrdPersonTrdExt> selectByFilter(CustTrdPersonExample example);
     List<Long> selectByPreFilter(CustTrdPersonExample example);
+    List<Long> selectByPreFilterAllowNoTrd(CustTrdPersonExample example);
     Long countByFilter(CustTrdPersonExtExample example);
+    Long countByFilterAllowNoTrd(CustTrdPersonExtExample example);
 
 }

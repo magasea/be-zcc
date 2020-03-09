@@ -14,4 +14,6 @@ public interface TrdInfoService {
 
 
   List<CustTrdInfo> getTrdInfo(Long custId, int id);
+
+  void patchPhoneAndAddress();
 }

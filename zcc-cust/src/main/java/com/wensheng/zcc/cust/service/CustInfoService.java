@@ -22,6 +22,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 public interface CustInfoService {
 
   public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy);
+  public void updateCompany(CustTrdCmpy custTrdCmpy);
 
   CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson);
 
@@ -59,4 +60,8 @@ public interface CustInfoService {
   List<CustTrdPerson> getPersonFromDate(Date beginDate);
 
   CustsCountByTime getCustCountByTime(LocalDateTime startTime);
+
+  void patchDuplicateCmpyName();
+
+
 }

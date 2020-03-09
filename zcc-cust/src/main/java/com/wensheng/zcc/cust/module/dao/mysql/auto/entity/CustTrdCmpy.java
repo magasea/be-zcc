@@ -29,6 +29,12 @@ public class CustTrdCmpy {
 
     private String favoriteTypeUpdate;
 
+    private String favTypeNote;
+
+    private Integer cmpyType;
+
+    private String note;
+
     private Integer dataStatus;
 
     private Integer dataQuality;
@@ -145,6 +151,30 @@ public class CustTrdCmpy {
 
     public void setFavoriteTypeUpdate(String favoriteTypeUpdate) {
         this.favoriteTypeUpdate = favoriteTypeUpdate == null ? null : favoriteTypeUpdate.trim();
+    }
+
+    public String getFavTypeNote() {
+        return favTypeNote;
+    }
+
+    public void setFavTypeNote(String favTypeNote) {
+        this.favTypeNote = favTypeNote == null ? null : favTypeNote.trim();
+    }
+
+    public Integer getCmpyType() {
+        return cmpyType;
+    }
+
+    public void setCmpyType(Integer cmpyType) {
+        this.cmpyType = cmpyType;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 
     public Integer getDataStatus() {

@@ -15,23 +15,25 @@ public class CustAmcCmpycontactor {
 
     private String city;
 
+    private String county;
+
     private String address;
 
     private String title;
 
     private String company;
 
+    private String branchCmpy;
+
     private String historyCmpy;
-
-    private String recorderName;
-
-    private String favoriteCityPrep;
-
-    private String favoriteTypePrep;
 
     private String favoriteCityUpdate;
 
     private String favoriteTypeUpdate;
+
+    private String favTypeNote;
+
+    private String note;
 
     private Long cmpyId;
 
@@ -91,6 +93,14 @@ public class CustAmcCmpycontactor {
         this.city = city == null ? null : city.trim();
     }
 
+    public String getCounty() {
+        return county;
+    }
+
+    public void setCounty(String county) {
+        this.county = county == null ? null : county.trim();
+    }
+
     public String getAddress() {
         return address;
     }
@@ -115,36 +125,20 @@ public class CustAmcCmpycontactor {
         this.company = company == null ? null : company.trim();
     }
 
+    public String getBranchCmpy() {
+        return branchCmpy;
+    }
+
+    public void setBranchCmpy(String branchCmpy) {
+        this.branchCmpy = branchCmpy == null ? null : branchCmpy.trim();
+    }
+
     public String getHistoryCmpy() {
         return historyCmpy;
     }
 
     public void setHistoryCmpy(String historyCmpy) {
         this.historyCmpy = historyCmpy == null ? null : historyCmpy.trim();
-    }
-
-    public String getRecorderName() {
-        return recorderName;
-    }
-
-    public void setRecorderName(String recorderName) {
-        this.recorderName = recorderName == null ? null : recorderName.trim();
-    }
-
-    public String getFavoriteCityPrep() {
-        return favoriteCityPrep;
-    }
-
-    public void setFavoriteCityPrep(String favoriteCityPrep) {
-        this.favoriteCityPrep = favoriteCityPrep == null ? null : favoriteCityPrep.trim();
-    }
-
-    public String getFavoriteTypePrep() {
-        return favoriteTypePrep;
-    }
-
-    public void setFavoriteTypePrep(String favoriteTypePrep) {
-        this.favoriteTypePrep = favoriteTypePrep == null ? null : favoriteTypePrep.trim();
     }
 
     public String getFavoriteCityUpdate() {
@@ -161,6 +155,22 @@ public class CustAmcCmpycontactor {
 
     public void setFavoriteTypeUpdate(String favoriteTypeUpdate) {
         this.favoriteTypeUpdate = favoriteTypeUpdate == null ? null : favoriteTypeUpdate.trim();
+    }
+
+    public String getFavTypeNote() {
+        return favTypeNote;
+    }
+
+    public void setFavTypeNote(String favTypeNote) {
+        this.favTypeNote = favTypeNote == null ? null : favTypeNote.trim();
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 
     public Long getCmpyId() {

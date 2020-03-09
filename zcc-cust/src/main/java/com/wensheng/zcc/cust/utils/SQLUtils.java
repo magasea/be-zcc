@@ -55,6 +55,10 @@ public class SQLUtils {
     if(!StringUtils.isEmpty(queryParam.getName())){
         criteria.andCmpyNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append("%").toString() );
     }
+    if(!StringUtils.isEmpty(queryParam.getCustCity())){
+      criteria.andCmpyProvinceLike(new StringBuilder(StringUtils.trimWhitespace(queryParam.getCustCity()).substring(0
+          , 2)).append("%").toString() );
+    }
     return custTrdCmpyExtExample;
   }
   public static String getFilterByForCustTrd(QueryParam queryParam){
@@ -123,6 +127,11 @@ public class SQLUtils {
     if(!StringUtils.isEmpty(queryParam.getName())){
       criteria.andNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append(
           "%").toString() );
+    }
+
+    if(!StringUtils.isEmpty(queryParam.getCustCity())){
+      criteria.andProvinceLike(new StringBuilder(StringUtils.trimWhitespace(queryParam.getCustCity()).substring(0
+          , 2)).append("%").toString() );
     }
     return custTrdPersonExtExample;
   }

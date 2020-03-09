@@ -44,6 +44,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -111,6 +112,11 @@ public class CustInfoServiceImpl implements CustInfoService {
   }
 
   @Override
+  public void updateCompany(CustTrdCmpy custTrdCmpy) {
+    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+  }
+
+  @Override
   public CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson) {
     custTrdPersonMapper.insertSelective(custTrdPerson);
     return custTrdPerson;
@@ -154,9 +160,13 @@ public class CustInfoServiceImpl implements CustInfoService {
       log.info("preGroupResults:{}", gson.toJson(preGroupResults));
 
     }else{
-
-      preGroupResults =
-          custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
+      if(queryParam.isAllowNoTrd()){
+        preGroupResults =
+            custTrdCmpyExtMapper.selectByPreFilterAllowNoTrd(custTrdCmpyExtExample);
+      }else{
+        preGroupResults =
+            custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
+      }
       log.info("preGroupResults:{}", gson.toJson(preGroupResults));
 //      CustTrdCmpyExtExample.Criteria criteria = custTrdCmpyExtExample.createCriteria();
 //      criteria.andIdIn(preGroupResults);
@@ -322,10 +332,22 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
+    Long queryResult = -1L;
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
-    custTrdCmpyExtExample.setFilterByClause(filterBy);
-    return custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
+    if(!StringUtils.isEmpty(filterBy)){
+      custTrdCmpyExtExample.setFilterByClause(filterBy);
+      queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
+    }else{
+      if(queryParam.isAllowNoTrd()){
+        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExample);
+      }else{
+        queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
+      }
+    }
+
+
+    return queryResult;
 
 
 
@@ -350,13 +372,22 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExtExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
-//    filterBy = filterBy + " and ctp.mobile_num > -1 ";
-    if(!StringUtils.isEmpty(filterBy)) {
-      custTrdPersonExtExample.setFilterByClause(filterBy);
-    }
     custTrdPersonExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
     List<CustTrdPersonTrdExt> custTrdPersonTrdExtList = new ArrayList<>();
-    List<Long> ids = custTrdPersonExtMapper.selectByPreFilter(custTrdPersonExtExample);
+//    filterBy = filterBy + " and ctp.mobile_num > -1 ";
+    List<Long> ids = new ArrayList<>();
+    if(!StringUtils.isEmpty(filterBy)) {
+      custTrdPersonExtExample.setFilterByClause(filterBy);
+      ids = custTrdPersonExtMapper.selectByPreFilter(custTrdPersonExtExample);
+    }else{
+      if(queryParam.isAllowNoTrd()){
+        ids = custTrdPersonExtMapper.selectByPreFilterAllowNoTrd(custTrdPersonExtExample);
+      }else{
+        ids = custTrdPersonExtMapper.selectByPreFilter(custTrdPersonExtExample);
+      }
+    }
+
+
     if(CollectionUtils.isEmpty(ids)){
       log.error("Failed to get results for filter:{}", filterBy);
       return custTrdPersonTrdExtList;
@@ -478,14 +509,25 @@ public class CustInfoServiceImpl implements CustInfoService {
   public Long getPersonTradeCount(QueryParam queryParam) {
     CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
 
-
+    Long queryResult = -1L;
 
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
     custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
-    custTrdPersonExtExample.setFilterByClause(filterBy);
-    return custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
+    if(!StringUtils.isEmpty(filterBy)){
+      custTrdPersonExtExample.setFilterByClause(filterBy);
+      queryResult = custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
+    }else{
+      if(queryParam.isAllowNoTrd()){
+        queryResult = custTrdPersonExtMapper.countByFilterAllowNoTrd(custTrdPersonExtExample);
+      }else{
+        queryResult = custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
+      }
+    }
+
+
+    return queryResult;
   }
 
   @Override
@@ -721,6 +763,49 @@ public class CustInfoServiceImpl implements CustInfoService {
     custsCountByTime.setNewCustCmpiesByStartTime(custTrdCmpyList);
     custsCountByTime.setNewCustPersonByStartTime(custTrdPersonList);
     return custsCountByTime;
+  }
+
+  @Override
+  public void patchDuplicateCmpyName() {
+    List<Map> dupCmpyNames = custTrdCmpyExtMapper.selectDuplicateNameCmpy();
+    if(CollectionUtils.isEmpty(dupCmpyNames)){
+      return;
+    }
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    for(Map item: dupCmpyNames){
+      custTrdCmpyExample.clear();
+      custTrdCmpyExample.createCriteria().andCmpyNameEqualTo((String)item.get("cmpy_name"));
+      List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+      Long bestCmpyId = -1L;
+      int maxQuality = 0;
+      for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
+        if(custTrdCmpy.getDataQuality() > maxQuality  ){
+          maxQuality = custTrdCmpy.getDataQuality();
+          bestCmpyId = custTrdCmpy.getId();
+        }
+      }
+      if(bestCmpyId <= 0 ){
+        continue;
+      }
+
+      for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
+        custTrdInfoExample.clear();
+        if(custTrdCmpy.getId() == bestCmpyId){
+          //we use bestCmpyId
+          continue;
+        }
+        custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdCmpy.getId()).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+        List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+        for(CustTrdInfo custTrdInfo: custTrdInfos){
+          custTrdInfo.setBuyerId(bestCmpyId);
+          custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+        }
+        if(CollectionUtils.isEmpty(custTrdInfos)){
+          custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpy.getId());
+        }
+      }
+    }
   }
 
   private boolean updateCustPersonTrdRelations(List<String> histPhoneNumList, String phoneNum, String custName,

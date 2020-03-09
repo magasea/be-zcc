@@ -8,15 +8,16 @@
     <result column="mobile" jdbcType="CHAR" property="mobile" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
+    <result column="county" jdbcType="CHAR" property="county" />
     <result column="address" jdbcType="CHAR" property="address" />
     <result column="title" jdbcType="CHAR" property="title" />
     <result column="company" jdbcType="CHAR" property="company" />
+    <result column="branch_cmpy" jdbcType="CHAR" property="branchCmpy" />
     <result column="history_cmpy" jdbcType="CHAR" property="historyCmpy" />
-    <result column="recorder_name" jdbcType="CHAR" property="recorderName" />
-    <result column="favorite_city_prep" jdbcType="CHAR" property="favoriteCityPrep" />
-    <result column="favorite_type_prep" jdbcType="CHAR" property="favoriteTypePrep" />
     <result column="favorite_city_update" jdbcType="CHAR" property="favoriteCityUpdate" />
     <result column="favorite_type_update" jdbcType="CHAR" property="favoriteTypeUpdate" />
+    <result column="fav_type_note" jdbcType="CHAR" property="favTypeNote" />
+    <result column="note" jdbcType="CHAR" property="note" />
     <result column="cmpy_id" jdbcType="BIGINT" property="cmpyId" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -82,9 +83,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, phone, mobile, province, city, address, title, company, history_cmpy, recorder_name, 
-    favorite_city_prep, favorite_type_prep, favorite_city_update, favorite_type_update, 
-    cmpy_id, create_by, create_time, update_by, update_time
+    id, name, phone, mobile, province, city, county, address, title, company, branch_cmpy, 
+    history_cmpy, favorite_city_update, favorite_type_update, fav_type_note, note, cmpy_id, 
+    create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample" resultMap="BaseResultMap">
     select
@@ -122,17 +123,19 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into CUST_AMC_CMPYCONTACTOR (name, phone, mobile, province, 
-      city, address, title, company, 
-      history_cmpy, recorder_name, favorite_city_prep, 
-      favorite_type_prep, favorite_city_update, favorite_type_update, 
-      cmpy_id, create_by, create_time, 
-      update_by, update_time)
+      city, county, address, title, 
+      company, branch_cmpy, history_cmpy, 
+      favorite_city_update, favorite_type_update, fav_type_note, 
+      note, cmpy_id, create_by, 
+      create_time, update_by, update_time
+      )
     values (#{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{title,jdbcType=CHAR}, #{company,jdbcType=CHAR}, 
-      #{historyCmpy,jdbcType=CHAR}, #{recorderName,jdbcType=CHAR}, #{favoriteCityPrep,jdbcType=CHAR}, 
-      #{favoriteTypePrep,jdbcType=CHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, 
-      #{cmpyId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{title,jdbcType=CHAR}, 
+      #{company,jdbcType=CHAR}, #{branchCmpy,jdbcType=CHAR}, #{historyCmpy,jdbcType=CHAR}, 
+      #{favoriteCityUpdate,jdbcType=CHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, 
+      #{note,jdbcType=CHAR}, #{cmpyId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -155,6 +158,9 @@
       <if test="city != null">
         city,
       </if>
+      <if test="county != null">
+        county,
+      </if>
       <if test="address != null">
         address,
       </if>
@@ -164,23 +170,23 @@
       <if test="company != null">
         company,
       </if>
+      <if test="branchCmpy != null">
+        branch_cmpy,
+      </if>
       <if test="historyCmpy != null">
         history_cmpy,
-      </if>
-      <if test="recorderName != null">
-        recorder_name,
-      </if>
-      <if test="favoriteCityPrep != null">
-        favorite_city_prep,
-      </if>
-      <if test="favoriteTypePrep != null">
-        favorite_type_prep,
       </if>
       <if test="favoriteCityUpdate != null">
         favorite_city_update,
       </if>
       <if test="favoriteTypeUpdate != null">
         favorite_type_update,
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note,
+      </if>
+      <if test="note != null">
+        note,
       </if>
       <if test="cmpyId != null">
         cmpy_id,
@@ -214,6 +220,9 @@
       <if test="city != null">
         #{city,jdbcType=CHAR},
       </if>
+      <if test="county != null">
+        #{county,jdbcType=CHAR},
+      </if>
       <if test="address != null">
         #{address,jdbcType=CHAR},
       </if>
@@ -223,23 +232,23 @@
       <if test="company != null">
         #{company,jdbcType=CHAR},
       </if>
+      <if test="branchCmpy != null">
+        #{branchCmpy,jdbcType=CHAR},
+      </if>
       <if test="historyCmpy != null">
         #{historyCmpy,jdbcType=CHAR},
-      </if>
-      <if test="recorderName != null">
-        #{recorderName,jdbcType=CHAR},
-      </if>
-      <if test="favoriteCityPrep != null">
-        #{favoriteCityPrep,jdbcType=CHAR},
-      </if>
-      <if test="favoriteTypePrep != null">
-        #{favoriteTypePrep,jdbcType=CHAR},
       </if>
       <if test="favoriteCityUpdate != null">
         #{favoriteCityUpdate,jdbcType=CHAR},
       </if>
       <if test="favoriteTypeUpdate != null">
         #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=CHAR},
       </if>
       <if test="cmpyId != null">
         #{cmpyId,jdbcType=BIGINT},
@@ -285,6 +294,9 @@
       <if test="record.city != null">
         city = #{record.city,jdbcType=CHAR},
       </if>
+      <if test="record.county != null">
+        county = #{record.county,jdbcType=CHAR},
+      </if>
       <if test="record.address != null">
         address = #{record.address,jdbcType=CHAR},
       </if>
@@ -294,23 +306,23 @@
       <if test="record.company != null">
         company = #{record.company,jdbcType=CHAR},
       </if>
+      <if test="record.branchCmpy != null">
+        branch_cmpy = #{record.branchCmpy,jdbcType=CHAR},
+      </if>
       <if test="record.historyCmpy != null">
         history_cmpy = #{record.historyCmpy,jdbcType=CHAR},
-      </if>
-      <if test="record.recorderName != null">
-        recorder_name = #{record.recorderName,jdbcType=CHAR},
-      </if>
-      <if test="record.favoriteCityPrep != null">
-        favorite_city_prep = #{record.favoriteCityPrep,jdbcType=CHAR},
-      </if>
-      <if test="record.favoriteTypePrep != null">
-        favorite_type_prep = #{record.favoriteTypePrep,jdbcType=CHAR},
       </if>
       <if test="record.favoriteCityUpdate != null">
         favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
       </if>
       <if test="record.favoriteTypeUpdate != null">
         favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.favTypeNote != null">
+        fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=CHAR},
       </if>
       <if test="record.cmpyId != null">
         cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
@@ -340,15 +352,16 @@
       mobile = #{record.mobile,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
+      county = #{record.county,jdbcType=CHAR},
       address = #{record.address,jdbcType=CHAR},
       title = #{record.title,jdbcType=CHAR},
       company = #{record.company,jdbcType=CHAR},
+      branch_cmpy = #{record.branchCmpy,jdbcType=CHAR},
       history_cmpy = #{record.historyCmpy,jdbcType=CHAR},
-      recorder_name = #{record.recorderName,jdbcType=CHAR},
-      favorite_city_prep = #{record.favoriteCityPrep,jdbcType=CHAR},
-      favorite_type_prep = #{record.favoriteTypePrep,jdbcType=CHAR},
       favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
       favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      note = #{record.note,jdbcType=CHAR},
       cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -376,6 +389,9 @@
       <if test="city != null">
         city = #{city,jdbcType=CHAR},
       </if>
+      <if test="county != null">
+        county = #{county,jdbcType=CHAR},
+      </if>
       <if test="address != null">
         address = #{address,jdbcType=CHAR},
       </if>
@@ -385,23 +401,23 @@
       <if test="company != null">
         company = #{company,jdbcType=CHAR},
       </if>
+      <if test="branchCmpy != null">
+        branch_cmpy = #{branchCmpy,jdbcType=CHAR},
+      </if>
       <if test="historyCmpy != null">
         history_cmpy = #{historyCmpy,jdbcType=CHAR},
-      </if>
-      <if test="recorderName != null">
-        recorder_name = #{recorderName,jdbcType=CHAR},
-      </if>
-      <if test="favoriteCityPrep != null">
-        favorite_city_prep = #{favoriteCityPrep,jdbcType=CHAR},
-      </if>
-      <if test="favoriteTypePrep != null">
-        favorite_type_prep = #{favoriteTypePrep,jdbcType=CHAR},
       </if>
       <if test="favoriteCityUpdate != null">
         favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
       </if>
       <if test="favoriteTypeUpdate != null">
         favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=CHAR},
       </if>
       <if test="cmpyId != null">
         cmpy_id = #{cmpyId,jdbcType=BIGINT},
@@ -428,15 +444,16 @@
       mobile = #{mobile,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
+      county = #{county,jdbcType=CHAR},
       address = #{address,jdbcType=CHAR},
       title = #{title,jdbcType=CHAR},
       company = #{company,jdbcType=CHAR},
+      branch_cmpy = #{branchCmpy,jdbcType=CHAR},
       history_cmpy = #{historyCmpy,jdbcType=CHAR},
-      recorder_name = #{recorderName,jdbcType=CHAR},
-      favorite_city_prep = #{favoriteCityPrep,jdbcType=CHAR},
-      favorite_type_prep = #{favoriteTypePrep,jdbcType=CHAR},
       favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
       favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      note = #{note,jdbcType=CHAR},
       cmpy_id = #{cmpyId,jdbcType=BIGINT},
       create_by = #{createBy,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},

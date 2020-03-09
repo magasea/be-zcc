@@ -143,6 +143,8 @@
   </select>
 
 
+
+
   <select id="selectByPreFilter"
     parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"
     resultType="Long">
@@ -208,10 +210,91 @@
       <include refid="Example_Where_Clause" />
     </if>
     <if test="filterByClause != null">
-      ${filterByClause} group by ctc.id
+      ${filterByClause}
     </if>
-
+    group by ctc.id
     ) as tmp
 
   </select>
+
+
+  <select id="selectByExampleAllowNoTrd"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List">
+      <property name="prefix" value="ctc."/>
+    </include>,
+    <include refid="cust_trd_info_list" >
+      <property name="prefix" value="cti."/>
+      <property name="alias" value="cti_"/>
+    </include>
+    from CUST_TRD_CMPY ctc
+    left join CUST_TRD_INFO cti on ctc.id = cti.buyer_id
+    and cti.buyer_type = 2
+    <if test = "whereClause != null">
+      where ${whereClause}
+    </if>
+    <!--    <if test="_parameter != null">-->
+    <!--      <include refid="Example_Where_Clause" />-->
+    <!--    </if>-->
+    <!--    <if test="orderByClause != null">-->
+    <!--      order by ${orderByClause}-->
+    <!--    </if>-->
+  </select>
+
+  <select id="selectByPreFilterAllowNoTrd"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"
+    resultType="Long">
+    select ctc.id as id
+
+
+
+    from CUST_TRD_CMPY ctc
+    left join CUST_TRD_INFO cti on ctc.id = cti.buyer_id
+    and cti.buyer_type = 2
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="filterByClause != null">
+      ${filterByClause}
+    </if>
+    <if test="orderByClause != null">
+      group by ctc.id order by ${orderByClause}
+    </if>
+    <if test="limitByClause != null">
+      limit ${limitByClause}
+    </if>
+  </select>
+
+
+
+  <select id="countByFilterAllowNoTrd"
+    parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"
+    resultType="java.lang.Long">
+    select count(tmp.id) from(
+
+    select ctc.id as id, count(ctc.id)
+
+    from CUST_TRD_CMPY ctc
+    left join CUST_TRD_INFO cti on ctc.id = cti.buyer_id
+    and cti.buyer_type = 2
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="filterByClause != null">
+      ${filterByClause}
+    </if>
+    group by ctc.id
+    ) as tmp
+
+  </select>
+
+  <select id="selectDuplicateNameCmpy" resultType="java.util.Map">
+    select ctc.cmpy_name, count(ctc.cmpy_name) as cnt from CUST_TRD_CMPY ctc group by ctc.cmpy_name having cnt > 1;
+  </select>
+
 </mapper>

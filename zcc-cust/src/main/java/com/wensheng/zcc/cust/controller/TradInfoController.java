@@ -106,4 +106,10 @@ public class TradInfoController {
   public void patchTrdContactor() throws Exception {
     syncService.makeUpBuyerContactorOfTrade();
   }
+
+  @RequestMapping(value = "/refactData/patchTrdContactorPhone", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchTrdContactorPhone() throws Exception {
+    trdInfoService.patchPhoneAndAddress();
+  }
 }

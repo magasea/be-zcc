@@ -1108,7 +1108,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactPhonePrep())){
 
-      custTrdInfo.setTrdContractorPhone(trdInfoFromSync.getBuyerContactPhonePrep());
+      custTrdInfo.setTrdContactorPhone(trdInfoFromSync.getBuyerContactPhonePrep());
       sb.append(trdInfoFromSync.getBuyerContactPhonePrep()).append(" ").append(trdInfoFromSync.getBuyerContactAddressPrep());
     }
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){

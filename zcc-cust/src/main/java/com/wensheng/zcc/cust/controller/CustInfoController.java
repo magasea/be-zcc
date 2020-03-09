@@ -85,7 +85,13 @@ public class CustInfoController {
 
   }
 
+  @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
+  @ResponseBody
+  public void updateCmpy(@RequestBody CustTrdCmpy custTrdCmpy){
 
+     custInfoService.updateCompany(custTrdCmpy);
+
+  }
 
   @RequestMapping(value = "/getPerson", method = RequestMethod.POST)
   @ResponseBody
@@ -231,6 +237,12 @@ public class CustInfoController {
   @ResponseBody
   public CustsCountByTime getCustCountByTime(@RequestBody LocalDateTime startTime) throws Exception {
     return custInfoService.getCustCountByTime(startTime);
+  }
+
+  @RequestMapping(value = "/patchCustInfo4DupCmpyName", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchCustInfo4DupCmpyName() throws Exception {
+     custInfoService.patchDuplicateCmpyName();
   }
 
 }

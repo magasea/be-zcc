@@ -22,6 +22,7 @@ import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -119,18 +120,47 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
     }
 
+    StringBuilder key = new StringBuilder();
+
 
     for(CustTrdInfo custTrdInfo: custTrdInfos){
-      String key = String.format("%s%s",custTrdInfo.getTrdContactorName(), custTrdInfo.getTrdContactorPhone());
-      if(custAmcCmpycontactorMap.containsKey(key)){
-        custAmcCmpycontactorMap.get(key).getCustTrdInfoList().add(custTrdInfo);
+      if(StringUtils.isEmpty(custTrdInfo.getTrdContactorName()) || custTrdInfo.getTrdContactorName().equals("-1")){
+        continue;
+      }
+      key.setLength(0);
+      key.append(custTrdInfo.getTrdContactorName());
+      key.append(getPhoneFromTrdInfo(custTrdInfo));
+
+      if(custAmcCmpycontactorMap.containsKey(key.toString())){
+        custAmcCmpycontactorMap.get(key.toString()).getCustTrdInfoList().add(custTrdInfo);
       }else{
 //        log.error(" the trdInfo:{} doesn't belong to any contancator", custTrdInfo.getId());
       }
 
     }
-     custAmcCmpycontactorExtVos = convertToVos(custAmcCmpycontactorExts);
+
+     custAmcCmpycontactorExtVos = convertToVos(new ArrayList(custAmcCmpycontactorMap.values()));
     return custAmcCmpycontactorExtVos;
+  }
+
+  private String getPhoneFromTrdInfo(CustTrdInfo custTrdInfo){
+    if(StringUtils.isEmpty(custTrdInfo.getTrdContactorPhone()) && !custTrdInfo.getTrdContactorPhone().equals("-1")){
+      return custTrdInfo.getTrdContactorPhone();
+    }else if( !StringUtils.isEmpty(custTrdInfo.getTrdContactorAddr())){
+
+      String[] phoneAndAddr = null;
+      if(!StringUtils.isEmpty(custTrdInfo.getTrdContactorAddr())){
+        phoneAndAddr  = custTrdInfo.getTrdContactorAddr().split(" ");
+        if(phoneAndAddr.length >= 2){
+          return phoneAndAddr[0];
+
+        }else{
+          if(Character.isDigit(phoneAndAddr[0].charAt(0))){
+            return phoneAndAddr[0];
+          }
+        }
+      }
+    }
   }
 
   @Override
@@ -147,8 +177,12 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
     custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(new ArrayList<>());
     for(CustTrdInfo custTrdInfo : custTrdInfos){
-      if(custTrdInfo.getTrdContactorName().equals(custAmcCmpycontactor.getName()) && custAmcCmpycontactor.getTrdPhone().equals(custTrdInfo.getTrdContactorPhone())){
-        custAmcCmpycontactorTrdInfoVo.getCustTrdInfoList().add(custTrdInfo);
+      if(custTrdInfo.getTrdContactorName().equals(custAmcCmpycontactor.getName())){
+        //get phone info to compare
+        String phone = getPhoneFromTrdInfo(custTrdInfo);
+        if(custAmcCmpycontactor.getTrdPhone().equals(phone)){
+          custAmcCmpycontactorTrdInfoVo.getCustTrdInfoList().add(custTrdInfo);
+        }
       }
     }
     return custAmcCmpycontactorTrdInfoVo;

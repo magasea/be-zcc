@@ -80,9 +80,9 @@ public class AmcDebtCreateVo implements Serializable {
 
   private List<Long> debtors;
 
-  private List<AmcDebtorCmpy> newCompanies;
-
-  private List<AmcDebtorPerson> newPersons;
+//  private List<AmcDebtorCmpy> newCompanies;
+//
+//  private List<AmcDebtorPerson> newPersons;
 
   private DebtAdditional debtAdditional;
 

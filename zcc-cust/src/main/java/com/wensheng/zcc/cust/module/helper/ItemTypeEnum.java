@@ -13,6 +13,8 @@ public enum ItemTypeEnum {
   INDUSTRYASSET(6,"工业房产"),
   OTHERASSET(7,"其他房产"),
 
+  OTHER(100, "其它"),
+
   ;
 
   int id;

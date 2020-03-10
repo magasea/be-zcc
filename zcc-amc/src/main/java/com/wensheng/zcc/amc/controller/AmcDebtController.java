@@ -460,13 +460,13 @@ public class AmcDebtController {
       amcDebtService.connDebt2Debtors(amcDebtCreateVo.getDebtors(), amcDebtId);
     }
 
-    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewCompanies())){
-      amcDebtService.connDebt2Cmpys(amcDebtCreateVo.getNewCompanies(), amcDebtId);
-    }
-
-    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewPersons())){
-      amcDebtService.connDebt2Persons(amcDebtCreateVo.getNewPersons(), amcDebtId);
-    }
+//    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewCompanies())){
+//      amcDebtService.connDebt2Cmpys(amcDebtCreateVo.getNewCompanies(), amcDebtId);
+//    }
+//
+//    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewPersons())){
+//      amcDebtService.connDebt2Persons(amcDebtCreateVo.getNewPersons(), amcDebtId);
+//    }
   }
   @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#id, 'PERM_DEBTASSET_MOD')")
   @EditActionChecker

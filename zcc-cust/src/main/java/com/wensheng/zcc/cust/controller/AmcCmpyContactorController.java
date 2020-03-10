@@ -5,6 +5,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
+import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.service.SyncService;
@@ -59,6 +60,13 @@ public class AmcCmpyContactorController {
   @ResponseBody
   public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor){
     amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
+  }
+
+
+  @RequestMapping(value = "/getCmpyAmcContactorDetails", method = RequestMethod.POST)
+  @ResponseBody
+  public CustAmcCmpycontactorTrdInfoVo getCmpyAmcContactorDetails(@RequestBody Long cmpyContactorId){
+    return amcContactorService.getCmpyAmcContactorDetail(cmpyContactorId);
   }
 
 

@@ -375,6 +375,76 @@ public class CustAmcCmpycontactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andTrdPhoneIsNull() {
+            addCriterion("trd_phone is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneIsNotNull() {
+            addCriterion("trd_phone is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneEqualTo(String value) {
+            addCriterion("trd_phone =", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneNotEqualTo(String value) {
+            addCriterion("trd_phone <>", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneGreaterThan(String value) {
+            addCriterion("trd_phone >", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneGreaterThanOrEqualTo(String value) {
+            addCriterion("trd_phone >=", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneLessThan(String value) {
+            addCriterion("trd_phone <", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneLessThanOrEqualTo(String value) {
+            addCriterion("trd_phone <=", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneLike(String value) {
+            addCriterion("trd_phone like", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneNotLike(String value) {
+            addCriterion("trd_phone not like", value, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneIn(List<String> values) {
+            addCriterion("trd_phone in", values, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneNotIn(List<String> values) {
+            addCriterion("trd_phone not in", values, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneBetween(String value1, String value2) {
+            addCriterion("trd_phone between", value1, value2, "trdPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdPhoneNotBetween(String value1, String value2) {
+            addCriterion("trd_phone not between", value1, value2, "trdPhone");
+            return (Criteria) this;
+        }
+
         public Criteria andProvinceIsNull() {
             addCriterion("province is null");
             return (Criteria) this;

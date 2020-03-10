@@ -2,31 +2,25 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
-import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
 import com.wensheng.zcc.cust.service.CustInfoService;
-import com.wensheng.zcc.cust.service.ScriptSysService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.ExcelGenerator;
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort.Direction;
@@ -82,6 +76,22 @@ public class CustInfoController {
   public CustTrdCmpy getCmpy(@RequestParam Long companyId){
 
     return custInfoService.getCompany(companyId);
+
+  }
+
+  @RequestMapping(value = "/getCmpyByName", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustTrdCmpy> getCmpy(@RequestParam String companyName) throws Exception {
+
+    return custInfoService.getCompanyByName(companyName);
+
+  }
+
+  @RequestMapping(value = "/getCustFavor", method = RequestMethod.POST)
+  @ResponseBody
+  public CustTrdFavorVo getCustFavor(@RequestParam Long custId, @RequestParam Integer custType){
+
+    return custInfoService.getCustFavor(custId, custType);
 
   }
 

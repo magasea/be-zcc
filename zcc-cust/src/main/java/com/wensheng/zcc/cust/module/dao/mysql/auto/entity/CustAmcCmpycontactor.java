@@ -11,6 +11,8 @@ public class CustAmcCmpycontactor {
 
     private String mobile;
 
+    private String trdPhone;
+
     private String province;
 
     private String city;
@@ -75,6 +77,14 @@ public class CustAmcCmpycontactor {
 
     public void setMobile(String mobile) {
         this.mobile = mobile == null ? null : mobile.trim();
+    }
+
+    public String getTrdPhone() {
+        return trdPhone;
+    }
+
+    public void setTrdPhone(String trdPhone) {
+        this.trdPhone = trdPhone == null ? null : trdPhone.trim();
     }
 
     public String getProvince() {

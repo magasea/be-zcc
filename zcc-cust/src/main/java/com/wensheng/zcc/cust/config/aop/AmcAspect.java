@@ -61,39 +61,19 @@ public class AmcAspect {
     CustAmcCmpycontactor custAmcCmpycontactor = (CustAmcCmpycontactor) joinPoint.getArgs()[0];
     String province = custAmcCmpycontactor.getProvince();
     Map<String, Integer> userPrivMap = basicInfoService.getAmcUserPrivMap();
-    if(!userPrivMap.containsKey(province)){
-      log.error("cannot process for province:{}", joinPoint.getArgs());
-      return joinPoint.proceed(joinPoint.getArgs());
-    }
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
       throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
     }
     log.info(authentication.getDetails().toString());
+
+
     Map<String, Object> detailsParam =
         (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
-    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
-      Integer locationId = (Integer) detailsParam.get("location");
-      AmcLocationEnum locationUserEnum =
-          AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
-//      if(null != locationEnum){
-//        List<ZccDebtpack> zccDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum);
-//        if(!CollectionUtils.isEmpty(zccDebtpacks)){
-//          List<Long> amcDebtPackIds = zccDebtpacks.stream().map( item -> item.getId()).collect(Collectors.toList());
-//          queryParam.setDebtPackIds(amcDebtPackIds);
-//        }
-//      }
-      AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
-      if(userPrivMap.get(province) != locationId){
-        throw new Exception(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
-            locationUserEnum.getCname(), designedLocationEnum.getCname()));
-      }
-    }
-
     if(detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")){
-      Long ssoUserId = (Long) detailsParam.get("ssoUserId");
-      if(joinPoint.getSignature().toString().startsWith("add") || joinPoint.getSignature().toString().startsWith(
+      Long ssoUserId = Long.valueOf((Integer)detailsParam.get("ssoUserId"));
+      if(joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
           "create")){
         custAmcCmpycontactor.setCreateBy(ssoUserId);
         custAmcCmpycontactor.setCreateTime(AmcDateUtils.getCurrentDate());
@@ -105,6 +85,29 @@ public class AmcAspect {
       }
 
     }
+
+    if(CollectionUtils.isEmpty(userPrivMap) ){
+
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
+      Integer locationId = (Integer) detailsParam.get("location");
+      AmcLocationEnum locationUserEnum =
+          AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
+
+      AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
+      if(userPrivMap.get(province) != locationId){
+        throw new Exception(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
+            locationUserEnum.getCname(), designedLocationEnum.getCname()));
+      }
+    }
+
+
+
+
+
+
     return joinPoint.proceed(joinPoint.getArgs());
   }
 

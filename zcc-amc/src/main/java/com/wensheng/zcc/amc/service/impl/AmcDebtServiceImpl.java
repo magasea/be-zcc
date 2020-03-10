@@ -897,31 +897,31 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtSummary;
   }
 
-  @Override
-  public void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id) {
-    for(AmcDebtorCmpy cmpyItem: newCompanies){
-      AmcDebtor amcDebtor = new AmcDebtor();
-      amcDebtor.setDebtId(id);
-      amcDebtor.setCompanyId(cmpyItem.getCmpyId());
-      amcDebtor.setDebtorType(DebtorTypeEnum.COMPANY.getId());
-      amcDebtor.setRole(cmpyItem.getRole().getId());
-      amcDebtor.setDebtorName(cmpyItem.getName());
-      amcDebtorMapper.insertSelective(amcDebtor);
-    }
-  }
-
-  @Override
-  public void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id) {
-    for(AmcDebtorPerson personItem: newPersons){
-      AmcDebtor amcDebtor = new AmcDebtor();
-      amcDebtor.setDebtId(id);
-      amcDebtor.setRole(personItem.getRole().getId());
-      amcDebtor.setDebtorName(personItem.getName());
-      amcDebtor.setDebtorType(DebtorTypeEnum.PERSON.getId());
-      amcDebtor.setDebtorName(personItem.getName());
-      amcDebtorMapper.insertSelective(amcDebtor);
-    }
-  }
+//  @Override
+//  public void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id) {
+//    for(AmcDebtorCmpy cmpyItem: newCompanies){
+//      AmcDebtor amcDebtor = new AmcDebtor();
+//      amcDebtor.setDebtId(id);
+//      amcDebtor.setCompanyId(cmpyItem.getCmpyId());
+//      amcDebtor.setDebtorType(DebtorTypeEnum.COMPANY.getId());
+//      amcDebtor.setRole(cmpyItem.getRole().getId());
+//      amcDebtor.setDebtorName(cmpyItem.getName());
+//      amcDebtorMapper.insertSelective(amcDebtor);
+//    }
+//  }
+//
+//  @Override
+//  public void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id) {
+//    for(AmcDebtorPerson personItem: newPersons){
+//      AmcDebtor amcDebtor = new AmcDebtor();
+//      amcDebtor.setDebtId(id);
+//      amcDebtor.setRole(personItem.getRole().getId());
+//      amcDebtor.setDebtorName(personItem.getName());
+//      amcDebtor.setDebtorType(DebtorTypeEnum.PERSON.getId());
+//      amcDebtor.setDebtorName(personItem.getName());
+//      amcDebtorMapper.insertSelective(amcDebtor);
+//    }
+//  }
 
   @Override
   public AmcDebt getDebt(Long debtId) {

@@ -19,6 +19,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExtExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
+import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +54,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   public void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception {
     //first check name and phone unique
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
-    custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custAmcCmpycontactor.getCmpyId()).
+    custAmcCmpycontactorExample.createCriteria().andNameEqualTo(custAmcCmpycontactor.getName()).
         andCompanyEqualTo(custAmcCmpycontactor.getCompany()).andMobileEqualTo(custAmcCmpycontactor.getMobile());
     List<CustAmcCmpycontactor> custAmcCmpycontactors =
         custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
@@ -111,21 +112,46 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       custAmcCmpycontactorExt.setCustAmcCmpycontactor(custAmcCmpycontactor);
       custAmcCmpycontactorExt.setCustTrdInfoList(new ArrayList<>());
       custAmcCmpycontactorExts.add(custAmcCmpycontactorExt);
-      custAmcCmpycontactorMap.put(custAmcCmpycontactor.getName(), custAmcCmpycontactorExt);
+
+      custAmcCmpycontactorMap.put(String.format("%s%s",custAmcCmpycontactor.getName(), custAmcCmpycontactor.getTrdPhone()),
+          custAmcCmpycontactorExt);
+
+
     }
 
 
     for(CustTrdInfo custTrdInfo: custTrdInfos){
-
-      if(custAmcCmpycontactorMap.containsKey(custTrdInfo.getTrdContactorName())){
-        custAmcCmpycontactorMap.get(custTrdInfo.getTrdContactorName()).getCustTrdInfoList().add(custTrdInfo);
+      String key = String.format("%s%s",custTrdInfo.getTrdContactorName(), custTrdInfo.getTrdContactorPhone());
+      if(custAmcCmpycontactorMap.containsKey(key)){
+        custAmcCmpycontactorMap.get(key).getCustTrdInfoList().add(custTrdInfo);
       }else{
-        log.error(" the trdInfo:{} doesn't belong to any contancator", custTrdInfo.getId());
+//        log.error(" the trdInfo:{} doesn't belong to any contancator", custTrdInfo.getId());
       }
 
     }
      custAmcCmpycontactorExtVos = convertToVos(custAmcCmpycontactorExts);
     return custAmcCmpycontactorExtVos;
+  }
+
+  @Override
+  public CustAmcCmpycontactorTrdInfoVo getCmpyAmcContactorDetail(Long contactorId) {
+    CustAmcCmpycontactorTrdInfoVo custAmcCmpycontactorTrdInfoVo = new CustAmcCmpycontactorTrdInfoVo();
+    CustAmcCmpycontactor custAmcCmpycontactor = custAmcCmpycontactorMapper.selectByPrimaryKey(contactorId);
+    if(custAmcCmpycontactor == null || custAmcCmpycontactor.getCmpyId() == -1L){
+      custAmcCmpycontactorTrdInfoVo.setCustAmcCmpycontactor(custAmcCmpycontactor);
+      return custAmcCmpycontactorTrdInfoVo;
+    }
+
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custAmcCmpycontactor.getCmpyId()).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+    List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+    custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(new ArrayList<>());
+    for(CustTrdInfo custTrdInfo : custTrdInfos){
+      if(custTrdInfo.getTrdContactorName().equals(custAmcCmpycontactor.getName()) && custAmcCmpycontactor.getTrdPhone().equals(custTrdInfo.getTrdContactorPhone())){
+        custAmcCmpycontactorTrdInfoVo.getCustTrdInfoList().add(custTrdInfo);
+      }
+    }
+    return custAmcCmpycontactorTrdInfoVo;
   }
 
   private List<CustAmcCmpycontactorExtVo> getPureContactors(List<CustAmcCmpycontactor> custAmcCmpycontactors) {
@@ -237,19 +263,30 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             custAmcCmpycontactor.setName(custTrdInfo.getTrdContactorName());
             custAmcCmpycontactor.setCompany(custTrdCmpy.getCmpyName());
             custAmcCmpycontactor.setCmpyId(custTrdCmpy.getId());
-            if(!StringUtils.isEmpty(custTrdInfo.getTrdContactorPhone()) && !custTrdInfo.getTrdContactorPhone().equals("-1")){
+            if(!StringUtils.isEmpty(custTrdInfo.getTrdContactorPhone()) && !custTrdInfo.getTrdContactorPhone().equals("-1")
+
+            ){
+
               custAmcCmpycontactor.setMobile(custTrdInfo.getTrdContactorPhone());
+
               custAmcCmpycontactor.setAddress(custTrdInfo.getTrdContactorAddress());
+              custAmcCmpycontactor.setTrdPhone(custTrdInfo.getTrdContactorPhone());
             }else{
               String[] phoneAndAddr = null;
               if(!StringUtils.isEmpty(custTrdInfo.getTrdContactorAddr())){
                 phoneAndAddr  = custTrdInfo.getTrdContactorAddr().split(" ");
                 if(phoneAndAddr.length >= 2){
+                  custAmcCmpycontactor.setTrdPhone(phoneAndAddr[0]);
+
                   custAmcCmpycontactor.setMobile(phoneAndAddr[0]);
+
                   custAmcCmpycontactor.setAddress(phoneAndAddr[1]);
                 }else{
                   if(Character.isDigit(phoneAndAddr[0].charAt(0))){
+
                     custAmcCmpycontactor.setMobile(phoneAndAddr[0]);
+
+                    custAmcCmpycontactor.setTrdPhone(phoneAndAddr[0]);
                   }else{
                     custAmcCmpycontactor.setAddress(phoneAndAddr[0]);
                   }
@@ -274,6 +311,14 @@ public class AmcContactorServiceImpl implements AmcContactorService {
               custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
             }else{
               // can update
+
+              if(custAmcCmpycontactors.get(0).getUpdateBy() != -1L){
+                String mobile = custAmcCmpycontactors.get(0).getMobile();
+                String phone = custAmcCmpycontactors.get(0).getPhone();
+                AmcBeanUtils.copyProperties(custAmcCmpycontactor, custAmcCmpycontactors.get(0));
+                custAmcCmpycontactors.get(0).setMobile(mobile);
+                custAmcCmpycontactors.get(0).setPhone(phone);
+              }
               custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactors.get(0));
             }
 

@@ -5,6 +5,8 @@ import com.google.common.collect.Lists;
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionDetailMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
@@ -29,6 +31,7 @@ import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
@@ -806,6 +809,67 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }
     }
+  }
+
+  @Override
+  public CustTrdFavorVo getCustFavor(Long custId, Integer custType) {
+    CustTrdFavorVo custTrdFavorVo = new CustTrdFavorVo();
+    custTrdFavorVo.setCustId(custId);
+    custTrdFavorVo.setCustType(custType);
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+
+    if(custType == CustTypeEnum.COMPANY.getId()){
+      custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custId).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+    }else if(custType == CustTypeEnum.PERSON.getId()){
+      custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custId).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+    }
+    List<CustTrdInfo> custTrdInfos =  custTrdInfoMapper.selectByExample(custTrdInfoExample);
+    if(CollectionUtils.isEmpty(custTrdInfos)){
+      return custTrdFavorVo;
+    }
+    custTrdFavorVo.setIntrestCities(new HashMap<>());
+    custTrdFavorVo.setInvestType2Counts(new HashMap<>());
+    String favCity = null;
+    String favType = null;
+    int favCityCnt = 0;
+    int favTypeCnt = 0;
+    for(CustTrdInfo custTrdInfo: custTrdInfos){
+      favCityCnt = 0;
+      favTypeCnt = 0;
+      favCity = custTrdInfo.getDebtCity();
+      if(custTrdFavorVo.getIntrestCities().containsKey(favCity)){
+        favCityCnt = custTrdFavorVo.getIntrestCities().get(favCity);
+        favCityCnt = favCityCnt +1;
+        custTrdFavorVo.getIntrestCities().put(favCity, favCityCnt);
+      }else{
+        custTrdFavorVo.getIntrestCities().put(favCity, 0);
+      }
+
+      favType = String.format("%s%s",custTrdInfo.getTrdType(), custTrdInfo.getItemType());
+      if(custTrdFavorVo.getInvestType2Counts().containsKey(favType)){
+        favTypeCnt = custTrdFavorVo.getInvestType2Counts().get(favType);
+        favTypeCnt = favTypeCnt + 1;
+        custTrdFavorVo.getInvestType2Counts().put(favType, favTypeCnt);
+      }else{
+        custTrdFavorVo.getInvestType2Counts().put(favType, 0);
+      }
+
+
+    }
+
+    return custTrdFavorVo;
+  }
+
+  @Override
+  public List<CustTrdCmpy> getCompanyByName(String companyName) throws Exception {
+    if(StringUtils.isEmpty(companyName) || companyName.contains("%")){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_COMPANY_NAME_ERROR);
+    }
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    StringBuilder sb = new StringBuilder("%").append(companyName).append("%");
+    custTrdCmpyExample.createCriteria().andCmpyNameLike(sb.toString());
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    return custTrdCmpyList;
   }
 
   private boolean updateCustPersonTrdRelations(List<String> histPhoneNumList, String phoneNum, String custName,

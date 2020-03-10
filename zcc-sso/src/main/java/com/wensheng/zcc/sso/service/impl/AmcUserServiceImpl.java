@@ -229,6 +229,11 @@ public class AmcUserServiceImpl implements AmcUserService {
 
         amcUsers.get(0).setUpdateDate(java.sql.Date.valueOf(LocalDate.now()));
 //      }
+      if(amcUsers.size() == 1 && amcUsers.get(0).getSsoUserId() == -1L){
+        //need update the user's sso userId
+        amcUsers.get(0).setSsoUserId(amcUser.getSsoUserId());
+        needUpdateDb = true;
+      }
       if(needUpdateDb){
         amcUserMapper.updateByPrimaryKeySelective(amcUsers.get(0));
       }

@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
@@ -64,4 +65,7 @@ public interface CustInfoService {
   void patchDuplicateCmpyName();
 
 
+  CustTrdFavorVo getCustFavor(Long custId, Integer custType);
+
+  List<CustTrdCmpy> getCompanyByName(String companyName) throws Exception;
 }

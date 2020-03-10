@@ -4,6 +4,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.regex.Pattern;
 
 public class AmcNumberUtils {
   public static Long getLongFromStringWithMult100(String input) throws IllegalArgumentException{
@@ -72,6 +73,15 @@ public class AmcNumberUtils {
 
   public static BigDecimal getBigDecimalFromLongDiv1000000(Long input){
     return BigDecimal.valueOf(input).divide(BigDecimal.valueOf(1000000));
+  }
+
+  private static volatile Pattern patternNumber = Pattern.compile("-?\\d+(\\.\\d+)?");
+
+  public static boolean isNumeric(String strNum) {
+    if (strNum == null) {
+      return false;
+    }
+    return patternNumber.matcher(strNum).matches();
   }
 
 }

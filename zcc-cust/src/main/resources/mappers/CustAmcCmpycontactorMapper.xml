@@ -6,6 +6,7 @@
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="phone" jdbcType="CHAR" property="phone" />
     <result column="mobile" jdbcType="CHAR" property="mobile" />
+    <result column="trd_phone" jdbcType="CHAR" property="trdPhone" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="county" jdbcType="CHAR" property="county" />
@@ -83,9 +84,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, phone, mobile, province, city, county, address, title, company, branch_cmpy, 
-    history_cmpy, favorite_city_update, favorite_type_update, fav_type_note, note, cmpy_id, 
-    create_by, create_time, update_by, update_time
+    id, name, phone, mobile, trd_phone, province, city, county, address, title, company, 
+    branch_cmpy, history_cmpy, favorite_city_update, favorite_type_update, fav_type_note, 
+    note, cmpy_id, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample" resultMap="BaseResultMap">
     select
@@ -122,20 +123,20 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_AMC_CMPYCONTACTOR (name, phone, mobile, province, 
-      city, county, address, title, 
-      company, branch_cmpy, history_cmpy, 
-      favorite_city_update, favorite_type_update, fav_type_note, 
-      note, cmpy_id, create_by, 
-      create_time, update_by, update_time
-      )
-    values (#{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{title,jdbcType=CHAR}, 
-      #{company,jdbcType=CHAR}, #{branchCmpy,jdbcType=CHAR}, #{historyCmpy,jdbcType=CHAR}, 
-      #{favoriteCityUpdate,jdbcType=CHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, 
-      #{note,jdbcType=CHAR}, #{cmpyId,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into CUST_AMC_CMPYCONTACTOR (name, phone, mobile, trd_phone, 
+      province, city, county, address, 
+      title, company, branch_cmpy, 
+      history_cmpy, favorite_city_update, favorite_type_update, 
+      fav_type_note, note, cmpy_id, 
+      create_by, create_time, update_by, 
+      update_time)
+    values (#{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, 
+      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, 
+      #{title,jdbcType=CHAR}, #{company,jdbcType=CHAR}, #{branchCmpy,jdbcType=CHAR}, 
+      #{historyCmpy,jdbcType=CHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, 
+      #{favTypeNote,jdbcType=CHAR}, #{note,jdbcType=CHAR}, #{cmpyId,jdbcType=BIGINT}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -151,6 +152,9 @@
       </if>
       <if test="mobile != null">
         mobile,
+      </if>
+      <if test="trdPhone != null">
+        trd_phone,
       </if>
       <if test="province != null">
         province,
@@ -213,6 +217,9 @@
       </if>
       <if test="mobile != null">
         #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="trdPhone != null">
+        #{trdPhone,jdbcType=CHAR},
       </if>
       <if test="province != null">
         #{province,jdbcType=CHAR},
@@ -288,6 +295,9 @@
       <if test="record.mobile != null">
         mobile = #{record.mobile,jdbcType=CHAR},
       </if>
+      <if test="record.trdPhone != null">
+        trd_phone = #{record.trdPhone,jdbcType=CHAR},
+      </if>
       <if test="record.province != null">
         province = #{record.province,jdbcType=CHAR},
       </if>
@@ -350,6 +360,7 @@
       name = #{record.name,jdbcType=CHAR},
       phone = #{record.phone,jdbcType=CHAR},
       mobile = #{record.mobile,jdbcType=CHAR},
+      trd_phone = #{record.trdPhone,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
       county = #{record.county,jdbcType=CHAR},
@@ -382,6 +393,9 @@
       </if>
       <if test="mobile != null">
         mobile = #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="trdPhone != null">
+        trd_phone = #{trdPhone,jdbcType=CHAR},
       </if>
       <if test="province != null">
         province = #{province,jdbcType=CHAR},
@@ -442,6 +456,7 @@
     set name = #{name,jdbcType=CHAR},
       phone = #{phone,jdbcType=CHAR},
       mobile = #{mobile,jdbcType=CHAR},
+      trd_phone = #{trdPhone,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
       county = #{county,jdbcType=CHAR},

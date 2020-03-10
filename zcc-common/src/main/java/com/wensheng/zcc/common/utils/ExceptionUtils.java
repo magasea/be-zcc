@@ -57,6 +57,12 @@ public class ExceptionUtils {
     INVALID_USER_OPERATION(1032, "Invalid user operation", "不合规的用户操作"),
     INVALID_SSO_TOKEN(1033, "Invalid SSO Token", "不合规的SSO Token"),
     FAILED_TO_STOREFILE(1034, "Failed to store file", "文件保存失败"),
+
+    DUPLICATE_RECORD_INSERT_ERROR(1035, "duplicate record to insert ", "插入重复数据"),
+
+    LOGIN_REQUIRE_ERROR(1036, "login is required ", "必须先登录"),
+
+    INVALID_COMPANY_NAME_ERROR(1037, "名字非法 ", "字符串里面有非法字符"),
     ;
     int code;
     String name;

@@ -95,9 +95,9 @@ public interface AmcDebtService {
 
   AmcDebtSummary getSummaryInfo();
 
-  void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id);
-
-  void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id);
+//  void connDebt2Cmpys(List<AmcDebtorCmpy> newCompanies, Long id);
+//
+//  void connDebt2Persons(List<AmcDebtorPerson> newPersons, Long id);
 
   AmcDebt getDebt(Long debtId);
 

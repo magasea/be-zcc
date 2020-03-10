@@ -117,8 +117,8 @@ weixin:
 #    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
 #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
 #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
-    appId: wx6f60584065dd3e45
-    appSecret: 3217390a438df7cd13189b6a9c69abf2
+    appId: wx273fd3accb57b9b1
+    appSecret: b8e576b270ae4576baf0df3ea0e2b7bc
     encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
     token: wensheng
     userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s

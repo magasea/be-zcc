@@ -8,6 +8,7 @@ import lombok.Data;
 public class CustTrdInfoVo {
   Long custId;
   String custName;
+  String custCity = "-1";
   Map<Integer, Integer> investType2Counts;
   Integer trdCount;
   Long debtTotalAmount;

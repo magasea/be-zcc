@@ -1,16 +1,14 @@
 package com.wensheng.zcc.wechat.service.impl;
 
-import static org.springframework.data.geo.Metrics.KILOMETERS;
-
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
-import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
@@ -38,11 +36,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;

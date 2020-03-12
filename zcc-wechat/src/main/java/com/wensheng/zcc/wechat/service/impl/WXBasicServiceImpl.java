@@ -8,7 +8,6 @@ import java.io.IOException;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.xml.parsers.ParserConfigurationException;
-import org.apache.ibatis.mapping.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -30,11 +29,11 @@ import org.xml.sax.SAXException;
 @Service
 public class WXBasicServiceImpl implements WXBasicService {
 
-  @Value("${weixin.appId}")
-  String appId;
-
-  @Value("${weixin.appSecret}")
-  String appSecret;
+//  @Value("${weixin.appId}")
+//  String appId;
+//
+//  @Value("${weixin.appSecret}")
+//  String appSecret;
 
   @Value("${weixin.encodingAesKey}")
   String encodingAesKey;
@@ -45,11 +44,12 @@ public class WXBasicServiceImpl implements WXBasicService {
   @Autowired
   private Environment environment;
 
-  @Value("${weixin.get_public_token_url}")
-  String getPublicTokenUrl;
+  @Value("${weixin.prod.get_public_token_url}")
+  String getProdPublicTokenUrl;
 
-  @Autowired
-  private Environment environment;
+
+  @Value("${weixin.test.get_public_token_url}")
+  String getTestPublicTokenUrl;
 
   @Autowired
   ComnfuncGrpcService comnfuncPubGrpcService;
@@ -105,7 +105,13 @@ public class WXBasicServiceImpl implements WXBasicService {
       System.out.println("Currently active profile - " + profileName);
       profName = profileName;
     }
-    String url = String.format(getPublicTokenUrl, appId, appSecret );
+    String url = null;
+    if(profName.equals("dev")||profName.equals("test")){
+      url = getTestPublicTokenUrl;
+    }else{
+      url = getProdPublicTokenUrl;
+    }
+
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     HttpEntity<?> entity = new HttpEntity<>(headers);

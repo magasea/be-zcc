@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.controller;
 
+import com.wensheng.zcc.sso.aop.LogExecutionTime;
 import com.wensheng.zcc.sso.service.AmcSsoService;
 import com.wensheng.zcc.sso.service.util.TokenUtil;
 import java.util.Collection;
@@ -92,6 +93,7 @@ public class TokenController {
 
   @RequestMapping(method = RequestMethod.POST, value ="/amc/zcc/sso/exchangeTokenFromSSO")
   @ResponseBody
+  @LogExecutionTime
   public OAuth2AccessToken getTokenBySSOToken(@RequestParam String acccessToken) throws Exception {
     return amcSsoService.generateTokenFromToken(acccessToken);
   }

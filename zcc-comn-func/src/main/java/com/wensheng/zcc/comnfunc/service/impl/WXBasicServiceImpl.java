@@ -24,17 +24,17 @@ import org.springframework.web.client.RestTemplate;
 @Service
 public class WXBasicServiceImpl implements WXBasicService {
 
-  @Value("${weixin.appId}")
-  String appId;
+//  @Value("${weixin.appId}")
+//  String appId;
+//
+//  @Value("${weixin.appSecret}")
+//  String appSecret;
 
-  @Value("${weixin.appSecret}")
-  String appSecret;
+//  @Value("${weixin.encodingAesKey}")
+//  String encodingAesKey;
 
-  @Value("${weixin.encodingAesKey}")
-  String encodingAesKey;
 
-  @Value("${weixin.token}")
-  String token;
+  String token = "wensheng";
 
 
   @Value("${weixin.prod.get_public_token_url}")

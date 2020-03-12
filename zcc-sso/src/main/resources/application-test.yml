@@ -110,11 +110,13 @@ weixin:
         loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.open.appId}&secret=${weixin.open.appSecret}&code=%s&grant_type=authorization_code
         getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=$s
     pub:
-        appId: wx6f60584065dd3e45
-        appSecret: 3217390a438df7cd13189b6a9c69abf2
+#        appId: wx6f60584065dd3e45
+        appId: wx273fd3accb57b9b1
+#        appSecret: 3217390a438df7cd13189b6a9c69abf2
+        appSecret: b8e576b270ae4576baf0df3ea0e2b7bc
         encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
+#        loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.pub.appId}&secret=${weixin.pub.appSecret}&code=%s&grant_type=authorization_code
         loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.pub.appId}&secret=${weixin.pub.appSecret}&code=%s&grant_type=authorization_code
-
 message:
     url: http://esms100.10690007.net/sms/mt
     spid: 9346

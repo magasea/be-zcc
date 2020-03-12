@@ -94,8 +94,8 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
   @Override
   public void getWXPublicToken(com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenReq request,
       io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp> responseObserver) {
-
-   String token = wxBasicService.getPublicToken();
+    String profileName = request.getProfileName();
+   String token = wxBasicService.getPublicToken(profileName);
 
 
     responseObserver.onNext(WXPubTokenResp.newBuilder().setWxPubToken(token).build());

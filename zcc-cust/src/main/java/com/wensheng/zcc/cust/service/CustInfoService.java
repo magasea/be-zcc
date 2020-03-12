@@ -64,6 +64,8 @@ public interface CustInfoService {
 
   void patchDuplicateCmpyName();
 
+  void patchCmpyProvince(String province);
+
 
   CustTrdFavorVo getCustFavor(Long custId, Integer custType);
 

@@ -55,9 +55,8 @@ public class SQLUtils {
     if(!StringUtils.isEmpty(queryParam.getName())){
         criteria.andCmpyNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append("%").toString() );
     }
-    if(!StringUtils.isEmpty(queryParam.getCustCity())){
-      criteria.andCmpyProvinceLike(new StringBuilder(StringUtils.trimWhitespace(queryParam.getCustCity()).substring(0
-          , 2)).append("%").toString() );
+    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
+      criteria.andCmpyProvinceIn( queryParam.getCustCity());
     }
     return custTrdCmpyExtExample;
   }
@@ -129,9 +128,8 @@ public class SQLUtils {
           "%").toString() );
     }
 
-    if(!StringUtils.isEmpty(queryParam.getCustCity())){
-      criteria.andProvinceLike(new StringBuilder(StringUtils.trimWhitespace(queryParam.getCustCity()).substring(0
-          , 2)).append("%").toString() );
+    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
+      criteria.andProvinceIn(queryParam.getCustCity());
     }
     return custTrdPersonExtExample;
   }

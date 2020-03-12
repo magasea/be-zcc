@@ -282,6 +282,7 @@ public class WechatServiceImpl implements WechatService {
 
   @Override
   public WechatLoginResult loginPubWechat(String code) {
+
     String loginWechatUrl = String.format(loginPubUrl, code);
     ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
         WechatCode2SessionVo.class);

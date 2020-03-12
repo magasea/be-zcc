@@ -29,6 +29,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
+import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
@@ -38,6 +39,7 @@ import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
 import com.wensheng.zcc.cust.service.CustInfoService;
+import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -47,7 +49,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -94,6 +95,9 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Autowired
   CustTrdInfoMapper custTrdInfoMapper;
+
+  @Autowired
+  SyncService syncService;
 
   @Value("${env.image-repo}")
   String fileBase;
@@ -610,6 +614,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
+      custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
@@ -812,6 +817,63 @@ public class CustInfoServiceImpl implements CustInfoService {
   }
 
   @Override
+  public void patchCmpyProvince(String province) {
+
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.setOrderByClause(" id desc ");
+    if(StringUtils.isEmpty(province)){
+      custTrdCmpyExample.createCriteria().andLegalReptiveEqualTo("-1");
+
+    }else{
+      custTrdCmpyExample.createCriteria().andLegalReptiveEqualTo("-1").andCmpyProvinceEqualTo(province);
+    }
+    int offset = 0;
+    int pageSize = 100;
+    RowBounds rowBounds = new RowBounds(offset, pageSize);
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExampleWithRowbounds(custTrdCmpyExample, rowBounds);
+    boolean keepGoing = true;
+    if(CollectionUtils.isEmpty(custTrdCmpyList)){
+      keepGoing = false;
+      return;
+    }
+
+    List<CustTrdCmpy> needPatchList = new ArrayList<>();
+    while(keepGoing){
+      for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
+        if(StringUtils.isEmpty(custTrdCmpy.getLegalReptive()) || custTrdCmpy.getLegalReptive().equals("-1")){
+          //need patch province info
+          if(StringUtils.isEmpty(custTrdCmpy.getCmpyName()) || custTrdCmpy.getCmpyName().equals("-1")){
+            continue;
+          }
+
+          needPatchList.add(custTrdCmpy);
+
+
+        }
+
+
+      }
+      offset += pageSize;
+      rowBounds = new RowBounds(offset, pageSize);
+      custTrdCmpyList = custTrdCmpyMapper.selectByExampleWithRowbounds(custTrdCmpyExample, rowBounds);
+      if(CollectionUtils.isEmpty(custTrdCmpyList)){
+        keepGoing = false;
+        break;
+      }
+
+    }
+    for(CustTrdCmpy custTrdCmpy: needPatchList){
+      CustCmpyInfoFromSync custCmpyInfoFromSync = syncService.getCmpyInfoByName(custTrdCmpy.getCmpyName());
+      if(custCmpyInfoFromSync == null || StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyProvince())){
+        continue;
+      }
+      syncService.copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+    }
+  needPatchList = null;
+  }
+
+  @Override
   public CustTrdFavorVo getCustFavor(Long custId, Integer custType) {
     CustTrdFavorVo custTrdFavorVo = new CustTrdFavorVo();
     custTrdFavorVo.setCustId(custId);
@@ -842,7 +904,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         favCityCnt = favCityCnt +1;
         custTrdFavorVo.getIntrestCities().put(favCity, favCityCnt);
       }else{
-        custTrdFavorVo.getIntrestCities().put(favCity, 0);
+        custTrdFavorVo.getIntrestCities().put(favCity, 1);
       }
 
       favType = String.format("%s%s",custTrdInfo.getTrdType(), custTrdInfo.getItemType());
@@ -851,7 +913,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         favTypeCnt = favTypeCnt + 1;
         custTrdFavorVo.getInvestType2Counts().put(favType, favTypeCnt);
       }else{
-        custTrdFavorVo.getInvestType2Counts().put(favType, 0);
+        custTrdFavorVo.getInvestType2Counts().put(favType, 1);
       }
 
 

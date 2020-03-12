@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.xml.parsers.ParserConfigurationException;
+import org.apache.ibatis.mapping.Environment;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -43,6 +44,9 @@ public class WXBasicServiceImpl implements WXBasicService {
 
   @Value("${weixin.get_public_token_url}")
   String getPublicTokenUrl;
+
+  @Autowired
+  private Environment environment;
 
   @Autowired
   ComnfuncGrpcService comnfuncPubGrpcService;

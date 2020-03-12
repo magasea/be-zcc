@@ -5,6 +5,7 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="location" jdbcType="INTEGER" property="location" />
     <result column="province" jdbcType="CHAR" property="province" />
+    <result column="prov_name" jdbcType="CHAR" property="provName" />
     <result column="create_by" jdbcType="CHAR" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="CHAR" property="updateBy" />
@@ -69,7 +70,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, location, province, create_by, create_time, update_by, update_time
+    id, location, province, prov_name, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserprivExample" resultMap="BaseResultMap">
     select
@@ -106,12 +107,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_AMC_USERPRIV (location, province, create_by, 
-      create_time, update_by, update_time
-      )
-    values (#{location,jdbcType=INTEGER}, #{province,jdbcType=CHAR}, #{createBy,jdbcType=CHAR}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=CHAR}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+    insert into CUST_AMC_USERPRIV (location, province, prov_name, 
+      create_by, create_time, update_by, 
+      update_time)
+    values (#{location,jdbcType=INTEGER}, #{province,jdbcType=CHAR}, #{provName,jdbcType=CHAR}, 
+      #{createBy,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=CHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -124,6 +125,9 @@
       </if>
       <if test="province != null">
         province,
+      </if>
+      <if test="provName != null">
+        prov_name,
       </if>
       <if test="createBy != null">
         create_by,
@@ -144,6 +148,9 @@
       </if>
       <if test="province != null">
         #{province,jdbcType=CHAR},
+      </if>
+      <if test="provName != null">
+        #{provName,jdbcType=CHAR},
       </if>
       <if test="createBy != null">
         #{createBy,jdbcType=CHAR},
@@ -177,6 +184,9 @@
       <if test="record.province != null">
         province = #{record.province,jdbcType=CHAR},
       </if>
+      <if test="record.provName != null">
+        prov_name = #{record.provName,jdbcType=CHAR},
+      </if>
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=CHAR},
       </if>
@@ -199,6 +209,7 @@
     set id = #{record.id,jdbcType=BIGINT},
       location = #{record.location,jdbcType=INTEGER},
       province = #{record.province,jdbcType=CHAR},
+      prov_name = #{record.provName,jdbcType=CHAR},
       create_by = #{record.createBy,jdbcType=CHAR},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_by = #{record.updateBy,jdbcType=CHAR},
@@ -215,6 +226,9 @@
       </if>
       <if test="province != null">
         province = #{province,jdbcType=CHAR},
+      </if>
+      <if test="provName != null">
+        prov_name = #{provName,jdbcType=CHAR},
       </if>
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=CHAR},
@@ -235,6 +249,7 @@
     update CUST_AMC_USERPRIV
     set location = #{location,jdbcType=INTEGER},
       province = #{province,jdbcType=CHAR},
+      prov_name = #{provName,jdbcType=CHAR},
       create_by = #{createBy,jdbcType=CHAR},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=CHAR},

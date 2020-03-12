@@ -10,6 +10,7 @@ public class CustCmpyInfoFromSync {
   Long createTime;
   Long updateTime;
   String cmpyName;
+  String cmpyProvince;
   String uniSocialCode;
   String legalReptive;
   String cmpyPhone;

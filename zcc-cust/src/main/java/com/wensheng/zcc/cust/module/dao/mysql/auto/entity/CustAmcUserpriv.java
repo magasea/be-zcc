@@ -9,6 +9,8 @@ public class CustAmcUserpriv {
 
     private String province;
 
+    private String provName;
+
     private String createBy;
 
     private Date createTime;
@@ -39,6 +41,14 @@ public class CustAmcUserpriv {
 
     public void setProvince(String province) {
         this.province = province == null ? null : province.trim();
+    }
+
+    public String getProvName() {
+        return provName;
+    }
+
+    public void setProvName(String provName) {
+        this.provName = provName == null ? null : provName.trim();
     }
 
     public String getCreateBy() {

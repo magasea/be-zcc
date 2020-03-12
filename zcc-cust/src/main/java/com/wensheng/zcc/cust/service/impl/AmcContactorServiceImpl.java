@@ -68,6 +68,21 @@ public class AmcContactorServiceImpl implements AmcContactorService {
               + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
           custAmcCmpycontactor.getName(),
           custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+    }else{
+
+      custAmcCmpycontactorExample.clear();
+      custAmcCmpycontactorExample.createCriteria().andNameEqualTo(custAmcCmpycontactor.getName()).
+          andCompanyEqualTo(custAmcCmpycontactor.getCompany()).andTrdPhoneEqualTo(custAmcCmpycontactor.getMobile());
+      custAmcCmpycontactors =
+          custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+      if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
+        //just update the contactor
+        String trdPhone = custAmcCmpycontactors.get(0).getTrdPhone();
+        AmcBeanUtils.copyProperties(custAmcCmpycontactor, custAmcCmpycontactors.get(0));
+        custAmcCmpycontactors.get(0).setTrdPhone(trdPhone);
+        custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactors.get(0));
+        return;
+      }
     }
 
     custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
@@ -161,6 +176,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         }
       }
     }
+    return null;
   }
 
   @Override
@@ -173,7 +189,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
 
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custAmcCmpycontactor.getCmpyId()).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
+    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custAmcCmpycontactor.getCmpyId())
+        .andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId()).andTrdContactorNameEqualTo(custAmcCmpycontactor.getName());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
     custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(new ArrayList<>());
     for(CustTrdInfo custTrdInfo : custTrdInfos){
@@ -301,7 +318,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
             ){
 
-              custAmcCmpycontactor.setMobile(custTrdInfo.getTrdContactorPhone());
+//              custAmcCmpycontactor.setMobile(custTrdInfo.getTrdContactorPhone());
 
               custAmcCmpycontactor.setAddress(custTrdInfo.getTrdContactorAddress());
               custAmcCmpycontactor.setTrdPhone(custTrdInfo.getTrdContactorPhone());
@@ -336,7 +353,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             custAmcCmpycontactorExample.clear();
             custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpy.getId())
                 .andNameEqualTo(custAmcCmpycontactor.getName())
-                .andMobileEqualTo(custAmcCmpycontactor.getMobile());
+                .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
 
             List<CustAmcCmpycontactor> custAmcCmpycontactors =
                 custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
@@ -346,12 +363,11 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             }else{
               // can update
 
-              if(custAmcCmpycontactors.get(0).getUpdateBy() != -1L){
-                String mobile = custAmcCmpycontactors.get(0).getMobile();
-                String phone = custAmcCmpycontactors.get(0).getPhone();
-                AmcBeanUtils.copyProperties(custAmcCmpycontactor, custAmcCmpycontactors.get(0));
-                custAmcCmpycontactors.get(0).setMobile(mobile);
-                custAmcCmpycontactors.get(0).setPhone(phone);
+              if(custAmcCmpycontactors.get(0).getUpdateBy() != -1L ){
+                log.info("This record: name:{} cmpyId:{} id:{} cannot be update by system because the information is "
+                        + "updated by others", custAmcCmpycontactors.get(0).getName(),
+                    custAmcCmpycontactors.get(0).getCmpyId(), custAmcCmpycontactors.get(0).getId());
+                continue;
               }
               custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactors.get(0));
             }

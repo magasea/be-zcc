@@ -7,6 +7,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserprivExample
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
 import com.wensheng.zcc.cust.service.BasicInfoService;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -94,5 +95,22 @@ public class BasicInfoServiceImpl implements BasicInfoService {
     return userPrivMap;
   }
 
+
+  @Cacheable(unless = "#result == null")
+  @Override
+  public Map<Integer, List<String>> getAmcUserProvsMap() {
+    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
+
+    List<CustAmcUserpriv> custAmcUserprivs = amcUserprivMapper.selectByExample(amcUserprivExample);
+
+    Map<Integer, List<String>> userProvsMap = new HashMap<>();
+    for(CustAmcUserpriv custAmcUserpriv: custAmcUserprivs){
+      if(!userProvsMap.containsKey(custAmcUserpriv.getLocation())){
+        userProvsMap.put(custAmcUserpriv.getLocation(), new ArrayList<>());
+      }
+      userProvsMap.get(custAmcUserpriv.getLocation()).add(custAmcUserpriv.getProvince());
+    }
+    return userProvsMap;
+  }
 
 }

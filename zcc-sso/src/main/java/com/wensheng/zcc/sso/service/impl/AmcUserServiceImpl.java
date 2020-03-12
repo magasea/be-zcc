@@ -166,7 +166,7 @@ public class AmcUserServiceImpl implements AmcUserService {
     }
     if(CollectionUtils.isEmpty(amcUsers) && CollectionUtils.isEmpty(amcUsersWithSSOId)){
       if(StringUtils.isEmpty(amcUser.getPassword())){
-        amcUser.setPassword( UserUtils.getEncode( String.format("%s-%s",defaultPasswd, AmcDateUtils.getFormatedDate())));
+        amcUser.setPassword( UserUtils.getEncode( defaultPasswd));
         amcUser.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
         needUpdatePrivilege = true;
       }

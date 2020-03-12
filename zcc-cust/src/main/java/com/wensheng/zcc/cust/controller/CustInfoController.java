@@ -2,6 +2,8 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.cust.config.aop.QueryCheckerCmpy;
+import com.wensheng.zcc.cust.config.aop.QueryValidCmpy;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
@@ -57,6 +59,7 @@ public class CustInfoController {
 
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
+  @QueryCheckerCmpy
   public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy){
 
     return custInfoService.addCompany(custTrdCmpy);
@@ -97,7 +100,8 @@ public class CustInfoController {
 
   @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
   @ResponseBody
-  public void updateCmpy(@RequestBody CustTrdCmpy custTrdCmpy){
+  @QueryCheckerCmpy
+  public void modCmpy(@RequestBody CustTrdCmpy custTrdCmpy){
 
      custInfoService.updateCompany(custTrdCmpy);
 
@@ -149,6 +153,7 @@ public class CustInfoController {
 
 
   @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
   @RequestMapping(value = "/getCustTrdInfo", method = RequestMethod.POST)
   @ResponseBody
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
@@ -255,4 +260,10 @@ public class CustInfoController {
      custInfoService.patchDuplicateCmpyName();
   }
 
+
+  @RequestMapping(value = "/patchCmpyProvince", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchCmpyProvince(@RequestParam(required = false) String province) throws Exception {
+    custInfoService.patchCmpyProvince(province);
+  }
 }

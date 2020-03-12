@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
+import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.service.SyncService;
 import java.text.ParseException;
 import java.util.List;
@@ -26,6 +27,8 @@ public class ScriptSysServiceImplTest {
 
   @Autowired
   SyncService syncService;
+
+  private Gson gson = new Gson();
 
   @Test
   public void exportMapping(){
@@ -50,5 +53,14 @@ public class ScriptSysServiceImplTest {
   @Test
   public void checkTrdProvinceConsist() throws ParseException {
     syncService.makeCheckProvinceCodeOfTrade();
+  }
+
+  @Test
+  public void getCmpyByName() throws ParseException {
+    CustCmpyInfoFromSync custCmpyInfoFromSync = syncService.getCmpyInfoByName("上海文盛资产管理股份有限公司江苏分公司");
+    System.out.println(gson.toJson(custCmpyInfoFromSync));
+    custCmpyInfoFromSync = syncService.getCmpyInfoByName("丹阳市天晟投资有限公司");
+    System.out.println(gson.toJson(custCmpyInfoFromSync));
+
   }
 }

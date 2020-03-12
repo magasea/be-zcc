@@ -295,6 +295,76 @@ public class CustAmcUserprivExample {
             return (Criteria) this;
         }
 
+        public Criteria andProvNameIsNull() {
+            addCriterion("prov_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameIsNotNull() {
+            addCriterion("prov_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameEqualTo(String value) {
+            addCriterion("prov_name =", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameNotEqualTo(String value) {
+            addCriterion("prov_name <>", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameGreaterThan(String value) {
+            addCriterion("prov_name >", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameGreaterThanOrEqualTo(String value) {
+            addCriterion("prov_name >=", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameLessThan(String value) {
+            addCriterion("prov_name <", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameLessThanOrEqualTo(String value) {
+            addCriterion("prov_name <=", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameLike(String value) {
+            addCriterion("prov_name like", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameNotLike(String value) {
+            addCriterion("prov_name not like", value, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameIn(List<String> values) {
+            addCriterion("prov_name in", values, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameNotIn(List<String> values) {
+            addCriterion("prov_name not in", values, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameBetween(String value1, String value2) {
+            addCriterion("prov_name between", value1, value2, "provName");
+            return (Criteria) this;
+        }
+
+        public Criteria andProvNameNotBetween(String value1, String value2) {
+            addCriterion("prov_name not between", value1, value2, "provName");
+            return (Criteria) this;
+        }
+
         public Criteria andCreateByIsNull() {
             addCriterion("create_by is null");
             return (Criteria) this;

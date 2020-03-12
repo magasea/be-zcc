@@ -10,7 +10,7 @@ public class QueryParam {
 
   int custType;
   String city;
-  String custCity;
+  List<String> custCity;
   String name;
   Integer itemType = -1;
   Integer trdType = -1;

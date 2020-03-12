@@ -42,7 +42,7 @@ message WXPubTokenResp {
 }
 
 message WXPubTokenReq {
-
+  string profileName = 1;
 }
 
 service ComnFuncService {

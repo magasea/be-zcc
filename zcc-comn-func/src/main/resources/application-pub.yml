@@ -95,19 +95,25 @@ spring:
             max-file-size: 10240KB
             max-request-size: 10240KB
 
-weixin:
-    #    appId: wxdb885be2c95a5b32
-    #    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
-    #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
-    #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
-    appId: wx6f60584065dd3e45
-    appSecret: 3217390a438df7cd13189b6a9c69abf2
-    encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
-    token: wensheng
-    userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
-    loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
 
-    get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s
+weixin:
+    prod:
+        appId: wx6f60584065dd3e45
+        appSecret: 3217390a438df7cd13189b6a9c69abf2
+        encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
+        token: wensheng
+        userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
+        loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.prod.appId}&secret=${weixin.prod.appSecret}&js_code=JSCODE&grant_type=authorization_code
+        get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${weixin.prod.appId}&secret=${weixin.prod.appSecret}
+    test:
+        appId: wx273fd3accb57b9b1
+        appSecret: b8e576b270ae4576baf0df3ea0e2b7bc
+        encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
+        token: wensheng
+        userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
+        loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.test.appId}&secret=${weixin.test.appSecret}&js_code=JSCODE&grant_type=authorization_code
+        get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${weixin.test.appId}&secret=${weixin.test.appSecret}
+
 
 
 project:

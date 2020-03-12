@@ -1,5 +1,7 @@
 package com.wensheng.zcc.cust.service;
 
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import java.text.ParseException;
 import java.util.List;
 
@@ -21,5 +23,8 @@ public interface SyncService {
   public void updateSellerNameFromCTS();
 
   void patchTrdUrl();
+
+  public CustCmpyInfoFromSync getCmpyInfoByName(String cmpyName);
+  public void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy);
 
 }

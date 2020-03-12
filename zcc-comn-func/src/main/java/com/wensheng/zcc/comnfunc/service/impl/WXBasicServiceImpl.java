@@ -37,8 +37,12 @@ public class WXBasicServiceImpl implements WXBasicService {
   String token;
 
 
-  @Value("${weixin.get_public_token_url}")
-  String getPublicTokenUrl;
+  @Value("${weixin.prod.get_public_token_url}")
+  String getProdPublicTokenUrl;
+
+  @Value("${weixin.test.get_public_token_url}")
+  String getTestPublicTokenUrl;
+
 
   private Gson gson = new Gson();
 
@@ -83,8 +87,15 @@ public class WXBasicServiceImpl implements WXBasicService {
   }
 
   @Cacheable(unless = "#result == null")
-  public String getPublicToken(){
-    String url = String.format(getPublicTokenUrl, appId, appSecret );
+  @Override
+  public String getPublicToken(String provileName){
+    String url = null;
+    if(provileName.equals("dev") || provileName.equals("test")){
+      url = getTestPublicTokenUrl;
+    }else{
+      url = getProdPublicTokenUrl;
+    }
+
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     HttpEntity<?> entity = new HttpEntity<>(headers);

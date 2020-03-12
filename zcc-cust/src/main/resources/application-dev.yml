@@ -138,6 +138,7 @@ cust:
         debtTradeResources: http://10.20.100.252:8086/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s
         debtTradeResourcesWithDate: http://10.20.100.252:8086/debtTradeResources/getJson?page=%d&rows=%d&trdProvinceCode=%s&updateFromDate=%s&updateToDate=%s
         getCompanyInfoById: http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoById/%s
+        getCompanyInfoByName: http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoByName/%s
         getTrdById: http://10.20.100.252:8086/debts/get/%s
 #        http://10.20.100.252:8086/debtTradeResources/getJson?trdProvinceCode=110000000000
 #        http://10.20.100.252:8086/debtTradeCompanys/getCompanyInfoByName/深圳市恒志投资有限公司

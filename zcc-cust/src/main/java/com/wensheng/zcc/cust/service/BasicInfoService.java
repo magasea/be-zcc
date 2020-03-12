@@ -18,5 +18,6 @@ public interface BasicInfoService {
   List<CustAmcUserpriv> getAmcUserPriv();
   void  createOrUpdateAmcUserPriv(List<CustAmcUserpriv> custAmcUserprivs);
   Map<String, Integer> getAmcUserPrivMap();
+  Map<Integer, List<String>> getAmcUserProvsMap();
 
   }

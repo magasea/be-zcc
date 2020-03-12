@@ -122,7 +122,11 @@ public class SyncServiceImpl implements SyncService {
     @Value("${cust.syncUrls.getTrdContactorInfoByTrdId}")
     private String getTrdContactorInfoByTrdId;
 
-//  String[] provinceCodes = {"350000000000"};
+  @Value("${cust.syncUrls.getCompanyInfoByName}")
+  String getCompanyInfoByNameUrl;
+
+
+  //  String[] provinceCodes = {"350000000000"};
 String[] provinceCodes = {"410000000000","130000000000","230000000000","220000000000","210000000000","110000000000",
     "370000000000","330000000000", "360000000000","310000000000", "320000000000",
     "420000000000"};
@@ -163,6 +167,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return restTemplate.getForEntity(url, CustCmpyInfoFromSync.class).getBody();
     }
 
+
+@Override
+  public CustCmpyInfoFromSync getCmpyInfoByName(String cmpyName){
+    String url = String.format(getCompanyInfoByNameUrl, cmpyName);
+    return restTemplate.getForEntity(url, CustCmpyInfoFromSync.class).getBody();
+  }
 
   public PatchTrdContactor getTrdContactorByTrdId(String id){
     String url = String.format(getTrdContactorInfoByTrdId, id);
@@ -1010,12 +1020,15 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
     return dataQuality;
   }
-  private void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy){
+
+  public void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy){
     custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
     custTrdCmpy.setAnnuReptPhone(custCmpyInfoFromSync.getAnnuReptPhone());
     custTrdCmpy.setCmpyAddr(custCmpyInfoFromSync.getCmpyAddr());
-    custTrdCmpy.setCmpyName(StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyName())? null: custCmpyInfoFromSync.getCmpyName());
+    custTrdCmpy.setCmpyName(StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyName())? "-1": custCmpyInfoFromSync.getCmpyName());
     custTrdCmpy.setCmpyPhone(custCmpyInfoFromSync.getCmpyPhone());
+    custTrdCmpy.setCmpyProvince(StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyProvince())?"-1":
+        custCmpyInfoFromSync.getCmpyProvince().substring(0,6));
     custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
     custTrdCmpy.setLegalReptive(custCmpyInfoFromSync.getLegalReptive());
     custTrdCmpy.setUniSocialCode(custCmpyInfoFromSync.getUniSocialCode());

@@ -62,9 +62,9 @@ public class BasicInfoServiceImpl implements BasicInfoService {
   @Cacheable(unless = "#result == null")
   @Override
   public List<CustAmcUserpriv> getAmcUserPriv() {
-    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
+//    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
 
-    List<CustAmcUserpriv> custAmcUserprivs = amcUserprivMapper.selectByExample(amcUserprivExample);
+    List<CustAmcUserpriv> custAmcUserprivs = amcUserprivMapper.selectByExample(null);
 
     return custAmcUserprivs;
   }

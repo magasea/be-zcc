@@ -11,6 +11,8 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.service.BasicInfoService;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -232,15 +234,22 @@ public class AmcAspect {
         }else{
           Set<String> provinces =
               amcUserProvsMap.get(location).stream().collect(Collectors.toSet());
+          List<String> filteredProvince = new ArrayList<>();
           for(String custCity: queryParam.getCustCity()){
             log.info(custCity);
             if(StringUtils.isEmpty(custCity)){
               continue;
             }
-            if(!provinces.contains(custCity)){
-              queryParam.getCustCity().remove(custCity);
+            if(provinces.contains(custCity)){
+              filteredProvince.add(custCity);
             }
           }
+          if(CollectionUtils.isEmpty(filteredProvince)){
+            queryParam.setCustCity(Arrays.asList("0"));
+          }else{
+            queryParam.setCustCity(filteredProvince);
+          }
+
         }
       }
     }

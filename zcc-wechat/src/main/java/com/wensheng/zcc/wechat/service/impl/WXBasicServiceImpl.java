@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -41,6 +42,8 @@ public class WXBasicServiceImpl implements WXBasicService {
   @Value("${weixin.token}")
   String token;
 
+  @Autowired
+  private Environment environment;
 
   @Value("${weixin.get_public_token_url}")
   String getPublicTokenUrl;
@@ -97,6 +100,11 @@ public class WXBasicServiceImpl implements WXBasicService {
 
   @Cacheable(unless = "#result == null")
   public String getPublicToken(){
+    String profName = null;
+    for (String profileName : environment.getActiveProfiles()) {
+      System.out.println("Currently active profile - " + profileName);
+      profName = profileName;
+    }
     String url = String.format(getPublicTokenUrl, appId, appSecret );
     HttpHeaders headers = new HttpHeaders();
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
@@ -106,7 +114,7 @@ public class WXBasicServiceImpl implements WXBasicService {
     System.out.println(((ResponseEntity<Map>) response).getBody().toString());
     String token =(String) ((Map)response.getBody()).get("access_token");
     if(StringUtils.isEmpty(token) || token.length() < 10){
-      return comnfuncPubGrpcService.getWXPubToken();
+      return comnfuncPubGrpcService.getWXPubToken(profName);
     }
     return token;
   }

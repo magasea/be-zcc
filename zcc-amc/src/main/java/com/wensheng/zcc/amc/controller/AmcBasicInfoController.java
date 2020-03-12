@@ -1,14 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
-import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.QueryContactorChecker;
-import com.wensheng.zcc.amc.service.AmcAssetService;
-import com.wensheng.zcc.amc.service.AmcContactorService;
-import com.wensheng.zcc.amc.service.impl.AmcBaiDuLogisQuery;
-import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
-import com.wensheng.zcc.common.params.AmcPage;
-import com.wensheng.zcc.common.params.PageInfo;
-import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.amc.aop.QuerySSOContactorChecker;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.helper.AssetNatureEnum;
@@ -24,12 +17,23 @@ import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
+import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
+import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.PageInfo;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
+import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
@@ -48,6 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @Controller
 @RequestMapping(value = "/api/basic")
 @Slf4j
+@CacheConfig(cacheNames = {"COURT"})
 public class AmcBasicInfoController {
 
   @Autowired
@@ -64,6 +69,7 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
+  @Cacheable
   public List<CurtInfo> getAllCourtInfo(){
     List<CurtInfo> curtInfos;
     CurtInfoExample curtInfoExample = new CurtInfoExample();
@@ -259,6 +265,29 @@ public class AmcBasicInfoController {
 //    Page<AmcDebtContactor> page = PageReqRepHelper.getPageResp(totalCount, queryResults, pageable);
     return PageReqRepHelper.getAmcPage(queryResults, totalCount);
 //    return queryResults;
+
+  }
+
+  @RequestMapping(value = "/amcid/{amcId}/amccontactors4debt", method = RequestMethod.POST)
+  @ResponseBody
+  @QuerySSOContactorChecker
+  public AmcPage<SSOAmcUser> getAmcDebtContactors( @RequestBody SSOQueryParam ssoQueryParam) throws Exception {
+
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(ssoQueryParam.getPageInfo());
+    if (CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("id", Direction.DESC);
+    }
+
+    AmcPage<SSOAmcUser> queryResults;
+
+    try {
+      queryResults = amcHelperService.getSsoUserList(ssoQueryParam);
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
+      throw ex;
+    }
+//
+    return queryResults;
 
   }
   @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN') or hasPermission(#amcId, 'PERM_DEBTCNTR_MOD')")

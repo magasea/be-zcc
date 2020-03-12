@@ -21,6 +21,8 @@
     <result column="lawsuit_state_desc" jdbcType="VARCHAR" property="lawsuitStateDesc" />
     <result column="valuation" jdbcType="BIGINT" property="valuation" />
     <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
+    <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
+    <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
     <result column="amc_contactor2_id" jdbcType="BIGINT" property="amcContactor2Id" />
     <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
     <result column="guarant_type" jdbcType="INTEGER" property="guarantType" />
@@ -95,9 +97,10 @@
   <sql id="Base_Column_List">
     id, debtpack_id, amc_id, title, base_amount, base_amount_desc, base_date, total_amount, 
     total_amount_desc, settle_date, court_id, zcc_debt_code, amc_debt_code, publish_state, 
-    publish_date, lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor2_id, 
-    is_recommanded, guarant_type, recomm_start_date, recomm_end_date, orig_creditor_id, 
-    orig_creditor_name, brief_desc, update_by, update_date, created_by, created_date
+    publish_date, lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor_name, 
+    amc_contactor_phone, amc_contactor2_id, is_recommanded, guarant_type, recomm_start_date, 
+    recomm_end_date, orig_creditor_id, orig_creditor_name, brief_desc, update_by, update_date, 
+    created_by, created_date
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -140,22 +143,22 @@
       court_id, zcc_debt_code, amc_debt_code, 
       publish_state, publish_date, lawsuit_state, 
       lawsuit_state_desc, valuation, amc_contactor_id, 
-      amc_contactor2_id, is_recommanded, guarant_type, 
-      recomm_start_date, recomm_end_date, orig_creditor_id, 
-      orig_creditor_name, brief_desc, update_by, 
-      update_date, created_by, created_date
-      )
+      amc_contactor_name, amc_contactor_phone, amc_contactor2_id, 
+      is_recommanded, guarant_type, recomm_start_date, 
+      recomm_end_date, orig_creditor_id, orig_creditor_name, 
+      brief_desc, update_by, update_date, 
+      created_by, created_date)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, #{settleDate,jdbcType=TIMESTAMP}, 
       #{courtId,jdbcType=BIGINT}, #{zccDebtCode,jdbcType=VARCHAR}, #{amcDebtCode,jdbcType=CHAR}, 
       #{publishState,jdbcType=INTEGER}, #{publishDate,jdbcType=TIMESTAMP}, #{lawsuitState,jdbcType=INTEGER}, 
       #{lawsuitStateDesc,jdbcType=VARCHAR}, #{valuation,jdbcType=BIGINT}, #{amcContactorId,jdbcType=BIGINT}, 
-      #{amcContactor2Id,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, #{guarantType,jdbcType=INTEGER}, 
-      #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, 
-      #{origCreditorName,jdbcType=CHAR}, #{briefDesc,jdbcType=VARCHAR}, #{updateBy,jdbcType=BIGINT}, 
-      #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}
-      )
+      #{amcContactorName,jdbcType=CHAR}, #{amcContactorPhone,jdbcType=CHAR}, #{amcContactor2Id,jdbcType=BIGINT}, 
+      #{isRecommanded,jdbcType=INTEGER}, #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, 
+      #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, #{origCreditorName,jdbcType=CHAR}, 
+      #{briefDesc,jdbcType=VARCHAR}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -216,6 +219,12 @@
       </if>
       <if test="amcContactorId != null">
         amc_contactor_id,
+      </if>
+      <if test="amcContactorName != null">
+        amc_contactor_name,
+      </if>
+      <if test="amcContactorPhone != null">
+        amc_contactor_phone,
       </if>
       <if test="amcContactor2Id != null">
         amc_contactor2_id,
@@ -308,6 +317,12 @@
       </if>
       <if test="amcContactorId != null">
         #{amcContactorId,jdbcType=BIGINT},
+      </if>
+      <if test="amcContactorName != null">
+        #{amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorPhone != null">
+        #{amcContactorPhone,jdbcType=CHAR},
       </if>
       <if test="amcContactor2Id != null">
         #{amcContactor2Id,jdbcType=BIGINT},
@@ -413,6 +428,12 @@
       <if test="record.amcContactorId != null">
         amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       </if>
+      <if test="record.amcContactorName != null">
+        amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="record.amcContactorPhone != null">
+        amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
+      </if>
       <if test="record.amcContactor2Id != null">
         amc_contactor2_id = #{record.amcContactor2Id,jdbcType=BIGINT},
       </if>
@@ -475,6 +496,8 @@
       lawsuit_state_desc = #{record.lawsuitStateDesc,jdbcType=VARCHAR},
       valuation = #{record.valuation,jdbcType=BIGINT},
       amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
+      amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
+      amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
       amc_contactor2_id = #{record.amcContactor2Id,jdbcType=BIGINT},
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       guarant_type = #{record.guarantType,jdbcType=INTEGER},
@@ -548,6 +571,12 @@
       <if test="amcContactorId != null">
         amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       </if>
+      <if test="amcContactorName != null">
+        amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorPhone != null">
+        amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
+      </if>
       <if test="amcContactor2Id != null">
         amc_contactor2_id = #{amcContactor2Id,jdbcType=BIGINT},
       </if>
@@ -607,6 +636,8 @@
       lawsuit_state_desc = #{lawsuitStateDesc,jdbcType=VARCHAR},
       valuation = #{valuation,jdbcType=BIGINT},
       amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
+      amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
+      amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
       amc_contactor2_id = #{amcContactor2Id,jdbcType=BIGINT},
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       guarant_type = #{guarantType,jdbcType=INTEGER},

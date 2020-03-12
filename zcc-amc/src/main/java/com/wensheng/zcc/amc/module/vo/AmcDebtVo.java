@@ -51,9 +51,10 @@ public class AmcDebtVo {
 
   private BigDecimal valuation;
 
-  private AmcDebtContactor amcContactorId;
 
-  private AmcDebtContactor amcContactor2Id;
+  private String amcContactorName;
+
+  private String amcContactorPhone;
 
   private Integer isRecommanded;
 

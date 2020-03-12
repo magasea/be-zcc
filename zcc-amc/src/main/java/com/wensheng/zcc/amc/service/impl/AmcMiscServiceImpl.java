@@ -1,9 +1,14 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
@@ -24,7 +29,13 @@ public class AmcMiscServiceImpl {
   AmcDebtMapper amcDebtMapper;
 
   @Autowired
+  AmcAssetMapper amcAssetMapper;
+
+  @Autowired
   ZccDebtpackMapper zccDebtpackMapper;
+
+  @Autowired
+  AmcDebtContactorMapper amcDebtContactorMapper;
 
 
   Map<Long, String> areaMapper = null;
@@ -98,4 +109,65 @@ public class AmcMiscServiceImpl {
     return amcAssetCode;
 
   }
+
+  public void patchAmcDebtContactor() {
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(null);
+    for(AmcDebt amcDebt: amcDebts){
+      if(amcDebt.getAmcContactorName() == null || amcDebt.getAmcContactorPhone() == null||
+          amcDebt.getAmcContactorName().equals("-1")||amcDebt.getAmcContactorPhone().equals("-1")){
+        if(amcDebt.getAmcContactorId() !=null && amcDebt.getAmcContactorId() != -1){
+          //can patch
+          AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebt.getAmcContactorId());
+          if(amcDebtContactor != null){
+            amcDebt.setAmcContactorName(amcDebtContactor.getName());
+            amcDebt.setAmcContactorPhone(amcDebtContactor.getPhoneNumber());
+            amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+            patchAmcAssets(amcDebt.getId(), amcDebtContactor);
+          }
+          else{
+            log.error("Failed to patch debt with id:{} anc amcContactId:{}", amcDebt.getId(), amcDebt.getAmcContactorId());
+          }
+        }
+      }
+    }
+    List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(null);
+    for(AmcAsset amcAsset: amcAssets){
+      if(amcAsset.getAmcContactorName() == null || amcAsset.getAmcContactorPhone() == null || amcAsset.getAmcContactorPhone().equals("-1")
+          || amcAsset.getAmcContactorName().equals("-1")){
+          AmcDebtContactor amcDebtContactor = getContactorByDebtId(amcAsset.getDebtId());
+          if(amcDebtContactor == null){
+            log.error("Failed to patch AmcAsset with id:{}", amcAsset.getId());
+          }else{
+            amcAsset.setAmcContactorName(amcDebtContactor.getName());
+            amcAsset.setAmcContactorPhone(amcDebtContactor.getPhoneNumber());
+            amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+          }
+      }
+    }
+  }
+
+  private AmcDebtContactor getContactorByDebtId(Long debtId){
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
+    if(amcDebt.getAmcContactorId() != null && amcDebt.getAmcContactorId() > 0){
+      AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebt.getAmcContactorId());
+      return amcDebtContactor;
+    }
+    return null;
+  }
+
+  private void patchAmcAssets(Long id, AmcDebtContactor amcDebtContactor) {
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    amcAssetExample.createCriteria().andDebtIdEqualTo(id);
+    List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+    for(AmcAsset amcAsset: amcAssets){
+      if(amcAsset.getAmcContactorName() == null || amcAsset.getAmcContactorPhone() == null ||
+          amcAsset.getAmcContactorName().equals("-1") || amcAsset.getAmcContactorPhone().equals("-1")){
+        amcAsset.setAmcContactorName(amcDebtContactor.getName());
+        amcAsset.setAmcContactorPhone(amcDebtContactor.getPhoneNumber());
+        amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+      }
+    }
+
+  }
+
 }

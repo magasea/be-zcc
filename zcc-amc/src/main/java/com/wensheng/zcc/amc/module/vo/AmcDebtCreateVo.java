@@ -55,7 +55,10 @@ public class AmcDebtCreateVo implements Serializable {
 
   private Long amcContactorId;
 
-  private Long amcContactor2Id;
+  private String amcContactorName;
+
+  private String amcContactorPhone;
+
 
   private Integer isRecommanded;
 
@@ -77,12 +80,10 @@ public class AmcDebtCreateVo implements Serializable {
 
   private Date createdDate;
 
+  private String note;
 
-  private List<Long> debtors;
+  private List<AmcDebtor> amcDebtors;
 
-//  private List<AmcDebtorCmpy> newCompanies;
-//
-//  private List<AmcDebtorPerson> newPersons;
 
   private DebtAdditional debtAdditional;
 

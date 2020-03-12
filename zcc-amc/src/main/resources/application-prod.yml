@@ -102,7 +102,7 @@ spring:
       cronExpr: 0 0 6,12,18,0 * * *
       cronExprSSO: 0 0 6,9,11,12,14,15,18,0 * * *
   cache:
-    cache-names: DEBTPACK, DEBT
+    cache-names: DEBTPACK, DEBT, ASSET, COURT
     caffeine:
       spec: maximumSize=500, expireAfterAccess=120s
   messages:

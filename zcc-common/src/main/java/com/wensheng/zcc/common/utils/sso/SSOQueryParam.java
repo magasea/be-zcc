@@ -5,7 +5,7 @@ import lombok.Data;
 @Data
 public class SSOQueryParam {
   int deptId;
-  int location;
+  int location = -1;
   String name;
   String mobilePhone;
   PageInfo pageInfo;

@@ -25,7 +25,8 @@ public class QueryParam {
   @SQLInjectionSafe
   String title;
   List<Integer> recommand = null;
-  Long amcContactorId = -1L;
+//  Long amcContactorId = -1L;
+  String amcContactorName = null;
   Long courtId = -1L;
   List<Long> debtPackIds = null;
 

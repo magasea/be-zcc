@@ -3,7 +3,6 @@ package com.wensheng.zcc.amc.service.impl.helper;
 import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -13,7 +12,6 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
 
 /**
  * @author chenwei on 1/10/19
@@ -31,10 +29,10 @@ public class Dao2VoUtils {
 
     AmcAssetVo amcAssetVo = new AmcAssetVo();
     AmcBeanUtils.copyProperties(amcAsset, amcAssetVo);
-    amcAssetVo.setAmcContactorId(new AmcDebtContactor());
-    amcAssetVo.getAmcContactorId().setId(amcAsset.getAmcContactorId());
-    if(amcAsset.getValuation() != null && amcAsset.getValuation() > 0){
-      amcAssetVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getValuation()));
+//    amcAssetVo.setAmcContactorId(new AmcDebtContactor());
+//    amcAssetVo.getAmcContactorId().setId(amcAsset.getAmcContactorId());
+    if(amcAsset.getTotalValuation() != null && amcAsset.getTotalValuation() > 0){
+      amcAssetVo.setTotalValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getTotalValuation()));
     }
 
 
@@ -63,10 +61,16 @@ public class Dao2VoUtils {
         amcAssetVo.setLandArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandArea()));
       }
     }
-    if(amcAsset.getArea()  != null && amcAsset.getArea() > 0){
-      amcAssetVo.setArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getArea()));
+    if(amcAsset.getBuildingArea()  != null && amcAsset.getBuildingArea() > 0){
+      amcAssetVo.setBuildingArea(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getBuildingArea()));
     }
 
+    if(amcAsset.getBuildingUnitPrice()  != null && amcAsset.getBuildingUnitPrice() > 0){
+      amcAssetVo.setBuildingUnitPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getBuildingUnitPrice()));
+    }
+    if(amcAsset.getLandUnitPrice()  != null && amcAsset.getLandUnitPrice() > 0){
+      amcAssetVo.setLandUnitPrice(AmcNumberUtils.getDecimalFromLongDiv100(amcAsset.getLandUnitPrice()));
+    }
 
     return amcAssetVo;
 

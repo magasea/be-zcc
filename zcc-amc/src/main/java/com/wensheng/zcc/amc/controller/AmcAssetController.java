@@ -197,15 +197,16 @@ public class AmcAssetController {
     AmcAsset amcAsset = new AmcAsset();
     AmcBeanUtils.copyProperties(amcAssetVo, amcAsset);
     AmcBeanUtils.fillNullObjects(amcAsset);
-    if(amcAssetVo.getValuation() != null ){
-      amcAsset.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getValuation()));
+    if(amcAssetVo.getTotalValuation() != null ){
+      amcAsset.setTotalValuation(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getTotalValuation()));
     }
-    if(amcAssetVo.getLandArea() != null ){
-      if(amcAssetVo.getLandAreaUnit() == null){
-        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT, "" +amcAssetVo.getLandAreaUnit());
+    if(amcAssetVo.getLandArea() != null ) {
+      if (amcAssetVo.getLandAreaUnit() == null) {
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_LANDAREA_UNIT, "" + amcAssetVo.getLandAreaUnit());
       }
-      if(amcAssetVo.getLandAreaUnit() != null || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null){
-        switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit())){
+      if (amcAssetVo.getLandAreaUnit() != null
+          || AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit()) != null) {
+        switch (AreaUnitEnum.lookupByDisplayTypeUtil(amcAssetVo.getLandAreaUnit())) {
           case SQUAREMETER:
             amcAsset.setLandArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandArea()));
             break;
@@ -222,12 +223,19 @@ public class AmcAssetController {
         }
       }
     }
-    if(amcAssetVo.getArea() != null){
-      amcAsset.setArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getArea()));
+
+    if(amcAssetVo.getBuildingArea() != null){
+      amcAsset.setBuildingArea(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getBuildingArea()));
     }
-    if(amcAssetVo.getAmcContactorId() != null && amcAssetVo.getAmcContactorId().getId() > 0){
-      amcAsset.setAmcContactorId(amcAssetVo.getAmcContactorId().getId());
-    }
+      if(amcAssetVo.getBuildingUnitPrice() != null ){
+        amcAsset.setBuildingUnitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getBuildingUnitPrice()));
+      }
+      if(amcAssetVo.getLandUnitPrice() != null ){
+        amcAsset.setLandUnitPrice(AmcNumberUtils.getLongFromDecimalWithMult100(amcAssetVo.getLandUnitPrice()));
+      }
+//    if(amcAssetVo.getAmcContactorId() != null && amcAssetVo.getAmcContactorId().getId() > 0){
+//      amcAsset.setAmcContactorId(amcAssetVo.getAmcContactorId().getId());
+//    }
     return amcAsset;
   }
 
@@ -365,7 +373,6 @@ public class AmcAssetController {
       amcAssetService.delImage(assetImage);
     }
   }
-
 
 
 

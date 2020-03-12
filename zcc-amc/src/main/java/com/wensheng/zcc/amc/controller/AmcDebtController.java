@@ -300,28 +300,13 @@ public class AmcDebtController {
     }
 
     //2. check contact person exist
-    if (createVo.getAmcContactorId() == null || createVo.getAmcContactorId() < 0) {
+    if (StringUtils.isEmpty(createVo.getAmcContactorName() ) ||StringUtils.isEmpty(createVo.getAmcContactorPhone() )) {
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCGRANTOR_AVAILABLE);
     }
-    boolean isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContactorId());
-    if (!isAmcContactExist) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-          + "id:%d", createVo.getAmcContactorId()));
-    } else {
-      amcDebt.setAmcContactorId(createVo.getAmcContactorId());
-    }
 
-    if (createVo.getAmcContactor2Id() == null || createVo.getAmcContactor2Id() < 0) {
-      log.info("no amc contactor2");
-    }else{
-      isAmcContactExist = amcDebtService.isAmcContactexist(createVo.getAmcContactor2Id());
-      if (!isAmcContactExist) {
-        throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCCONTACT_AVAILABLE, String.format("no amc person for "
-            + "id:%d", createVo.getAmcContactor2Id()));
-      } else {
-        amcDebt.setAmcContactor2Id(createVo.getAmcContactor2Id());
-      }
-    }
+
+
+
     if(createVo.getTotalAmount() != null){
       amcDebt.setTotalAmount(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getTotalAmount()));
     }
@@ -443,7 +428,7 @@ public class AmcDebtController {
       amcDebt.setValuation(
           AmcNumberUtils.getLongFromDecimalWithMult100(amcDebtVo.getValuation()));
     }else{
-      log.error("amcDebtVo.getValuation()"+ amcDebtVo.getValuation());
+      log.error("amcDebtVo.getTotalValuation()"+ amcDebtVo.getValuation());
     }
     if(null != amcDebtVo.getTotalAmount()){
       amcDebt
@@ -456,8 +441,8 @@ public class AmcDebtController {
 
 
   private void handleDebtors(AmcDebtCreateVo amcDebtCreateVo, Long amcDebtId){
-    if (!CollectionUtils.isEmpty(amcDebtCreateVo.getDebtors())) {
-      amcDebtService.connDebt2Debtors(amcDebtCreateVo.getDebtors(), amcDebtId);
+    if (!CollectionUtils.isEmpty(amcDebtCreateVo.getAmcDebtors())) {
+      amcDebtService.connDebt2Debtors(amcDebtCreateVo.getAmcDebtors(), amcDebtId);
     }
 
 //    if(!CollectionUtils.isEmpty(amcDebtCreateVo.getNewCompanies())){
@@ -695,5 +680,11 @@ public class AmcDebtController {
   @ResponseBody
   public void patchAmcDebtCode() throws Exception {
      amcPatchService.patchAmcDebtCode();
+  }
+
+  @RequestMapping(value = "/patchAmcDebtContactor", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAmcDebtContactor() throws Exception {
+    amcPatchService.patchAmcDebtContactor();
   }
 }

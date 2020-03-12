@@ -92,8 +92,10 @@ public class SQLUtils {
       queryParamMap.put(QueryParamEnum.Recommand.name(), queryParam.getRecommand());
     }
 
-    if (queryParam.getAmcContactorId() != null && queryParam.getAmcContactorId() > 0) {
-      queryParamMap.put("AmcContactorId", queryParam.getAmcContactorId());
+
+
+    if (queryParam.getAmcContactorName() != null && !StringUtils.isEmpty(queryParam.getAmcContactorName() )) {
+      queryParamMap.put(QueryParamEnum.AmcContactorName.name(), queryParam.getAmcContactorName());
     }
     if(queryParam.getCourtId() != null && queryParam.getCourtId() > 0){
       queryParamMap.put(QueryParamEnum.CourtId.name(), queryParam.getCourtId());

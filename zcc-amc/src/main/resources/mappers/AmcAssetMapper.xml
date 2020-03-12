@@ -11,22 +11,27 @@
     <result column="amc_id" jdbcType="BIGINT" property="amcId" />
     <result column="amc_asset_code" jdbcType="CHAR" property="amcAssetCode" />
     <result column="zcc_asset_code" jdbcType="CHAR" property="zccAssetCode" />
-    <result column="valuation" jdbcType="BIGINT" property="valuation" />
+    <result column="total_valuation" jdbcType="BIGINT" property="totalValuation" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
-    <result column="area" jdbcType="BIGINT" property="area" />
+    <result column="building_area" jdbcType="BIGINT" property="buildingArea" />
+    <result column="building_unit_price" jdbcType="INTEGER" property="buildingUnitPrice" />
     <result column="land_area" jdbcType="BIGINT" property="landArea" />
     <result column="land_area_unit" jdbcType="INTEGER" property="landAreaUnit" />
+    <result column="land_unit_price" jdbcType="BIGINT" property="landUnitPrice" />
     <result column="publish_date" jdbcType="DATE" property="publishDate" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="county" jdbcType="CHAR" property="county" />
-    <result column="street" jdbcType="CHAR" property="street" />
+    <result column="address" jdbcType="CHAR" property="address" />
     <result column="building_name" jdbcType="CHAR" property="buildingName" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
+    <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
+    <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
+    <result column="note" jdbcType="CHAR" property="note" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -88,9 +93,10 @@
   </sql>
   <sql id="Base_Column_List">
     id, title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
-    zcc_asset_code, valuation, debt_id, area, land_area, land_area_unit, publish_date, 
-    province, city, county, street, building_name, update_by, update_date, created_by, 
-    created_date, amc_contactor_id
+    zcc_asset_code, total_valuation, debt_id, building_area, building_unit_price, land_area, 
+    land_area_unit, land_unit_price, publish_date, province, city, county, address, building_name, 
+    update_by, update_date, created_by, created_date, amc_contactor_id, amc_contactor_name, 
+    amc_contactor_phone, note
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -129,20 +135,24 @@
     </selectKey>
     insert into AMC_ASSET (title, type, sealed_state, 
       asset_nature, publish_state, amc_id, 
-      amc_asset_code, zcc_asset_code, valuation, 
-      debt_id, area, land_area, 
-      land_area_unit, publish_date, province, 
-      city, county, street, building_name, 
+      amc_asset_code, zcc_asset_code, total_valuation, 
+      debt_id, building_area, building_unit_price, 
+      land_area, land_area_unit, land_unit_price, 
+      publish_date, province, city, 
+      county, address, building_name, 
       update_by, update_date, created_by, 
-      created_date, amc_contactor_id)
+      created_date, amc_contactor_id, amc_contactor_name, 
+      amc_contactor_phone, note)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
-      #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{valuation,jdbcType=BIGINT}, 
-      #{debtId,jdbcType=BIGINT}, #{area,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, 
-      #{landAreaUnit,jdbcType=INTEGER}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{street,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
+      #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{totalValuation,jdbcType=BIGINT}, 
+      #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, #{buildingUnitPrice,jdbcType=INTEGER}, 
+      #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, #{landUnitPrice,jdbcType=BIGINT}, 
+      #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
+      #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
-      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT})
+      #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactorName,jdbcType=CHAR}, 
+      #{amcContactorPhone,jdbcType=CHAR}, #{note,jdbcType=CHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -174,20 +184,26 @@
       <if test="zccAssetCode != null">
         zcc_asset_code,
       </if>
-      <if test="valuation != null">
-        valuation,
+      <if test="totalValuation != null">
+        total_valuation,
       </if>
       <if test="debtId != null">
         debt_id,
       </if>
-      <if test="area != null">
-        area,
+      <if test="buildingArea != null">
+        building_area,
+      </if>
+      <if test="buildingUnitPrice != null">
+        building_unit_price,
       </if>
       <if test="landArea != null">
         land_area,
       </if>
       <if test="landAreaUnit != null">
         land_area_unit,
+      </if>
+      <if test="landUnitPrice != null">
+        land_unit_price,
       </if>
       <if test="publishDate != null">
         publish_date,
@@ -201,8 +217,8 @@
       <if test="county != null">
         county,
       </if>
-      <if test="street != null">
-        street,
+      <if test="address != null">
+        address,
       </if>
       <if test="buildingName != null">
         building_name,
@@ -221,6 +237,15 @@
       </if>
       <if test="amcContactorId != null">
         amc_contactor_id,
+      </if>
+      <if test="amcContactorName != null">
+        amc_contactor_name,
+      </if>
+      <if test="amcContactorPhone != null">
+        amc_contactor_phone,
+      </if>
+      <if test="note != null">
+        note,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -248,20 +273,26 @@
       <if test="zccAssetCode != null">
         #{zccAssetCode,jdbcType=CHAR},
       </if>
-      <if test="valuation != null">
-        #{valuation,jdbcType=BIGINT},
+      <if test="totalValuation != null">
+        #{totalValuation,jdbcType=BIGINT},
       </if>
       <if test="debtId != null">
         #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="area != null">
-        #{area,jdbcType=BIGINT},
+      <if test="buildingArea != null">
+        #{buildingArea,jdbcType=BIGINT},
+      </if>
+      <if test="buildingUnitPrice != null">
+        #{buildingUnitPrice,jdbcType=INTEGER},
       </if>
       <if test="landArea != null">
         #{landArea,jdbcType=BIGINT},
       </if>
       <if test="landAreaUnit != null">
         #{landAreaUnit,jdbcType=INTEGER},
+      </if>
+      <if test="landUnitPrice != null">
+        #{landUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="publishDate != null">
         #{publishDate,jdbcType=DATE},
@@ -275,8 +306,8 @@
       <if test="county != null">
         #{county,jdbcType=CHAR},
       </if>
-      <if test="street != null">
-        #{street,jdbcType=CHAR},
+      <if test="address != null">
+        #{address,jdbcType=CHAR},
       </if>
       <if test="buildingName != null">
         #{buildingName,jdbcType=CHAR},
@@ -295,6 +326,15 @@
       </if>
       <if test="amcContactorId != null">
         #{amcContactorId,jdbcType=BIGINT},
+      </if>
+      <if test="amcContactorName != null">
+        #{amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorPhone != null">
+        #{amcContactorPhone,jdbcType=CHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=CHAR},
       </if>
     </trim>
   </insert>
@@ -334,20 +374,26 @@
       <if test="record.zccAssetCode != null">
         zcc_asset_code = #{record.zccAssetCode,jdbcType=CHAR},
       </if>
-      <if test="record.valuation != null">
-        valuation = #{record.valuation,jdbcType=BIGINT},
+      <if test="record.totalValuation != null">
+        total_valuation = #{record.totalValuation,jdbcType=BIGINT},
       </if>
       <if test="record.debtId != null">
         debt_id = #{record.debtId,jdbcType=BIGINT},
       </if>
-      <if test="record.area != null">
-        area = #{record.area,jdbcType=BIGINT},
+      <if test="record.buildingArea != null">
+        building_area = #{record.buildingArea,jdbcType=BIGINT},
+      </if>
+      <if test="record.buildingUnitPrice != null">
+        building_unit_price = #{record.buildingUnitPrice,jdbcType=INTEGER},
       </if>
       <if test="record.landArea != null">
         land_area = #{record.landArea,jdbcType=BIGINT},
       </if>
       <if test="record.landAreaUnit != null">
         land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
+      </if>
+      <if test="record.landUnitPrice != null">
+        land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="record.publishDate != null">
         publish_date = #{record.publishDate,jdbcType=DATE},
@@ -361,8 +407,8 @@
       <if test="record.county != null">
         county = #{record.county,jdbcType=CHAR},
       </if>
-      <if test="record.street != null">
-        street = #{record.street,jdbcType=CHAR},
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=CHAR},
       </if>
       <if test="record.buildingName != null">
         building_name = #{record.buildingName,jdbcType=CHAR},
@@ -382,6 +428,15 @@
       <if test="record.amcContactorId != null">
         amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       </if>
+      <if test="record.amcContactorName != null">
+        amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="record.amcContactorPhone != null">
+        amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=CHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -398,22 +453,27 @@
       amc_id = #{record.amcId,jdbcType=BIGINT},
       amc_asset_code = #{record.amcAssetCode,jdbcType=CHAR},
       zcc_asset_code = #{record.zccAssetCode,jdbcType=CHAR},
-      valuation = #{record.valuation,jdbcType=BIGINT},
+      total_valuation = #{record.totalValuation,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
-      area = #{record.area,jdbcType=BIGINT},
+      building_area = #{record.buildingArea,jdbcType=BIGINT},
+      building_unit_price = #{record.buildingUnitPrice,jdbcType=INTEGER},
       land_area = #{record.landArea,jdbcType=BIGINT},
       land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
+      land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
       publish_date = #{record.publishDate,jdbcType=DATE},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
       county = #{record.county,jdbcType=CHAR},
-      street = #{record.street,jdbcType=CHAR},
+      address = #{record.address,jdbcType=CHAR},
       building_name = #{record.buildingName,jdbcType=CHAR},
       update_by = #{record.updateBy,jdbcType=BIGINT},
       update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
       created_date = #{record.createdDate,jdbcType=TIMESTAMP},
-      amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT}
+      amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
+      amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
+      amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
+      note = #{record.note,jdbcType=CHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -445,20 +505,26 @@
       <if test="zccAssetCode != null">
         zcc_asset_code = #{zccAssetCode,jdbcType=CHAR},
       </if>
-      <if test="valuation != null">
-        valuation = #{valuation,jdbcType=BIGINT},
+      <if test="totalValuation != null">
+        total_valuation = #{totalValuation,jdbcType=BIGINT},
       </if>
       <if test="debtId != null">
         debt_id = #{debtId,jdbcType=BIGINT},
       </if>
-      <if test="area != null">
-        area = #{area,jdbcType=BIGINT},
+      <if test="buildingArea != null">
+        building_area = #{buildingArea,jdbcType=BIGINT},
+      </if>
+      <if test="buildingUnitPrice != null">
+        building_unit_price = #{buildingUnitPrice,jdbcType=INTEGER},
       </if>
       <if test="landArea != null">
         land_area = #{landArea,jdbcType=BIGINT},
       </if>
       <if test="landAreaUnit != null">
         land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
+      </if>
+      <if test="landUnitPrice != null">
+        land_unit_price = #{landUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="publishDate != null">
         publish_date = #{publishDate,jdbcType=DATE},
@@ -472,8 +538,8 @@
       <if test="county != null">
         county = #{county,jdbcType=CHAR},
       </if>
-      <if test="street != null">
-        street = #{street,jdbcType=CHAR},
+      <if test="address != null">
+        address = #{address,jdbcType=CHAR},
       </if>
       <if test="buildingName != null">
         building_name = #{buildingName,jdbcType=CHAR},
@@ -493,6 +559,15 @@
       <if test="amcContactorId != null">
         amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       </if>
+      <if test="amcContactorName != null">
+        amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorPhone != null">
+        amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=CHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -506,22 +581,27 @@
       amc_id = #{amcId,jdbcType=BIGINT},
       amc_asset_code = #{amcAssetCode,jdbcType=CHAR},
       zcc_asset_code = #{zccAssetCode,jdbcType=CHAR},
-      valuation = #{valuation,jdbcType=BIGINT},
+      total_valuation = #{totalValuation,jdbcType=BIGINT},
       debt_id = #{debtId,jdbcType=BIGINT},
-      area = #{area,jdbcType=BIGINT},
+      building_area = #{buildingArea,jdbcType=BIGINT},
+      building_unit_price = #{buildingUnitPrice,jdbcType=INTEGER},
       land_area = #{landArea,jdbcType=BIGINT},
       land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
+      land_unit_price = #{landUnitPrice,jdbcType=BIGINT},
       publish_date = #{publishDate,jdbcType=DATE},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
       county = #{county,jdbcType=CHAR},
-      street = #{street,jdbcType=CHAR},
+      address = #{address,jdbcType=CHAR},
       building_name = #{buildingName,jdbcType=CHAR},
       update_by = #{updateBy,jdbcType=BIGINT},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},
       created_date = #{createdDate,jdbcType=TIMESTAMP},
-      amc_contactor_id = #{amcContactorId,jdbcType=BIGINT}
+      amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
+      amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
+      amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
+      note = #{note,jdbcType=CHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">

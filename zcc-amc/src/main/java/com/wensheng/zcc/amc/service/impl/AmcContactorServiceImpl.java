@@ -138,11 +138,11 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
 //    int pageSize = 20;
 //    while(pageNum > 0){
-    pageInfo.setPage(pageNum);
+    pageInfo.setPage(ssoQueryParam.getPageInfo().getPage());
     pageInfo.setSize(pageSize);
     HttpHeaders headers = getHttpJsonHeader();
     ssoQueryParam.setPageInfo(pageInfo);
-    ssoQueryParam.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
+//    ssoQueryParam.setDeptId(AmcDeptEnum.BUSINESS_DEPT.getId());
     HttpEntity<SSOQueryParam> entity = new HttpEntity<>(ssoQueryParam, headers);
 
     ResponseEntity response = restTemplate.exchange(ssoUrl, HttpMethod.POST, entity,

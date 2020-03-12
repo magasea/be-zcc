@@ -515,6 +515,76 @@ public class CustTrdCmpyExample {
             return (Criteria) this;
         }
 
+        public Criteria andCmpyProvinceIsNull() {
+            addCriterion("cmpy_province is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceIsNotNull() {
+            addCriterion("cmpy_province is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceEqualTo(String value) {
+            addCriterion("cmpy_province =", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceNotEqualTo(String value) {
+            addCriterion("cmpy_province <>", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceGreaterThan(String value) {
+            addCriterion("cmpy_province >", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceGreaterThanOrEqualTo(String value) {
+            addCriterion("cmpy_province >=", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceLessThan(String value) {
+            addCriterion("cmpy_province <", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceLessThanOrEqualTo(String value) {
+            addCriterion("cmpy_province <=", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceLike(String value) {
+            addCriterion("cmpy_province like", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceNotLike(String value) {
+            addCriterion("cmpy_province not like", value, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceIn(List<String> values) {
+            addCriterion("cmpy_province in", values, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceNotIn(List<String> values) {
+            addCriterion("cmpy_province not in", values, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceBetween(String value1, String value2) {
+            addCriterion("cmpy_province between", value1, value2, "cmpyProvince");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyProvinceNotBetween(String value1, String value2) {
+            addCriterion("cmpy_province not between", value1, value2, "cmpyProvince");
+            return (Criteria) this;
+        }
+
         public Criteria andCmpyAddrIsNull() {
             addCriterion("cmpy_addr is null");
             return (Criteria) this;

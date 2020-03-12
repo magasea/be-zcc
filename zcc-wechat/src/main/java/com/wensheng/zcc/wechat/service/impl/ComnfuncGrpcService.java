@@ -6,6 +6,7 @@ import com.wenshengamc.zcc.common.Common.GeoJson;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenReq;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp;
 import com.wenshengamc.zcc.wechat.AmcAssetImage;
 import com.wenshengamc.zcc.wechat.ImageUploadResult;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
@@ -43,7 +44,8 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
     comnFuncPubStub = ComnFuncServiceGrpc.newBlockingStub(comnFuncPubChannel);
   }
 
-  public String getWXPubToken(){
+  public String getWXPubToken(String profName){
+    WXPubTokenReq.Builder wxTRB = WXPubTokenReq.newBuilder();
 
     return comnFuncPubStub.getWXPublicToken(WXPubTokenReq.newBuilder().build()).getWxPubToken();
 

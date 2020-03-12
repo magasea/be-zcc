@@ -22,4 +22,6 @@ public class WXBasicServiceImplTest {
   public void getPublicToken() {
     wxBasicService.getPublicToken();
   }
+
+
 }

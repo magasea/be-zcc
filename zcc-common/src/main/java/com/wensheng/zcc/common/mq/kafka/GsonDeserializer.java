@@ -7,6 +7,7 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.serialization.Deserializer;
@@ -23,8 +24,11 @@ public class GsonDeserializer<T> implements Deserializer<T> {
   private Class<T> cls;
 
   private Gson gson =
-      new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.DEFAULT).registerTypeAdapter(LocalDateTime.class,
-      new DateTimeDeserializer()).create();
+      new GsonBuilder().setLongSerializationPolicy(LongSerializationPolicy.DEFAULT)
+          .registerTypeAdapter(LocalDateTime.class,
+      new LocalDateTimeDeserializer())
+          .registerTypeAdapter(Date.class, new DateTimeDeserializer())
+          .create();
 
 
   @Override

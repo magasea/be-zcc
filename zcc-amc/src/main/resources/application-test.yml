@@ -166,7 +166,7 @@ env:
   ws-sso-host: 10.20.100.235
   recmhost: 10.20.100.228
   mongodb-host: 10.20.100.235
-  image-repo: /home/chenwei/backup/temp
+  image-repo: /home/chenwei/temp
   oauth2:
     host: 10.20.100.235
     authLink: http://${env.oauth2.host}:10002

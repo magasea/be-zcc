@@ -166,7 +166,7 @@ env:
   dbpasswd: Wensheng#123
   kfkhost: 10.20.100.238
   mongodb-host: 10.20.100.238
-  image-repo: /mnt/backup/temp
+  image-repo: /home/chenwei/temp
   oauth2:
     host: 10.20.100.238
     authLink: http://${env.oauth2.host}:10002

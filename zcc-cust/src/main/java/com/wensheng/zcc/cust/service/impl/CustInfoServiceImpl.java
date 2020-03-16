@@ -822,10 +822,10 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.setOrderByClause(" id desc ");
     if(StringUtils.isEmpty(province)){
-      custTrdCmpyExample.createCriteria().andLegalReptiveEqualTo("-1");
+      custTrdCmpyExample.createCriteria();
 
     }else{
-      custTrdCmpyExample.createCriteria().andLegalReptiveEqualTo("-1").andCmpyProvinceEqualTo(province);
+      custTrdCmpyExample.createCriteria().andCmpyProvinceEqualTo(province);
     }
     int offset = 0;
     int pageSize = 100;
@@ -840,7 +840,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdCmpy> needPatchList = new ArrayList<>();
     while(keepGoing){
       for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
-        if(StringUtils.isEmpty(custTrdCmpy.getLegalReptive()) || custTrdCmpy.getLegalReptive().equals("-1")){
+//        if(StringUtils.isEmpty(custTrdCmpy.getLegalReptive()) || custTrdCmpy.getLegalReptive().equals("-1")){
           //need patch province info
           if(StringUtils.isEmpty(custTrdCmpy.getCmpyName()) || custTrdCmpy.getCmpyName().equals("-1")){
             continue;
@@ -849,7 +849,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           needPatchList.add(custTrdCmpy);
 
 
-        }
+//        }
 
 
       }

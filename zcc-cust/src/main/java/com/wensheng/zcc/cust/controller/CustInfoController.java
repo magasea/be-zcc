@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
 import com.wensheng.zcc.cust.config.aop.QueryCheckerCmpy;
 import com.wensheng.zcc.cust.config.aop.QueryValidCmpy;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
@@ -156,6 +157,7 @@ public class CustInfoController {
   @QueryValidCmpy
   @RequestMapping(value = "/getCustTrdInfo", method = RequestMethod.POST)
   @ResponseBody
+  @LogExecutionTime
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());

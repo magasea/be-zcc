@@ -143,9 +143,9 @@ public class WechatMaterialController {
   @RequestMapping(value = "/uploadOtherMaterial", headers = "Content-Type= multipart/form-data", method =
       RequestMethod.POST)
   @ResponseBody
-  public MediaUploadResp uploadImage(@RequestParam("fileName") String fileName,
+  public MediaUploadResp uploadImage(@RequestParam(value = "fileName", required =  false) String fileName,
       @RequestParam Integer materialType,
-      @RequestParam(value = "title", required =  false) String title,
+      @RequestParam(value = "title") String title,
       @RequestParam(value = "introduction", required = false) String introduction,
       @RequestPart MultipartFile imagePart) throws Exception {
 

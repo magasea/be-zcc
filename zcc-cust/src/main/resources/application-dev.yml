@@ -71,6 +71,7 @@ spring:
             database: wszcc_cust
             host: 10.20.100.235
             port: 27017
+            auto-index-creation: false
     cache:
         cache-names: regionName
         caffeine:

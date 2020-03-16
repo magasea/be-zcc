@@ -59,7 +59,7 @@ public class ScriptSysServiceImplTest {
   public void getCmpyByName() throws ParseException {
     CustCmpyInfoFromSync custCmpyInfoFromSync = syncService.getCmpyInfoByName("上海文盛资产管理股份有限公司江苏分公司");
     System.out.println(gson.toJson(custCmpyInfoFromSync));
-    custCmpyInfoFromSync = syncService.getCmpyInfoByName("丹阳市天晟投资有限公司");
+    custCmpyInfoFromSync = syncService.getCmpyInfoByName("浙江浙北资产管理有");
     System.out.println(gson.toJson(custCmpyInfoFromSync));
 
   }

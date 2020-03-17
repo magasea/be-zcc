@@ -194,7 +194,7 @@ public class WXUserServiceImpl implements WXUserService {
     tagMap.put("tag", tag);
     HttpEntity<Map> entity = new HttpEntity<Map>(tagMap, headers);
     ResponseEntity<WechatTag> response = restTemplate.exchange(url, HttpMethod.POST, entity, WechatTag.class);
-//    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    System.out.println(response.getBody().toString());
     return response.getBody().getId();
 
   }

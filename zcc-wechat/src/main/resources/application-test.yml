@@ -1,8 +1,8 @@
 server:
     port: 10005
 grpc:
-    server:
-        port: 10015
+
+    port: 10015
     client:
         comnfunc:
             host: ${env.rpchost}

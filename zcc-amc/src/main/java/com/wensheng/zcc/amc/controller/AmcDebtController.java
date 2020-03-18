@@ -656,7 +656,8 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{amcId}/debt/upload2wx", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcDebtUploadImg2WXRlt> upload2Wx(@RequestBody List<Long> debtIds) throws Exception {
+  public List<AmcDebtUploadImg2WXRlt> upload2Wx(@RequestBody List<Long> debtIds,
+      @PathVariable(required = false) Long amcId) throws Exception {
 
     return amcDebtService.uploadAmcDebtImage2WechatByIds(debtIds);
 

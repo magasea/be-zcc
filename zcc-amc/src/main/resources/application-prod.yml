@@ -108,7 +108,9 @@ spring:
   messages:
     encoding: UTF-8
     basename: locale/message
-
+  data:
+    mongodb:
+      auto-index-creation: true
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
   mapper-locations:

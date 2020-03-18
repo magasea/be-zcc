@@ -34,9 +34,12 @@ public class GrpcConfig {
  int comnfuncPort;
 
 
-  @Value("${grpc.server.port}")
+  @Value("${grpc.port}")
   int grpcPort;
 
+
+  @Autowired
+  WechatGrpcService wechatGrpcService;
 
 
  @Bean(name = "comnFuncChannel")

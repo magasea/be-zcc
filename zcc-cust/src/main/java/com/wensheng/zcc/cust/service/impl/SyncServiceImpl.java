@@ -555,7 +555,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep());
     if( null == custPersonInfoFromSync){
-      log.error("Failed to get {} person info with id:{} with trd id:{}", isBuyer?"buyer":"seller", isBuyer?
+      log.error("Failed to get {} person info with id:{} with trd:{}", isBuyer?"buyer":"seller", isBuyer?
           trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
       if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
@@ -563,7 +563,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       }
       errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
           errorTrdInfos.get(trdInfoFromSync.getId()),
-          String.format("Failed to get %s person info with id:%s with trd id:%s", isBuyer?"buyer":"seller", isBuyer?
+          String.format("Failed to get %s person info with id:%s with trd:%s", isBuyer?"buyer":"seller", isBuyer?
               trdInfoFromSync.getBuyerIdPrep():
               trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
       return -1L;
@@ -571,7 +571,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     if(StringUtils.isEmpty(custPersonInfoFromSync.getName())){
       errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
           errorTrdInfos.get(trdInfoFromSync.getId()),
-          String.format("get %s person info with id:%s with trd id:%s and the person have name:{}", isBuyer?"buyer":
+          String.format("get %s person info with id:%s with trd:%s and the person have name:{}", isBuyer?"buyer":
               "seller", isBuyer? trdInfoFromSync.getBuyerIdPrep(): trdInfoFromSync.getSellerIdPrep(),
               trdInfoFromSync.getId()), custPersonInfoFromSync.getName()));
       return -1L;

@@ -94,6 +94,7 @@ spring:
         cache-names: TOKEN
         caffeine:
             spec: maximumSize=500, expireAfterAccess=120s
+
     servlet:
         multipart:
             enabled: true

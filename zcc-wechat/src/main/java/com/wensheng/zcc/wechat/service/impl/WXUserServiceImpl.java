@@ -143,7 +143,7 @@ public class WXUserServiceImpl implements WXUserService {
     HttpEntity<?> entity = new HttpEntity<>(headers);
 
     UserIdsResp response = restTemplate.exchange(url.toString(), HttpMethod.GET, entity, UserIdsResp.class).getBody();
-    System.out.println(response.toString());
+//    System.out.println(response.toString());
 
     return response;
   }
@@ -181,7 +181,7 @@ public class WXUserServiceImpl implements WXUserService {
     return data;
   }
 
-  public synchronized long createWechatPublicUserTag(String tagName){
+  public synchronized long createWechatPublicUserTag(String tagName) throws Exception {
     String token = wxBasicService.getPublicToken();
 
     String url = String.format(createUserTagUrl, token );
@@ -193,9 +193,13 @@ public class WXUserServiceImpl implements WXUserService {
     tag.setName(tagName);
     tagMap.put("tag", tag);
     HttpEntity<Map> entity = new HttpEntity<Map>(tagMap, headers);
-    ResponseEntity<WechatTag> response = restTemplate.exchange(url, HttpMethod.POST, entity, WechatTag.class);
-    System.out.println(response.getBody().toString());
-    return response.getBody().getId();
+    ResponseEntity<TagCreateResp> responseCheck = restTemplate.exchange(url, HttpMethod.POST, entity, TagCreateResp.class);
+    if(responseCheck.getBody().getErrcode() != null){
+
+      throw new Exception(String.format("%s %s", responseCheck.getBody().getErrcode(),
+          responseCheck.getBody().getErrmsg()));
+    }
+    return responseCheck.getBody().getTag().id;
 
   }
 
@@ -362,7 +366,7 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Override
   @Scheduled(cron = "${spring.task.scheduling.cronTagUserExpr}")
-  public void tagUserTask(){
+  public void tagUserTask() throws Exception {
     Query query = new Query();
     query.addCriteria(Criteria.where("createTime").gte(AmcDateUtils.getDateMonthsDiff(3)));
     List<WXUserGeoRecord> wxUserGeoRecords = mongoTemplate.find(query, WXUserGeoRecord.class);
@@ -426,7 +430,7 @@ public class WXUserServiceImpl implements WXUserService {
     }
   }
 
-  private void tagUser(String openId, String province) {
+  private void tagUser(String openId, String province) throws Exception {
     List<TagInfoExt> tagInfoExts = getWechatPublicUserTag();
     List<String> openIds = new ArrayList<>();
     openIds.add(openId);
@@ -507,7 +511,14 @@ public class WXUserServiceImpl implements WXUserService {
 
 
 
+  @Data class TagCreateResp extends GeneralResp{
+    TagCreateInfo tag;
+  }
 
+  @Data class TagCreateInfo{
+    Long id;
+    String name;
+  }
 
   @Data
   public class TagUserBatchReq{

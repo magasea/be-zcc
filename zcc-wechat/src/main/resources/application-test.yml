@@ -83,6 +83,7 @@ spring:
             database: wszcc_wechat
             host: ${env.mongodb-host}
             port: 27017
+            auto-index-creation: true
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem

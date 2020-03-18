@@ -29,34 +29,90 @@ killProcess() {
     fi
 }
 
-killProcess ${pattern_amc}
-killProcess ${pattern_sso}
-killProcess ${pattern_log}
-killProcess ${pattern_cust}
-killProcess ${pattern_wechat}
-killProcess ${pattern_comnfunc}
+killAll() {
+  killProcess ${pattern_amc}
+  killProcess ${pattern_sso}
+  killProcess ${pattern_log}
+  killProcess ${pattern_cust}
+  killProcess ${pattern_wechat}
+  killProcess ${pattern_comnfunc}
+  echo ${execJarName_amc}
+  echo ${execJarName_sso}
+  echo ${execJarName_log}
+  echo ${execJarName_cust}
+  echo ${execJarName_wechat}
+  echo ${execJarName_comnfunc}
 
-echo ${execJarName_amc}
-echo ${execJarName_sso}
-echo ${execJarName_log}
-echo ${execJarName_cust}
-echo ${execJarName_wechat}
-echo ${execJarName_comnfunc}
+  sleep 5
 
-sleep 5
+  killProcess ${pattern_amc}
+  killProcess ${pattern_sso}
+  killProcess ${pattern_log}
+  killProcess ${pattern_cust}
+  killProcess ${pattern_wechat}
+  killProcess ${pattern_comnfunc}
+}
 
-killProcess ${pattern_amc}
-killProcess ${pattern_sso}
-killProcess ${pattern_log}
-killProcess ${pattern_cust}
-killProcess ${pattern_wechat}
-killProcess ${pattern_comnfunc}
+startAll() {
+  nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
+  nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &
+  nohup java -jar -Dspring.profiles.active=test ${execJarName_log} &>loger.log &
+  nohup java -jar -Dspring.profiles.active=test ${execJarName_cust} &>cust.log &
+  nohup java -jar -Dspring.profiles.active=test ${execJarName_wechat} &>wechat.log &
+  nohup java -jar -Dspring.profiles.active=test ${execJarName_comnfunc} &>comnfunc.log &
+}
+indicator="$1"
+echo ${indicator}
 
+if [ -z ${indicator} ]; then
+  killAll
+  startAll
+fi
 
-nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
-nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &
-nohup java -jar -Dspring.profiles.active=test ${execJarName_log} &>loger.log &
-nohup java -jar -Dspring.profiles.active=test ${execJarName_cust} &>cust.log &
-nohup java -jar -Dspring.profiles.active=test ${execJarName_wechat} &>wechat.log &
-nohup java -jar -Dspring.profiles.active=test ${execJarName_comnfunc} &>comnfunc.log &
+if [ ! -z ${indicator} ]; then
+  case ${indicator} in
+
+    amc)
+      killProcess ${pattern_amc}
+      sleep 5
+      killProcess ${pattern_amc}
+      nohup java -jar -Dspring.profiles.active=test ${execJarName_amc} &>amc.log &
+      ;;
+
+    sso)
+      killProcess ${pattern_sso}
+      sleep 5
+      killProcess ${pattern_sso}
+      nohup java -jar -Dspring.profiles.active=test ${execJarName_sso} &>sso.log &
+      ;;
+    log)
+      killProcess ${pattern_log}
+      sleep 5
+      killProcess ${pattern_log}
+      nohup java -jar -Dspring.profiles.active=test ${execJarName_log} &>loger.log &
+      ;;
+    cust)
+      killProcess ${pattern_cust}
+      sleep 5
+      killProcess ${pattern_cust}
+      nohup java -jar -Dspring.profiles.active=test ${execJarName_cust} &>cust.log &
+      ;;
+    wechat)
+      killProcess ${pattern_wechat}
+      sleep 5
+      killProcess ${pattern_wechat}
+      nohup java -jar -Dspring.profiles.active=test ${execJarName_wechat} &>wechat.log &
+      ;;
+    comnfunc)
+      killProcess ${pattern_comnfunc}
+      sleep 5
+      killProcess ${pattern_comnfunc}
+      nohup java -jar -Dspring.profiles.active=test ${execJarName_comnfunc} &>comnfunc.log &
+      ;;
+    *)
+      echo $"Usage: $0 {amc|sso|log|cust|wechat|comnfunc}"
+      exit 1
+  esac
+fi
+
 

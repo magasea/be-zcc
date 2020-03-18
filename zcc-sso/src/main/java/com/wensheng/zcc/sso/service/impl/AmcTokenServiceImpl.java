@@ -3,14 +3,17 @@ package com.wensheng.zcc.sso.service.impl;
 import com.wensheng.zcc.sso.service.AmcTokenService;
 import java.util.Collection;
 import javax.annotation.Resource;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.provider.token.ConsumerTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.stereotype.Service;
 
 @Service
+@Slf4j
 public class AmcTokenServiceImpl implements AmcTokenService {
 
 
@@ -40,5 +43,26 @@ public class AmcTokenServiceImpl implements AmcTokenService {
       tokenServices.revokeToken(oAuth2AccessToken.getValue());
     }
     return true;
+  }
+
+
+  @Scheduled(cron = "${spring.task.scheduling.cronExprTokenRevok}")
+  @Override
+  public void checkAccessTokens() {
+    Collection<OAuth2AccessToken> oAuth2AccessTokens = tokenStore.findTokensByClientId(amcClientId);
+    boolean result = false;
+//    for (OAuth2AccessToken oauthAccessToken : oAuth2AccessTokens) {
+//      if (oauthAccessToken.isExpired()) {
+//        result = tokenServices.revokeToken(oauthAccessToken.getValue());
+//        log.info("revoke expired token:{} result:{}", oauthAccessToken.getValue(), result);
+//      }
+//    }
+    oAuth2AccessTokens = tokenStore.findTokensByClientId(amcClientId);
+    for (OAuth2AccessToken oauthAccessToken1 : oAuth2AccessTokens) {
+      if (oauthAccessToken1.isExpired()) {
+        result = tokenServices.revokeToken(oauthAccessToken1.getValue());
+        log.info("revoke expired token:{} result:{}", oauthAccessToken1.getValue(), result);
+      }
+    }
   }
 }

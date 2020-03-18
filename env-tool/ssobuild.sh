@@ -12,5 +12,5 @@ scp zcc-sso/target/zcc-sso-0.1-SNAPSHOT.jar chenwei@10.20.100.235:/home/chenwei/
 #scp zcc-comn-func/target/zcc-comn-func-0.1-SNAPSHOT.jar chenwei@10.20.100.238:/home/chenwei/working/zcc
 
 
-ssh chenwei@10.20.100.235 "cd /home/chenwei/working/zcc && ./startup.sh "
+ssh chenwei@10.20.100.235 "cd /home/chenwei/working/zcc && ./startup.sh sso"
 

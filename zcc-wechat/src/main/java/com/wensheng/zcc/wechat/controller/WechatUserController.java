@@ -120,8 +120,7 @@ public class WechatUserController {
 
   @RequestMapping(value = "/tag/tagUserWithGeo", method = RequestMethod.GET)
   @ResponseBody
-  public void tagUserWithGeo ()
-  {
+  public void tagUserWithGeo () throws Exception {
 
       wxService.tagUserTask();
 
@@ -129,11 +128,9 @@ public class WechatUserController {
 
   @RequestMapping(value = "/tag/create-user-tag", method = RequestMethod.POST)
   @ResponseBody
-  public String createUsersTag(@RequestParam("tagName") String tagName)
-  {
+  public Long createUsersTag(@RequestParam("tagName") String tagName) throws Exception {
 
-     wxService.createWechatPublicUserTag(tagName);
-     return "success";
+     return wxService.createWechatPublicUserTag(tagName);
 
   }
 

@@ -12,5 +12,5 @@ scp zcc-cust/target/zcc-cust-0.1-SNAPSHOT.jar chenwei@10.20.100.238:/home/chenwe
 #scp zcc-comn-func/target/zcc-comn-func-0.1-SNAPSHOT.jar chenwei@10.20.100.238:/home/chenwei/working/zcc
 
 
-ssh chenwei@10.20.100.238 "cd /home/chenwei/working/zcc && ./startup-prod.sh "
+ssh chenwei@10.20.100.238 "cd /home/chenwei/working/zcc && ./startup-prod.sh cust"
 

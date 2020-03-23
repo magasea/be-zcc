@@ -38,8 +38,7 @@ public class GrpcConfig {
   int grpcPort;
 
 
-  @Autowired
-  WechatGrpcService wechatGrpcService;
+
 
 
  @Bean(name = "comnFuncChannel")
@@ -54,33 +53,6 @@ public class GrpcConfig {
         ManagedChannelBuilder.forAddress(comnfuncPubHost, comnfuncPubPort).usePlaintext();
     return managedChannelBuilder.build();
   }
-
-// @Bean(name = "comnFuncStub")
-// @Primary
-// ComnFuncServiceBlockingStub comnFuncServiceStub(ManagedChannel comnFuncChanel){
-//   ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService = ComnFuncServiceGrpc.newBlockingStub(comnFuncChanel);
-//   return comnFuncService;
-// }
-//  @Bean(name = "comnFuncPubStub")
-//  ComnFuncServiceBlockingStub comnFuncPubServiceStub(){
-//    ManagedChannel managedChannel = comnFuncPubChannel();
-//    ComnFuncServiceGrpc.ComnFuncServiceBlockingStub comnFuncService =
-//        ComnFuncServiceGrpc.newBlockingStub(managedChannel);
-//    return comnFuncService;
-//  }
-
-//  @Bean
-//  Server server() throws InterruptedException, IOException {
-//    UnknownStatusDescriptionInterceptor unknownStatusDescriptionInterceptor = new UnknownStatusDescriptionInterceptor(
-//        Arrays.asList(IllegalArgumentException.class, Exception.class, RuntimeException.class));
-//    Server server = ServerBuilder.forPort(grpcPort)
-//        .addService(ServerInterceptors.intercept(wechatGrpcService, unknownStatusDescriptionInterceptor))
-//        .addService(ProtoReflectionService.newInstance())
-//        .build();
-//
-//    return server;
-//
-//  }
 
 
 }

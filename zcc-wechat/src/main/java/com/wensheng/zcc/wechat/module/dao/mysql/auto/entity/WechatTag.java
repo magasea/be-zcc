@@ -7,6 +7,8 @@ public class WechatTag {
 
     private String tagName;
 
+    private Integer count;
+
     public Long getId() {
         return id;
     }
@@ -29,5 +31,13 @@ public class WechatTag {
 
     public void setTagName(String tagName) {
         this.tagName = tagName == null ? null : tagName.trim();
+    }
+
+    public Integer getCount() {
+        return count;
+    }
+
+    public void setCount(Integer count) {
+        this.count = count;
     }
 }

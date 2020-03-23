@@ -17,7 +17,7 @@
     <result column="remark" jdbcType="CHAR" property="remark" />
     <result column="group_id" jdbcType="INTEGER" property="groupId" />
     <result column="subscribe_scene" jdbcType="CHAR" property="subscribeScene" />
-    <result column="qr_scene" jdbcType="CHAR" property="qrScene" />
+    <result column="qr_scene" jdbcType="INTEGER" property="qrScene" />
     <result column="qr_scene_str" jdbcType="VARCHAR" property="qrSceneStr" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -127,7 +127,7 @@
       #{sex,jdbcType=INTEGER}, #{language,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
       #{country,jdbcType=CHAR}, #{headImgUrl,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=TIMESTAMP}, 
       #{unionId,jdbcType=CHAR}, #{remark,jdbcType=CHAR}, #{groupId,jdbcType=INTEGER}, 
-      #{subscribeScene,jdbcType=CHAR}, #{qrScene,jdbcType=CHAR}, #{qrSceneStr,jdbcType=VARCHAR}
+      #{subscribeScene,jdbcType=CHAR}, #{qrScene,jdbcType=INTEGER}, #{qrSceneStr,jdbcType=VARCHAR}
       )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
@@ -229,7 +229,7 @@
         #{subscribeScene,jdbcType=CHAR},
       </if>
       <if test="qrScene != null">
-        #{qrScene,jdbcType=CHAR},
+        #{qrScene,jdbcType=INTEGER},
       </if>
       <if test="qrSceneStr != null">
         #{qrSceneStr,jdbcType=VARCHAR},
@@ -291,7 +291,7 @@
         subscribe_scene = #{record.subscribeScene,jdbcType=CHAR},
       </if>
       <if test="record.qrScene != null">
-        qr_scene = #{record.qrScene,jdbcType=CHAR},
+        qr_scene = #{record.qrScene,jdbcType=INTEGER},
       </if>
       <if test="record.qrSceneStr != null">
         qr_scene_str = #{record.qrSceneStr,jdbcType=VARCHAR},
@@ -318,7 +318,7 @@
       remark = #{record.remark,jdbcType=CHAR},
       group_id = #{record.groupId,jdbcType=INTEGER},
       subscribe_scene = #{record.subscribeScene,jdbcType=CHAR},
-      qr_scene = #{record.qrScene,jdbcType=CHAR},
+      qr_scene = #{record.qrScene,jdbcType=INTEGER},
       qr_scene_str = #{record.qrSceneStr,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -370,7 +370,7 @@
         subscribe_scene = #{subscribeScene,jdbcType=CHAR},
       </if>
       <if test="qrScene != null">
-        qr_scene = #{qrScene,jdbcType=CHAR},
+        qr_scene = #{qrScene,jdbcType=INTEGER},
       </if>
       <if test="qrSceneStr != null">
         qr_scene_str = #{qrSceneStr,jdbcType=VARCHAR},
@@ -394,7 +394,7 @@
       remark = #{remark,jdbcType=CHAR},
       group_id = #{groupId,jdbcType=INTEGER},
       subscribe_scene = #{subscribeScene,jdbcType=CHAR},
-      qr_scene = #{qrScene,jdbcType=CHAR},
+      qr_scene = #{qrScene,jdbcType=INTEGER},
       qr_scene_str = #{qrSceneStr,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

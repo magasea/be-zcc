@@ -49,19 +49,18 @@ public class AmcTokenServiceImpl implements AmcTokenService {
   @Scheduled(cron = "${spring.task.scheduling.cronExprTokenRevok}")
   @Override
   public void checkAccessTokens() {
-    Collection<OAuth2AccessToken> oAuth2AccessTokens = tokenStore.findTokensByClientId(amcClientId);
-    boolean result = false;
+
 //    for (OAuth2AccessToken oauthAccessToken : oAuth2AccessTokens) {
 //      if (oauthAccessToken.isExpired()) {
 //        result = tokenServices.revokeToken(oauthAccessToken.getValue());
 //        log.info("revoke expired token:{} result:{}", oauthAccessToken.getValue(), result);
 //      }
 //    }
-    oAuth2AccessTokens = tokenStore.findTokensByClientId(amcClientId);
-    for (OAuth2AccessToken oauthAccessToken1 : oAuth2AccessTokens) {
-      if (oauthAccessToken1.isExpired()) {
-        result = tokenServices.revokeToken(oauthAccessToken1.getValue());
-        log.info("revoke expired token:{} result:{}", oauthAccessToken1.getValue(), result);
+    Collection<OAuth2AccessToken>  oAuth2AccessTokens = tokenStore.findTokensByClientId(amcClientId);
+    for (OAuth2AccessToken oauthAccessToken : oAuth2AccessTokens) {
+      if (oauthAccessToken.isExpired()) {
+         boolean result = tokenServices.revokeToken(oauthAccessToken.getValue());
+        log.info("revoke expired token:{} result:{}", oauthAccessToken.getValue(), result);
       }
     }
   }

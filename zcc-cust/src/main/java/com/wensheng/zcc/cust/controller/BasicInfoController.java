@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.controller;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
@@ -120,7 +121,7 @@ public class BasicInfoController {
 
   @RequestMapping(value = "/regions", method = RequestMethod.POST)
   @ResponseBody
-  public List<CustRegion> getRegions(@RequestParam(required = false) Long regionId){
+  public List<CustRegionDetail> getRegions(@RequestParam(required = false) Long regionId){
     if(regionId == null){
       return basicInfoService.getAllCustRegion();
     }else{

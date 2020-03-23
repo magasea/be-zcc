@@ -100,7 +100,7 @@ public class WXBasicServiceImpl implements WXBasicService {
 
 
 
-  @Cacheable(unless = "#result == null")
+  @Cacheable
   public String getPublicToken(){
     String profName = null;
     for (String profileName : environment.getActiveProfiles()) {

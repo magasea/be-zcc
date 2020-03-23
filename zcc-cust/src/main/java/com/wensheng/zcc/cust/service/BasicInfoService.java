@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.service;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -11,8 +12,8 @@ import java.util.Map;
  * @project miniapp-backend
  */
 public interface BasicInfoService {
-  List<CustRegion> getAllCustRegion();
-  List<CustRegion> getSubCustRegion(Long parentId);
+  List<CustRegionDetail> getAllCustRegion();
+  List<CustRegionDetail> getSubCustRegion(Long parentId);
   public String getRegionNameByCode(Long code) throws Exception ;
 
   List<CustAmcUserpriv> getAmcUserPriv();

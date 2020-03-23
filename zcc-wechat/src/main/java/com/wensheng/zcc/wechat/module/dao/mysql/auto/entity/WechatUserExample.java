@@ -1115,62 +1115,52 @@ public class WechatUserExample {
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneEqualTo(String value) {
+        public Criteria andQrSceneEqualTo(Integer value) {
             addCriterion("qr_scene =", value, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneNotEqualTo(String value) {
+        public Criteria andQrSceneNotEqualTo(Integer value) {
             addCriterion("qr_scene <>", value, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneGreaterThan(String value) {
+        public Criteria andQrSceneGreaterThan(Integer value) {
             addCriterion("qr_scene >", value, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneGreaterThanOrEqualTo(String value) {
+        public Criteria andQrSceneGreaterThanOrEqualTo(Integer value) {
             addCriterion("qr_scene >=", value, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneLessThan(String value) {
+        public Criteria andQrSceneLessThan(Integer value) {
             addCriterion("qr_scene <", value, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneLessThanOrEqualTo(String value) {
+        public Criteria andQrSceneLessThanOrEqualTo(Integer value) {
             addCriterion("qr_scene <=", value, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneLike(String value) {
-            addCriterion("qr_scene like", value, "qrScene");
-            return (Criteria) this;
-        }
-
-        public Criteria andQrSceneNotLike(String value) {
-            addCriterion("qr_scene not like", value, "qrScene");
-            return (Criteria) this;
-        }
-
-        public Criteria andQrSceneIn(List<String> values) {
+        public Criteria andQrSceneIn(List<Integer> values) {
             addCriterion("qr_scene in", values, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneNotIn(List<String> values) {
+        public Criteria andQrSceneNotIn(List<Integer> values) {
             addCriterion("qr_scene not in", values, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneBetween(String value1, String value2) {
+        public Criteria andQrSceneBetween(Integer value1, Integer value2) {
             addCriterion("qr_scene between", value1, value2, "qrScene");
             return (Criteria) this;
         }
 
-        public Criteria andQrSceneNotBetween(String value1, String value2) {
+        public Criteria andQrSceneNotBetween(Integer value1, Integer value2) {
             addCriterion("qr_scene not between", value1, value2, "qrScene");
             return (Criteria) this;
         }

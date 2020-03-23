@@ -33,7 +33,7 @@ public class WechatUser {
 
     private String subscribeScene;
 
-    private String qrScene;
+    private Integer qrScene;
 
     private String qrSceneStr;
 
@@ -157,12 +157,12 @@ public class WechatUser {
         this.subscribeScene = subscribeScene == null ? null : subscribeScene.trim();
     }
 
-    public String getQrScene() {
+    public Integer getQrScene() {
         return qrScene;
     }
 
-    public void setQrScene(String qrScene) {
-        this.qrScene = qrScene == null ? null : qrScene.trim();
+    public void setQrScene(Integer qrScene) {
+        this.qrScene = qrScene;
     }
 
     public String getQrSceneStr() {

@@ -495,7 +495,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
 
     CustTrdInfo custTrdInfo = new CustTrdInfo();
-    copySyncTrd2TrdInfo(trdInfoFromSync, custTrdInfo);
+    int result = copySyncTrd2TrdInfo(trdInfoFromSync, custTrdInfo);
+    if(result < 0){
+      return;
+    }
     Long buyerId = -1L ;
     if(trdInfoFromSync.getBuyerTypePrep() == CustTypeSyncEnum.COMPANY.getId()){
       buyerId = syncCmpyInfoById(trdInfoFromSync, true, action == 1);
@@ -828,6 +831,22 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       custTrdSellerExample.createCriteria().andNameEqualTo(custCmpyInfoFromSync.getCmpyName());
       List<CustTrdSeller> custTrdSellers = custTrdSellerMapper.selectByExample(custTrdSellerExample);
       int sellerAction = -1;
+      if(null == custCmpyInfoFromSync.getUpdateTime() || custCmpyInfoFromSync.getUpdateTime() <= 0L){
+        log.error("Failed to get {} cmpy updateTime with id:{} of trd:{} updateTime:{}", isBuyer? "buyer":"seller",
+            isBuyer? trdInfoFromSync.getBuyerIdPrep(): trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId(),
+            custCmpyInfoFromSync.getUpdateTime());
+
+        if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
+          errorTrdInfos.put(trdInfoFromSync.getId(),"");
+        }
+        errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
+            errorTrdInfos.get(trdInfoFromSync.getId()),String.format("Failed to get %s cmpy info updateTime with "
+                    + "id:%s of trd:%s",
+                isBuyer? "buyer":"seller", isBuyer?
+                    trdInfoFromSync.getBuyerIdPrep():
+                    trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
+        return -1L;
+      }
       Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
       if(CollectionUtils.isEmpty(custTrdSellers)){
         //make new sell info
@@ -1044,7 +1063,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
    * @param custTrdInfo
    */
 
-  private void copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
+  private int copySyncTrd2TrdInfo(TrdInfoFromSync trdInfoFromSync, CustTrdInfo custTrdInfo){
 //    custTrdInfo.setSellerId(sellerRecord.getId());
     //make default value
     custTrdInfo.setPubDate(AmcDateUtils.getDataBaseDefaultOldDate());
@@ -1089,12 +1108,19 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
           errorTrdInfos.get(trdInfoFromSync.getId()),
           "trdInfoFromSync.getTrdProvincePrep() is empty"));
-      return;
+      return -1;
     }
     if(!trdInfoFromSync.getTrdProvincePrep().endsWith("000000")){
       log.error("getTrdProvincePrep:{}", trdInfoFromSync.getTrdProvincePrep());
     }
     custTrdInfo.setTrdProvince(trdInfoFromSync.getTrdProvincePrep().substring(0, 6));
+    if(null == trdInfoFromSync.getDebtProvincePrep()){
+      log.error("getDebtProvincePrep:{}", trdInfoFromSync.getDebtProvincePrep());
+      errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s",
+          pageForLog,   errorTrdInfos.get(trdInfoFromSync.getId()),
+          String.format("trdInfoFromSync.getDebtProvincePrep() is %s",trdInfoFromSync.getDebtProvincePrep())));
+      return -1;
+    }
     custTrdInfo.setDebtProvince(trdInfoFromSync.getDebtProvincePrep().substring(0, 6));
 
     if(StringUtils.isEmpty(trdInfoFromSync.getDebtCityPrep())){
@@ -1132,7 +1158,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       custTrdInfo.setTrdContactorAddr(sb.toString());
     }
 
-
+    return 1;
 
   }
 //http://10.20.200.100:8085/debts/get/3a7cd9cf68c5effc316981d6537d1595

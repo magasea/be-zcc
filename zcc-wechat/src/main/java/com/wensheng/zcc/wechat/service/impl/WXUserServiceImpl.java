@@ -5,13 +5,13 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.mq.kafka.module.AmcWechatUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
-import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatTag;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
@@ -20,6 +20,8 @@ import com.wensheng.zcc.wechat.module.vo.TagDel;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
 import com.wensheng.zcc.wechat.module.vo.WechatTagVo;
+import com.wensheng.zcc.wechat.module.vo.WechatUserInfoResp;
+import com.wensheng.zcc.wechat.module.vo.WechatUserInfoVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import java.io.IOException;
@@ -388,32 +390,76 @@ public class WXUserServiceImpl implements WXUserService {
   public void syncUserInfoFromWX() {
     String token = wxBasicService.getPublicToken();
 
+    UserIdsResp userIdsResp = getWechatPublicUserIds(null);
     UserListReq userListReq = new UserListReq();
     userListReq.setUser_list(new ArrayList<>());
+    if(null != userIdsResp.data.getOpenId() && !CollectionUtils.isEmpty(userIdsResp.getData().getOpenId())){
+      for(String openId: userIdsResp.getData().getOpenId()){
+        userListReq.getUser_list().add(new UserIdInfoReq(openId,null));
+
+      }
+    }else{
+      return;
+    }
+
+
+
 
     String url = String.format(getPublicUsersInfoUrl, token );
     HttpHeaders headers = getHttpJsonHeader();
     HttpEntity<UserListReq> entity = new HttpEntity<>( userListReq, headers);
-    ResponseEntity response = restTemplate.exchange(url, HttpMethod.POST, entity, Map.class);
+    ResponseEntity<WechatUserInfoResp> response = restTemplate.exchange(url, HttpMethod.POST, entity,
+        WechatUserInfoResp.class);
 //    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
 
-    List<WechatUser> data =(List) ((Map)response.getBody()).get("user_info_list");
-    pubDataInDb(data);
-    int count = 0;
-    while(data.size() > 10000){
 
-      String finalOpenId = data.get(data.size() - 1).getOpenId();
-      String nextUrl = String.format(getPublicUsersInfoUrl, token, finalOpenId);
-      response = restTemplate.exchange(nextUrl, HttpMethod.POST, entity, Map.class);
-      data =(List) ((Map)response.getBody()).get("user_info_list");
-      pubDataInDb(data);
-      count ++;
-      if(count > 100){
-        log.error("Please check why it take more than 100 times");
-        break;
+    List<WechatUserInfoVo> wechatUserInfoVos =  response.getBody().getUserInfoVoList();
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    for(WechatUserInfoVo userInfoVo: wechatUserInfoVos){
+      WechatUser wechatUser = new WechatUser();
+      AmcBeanUtils.copyProperties(userInfoVo, wechatUser);
+      wechatUserExample.clear();
+      if(!StringUtils.isEmpty(wechatUser.getUnionId())){
+        wechatUserExample.createCriteria().andUnionIdEqualTo(wechatUser.getUnionId());
+      }else{
+        wechatUserExample.createCriteria().andOpenIdEqualTo(wechatUser.getOpenId());
+      }
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(CollectionUtils.isEmpty(wechatUsers)){
+        //insert
+        wechatUserMapper.insertSelective(wechatUser);
+        refreshUserTags(wechatUser.getId(), userInfoVo.getTagIdList());
+      }else{
+        //update
+        AmcBeanUtils.copyProperties(wechatUser, wechatUsers.get(0));
+        wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
+        refreshUserTags(wechatUser.getId(), userInfoVo.getTagIdList());
+      }
+      
+      if(CollectionUtils.isEmpty(userInfoVo.getTagIdList())){
+        
       }
     }
 
+//    pubDataInDb(data);
+//    int count = 0;
+//    while(data.size() > 10000){
+//
+//      String finalOpenId = data.get(data.size() - 1).getOpenId();
+//      String nextUrl = String.format(getPublicUsersInfoUrl, token, finalOpenId);
+//      response = restTemplate.exchange(nextUrl, HttpMethod.POST, entity, Map.class);
+//      data =(List) ((Map)response.getBody()).get("user_info_list");
+//      pubDataInDb(data);
+//      count ++;
+//      if(count > 100){
+//        log.error("Please check why it take more than 100 times");
+//        break;
+//      }
+//    }
+
+  }
+
+  private void refreshUserTags(Long id, List<Integer> tagIdList) {
   }
 
   private void pubDataInDb(List<WechatUser> data) {

@@ -1,7 +1,5 @@
 package com.wensheng.zcc.common.utils;
 
-import static java.time.temporal.ChronoUnit.HOURS;
-
 import com.wenshengamc.zcc.common.Common.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -12,12 +10,10 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
-import org.apache.tomcat.jni.Local;
 
 /**
  * @author chenwei on 1/2/19

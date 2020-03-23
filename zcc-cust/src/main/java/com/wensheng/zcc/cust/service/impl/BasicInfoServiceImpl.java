@@ -1,11 +1,13 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcUserprivMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionDetailMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserprivExample;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetailExample;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -26,32 +28,35 @@ import org.springframework.util.CollectionUtils;
 @Slf4j
 @CacheConfig(cacheNames = {"regionName"})
 public class BasicInfoServiceImpl implements BasicInfoService {
+//  @Autowired
+//  CustRegionMapper custRegionMapper;
+
   @Autowired
-  CustRegionMapper custRegionMapper;
+  CustRegionDetailMapper custRegionDetailMapper;
 
 
   @Autowired
   CustAmcUserprivMapper amcUserprivMapper;
 
   @Override
-  public List<CustRegion> getAllCustRegion() {
+  public List<CustRegionDetail> getAllCustRegion() {
 
-    return custRegionMapper.selectByExample(null);
+    return custRegionDetailMapper.selectByExample(null);
   }
 
   @Override
-  public List<CustRegion> getSubCustRegion(Long parentId) {
-    CustRegionExample custRegionExample = new CustRegionExample();
+  public List<CustRegionDetail> getSubCustRegion(Long parentId) {
+    CustRegionDetailExample custRegionExample = new CustRegionDetailExample();
     custRegionExample.createCriteria().andParentIdEqualTo(parentId);
-    return custRegionMapper.selectByExample(custRegionExample);
+    return custRegionDetailMapper.selectByExample(custRegionExample);
   }
 
   @Cacheable(unless = "#result == null")
   @Override
   public String getRegionNameByCode(Long code) throws Exception {
-    CustRegionExample custRegionExample = new CustRegionExample();
+    CustRegionDetailExample custRegionExample = new CustRegionDetailExample();
     custRegionExample.createCriteria().andIdEqualTo(code);
-    List<CustRegion> custRegions = custRegionMapper.selectByExample(custRegionExample);
+    List<CustRegionDetail> custRegions = custRegionDetailMapper.selectByExample(custRegionExample);
     if(CollectionUtils.isEmpty(custRegions)){
       log.error("Failed to find name for code:{}", code);
       throw new Exception(String.format("Failed to find name for code:%s", code));

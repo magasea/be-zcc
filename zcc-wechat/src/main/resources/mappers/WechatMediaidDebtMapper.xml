@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatMediaidDebtMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebt">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="INTEGER" property="type" />
+    <result column="media_id" jdbcType="CHAR" property="mediaId" />
+    <result column="debt_id" jdbcType="BIGINT" property="debtId" />
+    <result column="wx_img_url" jdbcType="CHAR" property="wxImgUrl" />
+    <result column="msg_media_id" jdbcType="CHAR" property="msgMediaId" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, type, media_id, debt_id, wx_img_url, msg_media_id, create_time
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebtExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_MEDIAID_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_MEDIAID_DEBT
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from WECHAT_MEDIAID_DEBT
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebtExample">
+    delete from WECHAT_MEDIAID_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebt">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_MEDIAID_DEBT (type, media_id, debt_id, 
+      wx_img_url, msg_media_id, create_time
+      )
+    values (#{type,jdbcType=INTEGER}, #{mediaId,jdbcType=CHAR}, #{debtId,jdbcType=BIGINT}, 
+      #{wxImgUrl,jdbcType=CHAR}, #{msgMediaId,jdbcType=CHAR}, #{createTime,jdbcType=TIMESTAMP}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebt">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_MEDIAID_DEBT
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="type != null">
+        type,
+      </if>
+      <if test="mediaId != null">
+        media_id,
+      </if>
+      <if test="debtId != null">
+        debt_id,
+      </if>
+      <if test="wxImgUrl != null">
+        wx_img_url,
+      </if>
+      <if test="msgMediaId != null">
+        msg_media_id,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
+      <if test="mediaId != null">
+        #{mediaId,jdbcType=CHAR},
+      </if>
+      <if test="debtId != null">
+        #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="wxImgUrl != null">
+        #{wxImgUrl,jdbcType=CHAR},
+      </if>
+      <if test="msgMediaId != null">
+        #{msgMediaId,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebtExample" resultType="java.lang.Long">
+    select count(*) from WECHAT_MEDIAID_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update WECHAT_MEDIAID_DEBT
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
+      <if test="record.mediaId != null">
+        media_id = #{record.mediaId,jdbcType=CHAR},
+      </if>
+      <if test="record.debtId != null">
+        debt_id = #{record.debtId,jdbcType=BIGINT},
+      </if>
+      <if test="record.wxImgUrl != null">
+        wx_img_url = #{record.wxImgUrl,jdbcType=CHAR},
+      </if>
+      <if test="record.msgMediaId != null">
+        msg_media_id = #{record.msgMediaId,jdbcType=CHAR},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update WECHAT_MEDIAID_DEBT
+    set id = #{record.id,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=INTEGER},
+      media_id = #{record.mediaId,jdbcType=CHAR},
+      debt_id = #{record.debtId,jdbcType=BIGINT},
+      wx_img_url = #{record.wxImgUrl,jdbcType=CHAR},
+      msg_media_id = #{record.msgMediaId,jdbcType=CHAR},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebt">
+    update WECHAT_MEDIAID_DEBT
+    <set>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="mediaId != null">
+        media_id = #{mediaId,jdbcType=CHAR},
+      </if>
+      <if test="debtId != null">
+        debt_id = #{debtId,jdbcType=BIGINT},
+      </if>
+      <if test="wxImgUrl != null">
+        wx_img_url = #{wxImgUrl,jdbcType=CHAR},
+      </if>
+      <if test="msgMediaId != null">
+        msg_media_id = #{msgMediaId,jdbcType=CHAR},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebt">
+    update WECHAT_MEDIAID_DEBT
+    set type = #{type,jdbcType=INTEGER},
+      media_id = #{mediaId,jdbcType=CHAR},
+      debt_id = #{debtId,jdbcType=BIGINT},
+      wx_img_url = #{wxImgUrl,jdbcType=CHAR},
+      msg_media_id = #{msgMediaId,jdbcType=CHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatMediaidDebtExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_MEDIAID_DEBT
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

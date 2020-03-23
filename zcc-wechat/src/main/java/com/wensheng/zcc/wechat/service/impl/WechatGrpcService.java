@@ -23,7 +23,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
-@GRpcService
+@GRpcService(interceptors = LogInterceptor.class)
 public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
 

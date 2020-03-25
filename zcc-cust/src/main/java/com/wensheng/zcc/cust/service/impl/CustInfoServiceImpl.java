@@ -62,6 +62,7 @@ import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -101,6 +102,8 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Value("${env.image-repo}")
   String fileBase;
+
+  ThreadLocal<String> provinceToHandle;
 
   static final String SEP_INDICATOR_EDITABLE = "|$|";
   static final String SEP_INDICATOR_ORIGINAL = "|#|";
@@ -816,13 +819,18 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
   }
 
-  @Override
-  public void patchCmpyProvince(String province) {
-
+  @Scheduled(cron = "${spring.task.scheduling.cronExpCmpyInfo}")
+  public void patchCmpyInfo() {
+    String province;
+    if(provinceToHandle != null){
+      province = provinceToHandle.get();
+    }else{
+      province = null;
+    }
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.setOrderByClause(" id desc ");
     if(StringUtils.isEmpty(province)){
-      custTrdCmpyExample.createCriteria();
+      custTrdCmpyExample.createCriteria().andLegalReptiveEqualTo("-1");
 
     }else{
       custTrdCmpyExample.createCriteria().andCmpyProvinceEqualTo(province);
@@ -840,17 +848,13 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdCmpy> needPatchList = new ArrayList<>();
     while(keepGoing){
       for(CustTrdCmpy custTrdCmpy: custTrdCmpyList){
-//        if(StringUtils.isEmpty(custTrdCmpy.getLegalReptive()) || custTrdCmpy.getLegalReptive().equals("-1")){
-          //need patch province info
-          if(StringUtils.isEmpty(custTrdCmpy.getCmpyName()) || custTrdCmpy.getCmpyName().equals("-1")){
-            continue;
-          }
 
-          needPatchList.add(custTrdCmpy);
+        //need patch province info
+        if(StringUtils.isEmpty(custTrdCmpy.getCmpyName()) || custTrdCmpy.getCmpyName().equals("-1")){
+          continue;
+        }
 
-
-//        }
-
+        needPatchList.add(custTrdCmpy);
 
       }
       offset += pageSize;
@@ -870,7 +874,21 @@ public class CustInfoServiceImpl implements CustInfoService {
       syncService.copyCmpySync2CmpyInfo(custCmpyInfoFromSync, custTrdCmpy);
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }
-  needPatchList = null;
+    needPatchList = null;
+  }
+
+
+  @Override
+  public void patchCmpyProvince(String province) {
+    synchronized (provinceToHandle){
+      if(provinceToHandle == null){
+        synchronized (provinceToHandle){
+          provinceToHandle = new ThreadLocal<>();
+        }
+      }
+      provinceToHandle.set(province);
+    }
+
   }
 
   @Override

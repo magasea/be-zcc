@@ -54,7 +54,7 @@ public interface AmcAssetService {
     Long getAssetCount(Map<String, Object> queryParam) throws Exception;
 
 
-    Map<String, List<Long>> getAllAssetTitles();
+   List<AmcAsset> getSimpleAssets(List<Long> ids);
 
   AssetImage saveImageInfo( AssetImage assetImage);
 

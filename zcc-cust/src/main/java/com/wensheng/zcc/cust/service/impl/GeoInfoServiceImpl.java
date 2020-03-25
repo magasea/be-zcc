@@ -35,6 +35,8 @@ public class GeoInfoServiceImpl implements GeoInfoService {
   @Autowired
   BasicInfoService basicInfoService;
 
+  static final Long period_week_second = 60*60*24*7L;
+
   @Override
   @Scheduled(cron = "${spring.task.scheduling.cronExprGeo}")
   public void searchGeoInfoForTrd() {
@@ -63,13 +65,7 @@ public class GeoInfoServiceImpl implements GeoInfoService {
           log.error("", e);
           continue;
         }
-        GeoJsonPoint geoJsonPoint = null;
-        try {
-          geoJsonPoint = comnfuncGrpcService.getGeoInfoFromAddress(regionName, regionName);
-        } catch (Exception e) {
-          e.printStackTrace();
-          continue;
-        }
+
         query = new Query();
         query.addCriteria(Criteria.where("custTrdInfoId").is(custTrdInfo.getId()));
         List<CustTrdGeo> custTrdGeos = mongoTemplate.find(query, CustTrdGeo.class);
@@ -80,18 +76,34 @@ public class GeoInfoServiceImpl implements GeoInfoService {
         }else{
           custTrdGeo = custTrdGeos.get(0);
         }
-        custTrdGeo.setLocation(geoJsonPoint);
-        custTrdGeo.setCustTrdInfoId(custTrdInfo.getId());
-        custTrdGeo.setBuyerId(custTrdInfo.getBuyerId());
-        custTrdGeo.setBuyerType(custTrdInfo.getBuyerType());
-        custTrdGeo.setAmount(custTrdInfo.getTotalDebtAmount());
-        custTrdGeo.setTitle(custTrdInfo.getInfoTitle());
-        custTrdGeo.setDebtCity(custTrdInfo.getDebtCity());
-        custTrdGeo.setUrl(custTrdInfo.getInfoUrl());
-        custTrdGeo.setUpdateTime(updateTime);
+        GeoJsonPoint geoJsonPoint = null;
+        if(custTrdGeo.getUpdateTime() == null || updateTime - custTrdGeo.getUpdateTime() > period_week_second){
+          try {
+            geoJsonPoint = comnfuncGrpcService.getGeoInfoFromAddress(regionName, regionName);
+          } catch (Exception e) {
+            e.printStackTrace();
+            continue;
+          }
+          custTrdGeo.setLocation(geoJsonPoint);
+          custTrdGeo.setCustTrdInfoId(custTrdInfo.getId());
+          custTrdGeo.setBuyerId(custTrdInfo.getBuyerId());
+          custTrdGeo.setBuyerType(custTrdInfo.getBuyerType());
+          custTrdGeo.setAmount(custTrdInfo.getTotalDebtAmount());
+          custTrdGeo.setTitle(custTrdInfo.getInfoTitle());
+          custTrdGeo.setDebtCity(custTrdInfo.getDebtCity());
+          custTrdGeo.setUrl(custTrdInfo.getInfoUrl());
+          custTrdGeo.setUpdateTime(updateTime);
+        }else{
+          continue;
+        }
+
+
+
+
         mongoTemplate.save(custTrdGeo);
 
       }
+
       offset = pageSize + offset;
       rowBounds = new RowBounds(offset, pageSize);
 

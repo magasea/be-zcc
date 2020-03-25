@@ -91,6 +91,7 @@ spring:
             cronExprTrd: 0 0 6,18,23 * * *
             cronExprCust: 0 0 7,13,19,0 * * *
             cronExprGeo: 0 0 7,13,19,0 * * *
+            cronExpCmpyInfo: 0 0 22 * * *
             pool:
                 size: 3
     servlet:
@@ -163,8 +164,10 @@ env:
     env-hint: prod
     dbhost: 10.20.100.238
     rpchost: 10.20.100.238
-    dbusername: custuser
-    dbpasswd: Wensheng#123
+#    dbusername: custuser
+#    dbpasswd: Wensheng#123
+    dbusername: wscustworker
+    dbpasswd: Wsamc@12345
     recomhost: 10.20.100.236
     recomport: 7654
     kfkhost: 10.20.100.238

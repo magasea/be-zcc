@@ -127,10 +127,10 @@ public class AmcAssetController {
   }
 
 
-  @RequestMapping(value = "/amcid/{amcid}/asset/allTitles", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/getSimpleAssets", method = RequestMethod.POST)
   @ResponseBody
-  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody QueryParam queryParam) throws Exception{
-    return amcAssetService.getAllAssetTitles();
+  public List<AmcAsset> getSimpleAssets( @RequestBody List<Long> ids) throws Exception{
+    return amcAssetService.getSimpleAssets(ids);
   }
 
   @RequestMapping(value = "/amcid/{amcid}/asset", method = RequestMethod.POST)

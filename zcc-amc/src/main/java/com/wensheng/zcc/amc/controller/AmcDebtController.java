@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -362,6 +363,19 @@ public class AmcDebtController {
 
 
     return amcDebtExtVo;
+  }
+
+  @RequestMapping(value = "/api/amcid/{id}/debt/getDebtTitle", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcDebt> queryDebtTitle(@RequestParam("debtId") List<Long> debtIds)
+          throws Exception {
+
+
+    List<AmcDebt> amcDebts = amcDebtService.getDebtSimple(debtIds);
+
+
+
+    return amcDebts;
   }
 
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'PERM_DEBTASSET_MOD')")

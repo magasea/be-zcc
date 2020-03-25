@@ -19,4 +19,6 @@ public interface AmcContactorService {
 
   void initCmpyAmcContactor();
 
+  void initCmpyAmcContactorOfCmpy(Long cmpyId);
+
 }

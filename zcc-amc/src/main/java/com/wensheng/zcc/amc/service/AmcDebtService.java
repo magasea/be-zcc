@@ -12,8 +12,6 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
-import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
 import java.util.Map;
@@ -39,6 +37,8 @@ public interface AmcDebtService {
   public List<AmcDebt> queryAllByUserId( Long userId);
 
   public AmcDebtExtVo get(Long amcDebtId) throws Exception;
+
+
   public List<AmcDebtExtVo> getByIds(List<Long> amcDebtIds) throws Exception;
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
@@ -113,4 +113,6 @@ public interface AmcDebtService {
   public void searchGeoInfoForDebtByCourt();
 
   List<AmcDebtExtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint);
+
+  List<AmcDebt> getDebtSimple(List<Long> debtIds);
 }

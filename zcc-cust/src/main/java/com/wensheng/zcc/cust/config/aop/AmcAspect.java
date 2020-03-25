@@ -94,10 +94,11 @@ public class AmcAspect {
 
     }
 
-    if(CollectionUtils.isEmpty(userPrivMap) ){
+    if(CollectionUtils.isEmpty(userPrivMap) || null == province || StringUtils.isEmpty(province)){
 
       return joinPoint.proceed(joinPoint.getArgs());
     }
+
 
     if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
       Integer locationId = (Integer) detailsParam.get("location");
@@ -225,10 +226,7 @@ public class AmcAspect {
     if(title.equals(AmcSSOTitleEnum.TITLE_MGR.getId())||title.equals(AmcSSOTitleEnum.TITLE_SYS_ADM.getId())){
       return joinPoint.proceed(joinPoint.getArgs());
     }else if(deptId.equals(AmcDeptEnum.BUSINESS_DEPT.getId())){
-      if(!amcUserProvsMap.containsKey(location)){
-        throw new RuntimeException(String.format("您所在的地区:%s 不能查询投资人信息",
-            location));
-      }else{
+
         if(CollectionUtils.isEmpty(queryParam.getCustCity())){
           queryParam.setCustCity(amcUserProvsMap.get(location));
         }else{
@@ -251,7 +249,7 @@ public class AmcAspect {
           }
 
         }
-      }
+
     }
 
 

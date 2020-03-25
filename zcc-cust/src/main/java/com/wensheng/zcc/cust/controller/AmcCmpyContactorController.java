@@ -46,7 +46,7 @@ public class AmcCmpyContactorController {
   AmcContactorService amcContactorService;
 
 
-//  @QueryChecker
+
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor)
@@ -55,7 +55,7 @@ public class AmcCmpyContactorController {
   }
 
 
-//  @QueryChecker
+
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor){

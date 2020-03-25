@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
@@ -35,10 +36,10 @@ public class MiniAppAssetController {
   @Autowired
   AmcBaiDuLogisQuery amcBaiDuLogisQuery;
 
-  @RequestMapping(value = "/asset/allTitles", method = RequestMethod.POST)
+  @RequestMapping(value = "/amcid/{amcid}/asset/getSimpleAssets", method = RequestMethod.POST)
   @ResponseBody
-  public Map<String, List<Long>> getAmcAssetsAllTitles( @RequestBody QueryParam queryParam) throws Exception{
-    return amcAssetService.getAllAssetTitles();
+  public List<AmcAsset> getSimpleAssets(@RequestBody List<Long> ids) throws Exception{
+    return amcAssetService.getSimpleAssets(ids);
   }
 
   @RequestMapping(value = "/asset", method = RequestMethod.POST)

@@ -39,8 +39,6 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtorCmpy;
-import com.wensheng.zcc.amc.module.vo.AmcDebtorPerson;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -68,17 +66,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -224,7 +219,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Transactional
-  @CacheEvict
+  @CacheEvict(allEntries = true)
   public AmcDebtVo create(AmcDebt amcDebt) {
     amcDebtMapper.insertSelective(amcDebt);
     amcDebt.setZccDebtCode(amcMiscService.generateZccDebtCode(amcDebt.getDebtpackId(), amcDebt.getId()));
@@ -234,7 +229,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Transactional
-  @CacheEvict
+  @CacheEvict(allEntries = true)
   public int del(Long amcDebtId) {
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(amcDebtId);
     if(amcDebt != null && (amcDebt.getPublishState() == PublishStateEnum.DRAFT.getStatus()||amcDebt.getPublishState() == PublishStateEnum.NOTCLEAR.getStatus())){
@@ -267,6 +262,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  @CacheEvict(allEntries = true)
   public AmcDebtVo update(AmcDebt amcDebt) {
     AmcDebt amcDebtHistory = amcDebtMapper.selectByPrimaryKey(amcDebt.getId());
     if(!amcDebtHistory.getAmcContactorName().equals(amcDebt.getAmcContactorName()) ||
@@ -1194,6 +1190,18 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       }
     }
     return amcDebtVos;
+  }
+
+  @Override
+  @Cacheable
+  public List<AmcDebt> getDebtSimple(List<Long> debtIds) {
+    if(CollectionUtils.isEmpty(debtIds)){
+      return new ArrayList<>();
+    }
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andIdIn(debtIds);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
   }
 
   private void handleCourtGeoInfo(Map<Long, Long> debt2Courts) {

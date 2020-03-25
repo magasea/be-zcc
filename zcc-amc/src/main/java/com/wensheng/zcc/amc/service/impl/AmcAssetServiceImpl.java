@@ -51,6 +51,7 @@ import org.apache.kafka.common.protocol.types.Field.Str;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.GeoResults;
@@ -107,6 +108,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     @Transactional
+    @CacheEvict(allEntries = true)
     public AmcAssetVo create(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.insertSelective(amcAsset);
         delMongoForAmcAsset(amcAsset.getId());
@@ -192,6 +194,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     @Override
+    @CacheEvict(allEntries = true)
     @Transactional
     public int delAsset(Long amcAssetId) {
         AmcAsset amcAsset = amcAssetMapper.selectByPrimaryKey(amcAssetId);
@@ -244,7 +247,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     }
 
-
+    @CacheEvict(allEntries = true)
     @Override
     public AmcAssetVo update(AmcAsset amcAsset) throws Exception {
         amcAssetMapper.updateByPrimaryKey(amcAsset);
@@ -432,23 +435,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     }
 
-//    Comparator<AmcAssetVo> amcAssetVoComparator = new Comparator<AmcAssetVo>() {
-//        @Override
-//        public int compare(AmcAssetVo e1, AmcAssetVo e2) {
-//            if( e1.getAssetImage() == null && e2.getAssetImage() == null){
-//                return 0;
-//            }else if( e1.getAssetImage() != null && e2.getAssetImage() == null){
-//                return 1;
-//            }else if( e1.getAssetImage() != null && e2.getAssetImage() != null && e1.getAssetImage().getOssPath() != null && e2.getAssetImage().getOssPath() == null ) {
-//                return 1;
-//            }else if( e1.getAssetImage() != null && e2.getAssetImage() != null && e1.getAssetImage().getOssPath() != null && e2.getAssetImage().getOssPath() != null ){
-//                return 0;
-//            }else{
-//                return -1;
-//            }
-//
-//        }
-//    };
+
 
     @Override
     public Long getAssetCount(Map<String, Object> queryParam) throws Exception {
@@ -458,19 +445,14 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     @Override
-    public Map<String, List<Long>> getAllAssetTitles() {
-        AmcAssetExample amcAssetExample = new AmcAssetExample();
-//        amcAssetExample.setDistinct(true);
-        List<AmcAsset> amcAssets =  amcAssetExtMapper.selectAllTitlesByExample(amcAssetExample);
-        Map<String, List<Long>> titleMap = new HashMap<>();
-        for(AmcAsset amcAsset: amcAssets){
-            if(!titleMap.containsKey(amcAsset.getTitle())){
-                titleMap.put(amcAsset.getTitle(), new ArrayList<Long>());
-            }
-            titleMap.get(amcAsset.getTitle()).add(amcAsset.getId());
-
+    @Cacheable
+    public List<AmcAsset> getSimpleAssets(List<Long> ids) {
+        if(CollectionUtils.isEmpty(ids)){
+            return new ArrayList<>();
         }
-        return titleMap;
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andIdIn(ids);
+        return amcAssetMapper.selectByExample(amcAssetExample);
     }
 
     @Override
@@ -564,6 +546,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public List<AmcAssetVo> getAssetsByIds(List<Long> assetIds) throws Exception {
+        if(CollectionUtils.isEmpty(assetIds)){
+            return new ArrayList<>();
+        }
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         amcAssetExample.createCriteria().andIdIn(assetIds);
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);

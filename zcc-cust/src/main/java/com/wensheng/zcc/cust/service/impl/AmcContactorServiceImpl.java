@@ -175,9 +175,12 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     // Iterate over the HashMap
     while (iterator.hasNext()){
       Map.Entry<String, CustAmcCmpycontactorExt> entry = iterator.next();
-      if(entry.getValue().getCustAmcCmpycontactor().getCreateBy() == -1L
+      if(entry.getValue() == null||entry.getValue().getCustAmcCmpycontactor() == null ){
+        continue;
+      }
+      if(entry.getValue().getCustAmcCmpycontactor().getCreateBy() != null && entry.getValue().getCustAmcCmpycontactor().getCreateBy() == -1L
               && entry.getValue().getCustAmcCmpycontactor().getUpdateBy() == -1L &&CollectionUtils.isEmpty(entry.getValue().getCustTrdInfoList()) ){
-        custAmcCmpycontactorMapper.deleteByPrimaryKey(entry.getValue().getId());
+        custAmcCmpycontactorMapper.deleteByPrimaryKey(entry.getValue().getCustAmcCmpycontactor().getId());
         iterator.remove();
       }
 
@@ -185,6 +188,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
 
      custAmcCmpycontactorExtVos = convertToVos(new ArrayList(custAmcCmpycontactorMap.values()));
+    custAmcCmpycontactorMap = null;
     return custAmcCmpycontactorExtVos;
   }
 

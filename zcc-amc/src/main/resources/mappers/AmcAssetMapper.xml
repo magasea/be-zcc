@@ -14,7 +14,7 @@
     <result column="total_valuation" jdbcType="BIGINT" property="totalValuation" />
     <result column="debt_id" jdbcType="BIGINT" property="debtId" />
     <result column="building_area" jdbcType="BIGINT" property="buildingArea" />
-    <result column="building_unit_price" jdbcType="INTEGER" property="buildingUnitPrice" />
+    <result column="building_unit_price" jdbcType="BIGINT" property="buildingUnitPrice" />
     <result column="land_area" jdbcType="BIGINT" property="landArea" />
     <result column="land_area_unit" jdbcType="INTEGER" property="landAreaUnit" />
     <result column="land_unit_price" jdbcType="BIGINT" property="landUnitPrice" />
@@ -146,7 +146,7 @@
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
       #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{totalValuation,jdbcType=BIGINT}, 
-      #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, #{buildingUnitPrice,jdbcType=INTEGER}, 
+      #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, #{buildingUnitPrice,jdbcType=BIGINT}, 
       #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, #{landUnitPrice,jdbcType=BIGINT}, 
       #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
       #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
@@ -283,7 +283,7 @@
         #{buildingArea,jdbcType=BIGINT},
       </if>
       <if test="buildingUnitPrice != null">
-        #{buildingUnitPrice,jdbcType=INTEGER},
+        #{buildingUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="landArea != null">
         #{landArea,jdbcType=BIGINT},
@@ -384,7 +384,7 @@
         building_area = #{record.buildingArea,jdbcType=BIGINT},
       </if>
       <if test="record.buildingUnitPrice != null">
-        building_unit_price = #{record.buildingUnitPrice,jdbcType=INTEGER},
+        building_unit_price = #{record.buildingUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="record.landArea != null">
         land_area = #{record.landArea,jdbcType=BIGINT},
@@ -456,7 +456,7 @@
       total_valuation = #{record.totalValuation,jdbcType=BIGINT},
       debt_id = #{record.debtId,jdbcType=BIGINT},
       building_area = #{record.buildingArea,jdbcType=BIGINT},
-      building_unit_price = #{record.buildingUnitPrice,jdbcType=INTEGER},
+      building_unit_price = #{record.buildingUnitPrice,jdbcType=BIGINT},
       land_area = #{record.landArea,jdbcType=BIGINT},
       land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
       land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
@@ -515,7 +515,7 @@
         building_area = #{buildingArea,jdbcType=BIGINT},
       </if>
       <if test="buildingUnitPrice != null">
-        building_unit_price = #{buildingUnitPrice,jdbcType=INTEGER},
+        building_unit_price = #{buildingUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="landArea != null">
         land_area = #{landArea,jdbcType=BIGINT},
@@ -584,7 +584,7 @@
       total_valuation = #{totalValuation,jdbcType=BIGINT},
       debt_id = #{debtId,jdbcType=BIGINT},
       building_area = #{buildingArea,jdbcType=BIGINT},
-      building_unit_price = #{buildingUnitPrice,jdbcType=INTEGER},
+      building_unit_price = #{buildingUnitPrice,jdbcType=BIGINT},
       land_area = #{landArea,jdbcType=BIGINT},
       land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
       land_unit_price = #{landUnitPrice,jdbcType=BIGINT},

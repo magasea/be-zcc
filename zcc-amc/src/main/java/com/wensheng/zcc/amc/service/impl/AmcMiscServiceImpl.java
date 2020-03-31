@@ -79,8 +79,12 @@ public class AmcMiscServiceImpl {
         }
       }
     }
-    String amcDebtCode = String.format("wensheng-%s-%s%s", areaMapper.get(debtPackId),
-        AmcDateUtils.getCurrentYear(), debtId);
+    String amcDebtCode = "-1";
+    if(debtPackId != null && debtPackId > 0){
+      amcDebtCode = String.format("wensheng-%s-%s%s", areaMapper.get(debtPackId),
+              AmcDateUtils.getCurrentYear(), debtId);
+    }
+
     return amcDebtCode;
 
   }
@@ -148,7 +152,7 @@ public class AmcMiscServiceImpl {
 
   private AmcDebtContactor getContactorByDebtId(Long debtId){
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
-    if(amcDebt.getAmcContactorId() != null && amcDebt.getAmcContactorId() > 0){
+    if(amcDebt != null && amcDebt.getAmcContactorId() != null && amcDebt.getAmcContactorId() > 0){
       AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebt.getAmcContactorId());
       return amcDebtContactor;
     }

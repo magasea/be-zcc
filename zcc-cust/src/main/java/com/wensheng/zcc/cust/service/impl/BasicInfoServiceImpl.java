@@ -51,6 +51,21 @@ public class BasicInfoServiceImpl implements BasicInfoService {
     return custRegionDetailMapper.selectByExample(custRegionExample);
   }
 
+  @Override
+  @Cacheable
+  public List<CustRegionDetail> getRegionByName(String name) {
+    CustRegionDetailExample custRegionExample = new CustRegionDetailExample();
+    custRegionExample.createCriteria().andNameEqualTo(name);
+    return custRegionDetailMapper.selectByExample(custRegionExample);
+
+  }
+
+  @Override
+  @Cacheable
+  public CustRegionDetail getRegionById(Long id) {
+    return custRegionDetailMapper.selectByPrimaryKey(id);
+  }
+
   @Cacheable(unless = "#result == null")
   @Override
   public String getRegionNameByCode(Long code) throws Exception {

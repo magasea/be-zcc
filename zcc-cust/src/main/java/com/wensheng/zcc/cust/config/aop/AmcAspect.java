@@ -18,6 +18,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
+
+import com.wensheng.zcc.cust.service.impl.KafkaServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field.Str;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -48,6 +50,9 @@ public class AmcAspect {
 
   @Autowired
   BasicInfoService basicInfoService;
+
+  @Autowired
+  KafkaServiceImpl kafkaService;
 
 
   @Around("@annotation(LogExecutionTime)")
@@ -122,7 +127,7 @@ public class AmcAspect {
 
 
   @Around("@annotation(QueryCheckerCmpy) ")
-  public Object aroundDoQueryCmpy(ProceedingJoinPoint joinPoint) throws Throwable {
+  public Object aroundDoModCmpy(ProceedingJoinPoint joinPoint) throws Throwable {
     log.info("now get the point cut");
     if(joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null){
       log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
@@ -172,10 +177,6 @@ public class AmcAspect {
             locationUserEnum.getCname(), designedLocationEnum.getCname()));
       }
     }
-
-
-
-
 
 
     return joinPoint.proceed(joinPoint.getArgs());

@@ -162,13 +162,18 @@ wssso:
   port: 11002
   url: http://${wssso.host}:${wssso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
 # end::wechatConfig
-
+cust:
+  host: ${env.cust-host}
+  port: 10004
+  getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
+  getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
 env:
   name: dev
   dbhost: 10.20.100.235
   kfkhost: 10.20.100.235
   rpchost: localhost
   ws-sso-host: localhost
+  cust-host: localhost
   amcssohost: localhost
   recmhost: 10.20.100.228
   dbusername: wsamcworker

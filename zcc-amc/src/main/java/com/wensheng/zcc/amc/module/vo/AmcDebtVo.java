@@ -35,6 +35,8 @@ public class AmcDebtVo {
 
   private String totalAmountDesc;
 
+  private BigDecimal interestAmount;
+
   private Date settleDate;
 
   private Long courtId;

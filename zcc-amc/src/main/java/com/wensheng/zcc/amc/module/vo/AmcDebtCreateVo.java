@@ -37,6 +37,8 @@ public class AmcDebtCreateVo implements Serializable {
 
   private String totalAmountDesc;
 
+  private BigDecimal interestAmount;
+
   private Date settleDate;
 
   private Long courtId;

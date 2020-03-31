@@ -892,52 +892,52 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceEqualTo(Integer value) {
+        public Criteria andBuildingUnitPriceEqualTo(Long value) {
             addCriterion("building_unit_price =", value, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceNotEqualTo(Integer value) {
+        public Criteria andBuildingUnitPriceNotEqualTo(Long value) {
             addCriterion("building_unit_price <>", value, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceGreaterThan(Integer value) {
+        public Criteria andBuildingUnitPriceGreaterThan(Long value) {
             addCriterion("building_unit_price >", value, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceGreaterThanOrEqualTo(Integer value) {
+        public Criteria andBuildingUnitPriceGreaterThanOrEqualTo(Long value) {
             addCriterion("building_unit_price >=", value, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceLessThan(Integer value) {
+        public Criteria andBuildingUnitPriceLessThan(Long value) {
             addCriterion("building_unit_price <", value, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceLessThanOrEqualTo(Integer value) {
+        public Criteria andBuildingUnitPriceLessThanOrEqualTo(Long value) {
             addCriterion("building_unit_price <=", value, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceIn(List<Integer> values) {
+        public Criteria andBuildingUnitPriceIn(List<Long> values) {
             addCriterion("building_unit_price in", values, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceNotIn(List<Integer> values) {
+        public Criteria andBuildingUnitPriceNotIn(List<Long> values) {
             addCriterion("building_unit_price not in", values, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceBetween(Integer value1, Integer value2) {
+        public Criteria andBuildingUnitPriceBetween(Long value1, Long value2) {
             addCriterion("building_unit_price between", value1, value2, "buildingUnitPrice");
             return (Criteria) this;
         }
 
-        public Criteria andBuildingUnitPriceNotBetween(Integer value1, Integer value2) {
+        public Criteria andBuildingUnitPriceNotBetween(Long value1, Long value2) {
             addCriterion("building_unit_price not between", value1, value2, "buildingUnitPrice");
             return (Criteria) this;
         }

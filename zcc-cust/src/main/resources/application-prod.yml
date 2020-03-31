@@ -90,7 +90,7 @@ spring:
             thread-name-prefix: synchWithScrapySystem
             cronExprTrd: 0 0 6,18,23 * * *
             cronExprCust: 0 0 7,13,19,0 * * *
-            cronExprGeo: 0 0 7,13,19,0 * * *
+            cronExprGeo: 0 0 7,19,0 * * *
             cronExpCmpyInfo: 0 0 22 * * *
             pool:
                 size: 3
@@ -132,6 +132,7 @@ message:
 
 kafka:
     topic_wechatuser: topic_wechatuser_${env.env-hint}
+    topic_userop_info: topic_userop_info_${env.env-hint}
 
 logging:
     level:

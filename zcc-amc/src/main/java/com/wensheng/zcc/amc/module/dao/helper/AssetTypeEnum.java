@@ -17,9 +17,10 @@ public enum AssetTypeEnum {
     LAND(6, "土地"),
     FACTORY_BUILDING(7, "厂房"),
     OTHER1(8, "其它"),
+
     HOTEL(9, "酒店"),
     COMBINED(10, "综合"),
-
+    OTHER2(11, "其他"),
 
     ;
     AssetTypeEnum(int type, String name){

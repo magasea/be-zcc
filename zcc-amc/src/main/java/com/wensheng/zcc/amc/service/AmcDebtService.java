@@ -28,6 +28,7 @@ public interface AmcDebtService {
   public DebtImage  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc, ImageClassEnum imageClass);
 
   public AmcDebtVo create(AmcDebt AmcDebt);
+  public List<AmcDebt> queryByTitle(String debtTitle, Long deptPackId);
 
   public int del(Long amcDebtId);
 
@@ -114,5 +115,6 @@ public interface AmcDebtService {
 
   List<AmcDebtExtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint);
 
-  List<AmcDebt> getDebtSimple(List<Long> debtIds);
+  List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
+  List<AmcDebt> getDebtSimpleByTitleLike(String title);
 }

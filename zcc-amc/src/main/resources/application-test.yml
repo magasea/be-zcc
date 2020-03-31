@@ -157,6 +157,11 @@ wssso:
   host: ${env.ws-sso-host}
   port: 11002
   url: http://${wssso.host}:${wssso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
+cust:
+  host: ${env.cust-host}
+  port: 10004
+  getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
+  getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
 env:
   name: test
   dbhost: 10.20.100.235
@@ -166,6 +171,7 @@ env:
   dbpasswd: Wsamc@12345
   kfkhost: 10.20.100.235
   ws-sso-host: 10.20.100.235
+  cust-host: 10.20.100.235
   recmhost: 10.20.100.228
   mongodb-host: 10.20.100.235
   image-repo: /home/chenwei/temp

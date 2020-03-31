@@ -14,6 +14,8 @@ import java.util.Map;
 public interface BasicInfoService {
   List<CustRegionDetail> getAllCustRegion();
   List<CustRegionDetail> getSubCustRegion(Long parentId);
+  List<CustRegionDetail> getRegionByName(String name);
+  CustRegionDetail getRegionById(Long id);
   public String getRegionNameByCode(Long code) throws Exception ;
 
   List<CustAmcUserpriv> getAmcUserPriv();

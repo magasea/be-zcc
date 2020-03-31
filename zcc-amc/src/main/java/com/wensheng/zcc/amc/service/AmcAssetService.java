@@ -73,6 +73,8 @@ public interface AmcAssetService {
 
   Map<Long, Map<Long, List<AssetImage>>> getAssetImgsByDebtIds(List<Long> debtIds);
 
+  Map<Long, List<AmcAsset>> getSimpleAssetsByDebtId(List<Long> debtIds);
+
   public void checkGeoInfoWorker();
 
   Map<Long, AssetAdditional> getAssetAdditions(Long amcDebtId);

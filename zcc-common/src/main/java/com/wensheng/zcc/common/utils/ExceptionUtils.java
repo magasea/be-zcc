@@ -63,6 +63,11 @@ public class ExceptionUtils {
     LOGIN_REQUIRE_ERROR(1036, "login is required ", "必须先登录"),
 
     INVALID_COMPANY_NAME_ERROR(1037, "名字非法 ", "字符串里面有非法字符"),
+
+    INVALID_EXCEL_HEADER_ERROR(1038, "非法的表头 ", "出现后台尚未能够处理的表头"),
+    MISSING_EXCEL_HEADER_ERROR(1039, "有缺失的表头 ", "有缺失的表头"),
+    MISSING_EXCEL_CONTENT_ERROR(1040, "有缺失的内容 ", "有缺失的内容"),
+    INVALID_EXCEL_CONTENT_ERROR(1041, "不合理的内容 ", "不合理的内容"),
     ;
     int code;
     String name;

@@ -17,11 +17,19 @@ public class AmcDebt {
 
     private Date baseDate;
 
+    private Long interestAmount;
+
     private Long totalAmount;
 
     private String totalAmountDesc;
 
     private Date settleDate;
+
+    private Long curtProv;
+
+    private Long curtCity;
+
+    private Long curtCounty;
 
     private Long courtId;
 
@@ -125,6 +133,14 @@ public class AmcDebt {
         this.baseDate = baseDate;
     }
 
+    public Long getInterestAmount() {
+        return interestAmount;
+    }
+
+    public void setInterestAmount(Long interestAmount) {
+        this.interestAmount = interestAmount;
+    }
+
     public Long getTotalAmount() {
         return totalAmount;
     }
@@ -147,6 +163,30 @@ public class AmcDebt {
 
     public void setSettleDate(Date settleDate) {
         this.settleDate = settleDate;
+    }
+
+    public Long getCurtProv() {
+        return curtProv;
+    }
+
+    public void setCurtProv(Long curtProv) {
+        this.curtProv = curtProv;
+    }
+
+    public Long getCurtCity() {
+        return curtCity;
+    }
+
+    public void setCurtCity(Long curtCity) {
+        this.curtCity = curtCity;
+    }
+
+    public Long getCurtCounty() {
+        return curtCounty;
+    }
+
+    public void setCurtCounty(Long curtCounty) {
+        this.curtCounty = curtCounty;
     }
 
     public Long getCourtId() {

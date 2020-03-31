@@ -694,6 +694,21 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssetMap;
     }
 
+    @Override
+    public Map<Long, List<AmcAsset>> getSimpleAssetsByDebtId(List<Long> debtIds) {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdIn(debtIds);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        Map<Long, List<AmcAsset>> assetDebtIdMap = new HashMap<>();
+        for(AmcAsset amcAsset: amcAssets){
+            if(!assetDebtIdMap.containsKey(amcAsset.getDebtId())){
+                assetDebtIdMap.put(amcAsset.getDebtId(), new ArrayList<>());
+            }
+            assetDebtIdMap.get(amcAsset.getDebtId()).add(amcAsset);
+        }
+        return assetDebtIdMap;
+    }
+
     private AmcAssetExample getAmcAssetExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();

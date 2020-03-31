@@ -545,6 +545,66 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andInterestAmountIsNull() {
+            addCriterion("interest_amount is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountIsNotNull() {
+            addCriterion("interest_amount is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountEqualTo(Long value) {
+            addCriterion("interest_amount =", value, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountNotEqualTo(Long value) {
+            addCriterion("interest_amount <>", value, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountGreaterThan(Long value) {
+            addCriterion("interest_amount >", value, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountGreaterThanOrEqualTo(Long value) {
+            addCriterion("interest_amount >=", value, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountLessThan(Long value) {
+            addCriterion("interest_amount <", value, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountLessThanOrEqualTo(Long value) {
+            addCriterion("interest_amount <=", value, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountIn(List<Long> values) {
+            addCriterion("interest_amount in", values, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountNotIn(List<Long> values) {
+            addCriterion("interest_amount not in", values, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountBetween(Long value1, Long value2) {
+            addCriterion("interest_amount between", value1, value2, "interestAmount");
+            return (Criteria) this;
+        }
+
+        public Criteria andInterestAmountNotBetween(Long value1, Long value2) {
+            addCriterion("interest_amount not between", value1, value2, "interestAmount");
+            return (Criteria) this;
+        }
+
         public Criteria andTotalAmountIsNull() {
             addCriterion("total_amount is null");
             return (Criteria) this;
@@ -732,6 +792,186 @@ public class AmcDebtExample {
 
         public Criteria andSettleDateNotBetween(Date value1, Date value2) {
             addCriterion("settle_date not between", value1, value2, "settleDate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvIsNull() {
+            addCriterion("curt_prov is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvIsNotNull() {
+            addCriterion("curt_prov is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvEqualTo(Long value) {
+            addCriterion("curt_prov =", value, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvNotEqualTo(Long value) {
+            addCriterion("curt_prov <>", value, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvGreaterThan(Long value) {
+            addCriterion("curt_prov >", value, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvGreaterThanOrEqualTo(Long value) {
+            addCriterion("curt_prov >=", value, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvLessThan(Long value) {
+            addCriterion("curt_prov <", value, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvLessThanOrEqualTo(Long value) {
+            addCriterion("curt_prov <=", value, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvIn(List<Long> values) {
+            addCriterion("curt_prov in", values, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvNotIn(List<Long> values) {
+            addCriterion("curt_prov not in", values, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvBetween(Long value1, Long value2) {
+            addCriterion("curt_prov between", value1, value2, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtProvNotBetween(Long value1, Long value2) {
+            addCriterion("curt_prov not between", value1, value2, "curtProv");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityIsNull() {
+            addCriterion("curt_city is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityIsNotNull() {
+            addCriterion("curt_city is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityEqualTo(Long value) {
+            addCriterion("curt_city =", value, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityNotEqualTo(Long value) {
+            addCriterion("curt_city <>", value, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityGreaterThan(Long value) {
+            addCriterion("curt_city >", value, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityGreaterThanOrEqualTo(Long value) {
+            addCriterion("curt_city >=", value, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityLessThan(Long value) {
+            addCriterion("curt_city <", value, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityLessThanOrEqualTo(Long value) {
+            addCriterion("curt_city <=", value, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityIn(List<Long> values) {
+            addCriterion("curt_city in", values, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityNotIn(List<Long> values) {
+            addCriterion("curt_city not in", values, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityBetween(Long value1, Long value2) {
+            addCriterion("curt_city between", value1, value2, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCityNotBetween(Long value1, Long value2) {
+            addCriterion("curt_city not between", value1, value2, "curtCity");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyIsNull() {
+            addCriterion("curt_county is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyIsNotNull() {
+            addCriterion("curt_county is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyEqualTo(Long value) {
+            addCriterion("curt_county =", value, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyNotEqualTo(Long value) {
+            addCriterion("curt_county <>", value, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyGreaterThan(Long value) {
+            addCriterion("curt_county >", value, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyGreaterThanOrEqualTo(Long value) {
+            addCriterion("curt_county >=", value, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyLessThan(Long value) {
+            addCriterion("curt_county <", value, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyLessThanOrEqualTo(Long value) {
+            addCriterion("curt_county <=", value, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyIn(List<Long> values) {
+            addCriterion("curt_county in", values, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyNotIn(List<Long> values) {
+            addCriterion("curt_county not in", values, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyBetween(Long value1, Long value2) {
+            addCriterion("curt_county between", value1, value2, "curtCounty");
+            return (Criteria) this;
+        }
+
+        public Criteria andCurtCountyNotBetween(Long value1, Long value2) {
+            addCriterion("curt_county not between", value1, value2, "curtCounty");
             return (Criteria) this;
         }
 

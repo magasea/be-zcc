@@ -810,14 +810,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(isBuyer? trdInfoFromSync.getBuyerId():
         "-1");
     if( null == custCmpyInfoFromSync){
-      log.error("Failed to get {} cmpy info with id:{} of trd:{}", isBuyer? "buyer":"seller", isBuyer?
+      log.error("Failed to get {} cmpy info with id:{} with trd:{}", isBuyer? "buyer":"seller", isBuyer?
           trdInfoFromSync.getBuyerId():
           -1, trdInfoFromSync.getAuctionID());
       if(!errorTrdInfos.containsKey(trdInfoFromSync.getAuctionID())){
         errorTrdInfos.put(trdInfoFromSync.getAuctionID(),"");
       }
       errorTrdInfos.put(trdInfoFromSync.getAuctionID(), String.format("page:[%d] %s\n%s", pageForLog,
-      errorTrdInfos.get(trdInfoFromSync.getAuctionID()),String.format("Failed to get %s cmpy info with id:%s of trd:%s",
+      errorTrdInfos.get(trdInfoFromSync.getAuctionID()),String.format("Failed to get %s cmpy info with id:%s with trd:%s",
               isBuyer? "buyer":"seller", isBuyer?
                   trdInfoFromSync.getBuyerId():
                   -1, trdInfoFromSync.getAuctionID())));

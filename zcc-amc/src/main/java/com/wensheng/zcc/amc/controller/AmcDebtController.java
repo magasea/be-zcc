@@ -3,8 +3,9 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
+import com.wensheng.zcc.amc.controller.helper.SimpleQueryParam;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
-import com.wensheng.zcc.amc.service.KafkaService;
+import com.wensheng.zcc.amc.service.*;
 import com.wensheng.zcc.amc.service.impl.AmcMiscServiceImpl;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
@@ -22,10 +23,6 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
-import com.wensheng.zcc.amc.service.AmcDebtService;
-import com.wensheng.zcc.amc.service.AmcDebtpackService;
-import com.wensheng.zcc.amc.service.AmcOssFileService;
-import com.wensheng.zcc.amc.service.ZccRulesService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
@@ -37,7 +34,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -66,6 +62,9 @@ public class AmcDebtController {
 
   @Autowired
   AmcOssFileService amcOssFileService;
+
+  @Autowired
+  AmcExcelFileService amcExcelFileService;
 
   @Autowired
   AmcDebtService amcDebtService;
@@ -261,6 +260,24 @@ public class AmcDebtController {
     return debtImages;
 
   }
+
+
+
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/excel/upload", headers = "Content-Type= multipart/form-data",method =
+          RequestMethod.POST)
+  @ResponseBody
+  public List<AmcDebt> uploadDebtByExcel (@PathVariable Long amcid,
+                                         @RequestParam("excel") MultipartFile excelFile) throws Exception {
+
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    List<String> filePaths = new ArrayList<>();
+    amcExcelFileService.handleMultiPartFile(excelFile);
+
+    return new ArrayList<>();
+
+  }
+
   @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN')  or hasPermission(#amcid, 'PERM_DEBTASSET_MOD') or hasPermission(#amcid, 'PERM_AMC_CRUD')")
   @RequestMapping(value = "/api/amcid/{amcid}/debt/image/del", method = RequestMethod.POST)
   @ResponseBody
@@ -313,6 +330,9 @@ public class AmcDebtController {
     }
     if(createVo.getBaseAmount() != null){
       amcDebt.setBaseAmount(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getBaseAmount()));
+    }
+    if(createVo.getInterestAmount() != null){
+      amcDebt.setInterestAmount(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getInterestAmount()));
     }
     if(createVo.getValuation() != null){
       amcDebt.setValuation(AmcNumberUtils.getLongFromDecimalWithMult100(createVo.getValuation()));
@@ -367,11 +387,15 @@ public class AmcDebtController {
 
   @RequestMapping(value = "/api/amcid/{id}/debt/getDebtTitle", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcDebt> queryDebtTitle(@RequestParam("debtId") List<Long> debtIds)
+  public List<AmcDebt> queryDebtTitle(@RequestBody SimpleQueryParam simpleQueryParam)
           throws Exception {
+    List<AmcDebt> amcDebts = new ArrayList<>();
+    if(!CollectionUtils.isEmpty(simpleQueryParam.getIds())){
+      amcDebts = amcDebtService.getDebtSimpleByIds(simpleQueryParam.getIds());
+    }else if(!StringUtils.isEmpty(simpleQueryParam.getTitle())){
+      amcDebts = amcDebtService.getDebtSimpleByTitleLike(simpleQueryParam.getTitle());
+    }
 
-
-    List<AmcDebt> amcDebts = amcDebtService.getDebtSimple(debtIds);
 
 
 

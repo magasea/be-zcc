@@ -21,6 +21,7 @@ public class AssetAdditional {
     String _id;
     @Indexed(unique = true, direction = IndexDirection.DESCENDING)
     Long amcAssetId;
+    String owner;                   //所有权人
     String description;				// 抵押物描述
     Integer viewCount	=0;			// 浏览次数
     Integer likeCount	=0;			// 点赞次数

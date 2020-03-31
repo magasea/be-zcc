@@ -17,8 +17,7 @@ import org.springframework.boot.autoconfigure.kafka.KafkaProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.ConsumerFactory;
-import org.springframework.kafka.core.DefaultKafkaConsumerFactory;
+import org.springframework.kafka.core.*;
 
 
 /**
@@ -46,15 +45,15 @@ public class KafkaConfig {
     return props;
   }
 
-//  @Bean
-//  public ProducerFactory<String, Object> producerFactory() {
-//    return new DefaultKafkaProducerFactory<>(producerConfigs());
-//  }
+  @Bean
+  public ProducerFactory<String, Object> producerFactory() {
+    return new DefaultKafkaProducerFactory<>(producerConfigs());
+  }
 
-//  @Bean
-//  public KafkaTemplate<String, Object> kafkaTemplate() {
-//    return new KafkaTemplate<>(producerFactory());
-//  }
+  @Bean
+  public KafkaTemplate<String, Object> kafkaTemplate() {
+    return new KafkaTemplate<>(producerFactory());
+  }
 
   @Bean
   public NewTopic adviceTopic() {

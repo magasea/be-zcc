@@ -96,6 +96,9 @@ public class Dao2VoUtils {
     if(amcDebt.getBaseAmount() > 0 ){
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));
     }
+    if(amcDebt.getInterestAmount() > 0){
+      amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getInterestAmount()));
+    }
     return amcDebtVo;
 
   }

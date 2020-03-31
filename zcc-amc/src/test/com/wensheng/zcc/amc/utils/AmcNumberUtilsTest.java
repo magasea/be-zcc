@@ -52,4 +52,10 @@ public class AmcNumberUtilsTest {
     BigDecimal resultMu = AmcNumberUtils.getMuFromSQM(result);
     System.out.println(resultMu);
   }
+
+  @Test
+  public void bitWiseOp() throws Exception {
+    int test = -11;
+    System.out.println((test & 1) == 0);
+  }
 }

@@ -130,6 +130,28 @@ public class BasicInfoController {
 
   }
 
+  @RequestMapping(value = "/regionsByName", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustRegionDetail> getRegionByName(@RequestBody(required = false) String name){
+    if(name == null){
+      return basicInfoService.getAllCustRegion();
+    }else{
+      return basicInfoService.getRegionByName(name);
+    }
+
+  }
+
+  @RequestMapping(value = "/regionsById", method = RequestMethod.POST)
+  @ResponseBody
+  public CustRegionDetail getRegionById(@RequestBody(required = false) Long id){
+    if(id == null){
+      return null;
+    }else{
+      return basicInfoService.getRegionById(id);
+    }
+
+  }
+
   @PreAuthorize("hasAnyRole('SYSTEM_ADMIN','CO_ADMIN','AMC_LOCAL_ADMIN')")
   @RequestMapping(value = "/searchGeoInfo4Trd", method = RequestMethod.POST)
   @ResponseBody

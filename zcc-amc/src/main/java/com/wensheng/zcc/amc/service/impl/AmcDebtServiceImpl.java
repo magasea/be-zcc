@@ -228,6 +228,18 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  public List<AmcDebt> queryByTitle(String debtTitle, Long deptPackId) {
+
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    AmcDebtExample.Criteria criteria =  amcDebtExample.createCriteria().andTitleEqualTo(debtTitle);
+    if(deptPackId != null && deptPackId > 0){
+      criteria.andDebtpackIdEqualTo(deptPackId);
+    }
+    List<AmcDebt> amcDebts =  amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
+  }
+
+  @Override
   @Transactional
   @CacheEvict(allEntries = true)
   public int del(Long amcDebtId) {
@@ -441,6 +453,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
 
     }
+    if(amcDebt.getInterestAmount() !=null && amcDebt.getInterestAmount() > 0 ){
+      amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getInterestAmount()));
+
+    }
 //    if(amcDebt.getAmcContactorId() > 0){
 //      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
 //    }
@@ -468,6 +484,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebtExt.getDebtInfo().getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getTotalAmount()));
 
+    }
+    if(amcDebtExt.getDebtInfo().getInterestAmount() > 0){
+      amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getInterestAmount()));
     }
 //    if(amcDebtExt.getDebtInfo().getAmcContactorId() > 0){
 //      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactorId()));
@@ -1194,12 +1213,22 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   @Cacheable
-  public List<AmcDebt> getDebtSimple(List<Long> debtIds) {
+  public List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds) {
     if(CollectionUtils.isEmpty(debtIds)){
       return new ArrayList<>();
     }
     AmcDebtExample amcDebtExample = new AmcDebtExample();
-    amcDebtExample.createCriteria().andIdIn(debtIds);
+    amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());;
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
+  }
+
+  @Override
+  public List<AmcDebt> getDebtSimpleByTitleLike(String title) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    StringBuilder sb = new StringBuilder("%");
+    sb.append(title).append("%");
+    amcDebtExample.createCriteria().andTitleLike(sb.toString()).andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
     return amcDebts;
   }

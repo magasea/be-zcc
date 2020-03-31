@@ -812,14 +812,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(isBuyer? trdInfoFromSync.getBuyerIdPrep():
         trdInfoFromSync.getSellerIdPrep());
     if( null == custCmpyInfoFromSync){
-      log.error("Failed to get {} cmpy info with id:{} of trd:{}", isBuyer? "buyer":"seller", isBuyer?
+      log.error("Failed to get {} cmpy info with id:{} with trd:{}", isBuyer? "buyer":"seller", isBuyer?
           trdInfoFromSync.getBuyerIdPrep():
           trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId());
       if(!errorTrdInfos.containsKey(trdInfoFromSync.getId())){
         errorTrdInfos.put(trdInfoFromSync.getId(),"");
       }
       errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
-      errorTrdInfos.get(trdInfoFromSync.getId()),String.format("Failed to get %s cmpy info with id:%s of trd:%s",
+      errorTrdInfos.get(trdInfoFromSync.getId()),String.format("Failed to get %s cmpy info with id:%s with trd:%s",
               isBuyer? "buyer":"seller", isBuyer?
                   trdInfoFromSync.getBuyerIdPrep():
                   trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));
@@ -832,7 +832,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       List<CustTrdSeller> custTrdSellers = custTrdSellerMapper.selectByExample(custTrdSellerExample);
       int sellerAction = -1;
       if(null == custCmpyInfoFromSync.getUpdateTime() || custCmpyInfoFromSync.getUpdateTime() <= 0L){
-        log.error("Failed to get {} cmpy updateTime with id:{} of trd:{} updateTime:{}", isBuyer? "buyer":"seller",
+        log.error("Failed to get {} cmpy updateTime with id:{} with trd:{} updateTime:{}", isBuyer? "buyer":"seller",
             isBuyer? trdInfoFromSync.getBuyerIdPrep(): trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId(),
             custCmpyInfoFromSync.getUpdateTime());
 
@@ -841,7 +841,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         errorTrdInfos.put(trdInfoFromSync.getId(), String.format("page:[%d] %s\n%s", pageForLog,
             errorTrdInfos.get(trdInfoFromSync.getId()),String.format("Failed to get %s cmpy info updateTime with "
-                    + "id:%s of trd:%s",
+                    + "id:%s with trd:%s",
                 isBuyer? "buyer":"seller", isBuyer?
                     trdInfoFromSync.getBuyerIdPrep():
                     trdInfoFromSync.getSellerIdPrep(), trdInfoFromSync.getId())));

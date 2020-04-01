@@ -375,6 +375,12 @@ public class AmcAssetController {
   }
 
 
+  @RequestMapping(value = "/amcid/{amcid}/asset/patchLocationCode", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchLocationCode() throws Exception{
+    amcAssetService.patchAssetLocationWithCode();
+  }
+
 
 
 

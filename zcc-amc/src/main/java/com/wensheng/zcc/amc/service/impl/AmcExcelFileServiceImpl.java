@@ -86,6 +86,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
     AmcDebtService amcDebtService;
 
     @Autowired
+    AmcExcelPreCheckService amcExcelPreCheckService;
+
+    @Autowired
     AmcDebtpackService amcDebtpackService;
 
     @Autowired

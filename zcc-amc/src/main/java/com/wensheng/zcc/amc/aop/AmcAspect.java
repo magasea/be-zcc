@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPreExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
@@ -346,6 +347,35 @@ public class AmcAspect {
     return proceed;
   }
 
+  @Around("@annotation(QueryDebtPreChecker) ")
+  public Object aroundQueryDebtPreChecker(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    AmcDebtPreExample amcDebtPreExample = (AmcDebtPreExample) joinPoint.getArgs()[0];
 
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
+      if(amcDebtPreExample.getOredCriteria().size() == 0){
+        amcDebtPreExample.createCriteria().andCreatedByEqualTo(-1L);
+      }
+      return joinPoint.proceed(new Object[]{amcDebtPreExample});
+    }
+    log.info(authentication.getDetails().toString());
+    Map<String, Object> detailsParam =
+            (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
+    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
+      Integer locationId = (Integer) detailsParam.get("location");
+      AmcLocationEnum locationEnum =
+              AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
+      if(null != locationEnum){
+        List<ZccDebtpack> zccDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum);
+        if(!CollectionUtils.isEmpty(zccDebtpacks)){
+          List<Long> amcDebtPackIds = zccDebtpacks.stream().map( item -> item.getId()).collect(Collectors.toList());
+          queryParam.setDebtPackIds(amcDebtPackIds);
+        }
+      }
+
+    }
+    return joinPoint.proceed(new Object[]{queryParam});
+  }
 
 }

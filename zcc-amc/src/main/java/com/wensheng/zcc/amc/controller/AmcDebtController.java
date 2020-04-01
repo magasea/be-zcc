@@ -266,15 +266,14 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcid}/debt/excel/upload", headers = "Content-Type= multipart/form-data",method =
           RequestMethod.POST)
   @ResponseBody
-  public List<AmcDebt> uploadDebtByExcel (@PathVariable Long amcid,
+  public List<String> uploadDebtByExcel (@PathVariable Long amcid,
                                          @RequestParam("excel") MultipartFile excelFile) throws Exception {
 
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
-    List<String> filePaths = new ArrayList<>();
-    amcExcelFileService.handleMultiPartFile(excelFile);
+    List<String> errorInfo = amcExcelFileService.handleMultiPartFile(excelFile);
 
-    return new ArrayList<>();
+    return errorInfo;
 
   }
 

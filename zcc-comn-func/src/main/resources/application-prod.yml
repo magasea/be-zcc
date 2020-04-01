@@ -94,7 +94,9 @@ spring:
             file-size-threshold: 10240KB
             max-file-size: 10240KB
             max-request-size: 10240KB
-
+amc:
+    urls:
+        getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
 
 weixin:
     prod:
@@ -159,6 +161,8 @@ env:
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
+    regionhost: 10.20.100.228
+    regionport: 5050
     oauth2:
         host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

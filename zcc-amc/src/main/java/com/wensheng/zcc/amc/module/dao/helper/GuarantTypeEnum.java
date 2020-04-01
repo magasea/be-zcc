@@ -13,6 +13,7 @@ public enum GuarantTypeEnum {
   COMBINED(3, "抵押+保证"),
   COMBINED1(4, "抵押+保证+质押"),
   CHIBOR(5, "拆借"),
+  PLEDGE(6, "质押"),
   ;
 
   GuarantTypeEnum(int type, String name){
@@ -23,9 +24,9 @@ public enum GuarantTypeEnum {
   int type;
   String name;
 
-  private static final Function<String, AssetTypeEnum> func =
-      EnumUtils.lookupMap(AssetTypeEnum.class, e -> e.getName());
-  public static AssetTypeEnum lookupByDisplayNameUtil(String name) {
+  private static final Function<String, GuarantTypeEnum> func =
+      EnumUtils.lookupMap(GuarantTypeEnum.class, e -> e.getName());
+  public static GuarantTypeEnum lookupByDisplayNameUtil(String name) {
     return func.apply(name);
   }
   public int getType() {

@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import com.google.common.collect.Lists;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
@@ -20,7 +19,6 @@ import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.kafka.common.protocol.types.Field;
 import org.apache.poi.ss.usermodel.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -45,7 +43,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
     static final String strDebtTitle = "债权名称";
     static final String strBrower = "借款人";
     static final String strDebtBaseAmount = "债权本金(元)";
-    static final String strDebtTotalAmount = "债权本息(元)";
+//    static final String strDebtTotalAmount = "债权本息(元)";
+    static final String strDebtInterestAmount = "债权利息(元)";
     static final String strLawState = "诉讼状态";
     static final String strGrantType = "担保方式";
     static final String strGrantor = "担保人";
@@ -108,7 +107,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
 
     @Override
-    public String handleMultiPartFile(MultipartFile multipartFile) throws Exception {
+    public List<String> handleMultiPartFile(MultipartFile multipartFile) throws Exception {
         File targetFile = null;
         targetFile =
                 new File(debtImageRepo+File.separator  +multipartFile.getOriginalFilename());
@@ -130,16 +129,17 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
         // Getting the Sheet at index zero
         Sheet sheetDebt = workbook.getSheetAt(0);
-        Map<String, AmcDebtVo> debtMap = handleDebtFromExcel(sheetDebt);
+        List<String> errorInfo = new ArrayList<>();
+        Map<String, AmcDebtVo> debtMap = handleDebtFromExcel(sheetDebt, errorInfo);
         Sheet sheetAsset = workbook.getSheetAt(1);
-        handleAssetFromExcel(sheetAsset, debtMap);
+        handleAssetFromExcel(sheetAsset, debtMap, errorInfo);
+        return errorInfo;
 
 
 
-        return targetFile.getCanonicalPath();
     }
 
-    private void handleAssetFromExcel(Sheet sheetAsset, Map<String, AmcDebtVo> debtMap) throws Exception {
+    private void handleAssetFromExcel(Sheet sheetAsset, Map<String, AmcDebtVo> debtMap, List<String> errorInfo) throws Exception {
 
         Map<Long, Map<String, AmcAsset>> historyAssetTitleDebtId = getHistoryAssetTitleDebtIdMap(debtMap.values().stream().map(item->item.getId()).collect(Collectors.toUnmodifiableList()));
         Set<String> assetTitles = new HashSet<>();
@@ -169,11 +169,15 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         while (rowIterator.hasNext()) {
 
             Row row = rowIterator.next();
-            if (row.getLastCellNum() < 5) {
-                // it is header rows
-                continue;
-            }
+            if(row.getLastCellNum() - row.getFirstCellNum() <= 10 ){
+                if(!hasGotHeader){
+                    // it is header rows
+                    continue;
+                }else{
+                    break;
+                }
 
+            }
             if (!hasGotHeader) {
                 log.info("now got first row, it is title row");
                 // Now let's iterate over the columns of the current row
@@ -185,7 +189,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     Cell cell = cellIterator.next();
                     idxOfCell++;
                     String cellValue = dataFormatter.formatCellValue(cell);
-                    System.out.print(cellValue + "\t");
+
                     switch (cellValue) {
                         case strDebtTitle:
                             idxDebtTitle = idxOfCell;
@@ -318,9 +322,14 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
                 AmcAsset amcAsset = new AmcAsset();
 
+                if(StringUtils.isEmpty(cellDebtTitle) && StringUtils.isEmpty(cellAssetName)){
+                    break;
+                }
+
                 if(!debtMap.containsKey(cellDebtTitle)){
-                    log.error("There is no debt with title:{}", cellDebtTitle);
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("no such debtTitle:%s",cellDebtTitle));
+                    log.error("{} {} There is no debt with title:{}", sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle);
+                    errorInfo.add(String.format("%s %s There is no debt with title:%s",  sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle));
+                    continue;
                 }else{
                     amcAsset.setDebtId(debtMap.get(cellDebtTitle).getId());
                 }
@@ -334,7 +343,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellAssetName)){
                     amcAsset.setTitle(cellAssetName);
                 }else{
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("no asset name:%s", cellAssetName));
+//                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("no asset name:%s", cellAssetName));
+                    errorInfo.add(String.format("%s %s no asset name:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetName));
+                    continue;
                 }
                 amcAsset.setAssetNature(AssetNatureEnum.SEAL.getType());
 //                if(!StringUtils.isEmpty(cellAssetNature)){
@@ -346,45 +357,63 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellAssetType)){
                     amcAsset.setType(AssetTypeEnum.lookupByDisplayNameUtil(cellAssetType).getType());
                 }else{
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("no asset type:%s", cellAssetType));
+                    log.error(String.format("%s %s no asset type:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+                    continue;
                 }
 
                 if(!StringUtils.isEmpty(cellAssetLawSealState)){
                     amcAsset.setSealedState(SealStateEnum.lookupByDisplayNameUtil(cellAssetLawSealState).getStatus());
                 }
-                boolean failed_get_county = true;
+
+                if(!StringUtils.isEmpty(cellAssetProv)){
+                    List<Region> regions = regionService.getRegionByName(cellAssetProv);
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetProv:%s",cellAssetProv));
+                        errorInfo.add(String.format("%s %s failed to find code for cellAssetProv:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetProv));
+//                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+
+                    }else{
+                        amcAsset.setProvince(regions.get(0).getId().toString());
+                    }
+                }
+                if(!StringUtils.isEmpty(cellAssetCity)){
+                    List<Region> regions = regionService.getRegionByName(cellAssetCity);
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",cellAssetCity));
+                        errorInfo.add(String.format("%s %s failed to find code for cellAssetProv:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetCity));
+//                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+
+                    }else if(regions.size() > 1){
+                        for(Region region: regions){
+                            if(region.getId().toString().startsWith(amcAsset.getProvince().substring(0,2))){
+                                amcAsset.setCity(region.getId().toString());
+                                break;
+                            }
+                        }
+                    }else{
+                        amcAsset.setCity(regions.get(0).getId().toString());
+                    }
+                }
+
                 if(!StringUtils.isEmpty(cellAssetCounty)){
                     List<Region> regions = regionService.getRegionByName(cellAssetCounty);
                     if(CollectionUtils.isEmpty(regions)){
                         log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+                        errorInfo.add(String.format("%s %s failed to find code for cellAssetCounty:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetCounty));
 //                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
-                        failed_get_county = true;
+
                     }else if(regions.size() > 1){
                         for(Region region: regions){
-                            Region parentRegion = regionService.getRegionById(region.getParentId());
-                            if(parentRegion.getName().equals(cellAssetCity)){
+                            if(region.getId().toString().startsWith(amcAsset.getCity().substring(0,3))){
                                 amcAsset.setCounty(region.getId().toString());
-                                amcAsset.setCity(parentRegion.getId().toString());
-                                amcAsset.setProvince(parentRegion.getParentId().toString());
-                                failed_get_county = false;
+                                break;
                             }
                         }
+                    }else{
+                        amcAsset.setCounty(regions.get(0).getId().toString());
                     }
                 }
-                if(!StringUtils.isEmpty(cellAssetCity) && failed_get_county ){
-                    List<Region> regions = regionService.getRegionByName(cellAssetCity);
-                    if(CollectionUtils.isEmpty(regions)){
-                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",cellAssetCity));
-                    }else if(regions.size() > 1){
-                        for(Region region: regions){
-                            Region parentRegion = regionService.getRegionById(region.getParentId());
-                            if(parentRegion.getName().equals(cellAssetProv)){
-                                amcAsset.setCity(region.getId().toString());
-                                amcAsset.setProvince(region.getParentId().toString());
-                            }
-                        }
-                    }
-                }
+
 
                 if(!StringUtils.isEmpty(cellAssetAddr)){
                     amcAsset.setAddress(cellAssetAddr);
@@ -419,11 +448,13 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     AmcBeanUtils.copyProperties(amcAsset, amcAssetHistory);
 
                     amcAssetService.update(amcAssetHistory);
+                    assetAdditional.setAmcAssetId(amcAssetHistory.getId());
                     amcAssetService.createOrUpdateAssetAddition(assetAdditional);
 
                 }else{
                     //create
-                    amcAssetService.create(amcAsset);
+                    AmcAssetVo amcAssetVo = amcAssetService.create(amcAsset);
+                    assetAdditional.setAmcAssetId(amcAssetVo.getId());
                     amcAssetService.createOrUpdateAssetAddition(assetAdditional);
                 }
 
@@ -455,7 +486,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         return amcAssetTitlesDebtId;
     }
 
-    private Map<String, AmcDebtVo> handleDebtFromExcel(Sheet sheetDebt) throws Exception {
+    private Map<String, AmcDebtVo> handleDebtFromExcel(Sheet sheetDebt, List<String> errorInfo) throws Exception {
 
         Map<String, AmcDebtVo> debtMap = new HashMap<>();
         Map<String, Long> regionMap = new HashMap<>();
@@ -465,7 +496,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         int idxDebtTitle = -1;
         int idxBrowwer = -1;
         int idxDebtBaseAmount = -1;
-        int idxDebtTotalAmount = -1;
+//        int idxDebtTotalAmount = -1;
+        int idxDebtInterestAmount = -1;
         int idxLawState = -1;
         int idxGrantType = -1;
         int idxGrantor = -1;
@@ -522,8 +554,11 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         case strDebtBaseAmount:
                             idxDebtBaseAmount = idxOfCell;
                             break;
-                        case strDebtTotalAmount:
-                            idxDebtTotalAmount = idxOfCell;
+//                        case strDebtTotalAmount:
+//                            idxDebtTotalAmount = idxOfCell;
+//                            break;
+                        case strDebtInterestAmount:
+                            idxDebtInterestAmount = idxOfCell;
                             break;
                         case strDesc:
                             idxDesc = idxOfCell;
@@ -543,7 +578,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     }
                 }
                 // now check if there is missing headers
-                if(((idxDebtTitle + 1) * (idxBrowwer + 1) * (idxDebtBaseAmount + 1) * (idxDebtTotalAmount + 1) * (idxLawState + 1) *
+                if(((idxDebtTitle + 1) * (idxBrowwer + 1) * (idxDebtBaseAmount + 1) * (idxDebtInterestAmount +1) * (idxLawState + 1) *
                         (idxGrantType + 1) * (idxGrantor + 1) * (idxCourtProv + 1) * (idxCourtCity + 1) *
                         (idxCourtCounty + 1) * (idxCourt + 1) * (idxAmcContactor + 1) * (idxDesc + 1) ) == 0){
                     String missingHeader = null;
@@ -556,8 +591,11 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     if(idxDebtBaseAmount == -1){
                         missingHeader = strDebtBaseAmount;
                     }
-                    if(idxDebtTotalAmount == -1){
-                        missingHeader = strDebtBaseAmount;
+//                    if(idxDebtTotalAmount == -1){
+//                        missingHeader = strDebtTotalAmount;
+//                    }
+                    if(idxDebtInterestAmount == -1){
+                        missingHeader = strDebtInterestAmount;
                     }
                     if(idxLawState == -1){
                         missingHeader = strLawState;
@@ -595,7 +633,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 String cellDebtTitle = dataFormatter.formatCellValue(row.getCell(idxDebtTitle));
                 String cellBrowwer = dataFormatter.formatCellValue(row.getCell(idxBrowwer));
                 String cellDebtBaseAmount = dataFormatter.formatCellValue(row.getCell(idxDebtBaseAmount));
-                String cellDebtTotalAmount = dataFormatter.formatCellValue(row.getCell(idxDebtTotalAmount));
+//                String cellDebtTotalAmount = dataFormatter.formatCellValue(row.getCell(idxDebtTotalAmount));
+                String cellDebtInterestAmount = dataFormatter.formatCellValue(row.getCell(idxDebtInterestAmount));
                 String cellLawState = dataFormatter.formatCellValue(row.getCell(idxLawState));
                 String cellGrantType = dataFormatter.formatCellValue(row.getCell(idxGrantType));
                 String cellGrantor = dataFormatter.formatCellValue(row.getCell(idxGrantor));
@@ -614,13 +653,21 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellDebtBaseAmount)){
                     amcDebt.setBaseAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtBaseAmount));
                 }
-                if(!StringUtils.isEmpty(cellDebtTotalAmount)){
-                    amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtTotalAmount));
+//                if(!StringUtils.isEmpty(cellDebtTotalAmount)){
+//                    amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtTotalAmount));
+//                }
+                if(!StringUtils.isEmpty(cellDebtInterestAmount)){
+                    amcDebt.setInterestAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtInterestAmount));
                 }
                 if(!StringUtils.isEmpty(cellLawState)){
                     amcDebt.setLawsuitState(LawstateEnum.lookupByDisplayNameUtil(cellLawState).getStatus());
                 }
                 if(!StringUtils.isEmpty(cellGrantType)){
+                    GuarantTypeEnum guarantTypeEnum = GuarantTypeEnum.lookupByDisplayNameUtil(cellGrantType);
+                    if(guarantTypeEnum == null){
+                        errorInfo.add(String.format("%s %s failed to find guarantType for:%s", sheetDebt.getSheetName(), row.getRowNum(), cellGrantType));
+                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("%s %s failed to find guarantType for:%s", sheetDebt.getSheetName(), row.getRowNum(), cellGrantType));
+                    }
                     amcDebt.setGuarantType(GuarantTypeEnum.lookupByDisplayNameUtil(cellGrantType).getType());
                 }
                 if(!StringUtils.isEmpty(cellDebtTitle)){
@@ -631,7 +678,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
                 List<ZccDebtpack> zccDebtpacks =  amcDebtpackService.queryPacksWithLocation(AmcLocationEnum.lookupByDisplayIdUtil(ssoAmcUser.getLocation()));
                 if(CollectionUtils.isEmpty(zccDebtpacks)){
-                    log.error("There is no zccDebtPack for ssoAmcUser with location:{}", ssoAmcUser.getLocation());
+
+                    log.error(String.format("%s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
                 }
                 if(!StringUtils.isEmpty(cellCourt)){
                    Long curtId = getCourt(cellCourtProv, cellCourtCity, cellCourtCounty, cellCourt);
@@ -704,7 +752,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellBrowwer)){
                     makeBrowwers(cellBrowwer, amcDebtVo.getId());
                 }else{
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format(" the cellBrowwer is %s", cellBrowwer));
+                    errorInfo.add(String.format("%s %s the cellBrowwer is %s", sheetDebt.getSheetName(), row.getRowNum(), cellBrowwer));
+                    log.error(String.format("%s %s the cellBrowwer is %s", sheetDebt.getSheetName(), row.getRowNum(), cellBrowwer));
+                    continue;
                 }
             }
 

@@ -81,5 +81,7 @@ public interface AmcAssetService {
 
   List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
 
+  void patchAssetLocationWithCode() throws Exception;
+
 
 }

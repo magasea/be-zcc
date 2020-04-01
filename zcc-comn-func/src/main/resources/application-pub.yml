@@ -152,7 +152,9 @@ logging:
         com:
             wensheng: TRACE
         root: WARN
-
+amc:
+    urls:
+        getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
 
 env:
     env-hint: prod
@@ -160,6 +162,8 @@ env:
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
+    regionhost: 10.20.100.228
+    regionport: 5050
     oauth2:
         host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

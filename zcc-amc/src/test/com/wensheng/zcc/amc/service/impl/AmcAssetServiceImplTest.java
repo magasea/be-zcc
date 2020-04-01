@@ -569,4 +569,9 @@ public class AmcAssetServiceImplTest {
         amcAssetService.checkGeoInfoWorker();
 
   }
+
+    @org.junit.jupiter.api.Test
+    void patchAssetLocationWithCode() throws Exception {
+        amcAssetService.patchAssetLocationWithCode();
+    }
 }

@@ -7,11 +7,9 @@ import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
+import com.wensheng.zcc.comnfunc.service.RegionService;
 import com.wensheng.zcc.comnfunc.service.WXBasicService;
-import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
-import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
-import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp;
-import com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.*;
 import io.grpc.Status;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +20,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 @Service
 @GRpcService(interceptors = LogInterceptor.class)
@@ -34,6 +34,9 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 
   @Autowired
   WXBasicService wxBasicService;
+
+  @Autowired
+  RegionService regionService;
 
   @Override
   public void getAddress(com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq request,
@@ -121,6 +124,25 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 //    aBuilder.setCity(gaodeRegeoQueryVal.getAddressComponent().getCity());
     responseObserver.onNext(aBuilder.build());
     responseObserver.onCompleted();
+  }
+
+  @Override
+  public void getAmcRegionByName(com.wenshengamc.zcc.comnfunc.gaodegeo.AmcRegionReq request,
+                                 io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.AmcRegionResp> responseObserver) {
+    try{
+      List<com.wensheng.zcc.comnfunc.module.dto.AmcRegionItem> amcRegionItems = regionService.getRegionByName(request.getRegName());
+      AmcRegionResp.Builder amcRegionBuilder = AmcRegionResp.newBuilder();
+      for(com.wensheng.zcc.comnfunc.module.dto.AmcRegionItem amcRegionItem: amcRegionItems){
+        AmcRegionItem.Builder ariBuilder = AmcRegionItem.newBuilder();
+        AmcBeanUtils.copyProperties(amcRegionItem, ariBuilder);
+        amcRegionBuilder.addAmcRegionItems(ariBuilder);
+      }
+      responseObserver.onNext(amcRegionBuilder.build());
+      responseObserver.onCompleted();
+    }catch (Exception ex){
+      responseObserver.onError(ex);
+    }
+    ;
   }
 
 

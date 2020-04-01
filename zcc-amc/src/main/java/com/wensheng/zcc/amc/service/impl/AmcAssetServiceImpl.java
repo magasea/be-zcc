@@ -22,8 +22,10 @@ import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.RegionService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.module.dto.Region;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -104,6 +106,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     AmcDebtService amcDebtService;
+
+    @Autowired
+    RegionService regionService;
 
 
     @Override
@@ -894,6 +899,103 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         assetGeoNears.add(queryNearByAssets(geoJsonPoint, new Integer[]{300}));
 
         return assetGeoNears;
+    }
+
+    @Override
+    public void patchAssetLocationWithCode() throws Exception {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.setOrderByClause(" id desc ");
+        int offset = 0;
+        int pageSize = 50;
+        RowBounds rowBounds = new RowBounds(offset, pageSize);
+        boolean haveMore = false;
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
+        if(!CollectionUtils.isEmpty(amcAssets)){
+            haveMore = true;
+        }
+        while(haveMore){
+            for(AmcAsset amcAsset: amcAssets){
+                boolean needUpdate = false;
+                if(amcAsset.getProvince() != null && !amcAsset.getProvince().equals("-1") && !Character.isDigit(amcAsset.getProvince().charAt(0))){
+                    List<Region> regions = null;
+                    try{
+                        regions =   regionService.getRegionByName(amcAsset.getProvince());
+                    }catch (Exception ex){
+                        log.error("failed to handle:{}", amcAsset.getProvince(), ex);
+                        continue;
+                    }
+                    if(CollectionUtils.isEmpty(regions)){
+                        continue;
+                    }else{
+                        amcAsset.setProvince(regions.get(0).getId().toString());
+                        needUpdate = true;
+                    }
+                }
+
+                if(!StringUtils.isEmpty(amcAsset.getCity()) && !amcAsset.getCity().equals("-1") && !Character.isDigit(amcAsset.getCity().charAt(0))){
+                    List<Region> regions = null;
+                    try{
+                        regions =   regionService.getRegionByName(amcAsset.getCity());
+                    }catch (Exception ex){
+                        log.error("failed to handle:{}", amcAsset.getCity(), ex);
+                        continue;
+                    }
+
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",amcAsset.getCity()));
+
+                    }else if(regions.size() > 1){
+                        for(Region region: regions){
+                            if(region.getId().toString().startsWith(amcAsset.getProvince().substring(0,2))){
+                                amcAsset.setCity(region.getId().toString());
+                                break;
+                            }
+                        }
+                    }else{
+                        amcAsset.setCity(regions.get(0).getId().toString());
+                        needUpdate = true;
+
+                    }
+                }
+
+                if(!StringUtils.isEmpty(amcAsset.getCounty()) && !amcAsset.getCounty().equals("-1") && !Character.isDigit(amcAsset.getCounty().charAt(0))){
+                    List<Region> regions = null;
+                    try{
+                        regions =   regionService.getRegionByName(amcAsset.getCounty());;
+                    }catch (Exception ex){
+                        log.error("failed to handle:{}", amcAsset.getCounty(), ex);
+//                        continue;
+                    }
+
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",amcAsset.getCounty()));
+
+                    }else if(regions.size() > 1){
+                        for(Region region: regions){
+                            if(region.getId().toString().startsWith(amcAsset.getCity().substring(0,3))){
+                                amcAsset.setCounty(region.getId().toString());
+                                break;
+                            }
+                        }
+                    }else{
+                        amcAsset.setCounty(regions.get(0).getId().toString());
+                        needUpdate = true;
+
+                    }
+                }
+                if(needUpdate){
+                    amcAssetMapper.updateByPrimaryKey(amcAsset);
+                }
+            }
+            offset += 50;
+            rowBounds = new RowBounds(offset, pageSize);
+            amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
+            if(CollectionUtils.isEmpty(amcAssets)){
+                haveMore = false;
+                break;
+            }
+        }
+
     }
 
     private AmcAssetGeoNear queryNearByAssets(GeoJsonPoint geoJsonPoint, Integer[] distances) throws Exception {

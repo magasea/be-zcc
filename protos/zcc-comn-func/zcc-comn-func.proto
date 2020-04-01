@@ -37,12 +37,29 @@ message WhoResponse {
   string value = 2;
 }
 
+
 message WXPubTokenResp {
   string wxPubToken = 1;
 }
 
 message WXPubTokenReq {
   string profileName = 1;
+}
+
+
+message AmcRegionItem {
+    string code = 1;
+    string name = 2;
+    string lat = 3;
+    string lon = 4;
+}
+
+message AmcRegionReq {
+    string regName = 1;
+}
+
+message AmcRegionResp {
+    repeated AmcRegionItem amcRegionItems = 1;
 }
 
 service ComnFuncService {
@@ -53,5 +70,7 @@ service ComnFuncService {
   rpc getAddressByGeoPoint(wenshengamc.zcc.common.GeoJson) returns (Address);
 
   rpc getWXPublicToken(WXPubTokenReq) returns (WXPubTokenResp);
+
+  rpc getAmcRegionByName(AmcRegionReq) returns (AmcRegionResp);
 
 }

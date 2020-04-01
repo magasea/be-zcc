@@ -139,7 +139,9 @@ gaode:
     geocoder: https://restapi.amap.com/v3/geocode/geo?address=%s&key=${gaode.key}
     regeocoder: https://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&poitype=&radius=&extensions=base&batch=false&roadlevel=0
 
-
+amc:
+    urls:
+        getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
 
 message:
     url: http://esms100.10690007.net/sms/mt
@@ -164,6 +166,8 @@ env:
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /disk/temp
+    regionhost: 10.20.100.228
+    regionport: 5050
     oauth2:
         host: localhost
         authLink: http://${env.oauth2.host}:10002

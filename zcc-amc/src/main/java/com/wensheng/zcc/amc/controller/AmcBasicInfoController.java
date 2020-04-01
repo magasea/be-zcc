@@ -3,17 +3,7 @@ package com.wensheng.zcc.amc.controller;
 import com.wensheng.zcc.amc.aop.QueryContactorChecker;
 import com.wensheng.zcc.amc.aop.QuerySSOContactorChecker;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
-import com.wensheng.zcc.amc.module.dao.helper.AreaUnitEnum;
-import com.wensheng.zcc.amc.module.dao.helper.AssetNatureEnum;
-import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
-import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
-import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
-import com.wensheng.zcc.amc.module.dao.helper.IsRecommandEnum;
-import com.wensheng.zcc.amc.module.dao.helper.LawstateEnum;
-import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
-import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
@@ -230,6 +220,38 @@ public class AmcBasicInfoController {
   }
 
 
+  @RequestMapping(value = "/landSupplyType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getLandSupplyType(){
+
+    List<String> result = new ArrayList<>();
+    for(LandSupplyTypeEnum landSupplyTypeEnum: LandSupplyTypeEnum.values()){
+      result.add(String.format("%d:%s", landSupplyTypeEnum.getId(), landSupplyTypeEnum.getName()));
+    }
+    return result;
+  }
+  //landUsageType
+  @RequestMapping(value = "/landUsageType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getLandUsageType(){
+
+    List<String> result = new ArrayList<>();
+    for(LandUsageTypeEnum landUsageTypeEnum: LandUsageTypeEnum.values()){
+      result.add(String.format("%d:%s", landUsageTypeEnum.getId(), landUsageTypeEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/renovation", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getRenovation(){
+
+    List<String> result = new ArrayList<>();
+    for(RenovationEnum renovationEnum: RenovationEnum.values()){
+      result.add(String.format("%d:%s", renovationEnum.getId(), renovationEnum.getName()));
+    }
+    return result;
+  }
   @RequestMapping(value = "/debtorRoles", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getDebtorRoles(){

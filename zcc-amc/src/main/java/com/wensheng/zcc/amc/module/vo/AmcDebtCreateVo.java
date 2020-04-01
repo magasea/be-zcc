@@ -61,6 +61,11 @@ public class AmcDebtCreateVo implements Serializable {
 
   private String amcContactorPhone;
 
+  private Long curtProv;
+
+  private Long curtCity;
+
+  private Long curtCounty;
 
   private Integer isRecommanded;
 

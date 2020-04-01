@@ -53,6 +53,11 @@ public class AmcDebtVo {
 
   private BigDecimal valuation;
 
+  private Long curtProv;
+
+  private Long curtCity;
+
+  private Long curtCounty;
 
   private String amcContactorName;
 

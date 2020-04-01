@@ -1,7 +1,8 @@
 package com.wensheng.zcc.amc.service;
 
-import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 /**
  * @author chenwei on 1/3/19
@@ -12,7 +13,7 @@ public interface AmcExcelFileService {
 
 
 
-  public String handleMultiPartFile(MultipartFile multipartFile) throws Exception;
+  public List<String> handleMultiPartFile(MultipartFile multipartFile) throws Exception;
 
 
 

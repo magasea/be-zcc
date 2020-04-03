@@ -15,6 +15,6 @@ public interface AmcExcelFileService {
 
   public List<String> handleMultiPartFile(MultipartFile multipartFile) throws Exception;
 
-
+  public List<String> handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception;
 
 }

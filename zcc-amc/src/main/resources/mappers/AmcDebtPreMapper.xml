@@ -41,6 +41,7 @@
     <result column="update_date" jdbcType="TIMESTAMP" property="updateDate" />
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
+    <result column="row_num" jdbcType="INTEGER" property="rowNum" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -107,7 +108,7 @@
     lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor_name, 
     amc_contactor_phone, amc_contactor2_id, is_recommanded, guarant_type, recomm_start_date, 
     recomm_end_date, orig_creditor_id, orig_creditor_name, debt_desc, update_by, update_date, 
-    created_by, created_date
+    created_by, created_date, row_num
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPreExample" resultMap="BaseResultMap">
     select
@@ -156,7 +157,8 @@
       is_recommanded, guarant_type, recomm_start_date, 
       recomm_end_date, orig_creditor_id, orig_creditor_name, 
       debt_desc, update_by, update_date, 
-      created_by, created_date)
+      created_by, created_date, row_num
+      )
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, #{baseDate,jdbcType=TIMESTAMP}, 
       #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, #{totalAmountDesc,jdbcType=VARCHAR}, 
@@ -169,7 +171,8 @@
       #{isRecommanded,jdbcType=INTEGER}, #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, 
       #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, #{origCreditorName,jdbcType=CHAR}, 
       #{debtDesc,jdbcType=VARCHAR}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, 
-      #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP})
+      #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}, #{rowNum,jdbcType=INTEGER}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPre">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -291,6 +294,9 @@
       <if test="createdDate != null">
         created_date,
       </if>
+      <if test="rowNum != null">
+        row_num,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="debtpackId != null">
@@ -406,6 +412,9 @@
       </if>
       <if test="createdDate != null">
         #{createdDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="rowNum != null">
+        #{rowNum,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -535,6 +544,9 @@
       <if test="record.createdDate != null">
         created_date = #{record.createdDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.rowNum != null">
+        row_num = #{record.rowNum,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -580,7 +592,8 @@
       update_by = #{record.updateBy,jdbcType=BIGINT},
       update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
-      created_date = #{record.createdDate,jdbcType=TIMESTAMP}
+      created_date = #{record.createdDate,jdbcType=TIMESTAMP},
+      row_num = #{record.rowNum,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -702,6 +715,9 @@
       <if test="createdDate != null">
         created_date = #{createdDate,jdbcType=TIMESTAMP},
       </if>
+      <if test="rowNum != null">
+        row_num = #{rowNum,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -744,7 +760,8 @@
       update_by = #{updateBy,jdbcType=BIGINT},
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},
-      created_date = #{createdDate,jdbcType=TIMESTAMP}
+      created_date = #{createdDate,jdbcType=TIMESTAMP},
+      row_num = #{rowNum,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPreExample" resultMap="BaseResultMap">

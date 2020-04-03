@@ -271,7 +271,7 @@ public class AmcDebtController {
 
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
-    List<String> errorInfo = amcExcelFileService.handleMultiPartFile(excelFile);
+    List<String> errorInfo = amcExcelFileService.handleMultiPartFilePrecheck(excelFile);
 
     return errorInfo;
 

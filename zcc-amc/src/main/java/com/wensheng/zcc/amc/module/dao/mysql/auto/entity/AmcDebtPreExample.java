@@ -2564,6 +2564,66 @@ public class AmcDebtPreExample {
             addCriterion("created_date not between", value1, value2, "createdDate");
             return (Criteria) this;
         }
+
+        public Criteria andRowNumIsNull() {
+            addCriterion("row_num is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumIsNotNull() {
+            addCriterion("row_num is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumEqualTo(Integer value) {
+            addCriterion("row_num =", value, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumNotEqualTo(Integer value) {
+            addCriterion("row_num <>", value, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumGreaterThan(Integer value) {
+            addCriterion("row_num >", value, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumGreaterThanOrEqualTo(Integer value) {
+            addCriterion("row_num >=", value, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumLessThan(Integer value) {
+            addCriterion("row_num <", value, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumLessThanOrEqualTo(Integer value) {
+            addCriterion("row_num <=", value, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumIn(List<Integer> values) {
+            addCriterion("row_num in", values, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumNotIn(List<Integer> values) {
+            addCriterion("row_num not in", values, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumBetween(Integer value1, Integer value2) {
+            addCriterion("row_num between", value1, value2, "rowNum");
+            return (Criteria) this;
+        }
+
+        public Criteria andRowNumNotBetween(Integer value1, Integer value2) {
+            addCriterion("row_num not between", value1, value2, "rowNum");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

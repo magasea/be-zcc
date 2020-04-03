@@ -4,9 +4,7 @@ import com.google.gson.Gson;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.EditActionEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPreExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -229,15 +227,15 @@ public class AmcAspect {
         if(! (authentication.getDetails() instanceof LinkedHashMap)
           && ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails() != null){
         Map details = (Map) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
-        if(details.containsKey("userId")){
-          userId = Long.valueOf( String.format("%d",details.get("userId")));
+        if(details.containsKey("ssoUserId")){
+          userId = Long.valueOf( String.format("%d",details.get("ssoUserId")));
           amcUserOperation.setUserId(userId);
 
         }
 
       }else if(authentication.getDetails() instanceof LinkedHashMap){
           Map details = (LinkedHashMap) authentication.getDetails();
-          if(details.containsKey("userId")){
+          if(details.containsKey("ssoUserId")){
             userId = Long.valueOf( String.format("%d",details.get("userId")));
             amcUserOperation.setUserId(userId);
 
@@ -350,32 +348,67 @@ public class AmcAspect {
   @Around("@annotation(QueryDebtPreChecker) ")
   public Object aroundQueryDebtPreChecker(ProceedingJoinPoint joinPoint) throws Throwable {
     log.info("now get the point cut");
-    AmcDebtPreExample amcDebtPreExample = (AmcDebtPreExample) joinPoint.getArgs()[0];
-
+    Long userId = -1L;
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
+    if(authentication != null && (authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
+      Map<String, Object> detailsParam =
+              (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+      if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+        userId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
+      }
+    }
+    if( joinPoint.getArgs()[0] instanceof AmcDebtPreExample ){
+      AmcDebtPreExample amcDebtPreExample = (AmcDebtPreExample) joinPoint.getArgs()[0];
+
       if(amcDebtPreExample.getOredCriteria().size() == 0){
-        amcDebtPreExample.createCriteria().andCreatedByEqualTo(-1L);
+        amcDebtPreExample.createCriteria().andCreatedByEqualTo(userId);
+      }else{
+        amcDebtPreExample.getOredCriteria().get(0).andCreatedByEqualTo(userId);
       }
       return joinPoint.proceed(new Object[]{amcDebtPreExample});
+    }else if(joinPoint.getArgs()[0] instanceof AmcDebtPre){
+      AmcDebtPre amcDebtPre = (AmcDebtPre) joinPoint.getArgs()[0];
+      amcDebtPre.setCreatedBy(userId);
+      return joinPoint.proceed(new Object[]{amcDebtPre});
     }
-    log.info(authentication.getDetails().toString());
-    Map<String, Object> detailsParam =
-            (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
-    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
-      Integer locationId = (Integer) detailsParam.get("location");
-      AmcLocationEnum locationEnum =
-              AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
-      if(null != locationEnum){
-        List<ZccDebtpack> zccDebtpacks = amcDebtpackService.queryPacksWithLocation(locationEnum);
-        if(!CollectionUtils.isEmpty(zccDebtpacks)){
-          List<Long> amcDebtPackIds = zccDebtpacks.stream().map( item -> item.getId()).collect(Collectors.toList());
-          queryParam.setDebtPackIds(amcDebtPackIds);
-        }
-      }
+    log.error("Failed to precheck the :{}", joinPoint.getArgs()[0]);
 
-    }
-    return joinPoint.proceed(new Object[]{queryParam});
+    return joinPoint.proceed(joinPoint.getArgs());
   }
+
+  @Around("@annotation(QueryAssetPreChecker) ")
+  public Object aroundQueryAssetPreChecker(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    Long userId = -1L;
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if(authentication != null && (authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
+      Map<String, Object> detailsParam =
+              (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+      if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+        userId = Long.valueOf((Integer)detailsParam.get("ssoUserId"));
+      }
+    }
+    if( joinPoint.getArgs()[0] instanceof AmcAssetPreExample ){
+      AmcAssetPreExample amcAssetPreExample = (AmcAssetPreExample) joinPoint.getArgs()[0];
+
+        if(amcAssetPreExample.getOredCriteria().size() == 0){
+          amcAssetPreExample.createCriteria().andCreatedByEqualTo(userId);
+        }else{
+          amcAssetPreExample.getOredCriteria().get(0).andCreatedByEqualTo(userId);
+        }
+        return joinPoint.proceed(new Object[]{amcAssetPreExample});
+    }else if(joinPoint.getArgs()[0] instanceof AmcAssetPre){
+      AmcAssetPre amcAssetPre = (AmcAssetPre) joinPoint.getArgs()[0];
+      amcAssetPre.setCreatedBy(userId);
+      return joinPoint.proceed(new Object[]{amcAssetPre});
+    }
+    log.error("Failed to precheck the :{}", joinPoint.getArgs()[0]);
+
+    return joinPoint.proceed(joinPoint.getArgs());
+  }
+
+
+
+
 
 }

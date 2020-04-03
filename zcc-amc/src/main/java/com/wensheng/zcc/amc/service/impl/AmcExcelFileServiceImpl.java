@@ -142,6 +142,675 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
     }
 
+    @Override
+    public List<String> handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception {
+        File targetFile = null;
+        targetFile =
+                new File(debtImageRepo+File.separator  +multipartFile.getOriginalFilename());
+
+
+        multipartFile.transferTo(targetFile);
+
+// Creating a Workbook from an Excel file (.xls or .xlsx)
+        Workbook workbook = WorkbookFactory.create(targetFile);
+
+        // Retrieving the number of sheets in the Workbook
+        System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+
+     /*
+           ==================================================================
+           Iterating over all the rows and columns in a Sheet (Multiple ways)
+           ==================================================================
+        */
+
+        // Getting the Sheet at index zero
+        Sheet sheetDebt = workbook.getSheetAt(0);
+        List<String> errorInfo = new ArrayList<>();
+        Map<String, AmcDebtPre> debtMap = handleDebtPreFromExcel(sheetDebt, errorInfo);
+        Sheet sheetAsset = workbook.getSheetAt(1);
+        handleAssetPreFromExcel(sheetAsset, debtMap, errorInfo);
+        return errorInfo;
+    }
+
+    private void handleAssetPreFromExcel(Sheet sheetAsset, Map<String, AmcDebtPre> debtMap, List<String> errorInfo) throws Exception {
+//        Map<Long, Map<String, AmcAsset>> historyAssetTitleDebtId = getHistoryAssetTitleDebtIdMap(debtMap.values().stream().map(item->item.getId()).collect(Collectors.toUnmodifiableList()));
+        HashMap<String, AmcAssetPre> assetTitles = new HashMap<>();
+
+        Iterator<Row> rowIterator = sheetAsset.rowIterator();
+        List<AmcAsset> amcAssets = new ArrayList<>();
+        int idxDebtTitle = -1;
+
+        //资产
+        int idxAssetName = -1;
+        int idxAssetOwner = -1;
+//        int idxAssetNature = -1;
+        int idxAssetType = -1;
+        int idxAssetLawSealState = -1;
+        int idxAssetProv = -1;
+        int idxAssetCity = -1;
+        int idxAssetCounty = -1;
+        int idxAssetAddr = -1;
+        int idxBuildingArea = -1;
+        int idxLandArea = -1;
+        int idxLandUsage = -1;
+        int idxLandSupplyType = -1;
+        int idxWarrantInfo = -1;
+        int idxNote = -1;
+
+        boolean hasGotHeader = false;
+        while (rowIterator.hasNext()) {
+
+            Row row = rowIterator.next();
+            if(row.getLastCellNum() - row.getFirstCellNum() <= 10 ){
+                if(!hasGotHeader){
+                    // it is header rows
+                    continue;
+                }else{
+                    break;
+                }
+
+            }
+            if (!hasGotHeader) {
+                log.info("now got first row, it is title row");
+                // Now let's iterate over the columns of the current row
+                Iterator<Cell> cellIterator = row.cellIterator();
+
+                int idxOfCell = -1;
+                while (cellIterator.hasNext()) {
+
+                    Cell cell = cellIterator.next();
+                    idxOfCell++;
+                    String cellValue = dataFormatter.formatCellValue(cell);
+
+                    switch (cellValue) {
+                        case strDebtTitle:
+                            idxDebtTitle = idxOfCell;
+                            break;
+                        case strAssetOwner:
+                            idxAssetOwner = idxOfCell;
+                            break;
+                        case strAssetAddr:
+                            idxAssetAddr = idxOfCell;
+                            break;
+                        case strAssetCity:
+                            idxAssetCity = idxOfCell;
+                            break;
+                        case strAssetCounty:
+                            idxAssetCounty = idxOfCell;
+                            break;
+                        case strAssetLawSealState:
+                            idxAssetLawSealState = idxOfCell;
+                            break;
+                        case strAssetName:
+                            idxAssetName = idxOfCell;
+                            break;
+//                        case strAssetNature:
+//                            idxAssetNature = idxOfCell;
+//                            break;
+                        case strAssetProv:
+                            idxAssetProv = idxOfCell;
+                            break;
+                        case strAssetType:
+                            idxAssetType = idxOfCell;
+                            break;
+                        case strBuildingArea:
+                            idxBuildingArea = idxOfCell;
+
+                        case strLandArea:
+                            idxLandArea = idxOfCell;
+                            break;
+                        case strLandSupplyType:
+                            idxLandSupplyType = idxOfCell;
+                            break;
+                        case strLandUsage:
+                            idxLandUsage = idxOfCell;
+                            break;
+                        case strWarrantInfo:
+                            idxWarrantInfo = idxOfCell;
+                        case strNote:
+                            idxNote = idxOfCell;
+                            break;
+                        default:
+                            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
+
+                    }
+                }
+
+                // now check if there is missing headers
+                if (((idxDebtTitle + 1) * (idxAssetName + 1)  * (idxAssetType + 1) *
+                        (idxAssetLawSealState + 1) * (idxAssetProv + 1) * (idxAssetCity + 1) * (idxAssetCounty + 1) * (idxAssetAddr + 1) * (idxBuildingArea + 1) *
+                        (idxLandArea + 1) * (idxLandUsage + 1) * (idxLandSupplyType + 1) * (idxWarrantInfo + 1)) == 0) {
+                    String missingHeader = null;
+                    if (idxDebtTitle == -1) {
+                        missingHeader = strDebtTitle;
+                    }
+                    if(idxAssetOwner == -1){
+                        missingHeader = strAssetOwner;
+                    }
+                    if (idxAssetName == -1) {
+                        missingHeader = strAssetName;
+                    }
+//                    if (idxAssetNature == -1) {
+//                        missingHeader = strAssetNature;
+//                    }
+                    if (idxAssetType == -1) {
+                        missingHeader = strAssetType;
+                    }
+                    if (idxAssetLawSealState == -1) {
+                        missingHeader = strAssetLawSealState;
+                    }
+                    if (idxAssetProv == -1) {
+                        missingHeader = strAssetProv;
+                    }
+                    if (idxAssetCity == -1) {
+                        missingHeader = strAssetCity;
+                    }
+                    if (idxAssetCounty == -1) {
+                        missingHeader = strAssetCounty;
+                    }
+                    if (idxAssetAddr == -1) {
+                        missingHeader = strAssetAddr;
+                    }
+                    if (idxBuildingArea == -1) {
+                        missingHeader = strBuildingArea;
+                    }
+                    if (idxLandArea == -1) {
+                        missingHeader = strLandArea;
+                    }
+                    if (idxLandUsage == -1) {
+                        missingHeader = strLandUsage;
+                    }
+                    if (idxLandSupplyType == -1) {
+                        missingHeader = strLandSupplyType;
+                    }
+                    if (idxWarrantInfo == -1) {
+                        missingHeader = strWarrantInfo;
+                    }
+                    if(idxNote == -1){
+                        missingHeader = strNote;
+                    }
+                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                }else{
+                    hasGotHeader = true;
+                }
+            } else {
+                // can generate debt and asset
+                String cellDebtTitle = dataFormatter.formatCellValue(row.getCell(idxDebtTitle));
+                String cellAssetOwner = dataFormatter.formatCellValue(row.getCell(idxAssetOwner));
+                String cellAssetName = dataFormatter.formatCellValue(row.getCell(idxAssetName));
+//                String cellAssetNature = dataFormatter.formatCellValue(row.getCell(idxAssetNature));
+                String cellAssetType = dataFormatter.formatCellValue(row.getCell(idxAssetType));
+                String cellAssetLawSealState = dataFormatter.formatCellValue(row.getCell(idxAssetLawSealState));
+                String cellAssetProv = dataFormatter.formatCellValue(row.getCell(idxAssetProv));
+                String cellAssetCity = dataFormatter.formatCellValue(row.getCell(idxAssetCity));
+                String cellAssetCounty = dataFormatter.formatCellValue(row.getCell(idxAssetCounty));
+                String cellAssetAddr = dataFormatter.formatCellValue(row.getCell(idxAssetAddr));
+                String cellBuildingArea = dataFormatter.formatCellValue(row.getCell(idxBuildingArea));
+                String cellLandArea = dataFormatter.formatCellValue(row.getCell(idxLandArea));
+                String cellLandUsage = dataFormatter.formatCellValue(row.getCell(idxLandUsage));
+                String cellLandSupplyType = dataFormatter.formatCellValue(row.getCell(idxLandSupplyType));
+                String cellWarrantInfo = dataFormatter.formatCellValue(row.getCell(idxWarrantInfo));
+                String cellNote = dataFormatter.formatCellValue(row.getCell(idxNote));
+
+                AmcAssetPre amcAssetPre = new AmcAssetPre();
+                amcAssetPre.setRowNum(row.getRowNum());
+
+
+                if(StringUtils.isEmpty(cellDebtTitle) && StringUtils.isEmpty(cellAssetName)){
+                    break;
+                }
+
+                if(!debtMap.containsKey(cellDebtTitle)){
+                    log.error("{} {} There is no debt with title:{}", sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle);
+                    errorInfo.add(String.format("%s %s There is no debt with title:%s",  sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle));
+                    continue;
+                }else{
+                    amcAssetPre.setDebtId(debtMap.get(cellDebtTitle).getId());
+                    amcAssetPre.setDebtTitle(cellDebtTitle);
+                }
+//                AssetAdditional assetAdditional = new AssetAdditional();
+                if(!StringUtils.isEmpty(cellAssetOwner)){
+                    amcAssetPre.setOwner(cellAssetOwner);
+                }
+                if(!StringUtils.isEmpty(cellLandSupplyType)){
+                    LandSupplyTypeEnum landSupplyTypeEnum = LandSupplyTypeEnum.lookupByDisplayNameUtil(cellLandSupplyType);
+                    if(null == landSupplyTypeEnum){
+                        errorInfo.add(String.format("%s %s There is no such landSupplyType:%s",  sheetAsset.getSheetName(), row.getRowNum(), cellLandSupplyType));
+                        log.error(String.format("%s %s There is no such landSupplyType:%s",  sheetAsset.getSheetName(), row.getRowNum(), cellLandSupplyType));
+                    }else{
+                        amcAssetPre.setLandsupply(landSupplyTypeEnum.getId());
+                    }
+                }
+                if(!StringUtils.isEmpty(cellAssetName)){
+                    amcAssetPre.setTitle(cellAssetName);
+                }else{
+//                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("no asset name:%s", cellAssetName));
+                    errorInfo.add(String.format("%s %s no asset name:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetName));
+                    log.error(String.format("%s %s no asset name:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetName));
+                    continue;
+                }
+                amcAssetPre.setAssetNature(AssetNatureEnum.SEAL.getType());
+//                if(!StringUtils.isEmpty(cellAssetNature)){
+//                    amcAsset.setAssetNature(AssetNatureEnum.lookupByDisplayNameUtil(cellAssetNature).getType());
+//                }else{
+//                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("no asset nature:%s", cellAssetNature));
+//                }
+
+                if(!StringUtils.isEmpty(cellAssetType)){
+                    AssetTypeEnum assetTypeEnum = AssetTypeEnum.lookupByDisplayNameUtil(cellAssetType);
+                    if(null == assetTypeEnum){
+                        errorInfo.add(String.format("%s %s There is no such AssetTypeEnum:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+                        log.error(String.format("%s %s There is no such AssetTypeEnum:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+                    }else{
+                        amcAssetPre.setType(assetTypeEnum.getType());
+                    }
+
+                }else{
+                    log.error(String.format("%s %s no asset type:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+                    errorInfo.add(String.format("%s %s no asset type:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+                    continue;
+                }
+
+                if(!StringUtils.isEmpty(cellAssetLawSealState)){
+                    SealStateEnum sealStateEnum = SealStateEnum.lookupByDisplayNameUtil(cellAssetLawSealState);
+                    if(null == sealStateEnum){
+                        errorInfo.add(String.format("%s %s There is no such SealStateEnum:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetLawSealState));
+                        log.error(String.format("%s %s There is no such SealStateEnum:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetLawSealState));
+                    }else{
+                        amcAssetPre.setSealedState(SealStateEnum.lookupByDisplayNameUtil(cellAssetLawSealState).getStatus());
+                    }
+                }
+
+                if(!StringUtils.isEmpty(cellAssetProv)){
+                    List<Region> regions = regionService.getRegionByName(cellAssetProv);
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetProv:%s",cellAssetProv));
+                        errorInfo.add(String.format("%s %s failed to find code for cellAssetProv:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetProv));
+//                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+
+                    }else{
+                        amcAssetPre.setProvince(regions.get(0).getId().toString());
+                    }
+                }
+                if(!StringUtils.isEmpty(cellAssetCity)){
+                    List<Region> regions = regionService.getRegionByName(cellAssetCity);
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",cellAssetCity));
+                        errorInfo.add(String.format("%s %s failed to find code for cellAssetProv:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetCity));
+//                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+
+                    }else if(regions.size() > 1){
+                        for(Region region: regions){
+                            if(region.getId().toString().startsWith(amcAssetPre.getProvince().substring(0,2))){
+                                amcAssetPre.setCity(region.getId().toString());
+                                break;
+                            }
+                        }
+                    }else{
+                        amcAssetPre.setCity(regions.get(0).getId().toString());
+                    }
+                }
+
+                if(!StringUtils.isEmpty(cellAssetCounty)){
+                    List<Region> regions = regionService.getRegionByName(cellAssetCounty);
+                    if(CollectionUtils.isEmpty(regions)){
+                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+                        errorInfo.add(String.format("%s %s failed to find code for cellAssetCounty:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetCounty));
+//                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
+
+                    }else if(regions.size() > 1){
+                        for(Region region: regions){
+                            if(region.getId().toString().startsWith(amcAssetPre.getCity().substring(0,3))){
+                                amcAssetPre.setCounty(region.getId().toString());
+                                break;
+                            }
+                        }
+                    }else{
+                        amcAssetPre.setCounty(regions.get(0).getId().toString());
+                    }
+                }
+
+
+                if(!StringUtils.isEmpty(cellAssetAddr)){
+                    amcAssetPre.setAddress(cellAssetAddr);
+                }
+                if(!StringUtils.isEmpty(cellBuildingArea)){
+                    amcAssetPre.setBuildingArea(AmcNumberUtils.getLongFromStringWithMult100(cellBuildingArea));
+                }
+                if(!StringUtils.isEmpty(cellLandArea)){
+                    amcAssetPre.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(cellLandArea));
+                    amcAssetPre.setLandAreaUnit(AreaUnitEnum.SQUAREMETER.getType());
+                }
+
+                if(!StringUtils.isEmpty(cellLandUsage)){
+                    LandUsageTypeEnum landUsageTypeEnum = LandUsageTypeEnum.lookupByDisplayNameUtil(cellLandUsage);
+                    if(null == landUsageTypeEnum){
+                        log.error(String.format("%s %s no such landUsage:%s",sheetAsset.getSheetName(),row.getRowNum(), cellLandUsage));
+                        errorInfo.add(String.format("%s %s no such landUsage:%s",sheetAsset.getSheetName(),row.getRowNum(), cellLandUsage));
+                    }else{
+                        amcAssetPre.setLandusage(landUsageTypeEnum.getId());
+                    }
+                }
+                if(!StringUtils.isEmpty(cellWarrantInfo)){
+                    amcAssetPre.setWarrant(cellWarrantInfo);
+                }
+                if(!StringUtils.isEmpty(cellNote)){
+                    amcAssetPre.setAssetNote(cellNote);
+//                    amcAsset.setNote(cellNote);
+                }
+                if(!assetTitles.containsKey(amcAssetPre.getTitle())){
+                    amcExcelPreCheckService.createAsset(amcAssetPre);
+                    assetTitles.put(amcAssetPre.getTitle(), amcAssetPre);
+                }else{
+                    if(assetTitles.get(amcAssetPre.getTitle()).getDebtId() == amcAssetPre.getDebtId()){
+                        //same debt id should not have duplicate asset title
+                        log.error(String.format("%s %s there is duplicate asset title:%s with the same debt:%s", sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle));
+                        errorInfo.add(String.format("%s %s there is duplicate asset title:%s with the same debt:%s", sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle));
+                        continue;
+                    }
+                }
+
+
+            }
+        }
+    }
+
+    private Map<String, AmcDebtPre> handleDebtPreFromExcel(Sheet sheetDebt, List<String> errorInfo) throws Exception {
+        AmcDebtPreExample amcDebtPreExample = new AmcDebtPreExample();
+        amcExcelPreCheckService.deleteAllDebtPre(amcDebtPreExample);
+        AmcAssetPreExample amcAssetPreExample = new AmcAssetPreExample();
+        amcExcelPreCheckService.deleteAllAssetPre(amcAssetPreExample);
+
+        Map<String, AmcDebtPre> debtMap = new HashMap<>();
+        Map<String, Long> regionMap = new HashMap<>();
+        // 1. You can obtain a rowIterator and columnIterator and iterate over them
+        Iterator<Row> rowIterator = sheetDebt.rowIterator();
+
+        int idxDebtTitle = -1;
+        int idxBrowwer = -1;
+        int idxDebtBaseAmount = -1;
+//        int idxDebtTotalAmount = -1;
+        int idxDebtInterestAmount = -1;
+        int idxLawState = -1;
+        int idxGrantType = -1;
+        int idxGrantor = -1;
+        int idxCourtProv = -1;
+        int idxCourtCity = -1;
+        int idxCourtCounty = -1;
+        int idxCourt = -1;
+        int idxAmcContactor = -1;
+        int idxDesc = -1;
+        boolean hasGotHeader = false;
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            if(row.getLastCellNum() - row.getFirstCellNum() <= 8 ){
+                if(!hasGotHeader){
+                    // it is header rows
+                    continue;
+                }else{
+                    break;
+                }
+
+            }
+            if(!hasGotHeader){
+                log.info("now got first row, it is title row");
+                // Now let's iterate over the columns of the current row
+                Iterator<Cell> cellIterator = row.cellIterator();
+                int idxOfCell = -1;
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    idxOfCell++;
+                    String cellValue = dataFormatter.formatCellValue(cell);
+                    System.out.print(cellValue + "\t");
+                    switch (cellValue) {
+                        case strDebtTitle:
+                            idxDebtTitle = idxOfCell;
+                            break;
+                        case strAmcContactor:
+                            idxAmcContactor = idxOfCell;
+                            break;
+                        case strBrower:
+                            idxBrowwer = idxOfCell;
+                            break;
+                        case strCourt:
+                            idxCourt = idxOfCell;
+                            break;
+                        case strCourtCity:
+                            idxCourtCity = idxOfCell;
+                            break;
+                        case strCourtCounty:
+                            idxCourtCounty = idxOfCell;
+                            break;
+                        case strCourtProv:
+                            idxCourtProv = idxOfCell;
+                            break;
+                        case strDebtBaseAmount:
+                            idxDebtBaseAmount = idxOfCell;
+                            break;
+//                        case strDebtTotalAmount:
+//                            idxDebtTotalAmount = idxOfCell;
+//                            break;
+                        case strDebtInterestAmount:
+                            idxDebtInterestAmount = idxOfCell;
+                            break;
+                        case strDesc:
+                            idxDesc = idxOfCell;
+                            break;
+                        case strGrantor:
+                            idxGrantor = idxOfCell;
+                            break;
+                        case strGrantType:
+                            idxGrantType = idxOfCell;
+                            break;
+                        case strLawState:
+                            idxLawState = idxOfCell;
+                            break;
+                        default:
+                            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
+
+                    }
+                }
+                // now check if there is missing headers
+                if(((idxDebtTitle + 1) * (idxBrowwer + 1) * (idxDebtBaseAmount + 1) * (idxDebtInterestAmount +1) * (idxLawState + 1) *
+                        (idxGrantType + 1) * (idxGrantor + 1) * (idxCourtProv + 1) * (idxCourtCity + 1) *
+                        (idxCourtCounty + 1) * (idxCourt + 1) * (idxAmcContactor + 1) * (idxDesc + 1) ) == 0){
+                    String missingHeader = null;
+                    if(idxDebtTitle == -1){
+                        missingHeader = strDebtTitle;
+                    }
+                    if(idxBrowwer == -1){
+                        missingHeader = strBrower;
+                    }
+                    if(idxDebtBaseAmount == -1){
+                        missingHeader = strDebtBaseAmount;
+                    }
+//                    if(idxDebtTotalAmount == -1){
+//                        missingHeader = strDebtTotalAmount;
+//                    }
+                    if(idxDebtInterestAmount == -1){
+                        missingHeader = strDebtInterestAmount;
+                    }
+                    if(idxLawState == -1){
+                        missingHeader = strLawState;
+                    }
+                    if(idxGrantType == -1){
+                        missingHeader = strGrantType;
+                    }
+                    if(idxGrantor == -1){
+                        missingHeader = strGrantor;
+                    }
+                    if(idxCourtProv == -1){
+                        missingHeader = strCourtProv;
+                    }
+                    if(idxCourtCity == -1){
+                        missingHeader = strCourtCity;
+                    }
+                    if(idxCourtCounty == -1){
+                        missingHeader = strCourtCounty;
+                    }
+                    if(idxCourt == -1){
+                        missingHeader = strCourt;
+                    }
+                    if(idxAmcContactor == -1){
+                        missingHeader = strAmcContactor;
+                    }
+                    if(idxDesc == -1){
+                        missingHeader = strDesc;
+                    }
+                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                }else{
+                    hasGotHeader = true;
+                }
+            }else{
+                // can generate debt and asset
+                String cellDebtTitle = dataFormatter.formatCellValue(row.getCell(idxDebtTitle));
+                String cellBrowwer = dataFormatter.formatCellValue(row.getCell(idxBrowwer));
+                String cellDebtBaseAmount = dataFormatter.formatCellValue(row.getCell(idxDebtBaseAmount));
+//                String cellDebtTotalAmount = dataFormatter.formatCellValue(row.getCell(idxDebtTotalAmount));
+                String cellDebtInterestAmount = dataFormatter.formatCellValue(row.getCell(idxDebtInterestAmount));
+                String cellLawState = dataFormatter.formatCellValue(row.getCell(idxLawState));
+                String cellGrantType = dataFormatter.formatCellValue(row.getCell(idxGrantType));
+                String cellGrantor = dataFormatter.formatCellValue(row.getCell(idxGrantor));
+                String cellCourtProv = dataFormatter.formatCellValue(row.getCell(idxCourtProv));
+                String cellCourtCity = dataFormatter.formatCellValue(row.getCell(idxCourtCity));
+                String cellCourtCounty = dataFormatter.formatCellValue(row.getCell(idxCourtCounty));
+                String cellCourt = dataFormatter.formatCellValue(row.getCell(idxCourt));
+                String cellAmcContactor = dataFormatter.formatCellValue(row.getCell(idxAmcContactor));
+                String cellDesc = dataFormatter.formatCellValue(row.getCell(idxDesc));
+                AmcDebtPre amcDebtPre = new AmcDebtPre();
+                amcDebtPre.setAmcId(Long.valueOf(AmcCmpyEnum.CMPY_WENSHENG.getId()));
+                amcDebtPre.setPublishState(PublishStateEnum.DRAFT.getStatus());
+                amcDebtPre.setRowNum(row.getRowNum());
+                SSOAmcUser ssoAmcUser = getAmcContactorByName(cellAmcContactor);
+                if(ssoAmcUser == null){
+                    errorInfo.add(String.format("%s %s failed to find amcContactor for:%s", sheetDebt.getSheetName(), row.getRowNum(), cellAmcContactor));
+                }else{
+                    amcDebtPre.setAmcContactorName(cellAmcContactor);
+                    amcDebtPre.setAmcContactorPhone(ssoAmcUser.getMobilePhone());
+                }
+
+                if(!StringUtils.isEmpty(cellDebtBaseAmount)){
+                    amcDebtPre.setBaseAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtBaseAmount));
+                }
+//                if(!StringUtils.isEmpty(cellDebtTotalAmount)){
+//                    amcDebt.setTotalAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtTotalAmount));
+//                }
+                if(!StringUtils.isEmpty(cellDebtInterestAmount)){
+                    amcDebtPre.setInterestAmount(AmcNumberUtils.getLongFromStringWithMult100(cellDebtInterestAmount));
+                }
+                if(!StringUtils.isEmpty(cellLawState)){
+                    LawstateEnum lawstateEnum = LawstateEnum.lookupByDisplayNameUtil(cellLawState);
+                    if(null == lawstateEnum){
+                        errorInfo.add(String.format("%s %s 找不到对应的法律状态:%s", sheetDebt.getSheetName(), row.getRowNum(), cellLawState));
+                        log.error(String.format("%s %s 找不到对应的法律状态:%s", sheetDebt.getSheetName(), row.getRowNum(), cellLawState));
+                    }else{
+                        amcDebtPre.setLawsuitState(LawstateEnum.lookupByDisplayNameUtil(cellLawState).getStatus());
+                    }
+
+                }
+                if(!StringUtils.isEmpty(cellGrantType)){
+                    GuarantTypeEnum guarantTypeEnum = GuarantTypeEnum.lookupByDisplayNameUtil(cellGrantType);
+                    if(guarantTypeEnum == null){
+                        errorInfo.add(String.format("%s %s failed to find guarantType for:%s", sheetDebt.getSheetName(), row.getRowNum(), cellGrantType));
+                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("%s %s failed to find guarantType for:%s", sheetDebt.getSheetName(), row.getRowNum(), cellGrantType));
+                    }
+                    amcDebtPre.setGuarantType(GuarantTypeEnum.lookupByDisplayNameUtil(cellGrantType).getType());
+                }
+                if(!StringUtils.isEmpty(cellDebtTitle)){
+                    amcDebtPre.setTitle(cellDebtTitle);
+                }else{
+                    break;
+                }
+
+                List<ZccDebtpack> zccDebtpacks =  amcDebtpackService.queryPacksWithLocation(AmcLocationEnum.lookupByDisplayIdUtil(ssoAmcUser.getLocation()));
+                if(CollectionUtils.isEmpty(zccDebtpacks)){
+                    errorInfo.add(String.format("%s %s failed to find user location for:%s", sheetDebt.getSheetName(), row.getRowNum(), cellAmcContactor));
+                    log.error(String.format("%s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
+                }
+                if(!StringUtils.isEmpty(cellCourt)){
+                    Long curtId = getCourt(cellCourtProv, cellCourtCity, cellCourtCounty, cellCourt);
+                    if(curtId <= -1L){
+                        errorInfo.add(String.format("%s %s 当前后台系统中没有找到该法院:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourt));
+                    }else{
+                        amcDebtPre.setCourtId(curtId);
+                    }
+
+                }
+
+                if(!StringUtils.isEmpty(cellCourtProv) && !regionMap.containsKey(cellCourtProv)){
+                    List<Region> regions = regionService.getRegionByName(cellCourtProv);
+                    if(!CollectionUtils.isEmpty(regions)){
+                        amcDebtPre.setCurtProv(regions.get(0).getId());
+                        regionMap.put(cellCourtProv, regions.get(0).getId());
+                    }else{
+                        log.error(String.format("%s %s 找不到对应的法院所属省:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtProv));
+                        errorInfo.add(String.format("%s %s 找不到对应的法院所属省:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtProv));
+                        regionMap.put(cellCourtProv, -1L);
+                    }
+                }else if(regionMap.containsKey(cellCourtProv)){
+                    amcDebtPre.setCurtProv(regionMap.get(cellCourtProv));
+                }
+
+                if(!StringUtils.isEmpty(cellCourtCity) && !regionMap.containsKey(cellCourtCity)){
+                    List<Region> regions = regionService.getRegionByName(cellCourtCity);
+                    if(!CollectionUtils.isEmpty(regions)){
+                        amcDebtPre.setCurtCity(regions.get(0).getId());
+                        regionMap.put(cellCourtCity, regions.get(0).getId());
+                    }else{
+                        log.error(String.format("%s %s 找不到对应的法院所属市:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCity));
+                        errorInfo.add(String.format("%s %s 找不到对应的法院所属市:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCity));
+                        regionMap.put(cellCourtCity, -1L);
+                    }
+                }else if(regionMap.containsKey(cellCourtCity)){
+                    amcDebtPre.setCurtCity(regionMap.get(cellCourtCity));
+                }
+
+                if(!StringUtils.isEmpty(cellCourtCounty) && !regionMap.containsKey(cellCourtCounty)){
+                    List<Region> regions = regionService.getRegionByName(cellCourtCounty);
+                    if(!CollectionUtils.isEmpty(regions)){
+                        amcDebtPre.setCurtCounty(regions.get(0).getId());
+                        regionMap.put(cellCourtCounty, regions.get(0).getId());
+                    }else{
+                        log.error(String.format("%s %s 找不到对应的法院所属区县:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCounty));
+                        errorInfo.add(String.format("%s %s 找不到对应的法院所属区县:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCounty));
+                        regionMap.put(cellCourtCounty, -1L);
+                    }
+                }else if(regionMap.containsKey(cellCourtCounty)){
+                    amcDebtPre.setCurtCounty(regionMap.get(cellCourtCounty));
+                }
+                boolean haveFormalDebtTitle = amcExcelPreCheckService.checkDebtTitleExist(amcDebtPre.getTitle());
+                if(haveFormalDebtTitle){
+                    log.error(String.format("%s %s 该债权在正式表AmcDebt里面已经存在,可以前往债权编辑页面去更新它:%s", sheetDebt.getSheetName(), row.getRowNum(), cellDebtTitle));
+                    errorInfo.add(String.format("%s %s 该债权在正式表AmcDebt里面已经存在,可以前往债权编辑页面去更新它:%s", sheetDebt.getSheetName(), row.getRowNum(), cellDebtTitle));
+                    continue;
+                }
+
+                AmcDebtPre amcDebtPreInDb = amcExcelPreCheckService.createDebt(amcDebtPre);
+
+                debtMap.put(amcDebtPreInDb.getTitle(), amcDebtPreInDb);
+
+
+                if(!StringUtils.isEmpty(cellDesc)){
+                    amcDebtPreInDb.setDebtDesc(cellDesc);
+
+                }
+
+
+                // after debt created , then make the related object
+
+                if(!StringUtils.isEmpty(cellGrantor)){
+                   amcDebtPreInDb.setGuarantee(checkGrantorsOrBrowwer(cellGrantor, errorInfo, sheetDebt, row));
+                }
+                if(!StringUtils.isEmpty(cellBrowwer)){
+                    amcDebtPreInDb.setBorrower(checkGrantorsOrBrowwer(cellBrowwer, errorInfo, sheetDebt, row));
+                }
+                amcExcelPreCheckService.updateDebt(amcDebtPreInDb);
+            }
+
+        }
+        return debtMap;
+    }
+
     private void handleAssetFromExcel(Sheet sheetAsset, Map<String, AmcDebtVo> debtMap, List<String> errorInfo) throws Exception {
 
         Map<Long, Map<String, AmcAsset>> historyAssetTitleDebtId = getHistoryAssetTitleDebtIdMap(debtMap.values().stream().map(item->item.getId()).collect(Collectors.toUnmodifiableList()));
@@ -704,7 +1373,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellCourtCity) && !regionMap.containsKey(cellCourtCity)){
                     List<Region> regions = regionService.getRegionByName(cellCourtCity);
                     if(!CollectionUtils.isEmpty(regions)){
-                        amcDebt.setCurtProv(regions.get(0).getId());
+                        amcDebt.setCurtCity(regions.get(0).getId());
                         regionMap.put(cellCourtCity, regions.get(0).getId());
                     }else{
                         regionMap.put(cellCourtCity, -1L);
@@ -764,7 +1433,24 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         }
         return debtMap;
     }
+    private String checkGrantorsOrBrowwer(String cellGrantorOrBrowwer, List<String> errorInfo, Sheet sheetDebt, Row row) {
 
+
+        if(cellGrantorOrBrowwer.contains(SEP_CHAR)){
+            Set<String> grantorsInSet = new HashSet<>();
+            String[] cellGrantors = cellGrantorOrBrowwer.split(SEP_CHAR);
+            for(String grantor: cellGrantors){
+               if(grantorsInSet.contains(grantor)){
+                   errorInfo.add(String.format("%s %s there is duplicate name:%s in %s", sheetDebt.getSheetName(), row.getRowNum(), grantor, cellGrantorOrBrowwer));
+               }else{
+                   grantorsInSet.add(grantor);
+               }
+            }
+            return  String.join(",", grantorsInSet);
+        }else{
+            return cellGrantorOrBrowwer;
+        }
+    }
 
 
     private void makeGrantors(String cellGrantor, Long debtId) {

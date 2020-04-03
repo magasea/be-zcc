@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetPre">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="title" jdbcType="CHAR" property="title" />
+    <result column="debt_title" jdbcType="VARCHAR" property="debtTitle" />
     <result column="type" jdbcType="INTEGER" property="type" />
     <result column="sealed_state" jdbcType="INTEGER" property="sealedState" />
     <result column="asset_nature" jdbcType="INTEGER" property="assetNature" />
@@ -19,6 +20,8 @@
     <result column="land_area_unit" jdbcType="INTEGER" property="landAreaUnit" />
     <result column="landusage" jdbcType="INTEGER" property="landusage" />
     <result column="landsupply" jdbcType="INTEGER" property="landsupply" />
+    <result column="owner" jdbcType="VARCHAR" property="owner" />
+    <result column="warrant" jdbcType="VARCHAR" property="warrant" />
     <result column="land_unit_price" jdbcType="BIGINT" property="landUnitPrice" />
     <result column="publish_date" jdbcType="DATE" property="publishDate" />
     <result column="province" jdbcType="CHAR" property="province" />
@@ -34,6 +37,7 @@
     <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
     <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
     <result column="asset_note" jdbcType="VARCHAR" property="assetNote" />
+    <result column="row_num" jdbcType="INTEGER" property="rowNum" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -94,11 +98,12 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
+    id, title, debt_title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
     zcc_asset_code, total_valuation, debt_id, building_area, building_unit_price, land_area, 
-    land_area_unit, landusage, landsupply, land_unit_price, publish_date, province, city, 
-    county, address, building_name, update_by, update_date, created_by, created_date, 
-    amc_contactor_id, amc_contactor_name, amc_contactor_phone, asset_note
+    land_area_unit, landusage, landsupply, owner, warrant, land_unit_price, publish_date, 
+    province, city, county, address, building_name, update_by, update_date, created_by, 
+    created_date, amc_contactor_id, amc_contactor_name, amc_contactor_phone, asset_note, 
+    row_num
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetPreExample" resultMap="BaseResultMap">
     select
@@ -135,28 +140,30 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_ASSET_PRE (title, type, sealed_state, 
-      asset_nature, publish_state, amc_id, 
-      amc_asset_code, zcc_asset_code, total_valuation, 
-      debt_id, building_area, building_unit_price, 
-      land_area, land_area_unit, landusage, 
-      landsupply, land_unit_price, publish_date, 
+    insert into AMC_ASSET_PRE (title, debt_title, type, 
+      sealed_state, asset_nature, publish_state, 
+      amc_id, amc_asset_code, zcc_asset_code, 
+      total_valuation, debt_id, building_area, 
+      building_unit_price, land_area, land_area_unit, 
+      landusage, landsupply, owner, 
+      warrant, land_unit_price, publish_date, 
       province, city, county, address, 
       building_name, update_by, update_date, 
       created_by, created_date, amc_contactor_id, 
-      amc_contactor_name, amc_contactor_phone, asset_note
-      )
-    values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
-      #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
-      #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{totalValuation,jdbcType=BIGINT}, 
-      #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, #{buildingUnitPrice,jdbcType=BIGINT}, 
-      #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, #{landusage,jdbcType=INTEGER}, 
-      #{landsupply,jdbcType=INTEGER}, #{landUnitPrice,jdbcType=BIGINT}, #{publishDate,jdbcType=DATE}, 
+      amc_contactor_name, amc_contactor_phone, asset_note, 
+      row_num)
+    values (#{title,jdbcType=CHAR}, #{debtTitle,jdbcType=VARCHAR}, #{type,jdbcType=INTEGER}, 
+      #{sealedState,jdbcType=INTEGER}, #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, 
+      #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, 
+      #{totalValuation,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, 
+      #{buildingUnitPrice,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, 
+      #{landusage,jdbcType=INTEGER}, #{landsupply,jdbcType=INTEGER}, #{owner,jdbcType=VARCHAR}, 
+      #{warrant,jdbcType=VARCHAR}, #{landUnitPrice,jdbcType=BIGINT}, #{publishDate,jdbcType=DATE}, 
       #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, 
       #{buildingName,jdbcType=CHAR}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, 
       #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT}, 
-      #{amcContactorName,jdbcType=CHAR}, #{amcContactorPhone,jdbcType=CHAR}, #{assetNote,jdbcType=VARCHAR}
-      )
+      #{amcContactorName,jdbcType=CHAR}, #{amcContactorPhone,jdbcType=CHAR}, #{assetNote,jdbcType=VARCHAR}, 
+      #{rowNum,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetPre">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -166,6 +173,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="title != null">
         title,
+      </if>
+      <if test="debtTitle != null">
+        debt_title,
       </if>
       <if test="type != null">
         type,
@@ -212,6 +222,12 @@
       <if test="landsupply != null">
         landsupply,
       </if>
+      <if test="owner != null">
+        owner,
+      </if>
+      <if test="warrant != null">
+        warrant,
+      </if>
       <if test="landUnitPrice != null">
         land_unit_price,
       </if>
@@ -257,10 +273,16 @@
       <if test="assetNote != null">
         asset_note,
       </if>
+      <if test="rowNum != null">
+        row_num,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
         #{title,jdbcType=CHAR},
+      </if>
+      <if test="debtTitle != null">
+        #{debtTitle,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         #{type,jdbcType=INTEGER},
@@ -307,6 +329,12 @@
       <if test="landsupply != null">
         #{landsupply,jdbcType=INTEGER},
       </if>
+      <if test="owner != null">
+        #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="warrant != null">
+        #{warrant,jdbcType=VARCHAR},
+      </if>
       <if test="landUnitPrice != null">
         #{landUnitPrice,jdbcType=BIGINT},
       </if>
@@ -352,6 +380,9 @@
       <if test="assetNote != null">
         #{assetNote,jdbcType=VARCHAR},
       </if>
+      <if test="rowNum != null">
+        #{rowNum,jdbcType=INTEGER},
+      </if>
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetPreExample" resultType="java.lang.Long">
@@ -368,6 +399,9 @@
       </if>
       <if test="record.title != null">
         title = #{record.title,jdbcType=CHAR},
+      </if>
+      <if test="record.debtTitle != null">
+        debt_title = #{record.debtTitle,jdbcType=VARCHAR},
       </if>
       <if test="record.type != null">
         type = #{record.type,jdbcType=INTEGER},
@@ -414,6 +448,12 @@
       <if test="record.landsupply != null">
         landsupply = #{record.landsupply,jdbcType=INTEGER},
       </if>
+      <if test="record.owner != null">
+        owner = #{record.owner,jdbcType=VARCHAR},
+      </if>
+      <if test="record.warrant != null">
+        warrant = #{record.warrant,jdbcType=VARCHAR},
+      </if>
       <if test="record.landUnitPrice != null">
         land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
       </if>
@@ -459,6 +499,9 @@
       <if test="record.assetNote != null">
         asset_note = #{record.assetNote,jdbcType=VARCHAR},
       </if>
+      <if test="record.rowNum != null">
+        row_num = #{record.rowNum,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -468,6 +511,7 @@
     update AMC_ASSET_PRE
     set id = #{record.id,jdbcType=BIGINT},
       title = #{record.title,jdbcType=CHAR},
+      debt_title = #{record.debtTitle,jdbcType=VARCHAR},
       type = #{record.type,jdbcType=INTEGER},
       sealed_state = #{record.sealedState,jdbcType=INTEGER},
       asset_nature = #{record.assetNature,jdbcType=INTEGER},
@@ -483,6 +527,8 @@
       land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
       landusage = #{record.landusage,jdbcType=INTEGER},
       landsupply = #{record.landsupply,jdbcType=INTEGER},
+      owner = #{record.owner,jdbcType=VARCHAR},
+      warrant = #{record.warrant,jdbcType=VARCHAR},
       land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
       publish_date = #{record.publishDate,jdbcType=DATE},
       province = #{record.province,jdbcType=CHAR},
@@ -497,7 +543,8 @@
       amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
-      asset_note = #{record.assetNote,jdbcType=VARCHAR}
+      asset_note = #{record.assetNote,jdbcType=VARCHAR},
+      row_num = #{record.rowNum,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -507,6 +554,9 @@
     <set>
       <if test="title != null">
         title = #{title,jdbcType=CHAR},
+      </if>
+      <if test="debtTitle != null">
+        debt_title = #{debtTitle,jdbcType=VARCHAR},
       </if>
       <if test="type != null">
         type = #{type,jdbcType=INTEGER},
@@ -553,6 +603,12 @@
       <if test="landsupply != null">
         landsupply = #{landsupply,jdbcType=INTEGER},
       </if>
+      <if test="owner != null">
+        owner = #{owner,jdbcType=VARCHAR},
+      </if>
+      <if test="warrant != null">
+        warrant = #{warrant,jdbcType=VARCHAR},
+      </if>
       <if test="landUnitPrice != null">
         land_unit_price = #{landUnitPrice,jdbcType=BIGINT},
       </if>
@@ -598,12 +654,16 @@
       <if test="assetNote != null">
         asset_note = #{assetNote,jdbcType=VARCHAR},
       </if>
+      <if test="rowNum != null">
+        row_num = #{rowNum,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetPre">
     update AMC_ASSET_PRE
     set title = #{title,jdbcType=CHAR},
+      debt_title = #{debtTitle,jdbcType=VARCHAR},
       type = #{type,jdbcType=INTEGER},
       sealed_state = #{sealedState,jdbcType=INTEGER},
       asset_nature = #{assetNature,jdbcType=INTEGER},
@@ -619,6 +679,8 @@
       land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
       landusage = #{landusage,jdbcType=INTEGER},
       landsupply = #{landsupply,jdbcType=INTEGER},
+      owner = #{owner,jdbcType=VARCHAR},
+      warrant = #{warrant,jdbcType=VARCHAR},
       land_unit_price = #{landUnitPrice,jdbcType=BIGINT},
       publish_date = #{publishDate,jdbcType=DATE},
       province = #{province,jdbcType=CHAR},
@@ -633,7 +695,8 @@
       amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
-      asset_note = #{assetNote,jdbcType=VARCHAR}
+      asset_note = #{assetNote,jdbcType=VARCHAR},
+      row_num = #{rowNum,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetPreExample" resultMap="BaseResultMap">

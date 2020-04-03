@@ -17,7 +17,14 @@ public interface AmcExcelPreCheckService {
 
   public boolean checkDebtTitleExist(String debtTitle);
   List<AmcDebtPre> getAllPreDebts(AmcDebtPreExample amcDebtPreExample);
-  List<AmcAssetPre> getAllAssets(AmcAssetPreExample amcAssetPreExample);
-  void saveDebt(AmcDebtPre amcDebtPre);
-  void saveAsset(AmcAssetPre amcAssetPre);
+  List<AmcAssetPre> getAllPreAssets(AmcAssetPreExample amcAssetPreExample);
+  AmcDebtPre createDebt(AmcDebtPre amcDebtPre);
+  AmcAssetPre createAsset(AmcAssetPre amcAssetPre);
+
+  AmcDebtPre updateDebt(AmcDebtPre amcDebtPre);
+  AmcAssetPre updateAsset(AmcAssetPre amcAssetPre);
+  void deleteAllDebtPre(AmcDebtPreExample amcDebtPreExample);
+  void deleteAllAssetPre(AmcAssetPreExample amcAssetPreExample);
+  boolean transferDebtPre2Debt(List<AmcDebtPre> amcDebtPres ) throws Exception;
+  boolean transferAssetPre2Asset(List<AmcAssetPre> amcAssetPres );
 }

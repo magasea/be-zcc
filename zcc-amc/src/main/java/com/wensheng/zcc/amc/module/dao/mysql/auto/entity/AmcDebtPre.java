@@ -81,6 +81,8 @@ public class AmcDebtPre {
 
     private Date createdDate;
 
+    private Integer rowNum;
+
     public Long getId() {
         return id;
     }
@@ -391,5 +393,13 @@ public class AmcDebtPre {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public Integer getRowNum() {
+        return rowNum;
+    }
+
+    public void setRowNum(Integer rowNum) {
+        this.rowNum = rowNum;
     }
 }

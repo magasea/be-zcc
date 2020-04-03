@@ -7,6 +7,8 @@ public class AmcAssetPre {
 
     private String title;
 
+    private String debtTitle;
+
     private Integer type;
 
     private Integer sealedState;
@@ -36,6 +38,10 @@ public class AmcAssetPre {
     private Integer landusage;
 
     private Integer landsupply;
+
+    private String owner;
+
+    private String warrant;
 
     private Long landUnitPrice;
 
@@ -67,6 +73,8 @@ public class AmcAssetPre {
 
     private String assetNote;
 
+    private Integer rowNum;
+
     public Long getId() {
         return id;
     }
@@ -81,6 +89,14 @@ public class AmcAssetPre {
 
     public void setTitle(String title) {
         this.title = title == null ? null : title.trim();
+    }
+
+    public String getDebtTitle() {
+        return debtTitle;
+    }
+
+    public void setDebtTitle(String debtTitle) {
+        this.debtTitle = debtTitle == null ? null : debtTitle.trim();
     }
 
     public Integer getType() {
@@ -203,6 +219,22 @@ public class AmcAssetPre {
         this.landsupply = landsupply;
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner == null ? null : owner.trim();
+    }
+
+    public String getWarrant() {
+        return warrant;
+    }
+
+    public void setWarrant(String warrant) {
+        this.warrant = warrant == null ? null : warrant.trim();
+    }
+
     public Long getLandUnitPrice() {
         return landUnitPrice;
     }
@@ -321,5 +353,13 @@ public class AmcAssetPre {
 
     public void setAssetNote(String assetNote) {
         this.assetNote = assetNote == null ? null : assetNote.trim();
+    }
+
+    public Integer getRowNum() {
+        return rowNum;
+    }
+
+    public void setRowNum(Integer rowNum) {
+        this.rowNum = rowNum;
     }
 }

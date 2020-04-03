@@ -2,10 +2,9 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.aop.QueryAssetPreChecker;
 import com.wensheng.zcc.amc.aop.QueryDebtPreChecker;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetPreMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtPreMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.*;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
@@ -15,12 +14,17 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcExcelPreCheckService;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 import java.util.List;
 @Service
+@Slf4j
 public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
 
     @Autowired
@@ -40,6 +44,12 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
 
     @Autowired
     AmcAssetService amcAssetService;
+
+    @Autowired
+    AmcDebtorMapper amcDebtorMapper;
+
+    static final String SEP_CHAR = ",";
+    static final String KEY_WORD_CMPY = "公司";
 
 
     @Override
@@ -123,17 +133,24 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
     }
 
     @Override
+    @Transactional
     public boolean transferDebtPre2Debt(List<AmcDebtPre> amcDebtPres ) throws Exception {
 
         for(AmcDebtPre amcDebtPre: amcDebtPres){
             if(checkDebtTitleExist(amcDebtPre.getTitle())){
-                throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB, String.format("duplicate debt title:%s", amcDebtPre.getTitle()));
+                throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB, String.format("数据库中已经有名字为:%s 的债权", amcDebtPre.getTitle()));
             }
             AmcDebt amcDebt = new AmcDebt();
             AmcBeanUtils.copyProperties(amcDebtPre, amcDebt);
             amcDebt.setId(null);
             amcDebtMapper.insertSelective(amcDebt);
             amcDebtService.saveDebtDesc(amcDebtPre.getDebtDesc(), amcDebt.getId());
+            if(!StringUtils.isEmpty(amcDebtPre.getGuarantee())){
+                makeGrantors(amcDebtPre.getGuarantee(), amcDebt.getId());
+            }
+            if(!StringUtils.isEmpty(amcDebtPre.getBorrower())){
+                makeBrowwers(amcDebtPre.getBorrower(), amcDebt.getId());
+            }
             List<AmcAssetPre> amcAssetPres = getAmcAssetPreByDebtPreId(amcDebtPre.getId());
             if(CollectionUtils.isEmpty(amcAssetPres)){
                 continue;
@@ -182,5 +199,78 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
         return false;
     }
 
+    @Override
+    public void makeGrantors(String cellGrantor, Long debtId) {
+        AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+        amcDebtorExample.createCriteria().andDebtIdEqualTo(debtId).andRoleEqualTo(DebtorRoleEnum.GUARANTOR.getId());
+        amcDebtorMapper.deleteByExample(amcDebtorExample);
 
+        if(cellGrantor.contains(SEP_CHAR)){
+            String[] cellGrantors = cellGrantor.split(SEP_CHAR);
+            for(String grantor: cellGrantors){
+                makeGrantor(grantor, debtId);
+            }
+        }else{
+            makeGrantor(cellGrantor, debtId);
+        }
+    }
+
+    private void makeGrantor(String cellGrantor, Long debtId) {
+        AmcDebtor amcDebtor = new AmcDebtor();
+        amcDebtor.setDebtorName(cellGrantor);
+        amcDebtor.setRole(DebtorRoleEnum.GUARANTOR.getId());
+        amcDebtor.setDebtId(debtId);
+        if(cellGrantor.contains(KEY_WORD_CMPY)){
+
+
+            amcDebtor.setDebtorType(DebtorTypeEnum.COMPANY.getId());
+
+        }else{
+            amcDebtor.setDebtorType(DebtorTypeEnum.PERSON.getId());
+        }
+        try{
+            amcDebtorMapper.insertSelective(amcDebtor);
+        }catch (DataIntegrityViolationException ex){
+            log.error("Duplication:", ex);
+        }
+    }
+
+    @Override
+    public void makeBrowwers(String cellBrowwer, Long debtId) {
+        AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
+        amcDebtorExample.createCriteria().andDebtIdEqualTo(debtId).andRoleEqualTo(DebtorRoleEnum.BROWWER.getId());
+        amcDebtorMapper.deleteByExample(amcDebtorExample);
+
+        if(cellBrowwer.contains(SEP_CHAR)){
+            String[] cellBrowwers = cellBrowwer.split(SEP_CHAR);
+            for(String browwer: cellBrowwers){
+                makeBrowwer(browwer, debtId);
+            }
+        }else{
+            makeBrowwer(cellBrowwer, debtId);
+        }
+
+    }
+
+    private void makeBrowwer(String cellBrowwer, Long debtId) {
+        AmcDebtor amcDebtor = new AmcDebtor();
+        amcDebtor.setDebtorName(cellBrowwer);
+        amcDebtor.setRole(DebtorRoleEnum.BROWWER.getId());
+        amcDebtor.setDebtId(debtId);
+        if(cellBrowwer.contains(KEY_WORD_CMPY)){
+
+
+            amcDebtor.setDebtorType(DebtorTypeEnum.COMPANY.getId());
+
+        }else{
+            amcDebtor.setDebtorType(DebtorTypeEnum.PERSON.getId());
+        }
+        try{
+            amcDebtorMapper.insertSelective(amcDebtor);
+        }catch (DataIntegrityViolationException ex){
+            log.error("Duplication:", ex);
+        }
+
+
+    }
 }

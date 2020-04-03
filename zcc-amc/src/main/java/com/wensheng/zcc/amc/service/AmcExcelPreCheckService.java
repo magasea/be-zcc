@@ -27,4 +27,7 @@ public interface AmcExcelPreCheckService {
   void deleteAllAssetPre(AmcAssetPreExample amcAssetPreExample);
   boolean transferDebtPre2Debt(List<AmcDebtPre> amcDebtPres ) throws Exception;
   boolean transferAssetPre2Asset(List<AmcAssetPre> amcAssetPres );
+
+  void makeGrantors(String cellGrantor, Long debtId);
+  void makeBrowwers(String cellBrowwer, Long debtId);
 }

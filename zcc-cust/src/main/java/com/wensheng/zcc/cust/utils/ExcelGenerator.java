@@ -45,7 +45,7 @@ public class ExcelGenerator {
               timeStamp));
 
 
-          ByteArrayOutputStream out = new ByteArrayOutputStream();
+//          ByteArrayOutputStream out = new ByteArrayOutputStream();
       ){
         CreationHelper createHelper = workbook.getCreationHelper();
 

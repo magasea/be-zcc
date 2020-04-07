@@ -1,6 +1,8 @@
 package com.wensheng.zcc.amc.service;
 
+import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
@@ -27,4 +29,12 @@ public interface AmcHelperService {
 
     void deletePersons(Long[] contactorIds) throws Exception;
   public AmcPage<SSOAmcUser> getSsoUserList(SSOQueryParam ssoQueryParam);
+
+  CurtInfo addCurt(CurtInfo curtInfo) throws Exception;
+  boolean delCurt(Long curtId) throws Exception;
+  boolean delCurtByQuery(QueryCurtParam queryCurtParam) throws Exception;
+
+  List<CurtInfo> queryCurtInfo(QueryCurtParam queryCurtParam) throws Exception;
+  Long queryCurtInfoCount(QueryCurtParam queryCurtParam) throws Exception;
+
 }

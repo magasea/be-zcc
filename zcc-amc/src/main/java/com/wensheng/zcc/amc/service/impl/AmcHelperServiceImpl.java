@@ -1,30 +1,30 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
-import java.util.List;
-import java.util.Map;
-import java.util.WeakHashMap;
-
-import com.wensheng.zcc.common.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.List;
+import java.util.Map;
+import java.util.WeakHashMap;
 
 /**
  * @author chenwei on 1/9/19
@@ -43,6 +43,9 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   @Autowired
   AmcContactorService amcContactorService;
 
+  @Autowired
+  CurtInfoMapper curtInfoMapper;
+
   private static final Map<Long, AmcDebtContactor> localAmcDebtContactorList = new WeakHashMap<Long, AmcDebtContactor>();
 
   public AmcDebtContactor getAmcDebtContactor(Long id){
@@ -59,6 +62,86 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   @Override
   public AmcPage<SSOAmcUser> getSsoUserList(SSOQueryParam ssoQueryParam){
     return amcContactorService.getSsoAmcUsers(ssoQueryParam);
+  }
+
+  @Override
+  public CurtInfo addCurt(CurtInfo curtInfo) throws Exception {
+    curtInfoMapper.insert(curtInfo);
+    return curtInfo;
+  }
+
+  @Override
+  public boolean delCurt(Long curtId) throws Exception {
+    curtInfoMapper.deleteByPrimaryKey(curtId);
+    return true;
+  }
+
+  @Override
+  public boolean delCurtByQuery(QueryCurtParam queryCurtParam) throws Exception {
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    CurtInfoExample.Criteria criteria = curtInfoExample.createCriteria();
+    if(!StringUtils.isEmpty(queryCurtParam.getProvince())){
+      criteria.andCurtProvinceEqualTo(queryCurtParam.getProvince());
+    }
+    if(!StringUtils.isEmpty(queryCurtParam.getCity())){
+      criteria.andCurtCityEqualTo(queryCurtParam.getCity());
+    }
+
+    if(!StringUtils.isEmpty(queryCurtParam.getCounty())){
+      criteria.andCurtCountyEqualTo(queryCurtParam.getCounty());
+    }
+    curtInfoMapper.deleteByExample(curtInfoExample);
+    return true;
+  }
+
+  @Override
+  public List<CurtInfo> queryCurtInfo(QueryCurtParam queryCurtParam) throws Exception {
+
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    curtInfoExample.setOrderByClause(" id desc ");
+    CurtInfoExample.Criteria criteria = curtInfoExample.createCriteria();
+
+    int offset = 0;
+    int size = 20;
+    if(queryCurtParam.getPageInfo() != null && queryCurtParam.getPageInfo().getOffset() >= 0){
+      if(queryCurtParam.getPageInfo().getSize() > 0){
+        offset = queryCurtParam.getPageInfo().getOffset();
+        size = queryCurtParam.getPageInfo().getSize();
+
+      }
+    }
+    RowBounds rowBounds = new RowBounds(offset, size);
+    if(!StringUtils.isEmpty(queryCurtParam.getProvince())){
+      criteria.andCurtProvinceEqualTo(queryCurtParam.getProvince());
+    }
+    if(!StringUtils.isEmpty(queryCurtParam.getCity())){
+      criteria.andCurtCityEqualTo(queryCurtParam.getCity());
+    }
+
+    if(!StringUtils.isEmpty(queryCurtParam.getCounty())){
+      criteria.andCurtCountyEqualTo(queryCurtParam.getCounty());
+    }
+    return curtInfoMapper.selectByExampleWithRowbounds(curtInfoExample, rowBounds);
+
+  }
+
+  @Override
+  public Long queryCurtInfoCount(QueryCurtParam queryCurtParam) throws Exception {
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    CurtInfoExample.Criteria criteria = curtInfoExample.createCriteria();
+
+
+    if(!StringUtils.isEmpty(queryCurtParam.getProvince())){
+      criteria.andCurtProvinceEqualTo(queryCurtParam.getProvince());
+    }
+    if(!StringUtils.isEmpty(queryCurtParam.getCity())){
+      criteria.andCurtCityEqualTo(queryCurtParam.getCity());
+    }
+
+    if(!StringUtils.isEmpty(queryCurtParam.getCounty())){
+      criteria.andCurtCountyEqualTo(queryCurtParam.getCounty());
+    }
+    return curtInfoMapper.countByExample(curtInfoExample);
   }
 
 

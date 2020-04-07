@@ -69,6 +69,7 @@ public class ExceptionUtils {
     MISSING_EXCEL_CONTENT_ERROR(1040, "有缺失的内容 ", "有缺失的内容"),
     INVALID_EXCEL_CONTENT_ERROR(1041, "不合理的内容 ", "不合理的内容"),
     FAILED_TRANSFEREXCEL_TO_DB(1042, "excel导入正式DB失败 ", "excel导入正式DB失败"),
+
     ;
     int code;
     String name;

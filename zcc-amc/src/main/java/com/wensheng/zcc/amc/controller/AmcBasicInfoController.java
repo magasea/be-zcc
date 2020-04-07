@@ -2,13 +2,16 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.aop.QueryContactorChecker;
 import com.wensheng.zcc.amc.aop.QuerySSOContactorChecker;
+import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcContactorService;
+import com.wensheng.zcc.amc.service.AmcExcelFileService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcPage;
@@ -16,6 +19,8 @@ import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -34,6 +44,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author chenwei on 1/4/19
@@ -57,6 +68,9 @@ public class AmcBasicInfoController {
   @Autowired
   AmcContactorService amcContactorService;
 
+  @Autowired
+  AmcExcelFileService amcExcelFileService;
+
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
   @Cacheable
@@ -68,29 +82,9 @@ public class AmcBasicInfoController {
     return curtInfos;
   }
 
-  @RequestMapping(value = "/court_info", method = RequestMethod.GET)
-  @ResponseBody
-  public List<CurtInfo> getCourtInfo(@RequestParam("courtId") Long courtId){
-    List<CurtInfo> curtInfos ;
-    CurtInfoExample curtInfoExample = new CurtInfoExample();
-    curtInfoExample.createCriteria().andIdEqualTo(courtId);
-    curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
-    return curtInfos;
-  }
 
-  @RequestMapping(value = "/court_info/add", method = RequestMethod.POST)
-  @ResponseBody
-  public CurtInfo addCourtInfo(@RequestBody CurtInfo curtInfo){
-    curtInfoMapper.insert(curtInfo);
-    return curtInfo;
-  }
 
-  @RequestMapping(value = "/court_info/update", method = RequestMethod.POST)
-  @ResponseBody
-  public CurtInfo updateCourtInfo(@RequestBody CurtInfo curtInfo){
-    curtInfoMapper.updateByPrimaryKeySelective(curtInfo);
-    return curtInfo;
-  }
+
 
   @RequestMapping(value = "/publishStates", method = RequestMethod.GET)
   @ResponseBody
@@ -365,5 +359,76 @@ public class AmcBasicInfoController {
 
     amcContactorService.syncContactorWithSSO();
   }
+
+  @RequestMapping(value = "/court_info/getCurtInfo", method = RequestMethod.POST)
+  @ResponseBody
+  public  AmcPage<CurtInfo>  getCurtInfo(@RequestBody QueryCurtParam queryCurtParam) throws Exception {
+
+     List<CurtInfo> curtInfos = amcHelperService.queryCurtInfo(queryCurtParam);
+     Long total = amcHelperService.queryCurtInfoCount(queryCurtParam);
+     return PageReqRepHelper.getAmcPage(curtInfos, total);
+  }
+
+  @RequestMapping(value = "/court_info", method = RequestMethod.GET)
+  @ResponseBody
+  public List<CurtInfo> getCourtInfo(@RequestParam("courtId") Long courtId){
+    List<CurtInfo> curtInfos ;
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    curtInfoExample.createCriteria().andIdEqualTo(courtId);
+    curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
+    return curtInfos;
+  }
+  @RequestMapping(value = "/court_info/delCurtInfoByQuery", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean  delCurtInfoByQuery(@RequestBody QueryCurtParam queryCurtParam) throws Exception {
+
+    return amcHelperService.delCurtByQuery(queryCurtParam);
+
+  }
+
+  @RequestMapping(value = "/court_info/delCurtInfoById", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean  delCurtInfoById(@RequestBody Long curtId) throws Exception {
+
+    return amcHelperService.delCurt(curtId);
+
+  }
+  @RequestMapping(value = "/court_info/add", method = RequestMethod.POST)
+  @ResponseBody
+  public CurtInfo addCourtInfo(@RequestBody CurtInfo curtInfo) throws Exception {
+    return amcHelperService.addCurt(curtInfo);
+
+  }
+
+  @RequestMapping(value = "/court_info/update", method = RequestMethod.POST)
+  @ResponseBody
+  public CurtInfo updateCourtInfo(@RequestBody CurtInfo curtInfo){
+    curtInfoMapper.updateByPrimaryKeySelective(curtInfo);
+    return curtInfo;
+  }
+
+  @RequestMapping(value = "/court_info/excel/refreshExcel", headers = "Content-Type= multipart/form-data",method =
+          RequestMethod.POST)
+  @ResponseBody
+  public ResponseEntity<Resource> updateCurtInfo (
+                                         @RequestParam("excel") MultipartFile excelFile) throws Exception {
+
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    File resultFile =  amcExcelFileService.handleMultiPartFileCurtInfo(excelFile);
+    Resource resource = new UrlResource(resultFile.toPath().toUri());
+    if(resource.exists()) {
+      return ResponseEntity.ok()
+              .contentType(MediaType.parseMediaType("application/octet-stream"))
+              .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+              .body(resource);
+    } else {
+      throw new Exception("File not found " + resultFile.toPath());
+    }
+
+
+  }
+
+
 
 }

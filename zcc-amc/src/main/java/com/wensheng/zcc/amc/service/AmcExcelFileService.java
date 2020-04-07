@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.service;
 
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -13,8 +14,10 @@ public interface AmcExcelFileService {
 
 
 
-  public List<String> handleMultiPartFile(MultipartFile multipartFile) throws Exception;
+  public List<String> importExcel4DebtAsset(MultipartFile multipartFile) throws Exception;
 
   public List<String> handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception;
+
+  public File handleMultiPartFileCurtInfo(MultipartFile multipartFile) throws Exception;
 
 }

@@ -7,6 +7,8 @@ public class CustTrdCmpy {
 
     private String cmpyName;
 
+    private String historyCmpyName;
+
     private String uniSocialCode;
 
     private String legalReptive;
@@ -63,6 +65,14 @@ public class CustTrdCmpy {
 
     public void setCmpyName(String cmpyName) {
         this.cmpyName = cmpyName == null ? null : cmpyName.trim();
+    }
+
+    public String getHistoryCmpyName() {
+        return historyCmpyName;
+    }
+
+    public void setHistoryCmpyName(String historyCmpyName) {
+        this.historyCmpyName = historyCmpyName == null ? null : historyCmpyName.trim();
     }
 
     public String getUniSocialCode() {

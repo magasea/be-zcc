@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.wensheng.zcc</groupId>
-    <artifactId>zcc-backend</artifactId>
+    <artifactId>amc-backend</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 

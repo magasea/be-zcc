@@ -15,7 +15,7 @@
     <!--</parent>-->
     <parent>
         <groupId>com.wensheng.zcc</groupId>
-        <artifactId>zcc-backend</artifactId>
+        <artifactId>amc-backend</artifactId>
         <version>0.1-SNAPSHOT</version>
     </parent>
     <dependencies>

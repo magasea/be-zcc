@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.controller;
 
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.vo.recom.Cust4Asset;
 import com.wensheng.zcc.cust.module.vo.recom.Cust4Debt;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @Slf4j
+@AddTraceLogId
 @RequestMapping("/amc/cust/amcService")
 public class AmcServiceController {
 

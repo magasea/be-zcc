@@ -18,13 +18,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
  */
 @Configuration
 public class ControllerConfig implements WebMvcConfigurer {
-  @Bean(name = "multipartResolver")
-  public CommonsMultipartResolver multipartResolver()
-  {
-    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
-    multipartResolver.setMaxUploadSize(20848820);
-    return multipartResolver;
-  }
+//  @Bean(name = "multipartResolver")
+//  public CommonsMultipartResolver multipartResolver()
+//  {
+//    CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver();
+//    multipartResolver.setMaxUploadSize(20848820);
+//    return multipartResolver;
+//  }
 
 
 

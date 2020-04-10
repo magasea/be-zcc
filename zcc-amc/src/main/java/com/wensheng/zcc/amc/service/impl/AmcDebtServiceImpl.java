@@ -12,10 +12,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
-import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
-import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
-import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
-import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
+import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
@@ -971,6 +968,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  public List<AmcDebt> getDebtByTiltle(String debtTitle) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andTitleEqualTo(debtTitle);
+    return amcDebtMapper.selectByExample(amcDebtExample);
+  }
+
+  @Override
   public <T> void saveOperLog(BaseActionVo<T> amcDebtVoBaseActionVo, String reviewComment) {
     AmcOperLog amcOperLog = new AmcOperLog();
     amcOperLog.setActionId(amcDebtVoBaseActionVo.getEditActionId());
@@ -1233,6 +1237,29 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebts;
   }
 
+  @Override
+  public DebtImage uploadDebtImage(String imagePath, String ossPrepath, Long debtId, String desc) throws Exception {
+//    String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
+    String ossPath = null;
+    try {
+      ossPath = amcOssFileService.handleFile2Oss(imagePath, ossPrepath);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw e;
+    }
+    try{
+      return saveImageInfo(ossPath, imagePath, debtId, desc, ImageClassEnum.MAIN);
+    }catch (Exception e) {
+      e.printStackTrace();
+      if(e.getMessage().contains("duplicate")){
+        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_IMAGE_ERROR, ossPath);
+      }
+      throw e;
+    }
+
+  }
+
   private void handleCourtGeoInfo(Map<Long, Long> debt2Courts) {
     long courtId = -1;
     Iterator<Map.Entry<Long, Long>> iterator = debt2Courts.entrySet().iterator();
@@ -1288,6 +1315,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
 
   }
+
+
 
 
   public AmcDebtExample getAmcDebtExampleWithQueryParam(Map<String, Object> queryParam) throws Exception {

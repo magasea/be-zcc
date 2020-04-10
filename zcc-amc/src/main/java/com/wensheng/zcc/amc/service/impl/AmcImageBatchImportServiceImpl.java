@@ -1,28 +1,104 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.service.AmcImageBatchImportService;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.compress.archivers.ArchiveEntry;
+import org.apache.commons.compress.archivers.ArchiveInputStream;
+import org.apache.commons.compress.archivers.ArchiveStreamFactory;
+import org.apache.commons.compress.utils.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
+import java.io.*;
+import java.nio.file.*;
+import java.util.Comparator;
+import java.util.Enumeration;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 @Service
+@Slf4j
 public class AmcImageBatchImportServiceImpl implements AmcImageBatchImportService {
 
     @Value("${project.params.debt_image_path}")
     String debtImageRepo;
 
+    static final String tempFolder = "unzip_temp";
+
+
+
     @Override
     public boolean importBatchImages(MultipartFile multipartFile) throws Exception {
 
+        String targetFolder = String.format("%s%s%s%s",debtImageRepo,File.separator,tempFolder,File.separator);
+        File dir = new File(targetFolder);
+        // create output directory if it doesn't exist
+        if(!dir.exists()) {
+            dir.mkdirs();
+        }else{
+            Path pathToBeDeleted = Paths.get(targetFolder);
+
+            Files.walk(pathToBeDeleted)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        }
+
         File targetFile = null;
         targetFile =
-                new File(debtImageRepo+File.separator  +multipartFile.getOriginalFilename());
-
+                new File(String.format("%s%s",targetFolder,multipartFile.getOriginalFilename()));
 
         multipartFile.transferTo(targetFile);
 
-        return false;
+        //Open the file
+        try (ArchiveInputStream i = new ArchiveStreamFactory()
+                .createArchiveInputStream(ArchiveStreamFactory.ZIP, new FileInputStream(targetFile))) {
+            ArchiveEntry entry = null;
+            while ((entry = i.getNextEntry()) != null) {
+                if (!i.canReadEntryData(entry)) {
+                    // log something?
+                    continue;
+                }
+                String name = String.format("%s%s%s",targetFolder, File.separator ,entry);
+                File f = new File(name);
+                if (entry.isDirectory()) {
+                    if (!f.isDirectory() && !f.mkdirs()) {
+                        throw new IOException("failed to create directory " + f);
+                    }
+                } else {
+                    File parent = f.getParentFile();
+                    if (!parent.isDirectory() && !parent.mkdirs()) {
+                        throw new IOException("failed to create directory " + parent);
+                    }
+                    try (OutputStream o = Files.newOutputStream(f.toPath())) {
+                        IOUtils.copy(i, o);
+                    }
+                }
+            }
+        }
+        return true;
+
     }
+
+    private void traverseFile(File[] files) throws IOException {
+        for (File file : files) {
+            if (file.isDirectory()) {
+                String debtTitle =  file.getParent();;
+                String assetTitle = file.getName();
+                //begin handle asset images
+                System.out.println("Directory: " + file.getName());
+                Files.list(file.toPath()).sorted().forEach( item -> uploadAssetImage(item, debtTitle, assetTitle));
+
+            } else {
+                System.out.println("File: " + file.getName());
+            }
+        }
+    }
+    private void uploadAssetImage(Path itemAssetImage, String debtTitle, String assetTitle) {
+
+
+    }
+
 }

@@ -56,6 +56,8 @@ public interface AmcAssetService {
 
    List<AmcAsset> getSimpleAssets(List<Long> ids);
 
+   List<AmcAsset> getAssetByDebtAndAssetTitle(String debtTitle, String assetTitle) throws Exception;
+
   AssetImage saveImageInfo( AssetImage assetImage);
 
 

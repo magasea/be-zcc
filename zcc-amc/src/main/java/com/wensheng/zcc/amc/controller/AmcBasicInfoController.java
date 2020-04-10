@@ -143,6 +143,17 @@ public class AmcBasicInfoController {
     return result;
   }
 
+  @RequestMapping(value = "/getDebtPrecheckErrorEnum", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getDebtPrecheckErrorEnum(){
+
+    List<String> result = new ArrayList<>();
+    for(DebtPrecheckErrorEnum debtPrecheckErrorEnum: DebtPrecheckErrorEnum.values()){
+      result.add(String.format("%d:%s", debtPrecheckErrorEnum.getErrorCode(), debtPrecheckErrorEnum.getCerrorInfo()));
+    }
+    return result;
+  }
+
   @RequestMapping(value = "/debtorRoleType", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getDebtorRoleType(){

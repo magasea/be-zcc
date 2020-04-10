@@ -12,10 +12,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
@@ -45,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -458,6 +456,20 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         amcAssetExample.createCriteria().andIdIn(ids);
         return amcAssetMapper.selectByExample(amcAssetExample);
+    }
+
+    @Override
+    public List<AmcAsset> getAssetByDebtAndAssetTitle(String debtTitle, String assetTitle) throws Exception {
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        List<AmcDebt> amcDebts = amcDebtService.getDebtByTiltle(debtTitle);
+        if(CollectionUtils.isEmpty(amcDebts)){
+            throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE);
+        }
+        amcAssetExample.createCriteria().andDebtIdIn(amcDebts.stream().map(item->item.getId()).collect(Collectors.toList()))
+        .andTitleEqualTo(assetTitle);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+
+        return amcAssets;
     }
 
     @Override
@@ -1057,6 +1069,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             query = null;
         }
     }
+
+
+
     @Data
     class AddressTmp{
         String address;

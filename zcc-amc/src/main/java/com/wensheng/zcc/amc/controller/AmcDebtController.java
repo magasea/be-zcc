@@ -4,7 +4,7 @@ import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.controller.helper.SimpleQueryParam;
-import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
+import com.wensheng.zcc.amc.module.vo.*;
 import com.wensheng.zcc.amc.service.*;
 import com.wensheng.zcc.amc.service.impl.AmcMiscServiceImpl;
 import com.wensheng.zcc.common.params.AmcPage;
@@ -18,10 +18,6 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
-import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
-import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -82,6 +78,9 @@ public class AmcDebtController {
 
   @Autowired
   AmcMiscServiceImpl amcPatchService;
+
+  @Autowired
+  AmcImageBatchImportService amcImageBatchImportService;
 
 
 
@@ -235,23 +234,24 @@ public class AmcDebtController {
     List<DebtImage> debtImages = new ArrayList<>();
     String ossPath;
     for (String filePath : filePaths) {
-      try {
-        ossPath = amcOssFileService.handleFile2Oss(filePath, prePath);
-
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
-      }
-      try{
-        debtImages.add(amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc,
-            ImageClassEnum.MAIN));
-      }catch (Exception e) {
-        e.printStackTrace();
-        if(e.getMessage().contains("duplicate")){
-          throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_IMAGE_ERROR, ossPath);
-        }
-        throw e;
-      }
+      debtImages.add(amcDebtService.uploadDebtImage(filePath, prePath, debtId, desc));
+//      try {
+//        ossPath = amcOssFileService.handleFile2Oss(filePath, prePath);
+//
+//      } catch (Exception e) {
+//        e.printStackTrace();
+//        throw e;
+//      }
+//      try{
+//        debtImages.add(amcDebtService.saveImageInfo(ossPath, filePath, debtId, desc,
+//            ImageClassEnum.MAIN));
+//      }catch (Exception e) {
+//        e.printStackTrace();
+//        if(e.getMessage().contains("duplicate")){
+//          throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_IMAGE_ERROR, ossPath);
+//        }
+//        throw e;
+//      }
 
     }
 
@@ -266,12 +266,12 @@ public class AmcDebtController {
   @RequestMapping(value = "/api/amcid/{amcid}/debt/excel/upload", headers = "Content-Type= multipart/form-data",method =
           RequestMethod.POST)
   @ResponseBody
-  public List<String> uploadDebtByExcel (@PathVariable Long amcid,
-                                         @RequestParam("excel") MultipartFile excelFile) throws Exception {
+  public List<DebtBatchImportErr> uploadDebtByExcel (@PathVariable Long amcid,
+                                                     @RequestParam("excel") MultipartFile excelFile) throws Exception {
 
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
-    List<String> errorInfo = amcExcelFileService.handleMultiPartFilePrecheck(excelFile);
+    List<DebtBatchImportErr> errorInfo = amcExcelFileService.handleMultiPartFilePrecheck(excelFile);
 
     return errorInfo;
 
@@ -724,5 +724,11 @@ public class AmcDebtController {
   @ResponseBody
   public void patchAmcDebtContactor() throws Exception {
     amcPatchService.patchAmcDebtContactor();
+  }
+
+  @RequestMapping(value = "/imageBatchImport", method = RequestMethod.POST)
+  @ResponseBody
+  public void imageBatchImport(@RequestParam("zipImages") MultipartFile zipImages) throws Exception {
+    amcImageBatchImportService.importBatchImages(zipImages);
   }
 }

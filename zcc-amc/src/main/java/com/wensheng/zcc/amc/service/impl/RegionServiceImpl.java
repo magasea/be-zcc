@@ -8,6 +8,7 @@ import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.AmcRegionItem;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.AmcRegionReq;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -22,9 +23,11 @@ import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 @Service
+@Slf4j
 public class RegionServiceImpl implements RegionService {
     private RestTemplate restTemplate = new RestTemplate();
 
@@ -59,7 +62,14 @@ public class RegionServiceImpl implements RegionService {
         List<Region> resp = (List<Region>) response.getBody();
 
         if(CollectionUtils.isEmpty(resp)){
-           List<AmcRegionItem> amcRegionItems =  comnfuncServiceStub.getAmcRegionByName(AmcRegionReq.newBuilder().setRegName(regionName).build()).getAmcRegionItemsList();
+            List<AmcRegionItem> amcRegionItems = new ArrayList<>();
+            try{
+                amcRegionItems =  comnfuncServiceStub.getAmcRegionByName(AmcRegionReq.newBuilder().setRegName(regionName).build()).getAmcRegionItemsList();
+            }catch (Exception ex){
+                log.error("Err: failed to get regionName by:{}",regionName,  ex);
+                return resp;
+            }
+
            for(AmcRegionItem amcRegionItem: amcRegionItems){
                Region region = new Region();
                region.setId(Long.valueOf(amcRegionItem.getCode())/1000000);

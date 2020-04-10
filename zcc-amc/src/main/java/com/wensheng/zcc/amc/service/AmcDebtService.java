@@ -102,6 +102,8 @@ public interface AmcDebtService {
 
   AmcDebt getDebt(Long debtId);
 
+  List<AmcDebt> getDebtByTiltle(String debtTitle);
+
   <T> void saveOperLog(BaseActionVo<T> amcDebt, String reviewComment);
 
   List<AmcOperLog> getOperLog(Long debtId, Integer actionId);
@@ -117,4 +119,7 @@ public interface AmcDebtService {
 
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
   List<AmcDebt> getDebtSimpleByTitleLike(String title);
+
+  DebtImage uploadDebtImage(String imagePath, String ossPrePath, Long debtId, String desc) throws Exception;
+
 }

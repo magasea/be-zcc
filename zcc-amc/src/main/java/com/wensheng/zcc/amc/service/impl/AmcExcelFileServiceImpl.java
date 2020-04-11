@@ -610,10 +610,16 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 }
                 if(!StringUtils.isEmpty(cellBuildingArea)){
                     amcAssetPre.setBuildingArea(AmcNumberUtils.getLongFromStringWithMult100(cellBuildingArea));
+                }else{
+                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strBuildingArea, cellBuildingArea, null);
+
                 }
                 if(!StringUtils.isEmpty(cellLandArea)){
                     amcAssetPre.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(cellLandArea));
                     amcAssetPre.setLandAreaUnit(AreaUnitEnum.SQUAREMETER.getType());
+                }else if(StringUtils.isEmpty(cellBuildingArea)){
+                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strLandArea, cellLandArea, null);
+
                 }
 
                 if(!StringUtils.isEmpty(cellLandUsage)){

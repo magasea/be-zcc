@@ -969,13 +969,14 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.DUPLICATEITEM_IN_DEBET, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtTitle, cellDebtTitle, "不能创建重复的债权");
                     duplicateEvent = true;
+
                 }
 
 
 
 
 
-                if(!StringUtils.isEmpty(cellDesc)){
+                if(!StringUtils.isEmpty(cellDesc) && !duplicateEvent){
                     amcDebtPreInDb.setDebtDesc(cellDesc);
 
                 }
@@ -983,13 +984,13 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
                 // after debt created , then make the related object
 
-                if(!StringUtils.isEmpty(cellGrantor)){
+                if(!StringUtils.isEmpty(cellGrantor) && !duplicateEvent){
                    amcDebtPreInDb.setGuarantee(checkGrantorsOrBrowwer(cellGrantor, errorInfo, sheetDebt, row, strGrantor));
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantor, cellGrantor, null);
                     log.error(String.format("错误提示： %s %s 担保人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
-                if(!StringUtils.isEmpty(cellBrowwer)){
+                if(!StringUtils.isEmpty(cellBrowwer) && !duplicateEvent){
                     amcDebtPreInDb.setBorrower(checkGrantorsOrBrowwer(cellBrowwer, errorInfo, sheetDebt, row, strBrower));
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strBrower, cellBrowwer, null);

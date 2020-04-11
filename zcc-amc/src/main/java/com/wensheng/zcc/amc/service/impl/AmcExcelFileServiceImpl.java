@@ -487,11 +487,11 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 //                    break;
                 }
 
-                if(!debtMap.containsKey(cellDebtTitle)){
+                if(!StringUtils.isEmpty(cellDebtTitle) && !debtMap.containsKey(cellDebtTitle)){
                     log.error(String.format("错误提示： %s %s 资产关联的债权名字为：[%s] 但是该债权尚未进入可导入的名单,所以该资产也不能被导入",  sheetAsset.getSheetName(), row.getRowNum(), cellDebtTitle));
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.DEBT_PRECHECK_NOTEXIST, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtTitle, cellDebtTitle, null);
 //                    continue;
-                }else{
+                }else if(!StringUtils.isEmpty(cellDebtTitle)){
                     amcAssetPre.setDebtId(debtMap.get(cellDebtTitle).getId());
                     amcAssetPre.setDebtTitle(cellDebtTitle);
                 }
@@ -611,7 +611,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellBuildingArea)){
                     amcAssetPre.setBuildingArea(AmcNumberUtils.getLongFromStringWithMult100(cellBuildingArea));
                 }else{
-                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strBuildingArea, cellBuildingArea, null);
+                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strBuildingArea, cellBuildingArea, null);
 
                 }
                 if(!StringUtils.isEmpty(cellLandArea)){

@@ -618,7 +618,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     amcAssetPre.setLandArea(AmcNumberUtils.getLongFromStringWithMult100(cellLandArea));
                     amcAssetPre.setLandAreaUnit(AreaUnitEnum.SQUAREMETER.getType());
                 }else if(StringUtils.isEmpty(cellBuildingArea)){
-                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strLandArea, cellLandArea, null);
+                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strLandArea, cellLandArea, null);
 
                 }
 

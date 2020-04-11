@@ -14,6 +14,7 @@ import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.StringToolUtils;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -156,7 +157,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
     @Override
     @Transactional
-    public List<DebtBatchImportErr> handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception {
+    public synchronized List<DebtBatchImportErr>  handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception {
         File targetFile = null;
         targetFile =
                 new File(debtImageRepo+File.separator  +multipartFile.getOriginalFilename());
@@ -875,10 +876,10 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 //                    break;
                 }
 
-                if(ssoAmcUser == null || ssoAmcUser.getLocation() == null ){
+                if(ssoAmcUser != null  && ssoAmcUser.getLocation() == null ){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.AMCCONTACTOR_INFO_ERR, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, "没有找到联系人所属的地区(分部)");
 //                    break;
-                }else{
+                }else if( ssoAmcUser != null ){
                     List<ZccDebtpack> zccDebtpacks =  amcDebtpackService.queryPacksWithLocation(AmcLocationEnum.lookupByDisplayIdUtil(ssoAmcUser.getLocation()));
                     if(CollectionUtils.isEmpty(zccDebtpacks)){
 
@@ -1638,7 +1639,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 //    }
     private String checkGrantorsOrBrowwer(String cellGrantorOrBrowwer, List<DebtBatchImportErr> errorInfo, Sheet sheetDebt, Row row, String columnName) {
 
-
+        if(!StringToolUtils.isNormalString(cellGrantorOrBrowwer) && !cellGrantorOrBrowwer.contains(SEP_CHAR)){
+            addErrorInfo(errorInfo, DebtPrecheckErrorEnum.SPEC_CHAR_ERR, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, columnName, cellGrantorOrBrowwer, null);
+        }
         if(cellGrantorOrBrowwer.contains(SEP_CHAR)){
             Set<String> grantorsInSet = new HashSet<>();
             String[] cellGrantors = cellGrantorOrBrowwer.split(SEP_CHAR);

@@ -1658,7 +1658,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
             String[] cellGrantors = cellGrantorOrBrowwer.split(SEP_CHAR);
             for(String grantor: cellGrantors){
                if(grantorsInSet.contains(grantor)){
-                   addErrorInfo(errorInfo, DebtPrecheckErrorEnum.DUPLICATENAME_IN_DEBET, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, columnName, grantor, null);
+                   addErrorInfo(errorInfo, DebtPrecheckErrorEnum.DUPLICATENAME_IN_DEBET, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, columnName, grantor, null);
 //                   errorInfo.add(String.format("告警提示： %s %s %s 在 %s 中有重复,重复的名字将被去重:", sheetDebt.getSheetName(), row.getRowNum(), grantor, cellGrantorOrBrowwer));
                }else{
                    grantorsInSet.add(grantor);

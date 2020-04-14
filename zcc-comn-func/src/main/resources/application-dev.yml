@@ -162,9 +162,9 @@ logging:
 
 env:
     env-hint: dev
-    dbhost: 10.20.100.235
+    dbhost: 10.20.100.238
     kfkhost: 10.20.100.238
-    mongodb-host: 10.20.100.235
+    mongodb-host: 10.20.100.238
     image-repo: /disk/temp
     regionhost: 10.20.100.228
     regionport: 5050

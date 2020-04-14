@@ -7,14 +7,15 @@ grpc:
         comnfunc:
             host: ${env.rpchost}
             port: 10016
+
 spring:
     autoconfigure:
         exclude:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
-        password: ${env.dbpasswd}
-        url: jdbc:mysql://${env.dbhost}:3306/ZCC_CUST?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true&&serverTimezone=Asia/Shanghai
+        password: ${env.dbpassword}
+        url: jdbc:mysql://${env.dbhost}:3306/ZCC_CUST?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai
         username: ${env.dbusername}
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
@@ -79,8 +80,9 @@ spring:
     data:
         mongodb:
             database: wszcc_cust
-            host: 10.20.100.238
+            host: 10.20.100.235
             port: 27017
+
     cache:
         cache-names: regionName
         caffeine:
@@ -88,12 +90,13 @@ spring:
     task:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
-            cronExprTrd: 0 0 6,18,23 * * *
+            cronExprTrd: 0 0 5,1,23 * * *
             cronExprCust: 0 0 7,13,19,0 * * *
             cronExprGeo: 0 0 7,19,0 * * *
             cronExpCmpyInfo: 0 0 22 * * *
             pool:
                 size: 3
+
     servlet:
         multipart:
             enabled: true
@@ -101,6 +104,7 @@ spring:
             max-request-size: 10MB
             max-file-size: 900MB
             location: ${env.image-repo}
+
     jackson:
         time-zone: Asia/Shanghai
 
@@ -161,18 +165,17 @@ recom:
         getDebtCusts: http://${env.recomhost}:${env.recomport}/api/sug/debt2investor/%s
         getCombinedCustByDebt: http://${env.recomhost}:${env.recomport}/api/sug/debtAndAsset2investor/%s
 
+
 env:
     env-hint: test
-    dbhost: 10.20.100.238
-    rpchost: 10.20.100.238
-#    dbusername: custuser
-#    dbpasswd: Wensheng#123
+    dbhost: 10.20.100.235
     dbusername: wscustworker
-    dbpasswd: Wsamc@12345
+    dbpassword: Wsamc@12345
+    rpchost: 10.20.100.235
     recomhost: 10.20.100.236
     recomport: 7654
-    kfkhost: 10.20.100.238
+    kfkhost: 10.20.100.235
     image-repo: /home/chenwei/working/zcc/temp
     oauth2:
-        host: 10.20.100.238
+        host: 10.20.100.235
         authLink: http://${env.oauth2.host}:10002

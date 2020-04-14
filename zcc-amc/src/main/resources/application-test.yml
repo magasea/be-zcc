@@ -111,7 +111,6 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
   mapper-locations:
@@ -162,19 +161,20 @@ cust:
   port: 10004
   getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
   getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
+
 env:
   name: test
-  dbhost: 10.20.100.235
-  dbusername: wsamcworker
-  rpchost: localhost
+  dbhost: 10.20.100.238
+  recmhost: 10.20.100.236
+  dbusername: amcuser
   amcssohost: localhost
-  dbpasswd: Wsamc@12345
-  kfkhost: 10.20.100.235
-  ws-sso-host: 10.20.100.235
-  cust-host: 10.20.100.235
-  recmhost: 10.20.100.228
-  mongodb-host: 10.20.100.235
+  rpchost: localhost
+  ws-sso-host: 10.20.100.238
+  cust-host: 10.20.100.238
+  dbpasswd: Wensheng#123
+  kfkhost: 10.20.100.238
+  mongodb-host: 10.20.100.238
   image-repo: /home/chenwei/temp
   oauth2:
-    host: 10.20.100.235
+    host: 10.20.100.238
     authLink: http://${env.oauth2.host}:10002

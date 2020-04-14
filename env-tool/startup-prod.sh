@@ -55,12 +55,12 @@ killAll() {
 }
 
 startAll() {
-  nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_amc} &>amc.log &
-  nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_sso} &>sso.log &
-  nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_log} &>loger.log &
-  nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_cust} &>cust.log &
-  nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_wechat} &>wechat.log &
-  nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_comnfunc} &>comnfunc.log &
+  nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_amc} &>amc.log &
+  nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_sso} &>sso.log &
+  nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_log} &>loger.log &
+  nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_cust} &>cust.log &
+  nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_wechat} &>wechat.log &
+  nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_comnfunc} &>comnfunc.log &
 }
 
 indicator="$1"
@@ -78,37 +78,37 @@ if [ ! -z ${indicator} ]; then
       killProcess ${pattern_amc}
       sleep 5
       killProcess ${pattern_amc}
-      nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_amc} &>amc.log &
+      nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_amc} &>amc.log &
       ;;
     sso)
       killProcess ${pattern_sso}
       sleep 5
       killProcess ${pattern_sso}
-      nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_sso} &>sso.log &
+      nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_sso} &>sso.log &
       ;;
     log)
       killProcess ${pattern_log}
       sleep 5
       killProcess ${pattern_log}
-      nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_log} &>loger.log &
+      nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_log} &>loger.log &
       ;;
     cust)
       killProcess ${pattern_cust}
       sleep 5
       killProcess ${pattern_cust}
-      nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_cust} &>cust.log &
+      nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms512M -Xmx1G ${execJarName_cust} &>cust.log &
       ;;
     wechat)
       killProcess ${pattern_wechat}
       sleep 5
       killProcess ${pattern_wechat}
-      nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_wechat} &>wechat.log &
+      nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_wechat} &>wechat.log &
       ;;
     comnfunc)
       killProcess ${pattern_comnfunc}
       sleep 5
       killProcess ${pattern_comnfunc}
-      nohup java -jar -Dspring.profiles.active=prod -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_comnfunc} &>comnfunc.log &
+      nohup java -jar -Dspring.profiles.active=preProd -XX:+UseG1GC -Xms128M -Xmx512M ${execJarName_comnfunc} &>comnfunc.log &
       ;;
     *)
       echo $"Usage: $0 {amc|sso|log|cust|wechat|comnfunc}"

@@ -6,8 +6,6 @@ grpc:
   enabled: true
   port: 10011
   in-process-server-name: amcGrpcServ
-
-  #    server:
   client:
     wechat:
       host: ${env.rpchost}
@@ -19,10 +17,10 @@ grpc:
       host: ${env.recmhost}
       port: 10018
 logging:
-    level:
-        com:
-            wensheng: TRACE
-        root: WARN
+  level:
+    com:
+      wensheng: TRACE
+    root: WARN
 mongodb:
   original:
     host: ${env.mongodb-host}
@@ -38,23 +36,23 @@ spring:
     exclude:
       - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
   datasource:
-      password: ${env.dbpasswd}
-      url: jdbc:mysql://${env.dbhost}:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-      username: ${env.dbusername}
-      driverClassName: com.mysql.cj.jdbc.Driver
-      filters: stat
-      maxActive: 20
-      initialSize: 1
-      maxWait: 60000
-      minIdle: 1
-      timeBetweenEvictionRunsMillis: 60000
-      minEvictableIdleTimeMillis: 300000
-      validationQuery: select 'x'
-      testWhileIdle: true
-      testOnBorrow: false
-      testOnReturn: false
-      poolPreparedStatements: true
-      maxOpenPreparedStatements: 20
+    password: ${env.dbpasswd}
+    url: jdbc:mysql://${env.dbhost}:3306/ZCC_AMC?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+    username: ${env.dbusername}
+    driverClassName: com.mysql.cj.jdbc.Driver
+    filters: stat
+    maxActive: 20
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+    validationQuery: select 'x'
+    testWhileIdle: true
+    testOnBorrow: false
+    testOnReturn: false
+    poolPreparedStatements: true
+    maxOpenPreparedStatements: 20
 
   security:
     oauth2:
@@ -98,7 +96,6 @@ spring:
       max-file-size: 900MB
       max-request-size: 900MB
       location: ${env.image-repo}
-
   task:
     scheduling:
       thread-name-prefix: amcscheduler-worker
@@ -132,13 +129,12 @@ project:
     bucket_name: ws-zcc
     oss_end_point_bak: oss-cn-shanghai.aliyuncs.com
     bucket_name_bak: ws-zccbak
-
 ---
 # tag::wechatConfig
 wechat:
   miniapp:
-  #  appId: wxdb885be2c95a5b32
-  #  appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+    #  appId: wxdb885be2c95a5b32
+    #  appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
     #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
     #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
     appId: wx43360e750e7099b9
@@ -153,8 +149,7 @@ baidu:
     appAK: LMZGzYuSmmBvE5IS5EMdEsUGROx7r2G8
     appId: 16178564
     appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
-    getGeoURL: http://api.map.baidu.com/geocoder/v2/?address=%s&output=json&ak=%s&sn=%s
-
+    getGeoURL: http://api.map.baidu.com/geocoder/v3/?address=%s&output=json&ak=%s&sn=%s
 sso:
   ssoUserDetailUrl: http://${env.amcssohost}:10002/amc/user/sso/getUserDetailsById/%d
   ssoUserTokenUrl: http://${env.amcssohost}:10002/amc/zcc/sso/getTokenByMobilephone/%s
@@ -162,25 +157,24 @@ wssso:
   host: ${env.ws-sso-host}
   port: 11002
   url: http://${wssso.host}:${wssso.port}/amc/user/amcid/1/amc-user/amcUsersByPage
-# end::wechatConfig
 cust:
   host: ${env.cust-host}
   port: 10004
   getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
   getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
 env:
-  name: dev
-  dbhost: 10.20.100.238
-  kfkhost: 10.20.100.238
-  rpchost: localhost
-  ws-sso-host: localhost
-  cust-host: localhost
-  amcssohost: localhost
-  recmhost: 10.20.100.228
+  name: test
+  dbhost: 10.20.100.235
   dbusername: wsamcworker
+  rpchost: localhost
+  amcssohost: localhost
   dbpasswd: Wsamc@12345
-  mongodb-host: 10.20.100.238
-  image-repo: /disk/temp
+  kfkhost: 10.20.100.235
+  ws-sso-host: 10.20.100.235
+  cust-host: 10.20.100.235
+  recmhost: 10.20.100.228
+  mongodb-host: 10.20.100.235
+  image-repo: /home/chenwei/temp
   oauth2:
-    host: localhost
+    host: 10.20.100.235
     authLink: http://${env.oauth2.host}:10002

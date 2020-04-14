@@ -15,9 +15,9 @@ spring:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
-        password: ${env.dbpassword}
+        password: Wsamc@12345
         url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-        username: ${env.dbusername}
+        username: wenshengcust
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
         maxActive: 20
@@ -128,6 +128,7 @@ weixin:
         loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.test.appId}&secret=${weixin.test.appSecret}&js_code=JSCODE&grant_type=authorization_code
         get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${weixin.test.appId}&secret=${weixin.test.appSecret}
 
+
     # user and tag management
     get_public_users_url: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
     get_public_userinfo_url: https://api.weixin.qq.com/cgi-bin/user/info?access_token=%s&openid=%s&lang=zh_CN
@@ -180,8 +181,6 @@ gaode:
     geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
     geocoder: https://restapi.amap.com/v3/geocode/geo?address=%s&key=${gaode.key}
 
-
-
 message:
     url: http://esms100.10690007.net/sms/mt
     spid: 9346
@@ -201,15 +200,13 @@ logging:
 
 env:
     env-hint: test
-    dbusername: wswxworker
-    dbpassword: Wsamc@12345
-    dbhost: 10.20.100.235
-    kfkhost: 10.20.100.235
+    dbhost: 10.20.100.238
+    kfkhost: 10.20.100.238
     rpchost: localhost
     pubhost: 101.132.27.96
     pubport: 5444
-    mongodb-host: 10.20.100.235
+    mongodb-host: 10.20.100.238
     image-repo: /home/chenwei/temp
     oauth2:
-        host: 10.20.100.235
+        host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

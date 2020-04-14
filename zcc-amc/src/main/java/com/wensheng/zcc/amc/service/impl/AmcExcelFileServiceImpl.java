@@ -503,7 +503,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     LandSupplyTypeEnum landSupplyTypeEnum = LandSupplyTypeEnum.lookupByDisplayNameUtil(cellLandSupplyType);
                     if(null == landSupplyTypeEnum){
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strLandSupplyType, cellLandSupplyType, null);
-                        log.error(String.format("错误提示： %s %s 后台还没设置该土地供应方式枚举值:%s",  sheetAsset.getSheetName(), row.getRowNum(), cellLandSupplyType));
+//                        log.error(String.format("错误提示： %s %s 后台还没设置该土地供应方式枚举值:%s",  sheetAsset.getSheetName(), row.getRowNum(), cellLandSupplyType));
                     }else{
                         amcAssetPre.setLandsupply(landSupplyTypeEnum.getId());
                     }
@@ -514,7 +514,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 //                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("没有资产名字:%s", cellAssetName));
 //                    errorInfo.add(String.format("错误提示： %s %s 没有资产名字:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetName));
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetName, cellAssetName, null);
-                    log.error(String.format("错误提示： %s %s 没有资产名字:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetName));
+//                    log.error(String.format("错误提示： %s %s 没有资产名字:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetName));
                     continue;
                 }
                 amcAssetPre.setAssetNature(AssetNatureEnum.SEAL.getType());
@@ -528,13 +528,13 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     AssetTypeEnum assetTypeEnum = AssetTypeEnum.lookupByDisplayNameUtil(cellAssetType);
                     if(null == assetTypeEnum){
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetType, cellAssetType, null);
-                        log.error(String.format("错误提示： %s %s 后台尚未配置该资产类型:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+//                        log.error(String.format("错误提示： %s %s 后台尚未配置该资产类型:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
                     }else{
                         amcAssetPre.setType(assetTypeEnum.getType());
                     }
 
                 }else{
-                    log.error(String.format("错误提示： %s %s 资产类型为空:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
+//                    log.error(String.format("错误提示： %s %s 资产类型为空:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetType));
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetType, cellAssetType, null);
 //                    continue;
                 }
@@ -543,7 +543,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     SealStateEnum sealStateEnum = SealStateEnum.lookupByDisplayNameUtil(cellAssetLawSealState);
                     if(null == sealStateEnum){
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetLawSealState, cellAssetLawSealState, null);
-                        log.error(String.format("错误提示： %s %s 后台尚未配置该查封类型:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetLawSealState));
+//                        log.error(String.format("错误提示： %s %s 后台尚未配置该查封类型:%s", sheetAsset.getSheetName(), row.getRowNum(), cellAssetLawSealState));
                     }else{
                         amcAssetPre.setSealedState(SealStateEnum.lookupByDisplayNameUtil(cellAssetLawSealState).getStatus());
                     }
@@ -552,7 +552,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellAssetProv)){
                     List<Region> regions = regionService.getRegionByName(cellAssetProv);
                     if(CollectionUtils.isEmpty(regions)){
-                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetProv:%s",cellAssetProv));
+//                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetProv:%s",cellAssetProv));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetProv, cellAssetProv, null);
 //                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
 
@@ -560,13 +560,13 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         amcAssetPre.setProvince(regions.get(0).getId().toString());
                     }
                 }else{
-                    log.error(String.format("错误提示： %s %s 资产所在省份不能为空",sheetAsset.getSheetName(),row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 资产所在省份不能为空",sheetAsset.getSheetName(),row.getRowNum()));
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetProv, cellAssetProv, null);
                 }
                 if(!StringUtils.isEmpty(cellAssetCity)){
                     List<Region> regions = regionService.getRegionByName(cellAssetCity);
                     if(CollectionUtils.isEmpty(regions)){
-                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",cellAssetCity));
+//                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",cellAssetCity));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetCity, cellAssetCity, null);
 //                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
 
@@ -581,14 +581,14 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         amcAssetPre.setCity(regions.get(0).getId().toString());
                     }
                 }else{
-                    log.error(String.format("错误提示： %s %s 资产所在城市不能为空",sheetAsset.getSheetName(),row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 资产所在城市不能为空",sheetAsset.getSheetName(),row.getRowNum()));
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetCity, cellAssetCity, null);
                 }
 
                 if(!StringUtils.isEmpty(cellAssetCounty)){
                     List<Region> regions = regionService.getRegionByName(cellAssetCounty);
                     if(CollectionUtils.isEmpty(regions)){
-                        log.error(String.format("错误提示： %s %s 后台没找到对应的资产所在区县的编码:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetCounty));
+//                        log.error(String.format("错误提示： %s %s 后台没找到对应的资产所在区县的编码:%s",sheetAsset.getSheetName(),row.getRowNum(), cellAssetCounty));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetCounty, cellAssetCounty, null);
 //                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",cellAssetCounty));
 
@@ -625,7 +625,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellLandUsage)){
                     LandUsageTypeEnum landUsageTypeEnum = LandUsageTypeEnum.lookupByDisplayNameUtil(cellLandUsage);
                     if(null == landUsageTypeEnum){
-                        log.error(String.format("错误提示： %s %s 后台尚未设置该土地用途枚举值:%s",sheetAsset.getSheetName(),row.getRowNum(), cellLandUsage));
+//                        log.error(String.format("错误提示： %s %s 后台尚未设置该土地用途枚举值:%s",sheetAsset.getSheetName(),row.getRowNum(), cellLandUsage));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strLandUsage, cellLandUsage, null);
                     }else{
                         amcAssetPre.setLandusage(landUsageTypeEnum.getId());
@@ -644,7 +644,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 }else{
                     if(assetTitles.get(amcAssetPre.getTitle()).getDebtId() == amcAssetPre.getDebtId()){
                         //same debt id should not have duplicate asset title
-                        log.error(String.format("错误提示： %s %s 有重复的资产名字:%s 在该债权下:%s", sheetAsset.getSheetName(), row.getRowNum(), amcAssetPre.getTitle(), cellDebtTitle));
+//                        log.error(String.format("错误提示： %s %s 有重复的资产名字:%s 在该债权下:%s", sheetAsset.getSheetName(), row.getRowNum(), amcAssetPre.getTitle(), cellDebtTitle));
 //                        errorInfo.add(String.format("错误提示： %s %s 有重复的资产名字:%s 在该债权下:%s", sheetAsset.getSheetName(), row.getRowNum(),amcAssetPre.getTitle(), cellDebtTitle));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.DUPLICATEITEM_IN_DEBET, sheetAsset.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAssetName, amcAssetPre.getTitle(), null);
                         continue;
@@ -820,7 +820,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 String cellDesc = dataFormatter.formatCellValue(row.getCell(idxDesc));
                 if(StringUtils.isEmpty(cellAmcContactor)){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, null);
-                    log.error(String.format("错误提示： %s %s 联系人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 联系人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
                 AmcDebtPre amcDebtPre = new AmcDebtPre();
                 amcDebtPre.setAmcId(Long.valueOf(AmcCmpyEnum.CMPY_WENSHENG.getId()));
@@ -831,7 +831,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
                 if(ssoAmcUser == null){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.AMCCONTACTOR_INFO_ERR, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, "没有找到该联系人");
-                    log.error(String.format("错误提示： %s %s 后台没有找到对应的联系人信息:%s", sheetDebt.getSheetName(), row.getRowNum(), cellAmcContactor));
+//                    log.error(String.format("错误提示： %s %s 后台没有找到对应的联系人信息:%s", sheetDebt.getSheetName(), row.getRowNum(), cellAmcContactor));
 //                    break;
                 }else{
                     amcDebtPre.setAmcContactorName(cellAmcContactor);
@@ -853,7 +853,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     LawstateEnum lawstateEnum = LawstateEnum.lookupByDisplayNameUtil(cellLawState);
                     if(null == lawstateEnum){
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strLawState, cellLawState, null);
-                        log.error(String.format("错误提示： %s %s 找不到对应的法律状态:%s", sheetDebt.getSheetName(), row.getRowNum(), cellLawState));
+//                        log.error(String.format("错误提示： %s %s 找不到对应的法律状态:%s", sheetDebt.getSheetName(), row.getRowNum(), cellLawState));
                     }else{
                         amcDebtPre.setLawsuitState(LawstateEnum.lookupByDisplayNameUtil(cellLawState).getStatus());
                     }
@@ -861,18 +861,18 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strLawState, cellLawState, null);
 
-                    log.error(String.format("错误提示： %s %s 诉讼状态不能为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 诉讼状态不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
                 if(!StringUtils.isEmpty(cellGrantType)){
                     GuarantTypeEnum guarantTypeEnum = GuarantTypeEnum.lookupByDisplayNameUtil(cellGrantType);
                     if(guarantTypeEnum == null){
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantType, cellGrantType, null);
-                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("%s %s 后台尚未设置该担保方式枚举值:%s", sheetDebt.getSheetName(), row.getRowNum(), cellGrantType));
+//                        throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("%s %s 后台尚未设置该担保方式枚举值:%s", sheetDebt.getSheetName(), row.getRowNum(), cellGrantType));
                     }
                     amcDebtPre.setGuarantType(GuarantTypeEnum.lookupByDisplayNameUtil(cellGrantType).getType());
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantType, cellGrantType, null);
-                    log.error(String.format("错误提示： %s %s 担保方式不能为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 担保方式不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
                 if(!StringUtils.isEmpty(cellDebtTitle)){
                     amcDebtPre.setTitle(cellDebtTitle);
@@ -890,24 +890,24 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     if(CollectionUtils.isEmpty(zccDebtpacks)){
 
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.AMCCONTACTOR_INFO_ERR, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, "没有找到联系人所属的地区(分部)");
-                        log.error(String.format("错误提示： %s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
+//                        log.error(String.format("错误提示： %s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
                     }
                 }
 
                 if(StringUtils.isEmpty(cellCourtProv)){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strCourtProv, cellCourtProv, null);
-                    log.error(String.format("错误提示： %s %s 法院所属省为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 法院所属省为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
 
                 if(StringUtils.isEmpty(cellCourtCity)){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strCourtCity, cellCourtCity, null);
-                    log.error(String.format("错误提示： %s %s 法院所属城市为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 法院所属城市为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
                 if(!StringUtils.isEmpty(cellCourt)){
                     Long curtId = getCourt(cellCourtProv, cellCourtCity, cellCourtCounty, cellCourt);
                     if(curtId <= -1L){
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strCourt, cellCourt, "没有找到该法院");
-                        log.error(String.format("告警提示： %s %s 当前后台系统中没有找到该法院:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourt));
+//                        log.error(String.format("告警提示： %s %s 当前后台系统中没有找到该法院:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourt));
                     }else{
                         amcDebtPre.setCourtId(curtId);
                     }
@@ -920,7 +920,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         amcDebtPre.setCurtProv(regions.get(0).getId());
                         regionMap.put(cellCourtProv, regions.get(0).getId());
                     }else{
-                        log.error(String.format("错误提示： %s %s 找不到对应的法院所属省:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtProv));
+//                        log.error(String.format("错误提示： %s %s 找不到对应的法院所属省:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtProv));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strCourtProv, cellCourtProv, null);
                         regionMap.put(cellCourtProv, -1L);
                     }
@@ -948,7 +948,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         amcDebtPre.setCurtCounty(regions.get(0).getId());
                         regionMap.put(cellCourtCounty, regions.get(0).getId());
                     }else{
-                        log.error(String.format("错误提示： %s %s 找不到对应的法院所属区县:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCounty));
+//                        log.error(String.format("错误提示： %s %s 找不到对应的法院所属区县:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCounty));
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strCourtCounty, cellCourtCounty, null);
                         regionMap.put(cellCourtCounty, -1L);
                     }
@@ -988,13 +988,13 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                    amcDebtPreInDb.setGuarantee(checkGrantorsOrBrowwer(cellGrantor, errorInfo, sheetDebt, row, strGrantor));
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantor, cellGrantor, null);
-                    log.error(String.format("错误提示： %s %s 担保人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 担保人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
                 if(!StringUtils.isEmpty(cellBrowwer) && !duplicateEvent){
                     amcDebtPreInDb.setBorrower(checkGrantorsOrBrowwer(cellBrowwer, errorInfo, sheetDebt, row, strBrower));
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strBrower, cellBrowwer, null);
-                    log.error(String.format("错误提示： %s %s 借款人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
+//                    log.error(String.format("错误提示： %s %s 借款人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
                 if(!duplicateEvent){
                     amcExcelPreCheckService.updateDebt(amcDebtPreInDb);
@@ -1021,6 +1021,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         }
         debtBatchImportErr.setHints(hints);
         errorInfo.add(debtBatchImportErr);
+        log.error(String.format("ErrorCode:%s sheetName:%s rowNum:%s errorLevel:%s fieldName:%s itemValue:%s reason:%s",debtPrecheckErrorEnum.getErrorCode(),
+                sheetName, rowNum, errorLevel, fieldName, itemValue, reason  ));
 
 
     }

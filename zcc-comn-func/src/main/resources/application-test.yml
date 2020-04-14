@@ -12,9 +12,9 @@ spring:
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
             - org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration
     datasource:
-        password: ${env.dbpassword}
+        password: wensheng
         url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-        username: ${env.dbusername}
+        username: wenshengcust
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
         maxActive: 20
@@ -87,14 +87,16 @@ spring:
     cache:
         cache-names: TOKEN
         caffeine:
-            spec: maximumSize=500, expireAfterAccess=120s
+            spec: maximumSize=500, expireAfterAccess=5400s
     servlet:
         multipart:
             enabled: true
             file-size-threshold: 10240KB
             max-file-size: 10240KB
             max-request-size: 10240KB
-
+amc:
+    urls:
+        getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
 
 weixin:
     prod:
@@ -113,7 +115,6 @@ weixin:
         userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
         loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.test.appId}&secret=${weixin.test.appSecret}&js_code=JSCODE&grant_type=authorization_code
         get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${weixin.test.appId}&secret=${weixin.test.appSecret}
-
 
 
 project:
@@ -137,7 +138,6 @@ gaode:
     regeocoder: https://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&poitype=&radius=&extensions=base&batch=false&roadlevel=0
 
 
-
 message:
     url: http://esms100.10690007.net/sms/mt
     spid: 9346
@@ -153,20 +153,16 @@ logging:
         com:
             wensheng: TRACE
         root: WARN
-amc:
-    urls:
-        getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
+
 
 env:
     env-hint: test
-    dbhost: 10.20.100.235
-    dbusername: wswxworker
-    dbpassword: Wsamc@12345
-    kfkhost: 10.20.100.235
+    dbhost: 10.20.100.238
+    kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
     regionhost: 10.20.100.228
     regionport: 5050
     oauth2:
-        host: 10.20.100.235
+        host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

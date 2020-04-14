@@ -30,7 +30,7 @@ spring:
   data:
     mongodb:
       database: wszcc_log
-      host: 10.20.100.235
+      host: 10.20.100.238
       port: 27017
   security:
     oauth2:
@@ -54,7 +54,7 @@ kafka:
 
 env:
   env-prefix: dev
-  kafka-host: 10.20.100.235
+  kafka-host: 10.20.100.238
   oauth2:
     host: localhost
     authLink: http://${env.oauth2.host}:10002

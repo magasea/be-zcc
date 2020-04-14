@@ -23,17 +23,17 @@ spring:
         testOnReturn: false
         poolPreparedStatements: true
         maxOpenPreparedStatements: 20
-    #    jpa:
-    #        generate-ddl: false
-    #        hibernate:
-    #            ddl-auto: 'none '
-    #            naming:
-    #                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
-    #        properties:
-    #            hibernate:
-    #                hbm2ddl:
-    #                    auto: none
-    #        show-sql: true
+#    jpa:
+#        generate-ddl: false
+#        hibernate:
+#            ddl-auto: 'none '
+#            naming:
+#                physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+#        properties:
+#            hibernate:
+#                hbm2ddl:
+#                    auto: none
+#        show-sql: true
     security:
         oauth2:
             client:
@@ -79,6 +79,7 @@ spring:
             cronExpr: 0 0 6,12,15,18,23 * * *
             cronExprTokenRevok: 0 0 7,13,16,19,21 * * *
 
+
 mybatis:
     type-aliases-package: com.wensheng.zcc.sso.module
     mapper-locations:
@@ -86,20 +87,20 @@ mybatis:
         - classpath:mappers/ext/*Mapper.xml
 
 mongodb:
-    #    original:
-    #        host: 10.20.100.235
-    #        port: 27017
-    #        database: wensheng
+#    original:
+#        host: 10.20.100.235
+#        port: 27017
+#        database: wensheng
     wszcc_sso:
         host: ${env.mongodb-host}
         port: 27017
         database: wszcc_sso
 
 weixin:
-    #    appId: wxdb885be2c95a5b32
-    #    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
-    #    get_token_url: https://api.weixin.qq.com/cgi-bin/token
-    #    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
+#    appId: wxdb885be2c95a5b32
+#    appSecret: 279bfb3dd9d3e5eb43c480f625afdc0b
+#    get_token_url: https://api.weixin.qq.com/cgi-bin/token
+#    get_qrcode_url: https://api.weixin.qq.com/wxa/getwxacodeunlimit
     appId: wx43360e750e7099b9
     appSecret: e08507e5865fe1315e403d011693253f
     loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.appId}&secret=${weixin.appSecret}&js_code=JSCODE&grant_type=authorization_code
@@ -111,13 +112,11 @@ weixin:
         loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.open.appId}&secret=${weixin.open.appSecret}&code=%s&grant_type=authorization_code
         getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=$s
     pub:
-#        appId: wx6f60584065dd3e45
-        appId: wx273fd3accb57b9b1
-#        appSecret: 3217390a438df7cd13189b6a9c69abf2
-        appSecret: b8e576b270ae4576baf0df3ea0e2b7bc
+        appId: wx6f60584065dd3e45
+        appSecret: 3217390a438df7cd13189b6a9c69abf2
         encodingAesKey: abcdefghijklmnopqrstuvwxyz0123456789ABCDEFG
-#        loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.pub.appId}&secret=${weixin.pub.appSecret}&code=%s&grant_type=authorization_code
         loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.pub.appId}&secret=${weixin.pub.appSecret}&code=%s&grant_type=authorization_code
+
 message:
     url: http://esms100.10690007.net/sms/mt
     spid: 9346
@@ -142,12 +141,12 @@ sso:
 
 env:
     name: test
-    dbhost: 10.20.100.235
+    dbhost: 10.20.100.238
     ssohost: 10.20.100.235
-    dbusername: amcssoworker
-    dbpasswd: Wsamc@12345
-    kfkhost: 10.20.100.235
-    mongodb-host: 10.20.100.235
+    dbusername: ssouser
+    dbpasswd: Wensheng#123
+    kfkhost: 10.20.100.238
+    mongodb-host: 10.20.100.238
     oauth2:
-        host: 10.20.100.235
+        host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

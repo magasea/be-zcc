@@ -1,11 +1,15 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.service.AmcAssetService;
+import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcImageBatchImportService;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.ArchiveInputStream;
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.utils.IOUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +30,9 @@ public class AmcImageBatchImportServiceImpl implements AmcImageBatchImportServic
     String debtImageRepo;
 
     static final String tempFolder = "unzip_temp";
+
+    @Autowired
+    AmcDebtService amcDebtService;
 
 
 
@@ -78,13 +85,24 @@ public class AmcImageBatchImportServiceImpl implements AmcImageBatchImportServic
                 }
             }
         }
+        traverseTargetFolder(targetFolder);
         return true;
 
+    }
+
+    public void traverseTargetFolder(String targetPath) throws Exception {
+        String targetFolder = String.format("%s%s%s%s",debtImageRepo,File.separator,tempFolder,File.separator);
+        File dir = new File(targetFolder);
+        if(!dir.exists()){
+            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_FOLDER);
+        }
+        traverseFile(dir.listFiles());
     }
 
     private void traverseFile(File[] files) throws IOException {
         for (File file : files) {
             if (file.isDirectory()) {
+
                 String debtTitle =  file.getParent();;
                 String assetTitle = file.getName();
                 //begin handle asset images
@@ -97,8 +115,8 @@ public class AmcImageBatchImportServiceImpl implements AmcImageBatchImportServic
         }
     }
     private void uploadAssetImage(Path itemAssetImage, String debtTitle, String assetTitle) {
-
-
+//        amcDebtService.
+        log.info("itemAssetImage:{}, debtTitle:{}, assetTitle:{}", itemAssetImage, debtTitle, assetTitle);
     }
 
 }

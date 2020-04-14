@@ -177,8 +177,8 @@ env:
   cust-host: localhost
   amcssohost: localhost
   recmhost: 10.20.100.228
-  dbusername: wsamcworker
-  dbpasswd: Wsamc@12345
+  dbusername: worker
+  dbpasswd: Wensheng@12345678
   mongodb-host: 10.20.100.238
   image-repo: /disk/temp
   oauth2:

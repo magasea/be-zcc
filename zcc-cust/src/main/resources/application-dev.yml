@@ -160,8 +160,8 @@ recom:
 env:
     env-hint: dev
     dbhost: 10.20.100.238
-    dbusername: wscustworker
-    dbpasswd: Wsamc@12345
+    dbusername: worker
+    dbpasswd: Wensheng@12345678
     rpchost: localhost
     kfkhost: 10.20.100.238
     recomhost: 10.20.100.236

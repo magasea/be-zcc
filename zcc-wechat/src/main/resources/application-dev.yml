@@ -14,9 +14,9 @@ spring:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
-        password: Wsamc@12345
+        password: ${env.dbpasswd}
         url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
-        username: wswxworker
+        username: ${env.dbusername}
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
         maxActive: 20
@@ -195,7 +195,8 @@ message:
     spid: 9346
     sppassword: xuKh9a8u
     commond: MT_REQUEST
-    multiCommond: MULTI_MT_REQUEST
+    multiCommond: MULTI_MT_REQUEST    dbusername: amcssoworker
+    dbpasswd: Wsamc@12345
 
 kafka:
     topic_wechatuser: topic_wechatuser_${env.env-hint}
@@ -211,6 +212,8 @@ logging:
 env:
     env-hint: dev
     dbhost: 10.20.100.238
+    dbusername: worker
+    dbpasswd: Wensheng@12345678
     rpchost: localhost
     pubhost: 101.132.27.96
     pubport: 5444

@@ -148,8 +148,8 @@ env:
     name: dev
     dbhost: 10.20.100.238
     ssohost: 10.20.100.238
-    dbusername: amcssoworker
-    dbpasswd: Wsamc@12345
+    dbusername: worker
+    dbpasswd: Wensheng@12345678
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.238
     oauth2:

@@ -17,5 +17,5 @@ public interface AmcImageBatchImportService {
   public boolean importBatchImages(MultipartFile multipartFile) throws Exception;
 
 
-
+    List<String> imageBatchCheck(List<String> zipImagesPaths);
 }

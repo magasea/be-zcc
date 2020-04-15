@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.aop.EditActionChecker;
 import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.controller.helper.SimpleQueryParam;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.*;
 import com.wensheng.zcc.amc.service.*;
 import com.wensheng.zcc.amc.service.impl.AmcMiscServiceImpl;
@@ -14,10 +15,6 @@ import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -81,6 +78,9 @@ public class AmcDebtController {
 
   @Autowired
   AmcImageBatchImportService amcImageBatchImportService;
+
+  @Autowired
+  AmcAssetService amcAssetService;
 
 
 
@@ -230,7 +230,7 @@ public class AmcDebtController {
         throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
       }
 
-    String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
+    String prePath = amcDebtService.getDebtOssPrePath(debtId);
     List<DebtImage> debtImages = new ArrayList<>();
     String ossPath;
     for (String filePath : filePaths) {
@@ -731,4 +731,64 @@ public class AmcDebtController {
   public void imageBatchImport(@RequestParam("zipImages") MultipartFile zipImages) throws Exception {
     amcImageBatchImportService.importBatchImages(zipImages);
   }
+
+
+  @RequestMapping(value = "/imageBatchCheck", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> imageBatchCheck(@RequestBody List<String> zipImagesPaths) throws Exception {
+    return amcImageBatchImportService.imageBatchCheck(zipImagesPaths);
+  }
+
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/image/uploadBatchImage", headers = "Content-Type= multipart/form-data",method =
+          RequestMethod.POST)
+  @ResponseBody
+  public void uploadBatchImage(@PathVariable Long amcid,
+                                         @RequestParam("path") String path,
+                                         @RequestParam("images") MultipartFile uploadingImage) throws Exception {
+    if(!path.contains("/")){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FOLDER, "目录分割符号应该为:\\");
+    }
+    String[] paths = path.split("\\/");
+    if(paths.length == 2){
+      //debt image
+      String debtTitle = paths[0];
+
+      //get debtId
+      Long debtId = amcDebtService.getDebtIdByTitle(debtTitle);
+
+      //transfer multipart file
+      String debtImagePath = amcOssFileService.handleMultiPartFile(uploadingImage, debtId, ImagePathClassEnum.DEBT.getName());
+
+      //upload image
+      String ossPrepath = amcDebtService.getDebtOssPrePath(debtId);
+      amcDebtService.uploadDebtImage(debtImagePath, ossPrepath, debtId, null);
+    }else if(paths.length == 3){
+      //asset image
+      String debtTitle = paths[0];
+      String assetTitle = paths[1];
+      String assetImageName = paths[2];
+      //get assetId
+      List<AmcAsset> amcAssets =  amcAssetService.getAssetByDebtAndAssetTitle(debtTitle, assetTitle);
+
+      if(CollectionUtils.isEmpty(amcAssets)){
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FOLDER, String.format("no amc asset title match for:%s",path));
+      }else if(amcAssets.size() > 1){
+        throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FOLDER, String.format("multiple amc asset title match for:%s",path));
+      }
+      String assetImagePath = amcOssFileService.handleMultiPartFile(uploadingImage, amcAssets.get(0).getId(), ImagePathClassEnum.ASSET.getName());
+
+      //upload image
+      String ossPrepath = amcAssetService.getAssetOssPrepath(amcAssets.get(0).getId());
+      int tag = ImageClassEnum.OTHER.getId();
+      if(assetImageName.startsWith("1")){
+        tag = ImageClassEnum.MAIN.getId();
+      }
+      amcAssetService.uploadAssetImage(assetImagePath, ossPrepath, tag, amcAssets.get(0).getId(), null);
+    }
+
+  }
+
+
+
+
 }

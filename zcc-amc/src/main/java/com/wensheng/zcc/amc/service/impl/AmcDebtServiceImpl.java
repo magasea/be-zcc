@@ -1238,6 +1238,22 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  public Long getDebtIdByTitle(String title) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+
+    amcDebtExample.createCriteria().andTitleEqualTo(title);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(CollectionUtils.isEmpty(amcDebts)){
+      return -1L;
+    }else if(amcDebts.size() > 1){
+      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR,
+              String.format("there is :%s debt with the same debtTitle:%s", amcDebts.size(), title));
+    }else{
+      return amcDebts.get(0).getId();
+    }
+  }
+
+  @Override
   public DebtImage uploadDebtImage(String imagePath, String ossPrepath, Long debtId, String desc) throws Exception {
 //    String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
     String ossPath = null;
@@ -1258,6 +1274,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       throw e;
     }
 
+  }
+
+  @Override
+  public String getDebtOssPrePath(Long debtId) {
+    String prePath = new StringBuilder(ImagePathClassEnum.DEBT.getName()).append("/").append(debtId).append( "/").toString();
+    return prePath;
   }
 
   private void handleCourtGeoInfo(Map<Long, Long> debt2Courts) {

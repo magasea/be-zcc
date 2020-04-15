@@ -3,15 +3,16 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.aop.QueryAssetPreChecker;
 import com.wensheng.zcc.amc.aop.QueryDebtPreChecker;
 import com.wensheng.zcc.amc.dao.mysql.mapper.*;
+import com.wensheng.zcc.amc.module.dao.helper.DebtPrecheckErrorEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
-import com.wensheng.zcc.amc.service.AmcAssetService;
-import com.wensheng.zcc.amc.service.AmcDebtService;
-import com.wensheng.zcc.amc.service.AmcExcelPreCheckService;
+import com.wensheng.zcc.amc.service.*;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -46,7 +47,13 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
     AmcAssetService amcAssetService;
 
     @Autowired
+    AmcExcelFileService amcExcelFileService;
+
+    @Autowired
     AmcDebtorMapper amcDebtorMapper;
+
+    @Autowired
+    AmcDebtpackService amcDebtpackService;
 
     static final String SEP_CHAR = ",";
     static final String KEY_WORD_CMPY = "公司";
@@ -143,6 +150,23 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
             AmcDebt amcDebt = new AmcDebt();
             AmcBeanUtils.copyProperties(amcDebtPre, amcDebt);
             amcDebt.setId(null);
+            if(StringUtils.isEmpty(amcDebtPre.getAmcContactorName()) ){
+                log.error("amc contactor is empty ");
+                throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
+                        String.format("amc contactor is %s  ", amcDebtPre.getAmcContactorName()));
+
+            }else if(amcDebtPre.getDebtpackId() <= 0){
+               SSOAmcUser ssoAmcUser =  amcExcelFileService.getAmcContactorByName(amcDebtPre.getAmcContactorName());
+
+                List<ZccDebtpack> zccDebtpacks =  amcDebtpackService.queryPacksWithLocation(AmcLocationEnum.lookupByDisplayIdUtil(ssoAmcUser.getLocation()));
+                if(CollectionUtils.isEmpty(zccDebtpacks)){
+                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
+                            String.format("ssoAmcUser location is %s  ", ssoAmcUser.getLocation()));
+//                        log.error(String.format("错误提示： %s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
+                }else{
+                    amcDebtPre.setDebtpackId(zccDebtpacks.get(0).getId());
+                }
+            }
             amcDebtMapper.insertSelective(amcDebt);
             amcDebtService.saveDebtDesc(amcDebtPre.getDebtDesc(), amcDebt.getId());
             if(!StringUtils.isEmpty(amcDebtPre.getGuarantee())){

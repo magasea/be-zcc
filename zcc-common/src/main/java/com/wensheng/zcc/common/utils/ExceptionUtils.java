@@ -70,7 +70,8 @@ public class ExceptionUtils {
     INVALID_EXCEL_CONTENT_ERROR(1041, "不合理的内容 ", "不合理的内容"),
     FAILED_TRANSFEREXCEL_TO_DB(1042, "excel导入正式DB失败 ", "excel导入正式DB失败"),
 
-    INVALID_FOLDER(1043, "invalid folder","文件目录不正确")
+    INVALID_FOLDER(1043, "invalid folder","文件目录不正确"),
+    DUPLICATE_ITEM_ERROR(1044, "duplicate item in db ", "有重复数据"),
 
     ;
     int code;

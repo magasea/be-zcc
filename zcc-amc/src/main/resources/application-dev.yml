@@ -113,7 +113,7 @@ spring:
     basename: locale/message
   data:
     mongodb:
-      auto-index-creation: true
+      auto-index-creation: false
 
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module

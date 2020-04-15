@@ -57,6 +57,7 @@ public interface AmcAssetService {
    List<AmcAsset> getSimpleAssets(List<Long> ids);
 
    List<AmcAsset> getAssetByDebtAndAssetTitle(String debtTitle, String assetTitle) throws Exception;
+    String getAssetOssPrepath(Long assetId);
 
   AssetImage saveImageInfo( AssetImage assetImage);
 
@@ -84,6 +85,7 @@ public interface AmcAssetService {
   List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
 
   void patchAssetLocationWithCode() throws Exception;
+  AssetImage uploadAssetImage(String imagePath, String ossPrepath, Integer tag, Long assetId, String desc) throws Exception;
 
 
 }

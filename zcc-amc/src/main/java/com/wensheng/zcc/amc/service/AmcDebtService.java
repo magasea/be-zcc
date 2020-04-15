@@ -120,6 +120,10 @@ public interface AmcDebtService {
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
   List<AmcDebt> getDebtSimpleByTitleLike(String title);
 
+  Long getDebtIdByTitle(String title) throws Exception;
+
   DebtImage uploadDebtImage(String imagePath, String ossPrePath, Long debtId, String desc) throws Exception;
+
+  String getDebtOssPrePath(Long debtId);
 
 }

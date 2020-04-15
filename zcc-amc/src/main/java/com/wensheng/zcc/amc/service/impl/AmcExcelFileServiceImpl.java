@@ -891,6 +891,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
                         addErrorInfo(errorInfo, DebtPrecheckErrorEnum.AMCCONTACTOR_INFO_ERR, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, "没有找到联系人所属的地区(分部)");
 //                        log.error(String.format("错误提示： %s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
+                    }else{
+                        amcDebtPre.setDebtpackId(zccDebtpacks.get(0).getId());
                     }
                 }
 
@@ -1783,7 +1785,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
     }
 
-    SSOAmcUser getAmcContactorByName(String name)  {
+    @Override
+    public SSOAmcUser getAmcContactorByName(String name)  {
         SSOQueryParam ssoQueryParam = new SSOQueryParam();
         ssoQueryParam.setName(name);
         ssoQueryParam.setPageInfo(new PageInfo());

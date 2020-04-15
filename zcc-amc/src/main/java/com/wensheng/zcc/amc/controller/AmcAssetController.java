@@ -267,21 +267,13 @@ public class AmcAssetController {
         throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2SERVER, e.getMessage());
       }
     }
-    String prePath = ImagePathClassEnum.ASSET.getName()+"/"+assetId+"/";
+
+    String prePath = amcAssetService.getAssetOssPrepath(assetId);
 
     List<AssetImage> assetImages = new ArrayList<>();
     for(String filePath: filePaths){
       try {
-        String ossPath =  amcOssFileService.handleFile2Oss(filePath, prePath);
-        AssetImage assetImage = new AssetImage();
-
-        assetImage.setOssPath(ossPath);
-        assetImage.setTag(tag);
-        assetImage.setOriginalName(filePath);
-        assetImage.setAmcAssetId(assetId);
-        assetImage.setDescription(description);
-        assetImages.add(amcAssetService.saveImageInfo( assetImage));
-
+        assetImages.add(amcAssetService.uploadAssetImage(filePath, prePath, tag, assetId, description));
       } catch (Exception e) {
         e.printStackTrace();
         throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_UPLOADFILE2OSS, e.getMessage());

@@ -6,12 +6,10 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
@@ -463,13 +461,18 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         List<AmcDebt> amcDebts = amcDebtService.getDebtByTiltle(debtTitle);
         if(CollectionUtils.isEmpty(amcDebts)){
-            throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE);
+            throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE, String.format("%s not available", debtTitle));
         }
         amcAssetExample.createCriteria().andDebtIdIn(amcDebts.stream().map(item->item.getId()).collect(Collectors.toList()))
         .andTitleEqualTo(assetTitle);
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
 
         return amcAssets;
+    }
+
+    @Override
+    public String getAssetOssPrepath(Long assetId){
+        return new StringBuilder(ImagePathClassEnum.ASSET.getName()).append("/").append(assetId).append("/").toString();
     }
 
     @Override
@@ -600,6 +603,23 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         List <AmcAssetVo> amcAssetVosList = new ArrayList<>(amcAssetVoMap.values());
 //            Collections.sort(amcAssetVosList, amcAssetVoComparator);
         return amcAssetVosList;
+
+    }
+
+    @Override
+    public AssetImage uploadAssetImage(String imagePath, String ossPrepath, Integer tag, Long assetId, String desc) throws Exception {
+//    String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
+
+        String ossPath =  amcOssFileService.handleFile2Oss(imagePath, ossPrepath);
+        AssetImage assetImage = new AssetImage();
+
+        assetImage.setOssPath(ossPath);
+        assetImage.setTag(tag);
+        assetImage.setOriginalName(imagePath);
+        assetImage.setAmcAssetId(assetId);
+        assetImage.setDescription(desc);
+        return saveImageInfo( assetImage);
+
 
     }
 

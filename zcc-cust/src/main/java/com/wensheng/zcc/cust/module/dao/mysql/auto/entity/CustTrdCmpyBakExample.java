@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class CustTrdCmpyExample {
+public class CustTrdCmpyBakExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public CustTrdCmpyExample() {
+    public CustTrdCmpyBakExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 
@@ -515,76 +515,6 @@ public class CustTrdCmpyExample {
             return (Criteria) this;
         }
 
-        public Criteria andCmpyPhoneUpdateIsNull() {
-            addCriterion("cmpy_phone_update is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateIsNotNull() {
-            addCriterion("cmpy_phone_update is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateEqualTo(String value) {
-            addCriterion("cmpy_phone_update =", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateNotEqualTo(String value) {
-            addCriterion("cmpy_phone_update <>", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateGreaterThan(String value) {
-            addCriterion("cmpy_phone_update >", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateGreaterThanOrEqualTo(String value) {
-            addCriterion("cmpy_phone_update >=", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateLessThan(String value) {
-            addCriterion("cmpy_phone_update <", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateLessThanOrEqualTo(String value) {
-            addCriterion("cmpy_phone_update <=", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateLike(String value) {
-            addCriterion("cmpy_phone_update like", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateNotLike(String value) {
-            addCriterion("cmpy_phone_update not like", value, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateIn(List<String> values) {
-            addCriterion("cmpy_phone_update in", values, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateNotIn(List<String> values) {
-            addCriterion("cmpy_phone_update not in", values, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateBetween(String value1, String value2) {
-            addCriterion("cmpy_phone_update between", value1, value2, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyPhoneUpdateNotBetween(String value1, String value2) {
-            addCriterion("cmpy_phone_update not between", value1, value2, "cmpyPhoneUpdate");
-            return (Criteria) this;
-        }
-
         public Criteria andHistoryCmpyPhoneIsNull() {
             addCriterion("history_cmpy_phone is null");
             return (Criteria) this;
@@ -792,76 +722,6 @@ public class CustTrdCmpyExample {
 
         public Criteria andCmpyAddrNotBetween(String value1, String value2) {
             addCriterion("cmpy_addr not between", value1, value2, "cmpyAddr");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateIsNull() {
-            addCriterion("cmpy_addr_update is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateIsNotNull() {
-            addCriterion("cmpy_addr_update is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateEqualTo(String value) {
-            addCriterion("cmpy_addr_update =", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotEqualTo(String value) {
-            addCriterion("cmpy_addr_update <>", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateGreaterThan(String value) {
-            addCriterion("cmpy_addr_update >", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateGreaterThanOrEqualTo(String value) {
-            addCriterion("cmpy_addr_update >=", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateLessThan(String value) {
-            addCriterion("cmpy_addr_update <", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateLessThanOrEqualTo(String value) {
-            addCriterion("cmpy_addr_update <=", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateLike(String value) {
-            addCriterion("cmpy_addr_update like", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotLike(String value) {
-            addCriterion("cmpy_addr_update not like", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateIn(List<String> values) {
-            addCriterion("cmpy_addr_update in", values, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotIn(List<String> values) {
-            addCriterion("cmpy_addr_update not in", values, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateBetween(String value1, String value2) {
-            addCriterion("cmpy_addr_update between", value1, value2, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotBetween(String value1, String value2) {
-            addCriterion("cmpy_addr_update not between", value1, value2, "cmpyAddrUpdate");
             return (Criteria) this;
         }
 

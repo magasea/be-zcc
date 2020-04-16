@@ -28,4 +28,9 @@ public class StringToolUtils {
 
     }
 
+//    public static int countWord(String baseStr, String checkStr){
+//        return Pattern.compile(String.format("\\b%s", checkStr)
+//                .splitAsStream(baseStr).count()-1;
+//    }
+
 }

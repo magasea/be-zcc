@@ -24,6 +24,7 @@ public interface SyncService {
 
   void patchTrdUrl();
 
+  void patchTrdDupAdd();
   public CustCmpyInfoFromSync getCmpyInfoByName(String cmpyName);
   public void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy);
 

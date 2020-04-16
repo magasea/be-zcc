@@ -1352,6 +1352,30 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
   }
 
+  @Override
+  public void patchTrdDupAdd() {
+    int offset = 0;
+    int pageSize = 50;
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+    custTrdInfoExample.setOrderByClause(" id desc ");
+    custTrdInfoExample.createCriteria().andTrdContactorAddressIsNotNull().andTrdContactorAddressNotEqualTo("-1");
+    RowBounds rowBounds = new RowBounds(offset, pageSize);
+    List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExampleWithRowbounds(custTrdInfoExample, rowBounds);
+    boolean hasMore = false;
+    if(CollectionUtils.isEmpty(custTrdInfos)){
+      return;
+    }else{
+      hasMore = true;
+    }
+    while(hasMore){
+      for(CustTrdInfo custTrdInfo: custTrdInfos){
+        String addrToCheck = custTrdInfo.getTrdContactorAddr();
+        String pureAddr = custTrdInfo.getTrdContactorAddress();
+
+      }
+    }
+  }
+
   private void patchTrdInfo(List<CustTrdInfo> custTrdInfos) {
     for(CustTrdInfo custTrdInfo: custTrdInfos){
       if(!StringUtils.isEmpty(custTrdInfo.getInfoUrl()) && custTrdInfo.getInfoUrl().contains(originUrlDomainName)){

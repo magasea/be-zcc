@@ -2,7 +2,7 @@ package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
 import java.util.Date;
 
-public class CustTrdInfo {
+public class CustTrdInfoBak {
     private Long id;
 
     private Integer itemType;

@@ -5,14 +5,14 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-public class CustTrdInfoExample {
+public class CustTrdInfoBakExample {
     protected String orderByClause;
 
     protected boolean distinct;
 
     protected List<Criteria> oredCriteria;
 
-    public CustTrdInfoExample() {
+    public CustTrdInfoBakExample() {
         oredCriteria = new ArrayList<Criteria>();
     }
 

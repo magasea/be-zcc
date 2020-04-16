@@ -2,7 +2,7 @@ package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
 import java.util.Date;
 
-public class CustAmcCmpycontactor {
+public class CustAmcCmpycontactorBak {
     private Long id;
 
     private String name;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
+<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoBakMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBak">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="item_type" jdbcType="INTEGER" property="itemType" />
     <result column="item_sub_type" jdbcType="INTEGER" property="itemSubType" />
@@ -102,14 +102,14 @@
     seller_name, trd_contactor_name, trd_contactor_addr, trd_contactor_phone, trd_contactor_mobile, 
     trd_contactor_address, data_status, data_quality, update_time, create_time, sync_time
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBakExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from CUST_TRD_INFO
+    from CUST_TRD_INFO_BAK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -120,24 +120,24 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from CUST_TRD_INFO
+    from CUST_TRD_INFO_BAK
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from CUST_TRD_INFO
+    delete from CUST_TRD_INFO_BAK
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample">
-    delete from CUST_TRD_INFO
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBakExample">
+    delete from CUST_TRD_INFO_BAK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
+  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBak">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_INFO (item_type, item_sub_type, trd_type, 
+    insert into CUST_TRD_INFO_BAK (item_type, item_sub_type, trd_type, 
       info_title, pack_count, info_id, 
       info_source, info_url, debt_province, 
       trd_province, debt_city, trd_amount_orig, 
@@ -162,11 +162,11 @@
       #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{syncTime,jdbcType=TIMESTAMP}
       )
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBak">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_INFO
+    insert into CUST_TRD_INFO_BAK
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="itemType != null">
         item_type,
@@ -370,14 +370,14 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultType="java.lang.Long">
-    select count(*) from CUST_TRD_INFO
+  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBakExample" resultType="java.lang.Long">
+    select count(*) from CUST_TRD_INFO_BAK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update CUST_TRD_INFO
+    update CUST_TRD_INFO_BAK
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
@@ -487,7 +487,7 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update CUST_TRD_INFO
+    update CUST_TRD_INFO_BAK
     set id = #{record.id,jdbcType=BIGINT},
       item_type = #{record.itemType,jdbcType=INTEGER},
       item_sub_type = #{record.itemSubType,jdbcType=INTEGER},
@@ -526,8 +526,8 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
-    update CUST_TRD_INFO
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBak">
+    update CUST_TRD_INFO_BAK
     <set>
       <if test="itemType != null">
         item_type = #{itemType,jdbcType=INTEGER},
@@ -631,8 +631,8 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
-    update CUST_TRD_INFO
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBak">
+    update CUST_TRD_INFO_BAK
     set item_type = #{itemType,jdbcType=INTEGER},
       item_sub_type = #{itemSubType,jdbcType=INTEGER},
       trd_type = #{trdType,jdbcType=INTEGER},
@@ -668,14 +668,14 @@
       sync_time = #{syncTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoBakExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from CUST_TRD_INFO
+    from CUST_TRD_INFO_BAK
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

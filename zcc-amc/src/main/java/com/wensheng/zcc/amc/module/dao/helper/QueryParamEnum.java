@@ -15,6 +15,7 @@ public enum QueryParamEnum {
   BaseAmount("BaseAmount"),
   AssetType("AssetType"),
   Location("Location"),
+  LocationCode("LocationCode"),
   Recommand("Recommand"),
   AmcContactorId("AmcContactorId"),
   AmcContactorName("AmcContactorName"),

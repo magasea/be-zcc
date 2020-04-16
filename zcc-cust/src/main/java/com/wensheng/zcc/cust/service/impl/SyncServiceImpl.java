@@ -1148,10 +1148,13 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactPhonePrep())){
 
       custTrdInfo.setTrdContactorPhone(trdInfoFromSync.getBuyerContactPhonePrep());
-      sb.append(trdInfoFromSync.getBuyerContactPhonePrep()).append(" ").append(trdInfoFromSync.getBuyerContactAddressPrep());
+      sb.append(trdInfoFromSync.getBuyerContactPhonePrep());
     }
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){
       custTrdInfo.setTrdContactorAddress(trdInfoFromSync.getBuyerContactAddressPrep());
+      if(sb.length() > 1){
+        sb.append(" ");
+      }
       sb.append(trdInfoFromSync.getBuyerContactAddressPrep());
     }
     if(sb.length() > 0){

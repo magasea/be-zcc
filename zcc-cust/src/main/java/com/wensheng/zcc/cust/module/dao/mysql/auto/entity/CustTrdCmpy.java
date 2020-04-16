@@ -15,8 +15,6 @@ public class CustTrdCmpy {
 
     private String cmpyPhone;
 
-    private String cmpyPhoneUpdate;
-
     private String historyCmpyPhone;
 
     private String cmpyProvince;
@@ -30,8 +28,6 @@ public class CustTrdCmpy {
     private String annuReptPhone;
 
     private String annuReptAddr;
-
-    private String favoriteCityUpdate;
 
     private String favoriteTypeUpdate;
 
@@ -103,14 +99,6 @@ public class CustTrdCmpy {
         this.cmpyPhone = cmpyPhone == null ? null : cmpyPhone.trim();
     }
 
-    public String getCmpyPhoneUpdate() {
-        return cmpyPhoneUpdate;
-    }
-
-    public void setCmpyPhoneUpdate(String cmpyPhoneUpdate) {
-        this.cmpyPhoneUpdate = cmpyPhoneUpdate == null ? null : cmpyPhoneUpdate.trim();
-    }
-
     public String getHistoryCmpyPhone() {
         return historyCmpyPhone;
     }
@@ -165,14 +153,6 @@ public class CustTrdCmpy {
 
     public void setAnnuReptAddr(String annuReptAddr) {
         this.annuReptAddr = annuReptAddr == null ? null : annuReptAddr.trim();
-    }
-
-    public String getFavoriteCityUpdate() {
-        return favoriteCityUpdate;
-    }
-
-    public void setFavoriteCityUpdate(String favoriteCityUpdate) {
-        this.favoriteCityUpdate = favoriteCityUpdate == null ? null : favoriteCityUpdate.trim();
     }
 
     public String getFavoriteTypeUpdate() {

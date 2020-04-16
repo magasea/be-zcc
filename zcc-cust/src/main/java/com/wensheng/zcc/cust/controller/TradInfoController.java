@@ -112,4 +112,10 @@ public class TradInfoController {
   public void patchTrdContactorPhone() throws Exception {
     trdInfoService.patchPhoneAndAddress();
   }
+
+  @RequestMapping(value = "/refactData/patchDupAdd", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchDupAdd() throws Exception {
+    syncService.patchTrdDupAdd();
+  }
 }

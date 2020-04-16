@@ -1,5 +1,8 @@
 package com.wensheng.zcc.common.utils;
 
+
+import org.apache.commons.lang3.StringUtils;
+
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -28,9 +31,16 @@ public class StringToolUtils {
 
     }
 
-//    public static int countWord(String baseStr, String checkStr){
-//        return Pattern.compile(String.format("\\b%s", checkStr)
-//                .splitAsStream(baseStr).count()-1;
-//    }
+    public static int countWord(String baseStr, String checkStr){
+        if(StringUtils.isEmpty(baseStr) || StringUtils.isEmpty(checkStr)){
+            return -1;
+        }
+        if(baseStr.length() < checkStr.length()){
+            return -1;
+        }
+        return StringUtils.countMatches(baseStr, checkStr);
+
+
+    }
 
 }

@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.StringToolUtils;
 import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustIntrstInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
@@ -1371,6 +1372,16 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       for(CustTrdInfo custTrdInfo: custTrdInfos){
         String addrToCheck = custTrdInfo.getTrdContactorAddr();
         String pureAddr = custTrdInfo.getTrdContactorAddress();
+        if(StringToolUtils.countWord(addrToCheck, pureAddr) > 1){
+          log.info("Need to trim word:{} from base:{}", pureAddr, addrToCheck);
+          addrToCheck = addrToCheck.substring(0, addrToCheck.lastIndexOf(pureAddr));
+          log.info("now it is:{}", addrToCheck);
+          custTrdInfo.setTrdContactorAddr(addrToCheck);
+          custTrdInfoMapper.updateByPrimaryKey(custTrdInfo);
+        }else{
+          log.info("no trim needed for:{}",addrToCheck );
+        }
+
 
       }
     }

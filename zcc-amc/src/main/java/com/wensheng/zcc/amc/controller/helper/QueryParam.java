@@ -16,7 +16,7 @@ public class QueryParam {
   List<Long> area = null;
   List<Long> landArea = null;
   List<String> location = null;
-  String locationCode = null;
+  List<String> locationCode = null;
   List<Integer> publishStates = null;
 //  Integer editStatus = -1;
   List<Long> baseAmount = null;

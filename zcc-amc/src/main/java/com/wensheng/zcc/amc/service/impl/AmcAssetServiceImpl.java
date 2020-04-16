@@ -955,6 +955,21 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                         criteria.andCountyEqualTo(StringUtils.trimWhitespace(locations.get(2)));
                     }
                 }
+                if(item.getKey().equals(QueryParamEnum.LocationCode.name()) && !CollectionUtils.isEmpty((List<String>)item.getValue())){
+                    List<String> locationCodes = (List<String>) item.getValue();
+                    String locationCode = locationCodes.get(0);
+                    StringBuilder sbCode = new StringBuilder();
+                    for(int idx = locationCode.length() -1; idx >= 0; idx--){
+                        if(Character.compare(locationCode.charAt(idx), '0') == 0){
+                            continue;
+                        }else{
+                            sbCode.append(locationCode.substring(0, idx+1));
+                            break;
+                        }
+
+                    }
+                    criteria.andCityLike(sbCode.append("%").toString());
+                }
                 if(item.getKey().equals("AmcContactorId")){
                     criteria.andAmcContactorIdEqualTo((Long)item.getValue());
                 }

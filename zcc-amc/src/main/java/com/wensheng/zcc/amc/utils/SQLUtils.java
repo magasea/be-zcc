@@ -84,6 +84,10 @@ public class SQLUtils {
       queryParamMap.put(QueryParamEnum.Location.name(), queryParam.getLocation());
     }
 
+    if (queryParam.getLocationCode() != null && !CollectionUtils.isEmpty(queryParam.getLocationCode())) {
+      queryParamMap.put(QueryParamEnum.LocationCode.name(), queryParam.getLocationCode());
+    }
+
     if (!StringUtils.isEmpty(queryParam.getTitle())) {
       queryParamMap.put(QueryParamEnum.Title.name(), queryParam.getTitle());
     }

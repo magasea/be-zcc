@@ -167,7 +167,7 @@ recom:
 
 
 env:
-    env-hint: test
+    env-hint: prod
     dbhost: 10.20.100.235
     dbusername: wscustworker
     dbpassword: Wsamc@12345

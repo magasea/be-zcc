@@ -200,7 +200,7 @@ logging:
 
 
 env:
-    env-hint: test
+    env-hint: prod
     dbusername: wswxworker
     dbpassword: Wsamc@12345
     dbhost: 10.20.100.235

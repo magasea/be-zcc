@@ -72,6 +72,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -163,6 +164,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcMiscServiceImpl amcMiscService;
+
+  @Value("${env.name}")
+  String envName;
 
   @Override
   public synchronized DebtImage  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc,
@@ -1278,7 +1282,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public String getDebtOssPrePath(Long debtId) {
-    String prePath = new StringBuilder(ImagePathClassEnum.DEBT.getName()).append("/").append(debtId).append( "/").toString();
+    String prePath = new StringBuilder(ImagePathClassEnum.DEBT.getName()).append("/").append(envName).append("/").
+            append(debtId).append( "/").toString();
     return prePath;
   }
 

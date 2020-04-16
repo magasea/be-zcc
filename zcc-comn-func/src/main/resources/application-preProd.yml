@@ -158,7 +158,7 @@ amc:
         getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
 
 env:
-    env-hint: test
+    env-hint: prod
     dbhost: 10.20.100.235
     dbusername: wswxworker
     dbpassword: Wsamc@12345

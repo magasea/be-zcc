@@ -32,14 +32,9 @@ import com.wenshengamc.zcc.wechat.ImageUploadResult;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WechatAssetImage;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.Data;
@@ -48,6 +43,7 @@ import org.apache.ibatis.session.RowBounds;
 import org.apache.kafka.common.protocol.types.Field.Str;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -105,6 +101,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     RegionService regionService;
+
+    @Value("${env.name}")
+    String envName;
 
 
     @Override
@@ -392,13 +391,16 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         if(CollectionUtils.isEmpty(amcAssetVos)){
             return amcAssetVos;
         }
-        Map<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
-            item->item));
+
+        List<Long> assetIds = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList());
+        Set<Long> assetIdSet = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toSet());
+//        TreeMap<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
+//            item->item));
         Query query = new Query();
-        query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()));
+        query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
         List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
         query = new Query();
-        query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
+        query.addCriteria(Criteria.where("amcAssetId").in(assetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
         boolean queryRecom = false;
         Set<Integer> recomFilterVal = new HashSet<>();
@@ -407,6 +409,15 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 List<Integer> recommands =  ((List)queryParam.get(QueryParamEnum.Recommand.name()));
                 if(!CollectionUtils.isEmpty(recommands)){
                     recommands.forEach(item -> recomFilterVal.add(item));
+
+
+
+
+
+
+
+
+
                 }
                 queryRecom = true;
             } catch (NumberFormatException e) {
@@ -416,26 +427,69 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
         for(AssetAdditional additional: assetAdditionals){
-            if(amcAssetVoMap.containsKey(additional.getAmcAssetId())){
+            if(assetIdSet.contains(additional.getAmcAssetId())){
                 if(queryRecom && !recomFilterVal.contains(additional.getIsRecommanded())){
-                    amcAssetVoMap.remove(additional.getAmcAssetId());
+                    removeAssetsById(additional.getAmcAssetId(), amcAssetVos);
+
                     log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
                 }else{
-                    amcAssetVoMap.get(additional.getAmcAssetId()).setAssetAdditional(additional);
+                    setAddInfo(additional, amcAssetVos);
+
                 }
             }
         }
-        for(AssetImage assetImage: assetImages){
-            if(amcAssetVoMap.containsKey(assetImage.getAmcAssetId())){
-                amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
-            }
-        }
-        List <AmcAssetVo> amcAssetVosList = new ArrayList<>(amcAssetVoMap.values());
+
+//        for(AssetImage assetImage: assetImages){
+//            if(amcAssetVoMap.containsKey(assetImage.getAmcAssetId())){
+//                amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
+//            }
+//        }
+        setImages(assetImages, amcAssetVos);
+
 //            Collections.sort(amcAssetVosList, amcAssetVoComparator);
-            return amcAssetVosList;
+            return amcAssetVos;
+
+    }
+    private void setImages(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
+        Iterator<AmcAssetVo> iteratorA =  amcAssetVos.iterator();
+        Iterator<AssetImage> iteratorI =  assetImages.iterator();
+        while(iteratorI.hasNext()){
+            AssetImage assetImage = iteratorI.next();
+            while (iteratorA.hasNext()){
+                AmcAssetVo amcAssetVo = iteratorA.next();
+                if(amcAssetVo.getId() == assetImage.getAmcAssetId()){
+                    amcAssetVo.setAssetImage(assetImage);
+//                    assetImages.remove(assetImage);
+                    iteratorI.remove();
+                }
+
+            }
+            iteratorA = amcAssetVos.iterator();
+        }
 
     }
 
+    private void setAddInfo(AssetAdditional additional, List<AmcAssetVo> amcAssetVos) {
+        Iterator<AmcAssetVo> iterator =  amcAssetVos.iterator();
+        while(iterator.hasNext()){
+            AmcAssetVo item = iterator.next();
+            if(item.getId() == additional.getAmcAssetId()){
+                item.setAssetAdditional(additional);
+                break;
+            }
+        }
+    }
+
+    private void removeAssetsById(Long id, List<AmcAssetVo> origList){
+        Iterator<AmcAssetVo> iterator =  origList.iterator();
+        while(iterator.hasNext()){
+            AmcAssetVo item = iterator.next();
+            if(item.getId() == id){
+                origList.remove(item);
+                break;
+            }
+        }
+    }
 
 
     @Override
@@ -472,7 +526,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public String getAssetOssPrepath(Long assetId){
-        return new StringBuilder(ImagePathClassEnum.ASSET.getName()).append("/").append(assetId).append("/").toString();
+        return new StringBuilder(ImagePathClassEnum.ASSET.getName()).append("/").append(envName).append("/").append(assetId).append("/").toString();
     }
 
     @Override
@@ -1098,6 +1152,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         String city;
     }
 
-
+    @Data
+    class AssetIdAsset{
+        Long assetId;
+        AmcAssetVo assetVo;
+    }
 
 }

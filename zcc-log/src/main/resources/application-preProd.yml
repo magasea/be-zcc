@@ -52,7 +52,7 @@ kafka:
   topic-amc-debt-create: topic_amc_debt_create_${env.name}
   topic-amc-asset-create: topic_amc_asset_create_${env.name}
 env:
-  env-prefix: test
+  env-prefix: prod
   kafka-host: 10.20.100.235
   oauth2:
     host: localhost

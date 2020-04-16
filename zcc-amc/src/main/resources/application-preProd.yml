@@ -163,7 +163,7 @@ cust:
   getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
   getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
 env:
-  name: test
+  name: prod
   dbhost: 10.20.100.235
   dbusername: wsamcworker
   rpchost: localhost

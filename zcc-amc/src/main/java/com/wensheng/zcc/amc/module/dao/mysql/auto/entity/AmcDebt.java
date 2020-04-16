@@ -77,6 +77,8 @@ public class AmcDebt {
 
     private Date createdDate;
 
+    private String note;
+
     public Long getId() {
         return id;
     }
@@ -371,5 +373,13 @@ public class AmcDebt {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
     }
 }

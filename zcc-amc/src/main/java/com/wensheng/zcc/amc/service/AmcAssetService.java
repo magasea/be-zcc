@@ -88,4 +88,5 @@ public interface AmcAssetService {
   AssetImage uploadAssetImage(String imagePath, String ossPrepath, Integer tag, Long assetId, String desc) throws Exception;
 
 
+    void patchRecomm();
 }

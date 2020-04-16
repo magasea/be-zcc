@@ -15,6 +15,8 @@ public class AmcAsset {
 
     private Integer publishState;
 
+    private Integer isRecom;
+
     private Long amcId;
 
     private String amcAssetCode;
@@ -109,6 +111,14 @@ public class AmcAsset {
 
     public void setPublishState(Integer publishState) {
         this.publishState = publishState;
+    }
+
+    public Integer getIsRecom() {
+        return isRecom;
+    }
+
+    public void setIsRecom(Integer isRecom) {
+        this.isRecom = isRecom;
     }
 
     public Long getAmcId() {

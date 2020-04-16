@@ -1,6 +1,7 @@
 #!/bin/bash
 cd /home/chenwei/workingTools/
-./apache-zookeeper-3.5.6-bin/bin/zkServer.sh start
-cd kafka_2.11-2.4.0
+cd *zookeeper*
+./bin/zkServer.sh start
+cd ../kafka_*
 ./bin/kafka-server-start.sh -daemon config/server.properties 
 

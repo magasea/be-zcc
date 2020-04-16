@@ -393,7 +393,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         }
 
         List<Long> assetIds = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList());
-        Set<Long> assetIdSet = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toSet());
+//        Set<Long> assetIdSet = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toSet());
 //        TreeMap<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
 //            item->item));
         Query query = new Query();
@@ -402,42 +402,43 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").in(assetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
-        boolean queryRecom = false;
-        Set<Integer> recomFilterVal = new HashSet<>();
-        if(queryParam.containsKey(QueryParamEnum.Recommand.name()) && queryParam.get(QueryParamEnum.Recommand.name()) != null){
-            try {
-                List<Integer> recommands =  ((List)queryParam.get(QueryParamEnum.Recommand.name()));
-                if(!CollectionUtils.isEmpty(recommands)){
-                    recommands.forEach(item -> recomFilterVal.add(item));
+        setAddInfos(assetAdditionals, amcAssetVos);
+//        boolean queryRecom = false;
+//        Set<Integer> recomFilterVal = new HashSet<>();
+//        if(queryParam.containsKey(QueryParamEnum.Recommand.name()) && queryParam.get(QueryParamEnum.Recommand.name()) != null){
+//            try {
+//                List<Integer> recommands =  ((List)queryParam.get(QueryParamEnum.Recommand.name()));
+//                if(!CollectionUtils.isEmpty(recommands)){
+//                    recommands.forEach(item -> recomFilterVal.add(item));
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//                }
+//                queryRecom = true;
+//            } catch (NumberFormatException e) {
+//                queryRecom = false;
+//            }
+//        }
 
 
-
-
-
-
-
-
-
-                }
-                queryRecom = true;
-            } catch (NumberFormatException e) {
-                queryRecom = false;
-            }
-        }
-
-
-        for(AssetAdditional additional: assetAdditionals){
-            if(assetIdSet.contains(additional.getAmcAssetId())){
-                if(queryRecom && !recomFilterVal.contains(additional.getIsRecommanded())){
-                    removeAssetsById(additional.getAmcAssetId(), amcAssetVos);
-
-                    log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
-                }else{
-                    setAddInfo(additional, amcAssetVos);
-
-                }
-            }
-        }
+//        for(AssetAdditional additional: assetAdditionals){
+//            if(assetIdSet.contains(additional.getAmcAssetId())){
+//                if(queryRecom && !recomFilterVal.contains(additional.getIsRecommanded())){
+//                    removeAssetsById(additional.getAmcAssetId(), amcAssetVos);
+//
+//                    log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
+//                }else{
+//                    setAddInfo(additional, amcAssetVos);
+//
+//                }
+//            }
+//        }
 
 //        for(AssetImage assetImage: assetImages){
 //            if(amcAssetVoMap.containsKey(assetImage.getAmcAssetId())){
@@ -451,20 +452,19 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     }
     private void setImages(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
-        Iterator<AmcAssetVo> iteratorA =  amcAssetVos.iterator();
         Iterator<AssetImage> iteratorI =  assetImages.iterator();
-        while(iteratorI.hasNext()){
-            AssetImage assetImage = iteratorI.next();
-            while (iteratorA.hasNext()){
-                AmcAssetVo amcAssetVo = iteratorA.next();
-                if(amcAssetVo.getId() == assetImage.getAmcAssetId()){
-                    amcAssetVo.setAssetImage(assetImage);
-//                    assetImages.remove(assetImage);
+        for(int idx = 0; idx < amcAssetVos.size(); idx++){
+            iteratorI =  assetImages.iterator();
+            while(iteratorI.hasNext()){
+                AssetImage assetImage = iteratorI.next();
+
+                if(amcAssetVos.get(idx).getId() == assetImage.getAmcAssetId()){
+                    amcAssetVos.get(idx).setAssetImage(assetImage);
+    //                    assetImages.remove(assetImage);
                     iteratorI.remove();
                 }
 
             }
-            iteratorA = amcAssetVos.iterator();
         }
 
     }
@@ -479,6 +479,29 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             }
         }
     }
+
+    private void setAddInfos(List<AssetAdditional> assetAdditionals, List<AmcAssetVo> amcAssetVos){
+        Iterator<AssetAdditional> iteratorAdd =  assetAdditionals.iterator();
+        for(int idx = 0; idx < amcAssetVos.size(); idx++){
+            iteratorAdd =  assetAdditionals.iterator();
+            while(iteratorAdd.hasNext()){
+                AssetAdditional assetAdditional = iteratorAdd.next();
+
+                    if(amcAssetVos.get(idx).getId() == assetAdditional.getAmcAssetId()){
+                        amcAssetVos.get(idx).setAssetAdditional(assetAdditional);
+//                    assetImages.remove(assetImage);
+                        iteratorAdd.remove();
+                        break;
+                    }
+
+                }
+            }
+        }
+
+
+
+
+
 
     private void removeAssetsById(Long id, List<AmcAssetVo> origList){
         Iterator<AmcAssetVo> iterator =  origList.iterator();
@@ -611,11 +634,17 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Override
     public void setRecomm(List<Long> assetIds, int isRecomm) {
-        Query query = new Query();
-        query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
-                Update update = new Update();
-                update.set("isRecommanded", isRecomm);
-        wszccTemplate.findAndModify(query, update, AssetAdditional.class);
+
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andIdIn(assetIds);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        if(CollectionUtils.isEmpty(amcAssets)){
+            return;
+        }
+        for(AmcAsset amcAsset: amcAssets){
+            amcAsset.setIsRecom(isRecomm);
+            amcAssetMapper.updateByPrimaryKey(amcAsset);
+        }
     }
 
     @Override
@@ -675,6 +704,41 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return saveImageInfo( assetImage);
 
 
+    }
+
+    @Override
+    public void patchRecomm() {
+        int offset = 0;
+        int pageSize = 20;
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.setOrderByClause(" id desc ");
+        RowBounds rowBounds = new RowBounds(offset, pageSize);
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
+        boolean hasMore = true;
+        if(CollectionUtils.isEmpty(amcAssets)){
+            hasMore = false;
+        }
+        while(hasMore){
+            for(AmcAsset amcAsset: amcAssets){
+                Query query = new Query();
+                query.addCriteria(Criteria.where("amcAssetId").in(amcAsset.getId()));
+                List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+                if(CollectionUtils.isEmpty(assetAdditionals)){
+                    continue;
+                }else {
+                    amcAsset.setIsRecom(assetAdditionals.get(0).getIsRecommanded());
+                    amcAssetMapper.updateByPrimaryKey(amcAsset);
+                }
+
+            }
+            offset += pageSize;
+            rowBounds = new RowBounds(offset, pageSize);
+            amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
+            if(CollectionUtils.isEmpty(amcAssets)){
+                hasMore = false;
+                break;
+            }
+        }
     }
 
     @Override
@@ -905,6 +969,14 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     }
 
                 }
+                if(item.getKey().equals((QueryParamEnum.Recommand.name()))){
+                    List<Integer> recomVals = (List<Integer>) item.getValue();
+                    if(CollectionUtils.isEmpty(recomVals)){
+                        log.error("There is no recom vals");
+                    }else{
+                        criteria.andIsRecomIn(recomVals);
+                    }
+                }
 
             }
         }
@@ -1008,10 +1080,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                         regions =   regionService.getRegionByName(amcAsset.getProvince());
                     }catch (Exception ex){
                         log.error("failed to handle:{}", amcAsset.getProvince(), ex);
-                        continue;
+//                        continue;
                     }
                     if(CollectionUtils.isEmpty(regions)){
-                        continue;
+//                        continue;
                     }else{
                         amcAsset.setProvince(regions.get(0).getId().toString());
                         needUpdate = true;
@@ -1024,16 +1096,17 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                         regions =   regionService.getRegionByName(amcAsset.getCity());
                     }catch (Exception ex){
                         log.error("failed to handle:{}", amcAsset.getCity(), ex);
-                        continue;
+//                        continue;
                     }
 
                     if(CollectionUtils.isEmpty(regions)){
-                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCity:%s",amcAsset.getCity()));
+                        log.error("{} {}", AmcExceptions.INVALID_COMPANY_NAME_ERROR, String.format("cellAssetCity:%s",amcAsset.getCity()));
 
                     }else if(regions.size() > 1){
                         for(Region region: regions){
                             if(region.getId().toString().startsWith(amcAsset.getProvince().substring(0,2))){
                                 amcAsset.setCity(region.getId().toString());
+                                needUpdate = true;
                                 break;
                             }
                         }
@@ -1060,6 +1133,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                         for(Region region: regions){
                             if(region.getId().toString().startsWith(amcAsset.getCity().substring(0,3))){
                                 amcAsset.setCounty(region.getId().toString());
+                                needUpdate = true;
                                 break;
                             }
                         }

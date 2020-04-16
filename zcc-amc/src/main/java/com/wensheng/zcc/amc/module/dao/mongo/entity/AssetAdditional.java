@@ -27,7 +27,7 @@ public class AssetAdditional {
     Integer likeCount	=0;			// 点赞次数
     Integer watchCount	=0;			// 关注次数
     Integer commentCount =0;			// 评论次数
-    int isRecommanded = 1; //是否推荐
+    int isRecommanded = -1; //是否推荐
     @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
     @JsonDeserialize(using = GeoJsonDeserializer.class)
     private GeoJson location = null;

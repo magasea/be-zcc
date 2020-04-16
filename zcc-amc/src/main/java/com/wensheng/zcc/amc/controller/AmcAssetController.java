@@ -175,6 +175,16 @@ public class AmcAssetController {
 
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/asset/patchRecomm", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchRecomm() throws Exception {
+
+
+    amcAssetService.patchRecomm();
+
+
+  }
+
 
 
 

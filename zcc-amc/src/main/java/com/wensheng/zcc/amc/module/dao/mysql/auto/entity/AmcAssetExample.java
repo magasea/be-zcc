@@ -502,6 +502,66 @@ public class AmcAssetExample {
             return (Criteria) this;
         }
 
+        public Criteria andIsRecomIsNull() {
+            addCriterion("is_recom is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomIsNotNull() {
+            addCriterion("is_recom is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomEqualTo(Integer value) {
+            addCriterion("is_recom =", value, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomNotEqualTo(Integer value) {
+            addCriterion("is_recom <>", value, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomGreaterThan(Integer value) {
+            addCriterion("is_recom >", value, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomGreaterThanOrEqualTo(Integer value) {
+            addCriterion("is_recom >=", value, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomLessThan(Integer value) {
+            addCriterion("is_recom <", value, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomLessThanOrEqualTo(Integer value) {
+            addCriterion("is_recom <=", value, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomIn(List<Integer> values) {
+            addCriterion("is_recom in", values, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomNotIn(List<Integer> values) {
+            addCriterion("is_recom not in", values, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomBetween(Integer value1, Integer value2) {
+            addCriterion("is_recom between", value1, value2, "isRecom");
+            return (Criteria) this;
+        }
+
+        public Criteria andIsRecomNotBetween(Integer value1, Integer value2) {
+            addCriterion("is_recom not between", value1, value2, "isRecom");
+            return (Criteria) this;
+        }
+
         public Criteria andAmcIdIsNull() {
             addCriterion("amc_id is null");
             return (Criteria) this;

@@ -35,6 +35,8 @@ public class AmcAssetVo {
 
   private Long debtId;
 
+  private Integer isRecom;
+
   private BigDecimal startPrice;
 
   private BigDecimal buildingArea;

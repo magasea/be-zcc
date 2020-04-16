@@ -8,6 +8,7 @@
     <result column="sealed_state" jdbcType="INTEGER" property="sealedState" />
     <result column="asset_nature" jdbcType="INTEGER" property="assetNature" />
     <result column="publish_state" jdbcType="INTEGER" property="publishState" />
+    <result column="is_recom" jdbcType="INTEGER" property="isRecom" />
     <result column="amc_id" jdbcType="BIGINT" property="amcId" />
     <result column="amc_asset_code" jdbcType="CHAR" property="amcAssetCode" />
     <result column="zcc_asset_code" jdbcType="CHAR" property="zccAssetCode" />
@@ -92,7 +93,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, title, type, sealed_state, asset_nature, publish_state, amc_id, amc_asset_code, 
+    id, title, type, sealed_state, asset_nature, publish_state, is_recom, amc_id, amc_asset_code, 
     zcc_asset_code, total_valuation, debt_id, building_area, building_unit_price, land_area, 
     land_area_unit, land_unit_price, publish_date, province, city, county, address, building_name, 
     update_by, update_date, created_by, created_date, amc_contactor_id, amc_contactor_name, 
@@ -134,22 +135,22 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_ASSET (title, type, sealed_state, 
-      asset_nature, publish_state, amc_id, 
-      amc_asset_code, zcc_asset_code, total_valuation, 
-      debt_id, building_area, building_unit_price, 
-      land_area, land_area_unit, land_unit_price, 
-      publish_date, province, city, 
-      county, address, building_name, 
+      asset_nature, publish_state, is_recom, 
+      amc_id, amc_asset_code, zcc_asset_code, 
+      total_valuation, debt_id, building_area, 
+      building_unit_price, land_area, land_area_unit, 
+      land_unit_price, publish_date, province, 
+      city, county, address, building_name, 
       update_by, update_date, created_by, 
       created_date, amc_contactor_id, amc_contactor_name, 
       amc_contactor_phone, note)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
-      #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{amcId,jdbcType=BIGINT}, 
-      #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, #{totalValuation,jdbcType=BIGINT}, 
-      #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, #{buildingUnitPrice,jdbcType=BIGINT}, 
-      #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, #{landUnitPrice,jdbcType=BIGINT}, 
-      #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, 
-      #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
+      #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{isRecom,jdbcType=INTEGER}, 
+      #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, 
+      #{totalValuation,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, 
+      #{buildingUnitPrice,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, 
+      #{landUnitPrice,jdbcType=BIGINT}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
       #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactorName,jdbcType=CHAR}, 
       #{amcContactorPhone,jdbcType=CHAR}, #{note,jdbcType=CHAR})
@@ -174,6 +175,9 @@
       </if>
       <if test="publishState != null">
         publish_state,
+      </if>
+      <if test="isRecom != null">
+        is_recom,
       </if>
       <if test="amcId != null">
         amc_id,
@@ -263,6 +267,9 @@
       </if>
       <if test="publishState != null">
         #{publishState,jdbcType=INTEGER},
+      </if>
+      <if test="isRecom != null">
+        #{isRecom,jdbcType=INTEGER},
       </if>
       <if test="amcId != null">
         #{amcId,jdbcType=BIGINT},
@@ -365,6 +372,9 @@
       <if test="record.publishState != null">
         publish_state = #{record.publishState,jdbcType=INTEGER},
       </if>
+      <if test="record.isRecom != null">
+        is_recom = #{record.isRecom,jdbcType=INTEGER},
+      </if>
       <if test="record.amcId != null">
         amc_id = #{record.amcId,jdbcType=BIGINT},
       </if>
@@ -450,6 +460,7 @@
       sealed_state = #{record.sealedState,jdbcType=INTEGER},
       asset_nature = #{record.assetNature,jdbcType=INTEGER},
       publish_state = #{record.publishState,jdbcType=INTEGER},
+      is_recom = #{record.isRecom,jdbcType=INTEGER},
       amc_id = #{record.amcId,jdbcType=BIGINT},
       amc_asset_code = #{record.amcAssetCode,jdbcType=CHAR},
       zcc_asset_code = #{record.zccAssetCode,jdbcType=CHAR},
@@ -495,6 +506,9 @@
       </if>
       <if test="publishState != null">
         publish_state = #{publishState,jdbcType=INTEGER},
+      </if>
+      <if test="isRecom != null">
+        is_recom = #{isRecom,jdbcType=INTEGER},
       </if>
       <if test="amcId != null">
         amc_id = #{amcId,jdbcType=BIGINT},
@@ -578,6 +592,7 @@
       sealed_state = #{sealedState,jdbcType=INTEGER},
       asset_nature = #{assetNature,jdbcType=INTEGER},
       publish_state = #{publishState,jdbcType=INTEGER},
+      is_recom = #{isRecom,jdbcType=INTEGER},
       amc_id = #{amcId,jdbcType=BIGINT},
       amc_asset_code = #{amcAssetCode,jdbcType=CHAR},
       zcc_asset_code = #{zccAssetCode,jdbcType=CHAR},

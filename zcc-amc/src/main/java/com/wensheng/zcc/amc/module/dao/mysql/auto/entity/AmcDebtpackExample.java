@@ -234,6 +234,76 @@ public class AmcDebtpackExample {
             return (Criteria) this;
         }
 
+        public Criteria andPackTitleIsNull() {
+            addCriterion("pack_title is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleIsNotNull() {
+            addCriterion("pack_title is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleEqualTo(String value) {
+            addCriterion("pack_title =", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleNotEqualTo(String value) {
+            addCriterion("pack_title <>", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleGreaterThan(String value) {
+            addCriterion("pack_title >", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleGreaterThanOrEqualTo(String value) {
+            addCriterion("pack_title >=", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleLessThan(String value) {
+            addCriterion("pack_title <", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleLessThanOrEqualTo(String value) {
+            addCriterion("pack_title <=", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleLike(String value) {
+            addCriterion("pack_title like", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleNotLike(String value) {
+            addCriterion("pack_title not like", value, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleIn(List<String> values) {
+            addCriterion("pack_title in", values, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleNotIn(List<String> values) {
+            addCriterion("pack_title not in", values, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleBetween(String value1, String value2) {
+            addCriterion("pack_title between", value1, value2, "packTitle");
+            return (Criteria) this;
+        }
+
+        public Criteria andPackTitleNotBetween(String value1, String value2) {
+            addCriterion("pack_title not between", value1, value2, "packTitle");
+            return (Criteria) this;
+        }
+
         public Criteria andNotesIsNull() {
             addCriterion("notes is null");
             return (Criteria) this;
@@ -491,6 +561,126 @@ public class AmcDebtpackExample {
 
         public Criteria andPackStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("pack_status not between", value1, value2, "packStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdIsNull() {
+            addCriterion("amc_cmpy_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdIsNotNull() {
+            addCriterion("amc_cmpy_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdEqualTo(Long value) {
+            addCriterion("amc_cmpy_id =", value, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdNotEqualTo(Long value) {
+            addCriterion("amc_cmpy_id <>", value, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdGreaterThan(Long value) {
+            addCriterion("amc_cmpy_id >", value, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("amc_cmpy_id >=", value, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdLessThan(Long value) {
+            addCriterion("amc_cmpy_id <", value, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdLessThanOrEqualTo(Long value) {
+            addCriterion("amc_cmpy_id <=", value, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdIn(List<Long> values) {
+            addCriterion("amc_cmpy_id in", values, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdNotIn(List<Long> values) {
+            addCriterion("amc_cmpy_id not in", values, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdBetween(Long value1, Long value2) {
+            addCriterion("amc_cmpy_id between", value1, value2, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcCmpyIdNotBetween(Long value1, Long value2) {
+            addCriterion("amc_cmpy_id not between", value1, value2, "amcCmpyId");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaIsNull() {
+            addCriterion("area is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaIsNotNull() {
+            addCriterion("area is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaEqualTo(Integer value) {
+            addCriterion("area =", value, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaNotEqualTo(Integer value) {
+            addCriterion("area <>", value, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaGreaterThan(Integer value) {
+            addCriterion("area >", value, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaGreaterThanOrEqualTo(Integer value) {
+            addCriterion("area >=", value, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaLessThan(Integer value) {
+            addCriterion("area <", value, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaLessThanOrEqualTo(Integer value) {
+            addCriterion("area <=", value, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaIn(List<Integer> values) {
+            addCriterion("area in", values, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaNotIn(List<Integer> values) {
+            addCriterion("area not in", values, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaBetween(Integer value1, Integer value2) {
+            addCriterion("area between", value1, value2, "area");
+            return (Criteria) this;
+        }
+
+        public Criteria andAreaNotBetween(Integer value1, Integer value2) {
+            addCriterion("area not between", value1, value2, "area");
             return (Criteria) this;
         }
     }

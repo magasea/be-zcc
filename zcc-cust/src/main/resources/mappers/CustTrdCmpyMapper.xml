@@ -11,11 +11,11 @@
     <result column="history_cmpy_phone" jdbcType="VARCHAR" property="historyCmpyPhone" />
     <result column="cmpy_province" jdbcType="CHAR" property="cmpyProvince" />
     <result column="cmpy_addr" jdbcType="VARCHAR" property="cmpyAddr" />
-    <result column="cmpy_addr_update" jdbcType="VARCHAR" property="cmpyAddrUpdate" />
     <result column="history_cmpy_addr" jdbcType="VARCHAR" property="historyCmpyAddr" />
     <result column="annu_rept_phone" jdbcType="CHAR" property="annuReptPhone" />
     <result column="annu_rept_addr" jdbcType="VARCHAR" property="annuReptAddr" />
     <result column="favorite_type_update" jdbcType="CHAR" property="favoriteTypeUpdate" />
+    <result column="favorite_city_update" jdbcType="CHAR" property="favoriteCityUpdate" />
     <result column="fav_type_note" jdbcType="CHAR" property="favTypeNote" />
     <result column="cmpy_type" jdbcType="INTEGER" property="cmpyType" />
     <result column="note" jdbcType="CHAR" property="note" />
@@ -87,8 +87,8 @@
   </sql>
   <sql id="Base_Column_List">
     id, cmpy_name, history_cmpy_name, uni_social_code, legal_reptive, cmpy_phone, history_cmpy_phone, 
-    cmpy_province, cmpy_addr, cmpy_addr_update, history_cmpy_addr, annu_rept_phone, annu_rept_addr, 
-    favorite_type_update, fav_type_note, cmpy_type, note, data_status, data_quality, 
+    cmpy_province, cmpy_addr, history_cmpy_addr, annu_rept_phone, annu_rept_addr, favorite_type_update, 
+    favorite_city_update, fav_type_note, cmpy_type, note, data_status, data_quality, 
     update_time, update_by, create_time, create_by, sync_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample" resultMap="BaseResultMap">
@@ -128,17 +128,17 @@
     </selectKey>
     insert into CUST_TRD_CMPY (cmpy_name, history_cmpy_name, uni_social_code, 
       legal_reptive, cmpy_phone, history_cmpy_phone, 
-      cmpy_province, cmpy_addr, cmpy_addr_update, 
-      history_cmpy_addr, annu_rept_phone, annu_rept_addr, 
-      favorite_type_update, fav_type_note, cmpy_type, 
+      cmpy_province, cmpy_addr, history_cmpy_addr, 
+      annu_rept_phone, annu_rept_addr, favorite_type_update, 
+      favorite_city_update, fav_type_note, cmpy_type, 
       note, data_status, data_quality, 
       update_time, update_by, create_time, 
       create_by, sync_time)
     values (#{cmpyName,jdbcType=CHAR}, #{historyCmpyName,jdbcType=VARCHAR}, #{uniSocialCode,jdbcType=VARCHAR}, 
       #{legalReptive,jdbcType=VARCHAR}, #{cmpyPhone,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, 
-      #{cmpyProvince,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, #{cmpyAddrUpdate,jdbcType=VARCHAR}, 
-      #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, 
-      #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{cmpyType,jdbcType=INTEGER}, 
+      #{cmpyProvince,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, #{historyCmpyAddr,jdbcType=VARCHAR}, 
+      #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, 
+      #{favoriteCityUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{cmpyType,jdbcType=INTEGER}, 
       #{note,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP})
@@ -173,9 +173,6 @@
       <if test="cmpyAddr != null">
         cmpy_addr,
       </if>
-      <if test="cmpyAddrUpdate != null">
-        cmpy_addr_update,
-      </if>
       <if test="historyCmpyAddr != null">
         history_cmpy_addr,
       </if>
@@ -187,6 +184,9 @@
       </if>
       <if test="favoriteTypeUpdate != null">
         favorite_type_update,
+      </if>
+      <if test="favoriteCityUpdate != null">
+        favorite_city_update,
       </if>
       <if test="favTypeNote != null">
         fav_type_note,
@@ -244,9 +244,6 @@
       <if test="cmpyAddr != null">
         #{cmpyAddr,jdbcType=VARCHAR},
       </if>
-      <if test="cmpyAddrUpdate != null">
-        #{cmpyAddrUpdate,jdbcType=VARCHAR},
-      </if>
       <if test="historyCmpyAddr != null">
         #{historyCmpyAddr,jdbcType=VARCHAR},
       </if>
@@ -258,6 +255,9 @@
       </if>
       <if test="favoriteTypeUpdate != null">
         #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favoriteCityUpdate != null">
+        #{favoriteCityUpdate,jdbcType=CHAR},
       </if>
       <if test="favTypeNote != null">
         #{favTypeNote,jdbcType=CHAR},
@@ -327,9 +327,6 @@
       <if test="record.cmpyAddr != null">
         cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
       </if>
-      <if test="record.cmpyAddrUpdate != null">
-        cmpy_addr_update = #{record.cmpyAddrUpdate,jdbcType=VARCHAR},
-      </if>
       <if test="record.historyCmpyAddr != null">
         history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
       </if>
@@ -341,6 +338,9 @@
       </if>
       <if test="record.favoriteTypeUpdate != null">
         favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.favoriteCityUpdate != null">
+        favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
       </if>
       <if test="record.favTypeNote != null">
         fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
@@ -388,11 +388,11 @@
       history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
       cmpy_province = #{record.cmpyProvince,jdbcType=CHAR},
       cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
-      cmpy_addr_update = #{record.cmpyAddrUpdate,jdbcType=VARCHAR},
       history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
       annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
       favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
       fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
       cmpy_type = #{record.cmpyType,jdbcType=INTEGER},
       note = #{record.note,jdbcType=CHAR},
@@ -434,9 +434,6 @@
       <if test="cmpyAddr != null">
         cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
       </if>
-      <if test="cmpyAddrUpdate != null">
-        cmpy_addr_update = #{cmpyAddrUpdate,jdbcType=VARCHAR},
-      </if>
       <if test="historyCmpyAddr != null">
         history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
       </if>
@@ -448,6 +445,9 @@
       </if>
       <if test="favoriteTypeUpdate != null">
         favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favoriteCityUpdate != null">
+        favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
       </if>
       <if test="favTypeNote != null">
         fav_type_note = #{favTypeNote,jdbcType=CHAR},
@@ -492,11 +492,11 @@
       history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
       cmpy_province = #{cmpyProvince,jdbcType=CHAR},
       cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
-      cmpy_addr_update = #{cmpyAddrUpdate,jdbcType=VARCHAR},
       history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
       annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
       annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
       favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
       fav_type_note = #{favTypeNote,jdbcType=CHAR},
       cmpy_type = #{cmpyType,jdbcType=INTEGER},
       note = #{note,jdbcType=CHAR},

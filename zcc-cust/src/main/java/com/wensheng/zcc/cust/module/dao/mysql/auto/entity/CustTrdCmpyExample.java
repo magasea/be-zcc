@@ -725,76 +725,6 @@ public class CustTrdCmpyExample {
             return (Criteria) this;
         }
 
-        public Criteria andCmpyAddrUpdateIsNull() {
-            addCriterion("cmpy_addr_update is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateIsNotNull() {
-            addCriterion("cmpy_addr_update is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateEqualTo(String value) {
-            addCriterion("cmpy_addr_update =", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotEqualTo(String value) {
-            addCriterion("cmpy_addr_update <>", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateGreaterThan(String value) {
-            addCriterion("cmpy_addr_update >", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateGreaterThanOrEqualTo(String value) {
-            addCriterion("cmpy_addr_update >=", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateLessThan(String value) {
-            addCriterion("cmpy_addr_update <", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateLessThanOrEqualTo(String value) {
-            addCriterion("cmpy_addr_update <=", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateLike(String value) {
-            addCriterion("cmpy_addr_update like", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotLike(String value) {
-            addCriterion("cmpy_addr_update not like", value, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateIn(List<String> values) {
-            addCriterion("cmpy_addr_update in", values, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotIn(List<String> values) {
-            addCriterion("cmpy_addr_update not in", values, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateBetween(String value1, String value2) {
-            addCriterion("cmpy_addr_update between", value1, value2, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andCmpyAddrUpdateNotBetween(String value1, String value2) {
-            addCriterion("cmpy_addr_update not between", value1, value2, "cmpyAddrUpdate");
-            return (Criteria) this;
-        }
-
         public Criteria andHistoryCmpyAddrIsNull() {
             addCriterion("history_cmpy_addr is null");
             return (Criteria) this;
@@ -1072,6 +1002,76 @@ public class CustTrdCmpyExample {
 
         public Criteria andFavoriteTypeUpdateNotBetween(String value1, String value2) {
             addCriterion("favorite_type_update not between", value1, value2, "favoriteTypeUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateIsNull() {
+            addCriterion("favorite_city_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateIsNotNull() {
+            addCriterion("favorite_city_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateEqualTo(String value) {
+            addCriterion("favorite_city_update =", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotEqualTo(String value) {
+            addCriterion("favorite_city_update <>", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateGreaterThan(String value) {
+            addCriterion("favorite_city_update >", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("favorite_city_update >=", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateLessThan(String value) {
+            addCriterion("favorite_city_update <", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateLessThanOrEqualTo(String value) {
+            addCriterion("favorite_city_update <=", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateLike(String value) {
+            addCriterion("favorite_city_update like", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotLike(String value) {
+            addCriterion("favorite_city_update not like", value, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateIn(List<String> values) {
+            addCriterion("favorite_city_update in", values, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotIn(List<String> values) {
+            addCriterion("favorite_city_update not in", values, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateBetween(String value1, String value2) {
+            addCriterion("favorite_city_update between", value1, value2, "favoriteCityUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andFavoriteCityUpdateNotBetween(String value1, String value2) {
+            addCriterion("favorite_city_update not between", value1, value2, "favoriteCityUpdate");
             return (Criteria) this;
         }
 

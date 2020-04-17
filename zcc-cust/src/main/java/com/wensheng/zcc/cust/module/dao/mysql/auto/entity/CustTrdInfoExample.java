@@ -1882,6 +1882,76 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andTrdContactorMobileIsNull() {
+            addCriterion("trd_contactor_mobile is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileIsNotNull() {
+            addCriterion("trd_contactor_mobile is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileEqualTo(String value) {
+            addCriterion("trd_contactor_mobile =", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileNotEqualTo(String value) {
+            addCriterion("trd_contactor_mobile <>", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileGreaterThan(String value) {
+            addCriterion("trd_contactor_mobile >", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileGreaterThanOrEqualTo(String value) {
+            addCriterion("trd_contactor_mobile >=", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileLessThan(String value) {
+            addCriterion("trd_contactor_mobile <", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileLessThanOrEqualTo(String value) {
+            addCriterion("trd_contactor_mobile <=", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileLike(String value) {
+            addCriterion("trd_contactor_mobile like", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileNotLike(String value) {
+            addCriterion("trd_contactor_mobile not like", value, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileIn(List<String> values) {
+            addCriterion("trd_contactor_mobile in", values, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileNotIn(List<String> values) {
+            addCriterion("trd_contactor_mobile not in", values, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileBetween(String value1, String value2) {
+            addCriterion("trd_contactor_mobile between", value1, value2, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdContactorMobileNotBetween(String value1, String value2) {
+            addCriterion("trd_contactor_mobile not between", value1, value2, "trdContactorMobile");
+            return (Criteria) this;
+        }
+
         public Criteria andTrdContactorAddressIsNull() {
             addCriterion("trd_contactor_address is null");
             return (Criteria) this;

@@ -57,6 +57,8 @@ public class CustTrdInfo {
 
     private String trdContactorPhone;
 
+    private String trdContactorMobile;
+
     private String trdContactorAddress;
 
     private Integer dataStatus;
@@ -283,6 +285,14 @@ public class CustTrdInfo {
 
     public void setTrdContactorPhone(String trdContactorPhone) {
         this.trdContactorPhone = trdContactorPhone == null ? null : trdContactorPhone.trim();
+    }
+
+    public String getTrdContactorMobile() {
+        return trdContactorMobile;
+    }
+
+    public void setTrdContactorMobile(String trdContactorMobile) {
+        this.trdContactorMobile = trdContactorMobile == null ? null : trdContactorMobile.trim();
     }
 
     public String getTrdContactorAddress() {

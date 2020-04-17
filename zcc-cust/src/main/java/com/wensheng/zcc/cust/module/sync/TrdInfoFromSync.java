@@ -23,6 +23,8 @@ public class TrdInfoFromSync {
     int sellerTypePrep;
     String sellerContactManPrep;
     String sellerContactPhonePrep;
+    // 转让方-手机
+    String sellerContactMobilePrep;
     String sellerContactEmailPrep;
     String sellerContactAddressPrep;
     String sellerContactIDCardPrep;
@@ -30,6 +32,8 @@ public class TrdInfoFromSync {
     int buyerTypePrep;
     String buyerContactManPrep;
     String buyerContactPhonePrep;
+    //受让方-联系手机号
+    String buyerContactMobilePrep;
     String buyerContactEmailPrep;
     String buyerContactAddressPrep;
     String buyerContactIDCardPrep;

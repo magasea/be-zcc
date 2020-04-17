@@ -29,6 +29,7 @@
     <result column="trd_contactor_name" jdbcType="CHAR" property="trdContactorName" />
     <result column="trd_contactor_addr" jdbcType="CHAR" property="trdContactorAddr" />
     <result column="trd_contactor_phone" jdbcType="CHAR" property="trdContactorPhone" />
+    <result column="trd_contactor_mobile" jdbcType="CHAR" property="trdContactorMobile" />
     <result column="trd_contactor_address" jdbcType="CHAR" property="trdContactorAddress" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
@@ -98,8 +99,8 @@
     id, item_type, item_sub_type, trd_type, info_title, pack_count, info_id, info_source, 
     info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, total_debt_amount, 
     trd_status, trd_date, pub_date, notes, buyer_type, buyer_id, seller_type, seller_id, 
-    seller_name, trd_contactor_name, trd_contactor_addr, trd_contactor_phone, trd_contactor_address, 
-    data_status, data_quality, update_time, create_time, sync_time
+    seller_name, trd_contactor_name, trd_contactor_addr, trd_contactor_phone, trd_contactor_mobile, 
+    trd_contactor_address, data_status, data_quality, update_time, create_time, sync_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -144,9 +145,10 @@
       trd_date, pub_date, notes, 
       buyer_type, buyer_id, seller_type, 
       seller_id, seller_name, trd_contactor_name, 
-      trd_contactor_addr, trd_contactor_phone, trd_contactor_address, 
-      data_status, data_quality, update_time, 
-      create_time, sync_time)
+      trd_contactor_addr, trd_contactor_phone, trd_contactor_mobile, 
+      trd_contactor_address, data_status, data_quality, 
+      update_time, create_time, sync_time
+      )
     values (#{itemType,jdbcType=INTEGER}, #{itemSubType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, 
       #{infoTitle,jdbcType=VARCHAR}, #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, 
       #{infoSource,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{debtProvince,jdbcType=CHAR}, 
@@ -155,9 +157,10 @@
       #{trdDate,jdbcType=DATE}, #{pubDate,jdbcType=TIMESTAMP}, #{notes,jdbcType=VARCHAR}, 
       #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, 
       #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, 
-      #{trdContactorAddr,jdbcType=CHAR}, #{trdContactorPhone,jdbcType=CHAR}, #{trdContactorAddress,jdbcType=CHAR}, 
-      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{syncTime,jdbcType=TIMESTAMP})
+      #{trdContactorAddr,jdbcType=CHAR}, #{trdContactorPhone,jdbcType=CHAR}, #{trdContactorMobile,jdbcType=CHAR}, 
+      #{trdContactorAddress,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, #{syncTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -242,6 +245,9 @@
       </if>
       <if test="trdContactorPhone != null">
         trd_contactor_phone,
+      </if>
+      <if test="trdContactorMobile != null">
+        trd_contactor_mobile,
       </if>
       <if test="trdContactorAddress != null">
         trd_contactor_address,
@@ -340,6 +346,9 @@
       </if>
       <if test="trdContactorPhone != null">
         #{trdContactorPhone,jdbcType=CHAR},
+      </if>
+      <if test="trdContactorMobile != null">
+        #{trdContactorMobile,jdbcType=CHAR},
       </if>
       <if test="trdContactorAddress != null">
         #{trdContactorAddress,jdbcType=CHAR},
@@ -451,6 +460,9 @@
       <if test="record.trdContactorPhone != null">
         trd_contactor_phone = #{record.trdContactorPhone,jdbcType=CHAR},
       </if>
+      <if test="record.trdContactorMobile != null">
+        trd_contactor_mobile = #{record.trdContactorMobile,jdbcType=CHAR},
+      </if>
       <if test="record.trdContactorAddress != null">
         trd_contactor_address = #{record.trdContactorAddress,jdbcType=CHAR},
       </if>
@@ -503,6 +515,7 @@
       trd_contactor_name = #{record.trdContactorName,jdbcType=CHAR},
       trd_contactor_addr = #{record.trdContactorAddr,jdbcType=CHAR},
       trd_contactor_phone = #{record.trdContactorPhone,jdbcType=CHAR},
+      trd_contactor_mobile = #{record.trdContactorMobile,jdbcType=CHAR},
       trd_contactor_address = #{record.trdContactorAddress,jdbcType=CHAR},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER},
@@ -594,6 +607,9 @@
       <if test="trdContactorPhone != null">
         trd_contactor_phone = #{trdContactorPhone,jdbcType=CHAR},
       </if>
+      <if test="trdContactorMobile != null">
+        trd_contactor_mobile = #{trdContactorMobile,jdbcType=CHAR},
+      </if>
       <if test="trdContactorAddress != null">
         trd_contactor_address = #{trdContactorAddress,jdbcType=CHAR},
       </if>
@@ -643,6 +659,7 @@
       trd_contactor_name = #{trdContactorName,jdbcType=CHAR},
       trd_contactor_addr = #{trdContactorAddr,jdbcType=CHAR},
       trd_contactor_phone = #{trdContactorPhone,jdbcType=CHAR},
+      trd_contactor_mobile = #{trdContactorMobile,jdbcType=CHAR},
       trd_contactor_address = #{trdContactorAddress,jdbcType=CHAR},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER},

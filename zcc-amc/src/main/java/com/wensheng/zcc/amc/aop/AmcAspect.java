@@ -230,7 +230,6 @@ public class AmcAspect {
         if(details.containsKey("ssoUserId")){
           userId = Long.valueOf( String.format("%d",details.get("ssoUserId")));
           amcUserOperation.setUserId(userId);
-
         }
 
       }else if(authentication.getDetails() instanceof LinkedHashMap){

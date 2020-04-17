@@ -8,6 +8,7 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.service.AmcTokenService;
+import com.wensheng.zcc.sso.service.AmcUserService;
 import com.wensheng.zcc.sso.service.KafkaService;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
@@ -43,6 +44,9 @@ public class KafkaServiceImpl implements KafkaService {
 
   @Autowired
   AmcTokenService amcTokenService;
+
+  @Autowired
+  AmcUserService amcUserService;
 
   private String MQ_TOPIC_WECHAT_USERLOCATION = null;
   private String MQ_TOPIC_WECHAT_USERCREATE = null;
@@ -83,18 +87,18 @@ public class KafkaServiceImpl implements KafkaService {
 
   @KafkaListener( topics = "${kafka.topic-sso-userchanged}", clientIdPrefix = "zcc-sso",
       containerFactory = "kafkaListenerStringContainerFactory")
-  public void listenUserOperation(ConsumerRecord<String, WechatUserLocation> cr,
-      @Payload AmcUser payload) {
+  public void listenUserOperation(ConsumerRecord<String, AmcUser> cr,
+      @Payload AmcUser amcUser) {
     log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),
-        typeIdHeader(cr.headers()), payload, cr.toString());
+        typeIdHeader(cr.headers()), amcUser, cr.toString());
     String gsonStr = null;
     try{
-      gsonStr = gson.toJson(payload);
-      AmcUser amcUser = new AmcUser();
-      AmcBeanUtils.copyProperties(payload, amcUser);
+//      gsonStr = gson.toJson(payload);
+//      AmcUser amcUser = new AmcUser();
+//      AmcBeanUtils.copyProperties(payload, amcUser);
       amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
 //      wszccTemplate.save(amcUser);
-
+      amcUserService.createUser(amcUser);
     }catch (Exception ex){
       log.error("Failed to handle:{}", gsonStr, ex);
     }

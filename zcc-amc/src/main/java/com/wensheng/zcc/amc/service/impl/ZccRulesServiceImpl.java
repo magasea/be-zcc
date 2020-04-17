@@ -125,6 +125,18 @@ public class ZccRulesServiceImpl implements ZccRulesService {
           return editStatusResult;
         }
       }
+      if(editAction == EditActionEnum.ACT_HIDE){
+        if(currentStatus == PublishStateEnum.PUBLISHED){
+          editStatusResult = PublishStateEnum.PUBLISH_HIDED;
+          return editStatusResult;
+        }
+      }
+      if(editAction == EditActionEnum.ACT_UNHIDE){
+        if(currentStatus == PublishStateEnum.PUBLISH_HIDED){
+          editStatusResult = PublishStateEnum.PUBLISHED;
+          return editStatusResult;
+        }
+      }
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_ACTION, String.format("currentStatus:%s action:%s",
           currentStatus.getName(), editAction.getCname()));
     }

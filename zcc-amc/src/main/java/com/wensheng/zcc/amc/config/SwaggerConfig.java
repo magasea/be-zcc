@@ -44,7 +44,7 @@ public class SwaggerConfig {
 //        .build();
 //  }
 
-  @Value("${spring.security.oauth2.client.registration.amc-admin.client-id}")
+  @Value("${spring.security.oauth2.client.registration.amc-client.client-id}")
   private String amcAdminClientId;
 
 

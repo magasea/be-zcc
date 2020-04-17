@@ -67,7 +67,8 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
   String ossFilePathBase;
 
-
+  @Value("${env.name}")
+  String envName;
 
 
 
@@ -99,7 +100,7 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
   @Override
   public void delFileInOss(String ossPath) throws Exception {
 
-    if(ossPath.contains(ossFilePathBase)){
+    if(ossPath.contains(ossFilePathBase) && ossPath.contains(envName)){
       String key = ossPath.substring(ossFilePathBase.length());
       log.info(String.format("delete file with key:%s", key));
       ossClient.deleteObject(bucketName, key);

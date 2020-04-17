@@ -15,7 +15,10 @@ public enum EditActionEnum {
   ACT_REVIEW_PASS(5, "review-pass","审核通过发布"),
   ACT_OFF_SHELF(6, "off-shelf","下架"),
   ACT_SOLD(7,"sold","售出"),
-  ACT_DEL(8, "del", "删除");
+  ACT_DEL(8, "del", "删除"),
+  ACT_HIDE(9, "hide", "隐藏"),
+  ACT_UNHIDE(10, "unhide", "显示"),
+  ;
 
 
   int id;

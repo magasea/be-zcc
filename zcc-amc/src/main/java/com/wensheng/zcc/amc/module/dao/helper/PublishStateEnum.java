@@ -20,6 +20,8 @@ public enum PublishStateEnum {
     UNSOLD_OFF_SHELF(11, "未售出已下架"),
     DRAFT_CHECK_FAILED(8, "草稿审核未通过"),
     RECORD_CHECK_FAILED(13, "草案审核未通过"),
+    PUBLISH_HIDED(14, "发布隐藏"),
+
 
     ;
 

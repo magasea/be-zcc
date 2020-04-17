@@ -220,7 +220,7 @@ public class AmcUserServiceImpl implements AmcUserService {
         amcUsers.get(0).setLgroup(amcUser.getLgroup());
         needUpdateDb = true;
       }
-      if(amcUser.getCompanyId() > 0 && amcUser.getCompanyId() != amcUsers.get(0).getCompanyId()){
+      if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0 && amcUser.getCompanyId() != amcUsers.get(0).getCompanyId()){
         amcUsers.get(0).setCompanyId(amcUser.getCompanyId());
         needUpdateDb = true;
         needUpdatePrivilege = true;

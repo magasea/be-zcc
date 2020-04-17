@@ -15,11 +15,15 @@ public class CustTrdCmpy {
 
     private String cmpyPhone;
 
+    private String cmpyPhoneUpdate;
+
     private String historyCmpyPhone;
 
     private String cmpyProvince;
 
     private String cmpyAddr;
+
+    private String cmpyAddrUpdate;
 
     private String historyCmpyAddr;
 
@@ -99,6 +103,14 @@ public class CustTrdCmpy {
         this.cmpyPhone = cmpyPhone == null ? null : cmpyPhone.trim();
     }
 
+    public String getCmpyPhoneUpdate() {
+        return cmpyPhoneUpdate;
+    }
+
+    public void setCmpyPhoneUpdate(String cmpyPhoneUpdate) {
+        this.cmpyPhoneUpdate = cmpyPhoneUpdate == null ? null : cmpyPhoneUpdate.trim();
+    }
+
     public String getHistoryCmpyPhone() {
         return historyCmpyPhone;
     }
@@ -121,6 +133,14 @@ public class CustTrdCmpy {
 
     public void setCmpyAddr(String cmpyAddr) {
         this.cmpyAddr = cmpyAddr == null ? null : cmpyAddr.trim();
+    }
+
+    public String getCmpyAddrUpdate() {
+        return cmpyAddrUpdate;
+    }
+
+    public void setCmpyAddrUpdate(String cmpyAddrUpdate) {
+        this.cmpyAddrUpdate = cmpyAddrUpdate == null ? null : cmpyAddrUpdate.trim();
     }
 
     public String getHistoryCmpyAddr() {

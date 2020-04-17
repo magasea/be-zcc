@@ -1146,11 +1146,30 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdInfo.setTrdContactorName(StringUtils.isEmpty(trdInfoFromSync.getBuyerContactManPrep()) ? "-1":
         trdInfoFromSync.getBuyerContactManPrep());
     StringBuilder sb = new StringBuilder();
+    StringBuilder  trdContactorPhone = new StringBuilder();
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactPhonePrep())){
 
-      custTrdInfo.setTrdContactorPhone(trdInfoFromSync.getBuyerContactPhonePrep());
+      custTrdInfo.setTrdContactorTel(trdInfoFromSync.getBuyerContactPhonePrep());
+      trdContactorPhone.append(trdInfoFromSync.getBuyerContactPhonePrep());
       sb.append(trdInfoFromSync.getBuyerContactPhonePrep());
     }
+    if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactMobilePrep())){
+
+      custTrdInfo.setTrdContactorMobile(trdInfoFromSync.getBuyerContactMobilePrep());
+      if(sb.length() > 1){
+        sb.append(";");
+      }
+      if(trdContactorPhone.length() > 1){
+        trdContactorPhone.append(";");
+      }
+      trdContactorPhone.append(trdInfoFromSync.getBuyerContactMobilePrep());
+      sb.append(trdInfoFromSync.getBuyerContactMobilePrep());
+    }
+
+    if(trdContactorPhone.length() > 1){
+      custTrdInfo.setTrdContactorPhone(trdContactorPhone.toString());
+    }
+
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){
       custTrdInfo.setTrdContactorAddress(trdInfoFromSync.getBuyerContactAddressPrep());
       if(sb.length() > 1){

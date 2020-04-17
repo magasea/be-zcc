@@ -27,9 +27,9 @@ public class CustTrdCmpy {
 
     private String annuReptAddr;
 
-    private String favoriteTypeUpdate;
-
     private String favoriteCityUpdate;
+
+    private String favoriteTypeUpdate;
 
     private String favTypeNote;
 
@@ -147,20 +147,20 @@ public class CustTrdCmpy {
         this.annuReptAddr = annuReptAddr == null ? null : annuReptAddr.trim();
     }
 
-    public String getFavoriteTypeUpdate() {
-        return favoriteTypeUpdate;
-    }
-
-    public void setFavoriteTypeUpdate(String favoriteTypeUpdate) {
-        this.favoriteTypeUpdate = favoriteTypeUpdate == null ? null : favoriteTypeUpdate.trim();
-    }
-
     public String getFavoriteCityUpdate() {
         return favoriteCityUpdate;
     }
 
     public void setFavoriteCityUpdate(String favoriteCityUpdate) {
         this.favoriteCityUpdate = favoriteCityUpdate == null ? null : favoriteCityUpdate.trim();
+    }
+
+    public String getFavoriteTypeUpdate() {
+        return favoriteTypeUpdate;
+    }
+
+    public void setFavoriteTypeUpdate(String favoriteTypeUpdate) {
+        this.favoriteTypeUpdate = favoriteTypeUpdate == null ? null : favoriteTypeUpdate.trim();
     }
 
     public String getFavTypeNote() {

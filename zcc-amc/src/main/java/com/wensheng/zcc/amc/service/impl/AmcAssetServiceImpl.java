@@ -458,7 +458,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             while(iteratorI.hasNext()){
                 AssetImage assetImage = iteratorI.next();
 
-                if(amcAssetVos.get(idx).getId() == assetImage.getAmcAssetId()){
+                if(amcAssetVos.get(idx).getId() != null && assetImage.getAmcAssetId() != null &&
+                        amcAssetVos.get(idx).getId().equals(assetImage.getAmcAssetId())){
                     amcAssetVos.get(idx).setAssetImage(assetImage);
     //                    assetImages.remove(assetImage);
                     iteratorI.remove();
@@ -487,7 +488,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             while(iteratorAdd.hasNext()){
                 AssetAdditional assetAdditional = iteratorAdd.next();
 
-                    if(amcAssetVos.get(idx).getId() == assetAdditional.getAmcAssetId()){
+                    if( amcAssetVos.get(idx).getId() != null && assetAdditional.getAmcAssetId() != null &&
+                            amcAssetVos.get(idx).getId().equals(assetAdditional.getAmcAssetId())){
                         amcAssetVos.get(idx).setAssetAdditional(assetAdditional);
 //                    assetImages.remove(assetImage);
                         iteratorAdd.remove();

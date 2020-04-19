@@ -878,7 +878,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     amcDebtPre.setTitle(cellDebtTitle);
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtTitle, cellDebtTitle, null);
-//
+                    continue;
+                    //
 //                    break;
                 }
 

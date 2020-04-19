@@ -22,7 +22,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
  */
 public interface CustInfoService {
 
-  public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy);
+  public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) throws Exception;
   public void updateCompany(CustTrdCmpy custTrdCmpy);
 
   CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson);

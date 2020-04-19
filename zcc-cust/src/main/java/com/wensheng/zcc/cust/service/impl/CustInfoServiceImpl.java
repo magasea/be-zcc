@@ -116,9 +116,28 @@ public class CustInfoServiceImpl implements CustInfoService {
   Gson gson = new Gson();
 
   @Override
-  public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) {
-    custTrdCmpyMapper.insertSelective(custTrdCmpy);
+  public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) throws Exception {
+    List<CustTrdCmpy> custTrdCmpies = queryCmpyByName(custTrdCmpy);
+    custTrdCmpies.size();
+    if (!CollectionUtils.isEmpty(custTrdCmpies)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR ,
+              String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
+    }
+    //custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
+  }
+
+  /**
+   *根据公司名称查询,是否已经有该公司。
+   * @return
+   */
+  private List<CustTrdCmpy> queryCmpyByName(CustTrdCmpy custTrdCmpy){
+    //按照公司名称和公司历史名称进行查询
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(custTrdCmpy.getCmpyName());
+    custTrdCmpyExtExample.or().andHistoryCmpyNameLike(String.format("%s%s%s","%",custTrdCmpy.getCmpyName(),"%"));
+    List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+    return custTrdCmpies;
   }
 
   @Override

@@ -61,7 +61,7 @@ public class CustInfoController {
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
   @QueryCheckerCmpy
-  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy){
+  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
 
     return custInfoService.addCompany(custTrdCmpy);
   }
@@ -79,8 +79,8 @@ public class CustInfoController {
   @ResponseBody
   public CustTrdCmpy getCmpy(@RequestParam Long companyId){
 
-    return custInfoService.getCompany(companyId);
-
+    CustTrdCmpy custTrdCmpy = custInfoService.getCompany(companyId);
+    return custTrdCmpy;
   }
 
   @RequestMapping(value = "/getCmpyByName", method = RequestMethod.POST)

@@ -1145,40 +1145,40 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdInfo.setTrdAmountOrig(trdInfoFromSync.getTrdAmount());
     custTrdInfo.setTrdContactorName(StringUtils.isEmpty(trdInfoFromSync.getBuyerContactManPrep()) ? "-1":
         trdInfoFromSync.getBuyerContactManPrep());
-    StringBuilder sb = new StringBuilder();
-    StringBuilder  trdContactorPhone = new StringBuilder();
+    StringBuilder sbTrdContactorAddr = new StringBuilder();
+    StringBuilder  sbTrdContactorPhone = new StringBuilder();
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactPhonePrep())){
 
       custTrdInfo.setTrdContactorTel(trdInfoFromSync.getBuyerContactPhonePrep());
-      trdContactorPhone.append(trdInfoFromSync.getBuyerContactPhonePrep());
-      sb.append(trdInfoFromSync.getBuyerContactPhonePrep());
+      sbTrdContactorPhone.append(trdInfoFromSync.getBuyerContactPhonePrep());
+      sbTrdContactorAddr.append(trdInfoFromSync.getBuyerContactPhonePrep());
     }
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactMobilePrep())){
 
       custTrdInfo.setTrdContactorMobile(trdInfoFromSync.getBuyerContactMobilePrep());
-      if(sb.length() > 1){
-        sb.append(";");
+      if(sbTrdContactorAddr.length() > 1){
+        sbTrdContactorAddr.append(";");
       }
-      if(trdContactorPhone.length() > 1){
-        trdContactorPhone.append(";");
+      if(sbTrdContactorPhone.length() > 1){
+        sbTrdContactorPhone.append(";");
       }
-      trdContactorPhone.append(trdInfoFromSync.getBuyerContactMobilePrep());
-      sb.append(trdInfoFromSync.getBuyerContactMobilePrep());
+      sbTrdContactorPhone.append(trdInfoFromSync.getBuyerContactMobilePrep());
+      sbTrdContactorAddr.append(trdInfoFromSync.getBuyerContactMobilePrep());
     }
 
-    if(trdContactorPhone.length() > 1){
-      custTrdInfo.setTrdContactorPhone(trdContactorPhone.toString());
+    if(sbTrdContactorPhone.length() > 1){
+      custTrdInfo.setTrdContactorPhone(sbTrdContactorPhone.toString());
     }
 
     if(!StringUtils.isEmpty(trdInfoFromSync.getBuyerContactAddressPrep())){
       custTrdInfo.setTrdContactorAddress(trdInfoFromSync.getBuyerContactAddressPrep());
-      if(sb.length() > 1){
-        sb.append(" ");
+      if(sbTrdContactorAddr.length() > 1){
+        sbTrdContactorAddr.append(" ");
       }
-      sb.append(trdInfoFromSync.getBuyerContactAddressPrep());
+      sbTrdContactorAddr.append(trdInfoFromSync.getBuyerContactAddressPrep());
     }
-    if(sb.length() > 0){
-      custTrdInfo.setTrdContactorAddr(sb.toString());
+    if(sbTrdContactorAddr.length() > 0){
+      custTrdInfo.setTrdContactorAddr(sbTrdContactorAddr.toString());
     }
 
     return 1;

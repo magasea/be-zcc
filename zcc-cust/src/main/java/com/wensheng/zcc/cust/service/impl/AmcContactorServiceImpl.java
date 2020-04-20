@@ -90,7 +90,65 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   @Override
-  public void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) {
+  public void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
+    CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(custAmcCmpycontactor.getId());
+    if(null == originalCmpycontactor){
+      log.error("There is no person in db name:{} company name:{} phone:{} reject insert",
+              custAmcCmpycontactor.getName(),
+              custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_CMPY_CONTACTOR_ERROR, String.format("数据库中没有对应的公司联系人"
+                      + "姓名为:%s 所属公司Id为:%s 电话为:%s", custAmcCmpycontactor.getName(),
+              custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+    }
+
+    //手机号放在mobileUpdate
+    if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
+      custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
+    }
+    //固话号放在phoneUpdate
+    if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
+      custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
+    }
+
+    //若改变了手机号和固话号，存入历史数据时要去重
+    if(null != custAmcCmpycontactor.getMobileUpdate() &&
+            !custAmcCmpycontactor.getMobileUpdate().equals(originalCmpycontactor.getMobileUpdate())){
+      if("-1".equals(originalCmpycontactor.getMobileHistory())){
+        custAmcCmpycontactor.setMobileHistory(originalCmpycontactor.getMobileUpdate());
+      }else {
+        String mobileHistory = String.format("%s;%s",originalCmpycontactor.getMobileHistory(),
+                custAmcCmpycontactor.getMobileUpdate());
+        Set<String> mobileHistorySet = new HashSet(Arrays.asList(mobileHistory.split(";")));
+        StringBuilder sbmobileHistory = new StringBuilder();
+        for (String mobile : mobileHistorySet) {
+          if(sbmobileHistory.length() >1){
+            sbmobileHistory.append(";");
+          }
+          sbmobileHistory.append(mobile);
+        }
+        custAmcCmpycontactor.setMobileHistory(sbmobileHistory.toString());
+      }
+    }
+
+    if(null != custAmcCmpycontactor.getPhoneUpdate() &&
+            !custAmcCmpycontactor.getPhoneUpdate().equals(originalCmpycontactor.getPhoneUpdate())){
+      if("-1".equals(originalCmpycontactor.getPhoneHistory())){
+        custAmcCmpycontactor.setPhoneHistory(originalCmpycontactor.getPhoneUpdate());
+      }else {
+        String phoneHistory = String.format("%s;%s",originalCmpycontactor.getPhoneHistory(),
+                custAmcCmpycontactor.getPhoneUpdate());
+        Set<String> phoneHistorySet = new HashSet(Arrays.asList(phoneHistory.split(";")));
+        StringBuilder sbPhoneHistory = new StringBuilder();
+        for (String phone : phoneHistorySet) {
+          if(sbPhoneHistory.length() >1){
+            sbPhoneHistory.append(";");
+          }
+          sbPhoneHistory.append(phone);
+        }
+        custAmcCmpycontactor.setPhoneHistory(sbPhoneHistory.toString());
+      }
+    }
+
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
   }
 

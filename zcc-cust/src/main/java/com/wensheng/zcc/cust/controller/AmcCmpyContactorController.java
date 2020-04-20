@@ -58,7 +58,7 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor){
+  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
     amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
   }
 

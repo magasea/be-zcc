@@ -15,6 +15,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExt;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
@@ -49,12 +50,18 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Override
   public void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception {
+    //手机号放在mobileUpdate
+    if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
+      custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
+    }
+    //固话号放在phoneUpdate
+    if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
+      custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
+    }
+
     //first check name and phone unique
-    CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
-    custAmcCmpycontactorExample.createCriteria().andNameEqualTo(custAmcCmpycontactor.getName()).
-        andCompanyEqualTo(custAmcCmpycontactor.getCompany()).andMobileEqualTo(custAmcCmpycontactor.getMobile());
-    List<CustAmcCmpycontactor> custAmcCmpycontactors =
-        custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+    List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorByPhoneNo(custAmcCmpycontactor);
+
     if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
       //cannot insert
       log.error("There is already person name:{} company name:{} phone:{} reject insert",
@@ -64,24 +71,22 @@ public class AmcContactorServiceImpl implements AmcContactorService {
               + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
           custAmcCmpycontactor.getName(),
           custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
-    }else{
-
-      custAmcCmpycontactorExample.clear();
-      custAmcCmpycontactorExample.createCriteria().andNameEqualTo(custAmcCmpycontactor.getName()).
-          andCompanyEqualTo(custAmcCmpycontactor.getCompany()).andTrdPhoneEqualTo(custAmcCmpycontactor.getMobile());
-      custAmcCmpycontactors =
-          custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
-      if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
-        //just update the contactor
-        String trdPhone = custAmcCmpycontactors.get(0).getTrdPhone();
-        AmcBeanUtils.copyProperties(custAmcCmpycontactor, custAmcCmpycontactors.get(0));
-        custAmcCmpycontactors.get(0).setTrdPhone(trdPhone);
-        custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactors.get(0));
-        return;
-      }
     }
 
     custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
+  }
+
+  /**
+   * 根据公司名称,联系人姓名,联系人电话号查找公司联系人
+   * @param custAmcCmpycontactor
+   * @return
+   */
+  private List<CustAmcCmpycontactor> queryCmpyContactorByPhoneNo(CustAmcCmpycontactor custAmcCmpycontactor){
+
+    List<String> phoneUpdateList = Arrays.asList(custAmcCmpycontactor.getPhoneUpdate().split(";"));
+    List<String> mobileUpdateList = Arrays.asList(custAmcCmpycontactor.getMobileUpdate().split(";"));
+    return custAmcCmpycontactorExtMapper.selectCmpyContactorByPhoneNo(custAmcCmpycontactor.getCompany(),
+            custAmcCmpycontactor.getName(), phoneUpdateList, mobileUpdateList);
   }
 
   @Override

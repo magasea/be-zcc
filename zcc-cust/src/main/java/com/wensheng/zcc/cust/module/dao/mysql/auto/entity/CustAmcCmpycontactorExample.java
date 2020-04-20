@@ -445,6 +445,426 @@ public class CustAmcCmpycontactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andMobileUpdateIsNull() {
+            addCriterion("mobile_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateIsNotNull() {
+            addCriterion("mobile_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateEqualTo(String value) {
+            addCriterion("mobile_update =", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateNotEqualTo(String value) {
+            addCriterion("mobile_update <>", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateGreaterThan(String value) {
+            addCriterion("mobile_update >", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("mobile_update >=", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateLessThan(String value) {
+            addCriterion("mobile_update <", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateLessThanOrEqualTo(String value) {
+            addCriterion("mobile_update <=", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateLike(String value) {
+            addCriterion("mobile_update like", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateNotLike(String value) {
+            addCriterion("mobile_update not like", value, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateIn(List<String> values) {
+            addCriterion("mobile_update in", values, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateNotIn(List<String> values) {
+            addCriterion("mobile_update not in", values, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateBetween(String value1, String value2) {
+            addCriterion("mobile_update between", value1, value2, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileUpdateNotBetween(String value1, String value2) {
+            addCriterion("mobile_update not between", value1, value2, "mobileUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepIsNull() {
+            addCriterion("mobile_prep is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepIsNotNull() {
+            addCriterion("mobile_prep is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepEqualTo(String value) {
+            addCriterion("mobile_prep =", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepNotEqualTo(String value) {
+            addCriterion("mobile_prep <>", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepGreaterThan(String value) {
+            addCriterion("mobile_prep >", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepGreaterThanOrEqualTo(String value) {
+            addCriterion("mobile_prep >=", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepLessThan(String value) {
+            addCriterion("mobile_prep <", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepLessThanOrEqualTo(String value) {
+            addCriterion("mobile_prep <=", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepLike(String value) {
+            addCriterion("mobile_prep like", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepNotLike(String value) {
+            addCriterion("mobile_prep not like", value, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepIn(List<String> values) {
+            addCriterion("mobile_prep in", values, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepNotIn(List<String> values) {
+            addCriterion("mobile_prep not in", values, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepBetween(String value1, String value2) {
+            addCriterion("mobile_prep between", value1, value2, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobilePrepNotBetween(String value1, String value2) {
+            addCriterion("mobile_prep not between", value1, value2, "mobilePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryIsNull() {
+            addCriterion("mobile_history is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryIsNotNull() {
+            addCriterion("mobile_history is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryEqualTo(String value) {
+            addCriterion("mobile_history =", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryNotEqualTo(String value) {
+            addCriterion("mobile_history <>", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryGreaterThan(String value) {
+            addCriterion("mobile_history >", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryGreaterThanOrEqualTo(String value) {
+            addCriterion("mobile_history >=", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryLessThan(String value) {
+            addCriterion("mobile_history <", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryLessThanOrEqualTo(String value) {
+            addCriterion("mobile_history <=", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryLike(String value) {
+            addCriterion("mobile_history like", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryNotLike(String value) {
+            addCriterion("mobile_history not like", value, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryIn(List<String> values) {
+            addCriterion("mobile_history in", values, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryNotIn(List<String> values) {
+            addCriterion("mobile_history not in", values, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryBetween(String value1, String value2) {
+            addCriterion("mobile_history between", value1, value2, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileHistoryNotBetween(String value1, String value2) {
+            addCriterion("mobile_history not between", value1, value2, "mobileHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateIsNull() {
+            addCriterion("phone_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateIsNotNull() {
+            addCriterion("phone_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateEqualTo(String value) {
+            addCriterion("phone_update =", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotEqualTo(String value) {
+            addCriterion("phone_update <>", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateGreaterThan(String value) {
+            addCriterion("phone_update >", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("phone_update >=", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateLessThan(String value) {
+            addCriterion("phone_update <", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateLessThanOrEqualTo(String value) {
+            addCriterion("phone_update <=", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateLike(String value) {
+            addCriterion("phone_update like", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotLike(String value) {
+            addCriterion("phone_update not like", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateIn(List<String> values) {
+            addCriterion("phone_update in", values, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotIn(List<String> values) {
+            addCriterion("phone_update not in", values, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateBetween(String value1, String value2) {
+            addCriterion("phone_update between", value1, value2, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotBetween(String value1, String value2) {
+            addCriterion("phone_update not between", value1, value2, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepIsNull() {
+            addCriterion("phone_prep is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepIsNotNull() {
+            addCriterion("phone_prep is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepEqualTo(String value) {
+            addCriterion("phone_prep =", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepNotEqualTo(String value) {
+            addCriterion("phone_prep <>", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepGreaterThan(String value) {
+            addCriterion("phone_prep >", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepGreaterThanOrEqualTo(String value) {
+            addCriterion("phone_prep >=", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepLessThan(String value) {
+            addCriterion("phone_prep <", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepLessThanOrEqualTo(String value) {
+            addCriterion("phone_prep <=", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepLike(String value) {
+            addCriterion("phone_prep like", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepNotLike(String value) {
+            addCriterion("phone_prep not like", value, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepIn(List<String> values) {
+            addCriterion("phone_prep in", values, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepNotIn(List<String> values) {
+            addCriterion("phone_prep not in", values, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepBetween(String value1, String value2) {
+            addCriterion("phone_prep between", value1, value2, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhonePrepNotBetween(String value1, String value2) {
+            addCriterion("phone_prep not between", value1, value2, "phonePrep");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryIsNull() {
+            addCriterion("phone_history is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryIsNotNull() {
+            addCriterion("phone_history is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryEqualTo(String value) {
+            addCriterion("phone_history =", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryNotEqualTo(String value) {
+            addCriterion("phone_history <>", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryGreaterThan(String value) {
+            addCriterion("phone_history >", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryGreaterThanOrEqualTo(String value) {
+            addCriterion("phone_history >=", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryLessThan(String value) {
+            addCriterion("phone_history <", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryLessThanOrEqualTo(String value) {
+            addCriterion("phone_history <=", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryLike(String value) {
+            addCriterion("phone_history like", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryNotLike(String value) {
+            addCriterion("phone_history not like", value, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryIn(List<String> values) {
+            addCriterion("phone_history in", values, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryNotIn(List<String> values) {
+            addCriterion("phone_history not in", values, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryBetween(String value1, String value2) {
+            addCriterion("phone_history between", value1, value2, "phoneHistory");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneHistoryNotBetween(String value1, String value2) {
+            addCriterion("phone_history not between", value1, value2, "phoneHistory");
+            return (Criteria) this;
+        }
+
         public Criteria andProvinceIsNull() {
             addCriterion("province is null");
             return (Criteria) this;

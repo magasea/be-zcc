@@ -13,6 +13,18 @@ public class CustAmcCmpycontactor {
 
     private String trdPhone;
 
+    private String mobileUpdate;
+
+    private String mobilePrep;
+
+    private String mobileHistory;
+
+    private String phoneUpdate;
+
+    private String phonePrep;
+
+    private String phoneHistory;
+
     private String province;
 
     private String city;
@@ -87,6 +99,54 @@ public class CustAmcCmpycontactor {
 
     public void setTrdPhone(String trdPhone) {
         this.trdPhone = trdPhone == null ? null : trdPhone.trim();
+    }
+
+    public String getMobileUpdate() {
+        return mobileUpdate;
+    }
+
+    public void setMobileUpdate(String mobileUpdate) {
+        this.mobileUpdate = mobileUpdate == null ? null : mobileUpdate.trim();
+    }
+
+    public String getMobilePrep() {
+        return mobilePrep;
+    }
+
+    public void setMobilePrep(String mobilePrep) {
+        this.mobilePrep = mobilePrep == null ? null : mobilePrep.trim();
+    }
+
+    public String getMobileHistory() {
+        return mobileHistory;
+    }
+
+    public void setMobileHistory(String mobileHistory) {
+        this.mobileHistory = mobileHistory == null ? null : mobileHistory.trim();
+    }
+
+    public String getPhoneUpdate() {
+        return phoneUpdate;
+    }
+
+    public void setPhoneUpdate(String phoneUpdate) {
+        this.phoneUpdate = phoneUpdate == null ? null : phoneUpdate.trim();
+    }
+
+    public String getPhonePrep() {
+        return phonePrep;
+    }
+
+    public void setPhonePrep(String phonePrep) {
+        this.phonePrep = phonePrep == null ? null : phonePrep.trim();
+    }
+
+    public String getPhoneHistory() {
+        return phoneHistory;
+    }
+
+    public void setPhoneHistory(String phoneHistory) {
+        this.phoneHistory = phoneHistory == null ? null : phoneHistory.trim();
     }
 
     public String getProvince() {

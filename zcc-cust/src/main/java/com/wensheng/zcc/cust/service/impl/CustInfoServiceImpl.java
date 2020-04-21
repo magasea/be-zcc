@@ -123,7 +123,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR ,
               String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
     }
-    //custTrdCmpyMapper.insertSelective(custTrdCmpy);
+    custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
   }
 

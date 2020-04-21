@@ -450,9 +450,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
     }
+    if( amcDebt.getBaseAmount() != null && amcDebt.getBaseAmount() > 0 && amcDebt.getInterestAmount() != null &&
+            amcDebt.getInterestAmount() > 0 && (amcDebt.getTotalAmount() == null || amcDebt.getTotalAmount () <= 0L)){
+
+    }
     if(amcDebt.getTotalAmount() !=null && amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
-
     }
     if(amcDebt.getInterestAmount() !=null && amcDebt.getInterestAmount() > 0 ){
       amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getInterestAmount()));
@@ -925,6 +928,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     for(AmcDebt amcDebt: amcDebts){
         totalBaseAmount += amcDebt.getBaseAmount();
     }
+    amcDebtExample.clear();
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    List<AmcDebt> amcDebtsPublished = amcDebtMapper.selectByExample(amcDebtExample);
+    int totalPublishedDebts = amcDebtsPublished.size();
+    Long totalPublishedAssets = amcAssetService.getAssetCountWithDebtIds(amcDebtsPublished.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList()));
+
     BigDecimal totalBaseAmountBigDecimal = AmcNumberUtils.getDecimalFromLongDiv100(totalBaseAmount);
     AmcDebtSummary amcDebtSummary = new AmcDebtSummary();
     amcDebtSummary.setDebtTotalAmount(totalBaseAmountBigDecimal);
@@ -937,6 +946,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     List<Long> amcDebtIds = amcDebts.stream().map(iitem -> iitem.getId()).collect(Collectors.toList());
     Long assetCount = amcAssetService.getAssetCountWithDebtIds(amcDebtIds);
     amcDebtSummary.setAssetTotalCount(assetCount);
+    amcDebtSummary.setAssetPublishedCount(totalPublishedAssets);
+    amcDebtSummary.setDebtPublishedCount(Long.valueOf(totalPublishedDebts));
     return amcDebtSummary;
   }
 

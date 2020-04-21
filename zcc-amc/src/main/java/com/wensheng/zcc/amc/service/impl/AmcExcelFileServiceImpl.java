@@ -818,6 +818,11 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 String cellCourt = dataFormatter.formatCellValue(row.getCell(idxCourt));
                 String cellAmcContactor = dataFormatter.formatCellValue(row.getCell(idxAmcContactor));
                 String cellDesc = dataFormatter.formatCellValue(row.getCell(idxDesc));
+
+
+                if(StringUtils.isEmpty(cellDebtTitle) && StringUtils.isEmpty(cellBrowwer)){
+                    break;
+                }
                 if(StringUtils.isEmpty(cellAmcContactor)){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, null);
 //                    log.error(String.format("错误提示： %s %s 联系人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
@@ -878,7 +883,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     amcDebtPre.setTitle(cellDebtTitle);
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtTitle, cellDebtTitle, null);
-//
+                    continue;
+                    //
 //                    break;
                 }
 

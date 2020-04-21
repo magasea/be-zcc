@@ -15,7 +15,7 @@
         </commentGenerator>
 
         <jdbcConnection driverClass="com.mysql.cj.jdbc.Driver"
-                        connectionURL="jdbc:mysql://10.20.100.235:3306/ZCC_AMC?allowPublicKeyRetrieval=true"
+                        connectionURL="jdbc:mysql://10.20.100.238:3306/ZCC_AMC?allowPublicKeyRetrieval=true"
                         userId="worker"
                         password="Wsamc@12345">
             <property name="nullCatalogMeansCurrent" value="true" />

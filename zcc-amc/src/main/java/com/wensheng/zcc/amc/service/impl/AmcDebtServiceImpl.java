@@ -450,9 +450,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
     }
+    if( amcDebt.getBaseAmount() != null && amcDebt.getBaseAmount() > 0 && amcDebt.getInterestAmount() != null &&
+            amcDebt.getInterestAmount() > 0 && (amcDebt.getTotalAmount() == null || amcDebt.getTotalAmount () <= 0L)){
+
+    }
     if(amcDebt.getTotalAmount() !=null && amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
-
     }
     if(amcDebt.getInterestAmount() !=null && amcDebt.getInterestAmount() > 0 ){
       amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getInterestAmount()));

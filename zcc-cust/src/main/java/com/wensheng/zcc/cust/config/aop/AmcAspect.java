@@ -168,14 +168,19 @@ public class AmcAspect {
 
     if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
       Integer locationId = (Integer) detailsParam.get("location");
-      if(locationId == null || locationId.compareTo(0) < 0){
-        throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
-      }
+
       AmcLocationEnum locationUserEnum =
           AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
-
       AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
-      if(userPrivMap.get(province) != locationId){
+      log.info("===============================");
+      log.info("userPrivMap===>{}",userPrivMap);
+      log.info("province===>{}",province);
+      log.info("locationId==>",locationId);
+//      if(locationId == null || locationId.compareTo(0) < 0 || designedLocationEnum ==null || locationUserEnum == null){
+//        throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
+//      }
+
+      if(userPrivMap.get(province).equals(locationId)){
         throw new RuntimeException(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
             locationUserEnum.getCname(), designedLocationEnum.getCname()));
       }

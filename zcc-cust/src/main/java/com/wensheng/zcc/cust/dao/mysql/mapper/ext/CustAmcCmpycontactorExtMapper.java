@@ -12,8 +12,9 @@ public interface CustAmcCmpycontactorExtMapper {
 
     List<CustAmcCmpycontactorExt> selectByFilter(CustAmcCmpycontactorExtExample example);
 
-    List<CustAmcCmpycontactor> selectCmpyContactorByPhoneNo(@Param("company") String company,
-                                                            @Param("name") String name,
-                                                            @Param("phoneUpdateList") List<String> phoneUpdateList,
-                                                            @Param("mobileUpdateList") List<String> mobileUpdateList);
+    List<CustAmcCmpycontactor> selectCmpyContactor(@Param("company") String company,
+                                                   @Param("name") String name,
+                                                   @Param("phoneList") List<String> phoneList,
+                                                   @Param("mobileList") List<String> mobileList);
+
 }

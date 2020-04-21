@@ -73,7 +73,7 @@ public class AmcCmpyContactorController {
   @RequestMapping(value = "/getCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   public List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(@RequestBody Long cmpyId){
-    return amcContactorService.getCmpyAmcContactor(cmpyId);
+    return amcContactorService.getCmpyAmcContactorNew(cmpyId);
   }
 
   @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)

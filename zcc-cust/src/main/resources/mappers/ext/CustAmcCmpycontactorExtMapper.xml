@@ -128,7 +128,7 @@
     </if>
   </select>
 
-  <select id="selectCmpyContactorByPhoneNo"
+  <select id="selectCmpyContactor"
           resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper.BaseResultMap">
     select
     <include refid="cust_amc_cmpycontactor">
@@ -137,10 +137,10 @@
     from CUST_AMC_CMPYCONTACTOR cac
     where cac.company = #{company}
     and cac.name = #{name}
-    <if test="mobileUpdateList != null">
+    <if test="mobileList != null">
       and (
       1=2
-      <foreach item="item" index="index" collection="mobileUpdateList">
+      <foreach item="item" index="index" collection="mobileList">
         OR cac.trd_phone LIKE CONCAT('%',#{item},'%')
         OR cac.mobile_update LIKE CONCAT('%',#{item},'%')
         OR cac.mobile_prep LIKE CONCAT('%',#{item},'%')
@@ -148,10 +148,10 @@
       </foreach>
       )
     </if>
-    <if test="mobileUpdateList == null">
+    <if test="mobileList == null">
       and (
       1=2
-      <foreach item="item" index="index" collection="phoneUpdateList">
+      <foreach item="item" index="index" collection="phoneList">
         OR cac.trd_phone LIKE CONCAT('%',#{item},'%')
         OR cac.phone_update LIKE CONCAT('%',#{item},'%')
         OR cac.phone_prep LIKE CONCAT('%',#{item},'%')
@@ -159,9 +159,7 @@
       </foreach>
       )
     </if>
-
   </select>
-
 
 
 </mapper>

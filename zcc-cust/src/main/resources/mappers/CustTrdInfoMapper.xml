@@ -32,6 +32,7 @@
     <result column="trd_contactor_tel" jdbcType="CHAR" property="trdContactorTel" />
     <result column="trd_contactor_mobile" jdbcType="CHAR" property="trdContactorMobile" />
     <result column="trd_contactor_address" jdbcType="CHAR" property="trdContactorAddress" />
+    <result column="trd_cmpycontactor_id" jdbcType="BIGINT" property="trdCmpycontactorId" />
     <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
     <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
@@ -101,8 +102,8 @@
     info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, total_debt_amount, 
     trd_status, trd_date, pub_date, notes, buyer_type, buyer_id, seller_type, seller_id, 
     seller_name, trd_contactor_name, trd_contactor_addr, trd_contactor_phone, trd_contactor_tel, 
-    trd_contactor_mobile, trd_contactor_address, data_status, data_quality, update_time, 
-    create_time, sync_time
+    trd_contactor_mobile, trd_contactor_address, trd_cmpycontactor_id, data_status, data_quality, 
+    update_time, create_time, sync_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample" resultMap="BaseResultMap">
     select
@@ -148,9 +149,9 @@
       buyer_type, buyer_id, seller_type, 
       seller_id, seller_name, trd_contactor_name, 
       trd_contactor_addr, trd_contactor_phone, trd_contactor_tel, 
-      trd_contactor_mobile, trd_contactor_address, data_status, 
-      data_quality, update_time, create_time, 
-      sync_time)
+      trd_contactor_mobile, trd_contactor_address, trd_cmpycontactor_id, 
+      data_status, data_quality, update_time, 
+      create_time, sync_time)
     values (#{itemType,jdbcType=INTEGER}, #{itemSubType,jdbcType=INTEGER}, #{trdType,jdbcType=INTEGER}, 
       #{infoTitle,jdbcType=VARCHAR}, #{packCount,jdbcType=INTEGER}, #{infoId,jdbcType=CHAR}, 
       #{infoSource,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{debtProvince,jdbcType=CHAR}, 
@@ -160,9 +161,9 @@
       #{buyerType,jdbcType=INTEGER}, #{buyerId,jdbcType=BIGINT}, #{sellerType,jdbcType=INTEGER}, 
       #{sellerId,jdbcType=BIGINT}, #{sellerName,jdbcType=CHAR}, #{trdContactorName,jdbcType=CHAR}, 
       #{trdContactorAddr,jdbcType=CHAR}, #{trdContactorPhone,jdbcType=CHAR}, #{trdContactorTel,jdbcType=CHAR}, 
-      #{trdContactorMobile,jdbcType=CHAR}, #{trdContactorAddress,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, 
-      #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{syncTime,jdbcType=TIMESTAMP})
+      #{trdContactorMobile,jdbcType=CHAR}, #{trdContactorAddress,jdbcType=CHAR}, #{trdCmpycontactorId,jdbcType=BIGINT}, 
+      #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{syncTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -256,6 +257,9 @@
       </if>
       <if test="trdContactorAddress != null">
         trd_contactor_address,
+      </if>
+      <if test="trdCmpycontactorId != null">
+        trd_cmpycontactor_id,
       </if>
       <if test="dataStatus != null">
         data_status,
@@ -360,6 +364,9 @@
       </if>
       <if test="trdContactorAddress != null">
         #{trdContactorAddress,jdbcType=CHAR},
+      </if>
+      <if test="trdCmpycontactorId != null">
+        #{trdCmpycontactorId,jdbcType=BIGINT},
       </if>
       <if test="dataStatus != null">
         #{dataStatus,jdbcType=INTEGER},
@@ -477,6 +484,9 @@
       <if test="record.trdContactorAddress != null">
         trd_contactor_address = #{record.trdContactorAddress,jdbcType=CHAR},
       </if>
+      <if test="record.trdCmpycontactorId != null">
+        trd_cmpycontactor_id = #{record.trdCmpycontactorId,jdbcType=BIGINT},
+      </if>
       <if test="record.dataStatus != null">
         data_status = #{record.dataStatus,jdbcType=INTEGER},
       </if>
@@ -529,6 +539,7 @@
       trd_contactor_tel = #{record.trdContactorTel,jdbcType=CHAR},
       trd_contactor_mobile = #{record.trdContactorMobile,jdbcType=CHAR},
       trd_contactor_address = #{record.trdContactorAddress,jdbcType=CHAR},
+      trd_cmpycontactor_id = #{record.trdCmpycontactorId,jdbcType=BIGINT},
       data_status = #{record.dataStatus,jdbcType=INTEGER},
       data_quality = #{record.dataQuality,jdbcType=INTEGER},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
@@ -628,6 +639,9 @@
       <if test="trdContactorAddress != null">
         trd_contactor_address = #{trdContactorAddress,jdbcType=CHAR},
       </if>
+      <if test="trdCmpycontactorId != null">
+        trd_cmpycontactor_id = #{trdCmpycontactorId,jdbcType=BIGINT},
+      </if>
       <if test="dataStatus != null">
         data_status = #{dataStatus,jdbcType=INTEGER},
       </if>
@@ -677,6 +691,7 @@
       trd_contactor_tel = #{trdContactorTel,jdbcType=CHAR},
       trd_contactor_mobile = #{trdContactorMobile,jdbcType=CHAR},
       trd_contactor_address = #{trdContactorAddress,jdbcType=CHAR},
+      trd_cmpycontactor_id = #{trdCmpycontactorId,jdbcType=BIGINT},
       data_status = #{dataStatus,jdbcType=INTEGER},
       data_quality = #{dataQuality,jdbcType=INTEGER},
       update_time = #{updateTime,jdbcType=TIMESTAMP},

@@ -15,6 +15,8 @@ public interface AmcContactorService {
 
   List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(Long cmpyId);
 
+  List<CustAmcCmpycontactorExtVo> getCmpyAmcContactorNew(Long cmpyId);
+
   CustAmcCmpycontactorTrdInfoVo getCmpyAmcContactorDetail(Long contactorId);
 
   void initCmpyAmcContactor();

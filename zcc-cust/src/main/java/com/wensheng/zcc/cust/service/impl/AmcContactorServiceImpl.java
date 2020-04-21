@@ -294,11 +294,19 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     for (CustTrdInfo custTrdInfo : custTrdInfos) {
       //有trdCmpycontactorId，组装数据
       if(custTrdInfo.getTrdCmpycontactorId()==null || custTrdInfo.getTrdCmpycontactorId() != -1l){
+        //以updatetime为准更新信息。
+//        if(){
+//
+//        }
+        //组装数据
         if(null != custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId())){
           custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId()).getCustTrdInfoList().add(custTrdInfo);
+        }else {
+          log.error("有交易信息与联系人不一致的情况，交易信息id：{}",custTrdInfo.getId());
         }
       }else if(StringUtils.isEmpty(custTrdInfo.getTrdContactorName()) || custTrdInfo.getTrdContactorName().equals("-1") ||
               StringUtils.isEmpty(custTrdInfo.getTrdContactorAddr()) || custTrdInfo.getTrdContactorAddr().equals("-1")){
+        //信息不全不需要初始化数据
         continue;
       }else {
         //给交易初始化公司联系人
@@ -552,10 +560,10 @@ public class AmcContactorServiceImpl implements AmcContactorService {
               .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
        custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     }else {
-      List<String> phoneUpdateList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
-      List<String> mobileUpdateList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
+      List<String> phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
+      List<String> mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
       custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactor(
-              cmpyName, custTrdInfo.getTrdContactorName(), phoneUpdateList, mobileUpdateList);
+              cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
     }
 
     if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
@@ -791,12 +799,6 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }else{
         continue;
       }
-
     }
-
-
-
-
-
   }
 }

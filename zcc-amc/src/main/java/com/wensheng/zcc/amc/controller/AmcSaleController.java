@@ -12,12 +12,14 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.params.AmcPage;
@@ -48,11 +50,20 @@ import java.util.Map;
  */
 @Controller
 @Slf4j
-@RequestMapping("/api")
+@RequestMapping("/api/amc/sale")
 public class AmcSaleController {
 
+
+
   @Autowired
-  AmcAssetService amcAssetService;
+  AmcSaleService amcSaleService;
+
+
+  @RequestMapping(value = "/floor", method = RequestMethod.POST)
+  @ResponseBody
+  List<AmcSaleFloor> getAmcSaleFloors(){
+    return amcSaleService.getFloors();
+  }
 
 
 

@@ -21,5 +21,9 @@ public class AmcDebtSummary {
 
   private Long assetTotalCount;
 
+  private Long debtPublishedCount;
+
+  private Long assetPublishedCount;
+
 
 }

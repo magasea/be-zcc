@@ -20,6 +20,10 @@ import java.util.Map;
  * @project zcc-backend
  */
 public interface AmcSaleService {
+    public List<AmcSaleFloor> getFloors();
+    public void updateFloor(AmcSaleFloor amcSaleFloor);
+    public List<AmcSaleTag> getTags();
+    public List<AmcSaleFilter> getFilters();
 
 
 }

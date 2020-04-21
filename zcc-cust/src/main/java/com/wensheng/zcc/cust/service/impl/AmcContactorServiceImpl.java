@@ -81,10 +81,16 @@ public class AmcContactorServiceImpl implements AmcContactorService {
    * @param custAmcCmpycontactor
    * @return
    */
-  private List<CustAmcCmpycontactor> queryCmpyContactorByPhoneNo(CustAmcCmpycontactor custAmcCmpycontactor){
+  private List<CustAmcCmpycontactor> queryCmpyContactorByPhoneNo(CustAmcCmpycontactor custAmcCmpycontactor) {
+    List<String> phoneUpdateList = null;
+    if (null != custAmcCmpycontactor.getPhoneUpdate()) {
+      phoneUpdateList = Arrays.asList(custAmcCmpycontactor.getPhoneUpdate().split(";"));
+    }
+    List<String> mobileUpdateList = null;
+    if (null != custAmcCmpycontactor.getMobileUpdate()) {
+      mobileUpdateList = Arrays.asList(custAmcCmpycontactor.getMobileUpdate().split(";"));
+    }
 
-    List<String> phoneUpdateList = Arrays.asList(custAmcCmpycontactor.getPhoneUpdate().split(";"));
-    List<String> mobileUpdateList = Arrays.asList(custAmcCmpycontactor.getMobileUpdate().split(";"));
     return custAmcCmpycontactorExtMapper.selectCmpyContactor(custAmcCmpycontactor.getCompany(),
             custAmcCmpycontactor.getName(), phoneUpdateList, mobileUpdateList);
   }

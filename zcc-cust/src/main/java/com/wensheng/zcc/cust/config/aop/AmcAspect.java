@@ -169,7 +169,7 @@ public class AmcAspect {
     if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
       Integer locationId = (Integer) detailsParam.get("location");
       if(locationId == null || locationId.compareTo(0) < 0){
-        throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库");
+        throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
       }
       AmcLocationEnum locationUserEnum =
           AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;

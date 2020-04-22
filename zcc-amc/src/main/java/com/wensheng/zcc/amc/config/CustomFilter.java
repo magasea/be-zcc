@@ -7,7 +7,6 @@ import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
-import com.wensheng.zcc.amc.service.UserService;
 import com.wensheng.zcc.common.module.amc.vo.AmcUserDetail;
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -46,8 +45,8 @@ import org.springframework.web.client.RestTemplate;
 //@Component
 public class CustomFilter extends OAuth2ClientContextFilter {
 
-  @Autowired
-  UserService userService;
+//  @Autowired
+//  UserService userService;
 
   RestTemplate restTemplate;
   @Autowired

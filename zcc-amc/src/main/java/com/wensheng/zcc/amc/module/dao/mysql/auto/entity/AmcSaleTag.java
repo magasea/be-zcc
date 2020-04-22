@@ -5,6 +5,8 @@ import java.util.Date;
 public class AmcSaleTag {
     private Long id;
 
+    private Integer type;
+
     private String name;
 
     private Long createBy;
@@ -21,6 +23,14 @@ public class AmcSaleTag {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 
     public String getName() {

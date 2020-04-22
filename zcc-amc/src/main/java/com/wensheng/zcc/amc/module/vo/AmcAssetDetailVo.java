@@ -5,9 +5,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetComment;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetWarrantInfo;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
-import java.math.BigDecimal;
-import java.util.Date;
 import java.util.List;
 import lombok.Data;
 

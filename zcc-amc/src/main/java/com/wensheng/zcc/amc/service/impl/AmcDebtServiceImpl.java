@@ -1,18 +1,18 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtorMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntctrctMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcGrntorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
-import com.wensheng.zcc.amc.module.dao.helper.*;
+import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
@@ -122,20 +122,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Autowired
   AmcDebtContactorMapper amcDebtContactorMapper;
 
-  @Autowired
-  AmcGrntctrctMapper amcGrntctrctMapper;
 
-  @Autowired
-  AmcGrntorMapper amcGrntorMapper;
+
+
 
   @Autowired
   AmcCmpyMapper amcCmpyMapper;
 
-  @Autowired
-  AmcCreditorMapper amcCreditorMapper;
 
-  @Autowired
-  AmcCreditorDebtMapper amcCreditorDebtMapper;
 
   @Autowired
   AmcOrigCreditorMapper amcOrigCreditorMapper;

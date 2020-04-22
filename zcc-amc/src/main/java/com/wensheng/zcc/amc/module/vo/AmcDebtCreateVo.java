@@ -1,10 +1,7 @@
 package com.wensheng.zcc.amc.module.vo;
 
-import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
-import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
-import io.swagger.models.auth.In;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;

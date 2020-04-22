@@ -5,6 +5,8 @@ import java.util.Date;
 public class AmcDebt {
     private Long id;
 
+    private Integer debtType;
+
     private Long debtpackId;
 
     private Long amcId;
@@ -85,6 +87,14 @@ public class AmcDebt {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Integer getDebtType() {
+        return debtType;
+    }
+
+    public void setDebtType(Integer debtType) {
+        this.debtType = debtType;
     }
 
     public Long getDebtpackId() {

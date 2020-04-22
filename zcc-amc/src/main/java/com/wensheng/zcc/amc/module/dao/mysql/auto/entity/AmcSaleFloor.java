@@ -9,9 +9,19 @@ public class AmcSaleFloor {
 
     private Integer css;
 
+    private String title;
+
+    private String slogon;
+
     private Date floorStartTime;
 
     private Date floorEndTime;
+
+    private String filterContent;
+
+    private String recomItems;
+
+    private Integer publishState;
 
     private Long createBy;
 
@@ -45,6 +55,22 @@ public class AmcSaleFloor {
         this.css = css;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title == null ? null : title.trim();
+    }
+
+    public String getSlogon() {
+        return slogon;
+    }
+
+    public void setSlogon(String slogon) {
+        this.slogon = slogon == null ? null : slogon.trim();
+    }
+
     public Date getFloorStartTime() {
         return floorStartTime;
     }
@@ -59,6 +85,30 @@ public class AmcSaleFloor {
 
     public void setFloorEndTime(Date floorEndTime) {
         this.floorEndTime = floorEndTime;
+    }
+
+    public String getFilterContent() {
+        return filterContent;
+    }
+
+    public void setFilterContent(String filterContent) {
+        this.filterContent = filterContent == null ? null : filterContent.trim();
+    }
+
+    public String getRecomItems() {
+        return recomItems;
+    }
+
+    public void setRecomItems(String recomItems) {
+        this.recomItems = recomItems == null ? null : recomItems.trim();
+    }
+
+    public Integer getPublishState() {
+        return publishState;
+    }
+
+    public void setPublishState(Integer publishState) {
+        this.publishState = publishState;
     }
 
     public Long getCreateBy() {

@@ -1,7 +1,7 @@
 package com.wensheng.zcc.amc.module.dao.mysql.auto.ext;
 
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import java.util.List;
 import lombok.Data;
 

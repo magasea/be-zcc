@@ -3,6 +3,7 @@
 <mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagMapper">
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="type" jdbcType="INTEGER" property="type" />
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -68,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, create_by, create_time, update_by, update_time
+    id, type, name, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTagExample" resultMap="BaseResultMap">
     select
@@ -105,10 +106,12 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_SALE_TAG (name, create_by, create_time, 
-      update_by, update_time)
-    values (#{name,jdbcType=CHAR}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into AMC_SALE_TAG (type, name, create_by, 
+      create_time, update_by, update_time
+      )
+    values (#{type,jdbcType=INTEGER}, #{name,jdbcType=CHAR}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -116,6 +119,9 @@
     </selectKey>
     insert into AMC_SALE_TAG
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="type != null">
+        type,
+      </if>
       <if test="name != null">
         name,
       </if>
@@ -133,6 +139,9 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="type != null">
+        #{type,jdbcType=INTEGER},
+      </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
@@ -162,6 +171,9 @@
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
+      <if test="record.type != null">
+        type = #{record.type,jdbcType=INTEGER},
+      </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
@@ -185,6 +197,7 @@
   <update id="updateByExample" parameterType="map">
     update AMC_SALE_TAG
     set id = #{record.id,jdbcType=BIGINT},
+      type = #{record.type,jdbcType=INTEGER},
       name = #{record.name,jdbcType=CHAR},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -197,6 +210,9 @@
   <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag">
     update AMC_SALE_TAG
     <set>
+      <if test="type != null">
+        type = #{type,jdbcType=INTEGER},
+      </if>
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
@@ -217,7 +233,8 @@
   </update>
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag">
     update AMC_SALE_TAG
-    set name = #{name,jdbcType=CHAR},
+    set type = #{type,jdbcType=INTEGER},
+      name = #{name,jdbcType=CHAR},
       create_by = #{createBy,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=BIGINT},

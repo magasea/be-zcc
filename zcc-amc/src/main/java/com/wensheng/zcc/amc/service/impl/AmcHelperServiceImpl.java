@@ -144,13 +144,14 @@ public class AmcHelperServiceImpl implements AmcHelperService {
     return curtInfoMapper.countByExample(curtInfoExample);
   }
 
-
+  @Override
   public AmcDebtContactor createPerson(AmcDebtContactor AmcDebtContactor){
     amcDebtContactorMapper.insertSelective(AmcDebtContactor);
     localAmcDebtContactorList.put(AmcDebtContactor.getId(), AmcDebtContactor);
     return AmcDebtContactor;
   }
 
+  @Override
   public AmcDebtContactor updatePerson(AmcDebtContactor AmcDebtContactor){
     amcDebtContactorMapper.updateByPrimaryKeySelective(AmcDebtContactor);
     localAmcDebtContactorList.put(AmcDebtContactor.getId(), AmcDebtContactor);

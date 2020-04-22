@@ -17,14 +17,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AmcAssetOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.AssetImageOrigin;
 import com.wensheng.zcc.amc.module.dao.mongo.origin.DebtOrigin;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 
 import com.wensheng.zcc.common.utils.AmcDateUtils;

@@ -299,17 +299,25 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     //根据交易信息组装数据custAmcCmpycontactorMap
     for (CustTrdInfo custTrdInfo : custTrdInfos) {
       //有trdCmpycontactorId，组装数据
-      if(custTrdInfo.getTrdCmpycontactorId()==null || custTrdInfo.getTrdCmpycontactorId() != -1l){
-        //以updatetime为准更新信息。
-//        if(){
-//
-//        }
+      if(custTrdInfo.getTrdCmpycontactorId()==null || custTrdInfo.getTrdCmpycontactorId() != -1L){
         //组装数据
         if(null != custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId())){
           custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId()).getCustTrdInfoList().add(custTrdInfo);
+
+          //判断是否需要更新联系人
+          if(custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId()).
+              getCustAmcCmpycontactor().getUpdateTime().before(custTrdInfo.getUpdateTime())){
+            //初始化公司联系人
+            CustAmcCmpycontactor custAmcCmpycontactor = initCmpycontactor(custTrdInfo, cmpyId, custTrdCmpy.getCmpyName());
+            custAmcCmpycontactor.setId(custTrdInfo.getTrdCmpycontactorId());
+            custAmcCmpycontactor.setUpdateTime(new Date());
+            custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+          }
+
         }else {
           log.error("有交易信息与联系人不一致的情况，交易信息id：{}",custTrdInfo.getId());
         }
+
       }else if(StringUtils.isEmpty(custTrdInfo.getTrdContactorName()) || custTrdInfo.getTrdContactorName().equals("-1") ||
               StringUtils.isEmpty(custTrdInfo.getTrdContactorAddr()) || custTrdInfo.getTrdContactorAddr().equals("-1")){
         //信息不全不需要初始化数据
@@ -390,6 +398,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     List<CustAmcCmpycontactorExtVo> custAmcCmpycontactorExtVos = new ArrayList<>();
     for(CustAmcCmpycontactor custAmcCmpycontactor: custAmcCmpycontactors){
       CustAmcCmpycontactorExtVo custAmcCmpycontactorExtVo = new CustAmcCmpycontactorExtVo();
+      //兼容老数据0421
+      compatibleOldPhone(custAmcCmpycontactor);
       custAmcCmpycontactorExtVo.setCustAmcCmpycontactor(custAmcCmpycontactor);
       custAmcCmpycontactorExtVo.setFavorCityPrep(new HashMap<>());
       custAmcCmpycontactorExtVo.setFavorTypePrep(new HashMap<>());
@@ -416,6 +426,11 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       CustAmcCmpycontactorExtVo custAmcCmpycontactorExtVo) {
 
     AmcBeanUtils.copyProperties(custAmcCmpycontactorExt.getCustAmcCmpycontactor(), custAmcCmpycontactorExtVo.getCustAmcCmpycontactor());
+    CustAmcCmpycontactor custAmcCmpycontactor = custAmcCmpycontactorExtVo.getCustAmcCmpycontactor();
+
+    //兼容老数据0421
+    compatibleOldPhone(custAmcCmpycontactor);
+
     Map<String, Integer> favorCities = new HashMap<>();
     Map<String, Integer> favorTypes = new HashMap<>();
     int cityCnt = 0;
@@ -445,6 +460,15 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     custAmcCmpycontactorExtVo.setFavorCityPrep(favorCities);
     custAmcCmpycontactorExtVo.setFavorTypePrep(favorTypes);
 
+  }
+
+  private void compatibleOldPhone(CustAmcCmpycontactor custAmcCmpycontactor) {
+    if("-1".equals(custAmcCmpycontactor.getMobilePrep())){
+      custAmcCmpycontactor.setMobilePrep(custAmcCmpycontactor.getMobile());
+    }
+    if("-1".equals(custAmcCmpycontactor.getPhonePrep())){
+      custAmcCmpycontactor.setPhonePrep(custAmcCmpycontactor.getPhone());
+    }
   }
 
 
@@ -513,12 +537,63 @@ public class AmcContactorServiceImpl implements AmcContactorService {
    * @return
    */
   private CustAmcCmpycontactor initCmpyAmcContactorByTrdInfoNew(CustTrdInfo custTrdInfo, Long cmpyId, String cmpyName){
+    //判断是否需要初始化联系人
     if(null == custTrdInfo.getTrdContactorName() || custTrdInfo.getTrdContactorName().equals("-1") ||
             custTrdInfo.getTrdContactorAddr().equals("-1") || null == custTrdInfo.getTrdContactorAddr()){
       //not valid info for trdContactorName and trdContactorPhone
       return null;
     }
+    //初始化公司联系人
+    CustAmcCmpycontactor custAmcCmpycontactor = initCmpycontactor(custTrdInfo, cmpyId, cmpyName);
 
+    //再次判断是否需要初始化联系人
+    if(StringUtils.isEmpty(custAmcCmpycontactor.getMobile()) || StringUtils.isEmpty(custAmcCmpycontactor.getName()) ||
+            StringUtils.isEmpty(custAmcCmpycontactor.getTrdPhone())){
+      //no phone or no name no need
+      return null;
+    }
+
+    //判断是否已有对应的联系人
+    List<CustAmcCmpycontactor>custAmcCmpycontactors =null;
+    if("-1".equals(custTrdInfo.getTrdContactorTel()) && "-1".equals(custTrdInfo.getTrdContactorMobile()) ){
+      //兼容电话和手机号未分开的情况
+      CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
+      custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId)
+              .andNameEqualTo(custAmcCmpycontactor.getName())
+              .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
+      custAmcCmpycontactorExample.setOrderByClause(" id desc ");
+       custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+    }else {
+      List<String> phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
+      List<String> mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
+      custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactor(
+              cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
+    }
+
+    //数据库无对应的联系人新增
+    if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
+      custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
+      custTrdInfo.setTrdCmpycontactorId(custAmcCmpycontactor.getId());
+      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+      return custAmcCmpycontactor;
+    }else{
+      //数据库有对应的联系人则将交易指定到对应的联系人上
+      custTrdInfo.setTrdCmpycontactorId(custAmcCmpycontactors.get(0).getId());
+      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
+      CustAmcCmpycontactor originalCmpycontactor = custAmcCmpycontactors.get(0);
+      Long cmpycontactorId = custAmcCmpycontactors.get(0).getId();
+
+      //判断是否需要更新联系人
+      if(custAmcCmpycontactors.get(0).getUpdateTime().before(custTrdInfo.getUpdateTime())){
+        custAmcCmpycontactor.setId(cmpycontactorId);
+        custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+      }
+      return custAmcCmpycontactors.get(0);
+    }
+  }
+
+  private CustAmcCmpycontactor initCmpycontactor(CustTrdInfo custTrdInfo, Long cmpyId, String cmpyName) {
+    //初始化对应的联系人
     CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
     custAmcCmpycontactor.setName(custTrdInfo.getTrdContactorName());
     custAmcCmpycontactor.setCompany(cmpyName);
@@ -552,38 +627,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         }
       }
     }
-    if(StringUtils.isEmpty(custAmcCmpycontactor.getMobile()) || StringUtils.isEmpty(custAmcCmpycontactor.getName()) ||
-            StringUtils.isEmpty(custAmcCmpycontactor.getTrdPhone())){
-      //no phone or no name no need
-      return null;
-    }
-
-    List<CustAmcCmpycontactor>custAmcCmpycontactors =null;
-    if("-1".equals(custTrdInfo.getTrdContactorTel()) && "-1".equals(custTrdInfo.getTrdContactorMobile()) ){
-      CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
-      custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId)
-              .andNameEqualTo(custAmcCmpycontactor.getName())
-              .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
-       custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
-    }else {
-      List<String> phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
-      List<String> mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
-      custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactor(
-              cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
-    }
-
-    if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
-      custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
-      custTrdInfo.setTrdCmpycontactorId(custAmcCmpycontactor.getId());
-      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
-      return custAmcCmpycontactor;
-    }else{
-      custTrdInfo.setTrdCmpycontactorId(custAmcCmpycontactors.get(0).getId());
-      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
-      return custAmcCmpycontactors.get(0);
-    }
+    custAmcCmpycontactor.setUpdateTime(new Date());
+    return custAmcCmpycontactor;
   }
-
 
 
   @Override

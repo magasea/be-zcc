@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.controller;
 
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.config.aop.QueryChecker;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Slf4j
+@AddTraceLogId
 @RequestMapping("/amc/cust/amcContactor")
 public class AmcCmpyContactorController {
 

@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
 import com.wensheng.zcc.cust.config.aop.QueryCheckerCmpy;
 import com.wensheng.zcc.cust.config.aop.QueryValidCmpy;
@@ -46,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Slf4j
+@AddTraceLogId
 @RequestMapping("/amc/cust/custinfo")
 public class CustInfoController {
 

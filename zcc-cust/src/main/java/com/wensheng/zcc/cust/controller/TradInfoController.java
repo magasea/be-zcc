@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.controller;
 
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.service.SyncBidService;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Slf4j
+@AddTraceLogId
 @RequestMapping("/amc/cust/trdinfo")
 public class TradInfoController {
 

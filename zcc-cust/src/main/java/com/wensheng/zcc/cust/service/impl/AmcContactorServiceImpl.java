@@ -463,10 +463,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   private void compatibleOldPhone(CustAmcCmpycontactor custAmcCmpycontactor) {
-    if("-1".equals(custAmcCmpycontactor.getMobilePrep())){
+    if("-1".equals(custAmcCmpycontactor.getMobilePrep()) && "-1".equals(custAmcCmpycontactor.getPhonePrep())){
       custAmcCmpycontactor.setMobilePrep(custAmcCmpycontactor.getMobile());
-    }
-    if("-1".equals(custAmcCmpycontactor.getPhonePrep())){
       custAmcCmpycontactor.setPhonePrep(custAmcCmpycontactor.getPhone());
     }
   }

@@ -174,6 +174,8 @@ public class AmcAspect {
       AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
 
       if(locationId == null || locationId.compareTo(0) < 0 || designedLocationEnum ==null || locationUserEnum == null){
+        log.error("locationId:{};designedLocationEnum:{};locationUserEnum:{}",locationId,
+            designedLocationEnum, locationUserEnum);
       throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
       }
 

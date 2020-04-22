@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.controller;
 
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.config.aop.QueryChecker;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Slf4j
+@AddTraceLogId
 @RequestMapping("/amc/cust/amcContactor")
 public class AmcCmpyContactorController {
 
@@ -58,7 +60,7 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor){
+  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
     amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
   }
 
@@ -73,7 +75,7 @@ public class AmcCmpyContactorController {
   @RequestMapping(value = "/getCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   public List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(@RequestBody Long cmpyId){
-    return amcContactorService.getCmpyAmcContactor(cmpyId);
+    return amcContactorService.getCmpyAmcContactorNew(cmpyId);
   }
 
   @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)

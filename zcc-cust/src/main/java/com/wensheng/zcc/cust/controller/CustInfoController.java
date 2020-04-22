@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
 import com.wensheng.zcc.cust.config.aop.QueryCheckerCmpy;
 import com.wensheng.zcc.cust.config.aop.QueryValidCmpy;
@@ -46,6 +47,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @Slf4j
+@AddTraceLogId
 @RequestMapping("/amc/cust/custinfo")
 public class CustInfoController {
 
@@ -61,7 +63,7 @@ public class CustInfoController {
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
   @QueryCheckerCmpy
-  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy){
+  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
 
     return custInfoService.addCompany(custTrdCmpy);
   }
@@ -79,8 +81,8 @@ public class CustInfoController {
   @ResponseBody
   public CustTrdCmpy getCmpy(@RequestParam Long companyId){
 
-    return custInfoService.getCompany(companyId);
-
+    CustTrdCmpy custTrdCmpy = custInfoService.getCompany(companyId);
+    return custTrdCmpy;
   }
 
   @RequestMapping(value = "/getCmpyByName", method = RequestMethod.POST)

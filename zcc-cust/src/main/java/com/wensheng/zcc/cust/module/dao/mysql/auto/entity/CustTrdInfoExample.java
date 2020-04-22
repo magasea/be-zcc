@@ -2092,6 +2092,66 @@ public class CustTrdInfoExample {
             return (Criteria) this;
         }
 
+        public Criteria andTrdCmpycontactorIdIsNull() {
+            addCriterion("trd_cmpycontactor_id is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdIsNotNull() {
+            addCriterion("trd_cmpycontactor_id is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdEqualTo(Long value) {
+            addCriterion("trd_cmpycontactor_id =", value, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdNotEqualTo(Long value) {
+            addCriterion("trd_cmpycontactor_id <>", value, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdGreaterThan(Long value) {
+            addCriterion("trd_cmpycontactor_id >", value, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdGreaterThanOrEqualTo(Long value) {
+            addCriterion("trd_cmpycontactor_id >=", value, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdLessThan(Long value) {
+            addCriterion("trd_cmpycontactor_id <", value, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdLessThanOrEqualTo(Long value) {
+            addCriterion("trd_cmpycontactor_id <=", value, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdIn(List<Long> values) {
+            addCriterion("trd_cmpycontactor_id in", values, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdNotIn(List<Long> values) {
+            addCriterion("trd_cmpycontactor_id not in", values, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdBetween(Long value1, Long value2) {
+            addCriterion("trd_cmpycontactor_id between", value1, value2, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdCmpycontactorIdNotBetween(Long value1, Long value2) {
+            addCriterion("trd_cmpycontactor_id not between", value1, value2, "trdCmpycontactorId");
+            return (Criteria) this;
+        }
+
         public Criteria andDataStatusIsNull() {
             addCriterion("data_status is null");
             return (Criteria) this;

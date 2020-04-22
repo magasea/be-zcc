@@ -7,6 +7,12 @@
     <result column="phone" jdbcType="CHAR" property="phone" />
     <result column="mobile" jdbcType="CHAR" property="mobile" />
     <result column="trd_phone" jdbcType="CHAR" property="trdPhone" />
+    <result column="mobile_update" jdbcType="CHAR" property="mobileUpdate" />
+    <result column="mobile_prep" jdbcType="CHAR" property="mobilePrep" />
+    <result column="mobile_history" jdbcType="CHAR" property="mobileHistory" />
+    <result column="phone_update" jdbcType="CHAR" property="phoneUpdate" />
+    <result column="phone_prep" jdbcType="CHAR" property="phonePrep" />
+    <result column="phone_history" jdbcType="CHAR" property="phoneHistory" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="county" jdbcType="CHAR" property="county" />
@@ -85,8 +91,9 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, phone, mobile, trd_phone, province, city, county, address, title, cmpy_id, 
-    company, branch_cmpy, history_cmpy, recorder_name, favorite_city_update, favorite_type_update, 
+    id, name, phone, mobile, trd_phone, mobile_update, mobile_prep, mobile_history, phone_update, 
+    phone_prep, phone_history, province, city, county, address, title, cmpy_id, company, 
+    branch_cmpy, history_cmpy, recorder_name, favorite_city_update, favorite_type_update, 
     fav_type_note, note, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample" resultMap="BaseResultMap">
@@ -125,6 +132,8 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into CUST_AMC_CMPYCONTACTOR (name, phone, mobile, trd_phone, 
+      mobile_update, mobile_prep, mobile_history, 
+      phone_update, phone_prep, phone_history, 
       province, city, county, address, 
       title, cmpy_id, company, branch_cmpy, 
       history_cmpy, recorder_name, favorite_city_update, 
@@ -132,6 +141,8 @@
       create_by, create_time, update_by, 
       update_time)
     values (#{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, 
+      #{mobileUpdate,jdbcType=CHAR}, #{mobilePrep,jdbcType=CHAR}, #{mobileHistory,jdbcType=CHAR}, 
+      #{phoneUpdate,jdbcType=CHAR}, #{phonePrep,jdbcType=CHAR}, #{phoneHistory,jdbcType=CHAR}, 
       #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, 
       #{title,jdbcType=CHAR}, #{cmpyId,jdbcType=BIGINT}, #{company,jdbcType=CHAR}, #{branchCmpy,jdbcType=CHAR}, 
       #{historyCmpy,jdbcType=CHAR}, #{recorderName,jdbcType=CHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, 
@@ -156,6 +167,24 @@
       </if>
       <if test="trdPhone != null">
         trd_phone,
+      </if>
+      <if test="mobileUpdate != null">
+        mobile_update,
+      </if>
+      <if test="mobilePrep != null">
+        mobile_prep,
+      </if>
+      <if test="mobileHistory != null">
+        mobile_history,
+      </if>
+      <if test="phoneUpdate != null">
+        phone_update,
+      </if>
+      <if test="phonePrep != null">
+        phone_prep,
+      </if>
+      <if test="phoneHistory != null">
+        phone_history,
       </if>
       <if test="province != null">
         province,
@@ -224,6 +253,24 @@
       </if>
       <if test="trdPhone != null">
         #{trdPhone,jdbcType=CHAR},
+      </if>
+      <if test="mobileUpdate != null">
+        #{mobileUpdate,jdbcType=CHAR},
+      </if>
+      <if test="mobilePrep != null">
+        #{mobilePrep,jdbcType=CHAR},
+      </if>
+      <if test="mobileHistory != null">
+        #{mobileHistory,jdbcType=CHAR},
+      </if>
+      <if test="phoneUpdate != null">
+        #{phoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="phonePrep != null">
+        #{phonePrep,jdbcType=CHAR},
+      </if>
+      <if test="phoneHistory != null">
+        #{phoneHistory,jdbcType=CHAR},
       </if>
       <if test="province != null">
         #{province,jdbcType=CHAR},
@@ -305,6 +352,24 @@
       <if test="record.trdPhone != null">
         trd_phone = #{record.trdPhone,jdbcType=CHAR},
       </if>
+      <if test="record.mobileUpdate != null">
+        mobile_update = #{record.mobileUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.mobilePrep != null">
+        mobile_prep = #{record.mobilePrep,jdbcType=CHAR},
+      </if>
+      <if test="record.mobileHistory != null">
+        mobile_history = #{record.mobileHistory,jdbcType=CHAR},
+      </if>
+      <if test="record.phoneUpdate != null">
+        phone_update = #{record.phoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.phonePrep != null">
+        phone_prep = #{record.phonePrep,jdbcType=CHAR},
+      </if>
+      <if test="record.phoneHistory != null">
+        phone_history = #{record.phoneHistory,jdbcType=CHAR},
+      </if>
       <if test="record.province != null">
         province = #{record.province,jdbcType=CHAR},
       </if>
@@ -371,6 +436,12 @@
       phone = #{record.phone,jdbcType=CHAR},
       mobile = #{record.mobile,jdbcType=CHAR},
       trd_phone = #{record.trdPhone,jdbcType=CHAR},
+      mobile_update = #{record.mobileUpdate,jdbcType=CHAR},
+      mobile_prep = #{record.mobilePrep,jdbcType=CHAR},
+      mobile_history = #{record.mobileHistory,jdbcType=CHAR},
+      phone_update = #{record.phoneUpdate,jdbcType=CHAR},
+      phone_prep = #{record.phonePrep,jdbcType=CHAR},
+      phone_history = #{record.phoneHistory,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
       county = #{record.county,jdbcType=CHAR},
@@ -407,6 +478,24 @@
       </if>
       <if test="trdPhone != null">
         trd_phone = #{trdPhone,jdbcType=CHAR},
+      </if>
+      <if test="mobileUpdate != null">
+        mobile_update = #{mobileUpdate,jdbcType=CHAR},
+      </if>
+      <if test="mobilePrep != null">
+        mobile_prep = #{mobilePrep,jdbcType=CHAR},
+      </if>
+      <if test="mobileHistory != null">
+        mobile_history = #{mobileHistory,jdbcType=CHAR},
+      </if>
+      <if test="phoneUpdate != null">
+        phone_update = #{phoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="phonePrep != null">
+        phone_prep = #{phonePrep,jdbcType=CHAR},
+      </if>
+      <if test="phoneHistory != null">
+        phone_history = #{phoneHistory,jdbcType=CHAR},
       </if>
       <if test="province != null">
         province = #{province,jdbcType=CHAR},
@@ -471,6 +560,12 @@
       phone = #{phone,jdbcType=CHAR},
       mobile = #{mobile,jdbcType=CHAR},
       trd_phone = #{trdPhone,jdbcType=CHAR},
+      mobile_update = #{mobileUpdate,jdbcType=CHAR},
+      mobile_prep = #{mobilePrep,jdbcType=CHAR},
+      mobile_history = #{mobileHistory,jdbcType=CHAR},
+      phone_update = #{phoneUpdate,jdbcType=CHAR},
+      phone_prep = #{phonePrep,jdbcType=CHAR},
+      phone_history = #{phoneHistory,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
       county = #{county,jdbcType=CHAR},

@@ -53,15 +53,29 @@ public class CustTrdInfo {
 
     private String trdContactorName;
 
+    /**
+     * 固话；手机 trdContactorAddress（冗余）
+     */
     private String trdContactorAddr;
 
+    /**
+     * 固话；手机 （冗余）
+     */
     private String trdContactorPhone;
 
+    /**
+     * 固话
+     */
     private String trdContactorTel;
 
+    /**
+     * 手机
+     */
     private String trdContactorMobile;
 
     private String trdContactorAddress;
+
+    private Long trdCmpycontactorId;
 
     private Integer dataStatus;
 
@@ -311,6 +325,14 @@ public class CustTrdInfo {
 
     public void setTrdContactorAddress(String trdContactorAddress) {
         this.trdContactorAddress = trdContactorAddress == null ? null : trdContactorAddress.trim();
+    }
+
+    public Long getTrdCmpycontactorId() {
+        return trdCmpycontactorId;
+    }
+
+    public void setTrdCmpycontactorId(Long trdCmpycontactorId) {
+        this.trdCmpycontactorId = trdCmpycontactorId;
     }
 
     public Integer getDataStatus() {

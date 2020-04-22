@@ -11,20 +11,23 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.service.BasicInfoService;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+
+import java.lang.management.ManagementFactory;
+import java.lang.management.RuntimeMXBean;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import com.wensheng.zcc.cust.service.impl.KafkaServiceImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.common.protocol.types.Field.Str;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
+import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Aspect;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.core.Authentication;
@@ -54,6 +57,25 @@ public class AmcAspect {
   @Autowired
   KafkaServiceImpl kafkaService;
 
+  //日志序列号
+  static AtomicInteger traceLogSequence = new AtomicInteger(0);
+
+  /**
+   *使用注解加入日志id
+   */
+  @Before(value = "@within(AddTraceLogId) || @annotation(AddTraceLogId)")
+  public void before(JoinPoint joinPoint) throws Throwable {
+    //时间戳
+    Long timeMilli = System.currentTimeMillis();
+    //进程id
+    RuntimeMXBean runtimeMXBean = ManagementFactory.getRuntimeMXBean();
+    int runtimeId =Integer.valueOf(runtimeMXBean.getName().split("@")[0]).intValue();
+    //日志序列号加 1
+    int traceLogSequenceInt  = traceLogSequence.addAndGet(1);
+    //生成日志号
+    String traceLogId = String.format("%d%010d%07d",timeMilli,traceLogSequenceInt,runtimeId);
+    MDC.put("TRACE_LOG_ID",traceLogId);
+  }
 
   @Around("@annotation(LogExecutionTime)")
   public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{
@@ -111,7 +133,7 @@ public class AmcAspect {
           AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
 
       AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
-      if(userPrivMap.get(province) != locationId){
+      if(userPrivMap.get(province).equals(locationId)){
         throw new Exception(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
             locationUserEnum.getCname(), designedLocationEnum.getCname()));
       }
@@ -129,7 +151,7 @@ public class AmcAspect {
   @Around("@annotation(QueryCheckerCmpy) ")
   public Object aroundDoModCmpy(ProceedingJoinPoint joinPoint) throws Throwable {
     log.info("now get the point cut");
-    if(joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null){
+    if (joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null) {
       log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
       return joinPoint.proceed(joinPoint.getArgs());
     }
@@ -138,56 +160,60 @@ public class AmcAspect {
     Map<String, Integer> userPrivMap = basicInfoService.getAmcUserPrivMap();
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-    if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
+    if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
       throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
     }
     log.info(authentication.getDetails().toString());
 
 
     Map<String, Object> detailsParam =
-        (Map<String, Object>) ((OAuth2AuthenticationDetails)authentication.getDetails()).getDecodedDetails();
-    if(detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")){
-      Long ssoUserId = Long.valueOf((Integer)detailsParam.get("ssoUserId"));
-      if(joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
-          "create")){
+            (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+    if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+      Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
+      if (joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
+              "create")) {
         custTrdCmpy.setCreateBy(ssoUserId);
         custTrdCmpy.setCreateTime(AmcDateUtils.getCurrentDate());
       }
-      if(joinPoint.getSignature().toString().startsWith("update") || joinPoint.getSignature().toString().startsWith(
-          "mod")){
+      if (joinPoint.getSignature().toString().startsWith("update") || joinPoint.getSignature().toString().startsWith(
+              "mod")) {
         custTrdCmpy.setUpdateBy(ssoUserId);
         custTrdCmpy.setUpdateTime(AmcDateUtils.getCurrentDate());
       }
 
     }
 
-    if(CollectionUtils.isEmpty(userPrivMap) || StringUtils.isEmpty(province) ){
+    if (CollectionUtils.isEmpty(userPrivMap) || StringUtils.isEmpty(province)) {
 
       return joinPoint.proceed(joinPoint.getArgs());
     }
 
-    if(detailsParam.containsKey("location") && null != detailsParam.get("location")){
+    if (detailsParam.containsKey("location") && null != detailsParam.get("location")) {
       Integer locationId = (Integer) detailsParam.get("location");
-      if(locationId == null || locationId.compareTo(0) < 0){
-        throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
-      }
-      AmcLocationEnum locationUserEnum =
-          AmcLocationEnum.lookupByDisplayIdUtil(locationId) ;
 
+      AmcLocationEnum locationUserEnum =
+              AmcLocationEnum.lookupByDisplayIdUtil(locationId);
       AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
-      if(userPrivMap.get(province) != locationId){
-        throw new RuntimeException(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
-            locationUserEnum.getCname(), designedLocationEnum.getCname()));
+
+      if(locationId == null || locationId.compareTo(0) < 0 || designedLocationEnum ==null || locationUserEnum == null){
+        log.error("locationId:{};designedLocationEnum:{};locationUserEnum:{}",locationId,
+            designedLocationEnum, locationUserEnum);
+      throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
       }
+
+      if (!userPrivMap.get(province).equals(locationId)) {
+        throw new RuntimeException(String.format("您所在的地区:%s 不能处理该省的投资人信息, 按照设计应该由:%s 地区的业务人员来处理",
+                locationUserEnum.getCname(), designedLocationEnum.getCname()));
+      }
+
     }
 
-
-    return joinPoint.proceed(joinPoint.getArgs());
+      return joinPoint.proceed(joinPoint.getArgs());
   }
 
 
 
-  @Around("@annotation(QueryValidCmpy) ")
+  @Around("@annotation(QueryValidCmpy)")
   public Object aroundQueryValidCmpy(ProceedingJoinPoint joinPoint) throws Throwable {
     log.info("now get the point cut");
     if(joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null){

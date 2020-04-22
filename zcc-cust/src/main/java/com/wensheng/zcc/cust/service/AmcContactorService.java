@@ -9,11 +9,13 @@ public interface AmcContactorService {
 
   void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
-  void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor);
+  void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
   List<CustAmcCmpycontactor> getCmpyAmcContactor(String cmpyName);
 
   List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(Long cmpyId);
+
+  List<CustAmcCmpycontactorExtVo> getCmpyAmcContactorNew(Long cmpyId);
 
   CustAmcCmpycontactorTrdInfoVo getCmpyAmcContactorDetail(Long contactorId);
 

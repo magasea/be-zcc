@@ -1,13 +1,11 @@
 package com.wensheng.zcc.cust.controller;
 
-import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegion;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
-import com.wensheng.zcc.cust.module.helper.InvestTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PersonSexEnum;
 import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
@@ -30,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  * @project miniapp-backend
  */
 @Controller
+@AddTraceLogId
 @RequestMapping("/amc/cust/basic")
 public class BasicInfoController {
 

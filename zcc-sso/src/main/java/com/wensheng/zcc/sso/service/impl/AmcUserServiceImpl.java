@@ -280,7 +280,7 @@ public class AmcUserServiceImpl implements AmcUserService {
       }else if(amcUserRoles.size() >= 1){
 
         for(AmcUserRole amcUserRoleItem: amcUserRoles){
-          if(amcUserRoleItem.getRoleId() != amcUserRole.getRoleId()){
+          if(!amcUserRoleItem.getRoleId().equals(amcUserRole.getRoleId())){
             amcUserRoleMapper.deleteByPrimaryKey(amcUserRoleItem.getId());
           }else{
             hasRoleAlready = true;

@@ -378,8 +378,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
 
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custAmcCmpycontactor.getCmpyId())
-        .andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId()).andTrdContactorNameEqualTo(custAmcCmpycontactor.getName());
+//    custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custAmcCmpycontactor.getCmpyId())
+//        .andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId()).andTrdContactorNameEqualTo(custAmcCmpycontactor.getName());
+    custTrdInfoExample.createCriteria().andTrdCmpycontactorIdEqualTo(contactorId);
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
     custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(new ArrayList<>());
     for(CustTrdInfo custTrdInfo : custTrdInfos){

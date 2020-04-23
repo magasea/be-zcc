@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -69,6 +70,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.Data;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -321,8 +323,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return debtImages.get(0);
   }
 
+  @LogExecutionTime
   @Override
-  public AmcDebtExtVo get(Long amcDebtId) throws Exception {
+  public AmcDebtExtVo get(Long amcDebtId, boolean needAdditionInfo) throws Exception {
 
     List<AmcDebtExt> amcDebtExts = amcDebtExtMapper.selectByPrimaryKeyExt(amcDebtId);
     if(CollectionUtils.isEmpty(amcDebtExts )){
@@ -343,11 +346,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     Query query = new Query();
     query.addCriteria(Criteria.where("amcDebtId").is(amcDebtId));
-
-    List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
-    if(!CollectionUtils.isEmpty(debtAdditionals)){
-      amcDebtVo.setDebtAdditional(debtAdditionals.get(0));
+    if(needAdditionInfo){
+      List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
+      if(!CollectionUtils.isEmpty(debtAdditionals)){
+        amcDebtVo.setDebtAdditional(debtAdditionals.get(0));
+      }
     }
+
     query = new Query();
     query.addCriteria(Criteria.where("debtId").is(amcDebtId).and("tag").is(ImageClassEnum.MAIN.getId()));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
@@ -385,7 +390,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     List<AmcDebtExtVo> amcDebtExtVos = new ArrayList<>();
     for(Long amcDebtId: amcDebtIds){
       try{
-        AmcDebtExtVo amcDebtExtVo = get(amcDebtId);
+        AmcDebtExtVo amcDebtExtVo = get(amcDebtId, true);
         amcDebtExtVos.add(amcDebtExtVo);
       }catch (Exception ex){
         log.error("Met error when try to get debt by:{}", amcDebtId, ex);
@@ -1215,7 +1220,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     List<AmcDebtExtVo> amcDebtVos = new ArrayList<>();
     for(GeoResult<DebtAdditional> geoResult: debtAdditionalGeoResults.getContent()) {
       try {
-        AmcDebtExtVo amcDebtExtVo = get(geoResult.getContent().getAmcDebtId());
+        AmcDebtExtVo amcDebtExtVo = get(geoResult.getContent().getAmcDebtId(), false);
+        amcDebtExtVo.getAmcDebtVo().setDebtAdditional(geoResult.getContent());
         amcDebtVos.add(amcDebtExtVo);
       } catch (Exception e) {
         log.error("Failed to get amcDebtExtVo ", e);

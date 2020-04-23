@@ -6,8 +6,12 @@ import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentDebt;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentTag;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcExcelFileService;
@@ -376,6 +380,27 @@ public class AmcBasicInfoController {
     return result;
   }
 
+
+  @RequestMapping(value = "/amcAssetFilter", method = RequestMethod.POST)
+  @ResponseBody
+  public void showAmcAssetFilter(@RequestBody AmcFilterContentAsset amcFilterContentAsset){
+
+    return;
+  }
+
+  @RequestMapping(value = "/amcDebtFilter", method = RequestMethod.POST)
+  @ResponseBody
+  public void showAmcDebtFilter(@RequestBody AmcFilterContentDebt amcFilterContentDebt){
+
+    return;
+  }
+
+  @RequestMapping(value = "/amcTagFilter", method = RequestMethod.POST)
+  @ResponseBody
+  public void showAmcTagFilter(@RequestBody AmcFilterContentTag amcFilterContentTag){
+
+    return;
+  }
 
   @RequestMapping(value = "/checkGeoInfo", method = RequestMethod.POST)
   @ResponseBody

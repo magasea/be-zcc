@@ -377,7 +377,7 @@ public class AmcDebtController {
       throws Exception {
 
 
-    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(debtId);
+    AmcDebtExtVo amcDebtExtVo = amcDebtService.get(debtId , true);
 
 
 
@@ -708,6 +708,7 @@ public class AmcDebtController {
 
   }
 
+  @LogExecutionTime
   @RequestMapping(value = "/getDebtGeoNear", method = RequestMethod.POST)
   @ResponseBody
   public List<AmcDebtExtVo> getDebtGeoNear(@RequestBody GeoJsonPoint geoJsonPoint) throws Exception {

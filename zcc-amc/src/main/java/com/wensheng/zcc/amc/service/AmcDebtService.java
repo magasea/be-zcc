@@ -37,7 +37,7 @@ public interface AmcDebtService {
 
   public List<AmcDebt> queryAllByUserId( Long userId);
 
-  public AmcDebtExtVo get(Long amcDebtId) throws Exception;
+  public AmcDebtExtVo get(Long amcDebtId, boolean needAddInfo) throws Exception;
 
 
   public List<AmcDebtExtVo> getByIds(List<Long> amcDebtIds) throws Exception;

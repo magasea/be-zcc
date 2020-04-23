@@ -341,6 +341,25 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
     }
 
+    // Get the iterator over the HashMap
+    Iterator<Map.Entry<Long, CustAmcCmpycontactorExt> >
+        iterator = custAmcCmpycontactorMap.entrySet().iterator();
+    // Iterate over the HashMap
+    while (iterator.hasNext()) {
+      Map.Entry<Long, CustAmcCmpycontactorExt> entry = iterator.next();
+      if (entry.getValue() == null || entry.getValue().getCustAmcCmpycontactor() == null) {
+        continue;
+      }
+      if (entry.getValue().getCustAmcCmpycontactor().getCreateBy() != null
+          && entry.getValue().getCustAmcCmpycontactor().getCreateBy() == -1L
+          && entry.getValue().getCustAmcCmpycontactor().getUpdateBy() == -1L
+          && CollectionUtils.isEmpty(entry.getValue().getCustTrdInfoList())) {
+        custAmcCmpycontactorMapper
+            .deleteByPrimaryKey(entry.getValue().getCustAmcCmpycontactor().getId());
+        iterator.remove();
+      }
+    }
+
     custAmcCmpycontactorExtVos = convertToVos(new ArrayList(custAmcCmpycontactorMap.values()));
     custAmcCmpycontactorMap = null;
     return custAmcCmpycontactorExtVos;

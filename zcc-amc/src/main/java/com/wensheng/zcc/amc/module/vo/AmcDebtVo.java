@@ -2,9 +2,6 @@ package com.wensheng.zcc.amc.module.vo;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCreditor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcGrntor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;

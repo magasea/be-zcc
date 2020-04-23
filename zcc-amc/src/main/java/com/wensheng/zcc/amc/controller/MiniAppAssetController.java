@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.controller;
 
-import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
@@ -9,7 +8,6 @@ import com.wensheng.zcc.amc.service.impl.AmcBaiDuLogisQuery;
 import com.wensheng.zcc.common.module.LatLng;
 import java.io.UnsupportedEncodingException;
 import java.util.List;
-import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

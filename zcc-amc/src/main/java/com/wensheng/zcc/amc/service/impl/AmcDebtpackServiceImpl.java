@@ -1,16 +1,14 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCreditorDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtpackExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpackExample;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.utils.SQLUtils;
@@ -42,8 +40,7 @@ public class AmcDebtpackServiceImpl implements AmcDebtpackService {
   @Autowired
   AmcOrigCreditorMapper amcOrigCreditorMapper;
 
-  @Autowired
-  AmcCreditorDebtpackMapper amcCreditorDebtpackMapper;
+
 
   @Autowired
   AmcDebtContactorMapper amcDebtContactorMapper;

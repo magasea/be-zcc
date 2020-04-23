@@ -3,7 +3,6 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
-import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtpackMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;

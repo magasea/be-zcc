@@ -8,7 +8,6 @@ import com.wensheng.zcc.amc.module.dao.helper.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
-import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcExcelFileService;
@@ -28,7 +27,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort.Direction;
@@ -243,6 +241,28 @@ public class AmcBasicInfoController {
     List<String> result = new ArrayList<>();
     for(LandUsageTypeEnum landUsageTypeEnum: LandUsageTypeEnum.values()){
       result.add(String.format("%d:%s", landUsageTypeEnum.getId(), landUsageTypeEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/filterType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getFilterType(){
+
+    List<String> result = new ArrayList<>();
+    for(FilterTypeEnum filterTypeEnum: FilterTypeEnum.values()){
+      result.add(String.format("%d:%s", filterTypeEnum.getType(), filterTypeEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/debtType", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getDebtType(){
+
+    List<String> result = new ArrayList<>();
+    for(DebtTypeEnum debtTypeEnum: DebtTypeEnum.values()){
+      result.add(String.format("%d:%s", debtTypeEnum.getType(), debtTypeEnum.getName()));
     }
     return result;
   }

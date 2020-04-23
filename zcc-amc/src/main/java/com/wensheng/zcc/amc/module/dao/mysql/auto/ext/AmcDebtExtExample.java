@@ -2,7 +2,6 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.ext;
 
 import com.wensheng.zcc.amc.module.dao.helper.MysqlPageInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 
 /**
  * @author chenwei on 3/13/19

@@ -72,8 +72,8 @@ public class ExceptionUtils {
 
     INVALID_FOLDER(1043, "invalid folder","文件目录不正确"),
     DUPLICATE_ITEM_ERROR(1044, "duplicate item in db ", "有重复数据"),
-
-    NO_CMPY_CONTACTOR_ERROR(1045, "no CmpyContactor in db ", "数据库没有公司联系人"),
+    INVALID_JSON_CONTENT_ERROR(1045, "invalid json content error ", "内容不符合json格式"),
+    NO_CMPY_CONTACTOR_ERROR(1046, "no CmpyContactor in db ", "数据库没有公司联系人"),
     ;
     int code;
     String name;

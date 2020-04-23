@@ -21,9 +21,8 @@ import java.util.Map;
  */
 public interface AmcSaleService {
     public List<AmcSaleFloor> getFloors();
-    public void updateFloor(AmcSaleFloor amcSaleFloor);
+    public void updateFloor(AmcSaleFloor amcSaleFloor) throws Exception;
     public List<AmcSaleTag> getTags();
-    public List<AmcSaleFilter> getFilters();
 
 
 }

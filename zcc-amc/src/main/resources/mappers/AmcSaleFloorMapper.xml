@@ -5,8 +5,13 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="floor" jdbcType="INTEGER" property="floor" />
     <result column="css" jdbcType="INTEGER" property="css" />
+    <result column="title" jdbcType="CHAR" property="title" />
+    <result column="slogon" jdbcType="VARCHAR" property="slogon" />
     <result column="floor_start_time" jdbcType="TIMESTAMP" property="floorStartTime" />
     <result column="floor_end_time" jdbcType="TIMESTAMP" property="floorEndTime" />
+    <result column="filter_content" jdbcType="VARCHAR" property="filterContent" />
+    <result column="recom_items" jdbcType="VARCHAR" property="recomItems" />
+    <result column="publish_state" jdbcType="INTEGER" property="publishState" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
@@ -71,8 +76,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, floor, css, floor_start_time, floor_end_time, create_by, create_time, update_by, 
-    update_time
+    id, floor, css, title, slogon, floor_start_time, floor_end_time, filter_content, 
+    recom_items, publish_state, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample" resultMap="BaseResultMap">
     select
@@ -109,12 +114,16 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_SALE_FLOOR (floor, css, floor_start_time, 
-      floor_end_time, create_by, create_time, 
-      update_by, update_time)
-    values (#{floor,jdbcType=INTEGER}, #{css,jdbcType=INTEGER}, #{floorStartTime,jdbcType=TIMESTAMP}, 
-      #{floorEndTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into AMC_SALE_FLOOR (floor, css, title, 
+      slogon, floor_start_time, floor_end_time, 
+      filter_content, recom_items, publish_state, 
+      create_by, create_time, update_by, 
+      update_time)
+    values (#{floor,jdbcType=INTEGER}, #{css,jdbcType=INTEGER}, #{title,jdbcType=CHAR}, 
+      #{slogon,jdbcType=VARCHAR}, #{floorStartTime,jdbcType=TIMESTAMP}, #{floorEndTime,jdbcType=TIMESTAMP}, 
+      #{filterContent,jdbcType=VARCHAR}, #{recomItems,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -128,11 +137,26 @@
       <if test="css != null">
         css,
       </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="slogon != null">
+        slogon,
+      </if>
       <if test="floorStartTime != null">
         floor_start_time,
       </if>
       <if test="floorEndTime != null">
         floor_end_time,
+      </if>
+      <if test="filterContent != null">
+        filter_content,
+      </if>
+      <if test="recomItems != null">
+        recom_items,
+      </if>
+      <if test="publishState != null">
+        publish_state,
       </if>
       <if test="createBy != null">
         create_by,
@@ -154,11 +178,26 @@
       <if test="css != null">
         #{css,jdbcType=INTEGER},
       </if>
+      <if test="title != null">
+        #{title,jdbcType=CHAR},
+      </if>
+      <if test="slogon != null">
+        #{slogon,jdbcType=VARCHAR},
+      </if>
       <if test="floorStartTime != null">
         #{floorStartTime,jdbcType=TIMESTAMP},
       </if>
       <if test="floorEndTime != null">
         #{floorEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="filterContent != null">
+        #{filterContent,jdbcType=VARCHAR},
+      </if>
+      <if test="recomItems != null">
+        #{recomItems,jdbcType=VARCHAR},
+      </if>
+      <if test="publishState != null">
+        #{publishState,jdbcType=INTEGER},
       </if>
       <if test="createBy != null">
         #{createBy,jdbcType=BIGINT},
@@ -192,11 +231,26 @@
       <if test="record.css != null">
         css = #{record.css,jdbcType=INTEGER},
       </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=CHAR},
+      </if>
+      <if test="record.slogon != null">
+        slogon = #{record.slogon,jdbcType=VARCHAR},
+      </if>
       <if test="record.floorStartTime != null">
         floor_start_time = #{record.floorStartTime,jdbcType=TIMESTAMP},
       </if>
       <if test="record.floorEndTime != null">
         floor_end_time = #{record.floorEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.filterContent != null">
+        filter_content = #{record.filterContent,jdbcType=VARCHAR},
+      </if>
+      <if test="record.recomItems != null">
+        recom_items = #{record.recomItems,jdbcType=VARCHAR},
+      </if>
+      <if test="record.publishState != null">
+        publish_state = #{record.publishState,jdbcType=INTEGER},
       </if>
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=BIGINT},
@@ -220,8 +274,13 @@
     set id = #{record.id,jdbcType=BIGINT},
       floor = #{record.floor,jdbcType=INTEGER},
       css = #{record.css,jdbcType=INTEGER},
+      title = #{record.title,jdbcType=CHAR},
+      slogon = #{record.slogon,jdbcType=VARCHAR},
       floor_start_time = #{record.floorStartTime,jdbcType=TIMESTAMP},
       floor_end_time = #{record.floorEndTime,jdbcType=TIMESTAMP},
+      filter_content = #{record.filterContent,jdbcType=VARCHAR},
+      recom_items = #{record.recomItems,jdbcType=VARCHAR},
+      publish_state = #{record.publishState,jdbcType=INTEGER},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_by = #{record.updateBy,jdbcType=BIGINT},
@@ -239,11 +298,26 @@
       <if test="css != null">
         css = #{css,jdbcType=INTEGER},
       </if>
+      <if test="title != null">
+        title = #{title,jdbcType=CHAR},
+      </if>
+      <if test="slogon != null">
+        slogon = #{slogon,jdbcType=VARCHAR},
+      </if>
       <if test="floorStartTime != null">
         floor_start_time = #{floorStartTime,jdbcType=TIMESTAMP},
       </if>
       <if test="floorEndTime != null">
         floor_end_time = #{floorEndTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="filterContent != null">
+        filter_content = #{filterContent,jdbcType=VARCHAR},
+      </if>
+      <if test="recomItems != null">
+        recom_items = #{recomItems,jdbcType=VARCHAR},
+      </if>
+      <if test="publishState != null">
+        publish_state = #{publishState,jdbcType=INTEGER},
       </if>
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=BIGINT},
@@ -264,8 +338,13 @@
     update AMC_SALE_FLOOR
     set floor = #{floor,jdbcType=INTEGER},
       css = #{css,jdbcType=INTEGER},
+      title = #{title,jdbcType=CHAR},
+      slogon = #{slogon,jdbcType=VARCHAR},
       floor_start_time = #{floorStartTime,jdbcType=TIMESTAMP},
       floor_end_time = #{floorEndTime,jdbcType=TIMESTAMP},
+      filter_content = #{filterContent,jdbcType=VARCHAR},
+      recom_items = #{recomItems,jdbcType=VARCHAR},
+      publish_state = #{publishState,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=BIGINT},

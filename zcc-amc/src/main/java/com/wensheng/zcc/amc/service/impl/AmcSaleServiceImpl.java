@@ -78,29 +78,23 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
-    public boolean updateFloor(AmcSaleFloor amcSaleFloor) throws Exception {
-        checkFilterContent(amcSaleFloor);
-        amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloor);
+    public boolean updateFloor(AmcSaleFloorVo amcSaleFloorVo) throws Exception {
+        checkFilterContent(amcSaleFloorVo);
+        amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloorVo.getAmcSaleFloor());
       return true;
     }
 
-    private void checkFilterContent(AmcSaleFloor amcSaleFloor) throws Exception {
-        amcSaleFloor.getFilterContent();
-        AmcSaleFilter amcSaleFilter = gson.fromJson(amcSaleFloor.getFilterContent(), AmcSaleFilter.class);
-        if(amcSaleFilter == null || StringUtils.isEmpty(amcSaleFloor.getFilterContent())){
-            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR, amcSaleFloor.getFilterContent());
+    private void checkFilterContent(AmcSaleFloorVo amcSaleFloorVo) throws Exception {
+        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
+        if(amcSaleFloorVo.getAmcRecommItem() != null && amcSaleFloorVo.getAmcRecommItem().getFilterContentItemList() != null &&
+        CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterContentItemList())){
+            amcSaleFloor.setRecomItems(gson.toJson(amcSaleFloorVo.getAmcRecommItem()));
         }
-        if(CollectionUtils.isEmpty(amcSaleFilter.getFilterContentItemList())){
-            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR, amcSaleFloor.getFilterContent());
+        if(amcSaleFloorVo.getAmcSaleFilter() != null && amcSaleFloorVo.getAmcSaleFilter().getFilterContentItemList() != null &&
+        CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterContentItemList())){
+            amcSaleFloor.setFilterContent(gson.toJson(amcSaleFloorVo.getAmcSaleFilter()));
         }
-        for(AmcFilterContentItem amcFilterContentItem: amcSaleFilter.getFilterContentItemList()){
-            if(amcFilterContentItem.getFilterType() == FilterTypeEnum.TAG.getType()){
-                AmcFilterContentTag amcFilterContentTag = (AmcFilterContentTag) amcFilterContentItem;
-                if(CollectionUtils.isEmpty(amcFilterContentTag.getTagIds())){
-                    throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR, amcSaleFloor.getFilterContent());
-                }
-            }
-        }
+
     }
 
     @Override
@@ -111,7 +105,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
-    public boolean updateFloorFilter(Long floorId, AmcSaleFilter amcSaleFloorFilter, AmcSaleFilter recommItems) {
+    public boolean updateFloorAllFilter(Long floorId, AmcSaleFilter amcSaleFloorFilter, AmcSaleFilter recommItems) {
         AmcSaleFloor amcSaleFloor = amcSaleFloorMapper.selectByPrimaryKey(floorId);
         if(amcSaleFloor == null ){
             return false;
@@ -123,6 +117,26 @@ public class AmcSaleServiceImpl implements AmcSaleService {
             amcSaleFloor.setRecomItems(gson.toJson(recommItems));
         }
         amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloor);
+        return true;
+    }
+
+    @Override
+    public boolean updateFloorFilterRecom(Long floorId, AmcSaleFilter recommItems) {
+        return false;
+    }
+
+    @Override
+    public boolean updateFloorFilter(Long floorId, AmcSaleFilter amcSaleFilter) {
+        AmcSaleFloor amcSaleFloor = amcSaleFloorMapper.selectByPrimaryKey(floorId);
+        if(amcSaleFloor == null ){
+            return false;
+        }
+        if(CollectionUtils.isEmpty(amcSaleFilter.getFilterContentItemList())){
+            log.error("empty filter content item list");
+            return false;
+        }
+        amcSaleFloor.setFilterContent(gson.toJson(amcSaleFilter));
+
         return true;
     }
 

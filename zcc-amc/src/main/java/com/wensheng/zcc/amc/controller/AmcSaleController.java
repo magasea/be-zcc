@@ -39,17 +39,13 @@ public class AmcSaleController {
   }
 
 
-  @RequestMapping(value = "/updateFloorWhole", method = RequestMethod.POST)
+  @RequestMapping(value = "/updateFloorWithFilter", method = RequestMethod.POST)
   @ResponseBody
-  boolean  updateFloorWhole(@RequestBody AmcSaleFloor amcSaleFloor) throws Exception {
+  boolean  updateFloorWithFilter(@RequestBody AmcSaleFloorVo amcSaleFloor) throws Exception {
     return amcSaleService.updateFloor(amcSaleFloor);
   }
-  @RequestMapping(value = "/updateFloorFilter", method = RequestMethod.POST)
-  @ResponseBody
-  boolean  updateFloorFilter(@RequestBody Long floorId, @RequestBody(required = false) AmcSaleFilter amcSaleFloorFilter,
-      @RequestBody(required = false) AmcSaleFilter recommItems) throws Exception {
-    return amcSaleService.updateFloorFilter(floorId, amcSaleFloorFilter, recommItems);
-  }
+
+
 
 
   @RequestMapping(value = "/updateFloorBasic", method = RequestMethod.POST)

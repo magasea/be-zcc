@@ -12,11 +12,15 @@ import java.util.List;
  */
 public interface AmcSaleService {
     public List<AmcSaleFloorVo> getFloors();
-    public boolean updateFloor(AmcSaleFloor amcSaleFloor) throws Exception;
+    public boolean updateFloor(AmcSaleFloorVo amcSaleFloorVo) throws Exception;
     public List<AmcSaleTag> getTags();
 
 
-    boolean updateFloorFilter(Long floorId, AmcSaleFilter amcSaleFloorFilter, AmcSaleFilter recommItems);
+    boolean updateFloorAllFilter(Long floorId, AmcSaleFilter amcSaleFloorFilter, AmcSaleFilter recommItems);
+
+    boolean updateFloorFilterRecom(Long floorId, AmcSaleFilter recommItems);
+
+    boolean updateFloorFilter(Long floorId, AmcSaleFilter amcSaleFilter);
 
     boolean updateFloorBasic(AmcSaleFloor amcSaleFloor);
 

@@ -120,4 +120,10 @@ public class TradInfoController {
   public void patchDupAdd() throws Exception {
     syncService.patchTrdDupAdd();
   }
+
+  @RequestMapping(value = "/refactData/patchRevisePhone", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchRevisePhone() throws Exception {
+    syncService.patchRevisePhone();
+  }
 }

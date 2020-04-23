@@ -69,6 +69,15 @@
     seller_id, seller_name, trd_contactor_name, trd_contactor_addr, data_status, data_quality
   </sql>
 
+  <sql id="All_Base_Column_List">
+    id, item_type, item_sub_type, trd_type, info_title, pack_count, info_id, info_source,
+    info_url, debt_province, trd_province, debt_city, trd_amount_orig, trd_amount, total_debt_amount,
+    trd_status, trd_date, pub_date, notes, buyer_type, buyer_id, seller_type, seller_id,
+    seller_name, trd_contactor_name, trd_contactor_addr, trd_contactor_phone, trd_contactor_tel,
+    trd_contactor_mobile, trd_contactor_address, trd_cmpycontactor_id, data_status, data_quality,
+    update_time, create_time, sync_time
+  </sql>
+
   <sql id="Base_List">
     ${prefix}id as id,
     ${prefix}item_type as item_type,
@@ -145,4 +154,38 @@
       order by ${orderByClause}
     </if>
   </select>
+
+  <select id="selectInfoByPhoneSign" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_INFO
+    where
+    trd_contactor_phone LIKE CONCAT('%',#{sign},'%')
+  </select>
+
+  <select id="selectInfoByRigitPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_INFO
+    where
+    LENGTH(trd_contactor_phone) <![CDATA[<=]]> 15 AND trd_contactor_phone !=-1
+  </select>
+
+  <select id="selectInfoByUnknowPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_INFO
+    where
+    trd_contactor_phone !=-1
+    AND trd_contactor_phone not LIKE '%、%'
+    AND trd_contactor_phone not LIKE '%/%'
+    AND LENGTH(trd_contactor_phone) > 15
+    AND trd_contactor_phone not LIKE '%，%'
+    AND trd_contactor_phone not LIKE '%；%'
+  </select>
+
+
 </mapper>

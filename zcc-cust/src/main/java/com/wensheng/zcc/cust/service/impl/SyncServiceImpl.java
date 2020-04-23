@@ -10,6 +10,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -98,6 +99,9 @@ public class SyncServiceImpl implements SyncService {
 
     @Autowired
   CustTrdInfoMapper custTrdInfoMapper;
+
+    @Autowired
+    CustTrdInfoExtMapper custTrdInfoExtMapper;
 
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
@@ -1439,6 +1443,86 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     String buyerAddress;
     String buyerEmail;
     String buyerIdcard;
+  }
+
+  @Override
+  public void patchRevisePhone(){
+    ArrayList<String> signList = new ArrayList();
+    signList.add("、");
+    signList.add("/");
+    signList.add("，");
+    signList.add("；");
+
+    for (String  sign: signList) {
+      List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectInfoByPhoneSign(sign);
+      for (CustTrdInfo custTrdInfo : custTrdInfoList) {
+
+        StringBuilder sbTrdContactorTel = new StringBuilder();
+        StringBuilder sbTrdContactorMobile = new StringBuilder();
+        String trdContactorPhone = custTrdInfo.getTrdContactorPhone();
+        String[] telMobiles =trdContactorPhone.split(sign);
+
+        for (int i = 0; i <telMobiles.length ; i++) {
+          Boolean isMobile = checkMobile(telMobiles[i]);
+          //手机号
+          if(isMobile){
+            if(sbTrdContactorMobile.length() >=1){
+              sbTrdContactorMobile.append(";");
+            }
+            sbTrdContactorMobile.append(telMobiles[i]);
+          }else {
+            //固话
+            if(sbTrdContactorTel.length() >=1){
+              sbTrdContactorTel.append(";");
+            }
+            sbTrdContactorTel.append(telMobiles[i]);
+          }
+        }
+        //存入收据库
+        CustTrdInfo custTrdInfoNew = new CustTrdInfo();
+        custTrdInfoNew.setId(custTrdInfo.getId());
+        if(sbTrdContactorTel.length()>=1){
+          custTrdInfoNew.setTrdContactorTel(sbTrdContactorTel.toString());
+        }
+        if(sbTrdContactorMobile.length()>=1){
+          custTrdInfoNew.setTrdContactorMobile(sbTrdContactorMobile.toString());
+        }
+        custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoNew);
+
+      }
+    }
+
+    //只有手机号和固话
+    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectInfoByRigitPhone();
+    for (CustTrdInfo custTrdInfo : custTrdInfoList){
+      String trdContactorPhone = custTrdInfo.getTrdContactorPhone();
+      Boolean isMobile = checkMobile(trdContactorPhone);
+      CustTrdInfo custTrdInfoNew = new CustTrdInfo();
+      custTrdInfoNew.setId(custTrdInfo.getId());
+      if(isMobile){
+        custTrdInfoNew.setTrdContactorMobile(trdContactorPhone);
+      }else {
+        custTrdInfoNew.setTrdContactorTel(trdContactorPhone);
+      }
+      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoNew);
+    }
+
+    //全部固话
+    List<CustTrdInfo> custTrdInfoListAllTel = custTrdInfoExtMapper.selectInfoByUnknowPhone();
+    for (CustTrdInfo custTrdInfo : custTrdInfoListAllTel) {
+      CustTrdInfo custTrdInfoNew = new CustTrdInfo();
+      custTrdInfoNew.setId(custTrdInfo.getId());
+      custTrdInfoNew.setTrdContactorTel(custTrdInfo.getTrdContactorPhone());
+      custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoNew);
+    }
+
+  }
+
+  public  Boolean checkMobile(String phone){
+    if(phone.length() == 11 && '1'==phone.charAt(0)){
+      return true;
+    }
+    return false;
   }
 
 }

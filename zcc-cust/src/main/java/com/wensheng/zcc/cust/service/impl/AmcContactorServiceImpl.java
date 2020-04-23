@@ -582,10 +582,17 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       custAmcCmpycontactorExample.setOrderByClause(" id desc ");
        custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     }else {
-      List<String> phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
-      List<String> mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
+
+      List<String> phonePrepList = null;
+      if (!"-1".equals(custTrdInfo.getTrdContactorTel())) {
+        phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
+      }
+      List<String> mobilePrepList = null;
+      if (!"-1".equals(custTrdInfo.getTrdContactorMobile())) {
+        mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
+      }
       custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactor(
-              cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
+          cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
     }
 
     //数据库无对应的联系人新增

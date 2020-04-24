@@ -36,6 +36,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -406,6 +407,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   private void syncTrdInfoForProvince(String provinceCode, String dateString) {
       //入参转换为时间
       SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+      formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
       Date inputDate = null;
       try {
         inputDate = formatter.parse(dateString);

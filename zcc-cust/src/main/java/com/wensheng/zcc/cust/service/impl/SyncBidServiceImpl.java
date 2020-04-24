@@ -28,6 +28,8 @@ import com.wensheng.zcc.cust.module.sync.PageWrapperBidResp;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.utils.TypeConvertUtil;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -127,6 +129,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   Map<String, String> errCmpyInfos;
   Map<String, String> errPersonInfos;
 
+
   boolean isTest = true;
   int pageForLog = 0;
   static volatile Boolean  isInSync = false;
@@ -215,7 +218,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
         try{
           for (String provinceCode: provinceCodes){
-            syncTrdInfoForProvince(provinceCode);
+            syncTrdInfoForProvince(provinceCode, null);
           }
         }catch(Exception ex){
           log.error(" error:", ex);
@@ -234,7 +237,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   @Override
   @LogExecutionTime
-  public  String syncWithTrdInfo(List<String> provinces){
+  public  String syncWithTrdInfo(List<String> provinces, String dateString){
 
       synchronized(isInSync){
 
@@ -252,7 +255,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
             try{
               for (String provinceCode: provinceCodes){
-                syncTrdInfoForProvince(provinceCode);
+                syncTrdInfoForProvince(provinceCode, dateString);
               }
             }catch(Exception ex){
               log.error(" error:", ex);
@@ -277,7 +280,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
       needSyncTrdInfoBaseOnPersonInfo = syncCustPersonInfo(province);
       if(needSyncTrdInfoBaseOnCmpyInfo || needSyncTrdInfoBaseOnPersonInfo){
-        syncWithTrdInfo(null);
+        syncWithTrdInfo(null,null);
       }
     }
   }
@@ -400,7 +403,17 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
 
-  private void syncTrdInfoForProvince(String provinceCode) {
+  private void syncTrdInfoForProvince(String provinceCode, String dateString) {
+      //入参转换为时间
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+      Date inputDate = null;
+      try {
+        inputDate = formatter.parse(dateString);
+      } catch (ParseException e) {
+        log.error("入参无法转换为时间：{}",dateString);
+        return;
+      }
+
       errorTrdInfos = new HashMap<>();
       errCmpyInfos = new HashMap<>();
       errPersonInfos = new HashMap<>();
@@ -417,7 +430,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         else{
           for(BidTrdInfoFromSync bidTrdInfoFromSync: pageWrapperResp.getDataList()){
-            handleTrdInfo(bidTrdInfoFromSync);
+            handleTrdInfo(bidTrdInfoFromSync, inputDate);
           }
           pageNum++;
         }
@@ -451,10 +464,19 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-  private void  handleTrdInfo(BidTrdInfoFromSync trdInfoFromSync) {
+  private void  handleTrdInfo(BidTrdInfoFromSync trdInfoFromSync, Date inputDate) {
 
     int action = -1;
     Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateTime());
+
+    //对比输入的时间，更新数据updateDate需在输入时间之后
+    if(inputDate.after(updateDate)){
+      log.info("同步爬虫数据在入参时间之前：{}",trdInfoFromSync);
+      return;
+    }
+
+
+
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getAuctionID());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);

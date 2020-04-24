@@ -7,7 +7,7 @@ import java.util.List;
 
 public interface SyncService {
 
-  public String syncWithTrdInfo(List<String> provinces);
+  public String syncWithTrdInfo(List<String> provinces,  String dateString);
   public void syncCustInfo();
 
   public boolean makeUpDataForMissDateOfTrade() throws ParseException;

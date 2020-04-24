@@ -2,10 +2,11 @@ package com.wensheng.zcc.cust.service;
 
 import java.text.ParseException;
 import java.util.List;
+import org.springframework.web.bind.annotation.RequestBody;
 
 public interface SyncBidService {
 
-  public String syncWithTrdInfo(List<String> provinces);
+  public String syncWithTrdInfo(List<String> provinces, String dateString);
   public void syncCustInfo();
 
 

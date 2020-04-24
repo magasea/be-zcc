@@ -130,8 +130,9 @@ public class SwaggerConfig {
     return new ApiInfoBuilder().title("My API title").description("")
         .termsOfServiceUrl("https://www.wenshengamc.com/api")
         .contact(new Contact("Chenwei", "http://www.example.com", "chenwei@wenshengamc.com"))
-        .license("Open Source").licenseUrl("https://www.wenshengamc.com").version("1.0.0").build();
+        .license("Open Source").licenseUrl("https://www.wenshengamc.com").version("2.0").build();
   }
+
 
 
 

@@ -114,6 +114,9 @@ spring:
   data:
     mongodb:
       auto-index-creation: false
+#  http:
+#    converters:
+#      preferred-json-mapper: gson
 
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module

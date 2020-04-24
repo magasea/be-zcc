@@ -74,6 +74,7 @@ public class ExceptionUtils {
     DUPLICATE_ITEM_ERROR(1044, "duplicate item in db ", "有重复数据"),
     INVALID_JSON_CONTENT_ERROR(1045, "invalid json content error ", "内容不符合json格式"),
     NO_CMPY_CONTACTOR_ERROR(1046, "no CmpyContactor in db ", "数据库没有公司联系人"),
+    AMCSALE_RECOMMITEM_ERROR(1047, "amcsale recommitem error ", ""),
     ;
     int code;
     String name;

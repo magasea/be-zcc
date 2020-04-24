@@ -711,8 +711,8 @@ public class AmcDebtController {
   @LogExecutionTime
   @RequestMapping(value = "/getDebtGeoNear", method = RequestMethod.POST)
   @ResponseBody
-  public List<AmcDebtExtVo> getDebtGeoNear(@RequestBody GeoJsonPoint geoJsonPoint) throws Exception {
-    return amcDebtService.queryAllNearByDebts(geoJsonPoint);
+  public List<AmcDebtVo> getDebtGeoNear(@RequestBody GeoJsonPoint geoJsonPoint, @RequestParam(required = false)Long[] distances ) throws Exception {
+    return amcDebtService.queryAllNearByDebts(geoJsonPoint, distances);
   }
 
   @RequestMapping(value = "/patchAmcDebtCode", method = RequestMethod.POST)

@@ -8,6 +8,9 @@ import lombok.Data;
 public class AmcSaleFilter implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  List<AmcFilterContentItem> filterContentItemList;
+  List<AmcFilterContentAsset> filterAssetItemList;
+  List<AmcFilterContentDebt> filterDebtItemList;
+  List<AmcFilterContentTag> filterTagItemList;
+
 
 }

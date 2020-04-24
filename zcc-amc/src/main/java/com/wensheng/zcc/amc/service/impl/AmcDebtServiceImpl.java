@@ -81,8 +81,10 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
+import org.springframework.data.geo.Metrics;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -323,7 +325,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return debtImages.get(0);
   }
 
-  @LogExecutionTime
+  private List<DebtImage> queryImages(List<Long> debtIds){
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcDebtId").in(debtIds));
+    List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    return debtImages;
+  }
+
   @Override
   public AmcDebtExtVo get(Long amcDebtId, boolean needAdditionInfo) throws Exception {
 
@@ -334,7 +342,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
     AmcDebtVo amcDebtVo = Dao2VoUtils.convertDo2Vo(amcDebtExts.get(0).getDebtInfo());
-    amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExts.get(0).getAmcAssets()));
+
+
 //    AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
 //    AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
 //
@@ -347,10 +356,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Query query = new Query();
     query.addCriteria(Criteria.where("amcDebtId").is(amcDebtId));
     if(needAdditionInfo){
+      amcDebtVo.setAssetVos(Dao2VoUtils.convertDoList2VoList(amcDebtExts.get(0).getAmcAssets()));
       List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
       if(!CollectionUtils.isEmpty(debtAdditionals)){
         amcDebtVo.setDebtAdditional(debtAdditionals.get(0));
       }
+
     }
 
     query = new Query();
@@ -361,18 +372,20 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
 
+    Map<Long, AssetAdditional> assetAdditionalMap = getAssetAdditions(amcDebtId);
+    for( AmcAssetVo amcAssetVo:  amcDebtExtVo.getAmcDebtVo().getAssetVos()){
+      if(assetAdditionalMap.containsKey(amcAssetVo.getId())){
+        amcAssetVo.setAssetAdditional(assetAdditionalMap.get(amcAssetVo.getId()));
+      }
+    }
     AmcInfo amcInfo = getAmcInfo(amcDebtId);
 
     List<AmcDebtor> amcDebtors = getDebtors(amcDebtId);
 
 
     AmcOrigCreditor origCreditor = getOriginCreditor(amcDebtId);
-    Map<Long, AssetAdditional> assetAdditionalMap = getAssetAdditions(amcDebtId);
-    for( AmcAssetVo amcAssetVo:  amcDebtExtVo.getAmcDebtVo().getAssetVos()){
-        if(assetAdditionalMap.containsKey(amcAssetVo.getId())){
-          amcAssetVo.setAssetAdditional(assetAdditionalMap.get(amcAssetVo.getId()));
-        }
-    }
+
+
 
     amcDebtExtVo.setAmcInfos(amcInfo);
     amcDebtExtVo.setAmcDebtors(amcDebtors);
@@ -1213,16 +1226,47 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   }
 
+
+
   @Override
-  public List<AmcDebtExtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint) {
-    NearQuery nearQuery =  NearQuery.near(geoJsonPoint).maxDistance(0.0).maxDistance(1000).inKilometers();
+  public List<AmcDebtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint, Long[] distances) throws Exception {
+    Long shortDistance = 0L;
+    Long longDistance = 1000L;
+    if(distances != null && distances.length >= 2){
+      if(distances[0].compareTo(distances[1]) > 0){
+        shortDistance = distances[1];
+        longDistance = distances[0];
+      }else{
+        longDistance = distances[1];
+        shortDistance = distances[0];
+      }
+    }
+
+
+    NearQuery nearQuery =  NearQuery.near(geoJsonPoint).minDistance(new Distance(shortDistance, Metrics.KILOMETERS)).maxDistance(new Distance(longDistance,
+        Metrics.KILOMETERS)).inKilometers();
     GeoResults<DebtAdditional> debtAdditionalGeoResults = wszccTemplate.geoNear(nearQuery, DebtAdditional.class);
-    List<AmcDebtExtVo> amcDebtVos = new ArrayList<>();
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    List<Long> debtIds = debtAdditionalGeoResults.getContent().stream().map(item->item.getContent().getAmcDebtId()).collect(
+        Collectors.toUnmodifiableList());
+    if(CollectionUtils.isEmpty(debtIds)){
+      log.error("There is no nearby debts");
+      return new ArrayList<>();
+    }
+    List<AmcDebtVo> amcDebtVosQuery = getByIdsSimple(debtIds);
+    Map<Long, AmcDebtVo> amcDebtVoMap = new HashMap<>();
+    amcDebtVosQuery.forEach(item-> amcDebtVoMap.put(item.getId(), item));
     for(GeoResult<DebtAdditional> geoResult: debtAdditionalGeoResults.getContent()) {
       try {
-        AmcDebtExtVo amcDebtExtVo = get(geoResult.getContent().getAmcDebtId(), false);
-        amcDebtExtVo.getAmcDebtVo().setDebtAdditional(geoResult.getContent());
-        amcDebtVos.add(amcDebtExtVo);
+
+        AmcDebtVo amcDebtVoFinal = amcDebtVoMap.get(geoResult.getContent().getAmcDebtId());
+        if(amcDebtVoFinal == null){
+          continue;
+        }
+        if(geoResult.getContent() != null){
+          amcDebtVoFinal.setDebtAdditional(geoResult.getContent());
+        }
+        amcDebtVos.add(amcDebtVoFinal);
       } catch (Exception e) {
         log.error("Failed to get amcDebtExtVo ", e);
       }
@@ -1240,6 +1284,27 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());;
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
     return amcDebts;
+  }
+
+  public List<AmcDebtVo> getByIdsSimple(List<Long> debtIds) {
+    if(CollectionUtils.isEmpty(debtIds)){
+      return new ArrayList<>();
+    }
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateNotEqualTo(PublishStateEnum.PUBLISHED.getStatus());;
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+
+    List<DebtImage> debtImages = queryImages(debtIds);
+    Map<Long, DebtImage> debtImageMap = new HashMap<>();
+    debtImages.forEach(item -> debtImageMap.put(item.getDebtId(), item));
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    for(AmcDebt amcDebt: amcDebts){
+      AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
+      amcDebtVo.setDebtImage(debtImageMap.get(amcDebtVo.getId()));
+      amcDebtVos.add(amcDebtVo);
+
+    }
+    return amcDebtVos;
   }
 
   @Override

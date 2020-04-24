@@ -13,6 +13,8 @@ public enum DebtTypeEnum {
     LOST(2, "损失类"),
     BORROW(3, "拆借类"),
     PLEDGE(4, "质押类"),
+    SUSPICIOUS(5, "可疑类"),
+    EQUITY(4, "质押类"),
 
 
     ;

@@ -115,7 +115,7 @@ public interface AmcDebtService {
 
   public void searchGeoInfoForDebtByCourt();
 
-  List<AmcDebtExtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint);
+  List<AmcDebtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint, Long[] distances) throws Exception;
 
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
   List<AmcDebt> getDebtSimpleByTitleLike(String title);

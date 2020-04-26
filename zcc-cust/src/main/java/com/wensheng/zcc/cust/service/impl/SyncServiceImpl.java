@@ -1540,6 +1540,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
   public  Boolean checkMobile(String phone){
+    phone = phone.trim();
     if(phone.length() == 11 && '1'==phone.charAt(0)){
       return true;
     }

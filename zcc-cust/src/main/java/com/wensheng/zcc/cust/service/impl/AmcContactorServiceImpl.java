@@ -955,6 +955,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   public  Boolean checkMobile(String phone){
+    phone = phone.trim();
     if(phone.length() == 11 && '1'==phone.charAt(0)){
       return true;
     }

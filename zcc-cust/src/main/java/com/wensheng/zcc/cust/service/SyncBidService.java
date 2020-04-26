@@ -20,4 +20,6 @@ public interface SyncBidService {
 
   void patchTrdUrl();
 
+  public void patchTrdPersonRevisePhone();
+
 }

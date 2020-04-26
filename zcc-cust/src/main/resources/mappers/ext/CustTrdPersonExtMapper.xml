@@ -70,6 +70,11 @@
 <!--    id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, -->
 <!--    addr, notes, create_by, create_time-->
 <!--  </sql>-->
+  <sql id="All_Base_Column_List">
+    id, orig_id, name, age_range, gender, mobile_num, history_mobile_num, tel_num, email,
+    id_card_num, province, city, addr, history_addr, notes, data_status, data_quality,
+    update_time, update_by, create_by, create_time, sync_time
+  </sql>
 
   <sql id="Base_Column_List">
     ${prefix}id as id,
@@ -306,4 +311,37 @@
     group by ctp.id
     ) as tmp
   </select>
+
+  <select id="selectTrdPersonByPhoneSign" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_PERSON
+    where
+    mobile_num LIKE CONCAT('%',#{sign},'%')
+  </select>
+
+  <select id="selectTrdPersonByRightPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_PERSON
+    where
+    LENGTH(mobile_num) <![CDATA[<=]]> 15 AND mobile_num !=-1
+  </select>
+
+  <select id="selectTrdPersonByUnknowPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_PERSON
+    where
+    mobile_num !=-1
+    AND mobile_num not LIKE '%、%'
+    AND mobile_num not LIKE '%/%'
+    AND LENGTH(mobile_num) > 15
+    AND mobile_num not LIKE '%，%'
+    AND mobile_num not LIKE '%；%'
+  </select>
+
 </mapper>

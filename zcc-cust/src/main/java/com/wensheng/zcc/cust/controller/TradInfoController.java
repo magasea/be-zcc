@@ -126,4 +126,10 @@ public class TradInfoController {
   public void patchTrdInfoRevisePhone() throws Exception {
     syncService.patchTrdInfoRevisePhone();
   }
+
+  @RequestMapping(value = "/refactData/patchTrdPersonRevisePhone", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchTrdPersonRevisePhone() throws Exception {
+    syncBidService.patchTrdPersonRevisePhone();
+  }
 }

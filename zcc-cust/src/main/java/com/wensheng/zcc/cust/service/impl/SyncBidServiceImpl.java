@@ -9,6 +9,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -98,7 +99,10 @@ public class SyncBidServiceImpl implements SyncBidService {
     CustTrdSellerMapper custTrdSellerMapper;
 
     @Autowired
-  CustTrdInfoMapper custTrdInfoMapper;
+    CustTrdInfoMapper custTrdInfoMapper;
+
+    @Autowired
+    CustTrdPersonExtMapper custTrdPersonExtMapper;
 
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
@@ -1220,6 +1224,92 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
   }
 
+  @Override
+  public void patchTrdPersonRevisePhone(){
+    ArrayList<String> signList = new ArrayList();
+    signList.add("、");
+    signList.add("/");
+    signList.add("，");
+
+    for (String  sign: signList) {
+      List<CustTrdPerson> custTrdInfoList = custTrdPersonExtMapper.selectTrdPersonByPhoneSign(sign);
+
+      for (CustTrdPerson custTrdPerson : custTrdInfoList) {
+
+        StringBuilder sbMobileNum = new StringBuilder();
+        StringBuilder sbTelNum = new StringBuilder();
+        String mobileNum = custTrdPerson.getMobileNum();
+        String[] telMobiles =mobileNum.split(sign);
+
+        for (int i = 0; i <telMobiles.length ; i++) {
+          Boolean isMobile = checkMobile(telMobiles[i]);
+          //手机号
+          if(isMobile){
+            if(sbMobileNum.length() >=1){
+              sbMobileNum.append(";");
+            }
+            sbMobileNum.append(telMobiles[i]);
+          }else {
+            //固话
+            if(sbTelNum.length() >=1){
+              sbTelNum.append(";");
+            }
+            sbTelNum.append(telMobiles[i]);
+          }
+        }
+        //存入收据库
+        CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+        custTrdPersonNew.setId(custTrdPerson.getId());
+        if(sbTelNum.length()>=1){
+          custTrdPersonNew.setTelNum(sbTelNum.toString());
+        }
+        if(sbMobileNum.length()>=1){
+          custTrdPersonNew.setMobileNum(sbMobileNum.toString());
+        }else {
+          custTrdPersonNew.setMobileNum("-1");
+        }
+        custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
+
+      }
+    }
+
+    //只有手机号和固话
+    List<CustTrdPerson> custTrdPersonList = custTrdPersonExtMapper.selectTrdPersonByRightPhone();
+    for (CustTrdPerson custTrdPerson : custTrdPersonList){
+      String mobileNum = custTrdPerson.getMobileNum();
+      Boolean isMobile = checkMobile(mobileNum);
+      CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+      custTrdPersonNew.setId(custTrdPerson.getId());
+      if(!isMobile){
+        custTrdPersonNew.setTelNum(mobileNum);
+        custTrdPersonNew.setMobileNum("-1");
+        custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
+      }
+    }
+
+    //全部固话
+    List<CustTrdPerson> custTrdPersonListAllTel = custTrdPersonExtMapper.selectTrdPersonByUnknowPhone();
+    for (CustTrdPerson custTrdPerson : custTrdPersonListAllTel) {
+      CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+      custTrdPersonNew.setId(custTrdPerson.getId());
+      custTrdPersonNew.setTelNum(custTrdPerson.getMobileNum());
+      custTrdPersonNew.setMobileNum("-1");
+      custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
+    }
+
+  }
+
+  public static   Boolean checkMobile(String phone){
+    phone = phone.trim();
+    if(phone.length() == 11 && '1'==phone.charAt(0)){
+      return true;
+    }
+    return false;
+  }
+
+  public static void main(String[] args) {
+    checkMobile(" 1367159666");
+  }
 }
 
 

@@ -20,9 +20,7 @@ public interface CustAmcCmpycontactorExtMapper {
                                                    @Param("mobileList") List<String> mobileList);
 
     List<CustAmcCmpycontactor> selectCmpyContactorByPhoneSign(@Param("sign") String sign);
-
     List<CustAmcCmpycontactor> selectCmpyContactorByRightPhone();
-
     List<CustAmcCmpycontactor> selectCmpyContactorByUnknowPhone();
 
 }

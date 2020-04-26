@@ -50,17 +50,17 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Override
   public void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception {
-    //手机号放在mobileUpdate
+    //兼容老逻辑手机号放在mobileUpdate
     if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
       custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
     }
-    //固话号放在phoneUpdate
+    //兼容老逻辑固话号放在phoneUpdate
     if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
       custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
     }
 
     //first check name and phone unique
-    List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorByPhoneNo(custAmcCmpycontactor);
+    List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorBymobileList(custAmcCmpycontactor);
 
     if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
       //cannot insert
@@ -81,18 +81,13 @@ public class AmcContactorServiceImpl implements AmcContactorService {
    * @param custAmcCmpycontactor
    * @return
    */
-  private List<CustAmcCmpycontactor> queryCmpyContactorByPhoneNo(CustAmcCmpycontactor custAmcCmpycontactor) {
-    List<String> phoneUpdateList = null;
-    if (null != custAmcCmpycontactor.getPhoneUpdate()) {
-      phoneUpdateList = Arrays.asList(custAmcCmpycontactor.getPhoneUpdate().split(";"));
-    }
+  private List<CustAmcCmpycontactor> queryCmpyContactorBymobileList(CustAmcCmpycontactor custAmcCmpycontactor) {
     List<String> mobileUpdateList = null;
     if (null != custAmcCmpycontactor.getMobileUpdate()) {
       mobileUpdateList = Arrays.asList(custAmcCmpycontactor.getMobileUpdate().split(";"));
     }
-
-    return custAmcCmpycontactorExtMapper.selectCmpyContactor(custAmcCmpycontactor.getCompany(),
-            custAmcCmpycontactor.getName(), phoneUpdateList, mobileUpdateList);
+    return custAmcCmpycontactorExtMapper.selectCmpyContactorBymobileList(custAmcCmpycontactor.getCompany(),
+            custAmcCmpycontactor.getName(), mobileUpdateList);
   }
 
   @Override
@@ -582,17 +577,12 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       custAmcCmpycontactorExample.setOrderByClause(" id desc ");
        custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     }else {
-
-      List<String> phonePrepList = null;
-      if (!"-1".equals(custTrdInfo.getTrdContactorTel())) {
-        phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
-      }
       List<String> mobilePrepList = null;
       if (!"-1".equals(custTrdInfo.getTrdContactorMobile())) {
         mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
       }
-      custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactor(
-          cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
+      custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactorBymobileList(
+          cmpyName, custTrdInfo.getTrdContactorName(), mobilePrepList);
     }
 
     //数据库无对应的联系人新增

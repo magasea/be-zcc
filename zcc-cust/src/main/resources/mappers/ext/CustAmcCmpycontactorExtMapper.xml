@@ -99,6 +99,13 @@
     ${prefix}data_quality as ${alias}data_quality
   </sql>
 
+  <sql id="Base_Column_List">
+    id, name, phone, mobile, trd_phone, mobile_update, mobile_prep, mobile_history, phone_update,
+    phone_prep, phone_history, province, city, county, address, title, cmpy_id, company,
+    branch_cmpy, history_cmpy, recorder_name, favorite_city_update, favorite_type_update,
+    fav_type_note, note, create_by, create_time, update_by, update_time
+  </sql>
+
   <select id="selectByFilter"
     parameterType="com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExtExample"
     resultMap="BaseResultMap">
@@ -160,6 +167,39 @@
       )
     </if>
     order by id desc
+  </select>
+
+
+  <select id="selectCmpyContactorByPhoneSign" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_AMC_CMPYCONTACTOR
+    where
+    trd_phone LIKE CONCAT('%',#{sign},'%')
+  </select>
+
+  <select id="selectCmpyContactorByRightPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_AMC_CMPYCONTACTOR
+    where
+    LENGTH(trd_phone) <![CDATA[<=]]> 15 AND trd_phone !=-1
+  </select>
+
+  <select id="selectCmpyContactorByUnknowPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper.BaseResultMap">
+    select
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_AMC_CMPYCONTACTOR
+    where
+    trd_phone !=-1
+    AND trd_phone not LIKE '%、%'
+    AND trd_phone not LIKE '%/%'
+    AND LENGTH(trd_phone) > 15
+    AND trd_phone not LIKE '%，%'
+    AND trd_phone not LIKE '%；%'
   </select>
 
 

@@ -121,9 +121,9 @@ public class TradInfoController {
     syncService.patchTrdDupAdd();
   }
 
-  @RequestMapping(value = "/refactData/patchRevisePhone", method = RequestMethod.POST)
+  @RequestMapping(value = "/refactData/patchTrdInfoRevisePhone", method = RequestMethod.POST)
   @ResponseBody
-  public void patchRevisePhone() throws Exception {
-    syncService.patchRevisePhone();
+  public void patchTrdInfoRevisePhone() throws Exception {
+    syncService.patchTrdInfoRevisePhone();
   }
 }

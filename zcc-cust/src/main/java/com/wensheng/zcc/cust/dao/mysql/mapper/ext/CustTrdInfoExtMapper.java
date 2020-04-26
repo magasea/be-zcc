@@ -13,7 +13,7 @@ public interface CustTrdInfoExtMapper {
 
     List<CustTrdInfo> selectInfoByPhoneSign(@Param("sign") String sign);
 
-    List<CustTrdInfo> selectInfoByRigitPhone();
+    List<CustTrdInfo> selectInfoByRightPhone();
 
     List<CustTrdInfo> selectInfoByUnknowPhone();
 

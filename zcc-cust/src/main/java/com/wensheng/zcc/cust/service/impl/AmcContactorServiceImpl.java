@@ -878,4 +878,87 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
     }
   }
+
+
+  @Override
+  public void patchCmpycontactorRevisePhone(){
+    ArrayList<String> signList = new ArrayList();
+    signList.add("、");
+    signList.add("/");
+    signList.add("，");
+    signList.add("；");
+
+    for (String  sign: signList) {
+      List<CustAmcCmpycontactor> custAmcCmpycontactorList = custAmcCmpycontactorExtMapper.
+          selectCmpyContactorByPhoneSign(sign);
+      for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactorList) {
+
+        StringBuilder sbPhonePrep = new StringBuilder();
+        StringBuilder sbMobilePrep = new StringBuilder();
+        String trdPhone = custAmcCmpycontactor.getTrdPhone();
+        String[] phoneMobiles =trdPhone.split(sign);
+
+        for (int i = 0; i <phoneMobiles.length ; i++) {
+          Boolean isMobile = checkMobile(phoneMobiles[i]);
+          //手机号
+          if(isMobile){
+            if(sbMobilePrep.length() >=1){
+              sbMobilePrep.append(";");
+            }
+            sbMobilePrep.append(phoneMobiles[i]);
+          }else {
+            //固话
+            if(sbPhonePrep.length() >=1){
+              sbPhonePrep.append(";");
+            }
+            sbPhonePrep.append(phoneMobiles[i]);
+          }
+        }
+        //存入数据库
+        CustAmcCmpycontactor custAmcCmpycontactorNew = new CustAmcCmpycontactor();
+        custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+        if(sbPhonePrep.length()>=1){
+          custAmcCmpycontactorNew.setPhonePrep(sbPhonePrep.toString());
+        }
+        if(sbMobilePrep.length()>=1){
+          custAmcCmpycontactorNew.setMobilePrep(sbMobilePrep.toString());
+        }
+        custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+
+      }
+    }
+
+    //只有手机号和固话
+    List<CustAmcCmpycontactor> custAmcCmpycontactorList = custAmcCmpycontactorExtMapper.selectCmpyContactorByRightPhone();
+    for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactorList){
+      String trdPhone = custAmcCmpycontactor.getTrdPhone();
+      Boolean isMobile = checkMobile(trdPhone);
+
+      CustAmcCmpycontactor custAmcCmpycontactorNew = new CustAmcCmpycontactor();
+      custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+      if(isMobile){
+        custAmcCmpycontactorNew.setMobilePrep(trdPhone);
+      }else {
+        custAmcCmpycontactorNew.setPhonePrep(trdPhone);
+      }
+      custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+    }
+
+    //全部固话
+    List<CustAmcCmpycontactor> custAmcCmpycontactorListAllTel = custAmcCmpycontactorExtMapper.selectCmpyContactorByUnknowPhone();
+    for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactorListAllTel) {
+      CustAmcCmpycontactor custAmcCmpycontactorNew = new CustAmcCmpycontactor();
+      custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+      custAmcCmpycontactorNew.setPhonePrep(custAmcCmpycontactor.getTrdPhone());
+      custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+    }
+  }
+
+  public  Boolean checkMobile(String phone){
+    if(phone.length() == 11 && '1'==phone.charAt(0)){
+      return true;
+    }
+    return false;
+  }
+
 }

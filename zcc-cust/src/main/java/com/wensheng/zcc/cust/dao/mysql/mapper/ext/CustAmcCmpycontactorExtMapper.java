@@ -2,6 +2,8 @@ package com.wensheng.zcc.cust.dao.mysql.mapper.ext;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExtExample;
 import java.util.List;
@@ -16,5 +18,11 @@ public interface CustAmcCmpycontactorExtMapper {
                                                    @Param("name") String name,
                                                    @Param("phoneList") List<String> phoneList,
                                                    @Param("mobileList") List<String> mobileList);
+
+    List<CustAmcCmpycontactor> selectCmpyContactorByPhoneSign(@Param("sign") String sign);
+
+    List<CustAmcCmpycontactor> selectCmpyContactorByRightPhone();
+
+    List<CustAmcCmpycontactor> selectCmpyContactorByUnknowPhone();
 
 }

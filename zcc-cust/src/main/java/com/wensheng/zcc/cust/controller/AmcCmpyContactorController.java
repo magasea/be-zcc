@@ -83,4 +83,10 @@ public class AmcCmpyContactorController {
   public void initCmpyAmcContactor(){
      amcContactorService.initCmpyAmcContactor();
   }
+
+  @RequestMapping(value = "/refactData/patchCmpycontactorRevisePhone", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchCmpycontactorRevisePhone() throws Exception {
+    amcContactorService.patchCmpycontactorRevisePhone();
+  }
 }

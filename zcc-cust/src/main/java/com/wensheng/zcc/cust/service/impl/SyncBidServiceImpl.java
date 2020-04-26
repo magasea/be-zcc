@@ -30,6 +30,7 @@ import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.utils.TypeConvertUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
@@ -1148,13 +1149,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   }
 
-
-
-
-
-
-
-
+  @Override
   public void updateBuyerCompanyInfoByIds(String id){
     CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(id);
     CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
@@ -1224,7 +1219,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       }
     }
   }
-
 
 }
 

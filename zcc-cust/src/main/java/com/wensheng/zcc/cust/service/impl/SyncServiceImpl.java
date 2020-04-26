@@ -1066,6 +1066,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     return dataQuality;
   }
 
+  @Override
   public void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy){
     custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
     custTrdCmpy.setAnnuReptPhone(custCmpyInfoFromSync.getAnnuReptPhone());
@@ -1466,7 +1467,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
   @Override
-  public void patchRevisePhone(){
+  public void patchTrdInfoRevisePhone(){
     ArrayList<String> signList = new ArrayList();
     signList.add("、");
     signList.add("/");
@@ -1513,7 +1514,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
 
     //只有手机号和固话
-    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectInfoByRigitPhone();
+    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectInfoByRightPhone();
     for (CustTrdInfo custTrdInfo : custTrdInfoList){
       String trdContactorPhone = custTrdInfo.getTrdContactorPhone();
       Boolean isMobile = checkMobile(trdContactorPhone);

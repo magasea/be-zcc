@@ -11,6 +11,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -29,6 +30,7 @@ import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.module.sync.TrdInfoFromSync;
 import com.wensheng.zcc.cust.service.SyncService;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -36,6 +38,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -87,6 +90,9 @@ public class SyncServiceImpl implements SyncService {
 
     @Autowired
     CustTrdPersonMapper custTrdPersonMapper;
+
+    @Autowired
+    CustTrdPersonExtMapper custTrdPersonExtMapper;
 
     @Autowired
     CustRegionMapper custRegionMapper;
@@ -232,7 +238,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
         try{
           for (String provinceCode: provinceCodes){
-            syncTrdInfoForProvince(provinceCode);
+            syncTrdInfoForProvince(provinceCode, null);
           }
         }catch(Exception ex){
           log.error(" error:", ex);
@@ -251,7 +257,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   @Override
   @LogExecutionTime
-  public  String syncWithTrdInfo(List<String> provinces){
+  public  String syncWithTrdInfo(List<String> provinces,  String dateString){
 
       synchronized(isInSync){
 
@@ -269,7 +275,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
             try{
               for (String provinceCode: provinceCodes){
-                syncTrdInfoForProvince(provinceCode);
+                syncTrdInfoForProvince(provinceCode, dateString);
               }
             }catch(Exception ex){
               log.error(" error:", ex);
@@ -294,7 +300,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
       needSyncTrdInfoBaseOnPersonInfo = syncCustPersonInfo(province);
       if(needSyncTrdInfoBaseOnCmpyInfo || needSyncTrdInfoBaseOnPersonInfo){
-        syncWithTrdInfo(null);
+        syncWithTrdInfo(null,null);
       }
     }
   }
@@ -417,7 +423,19 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
 
-  private void syncTrdInfoForProvince(String provinceCode) {
+  private void syncTrdInfoForProvince(String provinceCode, String dateString) {
+
+    //入参转换为时间
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+    Date inputDate = null;
+    try {
+      inputDate = formatter.parse(dateString);
+    } catch (ParseException e) {
+      log.error("入参无法转换为时间：{}",dateString);
+      return;
+    }
+
       errorTrdInfos = new HashMap<>();
       errCmpyInfos = new HashMap<>();
       errPersonInfos = new HashMap<>();
@@ -434,7 +452,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         else{
           for(TrdInfoFromSync trdInfoFromSync: pageWrapperResp.getList()){
-            handleTrdInfo(trdInfoFromSync);
+            handleTrdInfo(trdInfoFromSync, inputDate);
           }
           pageNum++;
         }
@@ -468,10 +486,16 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-  private void  handleTrdInfo(TrdInfoFromSync trdInfoFromSync) {
+  private void  handleTrdInfo(TrdInfoFromSync trdInfoFromSync, Date inputDate) {
 
     int action = -1;
     Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateDate());
+    //对比输入的时间，更新数据updateDate需在输入时间之后
+    if(inputDate.after(updateDate)){
+      log.info("同步爬虫数据在入参时间之前：{}",trdInfoFromSync);
+      return;
+    }
+
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getId());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
@@ -637,15 +661,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return custTrdSeller.getId();
     }
 
+    String mobileNum =StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum();
+    List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+    List<CustTrdPerson> custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
+        StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
+        mobileList);
 
-
-
-    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
-        custPersonInfoFromSync.getName()).andMobileNumEqualTo(
-        StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
-        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
-    List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
     int action = -1;
 
     if(CollectionUtils.isEmpty(custTrdPeople)){
@@ -899,7 +920,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
-    custTrdCmpyExample.or().andHistoryCmpyNameLike(String.format("%s%s%s","%",custCmpyInfoFromSync.getCmpyName(),"%"));
+    custTrdCmpyExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",custCmpyInfoFromSync.getCmpyName(),"%"));
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
     int action = -1;
     Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
@@ -1046,6 +1067,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     return dataQuality;
   }
 
+  @Override
   public void copyCmpySync2CmpyInfo(CustCmpyInfoFromSync custCmpyInfoFromSync, CustTrdCmpy custTrdCmpy){
     custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
     custTrdCmpy.setAnnuReptPhone(custCmpyInfoFromSync.getAnnuReptPhone());
@@ -1446,7 +1468,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
   @Override
-  public void patchRevisePhone(){
+  public void patchTrdInfoRevisePhone(){
     ArrayList<String> signList = new ArrayList();
     signList.add("、");
     signList.add("/");
@@ -1460,6 +1482,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         StringBuilder sbTrdContactorTel = new StringBuilder();
         StringBuilder sbTrdContactorMobile = new StringBuilder();
         String trdContactorPhone = custTrdInfo.getTrdContactorPhone();
+        trdContactorPhone = trdContactorPhone.replace(";","；");
+        trdContactorPhone = trdContactorPhone.replace(",","，");
         String[] telMobiles =trdContactorPhone.split(sign);
 
         for (int i = 0; i <telMobiles.length ; i++) {
@@ -1493,7 +1517,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
 
     //只有手机号和固话
-    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectInfoByRigitPhone();
+    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectInfoByRightPhone();
     for (CustTrdInfo custTrdInfo : custTrdInfoList){
       String trdContactorPhone = custTrdInfo.getTrdContactorPhone();
       Boolean isMobile = checkMobile(trdContactorPhone);
@@ -1519,6 +1543,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
   public  Boolean checkMobile(String phone){
+    phone = phone.trim();
     if(phone.length() == 11 && '1'==phone.charAt(0)){
       return true;
     }

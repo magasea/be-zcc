@@ -23,4 +23,6 @@ public interface AmcContactorService {
 
   void initCmpyAmcContactorOfCmpy(Long cmpyId);
 
+  void patchCmpycontactorRevisePhone();
+
 }

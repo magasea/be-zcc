@@ -135,7 +135,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     //按照公司名称和公司历史名称进行查询
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(custTrdCmpy.getCmpyName());
-    custTrdCmpyExtExample.or().andHistoryCmpyNameLike(String.format("%s%s%s","%",custTrdCmpy.getCmpyName(),"%"));
+    custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",custTrdCmpy.getCmpyName(),"%"));
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     return custTrdCmpies;
   }

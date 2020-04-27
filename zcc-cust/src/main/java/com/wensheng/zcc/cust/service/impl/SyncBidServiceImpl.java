@@ -9,6 +9,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -28,12 +29,16 @@ import com.wensheng.zcc.cust.module.sync.PageWrapperBidResp;
 import com.wensheng.zcc.cust.module.sync.PageWrapperResp;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.utils.TypeConvertUtil;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -94,7 +99,10 @@ public class SyncBidServiceImpl implements SyncBidService {
     CustTrdSellerMapper custTrdSellerMapper;
 
     @Autowired
-  CustTrdInfoMapper custTrdInfoMapper;
+    CustTrdInfoMapper custTrdInfoMapper;
+
+    @Autowired
+    CustTrdPersonExtMapper custTrdPersonExtMapper;
 
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
@@ -126,6 +134,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   Map<String, String> errorTrdInfos;
   Map<String, String> errCmpyInfos;
   Map<String, String> errPersonInfos;
+
 
   boolean isTest = true;
   int pageForLog = 0;
@@ -215,7 +224,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
         try{
           for (String provinceCode: provinceCodes){
-            syncTrdInfoForProvince(provinceCode);
+            syncTrdInfoForProvince(provinceCode, null);
           }
         }catch(Exception ex){
           log.error(" error:", ex);
@@ -234,7 +243,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   @Override
   @LogExecutionTime
-  public  String syncWithTrdInfo(List<String> provinces){
+  public  String syncWithTrdInfo(List<String> provinces, String dateString){
 
       synchronized(isInSync){
 
@@ -252,7 +261,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
             try{
               for (String provinceCode: provinceCodes){
-                syncTrdInfoForProvince(provinceCode);
+                syncTrdInfoForProvince(provinceCode, dateString);
               }
             }catch(Exception ex){
               log.error(" error:", ex);
@@ -277,7 +286,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
       needSyncTrdInfoBaseOnPersonInfo = syncCustPersonInfo(province);
       if(needSyncTrdInfoBaseOnCmpyInfo || needSyncTrdInfoBaseOnPersonInfo){
-        syncWithTrdInfo(null);
+        syncWithTrdInfo(null,null);
       }
     }
   }
@@ -400,7 +409,18 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
   }
 
 
-  private void syncTrdInfoForProvince(String provinceCode) {
+  private void syncTrdInfoForProvince(String provinceCode, String dateString) {
+      //入参转换为时间
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+      formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+      Date inputDate = null;
+      try {
+        inputDate = formatter.parse(dateString);
+      } catch (ParseException e) {
+        log.error("入参无法转换为时间：{}",dateString);
+        return;
+      }
+
       errorTrdInfos = new HashMap<>();
       errCmpyInfos = new HashMap<>();
       errPersonInfos = new HashMap<>();
@@ -417,7 +437,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         else{
           for(BidTrdInfoFromSync bidTrdInfoFromSync: pageWrapperResp.getDataList()){
-            handleTrdInfo(bidTrdInfoFromSync);
+            handleTrdInfo(bidTrdInfoFromSync, inputDate);
           }
           pageNum++;
         }
@@ -451,10 +471,19 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-  private void  handleTrdInfo(BidTrdInfoFromSync trdInfoFromSync) {
+  private void  handleTrdInfo(BidTrdInfoFromSync trdInfoFromSync, Date inputDate) {
 
     int action = -1;
     Date updateDate = AmcDateUtils.toUTCDate(trdInfoFromSync.getUpdateTime());
+
+    //对比输入的时间，更新数据updateDate需在输入时间之后
+    if(inputDate.after(updateDate)){
+      log.info("同步爬虫数据在入参时间之前：{}",trdInfoFromSync);
+      return;
+    }
+
+
+
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getAuctionID());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
@@ -638,12 +667,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
-        custPersonInfoFromSync.getName()).andMobileNumEqualTo(
-        StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
-        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
-    List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    String mobileNum =StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum();
+    List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+    List<CustTrdPerson> custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
+        StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
+        mobileList);
     int action = -1;
 
     if(CollectionUtils.isEmpty(custTrdPeople)){
@@ -876,6 +904,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
+    custTrdCmpyExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",custCmpyInfoFromSync.getCmpyName(),"%"));
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
     int action = -1;
     Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
@@ -1124,13 +1153,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   }
 
-
-
-
-
-
-
-
+  @Override
   public void updateBuyerCompanyInfoByIds(String id){
     CustCmpyInfoFromSync custCmpyInfoFromSync = getCmpyInfoById(id);
     CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
@@ -1201,7 +1224,95 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
   }
 
+  @Override
+  public void patchTrdPersonRevisePhone(){
+    ArrayList<String> signList = new ArrayList();
+    signList.add("、");
+    signList.add("/");
+    signList.add("，");
+    signList.add("；");
 
+    for (String  sign: signList) {
+      List<CustTrdPerson> custTrdInfoList = custTrdPersonExtMapper.selectTrdPersonByPhoneSign(sign);
+
+      for (CustTrdPerson custTrdPerson : custTrdInfoList) {
+
+        StringBuilder sbMobileNum = new StringBuilder();
+        StringBuilder sbTelNum = new StringBuilder();
+        String mobileNum = custTrdPerson.getMobileNum();
+        mobileNum = mobileNum.replace(";","；");
+        mobileNum = mobileNum.replace(",","，");
+        String[] telMobiles =mobileNum.split(sign);
+
+        for (int i = 0; i <telMobiles.length ; i++) {
+          Boolean isMobile = checkMobile(telMobiles[i]);
+          //手机号
+          if(isMobile){
+            if(sbMobileNum.length() >=1){
+              sbMobileNum.append(";");
+            }
+            sbMobileNum.append(telMobiles[i]);
+          }else {
+            //固话
+            if(sbTelNum.length() >=1){
+              sbTelNum.append(";");
+            }
+            sbTelNum.append(telMobiles[i]);
+          }
+        }
+        //存入收据库
+        CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+        custTrdPersonNew.setId(custTrdPerson.getId());
+        if(sbTelNum.length()>=1){
+          custTrdPersonNew.setTelNum(sbTelNum.toString());
+        }
+        if(sbMobileNum.length()>=1){
+          custTrdPersonNew.setMobileNum(sbMobileNum.toString());
+        }else {
+          custTrdPersonNew.setMobileNum("-1");
+        }
+        custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
+
+      }
+    }
+
+    //只有手机号和固话
+    List<CustTrdPerson> custTrdPersonList = custTrdPersonExtMapper.selectTrdPersonByRightPhone();
+    for (CustTrdPerson custTrdPerson : custTrdPersonList){
+      String mobileNum = custTrdPerson.getMobileNum();
+      Boolean isMobile = checkMobile(mobileNum);
+      CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+      custTrdPersonNew.setId(custTrdPerson.getId());
+      if(!isMobile){
+        custTrdPersonNew.setTelNum(mobileNum);
+        custTrdPersonNew.setMobileNum("-1");
+        custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
+      }
+    }
+
+    //全部固话
+    List<CustTrdPerson> custTrdPersonListAllTel = custTrdPersonExtMapper.selectTrdPersonByUnknowPhone();
+    for (CustTrdPerson custTrdPerson : custTrdPersonListAllTel) {
+      CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+      custTrdPersonNew.setId(custTrdPerson.getId());
+      custTrdPersonNew.setTelNum(custTrdPerson.getMobileNum());
+      custTrdPersonNew.setMobileNum("-1");
+      custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
+    }
+
+  }
+
+  public static   Boolean checkMobile(String phone){
+    phone = phone.trim();
+    if(phone.length() == 11 && '1'==phone.charAt(0)){
+      return true;
+    }
+    return false;
+  }
+
+  public static void main(String[] args) {
+    checkMobile(" 1367159666");
+  }
 }
 
 

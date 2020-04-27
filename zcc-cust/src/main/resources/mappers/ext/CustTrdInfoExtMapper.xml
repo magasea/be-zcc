@@ -164,7 +164,7 @@
     trd_contactor_phone LIKE CONCAT('%',#{sign},'%')
   </select>
 
-  <select id="selectInfoByRigitPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
+  <select id="selectInfoByRightPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper.BaseResultMap">
     select
     'true' as QUERYID,
     <include refid="All_Base_Column_List" />

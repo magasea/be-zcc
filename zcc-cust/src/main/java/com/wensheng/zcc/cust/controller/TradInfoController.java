@@ -60,14 +60,14 @@ public class TradInfoController {
 
   @RequestMapping(value = "/doSynchronization", method = RequestMethod.POST)
   @ResponseBody
-  public String doSynchronization(@RequestBody List<String> provinces) throws Exception {
-    return syncService.syncWithTrdInfo(provinces);
+  public String doSynchronization(@RequestBody List<String> provinces, @RequestParam String dateString) throws Exception {
+    return syncService.syncWithTrdInfo(provinces, dateString);
   }
 
   @RequestMapping(value = "/doBidSynchronization", method = RequestMethod.POST)
   @ResponseBody
-  public String doBidSynchronization(@RequestBody List<String> provinces) throws Exception {
-    return syncBidService.syncWithTrdInfo(provinces);
+  public String doBidSynchronization(@RequestBody List<String> provinces, @RequestParam String dateString) throws Exception {
+    return syncBidService.syncWithTrdInfo(provinces, dateString);
   }
   @RequestMapping(value = "/makeUpData/trdDate", method = RequestMethod.GET)
   @ResponseBody
@@ -121,9 +121,15 @@ public class TradInfoController {
     syncService.patchTrdDupAdd();
   }
 
-  @RequestMapping(value = "/refactData/patchRevisePhone", method = RequestMethod.POST)
+  @RequestMapping(value = "/refactData/patchTrdInfoRevisePhone", method = RequestMethod.POST)
   @ResponseBody
-  public void patchRevisePhone() throws Exception {
-    syncService.patchRevisePhone();
+  public void patchTrdInfoRevisePhone() throws Exception {
+    syncService.patchTrdInfoRevisePhone();
+  }
+
+  @RequestMapping(value = "/refactData/patchTrdPersonRevisePhone", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchTrdPersonRevisePhone() throws Exception {
+    syncBidService.patchTrdPersonRevisePhone();
   }
 }

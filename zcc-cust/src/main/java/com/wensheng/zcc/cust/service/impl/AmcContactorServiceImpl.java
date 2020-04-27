@@ -50,17 +50,17 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Override
   public void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception {
-    //手机号放在mobileUpdate
+    //兼容老逻辑手机号放在mobileUpdate
     if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
       custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
     }
-    //固话号放在phoneUpdate
+    //兼容老逻辑固话号放在phoneUpdate
     if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
       custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
     }
 
     //first check name and phone unique
-    List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorByPhoneNo(custAmcCmpycontactor);
+    List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorBymobileList(custAmcCmpycontactor);
 
     if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
       //cannot insert
@@ -81,18 +81,13 @@ public class AmcContactorServiceImpl implements AmcContactorService {
    * @param custAmcCmpycontactor
    * @return
    */
-  private List<CustAmcCmpycontactor> queryCmpyContactorByPhoneNo(CustAmcCmpycontactor custAmcCmpycontactor) {
-    List<String> phoneUpdateList = null;
-    if (null != custAmcCmpycontactor.getPhoneUpdate()) {
-      phoneUpdateList = Arrays.asList(custAmcCmpycontactor.getPhoneUpdate().split(";"));
-    }
+  private List<CustAmcCmpycontactor> queryCmpyContactorBymobileList(CustAmcCmpycontactor custAmcCmpycontactor) {
     List<String> mobileUpdateList = null;
     if (null != custAmcCmpycontactor.getMobileUpdate()) {
       mobileUpdateList = Arrays.asList(custAmcCmpycontactor.getMobileUpdate().split(";"));
     }
-
-    return custAmcCmpycontactorExtMapper.selectCmpyContactor(custAmcCmpycontactor.getCompany(),
-            custAmcCmpycontactor.getName(), phoneUpdateList, mobileUpdateList);
+    return custAmcCmpycontactorExtMapper.selectCmpyContactorBymobileList(custAmcCmpycontactor.getCompany(),
+            custAmcCmpycontactor.getName(), mobileUpdateList);
   }
 
   @Override
@@ -582,17 +577,14 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       custAmcCmpycontactorExample.setOrderByClause(" id desc ");
        custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     }else {
-
-      List<String> phonePrepList = null;
-      if (!"-1".equals(custTrdInfo.getTrdContactorTel())) {
-        phonePrepList = Arrays.asList(custTrdInfo.getTrdContactorTel().split(";"));
-      }
       List<String> mobilePrepList = null;
       if (!"-1".equals(custTrdInfo.getTrdContactorMobile())) {
         mobilePrepList = Arrays.asList(custTrdInfo.getTrdContactorMobile().split(";"));
       }
-      custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactor(
-          cmpyName, custTrdInfo.getTrdContactorName(), phonePrepList, mobilePrepList);
+      if(!CollectionUtils.isEmpty(mobilePrepList)){
+        custAmcCmpycontactors = custAmcCmpycontactorExtMapper.selectCmpyContactorBymobileList(
+            cmpyName, custTrdInfo.getTrdContactorName(), mobilePrepList);
+      }
     }
 
     //数据库无对应的联系人新增
@@ -878,4 +870,91 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
     }
   }
+
+
+  @Override
+  public void patchCmpycontactorRevisePhone(){
+    ArrayList<String> signList = new ArrayList();
+    signList.add("、");
+    signList.add("/");
+    signList.add("，");
+    signList.add("；");
+
+    for (String  sign: signList) {
+      List<CustAmcCmpycontactor> custAmcCmpycontactorList = custAmcCmpycontactorExtMapper.
+          selectCmpyContactorByPhoneSign(sign);
+      for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactorList) {
+
+        StringBuilder sbPhonePrep = new StringBuilder();
+        StringBuilder sbMobilePrep = new StringBuilder();
+        String trdPhone = custAmcCmpycontactor.getTrdPhone();
+        trdPhone = trdPhone.replace(";","；");
+        trdPhone = trdPhone.replace(",","，");
+        String[] phoneMobiles =trdPhone.split(sign);
+
+        for (int i = 0; i <phoneMobiles.length ; i++) {
+          Boolean isMobile = checkMobile(phoneMobiles[i]);
+          //手机号
+          if(isMobile){
+            if(sbMobilePrep.length() >=1){
+              sbMobilePrep.append(";");
+            }
+            sbMobilePrep.append(phoneMobiles[i]);
+          }else {
+            //固话
+            if(sbPhonePrep.length() >=1){
+              sbPhonePrep.append(";");
+            }
+            sbPhonePrep.append(phoneMobiles[i]);
+          }
+        }
+        //存入数据库
+        CustAmcCmpycontactor custAmcCmpycontactorNew = new CustAmcCmpycontactor();
+        custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+        if(sbPhonePrep.length()>=1){
+          custAmcCmpycontactorNew.setPhonePrep(sbPhonePrep.toString());
+        }
+        if(sbMobilePrep.length()>=1){
+          custAmcCmpycontactorNew.setMobilePrep(sbMobilePrep.toString());
+        }
+        custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+
+      }
+    }
+
+
+    //只有手机号和固话
+    List<CustAmcCmpycontactor> custAmcCmpycontactorList = custAmcCmpycontactorExtMapper.selectCmpyContactorByRightPhone();
+    for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactorList){
+      String trdPhone = custAmcCmpycontactor.getTrdPhone();
+      Boolean isMobile = checkMobile(trdPhone);
+
+      CustAmcCmpycontactor custAmcCmpycontactorNew = new CustAmcCmpycontactor();
+      custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+      if(isMobile){
+        custAmcCmpycontactorNew.setMobilePrep(trdPhone);
+      }else {
+        custAmcCmpycontactorNew.setPhonePrep(trdPhone);
+      }
+      custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+    }
+
+    //全部固话
+    List<CustAmcCmpycontactor> custAmcCmpycontactorListAllTel = custAmcCmpycontactorExtMapper.selectCmpyContactorByUnknowPhone();
+    for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactorListAllTel) {
+      CustAmcCmpycontactor custAmcCmpycontactorNew = new CustAmcCmpycontactor();
+      custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+      custAmcCmpycontactorNew.setPhonePrep(custAmcCmpycontactor.getTrdPhone());
+      custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+    }
+  }
+
+  public  Boolean checkMobile(String phone){
+    phone = phone.trim();
+    if(phone.length() == 11 && '1'==phone.charAt(0)){
+      return true;
+    }
+    return false;
+  }
+
 }

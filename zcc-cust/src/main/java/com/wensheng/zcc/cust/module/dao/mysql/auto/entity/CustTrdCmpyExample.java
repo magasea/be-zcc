@@ -235,73 +235,73 @@ public class CustTrdCmpyExample {
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameIsNull() {
-            addCriterion("history_cmpy_name is null");
+        public Criteria andCmpyNameHistoryIsNull() {
+            addCriterion("cmpy_name_history is null");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameIsNotNull() {
-            addCriterion("history_cmpy_name is not null");
+        public Criteria andCmpyNameHistoryIsNotNull() {
+            addCriterion("cmpy_name_history is not null");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameEqualTo(String value) {
-            addCriterion("history_cmpy_name =", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryEqualTo(String value) {
+            addCriterion("cmpy_name_history =", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameNotEqualTo(String value) {
-            addCriterion("history_cmpy_name <>", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryNotEqualTo(String value) {
+            addCriterion("cmpy_name_history <>", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameGreaterThan(String value) {
-            addCriterion("history_cmpy_name >", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryGreaterThan(String value) {
+            addCriterion("cmpy_name_history >", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameGreaterThanOrEqualTo(String value) {
-            addCriterion("history_cmpy_name >=", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryGreaterThanOrEqualTo(String value) {
+            addCriterion("cmpy_name_history >=", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameLessThan(String value) {
-            addCriterion("history_cmpy_name <", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryLessThan(String value) {
+            addCriterion("cmpy_name_history <", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameLessThanOrEqualTo(String value) {
-            addCriterion("history_cmpy_name <=", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryLessThanOrEqualTo(String value) {
+            addCriterion("cmpy_name_history <=", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameLike(String value) {
-            addCriterion("history_cmpy_name like", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryLike(String value) {
+            addCriterion("cmpy_name_history like", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameNotLike(String value) {
-            addCriterion("history_cmpy_name not like", value, "historyCmpyName");
+        public Criteria andCmpyNameHistoryNotLike(String value) {
+            addCriterion("cmpy_name_history not like", value, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameIn(List<String> values) {
-            addCriterion("history_cmpy_name in", values, "historyCmpyName");
+        public Criteria andCmpyNameHistoryIn(List<String> values) {
+            addCriterion("cmpy_name_history in", values, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameNotIn(List<String> values) {
-            addCriterion("history_cmpy_name not in", values, "historyCmpyName");
+        public Criteria andCmpyNameHistoryNotIn(List<String> values) {
+            addCriterion("cmpy_name_history not in", values, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameBetween(String value1, String value2) {
-            addCriterion("history_cmpy_name between", value1, value2, "historyCmpyName");
+        public Criteria andCmpyNameHistoryBetween(String value1, String value2) {
+            addCriterion("cmpy_name_history between", value1, value2, "cmpyNameHistory");
             return (Criteria) this;
         }
 
-        public Criteria andHistoryCmpyNameNotBetween(String value1, String value2) {
-            addCriterion("history_cmpy_name not between", value1, value2, "historyCmpyName");
+        public Criteria andCmpyNameHistoryNotBetween(String value1, String value2) {
+            addCriterion("cmpy_name_history not between", value1, value2, "cmpyNameHistory");
             return (Criteria) this;
         }
 

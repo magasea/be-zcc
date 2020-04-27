@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.dao.mysql.mapper.ext;
 
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
@@ -20,4 +21,10 @@ public interface CustTrdPersonExtMapper {
     Long countByFilter(CustTrdPersonExtExample example);
     Long countByFilterAllowNoTrd(CustTrdPersonExtExample example);
 
+    List<CustTrdPerson> selectTrdPersonByPhoneSign(@Param("sign") String sign);
+    List<CustTrdPerson> selectTrdPersonByRightPhone();
+    List<CustTrdPerson> selectTrdPersonByUnknowPhone();
+
+    List<CustTrdPerson> selectTrePersonBymobileList(@Param("name") String name,
+                                        @Param("mobileList") List<String> mobileList);
 }

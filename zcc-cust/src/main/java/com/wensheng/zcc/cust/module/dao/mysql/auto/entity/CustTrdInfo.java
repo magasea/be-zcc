@@ -53,24 +53,12 @@ public class CustTrdInfo {
 
     private String trdContactorName;
 
-    /**
-     * 固话；手机 trdContactorAddress（冗余）
-     */
     private String trdContactorAddr;
 
-    /**
-     * 固话；手机 （冗余）
-     */
     private String trdContactorPhone;
 
-    /**
-     * 固话
-     */
     private String trdContactorTel;
 
-    /**
-     * 手机
-     */
     private String trdContactorMobile;
 
     private String trdContactorAddress;

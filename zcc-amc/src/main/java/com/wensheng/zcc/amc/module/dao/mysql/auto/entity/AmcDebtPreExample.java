@@ -355,6 +355,66 @@ public class AmcDebtPreExample {
             return (Criteria) this;
         }
 
+        public Criteria andDebtTypeIsNull() {
+            addCriterion("debt_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeIsNotNull() {
+            addCriterion("debt_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeEqualTo(Integer value) {
+            addCriterion("debt_type =", value, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeNotEqualTo(Integer value) {
+            addCriterion("debt_type <>", value, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeGreaterThan(Integer value) {
+            addCriterion("debt_type >", value, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("debt_type >=", value, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeLessThan(Integer value) {
+            addCriterion("debt_type <", value, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("debt_type <=", value, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeIn(List<Integer> values) {
+            addCriterion("debt_type in", values, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeNotIn(List<Integer> values) {
+            addCriterion("debt_type not in", values, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeBetween(Integer value1, Integer value2) {
+            addCriterion("debt_type between", value1, value2, "debtType");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("debt_type not between", value1, value2, "debtType");
+            return (Criteria) this;
+        }
+
         public Criteria andBaseAmountIsNull() {
             addCriterion("base_amount is null");
             return (Criteria) this;

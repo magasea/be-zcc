@@ -38,6 +38,18 @@ public class AmcSaleController {
     return amcSaleService.getFloors();
   }
 
+  @RequestMapping(value = "/updateFloors", method = RequestMethod.POST)
+  @ResponseBody
+  boolean updateFloorsSeq(@RequestBody List<Long> floorIds) throws Exception {
+    return amcSaleService.updateFloorSeq(floorIds);
+  }
+
+  @RequestMapping(value = "/delFloor", method = RequestMethod.POST)
+  @ResponseBody
+  void getAmcSaleFloors(@RequestBody Long floorId) throws Exception {
+    amcSaleService.delFloor(floorId);
+  }
+
 
   @RequestMapping(value = "/updateFloorWithFilter", method = RequestMethod.POST)
   @ResponseBody

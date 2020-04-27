@@ -30,6 +30,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
@@ -1448,7 +1449,32 @@ public class AmcDebtServiceImpl implements AmcDebtService {
           needDefaultPublishState = false;
         }
 
+        if(item.getKey().equals(QueryParamEnum.DebtType.name())){
+          criteria.andDebtTypeEqualTo((Integer) item.getValue());
+        }
 
+        if(item.getKey().equals(QueryParamEnum.CourtLocations.name())){
+          String[] courtLocations = (String[]) item.getValue();
+          List<Long> curtIds = new ArrayList<>();
+          CurtInfoExample curtInfoExample = new CurtInfoExample();
+          if(courtLocations.length == 2){
+            //省 市
+            curtInfoExample.createCriteria().andCurtProvinceEqualTo(courtLocations[0]).andCurtCityEqualTo(courtLocations[1]);
+
+          }else if(courtLocations.length == 3){
+            //省 市 区
+            curtInfoExample.createCriteria().andCurtProvinceEqualTo(courtLocations[0])
+                .andCurtCityEqualTo(courtLocations[1]).andCurtCountyEqualTo(courtLocations[2]);
+          }
+          List<CurtInfo> curtInfos =  curtInfoMapper.selectByExample(curtInfoExample);
+          if(!CollectionUtils.isEmpty(curtInfos)){
+            curtIds = curtInfos.stream().map(court->court.getId()).collect(Collectors.toUnmodifiableList());
+            criteria.andCourtIdIn(curtIds);
+          }else{
+            log.error("Failed find curt info for :{}", courtLocations);
+          }
+
+        }
 
         if(item.getKey().equals(QueryParamEnum.AmcContactorName.name())){
           StringBuilder sb = new StringBuilder().append("%").append(item.getValue()).append("%");

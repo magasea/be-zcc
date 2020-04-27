@@ -13,6 +13,8 @@ import lombok.Data;
 public class QueryParam {
   Long debtId = -1L;
   Long assetId = -1L;
+  Integer debtType = -1;
+  String[] courtLocations = null;
   List<Long> area = null;
   List<Long> landArea = null;
   List<String> location = null;
@@ -30,7 +32,6 @@ public class QueryParam {
   String amcContactorName = null;
   Long courtId = -1L;
   List<Long> debtPackIds = null;
-
   PageInfo pageInfo;
 
 

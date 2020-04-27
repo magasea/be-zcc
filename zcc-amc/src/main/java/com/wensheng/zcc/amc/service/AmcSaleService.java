@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.service;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
+import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import java.util.List;
 
@@ -12,7 +13,10 @@ import java.util.List;
  */
 public interface AmcSaleService {
     public List<AmcSaleFloorVo> getFloors();
+    public List<AmcSaleFloorFrontEndVo> getFrontEndFloors();
     public boolean updateFloor(AmcSaleFloorVo amcSaleFloorVo) throws Exception;
+    public boolean updateFloorSeq(List<Long> floorIds) throws Exception;
+    public void delFloor(Long floorId) throws Exception;
     public List<AmcSaleTag> getTags();
 
 
@@ -25,4 +29,6 @@ public interface AmcSaleService {
     boolean updateFloorBasic(AmcSaleFloor amcSaleFloor);
 
     AmcSaleFloorVo createFloor(AmcSaleFloorVo amcSaleFloorVo);
+
+
 }

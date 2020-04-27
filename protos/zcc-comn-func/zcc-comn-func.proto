@@ -62,6 +62,15 @@ message AmcRegionResp {
     repeated AmcRegionItem amcRegionItems = 1;
 }
 
+message PhoneMsgReq {
+  string phoneNum = 1;
+  string code = 2;
+}
+
+messsage PhoneMsgRep {
+  string result = 1;
+}
+
 service ComnFuncService {
   rpc getAddress(WXUserGeoReq) returns (WXUserGeoReq);
 

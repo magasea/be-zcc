@@ -225,6 +225,66 @@ public class AmcSaleFloorExample {
             return (Criteria) this;
         }
 
+        public Criteria andFloorSeqIsNull() {
+            addCriterion("floor_seq is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqIsNotNull() {
+            addCriterion("floor_seq is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqEqualTo(Integer value) {
+            addCriterion("floor_seq =", value, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqNotEqualTo(Integer value) {
+            addCriterion("floor_seq <>", value, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqGreaterThan(Integer value) {
+            addCriterion("floor_seq >", value, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqGreaterThanOrEqualTo(Integer value) {
+            addCriterion("floor_seq >=", value, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqLessThan(Integer value) {
+            addCriterion("floor_seq <", value, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqLessThanOrEqualTo(Integer value) {
+            addCriterion("floor_seq <=", value, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqIn(List<Integer> values) {
+            addCriterion("floor_seq in", values, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqNotIn(List<Integer> values) {
+            addCriterion("floor_seq not in", values, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqBetween(Integer value1, Integer value2) {
+            addCriterion("floor_seq between", value1, value2, "floorSeq");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorSeqNotBetween(Integer value1, Integer value2) {
+            addCriterion("floor_seq not between", value1, value2, "floorSeq");
+            return (Criteria) this;
+        }
+
         public Criteria andCssIsNull() {
             addCriterion("css is null");
             return (Criteria) this;

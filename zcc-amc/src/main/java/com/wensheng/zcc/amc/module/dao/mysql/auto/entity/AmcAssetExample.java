@@ -2101,6 +2101,66 @@ public class AmcAssetExample {
             addCriterion("note not between", value1, value2, "note");
             return (Criteria) this;
         }
+
+        public Criteria andVisitCountIsNull() {
+            addCriterion("visit_count is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountIsNotNull() {
+            addCriterion("visit_count is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountEqualTo(Long value) {
+            addCriterion("visit_count =", value, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountNotEqualTo(Long value) {
+            addCriterion("visit_count <>", value, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountGreaterThan(Long value) {
+            addCriterion("visit_count >", value, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountGreaterThanOrEqualTo(Long value) {
+            addCriterion("visit_count >=", value, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountLessThan(Long value) {
+            addCriterion("visit_count <", value, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountLessThanOrEqualTo(Long value) {
+            addCriterion("visit_count <=", value, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountIn(List<Long> values) {
+            addCriterion("visit_count in", values, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountNotIn(List<Long> values) {
+            addCriterion("visit_count not in", values, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountBetween(Long value1, Long value2) {
+            addCriterion("visit_count between", value1, value2, "visitCount");
+            return (Criteria) this;
+        }
+
+        public Criteria andVisitCountNotBetween(Long value1, Long value2) {
+            addCriterion("visit_count not between", value1, value2, "visitCount");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

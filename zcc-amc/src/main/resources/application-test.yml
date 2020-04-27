@@ -101,8 +101,9 @@ spring:
       thread-name-prefix: amcscheduler-worker
       cronExpr: 0 0 6,12,18,0 * * *
       cronExprSSO: 0 0 6,9,11,12,14,15,18,0 * * *
+      cronExprRecom: 0 0 4 * * *
   cache:
-    cache-names: DEBTPACK, DEBT, ASSET, COURT
+    cache-names: DEBTPACK, DEBT, ASSET, COURT, FLOOR
     caffeine:
       spec: maximumSize=500, expireAfterAccess=120s
   messages:
@@ -161,11 +162,14 @@ cust:
   port: 10004
   getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
   getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
-
+recom:
+  urls:
+    getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/%s
 env:
   name: test
   dbhost: 10.20.100.238
   recmhost: 10.20.100.236
+  recmport: 7654
   dbusername: amcuser
   amcssohost: localhost
   rpchost: localhost

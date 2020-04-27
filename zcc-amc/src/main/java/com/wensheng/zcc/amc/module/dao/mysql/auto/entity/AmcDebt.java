@@ -81,6 +81,8 @@ public class AmcDebt {
 
     private String note;
 
+    private Long visitCount;
+
     public Long getId() {
         return id;
     }
@@ -391,5 +393,13 @@ public class AmcDebt {
 
     public void setNote(String note) {
         this.note = note == null ? null : note.trim();
+    }
+
+    public Long getVisitCount() {
+        return visitCount;
+    }
+
+    public void setVisitCount(Long visitCount) {
+        this.visitCount = visitCount;
     }
 }

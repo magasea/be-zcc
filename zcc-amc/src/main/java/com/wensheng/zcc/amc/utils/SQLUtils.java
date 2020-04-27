@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.utils;
 
+import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.controller.helper.QueryParam;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import java.util.HashMap;
@@ -50,6 +51,13 @@ public class SQLUtils {
 
     if (queryParam.getDebtId() > 0) {
       queryParamMap.put(QueryParamEnum.DebtId.name(), queryParam.getDebtId());
+    }
+    if(queryParam.getDebtType() > 0){
+      queryParamMap.put(QueryParamEnum.DebtType.name(), queryParam.getDebtType());
+    }
+
+    if(queryParam.getCourtLocations() != null && queryParam.getCourtLocations().length >= 1){
+      queryParamMap.put(QueryParamEnum.CourtLocations.name(), queryParam.getCourtLocations());
     }
 
     if (!CollectionUtils.isEmpty(queryParam.getArea()) && queryParam.getArea().size() > 1) {

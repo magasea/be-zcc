@@ -33,6 +33,7 @@
     <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
     <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
     <result column="note" jdbcType="CHAR" property="note" />
+    <result column="visit_count" jdbcType="BIGINT" property="visitCount" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -97,7 +98,7 @@
     zcc_asset_code, total_valuation, debt_id, building_area, building_unit_price, land_area, 
     land_area_unit, land_unit_price, publish_date, province, city, county, address, building_name, 
     update_by, update_date, created_by, created_date, amc_contactor_id, amc_contactor_name, 
-    amc_contactor_phone, note
+    amc_contactor_phone, note, visit_count
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -143,7 +144,8 @@
       city, county, address, building_name, 
       update_by, update_date, created_by, 
       created_date, amc_contactor_id, amc_contactor_name, 
-      amc_contactor_phone, note)
+      amc_contactor_phone, note, visit_count
+      )
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{isRecom,jdbcType=INTEGER}, 
       #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, 
@@ -153,7 +155,8 @@
       #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
       #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactorName,jdbcType=CHAR}, 
-      #{amcContactorPhone,jdbcType=CHAR}, #{note,jdbcType=CHAR})
+      #{amcContactorPhone,jdbcType=CHAR}, #{note,jdbcType=CHAR}, #{visitCount,jdbcType=BIGINT}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -251,6 +254,9 @@
       <if test="note != null">
         note,
       </if>
+      <if test="visitCount != null">
+        visit_count,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="title != null">
@@ -342,6 +348,9 @@
       </if>
       <if test="note != null">
         #{note,jdbcType=CHAR},
+      </if>
+      <if test="visitCount != null">
+        #{visitCount,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -447,6 +456,9 @@
       <if test="record.note != null">
         note = #{record.note,jdbcType=CHAR},
       </if>
+      <if test="record.visitCount != null">
+        visit_count = #{record.visitCount,jdbcType=BIGINT},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -484,7 +496,8 @@
       amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
-      note = #{record.note,jdbcType=CHAR}
+      note = #{record.note,jdbcType=CHAR},
+      visit_count = #{record.visitCount,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -582,6 +595,9 @@
       <if test="note != null">
         note = #{note,jdbcType=CHAR},
       </if>
+      <if test="visitCount != null">
+        visit_count = #{visitCount,jdbcType=BIGINT},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -616,7 +632,8 @@
       amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
-      note = #{note,jdbcType=CHAR}
+      note = #{note,jdbcType=CHAR},
+      visit_count = #{visitCount,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">

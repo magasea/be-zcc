@@ -51,6 +51,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
     static final String strDebtTitle = "债权名称";
     static final String strBrower = "借款人";
     static final String strDebtBaseAmount = "债权本金(元)";
+    static final String strDebtType = "债权类型";
 //    static final String strDebtTotalAmount = "债权本息(元)";
     static final String strDebtInterestAmount = "债权利息(元)";
     static final String strLawState = "诉讼状态";
@@ -671,6 +672,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         int idxBrowwer = -1;
         int idxDebtBaseAmount = -1;
 //        int idxDebtTotalAmount = -1;
+        int idxDebtType = -1;
         int idxDebtInterestAmount = -1;
         int idxLawState = -1;
         int idxGrantType = -1;
@@ -705,6 +707,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     System.out.print(cellValue + "\t");
                     switch (cellValue) {
                         case strDebtTitle:
+                            idxDebtTitle = idxOfCell;
+                            break;
+                        case strDebtType:
                             idxDebtTitle = idxOfCell;
                             break;
                         case strAmcContactor:
@@ -753,7 +758,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 }
                 // now check if there is missing headers
                 if(((idxDebtTitle + 1) * (idxBrowwer + 1) * (idxDebtBaseAmount + 1) * (idxDebtInterestAmount +1) * (idxLawState + 1) *
-                        (idxGrantType + 1) * (idxGrantor + 1) * (idxCourtProv + 1) * (idxCourtCity + 1) *
+                        (idxGrantType + 1) * (idxGrantor + 1) * (idxCourtProv + 1) * (idxCourtCity + 1) * (idxDebtType + 1) *
                         (idxCourtCounty + 1) * (idxCourt + 1) * (idxAmcContactor + 1) * (idxDesc + 1) ) == 0){
                     String missingHeader = null;
                     if(idxDebtTitle == -1){
@@ -808,6 +813,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 String cellBrowwer = dataFormatter.formatCellValue(row.getCell(idxBrowwer));
                 String cellDebtBaseAmount = dataFormatter.formatCellValue(row.getCell(idxDebtBaseAmount));
 //                String cellDebtTotalAmount = dataFormatter.formatCellValue(row.getCell(idxDebtTotalAmount));
+                String cellDebtType = dataFormatter.formatCellValue(row.getCell(idxDebtType));
                 String cellDebtInterestAmount = dataFormatter.formatCellValue(row.getCell(idxDebtInterestAmount));
                 String cellLawState = dataFormatter.formatCellValue(row.getCell(idxLawState));
                 String cellGrantType = dataFormatter.formatCellValue(row.getCell(idxGrantType));
@@ -827,6 +833,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strAmcContactor, cellAmcContactor, null);
 //                    log.error(String.format("错误提示： %s %s 联系人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
+
+
                 AmcDebtPre amcDebtPre = new AmcDebtPre();
                 amcDebtPre.setAmcId(Long.valueOf(AmcCmpyEnum.CMPY_WENSHENG.getId()));
                 amcDebtPre.setPublishState(PublishStateEnum.DRAFT.getStatus());
@@ -879,13 +887,21 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantType, cellGrantType, null);
 //                    log.error(String.format("错误提示： %s %s 担保方式不能为空", sheetDebt.getSheetName(), row.getRowNum()));
                 }
+                if(StringUtils.isEmpty(cellDebtType)){
+                    addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtType, cellDebtType, null);
+                }else{
+                    DebtTypeEnum debtTypeEnum = DebtTypeEnum.lookupByDisplayNameUtil(cellDebtType);
+                    if(debtTypeEnum == null){
+                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtType, cellDebtType, null);
+                    }
+                    amcDebtPre.setDebtType(debtTypeEnum.getType());
+                }
+
                 if(!StringUtils.isEmpty(cellDebtTitle)){
                     amcDebtPre.setTitle(cellDebtTitle);
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtTitle, cellDebtTitle, null);
                     continue;
-                    //
-//                    break;
                 }
 
                 if(ssoAmcUser != null  && ssoAmcUser.getLocation() == null ){

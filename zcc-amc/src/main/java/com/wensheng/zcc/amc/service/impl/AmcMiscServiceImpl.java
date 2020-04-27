@@ -10,19 +10,32 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
+import com.wensheng.zcc.amc.service.AmcMiscService;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import io.swagger.models.auth.In;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
-public class AmcMiscServiceImpl {
+public class AmcMiscServiceImpl implements AmcMiscService {
 
   @Autowired
   AmcDebtMapper amcDebtMapper;
@@ -36,8 +49,23 @@ public class AmcMiscServiceImpl {
   @Autowired
   AmcDebtContactorMapper amcDebtContactorMapper;
 
+  @Value("${recom.urls.getClickCount}")
+  String getClickCountUrl;
+
 
   Map<Long, String> areaMapper = null;
+
+
+  private RestTemplate restTemplate;
+
+  @PostConstruct
+  private void init(){
+    restTemplate = new RestTemplate();
+    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    gsonHttpMessageConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL));
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+    restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
+  }
   /**
    * generate amc code to empty field
    * for example: wensheng-gd-00001
@@ -168,6 +196,38 @@ public class AmcMiscServiceImpl {
         amcAsset.setAmcContactorName(amcDebtContactor.getName());
         amcAsset.setAmcContactorPhone(amcDebtContactor.getPhoneNumber());
         amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+      }
+    }
+
+  }
+  @Scheduled(cron = "${spring.task.scheduling.cronExprRecom}")
+  @Override
+  public void updateClickCountInfo(){
+    String param = "debt";
+    String urlFinal = String.format(getClickCountUrl, param);
+    ResponseEntity<Map> clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
+    Map<Long, Integer> clickCount = (HashMap<Long, Integer>) clickInfo.getBody();
+    if(!CollectionUtils.isEmpty(clickCount)){
+      for(Entry<Long, Integer> entry: clickCount.entrySet()){
+        if(entry.getValue() > 0){
+          AmcDebt amcDebt =  amcDebtMapper.selectByPrimaryKey(entry.getKey());
+          amcDebt.setVisitCount(Long.valueOf(entry.getValue()));
+          amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+        }
+      }
+    }
+
+    param = "asset";
+    urlFinal = String.format(getClickCountUrl, param);
+    clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
+    clickCount = (HashMap<Long, Integer>) clickInfo.getBody();
+    if(!CollectionUtils.isEmpty(clickCount)){
+      for(Entry<Long, Integer> entry: clickCount.entrySet()){
+        if(entry.getValue() > 0){
+          AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(entry.getKey());
+          amcAsset.setVisitCount(Long.valueOf(entry.getValue()));
+          amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+        }
       }
     }
 

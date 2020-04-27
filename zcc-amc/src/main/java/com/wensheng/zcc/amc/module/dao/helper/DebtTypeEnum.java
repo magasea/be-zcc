@@ -7,15 +7,15 @@ import java.util.function.Function;
  * @author chenwei on 12/10/18
  * @project zcc-backend
  */
-
+//保证类、损失类、折解类、质押类、可疑类、股权类
 public enum DebtTypeEnum {
     GUARANT(1, "保证类"),
     LOST(2, "损失类"),
     BORROW(3, "拆借类"),
-    PLEDGE(4, "质押类"),
+    PLEDGE(4, "抵质押类"),
     SUSPICIOUS(5, "可疑类"),
-    EQUITY(4, "质押类"),
-
+    EQUITY(6, "股权类"),
+    CREDIT(7, "信用类"),
 
     ;
     DebtTypeEnum(int type, String name){

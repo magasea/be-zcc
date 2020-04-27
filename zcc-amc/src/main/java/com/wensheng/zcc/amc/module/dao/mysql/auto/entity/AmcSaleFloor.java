@@ -7,6 +7,8 @@ public class AmcSaleFloor {
 
     private Integer floor;
 
+    private Integer floorSeq;
+
     private Integer css;
 
     private String title;
@@ -45,6 +47,14 @@ public class AmcSaleFloor {
 
     public void setFloor(Integer floor) {
         this.floor = floor;
+    }
+
+    public Integer getFloorSeq() {
+        return floorSeq;
+    }
+
+    public void setFloorSeq(Integer floorSeq) {
+        this.floorSeq = floorSeq;
     }
 
     public Integer getCss() {

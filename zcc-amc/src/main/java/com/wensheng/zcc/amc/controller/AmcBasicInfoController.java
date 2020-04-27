@@ -271,6 +271,18 @@ public class AmcBasicInfoController {
     return result;
   }
 
+  @RequestMapping(value = "/floorPublishEnum", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getFloorPublishEnum(){
+
+    List<String> result = new ArrayList<>();
+    for(FloorPublishStateEnum floorPublishStateEnum: FloorPublishStateEnum.values()){
+      result.add(String.format("%d:%s", floorPublishStateEnum.getStatus(), floorPublishStateEnum.getName()));
+    }
+    return result;
+  }
+
+
   @RequestMapping(value = "/renovation", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getRenovation(){

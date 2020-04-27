@@ -11,6 +11,8 @@ public class AmcDebtPre {
 
     private String title;
 
+    private Integer debtType;
+
     private Long baseAmount;
 
     private String baseAmountDesc;
@@ -113,6 +115,14 @@ public class AmcDebtPre {
 
     public void setTitle(String title) {
         this.title = title == null ? null : title.trim();
+    }
+
+    public Integer getDebtType() {
+        return debtType;
+    }
+
+    public void setDebtType(Integer debtType) {
+        this.debtType = debtType;
     }
 
     public Long getBaseAmount() {

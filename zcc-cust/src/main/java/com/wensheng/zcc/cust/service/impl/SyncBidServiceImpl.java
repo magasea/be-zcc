@@ -1230,6 +1230,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     signList.add("、");
     signList.add("/");
     signList.add("，");
+    signList.add("；");
 
     for (String  sign: signList) {
       List<CustTrdPerson> custTrdInfoList = custTrdPersonExtMapper.selectTrdPersonByPhoneSign(sign);
@@ -1239,6 +1240,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         StringBuilder sbMobileNum = new StringBuilder();
         StringBuilder sbTelNum = new StringBuilder();
         String mobileNum = custTrdPerson.getMobileNum();
+        mobileNum = mobileNum.replace(";","；");
+        mobileNum = mobileNum.replace(",","，");
         String[] telMobiles =mobileNum.split(sign);
 
         for (int i = 0; i <telMobiles.length ; i++) {

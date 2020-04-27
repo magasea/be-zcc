@@ -1482,6 +1482,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         StringBuilder sbTrdContactorTel = new StringBuilder();
         StringBuilder sbTrdContactorMobile = new StringBuilder();
         String trdContactorPhone = custTrdInfo.getTrdContactorPhone();
+        trdContactorPhone = trdContactorPhone.replace(";","；");
+        trdContactorPhone = trdContactorPhone.replace(",","，");
         String[] telMobiles =trdContactorPhone.split(sign);
 
         for (int i = 0; i <telMobiles.length ; i++) {

@@ -886,6 +886,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         StringBuilder sbPhonePrep = new StringBuilder();
         StringBuilder sbMobilePrep = new StringBuilder();
         String trdPhone = custAmcCmpycontactor.getTrdPhone();
+        trdPhone = trdPhone.replace(";","；");
+        trdPhone = trdPhone.replace(",","，");
         String[] phoneMobiles =trdPhone.split(sign);
 
         for (int i = 0; i <phoneMobiles.length ; i++) {
@@ -917,6 +919,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
       }
     }
+
 
     //只有手机号和固话
     List<CustAmcCmpycontactor> custAmcCmpycontactorList = custAmcCmpycontactorExtMapper.selectCmpyContactorByRightPhone();

@@ -4,7 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="cmpy_name" jdbcType="CHAR" property="cmpyName" />
-    <result column="history_cmpy_name" jdbcType="VARCHAR" property="historyCmpyName" />
+    <result column="cmpy_name_history" jdbcType="VARCHAR" property="cmpyNameHistory" />
     <result column="uni_social_code" jdbcType="VARCHAR" property="uniSocialCode" />
     <result column="legal_reptive" jdbcType="VARCHAR" property="legalReptive" />
     <result column="cmpy_phone" jdbcType="CHAR" property="cmpyPhone" />
@@ -88,7 +88,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, cmpy_name, history_cmpy_name, uni_social_code, legal_reptive, cmpy_phone, cmpy_phone_update, 
+    id, cmpy_name, cmpy_name_history, uni_social_code, legal_reptive, cmpy_phone, cmpy_phone_update, 
     history_cmpy_phone, cmpy_province, cmpy_addr, cmpy_addr_update, history_cmpy_addr, 
     annu_rept_phone, annu_rept_addr, favorite_city_update, favorite_type_update, fav_type_note, 
     cmpy_type, note, data_status, data_quality, update_time, update_by, create_time, 
@@ -129,7 +129,7 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_CMPY (cmpy_name, history_cmpy_name, uni_social_code, 
+    insert into CUST_TRD_CMPY (cmpy_name, cmpy_name_history, uni_social_code, 
       legal_reptive, cmpy_phone, cmpy_phone_update, 
       history_cmpy_phone, cmpy_province, cmpy_addr, 
       cmpy_addr_update, history_cmpy_addr, annu_rept_phone, 
@@ -138,7 +138,7 @@
       data_status, data_quality, update_time, 
       update_by, create_time, create_by, 
       sync_time)
-    values (#{cmpyName,jdbcType=CHAR}, #{historyCmpyName,jdbcType=VARCHAR}, #{uniSocialCode,jdbcType=VARCHAR}, 
+    values (#{cmpyName,jdbcType=CHAR}, #{cmpyNameHistory,jdbcType=VARCHAR}, #{uniSocialCode,jdbcType=VARCHAR}, 
       #{legalReptive,jdbcType=VARCHAR}, #{cmpyPhone,jdbcType=CHAR}, #{cmpyPhoneUpdate,jdbcType=CHAR}, 
       #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyProvince,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, 
       #{cmpyAddrUpdate,jdbcType=VARCHAR}, #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, 
@@ -157,8 +157,8 @@
       <if test="cmpyName != null">
         cmpy_name,
       </if>
-      <if test="historyCmpyName != null">
-        history_cmpy_name,
+      <if test="cmpyNameHistory != null">
+        cmpy_name_history,
       </if>
       <if test="uniSocialCode != null">
         uni_social_code,
@@ -234,8 +234,8 @@
       <if test="cmpyName != null">
         #{cmpyName,jdbcType=CHAR},
       </if>
-      <if test="historyCmpyName != null">
-        #{historyCmpyName,jdbcType=VARCHAR},
+      <if test="cmpyNameHistory != null">
+        #{cmpyNameHistory,jdbcType=VARCHAR},
       </if>
       <if test="uniSocialCode != null">
         #{uniSocialCode,jdbcType=VARCHAR},
@@ -323,8 +323,8 @@
       <if test="record.cmpyName != null">
         cmpy_name = #{record.cmpyName,jdbcType=CHAR},
       </if>
-      <if test="record.historyCmpyName != null">
-        history_cmpy_name = #{record.historyCmpyName,jdbcType=VARCHAR},
+      <if test="record.cmpyNameHistory != null">
+        cmpy_name_history = #{record.cmpyNameHistory,jdbcType=VARCHAR},
       </if>
       <if test="record.uniSocialCode != null">
         uni_social_code = #{record.uniSocialCode,jdbcType=VARCHAR},
@@ -404,7 +404,7 @@
     update CUST_TRD_CMPY
     set id = #{record.id,jdbcType=BIGINT},
       cmpy_name = #{record.cmpyName,jdbcType=CHAR},
-      history_cmpy_name = #{record.historyCmpyName,jdbcType=VARCHAR},
+      cmpy_name_history = #{record.cmpyNameHistory,jdbcType=VARCHAR},
       uni_social_code = #{record.uniSocialCode,jdbcType=VARCHAR},
       legal_reptive = #{record.legalReptive,jdbcType=VARCHAR},
       cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
@@ -438,8 +438,8 @@
       <if test="cmpyName != null">
         cmpy_name = #{cmpyName,jdbcType=CHAR},
       </if>
-      <if test="historyCmpyName != null">
-        history_cmpy_name = #{historyCmpyName,jdbcType=VARCHAR},
+      <if test="cmpyNameHistory != null">
+        cmpy_name_history = #{cmpyNameHistory,jdbcType=VARCHAR},
       </if>
       <if test="uniSocialCode != null">
         uni_social_code = #{uniSocialCode,jdbcType=VARCHAR},
@@ -516,7 +516,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy">
     update CUST_TRD_CMPY
     set cmpy_name = #{cmpyName,jdbcType=CHAR},
-      history_cmpy_name = #{historyCmpyName,jdbcType=VARCHAR},
+      cmpy_name_history = #{cmpyNameHistory,jdbcType=VARCHAR},
       uni_social_code = #{uniSocialCode,jdbcType=VARCHAR},
       legal_reptive = #{legalReptive,jdbcType=VARCHAR},
       cmpy_phone = #{cmpyPhone,jdbcType=CHAR},

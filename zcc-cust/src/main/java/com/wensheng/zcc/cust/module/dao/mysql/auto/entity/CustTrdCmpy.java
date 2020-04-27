@@ -7,7 +7,7 @@ public class CustTrdCmpy {
 
     private String cmpyName;
 
-    private String historyCmpyName;
+    private String cmpyNameHistory;
 
     private String uniSocialCode;
 
@@ -71,12 +71,12 @@ public class CustTrdCmpy {
         this.cmpyName = cmpyName == null ? null : cmpyName.trim();
     }
 
-    public String getHistoryCmpyName() {
-        return historyCmpyName;
+    public String getCmpyNameHistory() {
+        return cmpyNameHistory;
     }
 
-    public void setHistoryCmpyName(String historyCmpyName) {
-        this.historyCmpyName = historyCmpyName == null ? null : historyCmpyName.trim();
+    public void setCmpyNameHistory(String cmpyNameHistory) {
+        this.cmpyNameHistory = cmpyNameHistory == null ? null : cmpyNameHistory.trim();
     }
 
     public String getUniSocialCode() {

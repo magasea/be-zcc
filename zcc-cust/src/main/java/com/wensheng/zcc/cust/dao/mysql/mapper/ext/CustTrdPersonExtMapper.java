@@ -24,4 +24,7 @@ public interface CustTrdPersonExtMapper {
     List<CustTrdPerson> selectTrdPersonByPhoneSign(@Param("sign") String sign);
     List<CustTrdPerson> selectTrdPersonByRightPhone();
     List<CustTrdPerson> selectTrdPersonByUnknowPhone();
+
+    List<CustTrdPerson> selectTrePersonBymobileList(@Param("name") String name,
+                                        @Param("mobileList") List<String> mobileList);
 }

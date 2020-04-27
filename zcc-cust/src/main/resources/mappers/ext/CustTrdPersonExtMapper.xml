@@ -344,4 +344,23 @@
     AND mobile_num not LIKE '%；%'
   </select>
 
+  <select id="selectTrePersonBymobileList"
+    resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
+    sselect
+    'true' as QUERYID,
+    <include refid="All_Base_Column_List" />
+    from CUST_TRD_PERSON
+    where
+    and name = #{name}
+    <if test="mobileList != null">
+      and (
+      1=2
+      <foreach item="item" index="index" collection="mobileList">
+        OR mobile_num LIKE CONCAT('%',#{item},'%')
+      </foreach>
+      )
+    </if>
+    order by id desc
+  </select>
+
 </mapper>

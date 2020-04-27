@@ -667,12 +667,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
 
 
-    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
-        custPersonInfoFromSync.getName()).andMobileNumEqualTo(
-        StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
-        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
-    List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    String mobileNum =StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum();
+    List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+    List<CustTrdPerson> custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
+        StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
+        mobileList);
     int action = -1;
 
     if(CollectionUtils.isEmpty(custTrdPeople)){

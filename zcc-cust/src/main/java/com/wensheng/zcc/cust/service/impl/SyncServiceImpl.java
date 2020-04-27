@@ -11,6 +11,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -89,6 +90,9 @@ public class SyncServiceImpl implements SyncService {
 
     @Autowired
     CustTrdPersonMapper custTrdPersonMapper;
+
+    @Autowired
+    CustTrdPersonExtMapper custTrdPersonExtMapper;
 
     @Autowired
     CustRegionMapper custRegionMapper;
@@ -657,15 +661,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return custTrdSeller.getId();
     }
 
+    String mobileNum =StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum();
+    List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+    List<CustTrdPerson> custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
+        StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
+        mobileList);
 
-
-
-    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1":
-        custPersonInfoFromSync.getName()).andMobileNumEqualTo(
-        StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
-        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
-    List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
     int action = -1;
 
     if(CollectionUtils.isEmpty(custTrdPeople)){

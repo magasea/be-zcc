@@ -94,7 +94,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
             if(amcSaleFloorVo.getAmcRecommItem().getFilterTagItemList() != null &&
                 !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterTagItemList())){
-                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR)
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR);
 
             }
         }

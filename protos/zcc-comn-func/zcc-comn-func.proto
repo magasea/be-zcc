@@ -67,7 +67,7 @@ message PhoneMsgReq {
   string code = 2;
 }
 
-messsage PhoneMsgRep {
+message PhoneMsgRep {
   string result = 1;
 }
 
@@ -81,5 +81,7 @@ service ComnFuncService {
   rpc getWXPublicToken(WXPubTokenReq) returns (WXPubTokenResp);
 
   rpc getAmcRegionByName(AmcRegionReq) returns (AmcRegionResp);
+
+  rpc sendVerifyCode(PhoneMsgReq) returns (PhoneMsgRep);
 
 }

@@ -905,6 +905,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
+    custTrdCmpyExample.or().andHistoryCmpyNameLike(String.format("%s%s%s","%",custCmpyInfoFromSync.getCmpyName(),"%"));
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
     int action = -1;
     Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());

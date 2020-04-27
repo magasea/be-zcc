@@ -44,7 +44,7 @@
     ${prefix}uni_social_code as uni_social_code,
     ${prefix}legal_reptive as legal_reptive,
     ${prefix}cmpy_phone as cmpy_phone,
-    ${prefix}cmpy_phone_history as cmpy_phone_history,
+    ${prefix}history_cmpy_phone as history_cmpy_phone,
     ${prefix}cmpy_province as cmpy_province,
     ${prefix}cmpy_addr as cmpy_addr,
     ${prefix}history_cmpy_addr as history_cmpy_addr,

@@ -482,8 +482,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return;
     }
 
-
-
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     custTrdInfoExample.createCriteria().andInfoIdEqualTo(trdInfoFromSync.getAuctionID());
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
@@ -664,14 +662,15 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return custTrdSeller.getId();
     }
 
+    String mobileNum =custPersonInfoFromSync.getMobileNum();
+    List<CustTrdPerson> custTrdPeople = null;
+    if(!StringUtils.isEmpty(mobileNum)){
+      List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+      custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
+          StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
+          mobileList);
+    }
 
-
-
-    String mobileNum =StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum();
-    List<String> mobileList = Arrays.asList(mobileNum.split(";"));
-    List<CustTrdPerson> custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
-        StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
-        mobileList);
     int action = -1;
 
     if(CollectionUtils.isEmpty(custTrdPeople)){

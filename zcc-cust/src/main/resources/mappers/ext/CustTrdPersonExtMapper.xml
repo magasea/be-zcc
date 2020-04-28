@@ -346,12 +346,12 @@
 
   <select id="selectTrePersonBymobileList"
     resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
-    sselect
+    select
     'true' as QUERYID,
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    and name = #{name}
+     name = #{name}
     <if test="mobileList != null">
       and (
       1=2

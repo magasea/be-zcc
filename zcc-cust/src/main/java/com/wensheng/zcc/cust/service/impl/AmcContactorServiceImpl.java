@@ -435,14 +435,14 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     AdressResp adressResp = restTemplate.exchange(String.format(getAddressCodeByAddress,custAmcCmpycontactor.getAddress()),
       HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {}).getBody();
     if(null!=adressResp.getStatus() &&  "1".equals(adressResp.getStatus())){
-      custAmcCmpycontactor.setProvince(adressResp.getResult().getStatsResult().getProvince().get(0));
-      custAmcCmpycontactor.setCity(adressResp.getResult().getStatsResult().getCity().get(0));
-      custAmcCmpycontactor.setCounty(adressResp.getResult().getStatsResult().getCounty().get(0));
+      custAmcCmpycontactor.setProvince(adressResp.getResult().getStatsResult().getProvince().get(0).substring(0,6));
+      custAmcCmpycontactor.setCity(adressResp.getResult().getStatsResult().getCity().get(0).substring(0,6));
+      custAmcCmpycontactor.setCounty(adressResp.getResult().getStatsResult().getCounty().get(0).substring(0,6));
 
       CustAmcCmpycontactor custAmcCmpycontactorNew = new  CustAmcCmpycontactor();
-      custAmcCmpycontactorNew.setProvince(adressResp.getResult().getStatsResult().getProvince().get(0));
-      custAmcCmpycontactorNew.setCity(adressResp.getResult().getStatsResult().getCity().get(0));
-      custAmcCmpycontactorNew.setCounty(adressResp.getResult().getStatsResult().getCounty().get(0));
+      custAmcCmpycontactorNew.setProvince(adressResp.getResult().getStatsResult().getProvince().get(0).substring(0,6));
+      custAmcCmpycontactorNew.setCity(adressResp.getResult().getStatsResult().getCity().get(0).substring(0,6));
+      custAmcCmpycontactorNew.setCounty(adressResp.getResult().getStatsResult().getCounty().get(0).substring(0,6));
       custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
       custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
     }

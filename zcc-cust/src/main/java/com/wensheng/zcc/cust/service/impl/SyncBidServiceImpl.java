@@ -22,6 +22,7 @@ import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.BidTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
+import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.CustPersonInfoFromSync;
 import com.wensheng.zcc.cust.module.sync.BidTrdInfoFromSync;
@@ -78,7 +79,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class SyncBidServiceImpl implements SyncBidService {
 
-    private RestTemplate restTemplate = new RestTemplate();
+    private  RestTemplate restTemplate = new RestTemplate();
 
     @Autowired
     private MongoTemplate mongoTemplate;
@@ -175,6 +176,22 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return restTemplate.getForEntity(url, CustCmpyInfoFromSync.class).getBody();
     }
 
+  public static void main(String[] args){
+//    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+//    gsonHttpMessageConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL) );
+//    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+//    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2XmlHttpMessageConverter);
+//    restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
+//    isInSync = false;
+//
+//    String adressRespString = restTemplate.exchange("http://10.20.200.100:5050/pre/amap_code/api?address=河南省濮阳市南乐县元村镇留胄村",
+//        HttpMethod.GET, null, String.class).getBody();
+//    System.out.println(adressRespString);
+//    AdressResp adressResp = restTemplate.exchange("http://10.20.200.100:5050/pre/amap_code/api?address=河南省濮阳市南乐县元村镇留胄村",
+//         HttpMethod.GET, null,
+//        new ParameterizedTypeReference<AdressResp>() {}).getBody();
+//    System.out.println(adressResp);
+  }
 
   public CustPersonInfoFromSync getPersonInfoById(String id){
     String url = String.format(getPersonInfoById, id);
@@ -1307,10 +1324,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return true;
     }
     return false;
-  }
-
-  public static void main(String[] args) {
-    checkMobile(" 1367159666");
   }
 }
 

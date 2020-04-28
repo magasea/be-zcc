@@ -17,6 +17,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
 import com.wensheng.zcc.cust.service.AmcContactorService;
@@ -26,9 +27,13 @@ import java.util.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
@@ -45,6 +50,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Autowired
   CustAmcCmpycontactorExtMapper custAmcCmpycontactorExtMapper;
+
+  @Value("${cust.syncUrls.getAddressCodeByAddress}")
+  private String getAddressCodeByAddress;
 
   private static volatile Gson gson = new Gson();
 
@@ -386,6 +394,16 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   public CustAmcCmpycontactorTrdInfoVo getCmpyAmcContactorDetail(Long contactorId) {
     CustAmcCmpycontactorTrdInfoVo custAmcCmpycontactorTrdInfoVo = new CustAmcCmpycontactorTrdInfoVo();
     CustAmcCmpycontactor custAmcCmpycontactor = custAmcCmpycontactorMapper.selectByPrimaryKey(contactorId);
+
+    //是否有对应的地址省市区编码
+    if("-1".equals(custAmcCmpycontactor.getCounty()) && !"-1".equals(custAmcCmpycontactor.getAddress())){
+      try{
+        getAdressCode(custAmcCmpycontactor);
+      }catch (Exception e){
+        log.error("查询地址省市区编码出错，不影响主流程，Exception：{}",e);
+      }
+    }
+
     if(custAmcCmpycontactor == null || custAmcCmpycontactor.getCmpyId() == -1L){
       custAmcCmpycontactorTrdInfoVo.setCustAmcCmpycontactor(custAmcCmpycontactor);
       return custAmcCmpycontactorTrdInfoVo;
@@ -407,6 +425,27 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
     }
     return custAmcCmpycontactorTrdInfoVo;
+  }
+
+  private void getAdressCode(CustAmcCmpycontactor custAmcCmpycontactor) {
+    RestTemplate restTemplate = CommonHandler.getRestTemplate();
+    String adressResp1 = restTemplate.exchange(String.format(getAddressCodeByAddress,custAmcCmpycontactor.getAddress()),
+        HttpMethod.GET, null, String.class).getBody();
+    System.out.println(adressResp1);
+    AdressResp adressResp = restTemplate.exchange(String.format(getAddressCodeByAddress,custAmcCmpycontactor.getAddress()),
+      HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {}).getBody();
+    if(null!=adressResp.getStatus() &&  "1".equals(adressResp.getStatus())){
+      custAmcCmpycontactor.setProvince(adressResp.getResult().getStatsResult().getProvince().get(0));
+      custAmcCmpycontactor.setCity(adressResp.getResult().getStatsResult().getCity().get(0));
+      custAmcCmpycontactor.setCounty(adressResp.getResult().getStatsResult().getCounty().get(0));
+
+      CustAmcCmpycontactor custAmcCmpycontactorNew = new  CustAmcCmpycontactor();
+      custAmcCmpycontactorNew.setProvince(adressResp.getResult().getStatsResult().getProvince().get(0));
+      custAmcCmpycontactorNew.setCity(adressResp.getResult().getStatsResult().getCity().get(0));
+      custAmcCmpycontactorNew.setCounty(adressResp.getResult().getStatsResult().getCounty().get(0));
+      custAmcCmpycontactorNew.setId(custAmcCmpycontactor.getId());
+      custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactorNew);
+    }
   }
 
   private List<CustAmcCmpycontactorExtVo> getPureContactors(List<CustAmcCmpycontactor> custAmcCmpycontactors) {

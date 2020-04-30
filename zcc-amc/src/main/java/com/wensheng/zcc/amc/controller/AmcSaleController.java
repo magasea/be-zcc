@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
+import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.service.AmcSaleService;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,13 @@ public class AmcSaleController {
   List<AmcSaleFloorVo> getAmcSaleFloors(){
     return amcSaleService.getFloors();
   }
+
+  @RequestMapping(value = "/getFrontendFloors", method = RequestMethod.POST)
+  @ResponseBody
+  List<AmcSaleFloorFrontEndVo>  getFrontendFloors( ) throws Exception {
+    return amcSaleService.getFrontEndFloors();
+  }
+
 
   @RequestMapping(value = "/updateFloors", method = RequestMethod.POST)
   @ResponseBody

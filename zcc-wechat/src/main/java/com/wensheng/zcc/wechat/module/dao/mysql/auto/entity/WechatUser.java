@@ -37,6 +37,12 @@ public class WechatUser {
 
     private String qrSceneStr;
 
+    private String mobile;
+
+    private String verifyCode;
+
+    private Date vcodeTime;
+
     public Long getId() {
         return id;
     }
@@ -171,5 +177,29 @@ public class WechatUser {
 
     public void setQrSceneStr(String qrSceneStr) {
         this.qrSceneStr = qrSceneStr == null ? null : qrSceneStr.trim();
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile == null ? null : mobile.trim();
+    }
+
+    public String getVerifyCode() {
+        return verifyCode;
+    }
+
+    public void setVerifyCode(String verifyCode) {
+        this.verifyCode = verifyCode == null ? null : verifyCode.trim();
+    }
+
+    public Date getVcodeTime() {
+        return vcodeTime;
+    }
+
+    public void setVcodeTime(Date vcodeTime) {
+        this.vcodeTime = vcodeTime;
     }
 }

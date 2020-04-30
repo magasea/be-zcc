@@ -71,15 +71,16 @@
   <!--</select>-->
   <sql id="Prefix_Column_List">
   ${prefix}id as id,
+  ${prefix}debt_type as debt_type,
   ${prefix}debtpack_id as debtpack_id,
   ${prefix}amc_id as amc_id,
   ${prefix}title as title,
   ${prefix}base_amount as base_amount,
   ${prefix}base_amount_desc as base_amount_desc,
   ${prefix}base_date as base_date,
+  ${prefix}interest_amount as interest_amount,
   ${prefix}total_amount as total_amount,
   ${prefix}total_amount_desc as total_amount_desc,
-  ${prefix}interest_amount as interest_amount,
   ${prefix}settle_date as settle_date,
   ${prefix}curt_prov as curt_prov,
   ${prefix}curt_city as curt_city,
@@ -106,7 +107,9 @@
   ${prefix}update_by as update_by,
   ${prefix}update_date as update_date,
   ${prefix}created_by as created_by,
-  ${prefix}created_date as created_date
+  ${prefix}created_date as created_date,
+  ${prefix}note as note,
+  ${prefix}visit_count as visit_count
   </sql>
   <sql id="ASSET_Column_List">
   ${prefix}id as ${alias}id,

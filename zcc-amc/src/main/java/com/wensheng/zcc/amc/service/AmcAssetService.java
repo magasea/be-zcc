@@ -36,6 +36,7 @@ public interface AmcAssetService {
     public List<AmcAssetVo> queryAll(int offset, int size);
 
     public AmcAssetVo get(Long amcAssetId);
+  public List<AmcAssetVo> getByIds(List<Long> amcAssetIds) throws Exception;
 
     public List<AmcAssetVo> query(AmcAsset queryCond, int offset, int size);
 

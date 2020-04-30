@@ -8,6 +8,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
@@ -43,6 +44,8 @@ public interface AmcDebtService {
   public List<AmcDebtExtVo> getByIds(List<Long> amcDebtIds) throws Exception;
 
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
+
+  public List<AmcDebtVo> queryByIds(List<Long> debtIds);
 
   List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy,
       Map<String, Object> queryParam) throws Exception;
@@ -125,5 +128,7 @@ public interface AmcDebtService {
   DebtImage uploadDebtImage(String imagePath, String ossPrePath, Long debtId, String desc) throws Exception;
 
   String getDebtOssPrePath(Long debtId);
+
+  List<AmcContactorDTO> getDebtContactorByDebtIds(List<Long> debtIds);
 
 }

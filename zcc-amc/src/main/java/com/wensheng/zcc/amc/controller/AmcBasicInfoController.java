@@ -391,7 +391,16 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+  @RequestMapping(value = "/orderByField", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> orderByField(){
 
+    List<String> result = new ArrayList<>();
+    for(OrderByFieldEnum orderByFieldEnum : OrderByFieldEnum.values()){
+      result.add(String.format("%d:%s", orderByFieldEnum.getId(), orderByFieldEnum.getName()));
+    }
+    return result;
+  }
 
   @RequestMapping(value = "/amcAssetFilter", method = RequestMethod.POST)
   @ResponseBody

@@ -13,7 +13,7 @@ import java.util.List;
  */
 public interface AmcSaleService {
     public List<AmcSaleFloorVo> getFloors();
-    public List<AmcSaleFloorFrontEndVo> getFrontEndFloors();
+    public List<AmcSaleFloorFrontEndVo> getFrontEndFloors() throws Exception;
     public boolean updateFloor(AmcSaleFloorVo amcSaleFloorVo) throws Exception;
     public boolean updateFloorSeq(List<Long> floorIds) throws Exception;
     public void delFloor(Long floorId) throws Exception;

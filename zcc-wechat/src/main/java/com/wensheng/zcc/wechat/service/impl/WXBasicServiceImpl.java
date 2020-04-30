@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.xml.parsers.ParserConfigurationException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -28,6 +29,7 @@ import org.xml.sax.SAXException;
 
 @CacheConfig(cacheNames = {"TOKEN"})
 @Lazy
+@Slf4j
 @Service
 public class WXBasicServiceImpl implements WXBasicService {
 
@@ -101,6 +103,7 @@ public class WXBasicServiceImpl implements WXBasicService {
 
 
   @Cacheable
+  @Override
   public String getPublicToken(){
     String profName = null;
     for (String profileName : environment.getActiveProfiles()) {
@@ -119,7 +122,7 @@ public class WXBasicServiceImpl implements WXBasicService {
     HttpEntity<?> entity = new HttpEntity<>(headers);
 
     ResponseEntity response = restTemplate.exchange(url, HttpMethod.GET, entity, Map.class);
-    System.out.println(((ResponseEntity<Map>) response).getBody().toString());
+    log.info(((ResponseEntity<Map>) response).getBody().toString());
     String token =(String) ((Map)response.getBody()).get("access_token");
     if(StringUtils.isEmpty(token) || token.length() < 10){
       return comnfuncPubGrpcService.getWXPubToken(profName);

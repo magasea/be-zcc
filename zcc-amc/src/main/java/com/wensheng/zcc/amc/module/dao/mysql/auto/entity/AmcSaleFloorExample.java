@@ -415,73 +415,73 @@ public class AmcSaleFloorExample {
             return (Criteria) this;
         }
 
-        public Criteria andSlogonIsNull() {
-            addCriterion("slogon is null");
+        public Criteria andSloganIsNull() {
+            addCriterion("slogan is null");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonIsNotNull() {
-            addCriterion("slogon is not null");
+        public Criteria andSloganIsNotNull() {
+            addCriterion("slogan is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonEqualTo(String value) {
-            addCriterion("slogon =", value, "slogon");
+        public Criteria andSloganEqualTo(String value) {
+            addCriterion("slogan =", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonNotEqualTo(String value) {
-            addCriterion("slogon <>", value, "slogon");
+        public Criteria andSloganNotEqualTo(String value) {
+            addCriterion("slogan <>", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonGreaterThan(String value) {
-            addCriterion("slogon >", value, "slogon");
+        public Criteria andSloganGreaterThan(String value) {
+            addCriterion("slogan >", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonGreaterThanOrEqualTo(String value) {
-            addCriterion("slogon >=", value, "slogon");
+        public Criteria andSloganGreaterThanOrEqualTo(String value) {
+            addCriterion("slogan >=", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonLessThan(String value) {
-            addCriterion("slogon <", value, "slogon");
+        public Criteria andSloganLessThan(String value) {
+            addCriterion("slogan <", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonLessThanOrEqualTo(String value) {
-            addCriterion("slogon <=", value, "slogon");
+        public Criteria andSloganLessThanOrEqualTo(String value) {
+            addCriterion("slogan <=", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonLike(String value) {
-            addCriterion("slogon like", value, "slogon");
+        public Criteria andSloganLike(String value) {
+            addCriterion("slogan like", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonNotLike(String value) {
-            addCriterion("slogon not like", value, "slogon");
+        public Criteria andSloganNotLike(String value) {
+            addCriterion("slogan not like", value, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonIn(List<String> values) {
-            addCriterion("slogon in", values, "slogon");
+        public Criteria andSloganIn(List<String> values) {
+            addCriterion("slogan in", values, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonNotIn(List<String> values) {
-            addCriterion("slogon not in", values, "slogon");
+        public Criteria andSloganNotIn(List<String> values) {
+            addCriterion("slogan not in", values, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonBetween(String value1, String value2) {
-            addCriterion("slogon between", value1, value2, "slogon");
+        public Criteria andSloganBetween(String value1, String value2) {
+            addCriterion("slogan between", value1, value2, "slogan");
             return (Criteria) this;
         }
 
-        public Criteria andSlogonNotBetween(String value1, String value2) {
-            addCriterion("slogon not between", value1, value2, "slogon");
+        public Criteria andSloganNotBetween(String value1, String value2) {
+            addCriterion("slogan not between", value1, value2, "slogan");
             return (Criteria) this;
         }
 

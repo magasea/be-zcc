@@ -188,6 +188,8 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
                 AmcBeanUtils.copyProperties(amcAssetPre, amcAsset);
                 amcAsset.setId(null);
                 amcAsset.setDebtId(amcDebt.getId());
+                amcAsset.setAmcContactorName(amcDebt.getAmcContactorName());
+                amcAsset.setAmcContactorPhone(amcDebt.getAmcContactorPhone());
                 AmcAssetVo amcAssetVo = amcAssetService.create(amcAsset);
                 AssetAdditional assetAdditional = new AssetAdditional();
                 assetAdditional.setWarrant(amcAssetPre.getWarrant());

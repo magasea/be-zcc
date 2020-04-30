@@ -710,7 +710,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                             idxDebtTitle = idxOfCell;
                             break;
                         case strDebtType:
-                            idxDebtTitle = idxOfCell;
+                            idxDebtType = idxOfCell;
                             break;
                         case strAmcContactor:
                             idxAmcContactor = idxOfCell;
@@ -769,6 +769,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     }
                     if(idxDebtBaseAmount == -1){
                         missingHeader = strDebtBaseAmount;
+                    }
+                    if(idxDebtType == -1){
+                        missingHeader = strDebtType;
                     }
 //                    if(idxDebtTotalAmount == -1){
 //                        missingHeader = strDebtTotalAmount;

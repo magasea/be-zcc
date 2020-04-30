@@ -2,24 +2,30 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-import com.wensheng.zcc.amc.dao.mysql.mapper.*;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleFloorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagAssetMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagDebtMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagMapper;
 import com.wensheng.zcc.amc.module.dao.helper.FloorPublishStateEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTagExample;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentItem;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleRecomItems;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 import org.springframework.util.CollectionUtils;
 
 @Service
@@ -58,10 +64,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         List<AmcSaleFloorVo> amcSaleFloorVos = new ArrayList<>();
         TypeToken<ArrayList<AmcFilterContentItem>> token = new TypeToken<ArrayList<AmcFilterContentItem>>() {};
         for(AmcSaleFloor amcSaleFloor : amcSaleFloors){
-
-
             AmcSaleFloorVo amcSaleFloorVo = new AmcSaleFloorVo();
-
             amcSaleFloorVo.setAmcSaleFloor(amcSaleFloor);
             try{
                 if(!amcSaleFloor.getFilterContent().equals("-1") && amcSaleFloor.getFilterContent().length() > 2){
@@ -69,26 +72,23 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                     amcSaleFloorVo.setAmcSaleFilter(amcSaleFilter);
                 }
                 if(!amcSaleFloor.getRecomItems().equals("-1") && amcSaleFloor.getRecomItems().length() > 2){
-                    AmcSaleFilter amcSaleFilterRecomm = gson.fromJson(amcSaleFloor.getRecomItems(), AmcSaleFilter.class);
+                    AmcSaleRecomItems amcSaleFilterRecomm = gson.fromJson(amcSaleFloor.getRecomItems(), AmcSaleRecomItems.class);
                     amcSaleFloorVo.setAmcRecommItem(amcSaleFilterRecomm);
                 }
 
             }catch (Exception ex){
                 log.error("Failed to convert filter content to object", ex);
             }
-
-
-
             amcSaleFloorVos.add(amcSaleFloorVo);
-
-
         }
 
         return amcSaleFloorVos;
     }
 
     @Override
-    public List<AmcSaleFloorFrontEndVo> getFrontEndFloors() {
+    public List<AmcSaleFloorFrontEndVo> getFrontEndFloors() throws Exception {
+        List<AmcSaleFloorFrontEndVo> amcSaleFloorFrontEndVos = new ArrayList<>();
+
         // get all published floors
         AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
         amcSaleFloorExample.setOrderByClause(" floor_seq asc ");
@@ -96,23 +96,32 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
         // get all recomm items with floors
         for(AmcSaleFloor amcSaleFloor : amcSaleFloors){
-
+            AmcSaleFloorFrontEndVo amcSaleFloorFrontEndVo = new AmcSaleFloorFrontEndVo();
+            amcSaleFloorFrontEndVo.setAmcSaleFloor(amcSaleFloor);
             if(amcSaleFloor.getRecomItems() != null && !amcSaleFloor.getRecomItems().equals("-1")){
-                AmcSaleFilter amcRecomFilter = null;
+                AmcSaleRecomItems amcSaleRecomItems = null;
                 try{
-                    amcRecomFilter =  gson.fromJson(amcSaleFloor.getRecomItems(), AmcSaleFilter.class);
+                    amcSaleRecomItems =  gson.fromJson(amcSaleFloor.getRecomItems(), AmcSaleRecomItems.class);
                 }catch (Exception ex){
                     log.error("Failed to convert RecomItems content to AmcSaleFilter:{}", amcSaleFloor.getRecomItems(), ex);
                 }
-                if(!CollectionUtils.isEmpty(amcRecomFilter.getFilterDebtItemList())){
-                    amcRecomFilter.getFilterDebtItemList();
+                if(amcSaleRecomItems.getAmcSaleRecommDebts() != null &&
+                    !CollectionUtils.isEmpty(amcSaleRecomItems.getAmcSaleRecommDebts().getDebtIds())){
+                    amcSaleFloorFrontEndVo.setAmcDebtVos(amcDebtService.queryByIds(amcSaleRecomItems.getAmcSaleRecommDebts().getDebtIds()));
                 }
+                if(amcSaleRecomItems.getAmcSaleRecommAssets() != null &&
+                    !CollectionUtils.isEmpty(amcSaleRecomItems.getAmcSaleRecommAssets().getAssetIds())){
+                    amcSaleFloorFrontEndVo.setAmcAssetVos(
+                        amcAssetService.getAssetsByIds(amcSaleRecomItems.getAmcSaleRecommAssets().getAssetIds()));
 
+                }
+                amcSaleFloorFrontEndVos.add(amcSaleFloorFrontEndVo);
 
 
             }
+
         }
-        return null;
+        return amcSaleFloorFrontEndVos;
     }
 
     @Override
@@ -142,27 +151,21 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     private void checkFilterContent(AmcSaleFloorVo amcSaleFloorVo) throws Exception {
-        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
-        if(amcSaleFloorVo.getAmcRecommItem() != null && (amcSaleFloorVo.getAmcRecommItem().getFilterAssetItemList() != null &&
-        !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterAssetItemList())
-        || amcSaleFloorVo.getAmcRecommItem().getFilterDebtItemList() != null &&
-            !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterDebtItemList()))){
+        AmcSaleFloor amcSaleFloor = amcSaleFloorVo.getAmcSaleFloor();
+        if(amcSaleFloorVo.getAmcRecommItem() != null && (amcSaleFloorVo.getAmcRecommItem().getAmcSaleRecommAssets() != null &&
+        !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getAmcSaleRecommAssets().getAssetIds())
+        || amcSaleFloorVo.getAmcRecommItem().getAmcSaleRecommDebts() != null &&
+            !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getAmcSaleRecommDebts().getDebtIds()))){
             amcSaleFloor.setRecomItems(gson.toJson(amcSaleFloorVo.getAmcRecommItem()));
 
-            if(amcSaleFloorVo.getAmcRecommItem().getFilterTagItemList() != null &&
-                !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterTagItemList())){
-                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR);
 
-            }
         }
-        if(amcSaleFloorVo.getAmcSaleFilter() != null && (amcSaleFloorVo.getAmcSaleFilter().getFilterDebtItemList() != null &&
-        !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterDebtItemList())
-        || amcSaleFloorVo.getAmcSaleFilter().getFilterAssetItemList() != null &&
-            !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterAssetItemList()))
-        || amcSaleFloorVo.getAmcSaleFilter().getFilterTagItemList() != null &&
-            !CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterTagItemList())) {
+        if(amcSaleFloorVo.getAmcSaleFilter() != null && (amcSaleFloorVo.getAmcSaleFilter().getFilterDebt() != null
+        || amcSaleFloorVo.getAmcSaleFilter().getFilterAsset() != null
+        || amcSaleFloorVo.getAmcSaleFilter().getFilterTag() != null)) {
             amcSaleFloor.setFilterContent(gson.toJson(amcSaleFloorVo.getAmcSaleFilter()));
         }
+        amcSaleFloorVo.setAmcSaleFloor(amcSaleFloor);
 
     }
 
@@ -200,10 +203,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         if(amcSaleFloor == null ){
             return false;
         }
-        if(CollectionUtils.isEmpty(amcSaleFilter.getFilterAssetItemList()) ||
-            CollectionUtils.isEmpty(amcSaleFilter.getFilterDebtItemList()) ||
-            CollectionUtils.isEmpty(amcSaleFilter.getFilterTagItemList())
-        ){
+        if(amcSaleFilter.getFilterAsset() == null &&
+            amcSaleFilter.getFilterDebt() == null &&
+            amcSaleFilter.getFilterTag() == null){
             log.error("empty filter content item list");
             return false;
         }
@@ -224,18 +226,17 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     public AmcSaleFloorVo createFloor(AmcSaleFloorVo amcSaleFloorVo) {
         AmcSaleFloor amcSaleFloor = amcSaleFloorVo.getAmcSaleFloor();
 
-        if(amcSaleFloorVo.getAmcSaleFilter() == null || CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterDebtItemList())||
-            CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterDebtItemList())||
-            CollectionUtils.isEmpty(amcSaleFloorVo.getAmcSaleFilter().getFilterDebtItemList())
-
-        ){
+        if(amcSaleFloorVo.getAmcSaleFilter() == null || ( amcSaleFloorVo.getAmcSaleFilter().getFilterDebt() == null
+            && amcSaleFloorVo.getAmcSaleFilter().getFilterAsset() == null &&
+            amcSaleFloorVo.getAmcSaleFilter().getFilterTag() == null)){
             log.info("There is no filter item");
             amcSaleFloor.setFilterContent(null);
         }else{
             amcSaleFloor.setFilterContent(gson.toJson(amcSaleFloorVo.getAmcSaleFilter()));
         }
-        if(amcSaleFloorVo.getAmcRecommItem() == null || CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterAssetItemList())
-        || CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getFilterDebtItemList())){
+        if(amcSaleFloorVo.getAmcRecommItem() == null
+        || (CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getAmcSaleRecommDebts().getDebtIds())
+        && CollectionUtils.isEmpty(amcSaleFloorVo.getAmcRecommItem().getAmcSaleRecommAssets().getAssetIds()))){
             log.info("There is no recomm items");
             amcSaleFloor.setRecomItems(null);
         }else{

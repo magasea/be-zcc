@@ -195,7 +195,7 @@ message:
     spid: 9346
     sppassword: xuKh9a8u
     commond: MT_REQUEST
-    multiCommond: MULTI_MT_REQUEST    dbusername: amcssoworker
+    multiCommond: MULTI_MT_REQUEST
     dbpasswd: Wsamc@12345
 
 kafka:

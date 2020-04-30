@@ -20,6 +20,8 @@ public class AmcDebtCreateVo implements Serializable {
 
   private Long debtpackId;
 
+  private Integer debtType;
+
   private Long amcId;
 
   private String title;

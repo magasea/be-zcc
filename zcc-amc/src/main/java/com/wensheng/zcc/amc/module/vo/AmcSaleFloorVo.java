@@ -10,6 +10,6 @@ public class AmcSaleFloorVo {
   AmcSaleFloor amcSaleFloor;
 
   AmcSaleFilter amcSaleFilter;
-  AmcSaleFilter amcRecommItem;
+  AmcSaleRecomItems amcRecommItem;
 
 }

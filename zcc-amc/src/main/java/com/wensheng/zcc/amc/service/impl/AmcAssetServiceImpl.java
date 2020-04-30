@@ -11,6 +11,7 @@ import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
+import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
@@ -271,7 +272,19 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return null;
     }
 
-    @Override
+  @Override
+  public List<AmcAssetVo> getByIds(List<Long> amcAssetIds) throws Exception {
+
+      List<AmcAsset> amcAssets = getSimpleAssets(amcAssetIds);
+    List<AmcAssetVo> amcAssetVos = new ArrayList<>();
+    for(AmcAsset amcAsset: amcAssets){
+      amcAssetVos.add(queryMongoForAmcAsset(amcAsset));
+    }
+    return amcAssetVos;
+
+  }
+
+  @Override
     public List<AmcAssetVo> query(AmcAsset queryCond, int offset, int size) {
         return null;
     }
@@ -281,17 +294,48 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(assetId);
 
 
-        AmcAssetDetailVo amcAssetDetailVo = queryMongoForAmcAsset(amcAsset);
-        if(amcAsset.getAmcContactorId() != null && amcAsset.getAmcContactorId() > 0){
-            AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
-            amcDebtContactorExample.createCriteria().andIdEqualTo(amcAsset.getAmcContactorId());
-            AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcAsset.getAmcContactorId());
-//            amcAssetDetailVo.getAmcAssetVo().setAmcContactorId(amcDebtContactor);
+        AmcAssetDetailVo amcAssetDetailVo = queryDetailMongoForAmcAsset(amcAsset);
+        if(amcAsset.getAmcContactorName() == null ||  StringUtils.isEmpty(amcAsset.getAmcContactorName())){
+            List<AmcContactorDTO> amcContactorDTOS = amcDebtService.getDebtContactorByDebtIds(Arrays.asList(amcAsset.getDebtId()));
+            if(!CollectionUtils.isEmpty(amcContactorDTOS)){
+              amcAsset.setAmcContactorName(amcContactorDTOS.get(0).getContactorName());
+              amcAsset.setAmcContactorPhone(amcContactorDTOS.get(0).getContactorPhone());
+              amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+            }
+
         }
         return amcAssetDetailVo;
     }
 
-    private AmcAssetDetailVo queryMongoForAmcAsset(AmcAsset amcAsset) throws Exception {
+
+  private AmcAssetVo queryMongoForAmcAsset(AmcAsset amcAsset) throws Exception {
+    AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
+    Long assetId = amcAsset.getId();
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").is(assetId));
+
+    List<AssetAdditional> assetAdditionals =  wszccTemplate.find(query, AssetAdditional.class);
+
+
+
+    Query queryAssetImage = new Query();
+    queryAssetImage.addCriteria(Criteria.where("amcAssetId").is(assetId).and("tag").is(ImageClassEnum.MAIN.getId()));
+    List<AssetImage> assetImages = wszccTemplate.find(queryAssetImage, AssetImage.class);
+
+
+    if(!CollectionUtils.isEmpty(assetAdditionals)){
+      amcAssetVo.setAssetAdditional(assetAdditionals.get(0));
+    }
+
+
+    if(!CollectionUtils.isEmpty(assetImages)){
+      amcAssetVo.setAssetImage(assetImages.get(0));
+    }
+    return amcAssetVo;
+
+  }
+
+  private AmcAssetDetailVo queryDetailMongoForAmcAsset(AmcAsset amcAsset) throws Exception {
         AmcAssetVo amcAssetVo = Dao2VoUtils.convertDo2Vo(amcAsset);
         Long assetId = amcAsset.getId();
         Query query = new Query();
@@ -371,7 +415,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
         List<AmcAssetDetailVo> amcAssetDetailVos = new ArrayList<>();
         for(AmcAsset amcAsset: amcAssets){
-            amcAssetDetailVos.add(queryMongoForAmcAsset(amcAsset));
+            amcAssetDetailVos.add(queryDetailMongoForAmcAsset(amcAsset));
         }
         return amcAssetDetailVos;
     }
@@ -728,7 +772,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 if(CollectionUtils.isEmpty(assetAdditionals)){
                     continue;
                 }else {
-                    amcAsset.setIsRecom(assetAdditionals.get(0).getIsRecommanded());
+//                    amcAsset.setIsRecom(assetAdditionals.get(0).getIsRecommanded());
                     amcAssetMapper.updateByPrimaryKey(amcAsset);
                 }
 

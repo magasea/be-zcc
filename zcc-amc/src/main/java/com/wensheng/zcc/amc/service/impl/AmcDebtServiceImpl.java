@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -32,6 +31,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
+import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
@@ -71,7 +71,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import lombok.Data;
-import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -345,11 +344,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtVo amcDebtVo = Dao2VoUtils.convertDo2Vo(amcDebtExts.get(0).getDebtInfo());
 
 
-//    AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactorId());
-//    AmcDebtContactor amcDebtContactor2 = amcDebtContactorMapper.selectByPrimaryKey(amcDebtExts.get(0).getDebtInfo().getAmcContactor2Id());
-//
-//    amcDebtVo.setAmcContactorId(amcDebtContactor);
-//    amcDebtVo.setAmcContactor2Id(amcDebtContactor2);
+
 
 
 
@@ -432,7 +427,23 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return null;
   }
 
+  @Override
+  public List<AmcDebtVo> queryByIds(List<Long> debtIds) {
 
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andIdIn(debtIds);
+
+
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+
+
+
+    if(!CollectionUtils.isEmpty(amcDebts)){
+      return doList2VoList(amcDebts);
+    }
+
+    return null;
+  }
 
   private List<AmcDebtVo> doList2VoList(List<AmcDebt> originList){
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
@@ -440,8 +451,6 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Query query;
     for(AmcDebt amcDebt: originList){
       AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
-      query = new Query();
-      query.addCriteria(Criteria.where("debtId").is(amcDebt.getId()));
 
       amcDebtVos.add(amcDebtVo);
     }
@@ -663,6 +672,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     return true;
   }
+
+
 
   @Override
   public AmcDebtor create(AmcDebtor amcDebtor) throws Exception {
@@ -1254,7 +1265,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       log.error("There is no nearby debts");
       return new ArrayList<>();
     }
-    List<AmcDebtVo> amcDebtVosQuery = getByIdsSimple(debtIds);
+    List<AmcDebtVo> amcDebtVosQuery = getByIdsSimpleWithoutAddition(debtIds);
     Map<Long, AmcDebtVo> amcDebtVoMap = new HashMap<>();
     amcDebtVosQuery.forEach(item-> amcDebtVoMap.put(item.getId(), item));
     for(GeoResult<DebtAdditional> geoResult: debtAdditionalGeoResults.getContent()) {
@@ -1287,7 +1298,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebts;
   }
 
-  public List<AmcDebtVo> getByIdsSimple(List<Long> debtIds) {
+  public List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds) {
     if(CollectionUtils.isEmpty(debtIds)){
       return new ArrayList<>();
     }
@@ -1362,6 +1373,22 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     String prePath = new StringBuilder(ImagePathClassEnum.DEBT.getName()).append("/").append(envName).append("/").
             append(debtId).append( "/").toString();
     return prePath;
+  }
+
+  @Override
+  public List<AmcContactorDTO> getDebtContactorByDebtIds(List<Long> debtIds) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andIdIn(debtIds);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    List<AmcContactorDTO> amcContactorDTOS = new ArrayList<>();
+    for(AmcDebt amcDebt: amcDebts){
+      AmcContactorDTO amcContactorDTO = new AmcContactorDTO();
+      amcContactorDTO.setContactorName(amcDebt.getAmcContactorName());
+      amcContactorDTO.setDebtId(amcDebt.getId());
+      amcContactorDTO.setContactorPhone(amcDebt.getAmcContactorPhone());
+      amcContactorDTOS.add(amcContactorDTO);
+    }
+    return amcContactorDTOS;
   }
 
   private void handleCourtGeoInfo(Map<Long, Long> debt2Courts) {

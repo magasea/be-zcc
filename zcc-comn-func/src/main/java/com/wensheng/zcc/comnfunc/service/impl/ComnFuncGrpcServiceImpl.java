@@ -7,6 +7,7 @@ import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
+import com.wensheng.zcc.comnfunc.service.PhoneMsgService;
 import com.wensheng.zcc.comnfunc.service.RegionService;
 import com.wensheng.zcc.comnfunc.service.WXBasicService;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.*;
@@ -37,6 +38,9 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 
   @Autowired
   RegionService regionService;
+
+  @Autowired
+  PhoneMsgService phoneMsgService;
 
   @Override
   public void getAddress(com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq request,
@@ -143,6 +147,24 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
       responseObserver.onError(ex);
     }
     ;
+  }
+
+  @Override
+  public void sendVerifyCode(com.wenshengamc.zcc.comnfunc.gaodegeo.PhoneMsgReq request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.PhoneMsgRep> responseObserver) {
+    String code = request.getCode();
+    String phone = request.getPhoneNum();
+    try{
+      String result = phoneMsgService.generateVerificationCodeToPhone(phone, code);
+      PhoneMsgRep.Builder pmBuilder = PhoneMsgRep.newBuilder();
+      pmBuilder.setResult(result);
+      responseObserver.onNext(pmBuilder.build());
+      responseObserver.onCompleted();
+    }catch (Exception ex){
+      responseObserver.onError(ex);
+    }
+
+
   }
 
 

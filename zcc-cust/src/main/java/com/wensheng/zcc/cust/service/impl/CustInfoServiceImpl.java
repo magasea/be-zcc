@@ -960,6 +960,20 @@ public class CustInfoServiceImpl implements CustInfoService {
   }
 
   @Override
+  public List<CustTrdCmpy> getAccurateCmpyByName(String companyName) throws Exception {
+    if(StringUtils.isEmpty(companyName) || companyName.contains("%")){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_COMPANY_NAME_ERROR);
+    }
+    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(companyName);
+    custTrdCmpyExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",companyName,"%"));
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    //判断是否真的匹配
+
+    return custTrdCmpyList;
+  }
+
+  @Override
   public List<CustTrdCmpy> getCompanyByName(String companyName) throws Exception {
     if(StringUtils.isEmpty(companyName) || companyName.contains("%")){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_COMPANY_NAME_ERROR);

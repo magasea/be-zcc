@@ -429,9 +429,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   private void getAdressCode(CustAmcCmpycontactor custAmcCmpycontactor) {
     RestTemplate restTemplate = CommonHandler.getRestTemplate();
-    String adressResp1 = restTemplate.exchange(String.format(getAddressCodeByAddress,custAmcCmpycontactor.getAddress()),
-        HttpMethod.GET, null, String.class).getBody();
-    System.out.println(adressResp1);
+//    String adressResp1 = restTemplate.exchange(String.format(getAddressCodeByAddress,custAmcCmpycontactor.getAddress()),
+//        HttpMethod.GET, null, String.class).getBody();
+//    System.out.println(adressResp1);
     AdressResp adressResp = restTemplate.exchange(String.format(getAddressCodeByAddress,custAmcCmpycontactor.getAddress()),
       HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {}).getBody();
     if(null!=adressResp.getStatus() &&  "1".equals(adressResp.getStatus())){

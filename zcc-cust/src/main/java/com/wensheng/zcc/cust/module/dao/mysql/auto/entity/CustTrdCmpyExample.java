@@ -1834,6 +1834,76 @@ public class CustTrdCmpyExample {
             addCriterion("sync_time not between", value1, value2, "syncTime");
             return (Criteria) this;
         }
+
+        public Criteria andCrawledStatusIsNull() {
+            addCriterion("crawled_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusIsNotNull() {
+            addCriterion("crawled_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusEqualTo(String value) {
+            addCriterion("crawled_status =", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotEqualTo(String value) {
+            addCriterion("crawled_status <>", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusGreaterThan(String value) {
+            addCriterion("crawled_status >", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("crawled_status >=", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusLessThan(String value) {
+            addCriterion("crawled_status <", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusLessThanOrEqualTo(String value) {
+            addCriterion("crawled_status <=", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusLike(String value) {
+            addCriterion("crawled_status like", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotLike(String value) {
+            addCriterion("crawled_status not like", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusIn(List<String> values) {
+            addCriterion("crawled_status in", values, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotIn(List<String> values) {
+            addCriterion("crawled_status not in", values, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusBetween(String value1, String value2) {
+            addCriterion("crawled_status between", value1, value2, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotBetween(String value1, String value2) {
+            addCriterion("crawled_status not between", value1, value2, "crawledStatus");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

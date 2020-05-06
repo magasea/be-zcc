@@ -13,7 +13,7 @@ public class AmcSaleFloor {
 
     private String title;
 
-    private String slogon;
+    private String slogan;
 
     private Date floorStartTime;
 
@@ -73,12 +73,12 @@ public class AmcSaleFloor {
         this.title = title == null ? null : title.trim();
     }
 
-    public String getSlogon() {
-        return slogon;
+    public String getSlogan() {
+        return slogan;
     }
 
-    public void setSlogon(String slogon) {
-        this.slogon = slogon == null ? null : slogon.trim();
+    public void setSlogan(String slogan) {
+        this.slogan = slogan == null ? null : slogan.trim();
     }
 
     public Date getFloorStartTime() {

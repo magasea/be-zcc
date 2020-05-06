@@ -9,13 +9,14 @@ import lombok.Data;
 public class AmcFilterContentAsset extends AmcFilterContentItem implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  List<Long> assetIds = null;
+//  List<Long> assetIds = null;
   List<Long> area = null;
   List<Long> landArea = null;
-  List<String> locationCode = null;
+  String locationCode = null;
   List<Long> valuation = null;
   List<Integer> sealStatus = null;
   List<Integer> assetTypes = null;
   List<String> amcContactorNames = null;
+  int orderByField = -1;
 
 }

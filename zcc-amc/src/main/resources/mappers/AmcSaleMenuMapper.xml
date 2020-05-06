@@ -1,18 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleFloorMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor">
+<mapper namespace="com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleMenuMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu">
     <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="floor" jdbcType="INTEGER" property="floor" />
-    <result column="floor_seq" jdbcType="INTEGER" property="floorSeq" />
-    <result column="css" jdbcType="INTEGER" property="css" />
-    <result column="title" jdbcType="CHAR" property="title" />
-    <result column="slogan" jdbcType="VARCHAR" property="slogan" />
-    <result column="floor_start_time" jdbcType="TIMESTAMP" property="floorStartTime" />
-    <result column="floor_end_time" jdbcType="TIMESTAMP" property="floorEndTime" />
+    <result column="name" jdbcType="CHAR" property="name" />
     <result column="filter_content" jdbcType="VARCHAR" property="filterContent" />
-    <result column="recom_items" jdbcType="VARCHAR" property="recomItems" />
-    <result column="publish_state" jdbcType="INTEGER" property="publishState" />
+    <result column="seq" jdbcType="INTEGER" property="seq" />
+    <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
@@ -77,17 +71,16 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, floor, floor_seq, css, title, slogan, floor_start_time, floor_end_time, filter_content, 
-    recom_items, publish_state, create_by, create_time, update_by, update_time
+    id, name, filter_content, seq, img_url, create_by, create_time, update_by, update_time
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_SALE_FLOOR
+    from AMC_SALE_MENU
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -98,69 +91,47 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_SALE_FLOOR
+    from AMC_SALE_MENU
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from AMC_SALE_FLOOR
+    delete from AMC_SALE_MENU
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample">
-    delete from AMC_SALE_FLOOR
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample">
+    delete from AMC_SALE_MENU
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor">
+  <insert id="insert" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_SALE_FLOOR (floor, floor_seq, css, 
-      title, slogan, floor_start_time, 
-      floor_end_time, filter_content, recom_items, 
-      publish_state, create_by, create_time, 
+    insert into AMC_SALE_MENU (name, filter_content, seq, 
+      img_url, create_by, create_time, 
       update_by, update_time)
-    values (#{floor,jdbcType=INTEGER}, #{floorSeq,jdbcType=INTEGER}, #{css,jdbcType=INTEGER}, 
-      #{title,jdbcType=CHAR}, #{slogan,jdbcType=VARCHAR}, #{floorStartTime,jdbcType=TIMESTAMP}, 
-      #{floorEndTime,jdbcType=TIMESTAMP}, #{filterContent,jdbcType=VARCHAR}, #{recomItems,jdbcType=VARCHAR}, 
-      #{publishState,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+    values (#{name,jdbcType=CHAR}, #{filterContent,jdbcType=VARCHAR}, #{seq,jdbcType=INTEGER}, 
+      #{imgUrl,jdbcType=VARCHAR}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
       #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_SALE_FLOOR
+    insert into AMC_SALE_MENU
     <trim prefix="(" suffix=")" suffixOverrides=",">
-      <if test="floor != null">
-        floor,
-      </if>
-      <if test="floorSeq != null">
-        floor_seq,
-      </if>
-      <if test="css != null">
-        css,
-      </if>
-      <if test="title != null">
-        title,
-      </if>
-      <if test="slogan != null">
-        slogan,
-      </if>
-      <if test="floorStartTime != null">
-        floor_start_time,
-      </if>
-      <if test="floorEndTime != null">
-        floor_end_time,
+      <if test="name != null">
+        name,
       </if>
       <if test="filterContent != null">
         filter_content,
       </if>
-      <if test="recomItems != null">
-        recom_items,
+      <if test="seq != null">
+        seq,
       </if>
-      <if test="publishState != null">
-        publish_state,
+      <if test="imgUrl != null">
+        img_url,
       </if>
       <if test="createBy != null">
         create_by,
@@ -176,35 +147,17 @@
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
-      <if test="floor != null">
-        #{floor,jdbcType=INTEGER},
-      </if>
-      <if test="floorSeq != null">
-        #{floorSeq,jdbcType=INTEGER},
-      </if>
-      <if test="css != null">
-        #{css,jdbcType=INTEGER},
-      </if>
-      <if test="title != null">
-        #{title,jdbcType=CHAR},
-      </if>
-      <if test="slogan != null">
-        #{slogan,jdbcType=VARCHAR},
-      </if>
-      <if test="floorStartTime != null">
-        #{floorStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="floorEndTime != null">
-        #{floorEndTime,jdbcType=TIMESTAMP},
+      <if test="name != null">
+        #{name,jdbcType=CHAR},
       </if>
       <if test="filterContent != null">
         #{filterContent,jdbcType=VARCHAR},
       </if>
-      <if test="recomItems != null">
-        #{recomItems,jdbcType=VARCHAR},
+      <if test="seq != null">
+        #{seq,jdbcType=INTEGER},
       </if>
-      <if test="publishState != null">
-        #{publishState,jdbcType=INTEGER},
+      <if test="imgUrl != null">
+        #{imgUrl,jdbcType=VARCHAR},
       </if>
       <if test="createBy != null">
         #{createBy,jdbcType=BIGINT},
@@ -220,47 +173,29 @@
       </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample" resultType="java.lang.Long">
-    select count(*) from AMC_SALE_FLOOR
+  <select id="countByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample" resultType="java.lang.Long">
+    select count(*) from AMC_SALE_MENU
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update AMC_SALE_FLOOR
+    update AMC_SALE_MENU
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
       </if>
-      <if test="record.floor != null">
-        floor = #{record.floor,jdbcType=INTEGER},
-      </if>
-      <if test="record.floorSeq != null">
-        floor_seq = #{record.floorSeq,jdbcType=INTEGER},
-      </if>
-      <if test="record.css != null">
-        css = #{record.css,jdbcType=INTEGER},
-      </if>
-      <if test="record.title != null">
-        title = #{record.title,jdbcType=CHAR},
-      </if>
-      <if test="record.slogan != null">
-        slogan = #{record.slogan,jdbcType=VARCHAR},
-      </if>
-      <if test="record.floorStartTime != null">
-        floor_start_time = #{record.floorStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="record.floorEndTime != null">
-        floor_end_time = #{record.floorEndTime,jdbcType=TIMESTAMP},
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=CHAR},
       </if>
       <if test="record.filterContent != null">
         filter_content = #{record.filterContent,jdbcType=VARCHAR},
       </if>
-      <if test="record.recomItems != null">
-        recom_items = #{record.recomItems,jdbcType=VARCHAR},
+      <if test="record.seq != null">
+        seq = #{record.seq,jdbcType=INTEGER},
       </if>
-      <if test="record.publishState != null">
-        publish_state = #{record.publishState,jdbcType=INTEGER},
+      <if test="record.imgUrl != null">
+        img_url = #{record.imgUrl,jdbcType=VARCHAR},
       </if>
       <if test="record.createBy != null">
         create_by = #{record.createBy,jdbcType=BIGINT},
@@ -280,18 +215,12 @@
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update AMC_SALE_FLOOR
+    update AMC_SALE_MENU
     set id = #{record.id,jdbcType=BIGINT},
-      floor = #{record.floor,jdbcType=INTEGER},
-      floor_seq = #{record.floorSeq,jdbcType=INTEGER},
-      css = #{record.css,jdbcType=INTEGER},
-      title = #{record.title,jdbcType=CHAR},
-      slogan = #{record.slogan,jdbcType=VARCHAR},
-      floor_start_time = #{record.floorStartTime,jdbcType=TIMESTAMP},
-      floor_end_time = #{record.floorEndTime,jdbcType=TIMESTAMP},
+      name = #{record.name,jdbcType=CHAR},
       filter_content = #{record.filterContent,jdbcType=VARCHAR},
-      recom_items = #{record.recomItems,jdbcType=VARCHAR},
-      publish_state = #{record.publishState,jdbcType=INTEGER},
+      seq = #{record.seq,jdbcType=INTEGER},
+      img_url = #{record.imgUrl,jdbcType=VARCHAR},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_by = #{record.updateBy,jdbcType=BIGINT},
@@ -300,38 +229,20 @@
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor">
-    update AMC_SALE_FLOOR
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu">
+    update AMC_SALE_MENU
     <set>
-      <if test="floor != null">
-        floor = #{floor,jdbcType=INTEGER},
-      </if>
-      <if test="floorSeq != null">
-        floor_seq = #{floorSeq,jdbcType=INTEGER},
-      </if>
-      <if test="css != null">
-        css = #{css,jdbcType=INTEGER},
-      </if>
-      <if test="title != null">
-        title = #{title,jdbcType=CHAR},
-      </if>
-      <if test="slogan != null">
-        slogan = #{slogan,jdbcType=VARCHAR},
-      </if>
-      <if test="floorStartTime != null">
-        floor_start_time = #{floorStartTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="floorEndTime != null">
-        floor_end_time = #{floorEndTime,jdbcType=TIMESTAMP},
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
       </if>
       <if test="filterContent != null">
         filter_content = #{filterContent,jdbcType=VARCHAR},
       </if>
-      <if test="recomItems != null">
-        recom_items = #{recomItems,jdbcType=VARCHAR},
+      <if test="seq != null">
+        seq = #{seq,jdbcType=INTEGER},
       </if>
-      <if test="publishState != null">
-        publish_state = #{publishState,jdbcType=INTEGER},
+      <if test="imgUrl != null">
+        img_url = #{imgUrl,jdbcType=VARCHAR},
       </if>
       <if test="createBy != null">
         create_by = #{createBy,jdbcType=BIGINT},
@@ -348,32 +259,26 @@
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor">
-    update AMC_SALE_FLOOR
-    set floor = #{floor,jdbcType=INTEGER},
-      floor_seq = #{floorSeq,jdbcType=INTEGER},
-      css = #{css,jdbcType=INTEGER},
-      title = #{title,jdbcType=CHAR},
-      slogan = #{slogan,jdbcType=VARCHAR},
-      floor_start_time = #{floorStartTime,jdbcType=TIMESTAMP},
-      floor_end_time = #{floorEndTime,jdbcType=TIMESTAMP},
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu">
+    update AMC_SALE_MENU
+    set name = #{name,jdbcType=CHAR},
       filter_content = #{filterContent,jdbcType=VARCHAR},
-      recom_items = #{recomItems,jdbcType=VARCHAR},
-      publish_state = #{publishState,jdbcType=INTEGER},
+      seq = #{seq,jdbcType=INTEGER},
+      img_url = #{imgUrl,jdbcType=VARCHAR},
       create_by = #{createBy,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from AMC_SALE_FLOOR
+    from AMC_SALE_MENU
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

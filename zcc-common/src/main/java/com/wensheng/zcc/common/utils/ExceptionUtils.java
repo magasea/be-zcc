@@ -76,6 +76,7 @@ public class ExceptionUtils {
     NO_CMPY_CONTACTOR_ERROR(1046, "no CmpyContactor in db ", "数据库没有公司联系人"),
     AMCSALE_RECOMMITEM_ERROR(1047, "amcsale recommitem error ", "推荐项目错误"),
     INVALID_STATE(1048, "invalid state", "非法的状态"),
+    WECHAT_USER_ERROR(1049, "wechat user error", "微信用户错误"),
     ;
     int code;
     String name;

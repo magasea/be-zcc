@@ -4,4 +4,8 @@ public interface WXUserService {
   public void tagUserTask() throws Exception;
 
   void syncUserInfoFromWX();
+
+  boolean sendPhoneVcode(String openId, String phone, String code) throws Exception;
+
+  boolean bindPhone(String openId, String phone, String code) throws Exception;
 }

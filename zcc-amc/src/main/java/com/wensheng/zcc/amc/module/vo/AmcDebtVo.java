@@ -18,6 +18,8 @@ public class AmcDebtVo {
 
   private Long debtpackId;
 
+  private Integer debtType;
+
   private Long amcId;
 
   private String title;

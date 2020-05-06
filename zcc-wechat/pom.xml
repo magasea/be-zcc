@@ -50,7 +50,12 @@
             <artifactId>protostuff-runtime-proto</artifactId>
             <version>0.0.4</version>
         </dependency>
-
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava-testlib</artifactId>
+            <version>20.0</version>
+            <scope>test</scope>
+        </dependency>
 
     </dependencies>
 

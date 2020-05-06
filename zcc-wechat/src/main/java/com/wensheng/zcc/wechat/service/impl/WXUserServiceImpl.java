@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,6 +106,8 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Autowired
   WechatUserMapper wechatUserMapper;
+
+  private final Long MAX_TIME_LAG = 1200L;
 
 
   private Gson gson = new Gson();
@@ -457,6 +460,38 @@ public class WXUserServiceImpl implements WXUserService {
 //      }
 //    }
 
+  }
+
+  @Override
+  public boolean sendPhoneVcode(String openId, String phone, String code) throws Exception {
+    String result =  comnfuncGrpcService.sendVCode(phone, code);
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
+    }
+    wechatUsers.get(0).setMobile(phone);
+    wechatUsers.get(0).setVerifyCode(code);
+    wechatUsers.get(0).setVcodeTime(AmcDateUtils.getCurrentDate());
+    wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
+    return true;
+  }
+
+  @Override
+  public boolean bindPhone(String openId, String phone, String code) throws Exception {
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
+    }
+    Date currDate = AmcDateUtils.getCurrentDate();
+    Long timeLag = currDate.toInstant().getEpochSecond() - wechatUsers.get(0).getVcodeTime().toInstant().getEpochSecond();
+    if(timeLag < MAX_TIME_LAG){
+
+    }
+    return false;
   }
 
   private void refreshUserTags(Long id, List<Integer> tagIdList) {

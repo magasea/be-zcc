@@ -1234,6 +1234,206 @@ public class WechatUserExample {
             addCriterion("qr_scene_str not between", value1, value2, "qrSceneStr");
             return (Criteria) this;
         }
+
+        public Criteria andMobileIsNull() {
+            addCriterion("mobile is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileIsNotNull() {
+            addCriterion("mobile is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileEqualTo(String value) {
+            addCriterion("mobile =", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNotEqualTo(String value) {
+            addCriterion("mobile <>", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileGreaterThan(String value) {
+            addCriterion("mobile >", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileGreaterThanOrEqualTo(String value) {
+            addCriterion("mobile >=", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileLessThan(String value) {
+            addCriterion("mobile <", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileLessThanOrEqualTo(String value) {
+            addCriterion("mobile <=", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileLike(String value) {
+            addCriterion("mobile like", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNotLike(String value) {
+            addCriterion("mobile not like", value, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileIn(List<String> values) {
+            addCriterion("mobile in", values, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNotIn(List<String> values) {
+            addCriterion("mobile not in", values, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileBetween(String value1, String value2) {
+            addCriterion("mobile between", value1, value2, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNotBetween(String value1, String value2) {
+            addCriterion("mobile not between", value1, value2, "mobile");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeIsNull() {
+            addCriterion("verify_code is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeIsNotNull() {
+            addCriterion("verify_code is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeEqualTo(String value) {
+            addCriterion("verify_code =", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeNotEqualTo(String value) {
+            addCriterion("verify_code <>", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeGreaterThan(String value) {
+            addCriterion("verify_code >", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeGreaterThanOrEqualTo(String value) {
+            addCriterion("verify_code >=", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeLessThan(String value) {
+            addCriterion("verify_code <", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeLessThanOrEqualTo(String value) {
+            addCriterion("verify_code <=", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeLike(String value) {
+            addCriterion("verify_code like", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeNotLike(String value) {
+            addCriterion("verify_code not like", value, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeIn(List<String> values) {
+            addCriterion("verify_code in", values, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeNotIn(List<String> values) {
+            addCriterion("verify_code not in", values, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeBetween(String value1, String value2) {
+            addCriterion("verify_code between", value1, value2, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVerifyCodeNotBetween(String value1, String value2) {
+            addCriterion("verify_code not between", value1, value2, "verifyCode");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeIsNull() {
+            addCriterion("vcode_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeIsNotNull() {
+            addCriterion("vcode_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeEqualTo(Date value) {
+            addCriterion("vcode_time =", value, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeNotEqualTo(Date value) {
+            addCriterion("vcode_time <>", value, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeGreaterThan(Date value) {
+            addCriterion("vcode_time >", value, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("vcode_time >=", value, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeLessThan(Date value) {
+            addCriterion("vcode_time <", value, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeLessThanOrEqualTo(Date value) {
+            addCriterion("vcode_time <=", value, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeIn(List<Date> values) {
+            addCriterion("vcode_time in", values, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeNotIn(List<Date> values) {
+            addCriterion("vcode_time not in", values, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeBetween(Date value1, Date value2) {
+            addCriterion("vcode_time between", value1, value2, "vcodeTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andVcodeTimeNotBetween(Date value1, Date value2) {
+            addCriterion("vcode_time not between", value1, value2, "vcodeTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

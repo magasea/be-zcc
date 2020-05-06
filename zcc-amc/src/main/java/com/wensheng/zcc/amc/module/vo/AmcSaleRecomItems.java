@@ -5,12 +5,11 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class AmcSaleFilter implements Serializable {
+public class AmcSaleRecomItems implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  AmcFilterContentAsset filterAsset;
-  AmcFilterContentDebt filterDebt;
-  AmcFilterContentTag filterTag;
+  AmcSaleRecommAssets amcSaleRecommAssets;
+  AmcSaleRecommDebts amcSaleRecommDebts;
 
 
 }

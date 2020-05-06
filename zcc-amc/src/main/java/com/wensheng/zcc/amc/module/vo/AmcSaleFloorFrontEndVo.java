@@ -9,7 +9,7 @@ public class AmcSaleFloorFrontEndVo {
   AmcSaleFloor amcSaleFloor;
 
   AmcSaleFilter amcSaleFilter;
-  AmcSaleFilter amcRecommItem;
+  AmcSaleRecomItems amcRecommItem;
   List<AmcDebtVo> amcDebtVos;
   List<AmcAssetVo> amcAssetVos;
 

@@ -5,6 +5,7 @@ import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
 import com.wenshengamc.zcc.common.Common.GeoJson;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.PhoneMsgReq;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenReq;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp;
 import com.wenshengamc.zcc.wechat.AmcAssetImage;
@@ -59,5 +60,12 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
     return comnFuncStub.getAddressByGeoPoint(gjBuilder.build()).getAddress();
   }
 
+
+  public String sendVCode(String phoneNum, String vcode){
+    PhoneMsgReq.Builder pmrBuilder = PhoneMsgReq.newBuilder();
+    pmrBuilder.setPhoneNum(phoneNum).setCode(vcode);
+
+    return comnFuncStub.sendVerifyCode(pmrBuilder.build()).getResult();
+  }
 
 }

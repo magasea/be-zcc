@@ -7,6 +7,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.*;
@@ -15,6 +16,7 @@ import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
@@ -51,6 +53,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.geo.Metric;
+import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Ne;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
@@ -447,51 +450,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         query.addCriteria(Criteria.where("amcAssetId").in(assetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
         List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
         setAddInfos(assetAdditionals, amcAssetVos);
-//        boolean queryRecom = false;
-//        Set<Integer> recomFilterVal = new HashSet<>();
-//        if(queryParam.containsKey(QueryParamEnum.Recommand.name()) && queryParam.get(QueryParamEnum.Recommand.name()) != null){
-//            try {
-//                List<Integer> recommands =  ((List)queryParam.get(QueryParamEnum.Recommand.name()));
-//                if(!CollectionUtils.isEmpty(recommands)){
-//                    recommands.forEach(item -> recomFilterVal.add(item));
-//
-//
-//
-//
-//
-//
-//
-//
-//
-//                }
-//                queryRecom = true;
-//            } catch (NumberFormatException e) {
-//                queryRecom = false;
-//            }
-//        }
 
-
-//        for(AssetAdditional additional: assetAdditionals){
-//            if(assetIdSet.contains(additional.getAmcAssetId())){
-//                if(queryRecom && !recomFilterVal.contains(additional.getIsRecommanded())){
-//                    removeAssetsById(additional.getAmcAssetId(), amcAssetVos);
-//
-//                    log.info("filter the asset with id:"+ additional.getAmcAssetId() +" because recommand not match");
-//                }else{
-//                    setAddInfo(additional, amcAssetVos);
-//
-//                }
-//            }
-//        }
-
-//        for(AssetImage assetImage: assetImages){
-//            if(amcAssetVoMap.containsKey(assetImage.getAmcAssetId())){
-//                amcAssetVoMap.get(assetImage.getAmcAssetId()).setAssetImage(assetImage);
-//            }
-//        }
         setImages(assetImages, amcAssetVos);
 
-//            Collections.sort(amcAssetVosList, amcAssetVoComparator);
             return amcAssetVos;
 
     }
@@ -513,6 +474,37 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         }
 
     }
+
+  private List<AmcAssetVo> setImagesAndChangeOrder(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
+      List<AmcAssetVo> amcAssetVosResult = new ArrayList<>();
+    Iterator<AssetImage> iteratorI =  assetImages.iterator();
+    Iterator<AmcAssetVo> iteratorA =  amcAssetVos.iterator();
+    while(iteratorA.hasNext()){
+      AmcAssetVo currentAmcAssetVo = iteratorA.next();
+      iteratorI =  assetImages.iterator();
+      if(!iteratorI.hasNext()){
+        iteratorA.forEachRemaining(item-> amcAssetVosResult.add(item));
+        break;
+      }
+      while(iteratorI.hasNext()){
+        AssetImage assetImage = iteratorI.next();
+
+        if(currentAmcAssetVo.getId() != null && assetImage.getAmcAssetId() != null &&
+            currentAmcAssetVo.getId().equals(assetImage.getAmcAssetId())){
+          currentAmcAssetVo.setAssetImage(assetImage);
+          //                    assetImages.remove(assetImage);
+          iteratorI.remove();
+          amcAssetVosResult.add(currentAmcAssetVo);
+          iteratorA.remove();
+        }
+
+      }
+
+    }
+
+    return amcAssetVosResult;
+
+  }
 
     private void setAddInfo(AssetAdditional additional, List<AmcAssetVo> amcAssetVos) {
         Iterator<AmcAssetVo> iterator =  amcAssetVos.iterator();
@@ -787,7 +779,117 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         }
     }
 
-    @Override
+  @Override
+  public List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset)
+      throws Exception {
+      AmcAssetExample amcAssetExample = getAmcAssetExampleWithFloorFilter(filterAsset);
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+    List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+    if(CollectionUtils.isEmpty(amcAssetVos)){
+      return amcAssetVos;
+    }
+    Map<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
+        item->item));
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()));
+    List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+    query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
+    List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+    setImagesAndChangeOrder(assetImages, amcAssetVos);
+    setAddInfos(assetAdditionals, amcAssetVos);
+
+
+    return amcAssetVos;
+
+  }
+
+  private AmcAssetExample getAmcAssetExampleWithFloorFilter(AmcFilterContentAsset filterAsset) {
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
+    StringBuilder sb = new StringBuilder();
+
+
+    if(!CollectionUtils.isEmpty(filterAsset.getAssetTypes())){
+      criteria.andTypeIn(filterAsset.getAssetTypes());
+    }
+    if(!StringUtils.isEmpty(filterAsset.getLocationCode())){
+      StringBuilder sbCode = new StringBuilder();
+      for(int idx = filterAsset.getLocationCode().length() -1; idx >= 0; idx--){
+        if(Character.compare(filterAsset.getLocationCode().charAt(idx), '0') == 0){
+          continue;
+        }else{
+          sbCode.append(filterAsset.getLocationCode().substring(0, idx+1));
+          break;
+        }
+
+      }
+      criteria.andCityLike(sbCode.append("%").toString());
+    }
+
+    if(!CollectionUtils.isEmpty(filterAsset.getValuation())){
+      Long lowLimit;
+      Long highLimit;
+      if(filterAsset.getValuation().get(0) < filterAsset.getValuation().get(1)){
+        lowLimit = filterAsset.getValuation().get(0);
+        highLimit = filterAsset.getValuation().get(1);
+      }else{
+        highLimit = filterAsset.getValuation().get(0);
+        lowLimit = filterAsset.getValuation().get(1);
+      }
+      criteria.andTotalValuationBetween(lowLimit, highLimit);
+    }
+    if(!CollectionUtils.isEmpty(filterAsset.getSealStatus())){
+      criteria.andSealedStateIn(filterAsset.getSealStatus());
+    }
+
+    if(!CollectionUtils.isEmpty(filterAsset.getArea())){
+      Long lowLimit;
+      Long highLimit;
+      if(filterAsset.getArea().get(0) < filterAsset.getArea().get(1)){
+        lowLimit = filterAsset.getArea().get(0);
+        highLimit = filterAsset.getArea().get(1);
+      }else{
+        highLimit = filterAsset.getArea().get(0);
+        lowLimit = filterAsset.getArea().get(1);
+      }
+      criteria.andBuildingAreaBetween(lowLimit, highLimit);
+    }
+
+    if(!CollectionUtils.isEmpty(filterAsset.getLandArea())){
+
+      Long lowLimit;
+      Long highLimit;
+      if(filterAsset.getLandArea().get(0) < filterAsset.getLandArea().get(1)){
+        lowLimit = filterAsset.getLandArea().get(0);
+        highLimit = filterAsset.getLandArea().get(1);
+      }else{
+        highLimit = filterAsset.getLandArea().get(0);
+        lowLimit = filterAsset.getLandArea().get(1);
+      }
+      criteria.andLandAreaBetween(lowLimit, highLimit);
+    }
+
+
+    if(!CollectionUtils.isEmpty(filterAsset.getSealStatus())){
+      criteria.andSealedStateIn(filterAsset.getSealStatus());
+    }
+
+    if(filterAsset.getOrderByField() == OrderByFieldEnum.VISITCOUNT.getId()){
+      if(!StringUtils.isEmpty(amcAssetExample.getOrderByClause())){
+        sb.append(amcAssetExample.getOrderByClause()).append(", visit_count desc ");
+      }else{
+        amcAssetExample.setOrderByClause(" visit_count desc ");
+      }
+    }
+
+
+
+    criteria.andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    return amcAssetExample;
+  }
+
+  @Override
     public Map<Long, List<String>> uploadAmcAssetsImage2WechatByIds(List<Long> assetIds) {
         Query query = new Query();
         query.addCriteria(Criteria.where("amcAssetId").in(assetIds));

@@ -16,6 +16,10 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.SystemUtils;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.Base64;
 import java.util.List;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +41,9 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
   @Value("${project.params.asset_image_path}")
   String assetImageRepo;
+
+  @Value("${project.params.sale_image_path}")
+  String saleImageRepo;
 
   /**
    * oss_end_point: oss-cn-beijing.aliyuncs.com
@@ -141,6 +148,23 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
 
   }
 
+  @Override
+  public String img2Base64(String filePath) {
+    String base64Image = "";
+    File file = new File(filePath);
+    try (FileInputStream imageInFile = new FileInputStream(file)) {
+      // Reading a Image file from file system
+      byte imageData[] = new byte[(int) file.length()];
+      imageInFile.read(imageData);
+      base64Image = Base64.getEncoder().encodeToString(imageData);
+    } catch (FileNotFoundException e) {
+      log.error("Image not found", e);
+    } catch (IOException ioe) {
+      log.error("Exception while reading the Image ", ioe);
+    }
+    return base64Image;
+  }
+
 
   @Override
   public String handleMultiPartFile(MultipartFile multipartFile, Long id, String type) throws Exception {
@@ -156,8 +180,22 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
         targetFile =
             new File(assetImageRepo+File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
+      case "salemenu":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEMENU.getName()+
+            File.separator +id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEMENU.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
+      case "salebanner":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNER.getName()+
+            File.separator + id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNER.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
         default:
-          throw new Exception("type"+type + "is not debt or asset");
+          throw new Exception("type"+type + "is not debt or asset or sale");
     }
 
     multipartFile.transferTo(targetFile);
@@ -166,7 +204,18 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     return targetFile.getCanonicalPath();
   }
 
+  @Override
+  public String handleMultiPartFile4Base64(MultipartFile multipartFile) throws Exception {
+    File targetFile = null;
+    targetFile =
+        new File(debtImageRepo+File.separator +multipartFile.getOriginalFilename());
 
+
+    multipartFile.transferTo(targetFile);
+
+
+    return targetFile.getCanonicalPath();
+  }
 
 
 

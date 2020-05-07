@@ -122,6 +122,7 @@ mybatis:
 project:
   params:
     debt_image_path: ${env.image-repo}/${env.name}/debt/images/
+    sale_image_path: ${env.image-repo}/${env.name}/sale/images/
     asset_image_path: ${env.image-repo}/${env.name}/asset/images/
     qrcode_image_path: ${env.image-repo}/${env.name}/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com

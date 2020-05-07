@@ -15,6 +15,8 @@ public class AmcSaleBanner {
 
     private Integer linkType;
 
+    private String linkUrl;
+
     private Date startTime;
 
     private Date endTime;
@@ -77,6 +79,14 @@ public class AmcSaleBanner {
 
     public void setLinkType(Integer linkType) {
         this.linkType = linkType;
+    }
+
+    public String getLinkUrl() {
+        return linkUrl;
+    }
+
+    public void setLinkUrl(String linkUrl) {
+        this.linkUrl = linkUrl == null ? null : linkUrl.trim();
     }
 
     public Date getStartTime() {

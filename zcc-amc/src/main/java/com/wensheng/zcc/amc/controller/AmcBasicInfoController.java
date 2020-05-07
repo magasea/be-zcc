@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.aop.QuerySSOContactorChecker;
 import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
@@ -16,11 +17,14 @@ import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcExcelFileService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 
 import java.io.File;
@@ -72,6 +76,9 @@ public class AmcBasicInfoController {
 
   @Autowired
   AmcExcelFileService amcExcelFileService;
+
+  @Autowired
+  AmcOssFileService amcOssFileService;
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
@@ -402,6 +409,17 @@ public class AmcBasicInfoController {
     return result;
   }
 
+  @RequestMapping(value = "/bannderLinkType", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> bannderLinkType(){
+
+    List<String> result = new ArrayList<>();
+    for(BannerLinkTypeEnum bannerLinkTypeEnum : BannerLinkTypeEnum.values()){
+      result.add(String.format("%d:%s", bannerLinkTypeEnum.getId(), bannerLinkTypeEnum.getName()));
+    }
+    return result;
+  }
+
   @RequestMapping(value = "/amcAssetFilter", method = RequestMethod.POST)
   @ResponseBody
   public void showAmcAssetFilter(@RequestBody AmcFilterContentAsset amcFilterContentAsset){
@@ -505,7 +523,13 @@ public class AmcBasicInfoController {
 
 
   }
-
+  @RequestMapping(value = "/base64Image", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public String base64Image(@RequestParam("images") MultipartFile uploadingImage) throws Exception {
+      String filePath = amcOssFileService.handleMultiPartFile4Base64(uploadingImage);
+      return amcOssFileService.img2Base64(filePath);
+    }
 
 
 }

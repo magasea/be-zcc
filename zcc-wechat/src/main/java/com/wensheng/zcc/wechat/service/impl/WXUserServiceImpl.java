@@ -488,10 +488,24 @@ public class WXUserServiceImpl implements WXUserService {
     }
     Date currDate = AmcDateUtils.getCurrentDate();
     Long timeLag = currDate.toInstant().getEpochSecond() - wechatUsers.get(0).getVcodeTime().toInstant().getEpochSecond();
-    if(timeLag < MAX_TIME_LAG){
-
+    if(timeLag > MAX_TIME_LAG){
+      throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,"验证码超时");
     }
+
     return false;
+  }
+
+  @Override
+  public String userSubscribe(String xmlMsg) {
+    //todo: call sunhongtao function to record subscribe event
+    return null;
+  }
+
+  @Override
+  public String userMsg(String xmlMsg) {
+    //todo: call sunhongtao function to record subscribe event
+    return null;
+
   }
 
   private void refreshUserTags(Long id, List<Integer> tagIdList) {

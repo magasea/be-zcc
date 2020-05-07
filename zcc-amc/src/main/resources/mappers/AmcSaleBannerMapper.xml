@@ -8,6 +8,7 @@
     <result column="filter_content" jdbcType="VARCHAR" property="filterContent" />
     <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
     <result column="link_type" jdbcType="INTEGER" property="linkType" />
+    <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
     <result column="seq" jdbcType="INTEGER" property="seq" />
@@ -76,8 +77,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, title, filter_content, img_url, link_type, start_time, end_time, seq, visit_count, 
-    create_by, create_time, update_by, update_time
+    id, name, title, filter_content, img_url, link_type, link_url, start_time, end_time, 
+    seq, visit_count, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBannerExample" resultMap="BaseResultMap">
     select
@@ -115,15 +116,15 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_SALE_BANNER (name, title, filter_content, 
-      img_url, link_type, start_time, 
-      end_time, seq, visit_count, 
-      create_by, create_time, update_by, 
-      update_time)
+      img_url, link_type, link_url, 
+      start_time, end_time, seq, 
+      visit_count, create_by, create_time, 
+      update_by, update_time)
     values (#{name,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, #{filterContent,jdbcType=VARCHAR}, 
-      #{imgUrl,jdbcType=VARCHAR}, #{linkType,jdbcType=INTEGER}, #{startTime,jdbcType=TIMESTAMP}, 
-      #{endTime,jdbcType=TIMESTAMP}, #{seq,jdbcType=INTEGER}, #{visitCount,jdbcType=BIGINT}, 
-      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{imgUrl,jdbcType=VARCHAR}, #{linkType,jdbcType=INTEGER}, #{linkUrl,jdbcType=VARCHAR}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{seq,jdbcType=INTEGER}, 
+      #{visitCount,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -145,6 +146,9 @@
       </if>
       <if test="linkType != null">
         link_type,
+      </if>
+      <if test="linkUrl != null">
+        link_url,
       </if>
       <if test="startTime != null">
         start_time,
@@ -186,6 +190,9 @@
       </if>
       <if test="linkType != null">
         #{linkType,jdbcType=INTEGER},
+      </if>
+      <if test="linkUrl != null">
+        #{linkUrl,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
         #{startTime,jdbcType=TIMESTAMP},
@@ -240,6 +247,9 @@
       <if test="record.linkType != null">
         link_type = #{record.linkType,jdbcType=INTEGER},
       </if>
+      <if test="record.linkUrl != null">
+        link_url = #{record.linkUrl,jdbcType=VARCHAR},
+      </if>
       <if test="record.startTime != null">
         start_time = #{record.startTime,jdbcType=TIMESTAMP},
       </if>
@@ -277,6 +287,7 @@
       filter_content = #{record.filterContent,jdbcType=VARCHAR},
       img_url = #{record.imgUrl,jdbcType=VARCHAR},
       link_type = #{record.linkType,jdbcType=INTEGER},
+      link_url = #{record.linkUrl,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
       seq = #{record.seq,jdbcType=INTEGER},
@@ -306,6 +317,9 @@
       </if>
       <if test="linkType != null">
         link_type = #{linkType,jdbcType=INTEGER},
+      </if>
+      <if test="linkUrl != null">
+        link_url = #{linkUrl,jdbcType=VARCHAR},
       </if>
       <if test="startTime != null">
         start_time = #{startTime,jdbcType=TIMESTAMP},
@@ -341,6 +355,7 @@
       filter_content = #{filterContent,jdbcType=VARCHAR},
       img_url = #{imgUrl,jdbcType=VARCHAR},
       link_type = #{linkType,jdbcType=INTEGER},
+      link_url = #{linkUrl,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
       seq = #{seq,jdbcType=INTEGER},

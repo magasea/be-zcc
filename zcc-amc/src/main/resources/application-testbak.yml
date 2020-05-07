@@ -123,6 +123,7 @@ project:
   params:
     debt_image_path: ${env.image-repo}/${env.name}/debt/images/
     asset_image_path: ${env.image-repo}/${env.name}/asset/images/
+    sale_image_path: ${env.image-repo}/${env.name}/sale/images/
     qrcode_image_path: ${env.image-repo}/${env.name}/qrcode/images/
     oss_end_point: oss-cn-beijing.aliyuncs.com
     oss_key_id: LTAIr4FuhRp7SciF

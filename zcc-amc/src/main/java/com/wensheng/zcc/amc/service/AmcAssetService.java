@@ -8,6 +8,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort.Direction;
@@ -86,4 +87,6 @@ public interface AmcAssetService {
 
 
     void patchRecomm();
+
+  List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset) throws Exception;
 }

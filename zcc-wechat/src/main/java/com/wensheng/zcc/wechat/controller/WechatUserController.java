@@ -62,6 +62,10 @@ public class WechatUserController {
       response = wxService.recordLocation(xmlMsg);
     }else if(xmlMsg.contains("MASSSENDJOBFINISH")){
       response = wxMaterialService.recordMsgResult(xmlMsg);
+    }else if(xmlMsg.contains("subscribe")){
+      response = wxUserService.userSubscribe(xmlMsg);
+    }else if(xmlMsg.contains("text")){
+      response = wxUserService.userMsg(xmlMsg);
     }
     return response;
 

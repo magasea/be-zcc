@@ -15,10 +15,14 @@ public interface AmcOssFileService {
 
   public String handleMultiPartFile(MultipartFile multipartFile, Long id, String ImagePathClassEnumType) throws Exception;
 
+  public String handleMultiPartFile4Base64(MultipartFile multipartFile) throws Exception;
+
   public void delFileInOss(String ossPath) throws Exception;
 
   public void listFilesOnOss(ImagePathClassEnum imagePathClassEnum);
 
   public void backUpOssFiles();
+
+  String img2Base64(String filePath);
 
 }

@@ -505,6 +505,76 @@ public class AmcSaleBannerExample {
             return (Criteria) this;
         }
 
+        public Criteria andLinkUrlIsNull() {
+            addCriterion("link_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlIsNotNull() {
+            addCriterion("link_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlEqualTo(String value) {
+            addCriterion("link_url =", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlNotEqualTo(String value) {
+            addCriterion("link_url <>", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlGreaterThan(String value) {
+            addCriterion("link_url >", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("link_url >=", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlLessThan(String value) {
+            addCriterion("link_url <", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlLessThanOrEqualTo(String value) {
+            addCriterion("link_url <=", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlLike(String value) {
+            addCriterion("link_url like", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlNotLike(String value) {
+            addCriterion("link_url not like", value, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlIn(List<String> values) {
+            addCriterion("link_url in", values, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlNotIn(List<String> values) {
+            addCriterion("link_url not in", values, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlBetween(String value1, String value2) {
+            addCriterion("link_url between", value1, value2, "linkUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andLinkUrlNotBetween(String value1, String value2) {
+            addCriterion("link_url not between", value1, value2, "linkUrl");
+            return (Criteria) this;
+        }
+
         public Criteria andStartTimeIsNull() {
             addCriterion("start_time is null");
             return (Criteria) this;

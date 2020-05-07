@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
 import java.util.List;
 
 /**
@@ -30,5 +31,36 @@ public interface AmcSaleService {
 
     AmcSaleFloorVo createFloor(AmcSaleFloorVo amcSaleFloorVo);
 
+    List<AmcSaleMenu> getSaleMenus();
 
+    AmcSaleMenu updateSaleMenu(AmcSaleMenu amcSaleMenu);
+
+    boolean updateSaleMenuSeq(List<Long> menuIds);
+
+    boolean addSaleMenu(AmcSaleMenu amcSaleMenu);
+
+    boolean delSaleMenu(Long saleMenuId);
+
+    List<AmcSaleBanner> getSaleBanners();
+
+    AmcSaleBanner updateSaleBanner(AmcSaleBanner amcSaleBanner);
+
+    boolean updateBannerSeq(List<Long> bannerIds);
+
+    AmcSaleBanner addSaleBanner(AmcSaleBanner amcSaleBanner);
+
+    boolean delSaleBanner(Long amcSaleBannerId);
+
+    String getSaleMenuPrepath(Long saleMenuId);
+
+    String getSaleBannerPrepath(Long saleMenuId);
+
+
+    AmcSaleMenu updateSaleMenuImage(Long saleMenuId, String ossPath);
+
+    AmcSaleBanner updateSaleBannerImage(Long saleBannerId, String ossPath);
+
+    AmcSaleHomePage getAmcSaleHome() throws Exception;
+
+    List<Object> getFloorPage(Long floorId) throws Exception;
 }

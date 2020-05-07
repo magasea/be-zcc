@@ -2,19 +2,32 @@ package com.wensheng.zcc.amc.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleBannerMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleFloorMapper;
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleMenuMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagMapper;
 import com.wensheng.zcc.amc.module.dao.helper.FloorPublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBannerExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloorExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTagExample;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
+import com.wensheng.zcc.amc.module.vo.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentItem;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecomItems;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -25,8 +38,10 @@ import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -53,6 +68,15 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
     @Autowired
     AmcSaleTagAssetMapper amcSaleTagAssetMapper;
+
+    @Autowired
+    AmcSaleMenuMapper amcSaleMenuMapper;
+
+    @Autowired
+    AmcSaleBannerMapper amcSaleBannerMapper;
+
+    @Value("${env.name}")
+    String envName;
 
     private Gson gson = new Gson();
 
@@ -163,10 +187,29 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         if(amcSaleFloorVo.getAmcSaleFilter() != null && (amcSaleFloorVo.getAmcSaleFilter().getFilterDebt() != null
         || amcSaleFloorVo.getAmcSaleFilter().getFilterAsset() != null
         || amcSaleFloorVo.getAmcSaleFilter().getFilterTag() != null)) {
+            if(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt() != null &&
+                !checkFilterContentDebt(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt())){
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,
+                    gson.toJson(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt()));
+            }
+
+            if(amcSaleFloorVo.getAmcSaleFilter().getFilterAsset() != null &&
+                !checkFilterContentAsset(amcSaleFloorVo.getAmcSaleFilter().getFilterAsset())){
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,
+                    gson.toJson(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt()));
+            }
             amcSaleFloor.setFilterContent(gson.toJson(amcSaleFloorVo.getAmcSaleFilter()));
         }
         amcSaleFloorVo.setAmcSaleFloor(amcSaleFloor);
 
+    }
+
+    private boolean checkFilterContentAsset(AmcFilterContentAsset filterAsset) {
+        return true;
+    }
+
+    private boolean checkFilterContentDebt(AmcFilterContentDebt filterDebt) {
+        return true;
     }
 
     @Override
@@ -248,6 +291,77 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         return amcSaleFloorVo;
     }
 
+    @Override
+    public List<AmcSaleMenu> getSaleMenus() {
+        AmcSaleMenuExample amcSaleMenuExample = new AmcSaleMenuExample();
+        amcSaleMenuExample.setOrderByClause(" id desc ");
+        return amcSaleMenuMapper.selectByExample(amcSaleMenuExample);
+    }
+
+    @Override
+    public AmcSaleMenu updateSaleMenu(AmcSaleMenu amcSaleMenu) {
+        amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
+        return amcSaleMenu;
+    }
+
+    @Override
+    public boolean updateSaleMenuSeq(List<Long> menuIds) {
+        for(int idx = 1; idx <= menuIds.size(); idx++){
+            AmcSaleMenu amcSaleMenu =  amcSaleMenuMapper.selectByPrimaryKey(menuIds.get(idx-1));
+            amcSaleMenu.setSeq(idx);
+            amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
+        }
+        return true;
+    }
+
+    @Override
+    public boolean addSaleMenu(AmcSaleMenu amcSaleMenu) {
+        amcSaleMenuMapper.insertSelective(amcSaleMenu);
+        return true;
+    }
+
+    @Override
+    public boolean delSaleMenu(Long saleMenuId) {
+        amcSaleMenuMapper.deleteByPrimaryKey(saleMenuId);
+        return true;
+    }
+
+    @Override
+    public List<AmcSaleBanner> getSaleBanners() {
+        AmcSaleBannerExample amcSaleBannerExample = new AmcSaleBannerExample();
+        amcSaleBannerExample.setOrderByClause(" id desc ");
+
+        return amcSaleBannerMapper.selectByExample(amcSaleBannerExample);
+    }
+
+    @Override
+    public AmcSaleBanner updateSaleBanner(AmcSaleBanner amcSaleBanner) {
+        amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
+        return amcSaleBanner;
+    }
+
+    @Override
+    public boolean updateBannerSeq(List<Long> bannerIds) {
+        for(int idx = 1; idx <= bannerIds.size(); idx++){
+            AmcSaleBanner amcSaleBanner =  amcSaleBannerMapper.selectByPrimaryKey(bannerIds.get(idx-1));
+            amcSaleBanner.setSeq(idx);
+            amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
+        }
+        return true;
+    }
+
+    @Override
+    public AmcSaleBanner addSaleBanner(AmcSaleBanner amcSaleBanner) {
+        amcSaleBannerMapper.insertSelective(amcSaleBanner);
+        return amcSaleBanner;
+    }
+
+    @Override
+    public boolean delSaleBanner(Long amcSaleBannerId) {
+        amcSaleBannerMapper.deleteByPrimaryKey(amcSaleBannerId);
+        return true;
+    }
+
     public void updateTag(AmcSaleTag amcSaleTag){
         amcSaleTagMapper.updateByPrimaryKeySelective(amcSaleTag);
     }
@@ -260,8 +374,82 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
 
+    @Override
+    public String getSaleMenuPrepath(Long saleMenuId){
+        return new StringBuilder(ImagePathClassEnum.SALEMENU.getName()).append("/").append(envName).append("/").append(saleMenuId).append("/").toString();
+    }
+
+    @Override
+    public String getSaleBannerPrepath(Long saleBannerId) {
+        return new StringBuilder(ImagePathClassEnum.SALEBANNER.getName()).append("/").append(envName).append("/").append(saleBannerId).append("/").toString();
+    }
+
+    @Override
+    public AmcSaleMenu updateSaleMenuImage(Long saleMenuId, String ossPath) {
+        AmcSaleMenu amcSaleMenu =  amcSaleMenuMapper.selectByPrimaryKey(saleMenuId);
+        amcSaleMenu.setImgUrl(ossPath);
+        amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
+        return amcSaleMenu;
+    }
+
+    @Override
+    public AmcSaleBanner updateSaleBannerImage(Long saleBannerId, String ossPath) {
+        AmcSaleBanner amcSaleBanner = amcSaleBannerMapper.selectByPrimaryKey(saleBannerId);
+        amcSaleBanner.setImgUrl(ossPath);
+        amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
+        return amcSaleBanner;
+
+    }
+
+    @Override
+    public AmcSaleHomePage getAmcSaleHome() throws Exception {
+        AmcSaleHomePage amcSaleHomePage = new AmcSaleHomePage();
+        amcSaleHomePage.setAmcSaleFloorVoList(getFrontEndFloors());
+        amcSaleHomePage.setAmcSaleBannerList(getSaleBanners());
+        amcSaleHomePage.setAmcSaleMenuList(getSaleMenus());
+
+        return amcSaleHomePage;
+    }
+
+    @Override
+    public List<Object> getFloorPage(Long floorId) throws Exception {
+        AmcSaleFloor amcSaleFloor =  amcSaleFloorMapper.selectByPrimaryKey(floorId);
+        List<Object> resultList = new ArrayList<>();
+        if(amcSaleFloor == null){
+            return resultList;
+        }
+        if(amcSaleFloor.getFilterContent() != null && !StringUtils.isEmpty(amcSaleFloor.getFilterContent())){
+
+            AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleFloor.getFilterContent(), AmcSaleFilter.class);
+            if(amcSaleFilter.getFilterAsset() != null){
+                // get filtered assets
+                List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
+                if(!CollectionUtils.isEmpty(amcAssetVos)){
+                    resultList.addAll(amcAssetVos);
+                }
+            }
+            if(amcSaleFilter.getFilterDebt() != null){
+                // get filtered debts
+                List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
+                resultList.addAll(amcDebtVos);
+            }
+
+        }
 
 
+
+        return resultList;
+    }
+
+    private List<AmcDebtVo> getFilterDebts(AmcFilterContentDebt filterDebt) throws Exception {
+        List<AmcDebtVo> amcDebtVos = amcDebtService.getFloorFilteredDebt(filterDebt);
+        return amcDebtVos;
+    }
+
+    private List<AmcAssetVo> getFilterAssets(AmcFilterContentAsset filterAsset) throws Exception {
+        List<AmcAssetVo> amcAssetVos = amcAssetService.getFloorFilteredAsset(filterAsset);
+        return amcAssetVos;
+    }
 
 
 }

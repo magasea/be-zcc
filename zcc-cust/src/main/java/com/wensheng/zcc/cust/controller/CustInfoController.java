@@ -93,6 +93,14 @@ public class CustInfoController {
 
   }
 
+  @RequestMapping(value = "/getAccurateCmpyByName", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustTrdCmpy> getAccurateCmpyByName(@RequestParam String companyName) throws Exception {
+
+    return custInfoService.getAccurateCmpyByName(companyName);
+
+  }
+
   @RequestMapping(value = "/getCustFavor", method = RequestMethod.POST)
   @ResponseBody
   public CustTrdFavorVo getCustFavor(@RequestParam Long custId, @RequestParam Integer custType){

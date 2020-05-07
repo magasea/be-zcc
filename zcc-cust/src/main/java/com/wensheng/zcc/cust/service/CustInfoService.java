@@ -70,4 +70,6 @@ public interface CustInfoService {
   CustTrdFavorVo getCustFavor(Long custId, Integer custType);
 
   List<CustTrdCmpy> getCompanyByName(String companyName) throws Exception;
+
+  List<CustTrdCmpy> getAccurateCmpyByName(String companyName) throws Exception;
 }

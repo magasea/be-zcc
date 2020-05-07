@@ -99,6 +99,11 @@ public class AmcSaleController {
   AmcSaleMenu  updateSaleMenu(@RequestBody AmcSaleMenu amcSaleMenu ) throws Exception {
     return amcSaleService.updateSaleMenu(amcSaleMenu);
   }
+  @RequestMapping(value = "/updateSaleMenuSeq", method = RequestMethod.POST)
+  @ResponseBody
+  boolean  updateSaleMenuSeq(@RequestBody List<Long> menuIds ) throws Exception {
+    return amcSaleService.updateSaleMenuSeq(menuIds);
+  }
 
   @RequestMapping(value = "/delSaleMenu", method = RequestMethod.POST)
   @ResponseBody
@@ -108,7 +113,7 @@ public class AmcSaleController {
 
   @RequestMapping(value = "/addSaleMenu", method = RequestMethod.POST)
   @ResponseBody
-  boolean  addSaleMenu(@RequestBody AmcSaleMenu amcSaleMenu ) throws Exception {
+  AmcSaleMenu  addSaleMenu(@RequestBody AmcSaleMenu amcSaleMenu ) throws Exception {
     return amcSaleService.addSaleMenu(amcSaleMenu);
   }
 
@@ -157,6 +162,13 @@ public class AmcSaleController {
   AmcSaleBanner  updateSaleBanner(@RequestBody AmcSaleBanner amcSaleBanner ) throws Exception {
     return amcSaleService.updateSaleBanner(amcSaleBanner);
   }
+
+  @RequestMapping(value = "/updateSaleBannerSeq", method = RequestMethod.POST)
+  @ResponseBody
+  boolean  updateSaleBannerSeq(@RequestBody List<Long> bannerIds ) throws Exception {
+    return amcSaleService.updateBannerSeq(bannerIds);
+  }
+
 
   @RequestMapping(value = "/delSaleBanner", method = RequestMethod.POST)
   @ResponseBody

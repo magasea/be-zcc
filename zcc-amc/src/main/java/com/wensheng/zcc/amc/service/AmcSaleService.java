@@ -37,7 +37,7 @@ public interface AmcSaleService {
 
     boolean updateSaleMenuSeq(List<Long> menuIds);
 
-    boolean addSaleMenu(AmcSaleMenu amcSaleMenu);
+    AmcSaleMenu addSaleMenu(AmcSaleMenu amcSaleMenu);
 
     boolean delSaleMenu(Long saleMenuId);
 

@@ -315,9 +315,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
-    public boolean addSaleMenu(AmcSaleMenu amcSaleMenu) {
+    public AmcSaleMenu addSaleMenu(AmcSaleMenu amcSaleMenu) {
         amcSaleMenuMapper.insertSelective(amcSaleMenu);
-        return true;
+        return amcSaleMenu;
     }
 
     @Override

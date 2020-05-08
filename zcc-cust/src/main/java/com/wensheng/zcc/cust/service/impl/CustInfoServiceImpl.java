@@ -125,7 +125,7 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) throws Exception {
-    List<CustTrdCmpy> custTrdCmpies = queryCmpyByName(custTrdCmpy);
+    List<CustTrdCmpy> custTrdCmpies = queryCmpyByName(custTrdCmpy.getCmpyName());
     if (!CollectionUtils.isEmpty(custTrdCmpies)){
       throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR ,
               String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
@@ -136,6 +136,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
       try {
         restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
+        log.info("请求添加爬取公司信息成功，url:{}",String.format(crawledCompany,custTrdCmpy));
       }catch (Exception e){
         log.error("请求添加爬取公司信息失败，url:{}",String.format(crawledCompany,custTrdCmpy));
       }
@@ -148,11 +149,11 @@ public class CustInfoServiceImpl implements CustInfoService {
    *根据公司名称查询,是否已经有该公司。
    * @return
    */
-  private List<CustTrdCmpy> queryCmpyByName(CustTrdCmpy custTrdCmpy){
+  private List<CustTrdCmpy> queryCmpyByName(String cmpyName){
     //按照公司名称和公司历史名称进行查询
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(custTrdCmpy.getCmpyName());
-    custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",custTrdCmpy.getCmpyName(),"%"));
+    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyName);
+    custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",cmpyName,"%"));
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     return custTrdCmpies;
   }
@@ -161,19 +162,19 @@ public class CustInfoServiceImpl implements CustInfoService {
   public void updateCompany(CustTrdCmpy custTrdCmpy) throws Exception {
     //判断公司名称是否更改
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-    custTrdCmpyExtExample.createCriteria().andIdEqualTo(custTrdCmpy.getId());
-    List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
-    CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
-    if(!custTrdCmpyOriginal.getCmpyName().equals(custTrdCmpy.getCmpyName())){
+//    custTrdCmpyExtExample.createCriteria().andIdEqualTo(custTrdCmpy.getId());
+//    List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+//    CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
+    if(null != custTrdCmpy.getCmpyNameUpdate()){
       //修改公司名称，先判断是否已有该公司
-      List<CustTrdCmpy> custTrdCmpieList = queryCmpyByName(custTrdCmpy);
+      List<CustTrdCmpy> custTrdCmpieList = queryCmpyByName(custTrdCmpy.getCmpyNameUpdate());
       if (!CollectionUtils.isEmpty(custTrdCmpieList)){
         throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
-            String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
+            String.format("已存在该公司，名称是：%s",custTrdCmpy.getCmpyNameUpdate()));
       }
       //查询爬虫基础库中信息
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
-      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyName());
+      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
       CustCmpyInfoFromSync custCmpyInfoFromSync = restTemplate.getForEntity(
           url, CustCmpyInfoFromSync.class).getBody();
       if(null != custCmpyInfoFromSync){
@@ -188,10 +189,11 @@ public class CustInfoServiceImpl implements CustInfoService {
         }catch (Exception e){
           log.error("请求添加爬取公司信息失败，url:{}",String.format(crawledCompany,custTrdCmpy));
         }
+        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       }
+    }else {
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }
-
-    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }
 
   @Override

@@ -156,6 +156,7 @@ cust:
         getPersonInfoByUpdateTime: http://10.20.100.252:8086/debtTradePersons/getPersonInfoByUpdateTime?page=%d&rows=%d&updateFromDate=%s&provinceCode=%s
         getTrdContactorInfoByTrdId: http://10.20.100.252:8086/debtTradeResources/getJsonById/%s
         getAddressCodeByAddress: http://10.20.200.100:5050/pre/amap_code/api?address=%s
+        crawledCompany: http://10.20.100.252:8086/debtTradeCompanys/forceSave?cmpyName=%s
 recom:
     urls:
         getAssetCusts: http://${env.recomhost}:${env.recomport}/api/sug/asset2investor/%s

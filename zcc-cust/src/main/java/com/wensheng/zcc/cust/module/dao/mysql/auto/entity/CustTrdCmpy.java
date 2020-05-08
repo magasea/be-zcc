@@ -55,6 +55,10 @@ public class CustTrdCmpy {
 
     private Date syncTime;
 
+    private String cmpyNameUpdate;
+
+    private String crawledStatus;
+
     public Long getId() {
         return id;
     }
@@ -261,5 +265,21 @@ public class CustTrdCmpy {
 
     public void setSyncTime(Date syncTime) {
         this.syncTime = syncTime;
+    }
+
+    public String getCmpyNameUpdate() {
+        return cmpyNameUpdate;
+    }
+
+    public void setCmpyNameUpdate(String cmpyNameUpdate) {
+        this.cmpyNameUpdate = cmpyNameUpdate == null ? null : cmpyNameUpdate.trim();
+    }
+
+    public String getCrawledStatus() {
+        return crawledStatus;
+    }
+
+    public void setCrawledStatus(String crawledStatus) {
+        this.crawledStatus = crawledStatus == null ? null : crawledStatus.trim();
     }
 }

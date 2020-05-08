@@ -1834,6 +1834,146 @@ public class CustTrdCmpyExample {
             addCriterion("sync_time not between", value1, value2, "syncTime");
             return (Criteria) this;
         }
+
+        public Criteria andCmpyNameUpdateIsNull() {
+            addCriterion("cmpy_name_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateIsNotNull() {
+            addCriterion("cmpy_name_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateEqualTo(String value) {
+            addCriterion("cmpy_name_update =", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateNotEqualTo(String value) {
+            addCriterion("cmpy_name_update <>", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateGreaterThan(String value) {
+            addCriterion("cmpy_name_update >", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("cmpy_name_update >=", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateLessThan(String value) {
+            addCriterion("cmpy_name_update <", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateLessThanOrEqualTo(String value) {
+            addCriterion("cmpy_name_update <=", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateLike(String value) {
+            addCriterion("cmpy_name_update like", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateNotLike(String value) {
+            addCriterion("cmpy_name_update not like", value, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateIn(List<String> values) {
+            addCriterion("cmpy_name_update in", values, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateNotIn(List<String> values) {
+            addCriterion("cmpy_name_update not in", values, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateBetween(String value1, String value2) {
+            addCriterion("cmpy_name_update between", value1, value2, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCmpyNameUpdateNotBetween(String value1, String value2) {
+            addCriterion("cmpy_name_update not between", value1, value2, "cmpyNameUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusIsNull() {
+            addCriterion("crawled_status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusIsNotNull() {
+            addCriterion("crawled_status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusEqualTo(String value) {
+            addCriterion("crawled_status =", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotEqualTo(String value) {
+            addCriterion("crawled_status <>", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusGreaterThan(String value) {
+            addCriterion("crawled_status >", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusGreaterThanOrEqualTo(String value) {
+            addCriterion("crawled_status >=", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusLessThan(String value) {
+            addCriterion("crawled_status <", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusLessThanOrEqualTo(String value) {
+            addCriterion("crawled_status <=", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusLike(String value) {
+            addCriterion("crawled_status like", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotLike(String value) {
+            addCriterion("crawled_status not like", value, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusIn(List<String> values) {
+            addCriterion("crawled_status in", values, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotIn(List<String> values) {
+            addCriterion("crawled_status not in", values, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusBetween(String value1, String value2) {
+            addCriterion("crawled_status between", value1, value2, "crawledStatus");
+            return (Criteria) this;
+        }
+
+        public Criteria andCrawledStatusNotBetween(String value1, String value2) {
+            addCriterion("crawled_status not between", value1, value2, "crawledStatus");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

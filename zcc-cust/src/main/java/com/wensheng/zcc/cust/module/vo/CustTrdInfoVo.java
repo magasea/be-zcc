@@ -18,4 +18,6 @@ public class CustTrdInfoVo {
   String phone;
   String address;
 
+  //公司爬取状态
+  String crawledStatus;
 }

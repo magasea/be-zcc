@@ -29,6 +29,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
+import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
@@ -56,16 +57,19 @@ import org.apache.commons.collections4.ListUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.GeoResult;
 import org.springframework.data.geo.GeoResults;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.NearQuery;
+import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author chenwei on 4/17/19
@@ -102,6 +106,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Value("${env.image-repo}")
   String fileBase;
+  @Value("${cust.syncUrls.crawledCompany}")
+  private String crawledCompany;
+  @Value("${cust.syncUrls.getCompanyInfoByName}")
+  String getCompanyInfoByNameUrl;
 
   ThreadLocal<String> provinceToHandle;
 
@@ -117,11 +125,21 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public CustTrdCmpy addCompany(CustTrdCmpy custTrdCmpy) throws Exception {
-    List<CustTrdCmpy> custTrdCmpies = queryCmpyByName(custTrdCmpy);
-    custTrdCmpies.size();
+    List<CustTrdCmpy> custTrdCmpies = queryCmpyByName(custTrdCmpy.getCmpyName());
     if (!CollectionUtils.isEmpty(custTrdCmpies)){
       throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR ,
               String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
+    }
+    //判断是否有注册地址，没有注册地址则向爬虫系统增加一条爬虫任务
+    if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
+      custTrdCmpy.setCrawledStatus("1");
+      RestTemplate restTemplate = CommonHandler.getRestTemplate();
+      try {
+        restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
+        log.info("请求添加爬取公司信息成功，url:{}",String.format(crawledCompany,custTrdCmpy));
+      }catch (Exception e){
+        log.error("请求添加爬取公司信息失败，url:{}",String.format(crawledCompany,custTrdCmpy));
+      }
     }
     custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
@@ -131,18 +149,51 @@ public class CustInfoServiceImpl implements CustInfoService {
    *根据公司名称查询,是否已经有该公司。
    * @return
    */
-  private List<CustTrdCmpy> queryCmpyByName(CustTrdCmpy custTrdCmpy){
+  private List<CustTrdCmpy> queryCmpyByName(String cmpyName){
     //按照公司名称和公司历史名称进行查询
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(custTrdCmpy.getCmpyName());
-    custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",custTrdCmpy.getCmpyName(),"%"));
+    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyName);
+    custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",cmpyName,"%"));
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     return custTrdCmpies;
   }
 
   @Override
-  public void updateCompany(CustTrdCmpy custTrdCmpy) {
-    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+  public void updateCompany(CustTrdCmpy custTrdCmpy) throws Exception {
+    //判断公司名称是否更改
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+//    custTrdCmpyExtExample.createCriteria().andIdEqualTo(custTrdCmpy.getId());
+//    List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+//    CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
+    if(null != custTrdCmpy.getCmpyNameUpdate()){
+      //修改公司名称，先判断是否已有该公司
+      List<CustTrdCmpy> custTrdCmpieList = queryCmpyByName(custTrdCmpy.getCmpyNameUpdate());
+      if (!CollectionUtils.isEmpty(custTrdCmpieList)){
+        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
+            String.format("已存在该公司，名称是：%s",custTrdCmpy.getCmpyNameUpdate()));
+      }
+      //查询爬虫基础库中信息
+      RestTemplate restTemplate = CommonHandler.getRestTemplate();
+      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
+      CustCmpyInfoFromSync custCmpyInfoFromSync = restTemplate.getForEntity(
+          url, CustCmpyInfoFromSync.class).getBody();
+      if(null != custCmpyInfoFromSync){
+        //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
+
+
+      }else {
+        //没有查到数据则添加爬取公司数据任务，状态为1
+        custTrdCmpy.setCrawledStatus("1");
+        try {
+          restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
+        }catch (Exception e){
+          log.error("请求添加爬取公司信息失败，url:{}",String.format(crawledCompany,custTrdCmpy));
+        }
+        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+      }
+    }else {
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+    }
   }
 
   @Override
@@ -635,6 +686,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),

@@ -192,7 +192,7 @@ public class AmcAspect {
 
             if(locationId == null || locationId.compareTo(0) < 0 || designedLocationEnum ==null || locationUserEnum == null){
               log.error("locationId:{};designedLocationEnum:{};locationUserEnum:{};userPrivMap:{}",locationId,
-                  designedLocationEnum, locationUserEnum,userPrivMap.size());
+                  designedLocationEnum, locationUserEnum,userPrivMap);
               throw new RuntimeException(String.format("没有归属地区的用户不能更改投资入库"));
             }
 

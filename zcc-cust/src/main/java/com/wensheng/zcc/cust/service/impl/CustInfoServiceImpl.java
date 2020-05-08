@@ -684,6 +684,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),

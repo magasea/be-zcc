@@ -59,7 +59,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Controller
 @RequestMapping(value = "/api/basic")
 @Slf4j
-@CacheConfig(cacheNames = {"COURT"})
+
 public class AmcBasicInfoController {
 
   @Autowired
@@ -82,13 +82,10 @@ public class AmcBasicInfoController {
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
-  @Cacheable
-  public List<CurtInfo> getAllCourtInfo(){
-    List<CurtInfo> curtInfos;
-    CurtInfoExample curtInfoExample = new CurtInfoExample();
-    curtInfoExample.createCriteria().andCurtNameIsNotNull();
-    curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
-    return curtInfos;
+
+  public List<CurtInfo> getAllCourtInfo() throws Exception {
+
+    return amcHelperService.getAllCurts();
   }
 
 
@@ -405,6 +402,17 @@ public class AmcBasicInfoController {
     List<String> result = new ArrayList<>();
     for(OrderByFieldEnum orderByFieldEnum : OrderByFieldEnum.values()){
       result.add(String.format("%d:%s", orderByFieldEnum.getId(), orderByFieldEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/cssTypeEnum", method = RequestMethod.POST)
+  @ResponseBody
+  public List<String> cssTypeEnum(){
+
+    List<String> result = new ArrayList<>();
+    for(CSSTypeEnum cssTypeEnum :  CSSTypeEnum.values()){
+      result.add(String.format("%d:%s", cssTypeEnum.getId(), cssTypeEnum.getName()));
     }
     return result;
   }

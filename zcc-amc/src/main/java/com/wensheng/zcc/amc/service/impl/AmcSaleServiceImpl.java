@@ -8,9 +8,11 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleMenuMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagMapper;
+import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.FloorPublishStateEnum;
+import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
+import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBannerExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
@@ -24,14 +26,18 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentItem;
+import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecomItems;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
@@ -131,7 +137,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                 }
                 if(amcSaleRecomItems.getAmcSaleRecommDebts() != null &&
                     !CollectionUtils.isEmpty(amcSaleRecomItems.getAmcSaleRecommDebts().getDebtIds())){
-                    amcSaleFloorFrontEndVo.setAmcDebtVos(amcDebtService.queryByIds(amcSaleRecomItems.getAmcSaleRecommDebts().getDebtIds()));
+                    amcSaleFloorFrontEndVo.setAmcDebtVos(amcDebtService.queryBySeqIds(amcSaleRecomItems.getAmcSaleRecommDebts().getDebtIds()));
                 }
                 if(amcSaleRecomItems.getAmcSaleRecommAssets() != null &&
                     !CollectionUtils.isEmpty(amcSaleRecomItems.getAmcSaleRecommAssets().getAssetIds())){
@@ -139,11 +145,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                         amcAssetService.getAssetsByIds(amcSaleRecomItems.getAmcSaleRecommAssets().getAssetIds()));
 
                 }
-                amcSaleFloorFrontEndVos.add(amcSaleFloorFrontEndVo);
-
 
             }
-
+            amcSaleFloorFrontEndVos.add(amcSaleFloorFrontEndVo);
         }
         return amcSaleFloorFrontEndVos;
     }
@@ -189,14 +193,14 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         || amcSaleFloorVo.getAmcSaleFilter().getFilterTag() != null)) {
             if(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt() != null &&
                 !checkFilterContentDebt(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt())){
-                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FLOOR_FILTER_ERROR,
                     gson.toJson(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt()));
             }
 
             if(amcSaleFloorVo.getAmcSaleFilter().getFilterAsset() != null &&
                 !checkFilterContentAsset(amcSaleFloorVo.getAmcSaleFilter().getFilterAsset())){
-                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,
-                    gson.toJson(amcSaleFloorVo.getAmcSaleFilter().getFilterDebt()));
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FLOOR_FILTER_ERROR,
+                    gson.toJson(amcSaleFloorVo.getAmcSaleFilter().getFilterAsset()));
             }
             amcSaleFloor.setFilterContent(gson.toJson(amcSaleFloorVo.getAmcSaleFilter()));
         }
@@ -205,10 +209,73 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     private boolean checkFilterContentAsset(AmcFilterContentAsset filterAsset) {
-        return true;
+      if(filterAsset.getValuation() != null && filterAsset.getValuation().size() != 2 ){
+        log.error("filterAsset valuation size not correct");
+        return false;
+      }
+      if(filterAsset.getCityCode() !=null && !CollectionUtils.isEmpty(filterAsset.getCityCode()) ){
+          for(String locationCode: filterAsset.getCityCode()){
+              if(Integer.parseInt(locationCode) < 0 ){
+                  log.error("filterAsset cityCode not correct");
+                  return false;
+              }
+          }
+
+      }
+      if(filterAsset.getAssetTypes() != null){
+        for(Integer assetType: filterAsset.getAssetTypes()){
+          if(AssetTypeEnum.lookupByIdUtil(assetType) != null){
+            continue;
+          }else{
+            log.error("filterAsset assetType not correct");
+            return false;
+          }
+        }
+      }
+      if(filterAsset.getSealStatus() != null){
+        for(Integer sealStatus: filterAsset.getSealStatus()){
+          if(SealStateEnum.lookupByIdUtil(sealStatus) != null){
+            continue;
+          }else{
+            log.error("filterAsset sealStatus not correct");
+            return false;
+          }
+        }
+      }
+      if(filterAsset.getArea() != null && filterAsset.getArea().size() != 2){
+        log.error("filterAsset area size not correct");
+        return false;
+      }
+
+      if(filterAsset.getLandArea() != null && filterAsset.getLandArea().size() != 2){
+        log.error("filterAsset landArea size not correct");
+        return false;
+      }
+      return true;
     }
 
     private boolean checkFilterContentDebt(AmcFilterContentDebt filterDebt) {
+
+        if(filterDebt.getBaseAmount() != null && filterDebt.getBaseAmount().size() != 2){
+          log.error("filterDebt baseAmount size not correct");
+          return false;
+        }
+//        if(filterDebt.getCourtCities() != null && filterDebt.getCourtCities().length < 1){
+//            log.error("filterDebt courtCities size error");
+//            return false;
+//        }
+        if(filterDebt.getGuarantType() != null && CollectionUtils.isEmpty(filterDebt.getGuarantType())){
+            log.error("filterDebt guarantType size error");
+            return false;
+
+        }else if(!CollectionUtils.isEmpty(filterDebt.getGuarantType())){
+            for(Integer guarantType: filterDebt.getGuarantType()){
+                if(GuarantTypeEnum.lookupByIdUtil(guarantType) == null){
+                    log.error("filterDebt guarantType error");
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -261,6 +328,12 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     public boolean updateFloorBasic(AmcSaleFloor amcSaleFloor) {
         amcSaleFloor.setFilterContent(null);
         amcSaleFloor.setRecomItems(null);
+        if(amcSaleFloor.getPublishState().equals(FloorPublishStateEnum.UNPUBLISHED.getStatus())){
+            AmcSaleFloor hisFloor = amcSaleFloorMapper.selectByPrimaryKey(amcSaleFloor.getId());
+            if(hisFloor.getPublishState().equals(FloorPublishStateEnum.PUBLISHED.getStatus())){
+                amcSaleFloor.setManualEndTime(AmcDateUtils.getCurrentDate());
+            }
+        }
         amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloor);
         return true;
     }
@@ -292,10 +365,34 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
-    public List<AmcSaleMenu> getSaleMenus() {
+    public List<AmcSaleMenuVo> getSaleMenus() {
+        AmcSaleMenuExample amcSaleMenuExample = new AmcSaleMenuExample();
+        amcSaleMenuExample.setOrderByClause(" id desc ");
+        List<AmcSaleMenu> amcSaleMenus =amcSaleMenuMapper.selectByExample(amcSaleMenuExample);
+        List<AmcSaleMenuVo> amcSaleMenuVos = convertMenu2Vos(amcSaleMenus);
+        amcSaleMenus = null;
+        return amcSaleMenuVos;
+    }
+
+    public List<AmcSaleMenu> getSimpleSaleMenus() {
         AmcSaleMenuExample amcSaleMenuExample = new AmcSaleMenuExample();
         amcSaleMenuExample.setOrderByClause(" id desc ");
         return amcSaleMenuMapper.selectByExample(amcSaleMenuExample);
+
+    }
+
+    private List<AmcSaleMenuVo> convertMenu2Vos(List<AmcSaleMenu> amcSaleMenus) {
+        List<AmcSaleMenuVo> amcSaleMenuVos = new ArrayList<>();
+        for(AmcSaleMenu amcSaleMenu: amcSaleMenus){
+            AmcSaleMenuVo amcSaleMenuVo = new AmcSaleMenuVo();
+            AmcBeanUtils.copyProperties(amcSaleMenu, amcSaleMenuVo);
+            if(!StringUtils.isEmpty(amcSaleMenu.getFilterContent()) && !amcSaleMenu.getFilterContent().equals("-1")){
+                amcSaleMenuVo.setAmcSaleFilter(gson.fromJson(amcSaleMenu.getFilterContent(), AmcSaleFilter.class));
+            }
+
+            amcSaleMenuVos.add(amcSaleMenuVo);
+        }
+        return amcSaleMenuVos;
     }
 
     @Override
@@ -327,12 +424,38 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
-    public List<AmcSaleBanner> getSaleBanners() {
+    public List<AmcSaleBannerVo> getSaleBanners() {
         AmcSaleBannerExample amcSaleBannerExample = new AmcSaleBannerExample();
         amcSaleBannerExample.setOrderByClause(" id desc ");
 
-        return amcSaleBannerMapper.selectByExample(amcSaleBannerExample);
+        List<AmcSaleBanner> amcSaleBanners =  amcSaleBannerMapper.selectByExample(amcSaleBannerExample);
+        List<AmcSaleBannerVo> amcSaleBannerVos = convertBanner2Vos(amcSaleBanners);
+        amcSaleBanners = null;
+        return amcSaleBannerVos;
+
     }
+
+    public List<AmcSaleBanner> getSimpleSaleBanners() {
+        AmcSaleBannerExample amcSaleBannerExample = new AmcSaleBannerExample();
+        amcSaleBannerExample.setOrderByClause(" id desc ");
+
+        return  amcSaleBannerMapper.selectByExample(amcSaleBannerExample);
+
+    }
+
+    private List<AmcSaleBannerVo> convertBanner2Vos(List<AmcSaleBanner> amcSaleBanners) {
+        List<AmcSaleBannerVo> amcSaleBannerVos = new ArrayList<>();
+        for(AmcSaleBanner amcSaleBanner: amcSaleBanners){
+            AmcSaleBannerVo amcSaleBannerVo = new AmcSaleBannerVo();
+            AmcBeanUtils.copyProperties(amcSaleBanner, amcSaleBannerVo);
+            if(!StringUtils.isEmpty(amcSaleBanner.getFilterContent()) && !amcSaleBanner.getFilterContent().equals("-1")){
+                amcSaleBannerVo.setAmcSaleFilter(gson.fromJson(amcSaleBanner.getFilterContent(), AmcSaleFilter.class));
+            }
+            amcSaleBannerVos.add(amcSaleBannerVo);
+        }
+        return amcSaleBannerVos;
+    }
+
 
     @Override
     public AmcSaleBanner updateSaleBanner(AmcSaleBanner amcSaleBanner) {
@@ -405,8 +528,8 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     public AmcSaleHomePage getAmcSaleHome() throws Exception {
         AmcSaleHomePage amcSaleHomePage = new AmcSaleHomePage();
         amcSaleHomePage.setAmcSaleFloorVoList(getFrontEndFloors());
-        amcSaleHomePage.setAmcSaleBannerList(getSaleBanners());
-        amcSaleHomePage.setAmcSaleMenuList(getSaleMenus());
+        amcSaleHomePage.setAmcSaleBannerList(getSimpleSaleBanners());
+        amcSaleHomePage.setAmcSaleMenuList(getSimpleSaleMenus());
 
         return amcSaleHomePage;
     }
@@ -418,9 +541,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         if(amcSaleFloor == null){
             return resultList;
         }
-        if(amcSaleFloor.getFilterContent() != null && !StringUtils.isEmpty(amcSaleFloor.getFilterContent())){
-
+        if(amcSaleFloor.getFilterContent() != null && !StringUtils.isEmpty(amcSaleFloor.getFilterContent()) && !amcSaleFloor.getFilterContent().equals("-1")){
             AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleFloor.getFilterContent(), AmcSaleFilter.class);
+
             if(amcSaleFilter.getFilterAsset() != null){
                 // get filtered assets
                 List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
@@ -439,6 +562,102 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
 
         return resultList;
+    }
+
+    @Override
+    public List<Object> getMenuPage(Long menuId) throws Exception {
+        AmcSaleMenu amcSaleMenu =  amcSaleMenuMapper.selectByPrimaryKey(menuId);
+        List<Object> resultList = new ArrayList<>();
+        if(amcSaleMenu == null){
+            return resultList;
+        }
+        if(amcSaleMenu.getFilterContent() != null && !StringUtils.isEmpty(amcSaleMenu.getFilterContent())){
+
+            AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleMenu.getFilterContent(), AmcSaleFilter.class);
+            if(amcSaleFilter.getFilterAsset() != null){
+                // get filtered assets
+                List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
+                if(!CollectionUtils.isEmpty(amcAssetVos)){
+                    resultList.addAll(amcAssetVos);
+                }
+            }
+            if(amcSaleFilter.getFilterDebt() != null){
+                // get filtered debts
+                List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
+                resultList.addAll(amcDebtVos);
+            }
+
+        }
+        return resultList;
+    }
+
+    @Override
+    public List<Object> getBannerPage(Long bannerId) throws Exception {
+        AmcSaleBanner amcSaleBanner =  amcSaleBannerMapper.selectByPrimaryKey(bannerId);
+        List<Object> resultList = new ArrayList<>();
+        if(amcSaleBanner == null){
+            return resultList;
+        }
+        if(amcSaleBanner.getFilterContent() != null && !StringUtils.isEmpty(amcSaleBanner.getFilterContent())){
+
+            AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleBanner.getFilterContent(), AmcSaleFilter.class);
+            if(amcSaleFilter.getFilterAsset() != null){
+                // get filtered assets
+                List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
+                if(!CollectionUtils.isEmpty(amcAssetVos)){
+                    resultList.addAll(amcAssetVos);
+                }
+            }
+            if(amcSaleFilter.getFilterDebt() != null){
+                // get filtered debts
+                List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
+                resultList.addAll(amcDebtVos);
+            }
+
+        }
+        return resultList;
+    }
+
+    @Override
+    public AmcSaleMenuVo updateSaleMenuVo(AmcSaleMenuVo amcSaleMenuVo) throws Exception {
+        boolean hasFilter = false;
+        if(amcSaleMenuVo.getAmcSaleFilter().getFilterAsset() != null){
+            if( !checkFilterContentAsset(amcSaleMenuVo.getAmcSaleFilter().getFilterAsset())){
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_MENU_FILTER_ERROR, gson.toJson(amcSaleMenuVo.getAmcSaleFilter()));
+            }
+            hasFilter = true;
+        }
+        if(amcSaleMenuVo.getAmcSaleFilter().getFilterDebt() != null){
+            if( !checkFilterContentDebt(amcSaleMenuVo.getAmcSaleFilter().getFilterDebt())){
+                throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_MENU_FILTER_ERROR, gson.toJson(amcSaleMenuVo.getAmcSaleFilter()));
+            }
+            hasFilter = true;
+        }
+        if(hasFilter){
+            amcSaleMenuVo.setFilterContent(gson.toJson(amcSaleMenuVo.getAmcSaleFilter()));
+        }
+        amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenuVo);
+        return amcSaleMenuVo;
+    }
+
+    @Override
+    public AmcSaleBannerVo updateSaleBannerWithFilter(AmcSaleBannerVo amcSaleBannerVo)
+        throws Exception {
+        if(amcSaleBannerVo.getAmcSaleFilter() != null){
+            if(amcSaleBannerVo.getAmcSaleFilter().getFilterDebt() != null){
+                if(!checkFilterContentDebt(amcSaleBannerVo.getAmcSaleFilter().getFilterDebt())){
+                    throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_BANNER_FILTER_ERROR, gson.toJson(amcSaleBannerVo.getAmcSaleFilter()));
+                }
+            }
+            if(amcSaleBannerVo.getAmcSaleFilter().getFilterAsset() != null){
+                if(!checkFilterContentAsset(amcSaleBannerVo.getAmcSaleFilter().getFilterAsset())){
+                    throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_BANNER_FILTER_ERROR, gson.toJson(amcSaleBannerVo.getAmcSaleFilter()));
+                }
+            }
+        }
+        amcSaleBannerVo.setFilterContent(gson.toJson(amcSaleBannerVo.getAmcSaleFilter()));
+        amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBannerVo);
+        return amcSaleBannerVo;
     }
 
     private List<AmcDebtVo> getFilterDebts(AmcFilterContentDebt filterDebt) throws Exception {

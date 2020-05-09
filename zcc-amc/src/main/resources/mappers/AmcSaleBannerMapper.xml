@@ -11,6 +11,7 @@
     <result column="link_url" jdbcType="VARCHAR" property="linkUrl" />
     <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
     <result column="end_time" jdbcType="TIMESTAMP" property="endTime" />
+    <result column="publish_state" jdbcType="INTEGER" property="publishState" />
     <result column="seq" jdbcType="INTEGER" property="seq" />
     <result column="visit_count" jdbcType="BIGINT" property="visitCount" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
@@ -78,7 +79,7 @@
   </sql>
   <sql id="Base_Column_List">
     id, name, title, filter_content, img_url, link_type, link_url, start_time, end_time, 
-    seq, visit_count, create_by, create_time, update_by, update_time
+    publish_state, seq, visit_count, create_by, create_time, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBannerExample" resultMap="BaseResultMap">
     select
@@ -117,14 +118,16 @@
     </selectKey>
     insert into AMC_SALE_BANNER (name, title, filter_content, 
       img_url, link_type, link_url, 
-      start_time, end_time, seq, 
-      visit_count, create_by, create_time, 
-      update_by, update_time)
+      start_time, end_time, publish_state, 
+      seq, visit_count, create_by, 
+      create_time, update_by, update_time
+      )
     values (#{name,jdbcType=CHAR}, #{title,jdbcType=VARCHAR}, #{filterContent,jdbcType=VARCHAR}, 
       #{imgUrl,jdbcType=VARCHAR}, #{linkType,jdbcType=INTEGER}, #{linkUrl,jdbcType=VARCHAR}, 
-      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{seq,jdbcType=INTEGER}, 
-      #{visitCount,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+      #{startTime,jdbcType=TIMESTAMP}, #{endTime,jdbcType=TIMESTAMP}, #{publishState,jdbcType=INTEGER}, 
+      #{seq,jdbcType=INTEGER}, #{visitCount,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -155,6 +158,9 @@
       </if>
       <if test="endTime != null">
         end_time,
+      </if>
+      <if test="publishState != null">
+        publish_state,
       </if>
       <if test="seq != null">
         seq,
@@ -199,6 +205,9 @@
       </if>
       <if test="endTime != null">
         #{endTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="publishState != null">
+        #{publishState,jdbcType=INTEGER},
       </if>
       <if test="seq != null">
         #{seq,jdbcType=INTEGER},
@@ -256,6 +265,9 @@
       <if test="record.endTime != null">
         end_time = #{record.endTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.publishState != null">
+        publish_state = #{record.publishState,jdbcType=INTEGER},
+      </if>
       <if test="record.seq != null">
         seq = #{record.seq,jdbcType=INTEGER},
       </if>
@@ -290,6 +302,7 @@
       link_url = #{record.linkUrl,jdbcType=VARCHAR},
       start_time = #{record.startTime,jdbcType=TIMESTAMP},
       end_time = #{record.endTime,jdbcType=TIMESTAMP},
+      publish_state = #{record.publishState,jdbcType=INTEGER},
       seq = #{record.seq,jdbcType=INTEGER},
       visit_count = #{record.visitCount,jdbcType=BIGINT},
       create_by = #{record.createBy,jdbcType=BIGINT},
@@ -327,6 +340,9 @@
       <if test="endTime != null">
         end_time = #{endTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="publishState != null">
+        publish_state = #{publishState,jdbcType=INTEGER},
+      </if>
       <if test="seq != null">
         seq = #{seq,jdbcType=INTEGER},
       </if>
@@ -358,6 +374,7 @@
       link_url = #{linkUrl,jdbcType=VARCHAR},
       start_time = #{startTime,jdbcType=TIMESTAMP},
       end_time = #{endTime,jdbcType=TIMESTAMP},
+      publish_state = #{publishState,jdbcType=INTEGER},
       seq = #{seq,jdbcType=INTEGER},
       visit_count = #{visitCount,jdbcType=BIGINT},
       create_by = #{createBy,jdbcType=BIGINT},

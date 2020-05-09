@@ -430,7 +430,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> queryByIds(List<Long> debtIds) {
+  public List<AmcDebtVo> queryBySeqIds(List<Long> debtIds) {
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andIdIn(debtIds);
@@ -441,10 +441,26 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
     if(!CollectionUtils.isEmpty(amcDebts)){
-      return doList2VoList(amcDebts);
+      return doSeqList2VoList(amcDebts, debtIds);
     }
 
     return null;
+  }
+
+  private List<AmcDebtVo> doSeqList2VoList(List<AmcDebt> originList, List<Long> originIds){
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+
+    Query query;
+    for(AmcDebt amcDebt: originList){
+      AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
+
+      amcDebtVos.add(amcDebtVo);
+    }
+
+    updateDebtVosWithMongo(amcDebtVos);
+
+    return amcDebtVos;
+
   }
 
   private List<AmcDebtVo> doList2VoList(List<AmcDebt> originList){
@@ -1519,22 +1535,24 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   public AmcDebtExample getAmcDebtExampleWithFloorFilter(AmcFilterContentDebt floorDebtFilter) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
-    boolean needDefaultPublishState = true;
 
-    if(floorDebtFilter.getCourtLocations() != null && floorDebtFilter.getCourtLocations().length >= 1){
-      CurtInfoExample curtInfoExample = new CurtInfoExample();
-      if(floorDebtFilter.getCourtLocations().length < 2){
-        curtInfoExample.createCriteria().andCurtProvinceEqualTo(floorDebtFilter.getCourtLocations()[0]);
-      }else{
-        curtInfoExample.createCriteria().andCurtProvinceEqualTo(floorDebtFilter.getCourtLocations()[0])
-            .andCurtCityEqualTo(floorDebtFilter.getCourtLocations()[1]);
-      }
-      List<CurtInfo> curtInfos = curtInfoMapper.selectByExample(curtInfoExample);
+
+    List<CurtInfo> curtInfos = null;
+    List<CurtInfo> curtInfosTotal = new ArrayList<>();
+    if(floorDebtFilter.getCourtCities() != null && !CollectionUtils.isEmpty(floorDebtFilter.getCourtCities())){
+      curtInfos = amcHelperService.queryCurtInfoByCityNames(floorDebtFilter.getCourtCities());
       if(!CollectionUtils.isEmpty(curtInfos)){
-        criteria.andCourtIdIn(curtInfos.stream().map(item->item.getId()).collect(Collectors.toList()));
+        curtInfosTotal.addAll(curtInfos);
       }
     }
 
+    if(floorDebtFilter.getCourtProvs() != null && !CollectionUtils.isEmpty(floorDebtFilter.getCourtProvs())){
+      curtInfos = amcHelperService.queryCurtInfoByProvNames(floorDebtFilter.getCourtProvs());
+      curtInfosTotal.addAll(curtInfos);
+    }
+    if( !CollectionUtils.isEmpty(curtInfosTotal)){
+      criteria.andCourtIdIn(curtInfosTotal.stream().map(item->item.getId()).collect(Collectors.toList()));
+    }
     if(!CollectionUtils.isEmpty(floorDebtFilter.getGuarantType())){
       criteria.andGuarantTypeIn(floorDebtFilter.getGuarantType());
     }
@@ -1543,11 +1561,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       Long lowLimit = -1L;
       Long highLimit = -1L;
       if(floorDebtFilter.getBaseAmount().get(0) < floorDebtFilter.getBaseAmount().get(1)){
-        lowLimit = floorDebtFilter.getBaseAmount().get(0);
-        highLimit = floorDebtFilter.getBaseAmount().get(1);
+        lowLimit = floorDebtFilter.getBaseAmount().get(0)*100;
+        highLimit = floorDebtFilter.getBaseAmount().get(1)*100;
       }else{
-        lowLimit = floorDebtFilter.getBaseAmount().get(1);
-        highLimit = floorDebtFilter.getBaseAmount().get(0);
+        lowLimit = floorDebtFilter.getBaseAmount().get(1)*100;
+        highLimit = floorDebtFilter.getBaseAmount().get(0)*100;
       }
       criteria.andBaseAmountBetween(lowLimit, highLimit);
     }

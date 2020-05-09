@@ -13,6 +13,8 @@ public class AmcSaleMenu {
 
     private String imgUrl;
 
+    private Integer publishState;
+
     private Long createBy;
 
     private Date createTime;
@@ -59,6 +61,14 @@ public class AmcSaleMenu {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl == null ? null : imgUrl.trim();
+    }
+
+    public Integer getPublishState() {
+        return publishState;
+    }
+
+    public void setPublishState(Integer publishState) {
+        this.publishState = publishState;
     }
 
     public Long getCreateBy() {

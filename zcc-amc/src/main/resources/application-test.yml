@@ -165,7 +165,7 @@ cust:
   getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
 recom:
   urls:
-    getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/%s
+    getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/?%s
 env:
   name: test
   dbhost: 10.20.100.238

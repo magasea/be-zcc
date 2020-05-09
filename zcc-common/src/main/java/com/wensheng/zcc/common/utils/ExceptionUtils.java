@@ -78,7 +78,8 @@ public class ExceptionUtils {
     INVALID_STATE(1048, "invalid state", "非法的状态"),
     WECHAT_USER_ERROR(1049, "wechat user error", "微信用户错误"),
     INVALID_FLOOR_FILTER_ERROR(1050, "invalid floor filter error", "楼层过滤参数错误"),
-
+    INVALID_MENU_FILTER_ERROR(1051, "invalid menu filter error", "菜单过滤参数错误"),
+    INVALID_BANNER_FILTER_ERROR(1052, "invalid banner filter error", "广告位过滤参数错误"),
     ;
     int code;
     String name;

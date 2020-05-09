@@ -605,6 +605,66 @@ public class AmcSaleFloorExample {
             return (Criteria) this;
         }
 
+        public Criteria andManualEndTimeIsNull() {
+            addCriterion("manual_end_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeIsNotNull() {
+            addCriterion("manual_end_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeEqualTo(Date value) {
+            addCriterion("manual_end_time =", value, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeNotEqualTo(Date value) {
+            addCriterion("manual_end_time <>", value, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeGreaterThan(Date value) {
+            addCriterion("manual_end_time >", value, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("manual_end_time >=", value, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeLessThan(Date value) {
+            addCriterion("manual_end_time <", value, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeLessThanOrEqualTo(Date value) {
+            addCriterion("manual_end_time <=", value, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeIn(List<Date> values) {
+            addCriterion("manual_end_time in", values, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeNotIn(List<Date> values) {
+            addCriterion("manual_end_time not in", values, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeBetween(Date value1, Date value2) {
+            addCriterion("manual_end_time between", value1, value2, "manualEndTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andManualEndTimeNotBetween(Date value1, Date value2) {
+            addCriterion("manual_end_time not between", value1, value2, "manualEndTime");
+            return (Criteria) this;
+        }
+
         public Criteria andFilterContentIsNull() {
             addCriterion("filter_content is null");
             return (Criteria) this;

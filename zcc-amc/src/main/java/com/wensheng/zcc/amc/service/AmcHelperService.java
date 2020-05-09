@@ -31,10 +31,14 @@ public interface AmcHelperService {
   public AmcPage<SSOAmcUser> getSsoUserList(SSOQueryParam ssoQueryParam);
 
   CurtInfo addCurt(CurtInfo curtInfo) throws Exception;
+  List<CurtInfo> getAllCurts() throws Exception;
   boolean delCurt(Long curtId) throws Exception;
   boolean delCurtByQuery(QueryCurtParam queryCurtParam) throws Exception;
 
   List<CurtInfo> queryCurtInfo(QueryCurtParam queryCurtParam) throws Exception;
+
+  List<CurtInfo> queryCurtInfoByCityNames(List<String> cityNames) throws Exception;
+  List<CurtInfo> queryCurtInfoByProvNames(List<String> provNames) throws Exception;
   Long queryCurtInfoCount(QueryCurtParam queryCurtParam) throws Exception;
 
 }

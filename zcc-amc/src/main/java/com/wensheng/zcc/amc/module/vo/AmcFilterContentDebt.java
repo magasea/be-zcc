@@ -11,7 +11,8 @@ public class AmcFilterContentDebt extends AmcFilterContentItem implements Serial
   private static final long serialVersionUID = 1L;
 
 //  List<Long> debtIds = null;
-  String[] courtLocations = null;
+  List<String> courtCities = null;
+  List<String> courtProvs = null;
   List<Long> baseAmount = null;
   List<String> amcContactorNames = null;
   List<Long> courtIds = null;

@@ -14,9 +14,12 @@ import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
+import java.util.ArrayList;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -32,6 +35,7 @@ import java.util.WeakHashMap;
  */
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"COURT"})
 public class AmcHelperServiceImpl implements AmcHelperService {
 
   @Autowired
@@ -68,6 +72,14 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   public CurtInfo addCurt(CurtInfo curtInfo) throws Exception {
     curtInfoMapper.insert(curtInfo);
     return curtInfo;
+  }
+
+  @Override
+  @Cacheable
+  public List<CurtInfo> getAllCurts() throws Exception {
+
+    return curtInfoMapper.selectByExample(null);
+
   }
 
   @Override
@@ -123,6 +135,43 @@ public class AmcHelperServiceImpl implements AmcHelperService {
     }
     return curtInfoMapper.selectByExampleWithRowbounds(curtInfoExample, rowBounds);
 
+  }
+
+  @Override
+  @Cacheable
+  public List<CurtInfo> queryCurtInfoByCityNames(List<String> cityNames) throws Exception {
+
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    if(cityNames != null && !CollectionUtils.isEmpty(cityNames)){
+      CurtInfoExample.Criteria criteriaCourt = curtInfoExample.createCriteria();
+      if(cityNames.size() == 1){
+        criteriaCourt.andCurtCityEqualTo(cityNames.get(0));
+      }else{
+        criteriaCourt.andCurtCityIn(cityNames);
+      }
+
+      return curtInfoMapper.selectByExample(curtInfoExample);
+
+    }
+    return null;
+
+    
+  }
+
+  @Override
+  @Cacheable
+  public List<CurtInfo> queryCurtInfoByProvNames(List<String> provNames) throws Exception {
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    if(provNames != null && !CollectionUtils.isEmpty(provNames)){
+      CurtInfoExample.Criteria criteriaCourt = curtInfoExample.createCriteria();
+      if(provNames.size() == 1){
+        criteriaCourt.andCurtProvinceEqualTo(provNames.get(0));
+      }else{
+        criteriaCourt.andCurtProvinceIn(provNames);
+      }
+      return curtInfoMapper.selectByExample(curtInfoExample);
+    }
+    return null;
   }
 
   @Override

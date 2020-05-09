@@ -197,7 +197,10 @@ logging:
         com:
             wensheng: TRACE
         root: WARN
-
+recomm:
+    urls:
+        sendSubMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSubMsg
+        sendWechatMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSendMsg
 
 env:
     env-hint: prod
@@ -210,6 +213,8 @@ env:
     pubport: 5444
     mongodb-host: 10.20.100.235
     image-repo: /home/chenwei/temp
+    recmhost: 10.20.100.228
+    recmport: 7654
     oauth2:
         host: 10.20.100.235
         authLink: http://${env.oauth2.host}:10002

@@ -2,10 +2,12 @@ package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 
+import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
 import java.util.List;
 
 /**
@@ -31,7 +33,7 @@ public interface AmcSaleService {
 
     AmcSaleFloorVo createFloor(AmcSaleFloorVo amcSaleFloorVo);
 
-    List<AmcSaleMenu> getSaleMenus();
+    List<AmcSaleMenuVo> getSaleMenus();
 
     AmcSaleMenu updateSaleMenu(AmcSaleMenu amcSaleMenu);
 
@@ -41,7 +43,7 @@ public interface AmcSaleService {
 
     boolean delSaleMenu(Long saleMenuId);
 
-    List<AmcSaleBanner> getSaleBanners();
+    List<AmcSaleBannerVo> getSaleBanners();
 
     AmcSaleBanner updateSaleBanner(AmcSaleBanner amcSaleBanner);
 
@@ -63,4 +65,12 @@ public interface AmcSaleService {
     AmcSaleHomePage getAmcSaleHome() throws Exception;
 
     List<Object> getFloorPage(Long floorId) throws Exception;
+
+    List<Object> getMenuPage(Long menuId) throws Exception;
+
+    List<Object> getBannerPage(Long bannerId) throws Exception;
+
+  AmcSaleMenuVo updateSaleMenuVo(AmcSaleMenuVo amcSaleMenuVo) throws Exception;
+
+    AmcSaleBannerVo updateSaleBannerWithFilter(AmcSaleBannerVo amcSaleBannerVo) throws Exception;
 }

@@ -203,29 +203,36 @@ public class AmcMiscServiceImpl implements AmcMiscService {
   @Scheduled(cron = "${spring.task.scheduling.cronExprRecom}")
   @Override
   public void updateClickCountInfo(){
-    String param = "debt";
+    String param = "type=debt";
     String urlFinal = String.format(getClickCountUrl, param);
-    ResponseEntity<Map> clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
-    Map<Long, Integer> clickCount = (HashMap<Long, Integer>) clickInfo.getBody();
+    ResponseEntity<Map> clickInfo = null;
+    try{
+      clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
+    }catch (Exception ex){
+      log.error("Error:", ex);
+      ResponseEntity<String> resp = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   String.class);
+      log.info(resp.getBody());
+    }
+    Map<String, Double> clickCount = (Map<String, Double>) clickInfo.getBody();
     if(!CollectionUtils.isEmpty(clickCount)){
-      for(Entry<Long, Integer> entry: clickCount.entrySet()){
+      for(Entry<String, Double> entry: clickCount.entrySet()){
         if(entry.getValue() > 0){
-          AmcDebt amcDebt =  amcDebtMapper.selectByPrimaryKey(entry.getKey());
-          amcDebt.setVisitCount(Long.valueOf(entry.getValue()));
+          AmcDebt amcDebt =  amcDebtMapper.selectByPrimaryKey(Long.valueOf(entry.getKey()));
+          amcDebt.setVisitCount(entry.getValue().longValue());
           amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
         }
       }
     }
 
-    param = "asset";
+    param = "type=asset";
     urlFinal = String.format(getClickCountUrl, param);
     clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
-    clickCount = (HashMap<Long, Integer>) clickInfo.getBody();
+    clickCount = (Map<String, Double>) clickInfo.getBody();
     if(!CollectionUtils.isEmpty(clickCount)){
-      for(Entry<Long, Integer> entry: clickCount.entrySet()){
+      for(Entry<String, Double> entry: clickCount.entrySet()){
         if(entry.getValue() > 0){
-          AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(entry.getKey());
-          amcAsset.setVisitCount(Long.valueOf(entry.getValue()));
+          AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(Long.valueOf(entry.getKey()));
+          amcAsset.setVisitCount(entry.getValue().longValue());
           amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
         }
       }

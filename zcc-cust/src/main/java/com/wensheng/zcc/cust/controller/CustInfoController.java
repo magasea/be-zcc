@@ -225,7 +225,7 @@ public class CustInfoController {
     try{
       if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
         if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctc.create_time", Direction.DESC);
+//          orderByParam.put("ctc.create_time", Direction.DESC);
           orderByParam.put("ctc.update_time", Direction.DESC);
 
         }

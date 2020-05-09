@@ -167,6 +167,7 @@ public class AmcAspect {
       if (joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
               "create")) {
         custTrdCmpy.setCreateBy(ssoUserId);
+        custTrdCmpy.setUpdateTime(AmcDateUtils.getCurrentDate());
         custTrdCmpy.setCreateTime(AmcDateUtils.getCurrentDate());
       }
       if (joinPoint.getSignature().getName().startsWith("update") || joinPoint.getSignature().getName().startsWith(

@@ -135,7 +135,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdCmpy.setCrawledStatus("1");
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
       try {
-        restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
+//        restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
         log.info("请求添加爬取公司信息成功，url:{}",String.format(crawledCompany,custTrdCmpy));
       }catch (Exception e){
         log.error("请求添加爬取公司信息失败，url:{}",String.format(crawledCompany,custTrdCmpy));
@@ -185,7 +185,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         //没有查到数据则添加爬取公司数据任务，状态为1
         custTrdCmpy.setCrawledStatus("1");
         try {
-          restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
+//          restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();
         }catch (Exception e){
           log.error("请求添加爬取公司信息失败，url:{}",String.format(crawledCompany,custTrdCmpy));
         }

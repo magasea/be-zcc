@@ -981,6 +981,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
       }
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyHis);
+      custTrdCmpy.setId(custTrdCmpyHis.getId());
     }
     return custTrdCmpy.getId();
 

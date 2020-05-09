@@ -898,9 +898,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       }
       return custTrdSeller.getId();
     }
-    if("佛山市高明区合建市政建设有限公司阳山县石全石美石业有限公司开平市置力物业发展有限公司杭州捷邦供应链有限公司".contains(custCmpyInfoFromSync.getCmpyName())){
-      System.out.println(custCmpyInfoFromSync.getCmpyName());
-    }
 
     CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
@@ -964,6 +961,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
       }
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyHis);
+      custTrdCmpy.setId(custTrdCmpyHis.getId());
     }
     return custTrdCmpy.getId();
 

@@ -21,6 +21,8 @@ public class AmcSaleBanner {
 
     private Date endTime;
 
+    private Integer publishState;
+
     private Integer seq;
 
     private Long visitCount;
@@ -103,6 +105,14 @@ public class AmcSaleBanner {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Integer getPublishState() {
+        return publishState;
+    }
+
+    public void setPublishState(Integer publishState) {
+        this.publishState = publishState;
     }
 
     public Integer getSeq() {

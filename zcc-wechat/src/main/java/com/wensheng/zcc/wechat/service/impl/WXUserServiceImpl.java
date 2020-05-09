@@ -97,6 +97,16 @@ public class WXUserServiceImpl implements WXUserService {
   @Value("${weixin.get_useroftagid_url}")
   String getUsersOfTagIdUrl;
 
+
+
+  //call recomm system
+  @Value("${recomm.urls.sendSubMsg}")
+  String sendSubMsg;
+
+  @Value("${recomm.urls.sendWechatMsg}")
+  String sendWechatMsg;
+
+
   @Autowired
   MongoTemplate mongoTemplate;
 

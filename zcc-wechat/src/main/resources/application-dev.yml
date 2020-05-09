@@ -188,7 +188,10 @@ gaode:
     geocoder-reverse: http://restapi.amap.com/v3/geocode/regeo?key=${gaode.key}&location=%s&radius=1000&extensions=base&batch=false&roadlevel=0
     geocoder: https://restapi.amap.com/v3/geocode/geo?address=%s&key=${gaode.key}
 
-
+recomm:
+    urls:
+        sendSubMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSubMsg
+        sendWechatMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSendMsg
 
 message:
     url: http://esms100.10690007.net/sms/mt
@@ -220,6 +223,8 @@ env:
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.238
     image-repo: /disk/temp
+    recmhost: 10.20.100.228
+    recmport: 7654
     oauth2:
         host: localhost
         authLink: http://${env.oauth2.host}:10002

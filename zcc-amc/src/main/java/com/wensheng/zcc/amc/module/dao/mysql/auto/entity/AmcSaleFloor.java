@@ -19,6 +19,8 @@ public class AmcSaleFloor {
 
     private Date floorEndTime;
 
+    private Date manualEndTime;
+
     private String filterContent;
 
     private String recomItems;
@@ -95,6 +97,14 @@ public class AmcSaleFloor {
 
     public void setFloorEndTime(Date floorEndTime) {
         this.floorEndTime = floorEndTime;
+    }
+
+    public Date getManualEndTime() {
+        return manualEndTime;
+    }
+
+    public void setManualEndTime(Date manualEndTime) {
+        this.manualEndTime = manualEndTime;
     }
 
     public String getFilterContent() {

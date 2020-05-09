@@ -5,10 +5,12 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
+import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -89,10 +91,16 @@ public class AmcSaleController {
 
   @RequestMapping(value = "/getSaleMenus", method = RequestMethod.POST)
   @ResponseBody
-  List<AmcSaleMenu>  getSaleMenus( ) throws Exception {
+  List<AmcSaleMenuVo>  getSaleMenus( ) throws Exception {
     return amcSaleService.getSaleMenus();
   }
 
+
+  @RequestMapping(value = "/updateSaleMenuWithFilter", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleMenuVo  updateSaleMenuWithFilter(@RequestBody AmcSaleMenuVo amcSaleMenuVo ) throws Exception {
+    return amcSaleService.updateSaleMenuVo(amcSaleMenuVo);
+  }
 
   @RequestMapping(value = "/updateSaleMenu", method = RequestMethod.POST)
   @ResponseBody
@@ -149,10 +157,16 @@ public class AmcSaleController {
   }
 
 
+  @RequestMapping(value = "/getMenuPage", method = RequestMethod.POST)
+  @ResponseBody
+  List<Object> getMenuPage( @RequestBody Long menuId ) throws Exception {
+    return amcSaleService.getMenuPage(menuId);
+  }
+
 
   @RequestMapping(value = "/getSaleBanners", method = RequestMethod.POST)
   @ResponseBody
-  List<AmcSaleBanner>  getSaleBanners( ) throws Exception {
+  List<AmcSaleBannerVo>  getSaleBanners( ) throws Exception {
     return amcSaleService.getSaleBanners();
   }
 
@@ -161,6 +175,12 @@ public class AmcSaleController {
   @ResponseBody
   AmcSaleBanner  updateSaleBanner(@RequestBody AmcSaleBanner amcSaleBanner ) throws Exception {
     return amcSaleService.updateSaleBanner(amcSaleBanner);
+  }
+
+  @RequestMapping(value = "/updateSaleBannerWithFilter", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleBannerVo  updateSaleBannerWithFilter(@RequestBody AmcSaleBannerVo amcSaleBannerVo ) throws Exception {
+    return amcSaleService.updateSaleBannerWithFilter(amcSaleBannerVo);
   }
 
   @RequestMapping(value = "/updateSaleBannerSeq", method = RequestMethod.POST)

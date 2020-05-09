@@ -12,7 +12,8 @@ public class AmcFilterContentAsset extends AmcFilterContentItem implements Seria
 //  List<Long> assetIds = null;
   List<Long> area = null;
   List<Long> landArea = null;
-  String locationCode = null;
+  List<String> cityCode = null;
+  List<String> provCode = null;
   List<Long> valuation = null;
   List<Integer> sealStatus = null;
   List<Integer> assetTypes = null;

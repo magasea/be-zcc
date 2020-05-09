@@ -1,7 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
 
-import com.wensheng.zcc.amc.aop.QueryChecker;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
@@ -38,13 +37,10 @@ import com.wenshengamc.zcc.wechat.WechatAssetImage;
 
 import java.util.*;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.kafka.common.protocol.types.Field.Str;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -52,16 +48,12 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.geo.GeoResults;
-import org.springframework.data.geo.Metric;
-import org.springframework.data.mongodb.core.CollectionOptions;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.aggregation.ComparisonOperators.Ne;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
-import org.springframework.data.mongodb.repository.Near;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -813,45 +805,50 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     if(!CollectionUtils.isEmpty(filterAsset.getAssetTypes())){
       criteria.andTypeIn(filterAsset.getAssetTypes());
     }
-    if(!StringUtils.isEmpty(filterAsset.getLocationCode())){
-      StringBuilder sbCode = new StringBuilder();
-      for(int idx = filterAsset.getLocationCode().length() -1; idx >= 0; idx--){
-        if(Character.compare(filterAsset.getLocationCode().charAt(idx), '0') == 0){
-          continue;
-        }else{
-          sbCode.append(filterAsset.getLocationCode().substring(0, idx+1));
-          break;
-        }
+    if(!CollectionUtils.isEmpty(filterAsset.getCityCode())){
+      if(filterAsset.getCityCode().size() == 1){
 
+          criteria.andCityEqualTo(filterAsset.getCityCode().get(0));
+
+      }else{
+        criteria.andCityIn(filterAsset.getCityCode());
       }
-      criteria.andCityLike(sbCode.append("%").toString());
+
+    }
+    if(!CollectionUtils.isEmpty(filterAsset.getProvCode())){
+      if(filterAsset.getProvCode().size() == 1){
+
+          criteria.andProvinceEqualTo(filterAsset.getProvCode().get(0));
+
+      }else{
+        criteria.andProvinceIn(filterAsset.getProvCode());
+      }
+
     }
 
     if(!CollectionUtils.isEmpty(filterAsset.getValuation())){
       Long lowLimit;
       Long highLimit;
       if(filterAsset.getValuation().get(0) < filterAsset.getValuation().get(1)){
-        lowLimit = filterAsset.getValuation().get(0);
-        highLimit = filterAsset.getValuation().get(1);
+        lowLimit = filterAsset.getValuation().get(0)*100;
+        highLimit = filterAsset.getValuation().get(1)*100;
       }else{
-        highLimit = filterAsset.getValuation().get(0);
-        lowLimit = filterAsset.getValuation().get(1);
+        highLimit = filterAsset.getValuation().get(0)*100;
+        lowLimit = filterAsset.getValuation().get(1)*100;
       }
       criteria.andTotalValuationBetween(lowLimit, highLimit);
     }
-    if(!CollectionUtils.isEmpty(filterAsset.getSealStatus())){
-      criteria.andSealedStateIn(filterAsset.getSealStatus());
-    }
+
 
     if(!CollectionUtils.isEmpty(filterAsset.getArea())){
       Long lowLimit;
       Long highLimit;
       if(filterAsset.getArea().get(0) < filterAsset.getArea().get(1)){
-        lowLimit = filterAsset.getArea().get(0);
-        highLimit = filterAsset.getArea().get(1);
+        lowLimit = filterAsset.getArea().get(0)*100;
+        highLimit = filterAsset.getArea().get(1)*100;
       }else{
-        highLimit = filterAsset.getArea().get(0);
-        lowLimit = filterAsset.getArea().get(1);
+        highLimit = filterAsset.getArea().get(0)*100;
+        lowLimit = filterAsset.getArea().get(1)*100;
       }
       criteria.andBuildingAreaBetween(lowLimit, highLimit);
     }
@@ -861,11 +858,11 @@ public class AmcAssetServiceImpl implements AmcAssetService {
       Long lowLimit;
       Long highLimit;
       if(filterAsset.getLandArea().get(0) < filterAsset.getLandArea().get(1)){
-        lowLimit = filterAsset.getLandArea().get(0);
-        highLimit = filterAsset.getLandArea().get(1);
+        lowLimit = filterAsset.getLandArea().get(0)*100;
+        highLimit = filterAsset.getLandArea().get(1)*100;
       }else{
-        highLimit = filterAsset.getLandArea().get(0);
-        lowLimit = filterAsset.getLandArea().get(1);
+        highLimit = filterAsset.getLandArea().get(0)*100;
+        lowLimit = filterAsset.getLandArea().get(1)*100;
       }
       criteria.andLandAreaBetween(lowLimit, highLimit);
     }

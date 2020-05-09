@@ -27,6 +27,12 @@ public enum SealStateEnum {
     public static SealStateEnum lookupByDisplayNameUtil(String name) {
         return func.apply(name);
     }
+
+    private static final Function<Integer, SealStateEnum> funcId =
+        EnumUtils.lookupMap(SealStateEnum.class, e -> e.getStatus());
+    public static SealStateEnum lookupByIdUtil(Integer type) {
+        return funcId.apply(type);
+    }
     SealStateEnum(int status, String name){
         this.status = status;
         this.name = name;

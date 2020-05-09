@@ -36,6 +36,12 @@ public enum AssetTypeEnum {
     public static AssetTypeEnum lookupByDisplayNameUtil(String name) {
         return func.apply(name);
     }
+
+    private static final Function<Integer, AssetTypeEnum> funcId =
+        EnumUtils.lookupMap(AssetTypeEnum.class, e -> e.getType());
+    public static AssetTypeEnum lookupByIdUtil(Integer type) {
+        return funcId.apply(type);
+    }
     public int getType() {
         return type;
     }

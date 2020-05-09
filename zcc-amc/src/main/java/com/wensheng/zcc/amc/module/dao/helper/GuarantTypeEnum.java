@@ -29,6 +29,12 @@ public enum GuarantTypeEnum {
   public static GuarantTypeEnum lookupByDisplayNameUtil(String name) {
     return func.apply(name);
   }
+
+  private static final Function<Integer, GuarantTypeEnum> funcId =
+      EnumUtils.lookupMap(GuarantTypeEnum.class, e -> e.getType());
+  public static GuarantTypeEnum lookupByIdUtil(Integer type) {
+    return funcId.apply(type);
+  }
   public int getType() {
     return type;
   }

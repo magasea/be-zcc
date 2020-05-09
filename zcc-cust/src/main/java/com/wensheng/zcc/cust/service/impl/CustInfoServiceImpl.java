@@ -267,7 +267,14 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdCmpyExtExample.setWhereClause(sb.toString());
     custTrdCmpyExtExample.setFilterByClause(null);
     custTrdCmpyTrdExts = custTrdCmpyExtMapper.selectByExample(custTrdCmpyExtExample);
-    return custTrdCmpyTrdExts;
+    //custTrdCmpyTrdExts 转map
+    Map<Long, CustTrdCmpyTrdExt> cmpyTrdExtMap = custTrdCmpyTrdExts.stream().collect(Collectors.toMap(CustTrdCmpyTrdExt::getId, custTrdCmpyTrdExt -> custTrdCmpyTrdExt));
+    //根据id重新排列
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExtNewList = new ArrayList<>();
+    for (Long id : preGroupResults) {
+      custTrdCmpyTrdExtNewList.add(cmpyTrdExtMap.get(id));
+    }
+    return custTrdCmpyTrdExtNewList;
   }
 
 

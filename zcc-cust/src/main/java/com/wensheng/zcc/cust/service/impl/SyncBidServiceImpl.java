@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustIntrstInfoMapper;
@@ -967,19 +968,21 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       custTrdCmpyMapper.insertSelective(custTrdCmpy);
 
     }else if(action == 2 ){
-      custTrdCmpy = custTrdCmpyList.get(0);
+      CustTrdCmpy custTrdCmpyHis = custTrdCmpyList.get(0);
+      AmcBeanUtils.copyProperties(custTrdCmpy, custTrdCmpyHis);
       if(isBuyer){
-        int count = getTrdCntForCmpy(custTrdCmpy.getId()).intValue();
+        int count = getTrdCntForCmpy(custTrdCmpyHis.getId()).intValue();
         if(isNewTrd){
-          int basicQuality = checkBasicDataQuality(custTrdCmpy);
+          int basicQuality = checkBasicDataQuality(custTrdCmpyHis);
           if(basicQuality <= 0){
-            custTrdCmpy.setDataQuality( (count + 1)/2);
+            custTrdCmpyHis.setDataQuality( (count + 1)/2);
           }else{
-            custTrdCmpy.setDataQuality(custTrdCmpy.getDataQuality()+1);
+            custTrdCmpyHis.setDataQuality(custTrdCmpyHis.getDataQuality()+1);
           }
         }
       }
-      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyHis);
+      custTrdCmpy.setId(custTrdCmpyHis.getId());
     }
     return custTrdCmpy.getId();
 

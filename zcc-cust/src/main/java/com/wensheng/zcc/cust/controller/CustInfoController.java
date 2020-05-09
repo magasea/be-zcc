@@ -207,6 +207,52 @@ public class CustInfoController {
 
   }
 
+
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
+  @RequestMapping(value = "/getLatestCustTrdInfo", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public AmcPage<CustTrdInfoVo> getLatestCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
+
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+
+
+
+    List<CustTrdInfoVo> queryResults = null;
+    Long totalCount = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    try{
+      if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+        if(CollectionUtils.isEmpty(orderByParam)){
+          orderByParam.put("ctc.create_time", Direction.DESC);
+          orderByParam.put("ctc.update_time", Direction.DESC);
+
+        }
+        queryResults = custInfoService.queryCmpyTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
+            orderByParam);
+        totalCount = custInfoService.getCmpyTradeCount(queryParam);
+      }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
+
+        if(CollectionUtils.isEmpty(orderByParam)){
+          orderByParam.put("ctp.create_time", Direction.DESC);
+          orderByParam.put("ctp.create_time", Direction.DESC);
+        }
+        queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
+            orderByParam);
+        totalCount = custInfoService.getPersonTradeCount(queryParam);
+      }
+
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(queryResults, totalCount );
+
+  }
+
 //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)
   public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {

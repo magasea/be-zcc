@@ -278,4 +278,11 @@ public class CustInfoController {
   public void patchCmpyProvince(@RequestParam(required = false) String province) throws Exception {
     custInfoService.patchCmpyProvince(province);
   }
+
+  @RequestMapping(value = "/patchAddCmpyProvince", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAddCmpyProvince() throws Exception {
+    custInfoService.patchAddCmpyProvince();
+  }
+
 }

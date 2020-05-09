@@ -78,11 +78,11 @@ public class AmcCmpyContactorController {
     return amcContactorService.getCmpyAmcContactorNew(cmpyId);
   }
 
-  @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)
-  @ResponseBody
-  public void initCmpyAmcContactor(){
-     amcContactorService.initCmpyAmcContactor();
-  }
+//  @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)
+//  @ResponseBody
+//  public void initCmpyAmcContactor(){
+//     amcContactorService.initCmpyAmcContactor();
+//  }
 
   @RequestMapping(value = "/refactData/patchCmpycontactorRevisePhone", method = RequestMethod.POST)
   @ResponseBody

@@ -1070,6 +1070,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdCmpy.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
     custTrdCmpy.setLegalReptive(custCmpyInfoFromSync.getLegalReptive());
     custTrdCmpy.setUniSocialCode(custCmpyInfoFromSync.getUniSocialCode());
+    custTrdCmpy.setCmpyProvince(StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyProvince())?"-1":
+        custCmpyInfoFromSync.getCmpyProvince().substring(0,6));
     custTrdCmpy.setUpdateTime(AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime()));
     custTrdCmpy.setSyncTime(AmcDateUtils.getCurrentDate());
 

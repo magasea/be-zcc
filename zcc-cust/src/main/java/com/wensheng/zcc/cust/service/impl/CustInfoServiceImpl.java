@@ -16,6 +16,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
@@ -97,9 +98,11 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Autowired
   CustRegionDetailMapper custRegionDetailMapper;
 
-
   @Autowired
   CustTrdInfoMapper custTrdInfoMapper;
+
+  @Value("${cust.syncUrls.getAddressCodeByAddress}")
+  private String getAddressCodeByAddress;
 
   @Autowired
   SyncService syncService;
@@ -960,6 +963,72 @@ public class CustInfoServiceImpl implements CustInfoService {
       provinceToHandle.set(province);
     }
 
+  }
+
+  @Override
+  public void patchAddCmpyProvince() {
+    RestTemplate restTemplate = CommonHandler.getRestTemplate();
+   //查询没有省编码的公司
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    custTrdCmpyExtExample.createCriteria().andCmpyProvinceEqualTo("-1")
+        .andCmpyAddrNotEqualTo("-1").andCmpyAddrNotEqualTo("");
+//    List<CustTrdCmpy> custTrdCmpieListHasAdder= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+//
+//    for (CustTrdCmpy custTrdCmpy : custTrdCmpieListHasAdder) {
+//      AdressResp adressResp = null;
+//      try {
+//        adressResp = restTemplate
+//            .exchange(String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()),
+//                HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {
+//                }).getBody();
+//      } catch (Exception e) {
+//        log.error("查询地址信息出错,url:{},错误是：{}", String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()), e);
+//      }
+//      if (null !=adressResp && null != adressResp.getStatus() && "1".equals(adressResp.getStatus())) {
+//        CustTrdCmpy custTrdCmpyNew = new CustTrdCmpy();
+//        custTrdCmpyNew.setCmpyProvince(
+//            adressResp.getResult().getStatsResult().getProvince().get(0).substring(0, 6));
+//        custTrdCmpyNew.setId(custTrdCmpy.getId());
+//        log.info("公司省地址：{}，id:{}",custTrdCmpyNew.getCmpyProvince(),custTrdCmpyNew.getId());
+////        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyNew);
+//      }else {
+//        log.info("查询地址信息出错,url:{},返回参数是：{}，公司名称：{}", String.format(getAddressCodeByAddress,
+//            custTrdCmpy.getCmpyAddr()), adressResp, custTrdCmpy.getCmpyName());
+//      }
+//    }
+
+
+    custTrdCmpyExtExample.clear();
+    custTrdCmpyExtExample.createCriteria().andCmpyProvinceEqualTo("-1");
+    List<CustTrdCmpy> custTrdCmpieList= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+    for (CustTrdCmpy custTrdCmpy:custTrdCmpieList) {
+      //根据名称查询爬虫库
+      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyName());
+      CustCmpyInfoFromSync custCmpyInfoFromSync = null;
+      try {
+        custCmpyInfoFromSync = restTemplate
+            .getForEntity(url, CustCmpyInfoFromSync.class).getBody();
+        log.info("查询爬虫公司信息是：{},url:{}",custCmpyInfoFromSync,url);
+      } catch (Exception e) {
+        log.error("查询爬虫公司信息出错，错误是：{}",e);
+      }
+      //有公司信息，有注册地址的直接更新数据
+      if (null != custCmpyInfoFromSync && !StringUtils
+          .isEmpty(custCmpyInfoFromSync.getCmpyAddr())) {
+        //更新zcc公司省编码信息
+        CustTrdCmpy custTrdCmpyNew = new CustTrdCmpy();
+        custTrdCmpyNew.setId(custTrdCmpy.getId());
+        custTrdCmpyNew.setUniSocialCode(custCmpyInfoFromSync.getUniSocialCode());
+        custTrdCmpyNew.setCmpyPhone(custCmpyInfoFromSync.getCmpyPhone());
+        custTrdCmpyNew.setCmpyAddr(custCmpyInfoFromSync.getCmpyAddr());
+        custTrdCmpyNew.setAnnuReptPhone(custCmpyInfoFromSync.getAnnuReptPhone());
+        custTrdCmpyNew.setAnnuReptAddr(custCmpyInfoFromSync.getAnnuReptAddr());
+        custTrdCmpyNew
+            .setCmpyProvince(StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyProvince()) ? "-1" :
+                custCmpyInfoFromSync.getCmpyProvince().substring(0, 6));
+        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyNew);
+      }
+    }
   }
 
   @Override

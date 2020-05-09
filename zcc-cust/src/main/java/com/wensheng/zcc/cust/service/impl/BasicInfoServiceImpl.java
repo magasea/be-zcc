@@ -112,6 +112,7 @@ public class BasicInfoServiceImpl implements BasicInfoService {
     for(CustAmcUserpriv custAmcUserpriv: custAmcUserprivs){
       userPrivMap.put(custAmcUserpriv.getProvince(), custAmcUserpriv.getLocation());
     }
+    log.info("userPrivMap:{}",userPrivMap);
     return userPrivMap;
   }
 

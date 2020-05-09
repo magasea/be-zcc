@@ -59,6 +59,7 @@ public class ExceptionUtils {
     FAILED_TO_STOREFILE(1034, "Failed to store file", "文件保存失败"),
 
     DUPLICATE_RECORD_INSERT_ERROR(1035, "duplicate record to insert ", "插入重复数据"),
+    DUPLICATE_RECORD_UPDATE_ERROR(1035, "duplicate record to update ", "修改重复数据"),
 
     LOGIN_REQUIRE_ERROR(1036, "login is required ", "必须先登录"),
 

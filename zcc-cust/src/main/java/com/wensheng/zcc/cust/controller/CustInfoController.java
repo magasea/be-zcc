@@ -112,7 +112,7 @@ public class CustInfoController {
   @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
   @ResponseBody
   @QueryCheckerCmpy
-  public void modCmpy(@RequestBody CustTrdCmpy custTrdCmpy){
+  public void modCmpy(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
 
      custInfoService.updateCompany(custTrdCmpy);
 

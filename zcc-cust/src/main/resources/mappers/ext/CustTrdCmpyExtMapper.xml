@@ -58,7 +58,8 @@
     ${prefix}update_by as update_by,
     ${prefix}create_time as create_time,
     ${prefix}create_by as create_by,
-    ${prefix}sync_time as sync_time
+    ${prefix}sync_time as sync_time,
+    ${prefix}crawled_status as crawled_status
   </sql>
   <sql id="cust_trd_info_list">
     ${prefix}id as ${alias}id,

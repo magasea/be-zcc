@@ -135,7 +135,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     //判断是否有注册地址，没有注册地址则向爬虫系统增加一条爬虫任务
     if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
-      custTrdCmpy.setCrawledStatus("1");
+//      custTrdCmpy.setCrawledStatus("1");
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
       try {
 //        restTemplate.exchange(String.format(crawledCompany,custTrdCmpy), HttpMethod.GET, null, String.class).getBody();

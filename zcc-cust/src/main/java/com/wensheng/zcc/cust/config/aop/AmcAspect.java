@@ -190,6 +190,10 @@ public class AmcAspect {
             AmcLocationEnum locationUserEnum =
                 AmcLocationEnum.lookupByDisplayIdUtil(locationId);
             AmcLocationEnum designedLocationEnum = AmcLocationEnum.lookupByDisplayIdUtil(userPrivMap.get(province));
+          log.info("locationId:{};designedLocationEnum:{};locationUserEnum:{};userPrivMap:{}",locationId,
+              designedLocationEnum, locationUserEnum,userPrivMap);
+          Integer a = userPrivMap.get(province);
+          log.info("province:{};地区:{};",province,a);
 
             if(locationId == null || locationId.compareTo(0) < 0 || designedLocationEnum ==null || locationUserEnum == null){
               log.error("locationId:{};designedLocationEnum:{};locationUserEnum:{};userPrivMap:{}",locationId,

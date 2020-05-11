@@ -101,7 +101,7 @@ public class BasicInfoServiceImpl implements BasicInfoService {
 
     ;
   }
-  @Cacheable(unless = "#result == null")
+  @Cacheable
   @Override
   public Map<String, Integer> getAmcUserPrivMap() {
     CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
@@ -117,7 +117,7 @@ public class BasicInfoServiceImpl implements BasicInfoService {
   }
 
 
-  @Cacheable(unless = "#result == null")
+  @Cacheable
   @Override
   public Map<Integer, List<String>> getAmcUserProvsMap() {
     CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -76,6 +77,7 @@ public class AmcHelperServiceImpl implements AmcHelperService {
 
   @Override
   @Cacheable
+  @LogExecutionTime
   public List<CurtInfo> getAllCurts() throws Exception {
 
     return curtInfoMapper.selectByExample(null);

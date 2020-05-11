@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.HasImageEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
@@ -71,6 +72,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -214,7 +216,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       log.info("there is no image, just insert it");
       wszccTemplate.save(debtImage);
     }
-
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
+    amcDebt.setHasImg(HasImageEnum.HASIMAGE.getStatus());
+    amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
     return debtImage;
   }
 
@@ -251,7 +255,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtorExample.createCriteria().andDebtIdEqualTo(amcDebtId);
       amcDebtorMapper.deleteByExample(amcDebtorExample);
       Query queryNormal = new Query();
-      queryNormal.addCriteria(Criteria.where("amcDebtId").is(amcDebtId));
+      queryNormal.addCriteria(Criteria.where("debtId").is(amcDebtId));
       wszccTemplate.remove(queryNormal, DebtAdditional.class);
       Query queryImage = new Query();
       queryImage.addCriteria(Criteria.where("debtId").is(amcDebtId));
@@ -322,14 +326,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   private DebtImage queryImage(Long debtId){
     Query query = new Query();
-    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    query.addCriteria(Criteria.where("debtId").is(debtId));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
     return debtImages.get(0);
   }
 
   private List<DebtImage> queryImages(List<Long> debtIds){
     Query query = new Query();
-    query.addCriteria(Criteria.where("amcDebtId").in(debtIds));
+    query.addCriteria(Criteria.where("debtId").in(debtIds));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
     return debtImages;
   }
@@ -593,7 +597,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 //      }
 //    }
     Query query = new Query();
-//    query.addCriteria(Criteria.where("amcDebtId").in(debtIds));
+//    query.addCriteria(Criteria.where("debtId").in(debtIds));
 
 //    List<DebtAdditional> debtAdditionals =  wszccTemplate.find(query, DebtAdditional.class);
 //    Map<Long, DebtAdditional> debtAdditionalMap =
@@ -837,7 +841,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     debtAdditional.setAmcDebtId(debtId);
     debtAdditional.setDesc(debtDesc);
     Query query = new Query();
-    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    query.addCriteria(Criteria.where("debtId").is(debtId));
     Update update = new Update();
     update.set("desc", debtDesc);
     wszccTemplate.upsert(query, update, DebtAdditional.class);
@@ -1316,12 +1320,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebts;
   }
 
+  @Override
   public List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds) {
     if(CollectionUtils.isEmpty(debtIds)){
       return new ArrayList<>();
     }
     AmcDebtExample amcDebtExample = new AmcDebtExample();
-    amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateNotEqualTo(PublishStateEnum.PUBLISHED.getStatus());;
+    amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());;
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
 
     List<DebtImage> debtImages = queryImages(debtIds);
@@ -1330,7 +1335,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
     for(AmcDebt amcDebt: amcDebts){
       AmcDebtVo amcDebtVo = convertDo2Vo(amcDebt);
-      amcDebtVo.setDebtImage(debtImageMap.get(amcDebtVo.getId()));
+      if(debtImageMap.containsKey(amcDebtVo.getId())){
+        amcDebtVo.setDebtImage(debtImageMap.get(amcDebtVo.getId()));
+      }
+
       amcDebtVos.add(amcDebtVo);
 
     }
@@ -1418,44 +1426,34 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVos.add(convertDo2Vo(amcDebtExt));
     }
 
-     return updateDebtVosWithMongoWithImageFirst(amcDebtVos);
+     updateDebtVosWithMongoFixOrder(amcDebtVos);
+    return amcDebtVos;
   }
 
-  private List<AmcDebtVo> updateDebtVosWithMongoWithImageFirst(List<AmcDebtVo> amcDebtVos){
-    Map<Long, AmcDebtVo> amcDebtVosMap = amcDebtVos.stream().collect(
-        Collectors.toMap(item-> item.getId(), item -> item));
+  private void updateDebtVosWithMongoFixOrder(List<AmcDebtVo> amcDebtVos){
+    List<Long> debtIds = amcDebtVos.stream().map(item->item.getId()).collect(Collectors.toUnmodifiableList());
+//    Map<Long, AmcDebtVo> amcDebtVosMap = amcDebtVos.stream().collect(
+//        Collectors.toMap(item-> item.getId(), item -> item));
 //    Set<Long> debtIds = amcDebtVos.stream().map(item -> item.getId()).collect(Collectors.toSet());
     Query query = new Query();
-    query.addCriteria(Criteria.where("debtId").in(amcDebtVosMap.keySet()));
+    query.addCriteria(Criteria.where("debtId").in(debtIds));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
+    Map<Long, DebtImage> debtImageMap = debtImages.stream().collect(Collectors.toMap(item->item.getDebtId(), item->item));
+
 
     List<AmcDebtVo> amcDebtVoList = new ArrayList<>();
     Iterator<AmcDebtVo> iteratorDebt = amcDebtVos.iterator();
-    Iterator<DebtImage> iteratorI = debtImages.iterator();
+//    Iterator<DebtImage> iteratorI = debtImages.iterator();
     while(iteratorDebt.hasNext()){
-      AmcDebtVo currentAmcDebtVo = iteratorDebt.next();
-      iteratorI =  debtImages.iterator();
-      if(!iteratorI.hasNext()){
-        iteratorDebt.forEachRemaining(item-> amcDebtVoList.add(item));
-        break;
-      }
-      while(iteratorI.hasNext()){
-        DebtImage debtImage = iteratorI.next();
-
-        if(currentAmcDebtVo.getId() != null && debtImage.getDebtId() != null &&
-            currentAmcDebtVo.getId().equals(debtImage.getDebtId())){
-          currentAmcDebtVo.setDebtImage(debtImage);
-
-          iteratorI.remove();
-          amcDebtVoList.add(currentAmcDebtVo);
-          iteratorDebt.remove();
-        }
+     AmcDebtVo amcDebtVoCurrent = iteratorDebt.next();
+      if(debtImageMap.containsKey(amcDebtVoCurrent.getId())){
+        amcDebtVoCurrent.setDebtImage(debtImageMap.get(amcDebtVoCurrent.getId()));
       }
     }
 
     List<DebtAdditional> additionals = wszccTemplate.find(query, DebtAdditional.class);
-    setAddInfos(additionals, amcDebtVoList);
-    return amcDebtVoList;
+    setAddInfos(additionals, amcDebtVos);
+
   }
   private void setAddInfos(List<DebtAdditional> debtAdditionals, List<AmcDebtVo> amcDebtVos){
     Iterator<DebtAdditional> iteratorAdd =  debtAdditionals.iterator();
@@ -1534,6 +1532,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   public AmcDebtExample getAmcDebtExampleWithFloorFilter(AmcFilterContentDebt floorDebtFilter) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
+
     AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
 
 
@@ -1556,6 +1555,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(!CollectionUtils.isEmpty(floorDebtFilter.getGuarantType())){
       criteria.andGuarantTypeIn(floorDebtFilter.getGuarantType());
     }
+
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getDebtType())){
+      criteria.andDebtTypeIn(floorDebtFilter.getDebtType());
+    }
     if(!CollectionUtils.isEmpty(floorDebtFilter.getBaseAmount())){
 
       Long lowLimit = -1L;
@@ -1574,7 +1577,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(floorDebtFilter.getOrderByField() == OrderByFieldEnum.VISITCOUNT.getId()){
       amcDebtExample.setOrderByClause(" visit_count desc ");
     }else{
-      amcDebtExample.setOrderByClause(" id desc ");
+      amcDebtExample.setOrderByClause(" has_img desc, id desc ");
     }
 
     return amcDebtExample;

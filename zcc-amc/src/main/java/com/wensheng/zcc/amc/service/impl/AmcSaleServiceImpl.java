@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcSaleTagMapper;
 import com.wensheng.zcc.amc.module.dao.helper.AssetTypeEnum;
+import com.wensheng.zcc.amc.module.dao.helper.DebtTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.FloorPublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
@@ -43,6 +44,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -122,7 +124,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         // get all published floors
         AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
         amcSaleFloorExample.setOrderByClause(" floor_seq asc ");
-        amcSaleFloorExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus());
+        amcSaleFloorExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus())
+            .andFloorStartTimeLessThan(AmcDateUtils.getCurrentDate()).andFloorEndTimeGreaterThan(AmcDateUtils.getCurrentDate());
+
         List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
         // get all recomm items with floors
         for(AmcSaleFloor amcSaleFloor : amcSaleFloors){
@@ -276,6 +280,19 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                 }
             }
         }
+
+        if(filterDebt.getDebtType() != null && CollectionUtils.isEmpty(filterDebt.getDebtType())){
+            log.error("filterDebt getDebtType size error");
+            return false;
+
+        }else if(!CollectionUtils.isEmpty(filterDebt.getDebtType())){
+            for(Integer debtType: filterDebt.getDebtType()){
+                if(DebtTypeEnum.lookupByIdUtil(debtType) == null){
+                    log.error("filterDebt guarantType error");
+                    return false;
+                }
+            }
+        }
         return true;
     }
 
@@ -330,7 +347,10 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleFloor.setRecomItems(null);
         if(amcSaleFloor.getPublishState().equals(FloorPublishStateEnum.UNPUBLISHED.getStatus())){
             AmcSaleFloor hisFloor = amcSaleFloorMapper.selectByPrimaryKey(amcSaleFloor.getId());
-            if(hisFloor.getPublishState().equals(FloorPublishStateEnum.PUBLISHED.getStatus())){
+            if(hisFloor.getPublishState().equals(FloorPublishStateEnum.PUBLISHED.getStatus())
+                && hisFloor.getFloorStartTime().before(AmcDateUtils.getCurrentDate())
+                && hisFloor.getFloorEndTime().after(AmcDateUtils.getCurrentDate())
+            ){
                 amcSaleFloor.setManualEndTime(AmcDateUtils.getCurrentDate());
             }
         }
@@ -437,6 +457,8 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
     public List<AmcSaleBanner> getSimpleSaleBanners() {
         AmcSaleBannerExample amcSaleBannerExample = new AmcSaleBannerExample();
+        amcSaleBannerExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus())
+            .andStartTimeLessThan(AmcDateUtils.getCurrentDate()).andEndTimeGreaterThan(AmcDateUtils.getCurrentDate());
         amcSaleBannerExample.setOrderByClause(" id desc ");
 
         return  amcSaleBannerMapper.selectByExample(amcSaleBannerExample);

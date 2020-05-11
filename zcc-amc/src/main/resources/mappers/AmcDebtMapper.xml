@@ -42,6 +42,7 @@
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="note" jdbcType="CHAR" property="note" />
     <result column="visit_count" jdbcType="BIGINT" property="visitCount" />
+    <result column="has_img" jdbcType="INTEGER" property="hasImg" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -108,7 +109,7 @@
     lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor_name, 
     amc_contactor_phone, amc_contactor2_id, is_recommanded, guarant_type, recomm_start_date, 
     recomm_end_date, orig_creditor_id, orig_creditor_name, brief_desc, update_by, update_date, 
-    created_by, created_date, note, visit_count
+    created_by, created_date, note, visit_count, has_img
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -157,8 +158,8 @@
       guarant_type, recomm_start_date, recomm_end_date, 
       orig_creditor_id, orig_creditor_name, brief_desc, 
       update_by, update_date, created_by, 
-      created_date, note, visit_count
-      )
+      created_date, note, visit_count, 
+      has_img)
     values (#{debtType,jdbcType=INTEGER}, #{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, 
       #{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, 
       #{baseDate,jdbcType=TIMESTAMP}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
@@ -171,8 +172,8 @@
       #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, 
       #{origCreditorId,jdbcType=BIGINT}, #{origCreditorName,jdbcType=CHAR}, #{briefDesc,jdbcType=VARCHAR}, 
       #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
-      #{createdDate,jdbcType=TIMESTAMP}, #{note,jdbcType=CHAR}, #{visitCount,jdbcType=BIGINT}
-      )
+      #{createdDate,jdbcType=TIMESTAMP}, #{note,jdbcType=CHAR}, #{visitCount,jdbcType=BIGINT}, 
+      #{hasImg,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -297,6 +298,9 @@
       <if test="visitCount != null">
         visit_count,
       </if>
+      <if test="hasImg != null">
+        has_img,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="debtType != null">
@@ -415,6 +419,9 @@
       </if>
       <if test="visitCount != null">
         #{visitCount,jdbcType=BIGINT},
+      </if>
+      <if test="hasImg != null">
+        #{hasImg,jdbcType=INTEGER},
       </if>
     </trim>
   </insert>
@@ -547,6 +554,9 @@
       <if test="record.visitCount != null">
         visit_count = #{record.visitCount,jdbcType=BIGINT},
       </if>
+      <if test="record.hasImg != null">
+        has_img = #{record.hasImg,jdbcType=INTEGER},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -593,7 +603,8 @@
       created_by = #{record.createdBy,jdbcType=BIGINT},
       created_date = #{record.createdDate,jdbcType=TIMESTAMP},
       note = #{record.note,jdbcType=CHAR},
-      visit_count = #{record.visitCount,jdbcType=BIGINT}
+      visit_count = #{record.visitCount,jdbcType=BIGINT},
+      has_img = #{record.hasImg,jdbcType=INTEGER}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -718,6 +729,9 @@
       <if test="visitCount != null">
         visit_count = #{visitCount,jdbcType=BIGINT},
       </if>
+      <if test="hasImg != null">
+        has_img = #{hasImg,jdbcType=INTEGER},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -761,7 +775,8 @@
       created_by = #{createdBy,jdbcType=BIGINT},
       created_date = #{createdDate,jdbcType=TIMESTAMP},
       note = #{note,jdbcType=CHAR},
-      visit_count = #{visitCount,jdbcType=BIGINT}
+      visit_count = #{visitCount,jdbcType=BIGINT},
+      has_img = #{hasImg,jdbcType=INTEGER}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">

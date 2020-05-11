@@ -17,6 +17,7 @@ public class AmcFilterContentDebt extends AmcFilterContentItem implements Serial
   List<String> amcContactorNames = null;
   List<Long> courtIds = null;
   List<Integer> guarantType = null;
+  List<Integer> debtType = null;
   int orderByField = -1;
 
 }

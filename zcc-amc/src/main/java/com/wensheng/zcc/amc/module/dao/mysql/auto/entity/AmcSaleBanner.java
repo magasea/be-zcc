@@ -21,6 +21,8 @@ public class AmcSaleBanner {
 
     private Date endTime;
 
+    private Date manualEndTime;
+
     private Integer publishState;
 
     private Integer seq;
@@ -105,6 +107,14 @@ public class AmcSaleBanner {
 
     public void setEndTime(Date endTime) {
         this.endTime = endTime;
+    }
+
+    public Date getManualEndTime() {
+        return manualEndTime;
+    }
+
+    public void setManualEndTime(Date manualEndTime) {
+        this.manualEndTime = manualEndTime;
     }
 
     public Integer getPublishState() {

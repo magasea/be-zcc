@@ -4,6 +4,7 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcAssetExtMapper;
+import com.wensheng.zcc.amc.module.dao.helper.HasImageEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
@@ -271,10 +272,23 @@ public class AmcAssetServiceImpl implements AmcAssetService {
   public List<AmcAssetVo> getByIds(List<Long> amcAssetIds) throws Exception {
 
       List<AmcAsset> amcAssets = getSimpleAssets(amcAssetIds);
-    List<AmcAssetVo> amcAssetVos = new ArrayList<>();
-    for(AmcAsset amcAsset: amcAssets){
-      amcAssetVos.add(queryMongoForAmcAsset(amcAsset));
+    List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+    if(CollectionUtils.isEmpty(amcAssetVos)){
+      return amcAssetVos;
     }
+
+    List<Long> assetIds = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList());
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
+    List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+    query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(assetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
+    List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+    setAddInfos(assetAdditionals, amcAssetVos);
+
+    setImages(assetImages, amcAssetVos);
+
     return amcAssetVos;
 
   }
@@ -449,52 +463,30 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     }
     private void setImages(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
-        Iterator<AssetImage> iteratorI =  assetImages.iterator();
+      Map<Long, AssetImage> assetImageMap = assetImages.stream().filter(item->item.getAmcAssetId() != null)
+          .collect(Collectors.toMap(item->item.getAmcAssetId(), item-> item));
+
         for(int idx = 0; idx < amcAssetVos.size(); idx++){
-            iteratorI =  assetImages.iterator();
-            while(iteratorI.hasNext()){
-                AssetImage assetImage = iteratorI.next();
+          if(assetImageMap.containsKey(amcAssetVos.get(idx).getId())){
+            amcAssetVos.get(idx).setAssetImage(assetImageMap.get(amcAssetVos.get(idx).getId()));
+          }
 
-                if(amcAssetVos.get(idx).getId() != null && assetImage.getAmcAssetId() != null &&
-                        amcAssetVos.get(idx).getId().equals(assetImage.getAmcAssetId())){
-                    amcAssetVos.get(idx).setAssetImage(assetImage);
-    //                    assetImages.remove(assetImage);
-                    iteratorI.remove();
-                }
-
-            }
         }
 
     }
 
-  private List<AmcAssetVo> setImagesAndChangeOrder(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
-      List<AmcAssetVo> amcAssetVosResult = new ArrayList<>();
-    Iterator<AssetImage> iteratorI =  assetImages.iterator();
+  private void setImagesAndKeepOrder(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
+
     Iterator<AmcAssetVo> iteratorA =  amcAssetVos.iterator();
+    Map<Long, AssetImage> assetImageMap = assetImages.stream().collect(Collectors.toMap(item->item.getAmcAssetId(), item->item));
     while(iteratorA.hasNext()){
-      AmcAssetVo currentAmcAssetVo = iteratorA.next();
-      iteratorI =  assetImages.iterator();
-      if(!iteratorI.hasNext()){
-        iteratorA.forEachRemaining(item-> amcAssetVosResult.add(item));
-        break;
-      }
-      while(iteratorI.hasNext()){
-        AssetImage assetImage = iteratorI.next();
-
-        if(currentAmcAssetVo.getId() != null && assetImage.getAmcAssetId() != null &&
-            currentAmcAssetVo.getId().equals(assetImage.getAmcAssetId())){
-          currentAmcAssetVo.setAssetImage(assetImage);
-          //                    assetImages.remove(assetImage);
-          iteratorI.remove();
-          amcAssetVosResult.add(currentAmcAssetVo);
-          iteratorA.remove();
-        }
-
+      AmcAssetVo amcAssetVoCurrent = iteratorA.next();
+      if(assetImageMap.containsKey(amcAssetVoCurrent.getId())){
+        amcAssetVoCurrent.setAssetImage(assetImageMap.get(amcAssetVoCurrent.getId()));
       }
 
     }
 
-    return amcAssetVosResult;
 
   }
 
@@ -502,31 +494,26 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         Iterator<AmcAssetVo> iterator =  amcAssetVos.iterator();
         while(iterator.hasNext()){
             AmcAssetVo item = iterator.next();
-            if(item.getId() == additional.getAmcAssetId()){
+            if(item.getId().equals(additional.getAmcAssetId())){
                 item.setAssetAdditional(additional);
                 break;
             }
         }
     }
 
-    private void setAddInfos(List<AssetAdditional> assetAdditionals, List<AmcAssetVo> amcAssetVos){
-        Iterator<AssetAdditional> iteratorAdd =  assetAdditionals.iterator();
-        for(int idx = 0; idx < amcAssetVos.size(); idx++){
-            iteratorAdd =  assetAdditionals.iterator();
-            while(iteratorAdd.hasNext()){
-                AssetAdditional assetAdditional = iteratorAdd.next();
-
-                    if( amcAssetVos.get(idx).getId() != null && assetAdditional.getAmcAssetId() != null &&
-                            amcAssetVos.get(idx).getId().equals(assetAdditional.getAmcAssetId())){
-                        amcAssetVos.get(idx).setAssetAdditional(assetAdditional);
-//                    assetImages.remove(assetImage);
-                        iteratorAdd.remove();
-                        break;
-                    }
-
-                }
-            }
+    private void setAddInfos(List<AssetAdditional> assetAdditionals, List<AmcAssetVo> amcAssetVos) {
+      Map<Long, AssetAdditional> assetAdditionalMap = assetAdditionals.stream()
+          .filter(item -> item.getAmcAssetId() != null)
+          .collect(Collectors.toMap(item -> item.getAmcAssetId(), item -> item));
+      Iterator<AssetAdditional> iteratorAdd = assetAdditionals.iterator();
+      for (int idx = 0; idx < amcAssetVos.size(); idx++) {
+        if (assetAdditionalMap.containsKey(amcAssetVos.get(idx).getId())) {
+          amcAssetVos.get(idx)
+              .setAssetAdditional(assetAdditionalMap.get(amcAssetVos.get(idx).getId()));
         }
+
+      }
+    }
 
 
 
@@ -617,9 +604,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             wszccTemplate.save(assetImage);
         }
 
-
-
-
+        AmcAsset amcAsset = amcAssetMapper.selectByPrimaryKey(assetImage.getAmcAssetId());
+        amcAsset.setHasImg(HasImageEnum.HASIMAGE.getStatus());
+        amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
         return assetImage;
 
     }
@@ -780,15 +767,14 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     if(CollectionUtils.isEmpty(amcAssetVos)){
       return amcAssetVos;
     }
-    Map<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
-        item->item));
+    List<Long> amcAssetIds = amcAssetVos.stream().map(item->item.getId()).collect(Collectors.toList());
     Query query = new Query();
-    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()));
+    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetIds));
     List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
     query = new Query();
-    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetVoMap.keySet()).and("tag").is(ImageClassEnum.MAIN.getId()));
+    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
     List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
-    setImagesAndChangeOrder(assetImages, amcAssetVos);
+    setImagesAndKeepOrder(assetImages, amcAssetVos);
     setAddInfos(assetAdditionals, amcAssetVos);
 
 
@@ -798,6 +784,12 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
   private AmcAssetExample getAmcAssetExampleWithFloorFilter(AmcFilterContentAsset filterAsset) {
     AmcAssetExample amcAssetExample = new AmcAssetExample();
+    if(filterAsset.getOrderByField() == -1){
+      amcAssetExample.setOrderByClause(" has_img desc , id desc");
+    }else{
+      amcAssetExample.setOrderByClause(" visit_count desc ");
+    }
+
     AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
     StringBuilder sb = new StringBuilder();
 

@@ -67,6 +67,8 @@ public class AmcAsset {
 
     private Long visitCount;
 
+    private Integer hasImg;
+
     public Long getId() {
         return id;
     }
@@ -321,5 +323,13 @@ public class AmcAsset {
 
     public void setVisitCount(Long visitCount) {
         this.visitCount = visitCount;
+    }
+
+    public Integer getHasImg() {
+        return hasImg;
+    }
+
+    public void setHasImg(Integer hasImg) {
+        this.hasImg = hasImg;
     }
 }

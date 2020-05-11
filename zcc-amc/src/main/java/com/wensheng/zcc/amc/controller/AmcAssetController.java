@@ -73,7 +73,9 @@ public class AmcAssetController {
       @RequestBody(required = false) QueryParam assetQueryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
+      orderByParam.put("has_img", Direction.DESC);
       orderByParam.put("id", Direction.DESC);
+
     }
     Map<String, Object> queryParam = SQLUtils.getQueryParams(assetQueryParam);
 
@@ -133,6 +135,11 @@ public class AmcAssetController {
     return amcAssetService.getSimpleAssets(ids);
   }
 
+  @RequestMapping(value = "/amcid/{amcid}/asset/getAssetsByIds", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcAssetVo> getAssetsByIds( @RequestBody List<Long> ids) throws Exception{
+    return amcAssetService.getByIds(ids);
+  }
   @RequestMapping(value = "/amcid/{amcid}/asset", method = RequestMethod.POST)
   @ResponseBody
   public AmcAssetDetailVo getAmcAssetDetail( @RequestParam("amcAssetId") Long amcAssetId) throws Exception{

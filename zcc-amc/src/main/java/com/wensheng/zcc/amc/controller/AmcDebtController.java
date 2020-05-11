@@ -400,7 +400,13 @@ public class AmcDebtController {
 
     return amcDebts;
   }
+  @RequestMapping(value = "/api/amcid/{id}/debt/getSimpleDebtsByIds", method = RequestMethod.POST)
+  @ResponseBody
+  public List<AmcDebtVo> getSimpleDebtsByIds(@RequestBody List<Long> debtIds)
+      throws Exception {
 
+    return amcDebtService.getByIdsSimpleWithoutAddition(debtIds);
+  }
   @PreAuthorize("hasRole('SYSTEM_ADMIN') or hasPermission(#id, 'PERM_DEBTASSET_MOD')")
   @EditActionChecker
   @RequestMapping(value = "/api/amcid/{id}/debt/update", method = RequestMethod.POST)
@@ -599,7 +605,9 @@ public class AmcDebtController {
       throws Exception {
     Map<String, Sort.Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
     if (CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("has_img", Direction.DESC);
       orderByParam.put("id", Direction.DESC);
+
     }
     Map<String, Object> queryParamMap =  SQLUtils.getQueryParams(queryParam);
 

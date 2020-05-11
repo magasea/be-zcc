@@ -122,6 +122,9 @@ public interface AmcDebtService {
   List<AmcDebtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint, Long[] distances) throws Exception;
 
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
+
+  List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds);
+
   List<AmcDebt> getDebtSimpleByTitleLike(String title);
 
   Long getDebtIdByTitle(String title) throws Exception;

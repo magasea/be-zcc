@@ -21,4 +21,9 @@ public class AmcMiscServiceImplTest {
   public void updateClickCountInfo() {
     amcMiscService.updateClickCountInfo();
   }
+
+  @Test
+  public void updateHasImgTag() {
+    amcMiscService.updateHasImgTag();
+  }
 }

@@ -30,6 +30,13 @@ public enum DebtTypeEnum {
     public static DebtTypeEnum lookupByDisplayNameUtil(String name) {
         return func.apply(name);
     }
+
+    private static final Function<Integer, DebtTypeEnum> funcId =
+        EnumUtils.lookupMap(DebtTypeEnum.class, e -> e.getType());
+    public static DebtTypeEnum lookupByIdUtil(Integer type) {
+        return funcId.apply(type);
+    }
+
     public int getType() {
         return type;
     }

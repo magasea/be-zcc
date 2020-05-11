@@ -2161,6 +2161,66 @@ public class AmcAssetExample {
             addCriterion("visit_count not between", value1, value2, "visitCount");
             return (Criteria) this;
         }
+
+        public Criteria andHasImgIsNull() {
+            addCriterion("has_img is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgIsNotNull() {
+            addCriterion("has_img is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgEqualTo(Integer value) {
+            addCriterion("has_img =", value, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgNotEqualTo(Integer value) {
+            addCriterion("has_img <>", value, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgGreaterThan(Integer value) {
+            addCriterion("has_img >", value, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgGreaterThanOrEqualTo(Integer value) {
+            addCriterion("has_img >=", value, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgLessThan(Integer value) {
+            addCriterion("has_img <", value, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgLessThanOrEqualTo(Integer value) {
+            addCriterion("has_img <=", value, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgIn(List<Integer> values) {
+            addCriterion("has_img in", values, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgNotIn(List<Integer> values) {
+            addCriterion("has_img not in", values, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgBetween(Integer value1, Integer value2) {
+            addCriterion("has_img between", value1, value2, "hasImg");
+            return (Criteria) this;
+        }
+
+        public Criteria andHasImgNotBetween(Integer value1, Integer value2) {
+            addCriterion("has_img not between", value1, value2, "hasImg");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

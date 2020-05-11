@@ -4,6 +4,10 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper;
+import com.wensheng.zcc.amc.module.dao.helper.HasImageEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -13,16 +17,19 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.service.AmcMiscService;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
-import io.swagger.models.auth.In;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,6 +49,9 @@ public class AmcMiscServiceImpl implements AmcMiscService {
 
   @Autowired
   AmcAssetMapper amcAssetMapper;
+
+  @Autowired
+  MongoTemplate wszccTemplate;
 
   @Autowired
   ZccDebtpackMapper zccDebtpackMapper;
@@ -238,6 +248,32 @@ public class AmcMiscServiceImpl implements AmcMiscService {
       }
     }
 
+  }
+
+  @Override
+  public void updateHasImgTag() {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("tag").is(ImageClassEnum.MAIN.getId()));
+    List<AssetImage> assetImages =  wszccTemplate.find(query, AssetImage.class);
+    if(!CollectionUtils.isEmpty(assetImages)){
+      List<Long> amcAssetIds = assetImages.stream().filter(item->item.getAmcAssetId() != null).map(item->item.getAmcAssetId()).collect(
+          Collectors.toUnmodifiableList());
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      amcAssetExample.createCriteria().andIdIn(amcAssetIds);
+      AmcAsset amcAsset = new AmcAsset();
+      amcAsset.setHasImg(HasImageEnum.HASIMAGE.getStatus());
+      amcAssetMapper.updateByExampleSelective(amcAsset, amcAssetExample);
+    }
+    List<DebtImage> debtImages =  wszccTemplate.find(query, DebtImage.class);
+    if(!CollectionUtils.isEmpty(debtImages)){
+      List<Long> amcDebtIds = debtImages.stream().filter(item->item.getDebtId() != null).map(item->item.getDebtId()).collect(
+          Collectors.toUnmodifiableList());
+      AmcDebtExample amcDebtExample = new AmcDebtExample();
+      amcDebtExample.createCriteria().andIdIn(amcDebtIds);
+      AmcDebt amcDebt = new AmcDebt();
+      amcDebt.setHasImg(HasImageEnum.HASIMAGE.getStatus());
+      amcDebtMapper.updateByExampleSelective(amcDebt, amcDebtExample);
+    }
   }
 
 }

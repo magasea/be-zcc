@@ -45,8 +45,8 @@ import org.springframework.util.StringUtils;
 @Slf4j
 public class AmcAspect {
 
-
-
+  private Map<String, Integer> userPrivMap;
+  private Map<Integer, List<String>> amcUserProvsMap;
 
   Gson gson = new Gson();
 
@@ -77,6 +77,8 @@ public class AmcAspect {
     MDC.put("TRACE_LOG_ID",traceLogId);
   }
 
+
+
   @Around("@annotation(LogExecutionTime)")
   public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable{
     final long start = System.currentTimeMillis();
@@ -95,7 +97,10 @@ public class AmcAspect {
     }
     CustAmcCmpycontactor custAmcCmpycontactor = (CustAmcCmpycontactor) joinPoint.getArgs()[0];
     String province = custAmcCmpycontactor.getProvince();
-    Map<String, Integer> userPrivMap = basicInfoService.getAmcUserPrivMap();
+
+     if(null == userPrivMap){
+       userPrivMap = basicInfoService.getAmcUserPrivMap();
+     }
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if(authentication == null || ! (authentication.getDetails() instanceof OAuth2AuthenticationDetails)){
@@ -151,7 +156,9 @@ public class AmcAspect {
     }
     CustTrdCmpy custTrdCmpy = (CustTrdCmpy) joinPoint.getArgs()[0];
     String province = custTrdCmpy.getCmpyProvince();
-    Map<String, Integer> userPrivMap = basicInfoService.getAmcUserPrivMap();
+    if(null == userPrivMap){
+      userPrivMap = basicInfoService.getAmcUserPrivMap();
+    }
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
@@ -222,8 +229,11 @@ public class AmcAspect {
       return joinPoint.proceed(joinPoint.getArgs());
     }
     QueryParam queryParam = (QueryParam) joinPoint.getArgs()[0];
+    if(null == amcUserProvsMap){
+      amcUserProvsMap = basicInfoService.getAmcUserProvsMap();
+    }
 
-    Map<Integer, List<String>> amcUserProvsMap = basicInfoService.getAmcUserProvsMap();
+
     if(CollectionUtils.isEmpty(amcUserProvsMap)){
       return joinPoint.proceed(joinPoint.getArgs());
     }

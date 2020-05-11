@@ -99,9 +99,8 @@ public class BasicInfoServiceImpl implements BasicInfoService {
       amcUserprivMapper.insertSelective(custAmcUserpriv);
     }
 
-    ;
   }
-  @Cacheable
+  
   @Override
   public Map<String, Integer> getAmcUserPrivMap() {
     CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
@@ -117,7 +116,6 @@ public class BasicInfoServiceImpl implements BasicInfoService {
   }
 
 
-  @Cacheable
   @Override
   public Map<Integer, List<String>> getAmcUserProvsMap() {
     CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();

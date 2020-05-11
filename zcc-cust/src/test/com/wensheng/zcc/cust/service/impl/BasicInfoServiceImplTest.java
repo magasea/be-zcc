@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.wensheng.zcc.cust.service.BasicInfoService;
+import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -24,8 +25,8 @@ BasicInfoService basicInfoService;
   public void getAmcUserPrivMap() {
     Map<String, Integer> userPrivMap = basicInfoService.getAmcUserPrivMap();
     log.info("{}",userPrivMap);
-//    userPrivMap = basicInfoService.getAmcUserProvsMap();
-//    log.info("{}",userPrivMap);
+    Map<Integer, List<String>> userProvsMap = basicInfoService.getAmcUserProvsMap();
+    log.info("{}",userProvsMap);
 
   }
 }

@@ -38,6 +38,9 @@ public class BasicInfoServiceImpl implements BasicInfoService {
   @Autowired
   CustAmcUserprivMapper amcUserprivMapper;
 
+  public static final String CACHE_KEY_GETAMCUSERPRIVMAP = "getAmcUserPrivMap";
+  public static final String CACHE_KEY_GETAMCUSERPROVSMAP = "getAmcUserProvsMap";
+
   @Override
   public List<CustRegionDetail> getAllCustRegion() {
 
@@ -102,6 +105,7 @@ public class BasicInfoServiceImpl implements BasicInfoService {
   }
   
   @Override
+  @Cacheable(key = "#root.target.CACHE_KEY_GETAMCUSERPRIVMAP")
   public Map<String, Integer> getAmcUserPrivMap() {
     CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
 
@@ -117,6 +121,7 @@ public class BasicInfoServiceImpl implements BasicInfoService {
 
 
   @Override
+  @Cacheable(key = "#root.target.CACHE_KEY_GETAMCUSERPROVSMAP")
   public Map<Integer, List<String>> getAmcUserProvsMap() {
     CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
 

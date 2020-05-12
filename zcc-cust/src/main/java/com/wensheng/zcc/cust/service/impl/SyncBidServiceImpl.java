@@ -928,7 +928,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     if(CollectionUtils.isEmpty(custTrdCmpyList)){
       //make new cmpy info
       action = 1;
-    }else if(updateTime.after(custTrdCmpyList.get(0).getUpdateTime()) || isNewTrd || custTrdCmpyList.get(0).getDataQuality() <= 2){
+    }else if(updateTime.after(custTrdCmpyList.get(0).getSyncTime()) || isNewTrd || custTrdCmpyList.get(0).getDataQuality() <= 2){
       //update cmpy info
       if(custTrdCmpyList.size() > 1){
         CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
@@ -964,11 +964,16 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }
         custTrdCmpy.setDataQuality(quality);
       }
+      custTrdCmpy.setUpdateTime(AmcDateUtils.getCurrentDate());
       custTrdCmpy.setCreateTime(AmcDateUtils.getCurrentDate());
       custTrdCmpyMapper.insertSelective(custTrdCmpy);
 
     }else if(action == 2 ){
       CustTrdCmpy custTrdCmpyHis = custTrdCmpyList.get(0);
+      //update 取最近的
+      if(custTrdCmpy.getUpdateTime().before(custTrdCmpyHis.getUpdateTime())){
+        custTrdCmpy.setUpdateTime(custTrdCmpyHis.getUpdateTime());
+      }
       AmcBeanUtils.copyProperties(custTrdCmpy, custTrdCmpyHis);
       if(isBuyer){
         int count = getTrdCntForCmpy(custTrdCmpyHis.getId()).intValue();

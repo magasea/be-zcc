@@ -234,9 +234,6 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdCmpyExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
     List<Long> preGroupResults = new ArrayList<>();
     if(!StringUtils.isEmpty(filterBy)){
-
-
-
       custTrdCmpyExtExample.setFilterByClause(filterBy);
       preGroupResults =
           custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
@@ -244,6 +241,8 @@ public class CustInfoServiceImpl implements CustInfoService {
 
     }else{
       if(queryParam.isAllowNoTrd()){
+        String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
+        custTrdCmpyExtExample.setFilterByClause(filterLatestDate);
         preGroupResults =
             custTrdCmpyExtMapper.selectByPreFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
@@ -430,7 +429,10 @@ public class CustInfoServiceImpl implements CustInfoService {
       queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
     }else{
       if(queryParam.isAllowNoTrd()){
-        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExample);
+        String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
+        custTrdCmpyExtExample.setFilterByClause(filterLatestDate);
+//        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExample);
+        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
         queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
       }

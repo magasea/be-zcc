@@ -19,7 +19,9 @@ public class QueryParam {
   PageInfo pageInfo;
   int exportSize = -1;
   boolean allowNoTrd = false;
-
+  //只适用于最近更改的公司信息查询
+  String latestStartDay;
+  String latestEndDay;
 
 
 }

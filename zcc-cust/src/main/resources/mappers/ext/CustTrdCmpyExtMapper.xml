@@ -257,9 +257,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
-    <if test="whereFilterByClause != null">
+    <if test="whereClause != null">
       WHERE
-      ${whereFilterByClause}
+      ${whereClause}
     </if>
     <if test="orderByClause != null">
       group by ctc.id order by ${orderByClause}
@@ -287,9 +287,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
-    <if test="whereFilterByClause != null">
+    <if test="whereClause != null">
     WHERE
-      ${whereFilterByClause}
+      ${whereClause}
     </if>
     group by ctc.id
     ) as tmp

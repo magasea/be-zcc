@@ -243,7 +243,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       if(queryParam.isAllowNoTrd()){
         if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
           String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
-          custTrdCmpyExtExample.setWhereFilterByClause(filterLatestDate);
+          custTrdCmpyExtExample.setWhereClause(filterLatestDate);
         }
         preGroupResults =
             custTrdCmpyExtMapper.selectByPreFilterAllowNoTrd(custTrdCmpyExtExample);
@@ -433,7 +433,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       if(queryParam.isAllowNoTrd()){
         if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
           String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
-          custTrdCmpyExtExample.setWhereFilterByClause(filterLatestDate);
+          custTrdCmpyExtExample.setWhereClause(filterLatestDate);
         }
         AmcBeanUtils.copyProperties(custTrdCmpyExample, custTrdCmpyExtExample);
         queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExtExample);

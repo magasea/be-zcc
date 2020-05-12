@@ -431,8 +431,10 @@ public class CustInfoServiceImpl implements CustInfoService {
       queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
     }else{
       if(queryParam.isAllowNoTrd()){
-        String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
-        custTrdCmpyExtExample.setWhereFilterByClause(filterLatestDate);
+        if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+          String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
+          custTrdCmpyExtExample.setWhereFilterByClause(filterLatestDate);
+        }
 //        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExample);
         queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{

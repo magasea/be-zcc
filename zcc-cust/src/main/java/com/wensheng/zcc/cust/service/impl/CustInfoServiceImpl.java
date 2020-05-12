@@ -435,7 +435,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
           custTrdCmpyExtExample.setWhereFilterByClause(filterLatestDate);
         }
-//        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExample);
+        AmcBeanUtils.copyProperties(custTrdCmpyExample, custTrdCmpyExtExample);
         queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
         queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);

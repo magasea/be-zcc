@@ -131,7 +131,10 @@ public class SQLUtils {
       }catch (Exception e){
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
-      sb.append(" and ").append(" ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      if(sb.length()>0){
+        sb.append("and ");
+      }
+      sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
     }
     if(queryParam.getLatestEndDay() != null){
       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -140,7 +143,10 @@ public class SQLUtils {
       }catch (Exception e){
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
-      sb.append(" and ").append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      if(sb.length() > 0){
+        sb.append("and ");
+      }
+      sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
     }
     return sb.toString();
   }

@@ -5,6 +5,7 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.StringToolUtils;
 import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustIntrstInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
@@ -13,6 +14,8 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdSellerMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -44,7 +47,6 @@ import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -109,6 +111,9 @@ public class SyncServiceImpl implements SyncService {
 
     @Autowired
     CustTrdInfoExtMapper custTrdInfoExtMapper;
+
+  @Autowired
+  CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
 
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
@@ -935,10 +940,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       //update cmpy info
       if(custTrdCmpyList.size() > 1){
         CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+        CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
         for(int idx = 0; idx < custTrdCmpyList.size(); idx++){
           if(idx == 0){
             continue;
           }
+
           //before delete check the related id in trdInfo and update it with current cmpy id
           custTrdInfoExample.clear();
           custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdCmpyList.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId());
@@ -949,6 +956,20 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
               custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
             }
           }
+          custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpyList.get(idx).getId());
+
+          //before delete check the related id in custAmcCmpycontactor and update it with current cmpy id
+          custAmcCmpycontactorExample.clear();
+          custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpyList.get(idx).getId());
+          List<CustAmcCmpycontactor> custAmcCmpycontactors =
+              custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+          if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
+            for(CustAmcCmpycontactor custAmcCmpycontactor: custAmcCmpycontactors){
+              custAmcCmpycontactor.setCmpyId(custTrdCmpyList.get(0).getId());
+              custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+            }
+          }
+
           custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpyList.get(idx).getId());
         }
       }

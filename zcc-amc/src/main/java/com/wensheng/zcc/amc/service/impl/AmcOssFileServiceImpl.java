@@ -18,14 +18,20 @@ import com.wensheng.zcc.common.utils.SystemUtils;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -217,6 +223,35 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
     return targetFile.getCanonicalPath();
   }
 
+
+  @Override
+  public String downloadFileFromUrl(String srcUrl, String resizeParam, String baseRepo)
+      throws Exception {
+    StringBuilder sb = new StringBuilder(srcUrl);
+    if(!StringUtils.isEmpty(resizeParam)){
+       sb.append(resizeParam);
+    }
+
+    URL url = new URL(sb.toString());
+
+
+    StringBuilder sbFile = new StringBuilder();
+    if(StringUtils.isEmpty(baseRepo)){
+      sbFile.append(saleImageRepo);
+    }else{
+
+    }
+
+    SystemUtils.checkAndMakeDir(sbFile.toString());
+    String imageFileName = sbFile.append(File.separatorChar).append(UUID.randomUUID()).toString();
+    ReadableByteChannel readableByteChannel = Channels.newChannel(url.openStream());
+    FileOutputStream fileOutputStream = new FileOutputStream(imageFileName);
+    fileOutputStream.getChannel()
+        .transferFrom(readableByteChannel, 0, Long.MAX_VALUE);
+    fileOutputStream.close();
+    return imageFileName;
+
+  }
 
 
 }

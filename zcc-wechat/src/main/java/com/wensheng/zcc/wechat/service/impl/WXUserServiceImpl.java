@@ -5,6 +5,7 @@ import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.mq.kafka.module.AmcWechatUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
@@ -117,7 +118,7 @@ public class WXUserServiceImpl implements WXUserService {
   @Autowired
   WechatUserMapper wechatUserMapper;
 
-  private final Long MAX_TIME_LAG = 1200L;
+  private final Long MAX_TIME_LAG = 120L;
 
 
   private Gson gson = new Gson();
@@ -474,14 +475,22 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Override
   public boolean sendPhoneVcode(String openId, String phone, String code) throws Exception {
-    String result =  comnfuncGrpcService.sendVCode(phone, code);
+
     WechatUserExample wechatUserExample = new WechatUserExample();
     wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
     if(CollectionUtils.isEmpty(wechatUsers)){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
     }
-    wechatUsers.get(0).setMobile(phone);
+
+    if(!StringUtils.isEmpty(wechatUsers.get(0).getVerifyCode()) ){
+      Date currDate = AmcDateUtils.getCurrentDate();
+      if(currDate.toInstant().getEpochSecond() < (wechatUsers.get(0).getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG)){
+        throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR, "请过2分钟后再次申请");
+      }
+    }
+    String result =  comnfuncGrpcService.sendVCode(phone, code);
+//    wechatUsers.get(0).setMobile(phone);
     wechatUsers.get(0).setVerifyCode(code);
     wechatUsers.get(0).setVcodeTime(AmcDateUtils.getCurrentDate());
     wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
@@ -498,11 +507,15 @@ public class WXUserServiceImpl implements WXUserService {
     }
     Date currDate = AmcDateUtils.getCurrentDate();
     Long timeLag = currDate.toInstant().getEpochSecond() - wechatUsers.get(0).getVcodeTime().toInstant().getEpochSecond();
-    if(timeLag > MAX_TIME_LAG){
-      throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,"验证码超时");
+    if(timeLag > MAX_TIME_LAG*5){
+      throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,"验证码超时, 请再次申请");
+    }
+    if(code.equals(wechatUsers.get(0).getVerifyCode())){
+      wechatUsers.get(0).setMobile(phone);
+      wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
     }
 
-    return false;
+    return true;
   }
 
   @Override
@@ -516,6 +529,26 @@ public class WXUserServiceImpl implements WXUserService {
     //todo: call sunhongtao function to record subscribe event
     return null;
 
+  }
+
+  @Override
+  public boolean watchOnObject(String openId, String phone, Long objectId, Integer objectType) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId).and("objectId").is(objectId).and("type").is(objectType));
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+    if(CollectionUtils.isEmpty(wxUserWatchObjects)){
+      WXUserWatchObject wxUserWatchObject = new WXUserWatchObject();
+      wxUserWatchObject.setObjectId(objectId);
+      wxUserWatchObject.setOpenId(openId);
+      wxUserWatchObject.setPhone(phone);
+      wxUserWatchObject.setType(objectType);
+      wxUserWatchObject.setCreateTime(AmcDateUtils.getCurrentDate());
+      wxUserWatchObject.setUpdateTime(AmcDateUtils.getCurrentDate());
+      mongoTemplate.save(wxUserWatchObject);
+    }else{
+
+    }
+    return false;
   }
 
   private void refreshUserTags(Long id, List<Integer> tagIdList) {

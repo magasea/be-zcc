@@ -1,15 +1,17 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
-import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
+import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
-import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
+import com.wensheng.zcc.amc.module.vo.AmcSalePageModVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleFloorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleMenuPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
@@ -159,10 +161,14 @@ public class AmcSaleController {
 
   @RequestMapping(value = "/getMenuPage", method = RequestMethod.POST)
   @ResponseBody
-  List<Object> getMenuPage( @RequestBody Long menuId ) throws Exception {
+  AmcSaleMenuPageVo getMenuPage( @RequestBody Long menuId ) throws Exception {
     return amcSaleService.getMenuPage(menuId);
   }
-
+  @RequestMapping(value = "/getMenuPageWithFilter", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleMenuPageVo getMenuPageWithFilter( @RequestBody AmcSalePageModVo amcSalePageModVo ) throws Exception {
+    return amcSaleService.getMenuPageWithFilter(amcSalePageModVo);
+  }
 
   @RequestMapping(value = "/getSaleBanners", method = RequestMethod.POST)
   @ResponseBody
@@ -227,6 +233,19 @@ public class AmcSaleController {
     }
   }
 
+  @RequestMapping(value = "/getBannerPage", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleBannerPageVo getBannerPage( @RequestBody Long bannerId ) throws Exception {
+    return amcSaleService.getBannerPage(bannerId);
+  }
+
+  @RequestMapping(value = "/getBannerPageWithFilter", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleBannerPageVo getBannerPageWithFilter( @RequestBody AmcSalePageModVo amcSalePageModVo ) throws Exception {
+    return amcSaleService.getBannerPageWithFilter(amcSalePageModVo);
+  }
+
+
   @RequestMapping(value = "/getHomePage", method = RequestMethod.POST)
   @ResponseBody
   AmcSaleHomePage getSaleHomePage( ) throws Exception {
@@ -236,8 +255,14 @@ public class AmcSaleController {
 
   @RequestMapping(value = "/getFloorPage", method = RequestMethod.POST)
   @ResponseBody
-  List<Object> getFloorPage( @RequestBody Long floorId ) throws Exception {
+  AmcSaleFloorPageVo getFloorPage( @RequestBody Long floorId ) throws Exception {
     return amcSaleService.getFloorPage(floorId);
+  }
+
+  @RequestMapping(value = "/getFloorPageWithFilter", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleFloorPageVo getFloorPageWithFilter( @RequestBody AmcSalePageModVo amcSaleFloorPageModVo) throws Exception {
+    return amcSaleService.getFloorPageWithFilter(amcSaleFloorPageModVo);
   }
 
 }

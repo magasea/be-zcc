@@ -228,12 +228,14 @@ public class CustInfoServiceImpl implements CustInfoService {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
 //   CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
-    custTrdCmpyExtExample.setWhereClause(whereClause);
     custTrdCmpyExtExample.setOrderByClause(orderBy);
+
+    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdCmpyExtExample.setWhereClause(whereClause);
+    }
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
-
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = new ArrayList<>();
     custTrdCmpyExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
     List<Long> preGroupResults = new ArrayList<>();
@@ -426,7 +428,9 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
     String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
-    custTrdCmpyExtExample.setWhereClause(whereClause);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdCmpyExtExample.setWhereClause(whereClause);
+    }
 //    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
     Long queryResult = -1L;
 //    custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));

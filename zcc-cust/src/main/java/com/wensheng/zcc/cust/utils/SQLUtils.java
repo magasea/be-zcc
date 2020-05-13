@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
@@ -146,9 +147,25 @@ public class SQLUtils {
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(queryParam.getName())){
       if(sb.length()>0){
-        sb.append("and ");
+        sb.append(" and ");
       }
       sb.append("ctc.cmpy_name like ").append(String.format("%s%s%s","'%",queryParam.getName(),"%'"));
+    }
+    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
+      if(sb.length()>0){
+        sb.append(" and ");
+      }
+      List<String> custCity =queryParam.getCustCity();
+      StringBuffer proviceSb = new StringBuffer();
+      for(String provice : custCity){
+        if(proviceSb.length()>0){
+          proviceSb.append(",");
+        }
+        proviceSb.append("'");
+        proviceSb.append(provice);
+        proviceSb.append("'");
+      }
+      sb.append("ctc.cmpy_province in ").append("(").append(proviceSb.toString()).append(")");
     }
     if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
@@ -158,7 +175,7 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       if(sb.length()>0){
-        sb.append("and ");
+        sb.append(" and ");
       }
       sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
     }
@@ -170,7 +187,7 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       if(sb.length() > 0){
-        sb.append("and ");
+        sb.append(" and ");
       }
       sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
     }

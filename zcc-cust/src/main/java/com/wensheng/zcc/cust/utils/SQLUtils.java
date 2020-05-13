@@ -90,8 +90,17 @@ public class SQLUtils {
       sb.append(" and ");
       sb.append(ALIAS_CUST_TRD_INFO);
       if(queryParam.getCity().endsWith("000")){
-        sb.append(".").append("debt_city like '").append(queryParam.getCity().substring(0,
-            queryParam.getCity().length() -4)).append("%'");
+        String locationCode = queryParam.getCity();
+        for(int idx = locationCode.length() -1; idx >= 0; idx--){
+          if(Character.compare(locationCode.charAt(idx), '0') == 0){
+            continue;
+          }else{
+            locationCode = locationCode.substring(0, idx+1);
+            break;
+          }
+
+        }
+        sb.append(".").append("debt_city like '").append(locationCode).append("%'");
       }else{
         sb.append(".").append("debt_city =" ).append(queryParam.getCity());
       }

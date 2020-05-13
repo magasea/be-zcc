@@ -2,6 +2,8 @@ package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -24,5 +26,8 @@ public interface AmcOssFileService {
   public void backUpOssFiles();
 
   String img2Base64(String filePath);
+
+  String downloadFileFromUrl(String srcUrl, String resizeParam, String baseRepo)
+      throws Exception;
 
 }

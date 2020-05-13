@@ -18,6 +18,7 @@ import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcExcelFileService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
@@ -79,6 +80,9 @@ public class AmcBasicInfoController {
 
   @Autowired
   AmcOssFileService amcOssFileService;
+
+  @Autowired
+  AmcSaleService amcSaleService;
 
   @RequestMapping(value = "/all_court_info", method = RequestMethod.GET)
   @ResponseBody
@@ -539,5 +543,13 @@ public class AmcBasicInfoController {
       return amcOssFileService.img2Base64(filePath);
     }
 
+  @RequestMapping(value = "/base64ImageUrl",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public String base64ImageUrl(@RequestBody String imgUrl) throws Exception {
+
+    return  amcSaleService.getBase64Code(imgUrl);
+
+  }
 
 }

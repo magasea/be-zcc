@@ -1,7 +1,9 @@
 package com.wensheng.zcc.wechat.controller;
 
+import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.module.vo.WXBindPhoneVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
@@ -187,6 +189,31 @@ public class WechatUserController {
       @RequestParam("tagId") Long tagId) throws Exception {
 
     return wxService.getUsersOfTagId( tagId, openId);
+
+  }
+
+  @RequestMapping(value = "/user/sendVerifyCode", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean sendVerifyCode(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
+
+    String vcode = AmcNumberUtils.getValidationCode();
+    return wxService.sendPhoneVcode( wxBindPhoneVo.getPhone(), wxBindPhoneVo.getOpenId(), vcode);
+
+  }
+
+  @RequestMapping(value = "/user/bindPhone", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean bindPhone(@RequestBody WXBindPhoneVo wxBindPhoneVo ) throws Exception {
+
+    return wxService.bindPhone( wxBindPhoneVo.getPhone(), wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getVcode());
+
+  }
+
+  @RequestMapping(value = "/user/watchOn", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean watchOn(@RequestBody WXBindPhoneVo wxBindPhoneVo ) throws Exception {
+
+    return wxService.bindPhone( wxBindPhoneVo.getPhone(), wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getVcode());
 
   }
 }

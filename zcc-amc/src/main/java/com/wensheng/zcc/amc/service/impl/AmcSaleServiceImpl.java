@@ -27,15 +27,20 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.AmcFilterContentItem;
+import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
+import com.wensheng.zcc.amc.module.vo.AmcSalePageModVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleFloorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleMenuPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecomItems;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
@@ -44,7 +49,6 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -70,6 +74,8 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     AmcSaleTagMapper amcSaleTagMapper;
 
 
+    @Autowired
+    AmcOssFileService amcOssFileService;
 
     @Autowired
     AmcSaleTagDebtMapper amcSaleTagDebtMapper;
@@ -557,15 +563,17 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
-    public List<Object> getFloorPage(Long floorId) throws Exception {
+    public AmcSaleFloorPageVo getFloorPage(Long floorId) throws Exception {
+        AmcSaleFloorPageVo amcSaleFloorPageVo = new AmcSaleFloorPageVo();
         AmcSaleFloor amcSaleFloor =  amcSaleFloorMapper.selectByPrimaryKey(floorId);
+        amcSaleFloorPageVo.setAmcSaleFloor(amcSaleFloor);
         List<Object> resultList = new ArrayList<>();
         if(amcSaleFloor == null){
-            return resultList;
+            return amcSaleFloorPageVo;
         }
         if(amcSaleFloor.getFilterContent() != null && !StringUtils.isEmpty(amcSaleFloor.getFilterContent()) && !amcSaleFloor.getFilterContent().equals("-1")){
             AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleFloor.getFilterContent(), AmcSaleFilter.class);
-
+            amcSaleFloorPageVo.setAmcSaleFilter(amcSaleFilter);
             if(amcSaleFilter.getFilterAsset() != null){
                 // get filtered assets
                 List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
@@ -581,21 +589,48 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
         }
 
+        amcSaleFloorPageVo.setResultList(resultList);
 
-
-        return resultList;
+        return amcSaleFloorPageVo;
     }
 
     @Override
-    public List<Object> getMenuPage(Long menuId) throws Exception {
+    public AmcSaleFloorPageVo getFloorPageWithFilter(AmcSalePageModVo amcSaleFloorPageModVo)
+        throws Exception {
+        AmcSaleFloorPageVo amcSaleFloorPageVo = new AmcSaleFloorPageVo();
+        List<Object> resultList = new ArrayList<>();
+        amcSaleFloorPageVo.setAmcSaleFilter(amcSaleFloorPageModVo.getAmcSaleFilter());
+        AmcSaleFilter amcSaleFilter = amcSaleFloorPageModVo.getAmcSaleFilter();
+        if(amcSaleFilter.getFilterAsset() != null){
+            // get filtered assets
+            List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
+            if(!CollectionUtils.isEmpty(amcAssetVos)){
+                resultList.addAll(amcAssetVos);
+            }
+        }
+        if(amcSaleFilter.getFilterDebt() != null){
+            // get filtered debts
+            List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
+            resultList.addAll(amcDebtVos);
+        }
+        amcSaleFloorPageVo.setResultList(resultList);
+        return amcSaleFloorPageVo;
+    }
+
+
+
+    @Override
+    public AmcSaleMenuPageVo getMenuPage(Long menuId) throws Exception {
+        AmcSaleMenuPageVo amcSaleMenuPageVo = new AmcSaleMenuPageVo();
         AmcSaleMenu amcSaleMenu =  amcSaleMenuMapper.selectByPrimaryKey(menuId);
         List<Object> resultList = new ArrayList<>();
         if(amcSaleMenu == null){
-            return resultList;
+            return amcSaleMenuPageVo;
         }
         if(amcSaleMenu.getFilterContent() != null && !StringUtils.isEmpty(amcSaleMenu.getFilterContent())){
 
             AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleMenu.getFilterContent(), AmcSaleFilter.class);
+
             if(amcSaleFilter.getFilterAsset() != null){
                 // get filtered assets
                 List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
@@ -608,17 +643,46 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                 List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
                 resultList.addAll(amcDebtVos);
             }
-
+            amcSaleMenuPageVo.setAmcSaleFilter(amcSaleFilter);
         }
-        return resultList;
+        amcSaleMenuPageVo.setResultList(resultList);
+        return amcSaleMenuPageVo;
     }
 
     @Override
-    public List<Object> getBannerPage(Long bannerId) throws Exception {
+    public AmcSaleMenuPageVo getMenuPageWithFilter(AmcSalePageModVo amcSalePageModVo)
+        throws Exception {
+        AmcSaleMenuPageVo amcSaleMenuPageVo = new AmcSaleMenuPageVo();
+        List<Object> resultList = new ArrayList<>();
+
+
+        AmcSaleFilter amcSaleFilter =  amcSalePageModVo.getAmcSaleFilter();
+
+        if(amcSaleFilter.getFilterAsset() != null){
+            // get filtered assets
+            List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
+            if(!CollectionUtils.isEmpty(amcAssetVos)){
+                resultList.addAll(amcAssetVos);
+            }
+        }
+        if(amcSaleFilter.getFilterDebt() != null){
+            // get filtered debts
+            List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
+            resultList.addAll(amcDebtVos);
+        }
+
+        amcSaleMenuPageVo.setAmcSaleFilter(amcSaleFilter);
+        amcSaleMenuPageVo.setResultList(resultList);
+        return amcSaleMenuPageVo;
+    }
+
+    @Override
+    public AmcSaleBannerPageVo getBannerPage(Long bannerId) throws Exception {
+        AmcSaleBannerPageVo amcSaleBannerPageVo = new AmcSaleBannerPageVo();
         AmcSaleBanner amcSaleBanner =  amcSaleBannerMapper.selectByPrimaryKey(bannerId);
         List<Object> resultList = new ArrayList<>();
         if(amcSaleBanner == null){
-            return resultList;
+            return amcSaleBannerPageVo;
         }
         if(amcSaleBanner.getFilterContent() != null && !StringUtils.isEmpty(amcSaleBanner.getFilterContent())){
 
@@ -635,10 +699,40 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                 List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
                 resultList.addAll(amcDebtVos);
             }
+            amcSaleBannerPageVo.setAmcSaleFilter(amcSaleFilter);
 
         }
-        return resultList;
+        amcSaleBannerPageVo.setResultList(resultList);
+        return amcSaleBannerPageVo;
     }
+
+    @Override
+    public AmcSaleBannerPageVo getBannerPageWithFilter(AmcSalePageModVo amcSalePageModVo)
+        throws Exception {
+        AmcSaleBannerPageVo amcSaleBannerPageVo = new AmcSaleBannerPageVo();
+
+
+        AmcSaleFilter amcSaleFilter =  amcSalePageModVo.getAmcSaleFilter();
+        List<Object> resultList = new ArrayList<>();
+        if(amcSaleFilter.getFilterAsset() != null){
+            // get filtered assets
+            List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
+            if(!CollectionUtils.isEmpty(amcAssetVos)){
+                resultList.addAll(amcAssetVos);
+            }
+        }
+        if(amcSaleFilter.getFilterDebt() != null){
+            // get filtered debts
+            List<AmcDebtVo> amcDebtVos = getFilterDebts(amcSaleFilter.getFilterDebt());
+            resultList.addAll(amcDebtVos);
+        }
+        amcSaleBannerPageVo.setAmcSaleFilter(amcSaleFilter);
+
+        amcSaleBannerPageVo.setResultList(resultList);
+        return amcSaleBannerPageVo;
+    }
+
+
 
     @Override
     public AmcSaleMenuVo updateSaleMenuVo(AmcSaleMenuVo amcSaleMenuVo) throws Exception {
@@ -681,6 +775,15 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBannerVo);
         return amcSaleBannerVo;
     }
+
+    @Override
+    public String getBase64Code(String imgUrl) throws Exception {
+        String tempFilePath = amcOssFileService.downloadFileFromUrl(imgUrl, null, null );
+        return amcOssFileService.img2Base64(tempFilePath);
+
+    }
+
+
 
     private List<AmcDebtVo> getFilterDebts(AmcFilterContentDebt filterDebt) throws Exception {
         List<AmcDebtVo> amcDebtVos = amcDebtService.getFloorFilteredDebt(filterDebt);

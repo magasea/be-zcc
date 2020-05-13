@@ -12,4 +12,6 @@ public interface WXUserService {
   String userSubscribe(String xmlMsg);
 
   String userMsg(String xmlMsg);
+
+  boolean watchOnObject(String openId, String phone, Long objectId, Integer objectType);
 }

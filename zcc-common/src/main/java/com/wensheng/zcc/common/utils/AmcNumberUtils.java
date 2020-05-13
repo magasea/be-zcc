@@ -4,6 +4,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.NumberFormat;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 public class AmcNumberUtils {
@@ -82,6 +83,14 @@ public class AmcNumberUtils {
       return false;
     }
     return patternNumber.matcher(strNum).matches();
+  }
+
+  /**
+   * 获取6位随机验证码
+   * @return
+   */
+  public static String getValidationCode(){
+    return String.valueOf((new Random().nextInt(899999) + 100000));
   }
 
 }

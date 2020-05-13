@@ -150,9 +150,6 @@
     parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"
     resultType="Long">
     select ctc.id as id
-
-
-
     from CUST_TRD_CMPY ctc
     inner join CUST_TRD_INFO cti on cti.buyer_id = ctc.id
     and cti.buyer_type = 2
@@ -251,9 +248,6 @@
     parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"
     resultType="Long">
     select ctc.id as id
-
-
-
     from CUST_TRD_CMPY ctc
     left join CUST_TRD_INFO cti on ctc.id = cti.buyer_id
     and cti.buyer_type = 2
@@ -262,6 +256,10 @@
     </if>
     <if test="filterByClause != null">
       ${filterByClause}
+    </if>
+    <if test="whereClause != null">
+      WHERE
+      ${whereClause}
     </if>
     <if test="orderByClause != null">
       group by ctc.id order by ${orderByClause}
@@ -288,6 +286,10 @@
     </if>
     <if test="filterByClause != null">
       ${filterByClause}
+    </if>
+    <if test="whereClause != null">
+    WHERE
+      ${whereClause}
     </if>
     group by ctc.id
     ) as tmp

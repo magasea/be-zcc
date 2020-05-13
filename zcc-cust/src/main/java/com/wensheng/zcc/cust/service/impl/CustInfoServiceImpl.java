@@ -234,9 +234,6 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdCmpyExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
     List<Long> preGroupResults = new ArrayList<>();
     if(!StringUtils.isEmpty(filterBy)){
-
-
-
       custTrdCmpyExtExample.setFilterByClause(filterBy);
       preGroupResults =
           custTrdCmpyExtMapper.selectByPreFilter(custTrdCmpyExtExample);
@@ -244,6 +241,10 @@ public class CustInfoServiceImpl implements CustInfoService {
 
     }else{
       if(queryParam.isAllowNoTrd()){
+        if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+          String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
+          custTrdCmpyExtExample.setWhereClause(filterLatestDate);
+        }
         preGroupResults =
             custTrdCmpyExtMapper.selectByPreFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
@@ -430,7 +431,12 @@ public class CustInfoServiceImpl implements CustInfoService {
       queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
     }else{
       if(queryParam.isAllowNoTrd()){
-        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExample);
+        if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+          String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
+          custTrdCmpyExtExample.setWhereClause(filterLatestDate);
+        }
+        AmcBeanUtils.copyProperties(custTrdCmpyExample, custTrdCmpyExtExample);
+        queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
         queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
       }
@@ -975,34 +981,36 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public void patchAddCmpyProvince() {
     RestTemplate restTemplate = CommonHandler.getRestTemplate();
-   //查询没有省编码的公司
+    //查询没有省编码的公司
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+
+    custTrdCmpyExtExample.clear();;
     custTrdCmpyExtExample.createCriteria().andCmpyProvinceEqualTo("-1")
         .andCmpyAddrNotEqualTo("-1").andCmpyAddrNotEqualTo("");
-//    List<CustTrdCmpy> custTrdCmpieListHasAdder= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
-//
-//    for (CustTrdCmpy custTrdCmpy : custTrdCmpieListHasAdder) {
-//      AdressResp adressResp = null;
-//      try {
-//        adressResp = restTemplate
-//            .exchange(String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()),
-//                HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {
-//                }).getBody();
-//      } catch (Exception e) {
-//        log.error("查询地址信息出错,url:{},错误是：{}", String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()), e);
-//      }
-//      if (null !=adressResp && null != adressResp.getStatus() && "1".equals(adressResp.getStatus())) {
-//        CustTrdCmpy custTrdCmpyNew = new CustTrdCmpy();
-//        custTrdCmpyNew.setCmpyProvince(
-//            adressResp.getResult().getStatsResult().getProvince().get(0).substring(0, 6));
-//        custTrdCmpyNew.setId(custTrdCmpy.getId());
-//        log.info("公司省地址：{}，id:{}",custTrdCmpyNew.getCmpyProvince(),custTrdCmpyNew.getId());
-////        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyNew);
-//      }else {
-//        log.info("查询地址信息出错,url:{},返回参数是：{}，公司名称：{}", String.format(getAddressCodeByAddress,
-//            custTrdCmpy.getCmpyAddr()), adressResp, custTrdCmpy.getCmpyName());
-//      }
-//    }
+    List<CustTrdCmpy> custTrdCmpieListHasAdder= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+
+    for (CustTrdCmpy custTrdCmpy : custTrdCmpieListHasAdder) {
+      AdressResp adressResp = null;
+      try {
+        adressResp = restTemplate
+            .exchange(String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()),
+                HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {
+                }).getBody();
+      } catch (Exception e) {
+        log.error("查询地址信息出错,url:{},错误是：{}", String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()), e);
+      }
+      if (null !=adressResp && null != adressResp.getStatus() && "1".equals(adressResp.getStatus())) {
+        CustTrdCmpy custTrdCmpyNew = new CustTrdCmpy();
+        custTrdCmpyNew.setCmpyProvince(
+            adressResp.getResult().getStatsResult().getProvince().get(0).substring(0, 6));
+        custTrdCmpyNew.setId(custTrdCmpy.getId());
+        log.info("公司省地址：{}，id:{},公司名称：{}",custTrdCmpyNew.getCmpyProvince(),custTrdCmpyNew.getId(),custTrdCmpy.getCmpyName());
+        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyNew);
+      }else {
+        log.info("查询地址信息出错,url:{},返回参数是：{}，公司名称：{}", String.format(getAddressCodeByAddress,
+            custTrdCmpy.getCmpyAddr()), adressResp, custTrdCmpy.getCmpyName());
+      }
+    }
 
 
     custTrdCmpyExtExample.clear();
@@ -1017,11 +1025,10 @@ public class CustInfoServiceImpl implements CustInfoService {
             .getForEntity(url, CustCmpyInfoFromSync.class).getBody();
         log.info("查询爬虫公司信息是：{},url:{}",custCmpyInfoFromSync,url);
       } catch (Exception e) {
-        log.error("查询爬虫公司信息出错，错误是：{}",e);
+        log.error("查询爬虫公司信息出错，url:{},错误是：{}",url,e);
       }
       //有公司信息，有注册地址的直接更新数据
-      if (null != custCmpyInfoFromSync && !StringUtils
-          .isEmpty(custCmpyInfoFromSync.getCmpyAddr())) {
+      if (null != custCmpyInfoFromSync && !StringUtils.isEmpty(custCmpyInfoFromSync.getCmpyAddr())) {
         //更新zcc公司省编码信息
         CustTrdCmpy custTrdCmpyNew = new CustTrdCmpy();
         custTrdCmpyNew.setId(custTrdCmpy.getId());
@@ -1036,6 +1043,35 @@ public class CustInfoServiceImpl implements CustInfoService {
         custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyNew);
       }
     }
+
+
+    custTrdCmpyExtExample.clear();;
+    custTrdCmpyExtExample.createCriteria().andCmpyProvinceEqualTo("-1")
+        .andCmpyAddrNotEqualTo("-1").andCmpyAddrNotEqualTo("");
+    custTrdCmpieListHasAdder= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+    for (CustTrdCmpy custTrdCmpy : custTrdCmpieListHasAdder) {
+      AdressResp adressResp = null;
+      try {
+        adressResp = restTemplate
+            .exchange(String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()),
+                HttpMethod.GET, null, new ParameterizedTypeReference<AdressResp>() {
+                }).getBody();
+      } catch (Exception e) {
+        log.error("查询地址信息出错,url:{},错误是：{}", String.format(getAddressCodeByAddress, custTrdCmpy.getCmpyAddr()), e);
+      }
+      if (null !=adressResp && null != adressResp.getStatus() && "1".equals(adressResp.getStatus())) {
+        CustTrdCmpy custTrdCmpyNew = new CustTrdCmpy();
+        custTrdCmpyNew.setCmpyProvince(
+            adressResp.getResult().getStatsResult().getProvince().get(0).substring(0, 6));
+        custTrdCmpyNew.setId(custTrdCmpy.getId());
+        log.info("公司省地址：{}，id:{},公司名称：{}",custTrdCmpyNew.getCmpyProvince(),custTrdCmpyNew.getId(),custTrdCmpy.getCmpyName());
+        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpyNew);
+      }else {
+        log.info("查询地址信息出错,url:{},返回参数是：{}，公司名称：{}", String.format(getAddressCodeByAddress,
+            custTrdCmpy.getCmpyAddr()), adressResp, custTrdCmpy.getCmpyName());
+      }
+    }
+
   }
 
   @Override

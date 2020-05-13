@@ -4,6 +4,9 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
@@ -116,7 +119,35 @@ public class SQLUtils {
     if(queryParam.getTrdType() != null && queryParam.getTrdType() != -1){
       sb.append(" and ").append(" cti.trd_type = ").append(queryParam.getTrdType());
     }
+    return sb.toString();
+  }
 
+  public static String getFilterForLatestDate(QueryParam queryParam){
+    StringBuilder sb = new StringBuilder();
+    if(queryParam.getLatestStartDay() != null){
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+      try {
+        formatter.parse(queryParam.getLatestStartDay());
+      }catch (Exception e){
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      if(sb.length()>0){
+        sb.append("and ");
+      }
+      sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+    }
+    if(queryParam.getLatestEndDay() != null){
+      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+      try {
+        formatter.parse(queryParam.getLatestEndDay());
+      }catch (Exception e){
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      if(sb.length() > 0){
+        sb.append("and ");
+      }
+      sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+    }
     return sb.toString();
   }
 

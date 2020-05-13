@@ -217,15 +217,12 @@ public class CustInfoController {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
 
-
-
     List<CustTrdInfoVo> queryResults = null;
     Long totalCount = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     try{
       if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
         if(CollectionUtils.isEmpty(orderByParam)){
-//          orderByParam.put("ctc.create_time", Direction.DESC);
           orderByParam.put("ctc.update_time", Direction.DESC);
 
         }

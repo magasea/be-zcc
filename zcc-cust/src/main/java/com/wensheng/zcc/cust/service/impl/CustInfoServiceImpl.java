@@ -224,8 +224,12 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   private List<CustTrdCmpyTrdExt> queryCmpy(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+
     String orderBy = SQLUtils.getOrderBy(orderByParam);
-    CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
+//   CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
+    custTrdCmpyExtExample.setWhereClause(whereClause);
     custTrdCmpyExtExample.setOrderByClause(orderBy);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
@@ -241,10 +245,6 @@ public class CustInfoServiceImpl implements CustInfoService {
 
     }else{
       if(queryParam.isAllowNoTrd()){
-        if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
-          String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
-          custTrdCmpyExtExample.setWhereClause(filterLatestDate);
-        }
         preGroupResults =
             custTrdCmpyExtMapper.selectByPreFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
@@ -420,33 +420,27 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public Long getCmpyTradeCount(QueryParam queryParam) {
-    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
+
+//    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
+//    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
+    custTrdCmpyExtExample.setWhereClause(whereClause);
 //    filterBy = filterBy + " and ctc.cmpy_phone > -1 ";
     Long queryResult = -1L;
-    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-    custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
+//    custTrdCmpyExample.getOredCriteria().forEach(item -> custTrdCmpyExtExample.getOredCriteria().add(item));
     if(!StringUtils.isEmpty(filterBy)){
       custTrdCmpyExtExample.setFilterByClause(filterBy);
       queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
     }else{
       if(queryParam.isAllowNoTrd()){
-        if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
-          String filterLatestDate = SQLUtils.getFilterForLatestDate(queryParam);
-          custTrdCmpyExtExample.setWhereClause(filterLatestDate);
-        }
-        AmcBeanUtils.copyProperties(custTrdCmpyExample, custTrdCmpyExtExample);
         queryResult = custTrdCmpyExtMapper.countByFilterAllowNoTrd(custTrdCmpyExtExample);
       }else{
         queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
       }
     }
-
-
     return queryResult;
-
-
-
 
   }
 

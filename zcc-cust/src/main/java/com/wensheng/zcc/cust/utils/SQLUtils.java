@@ -4,9 +4,11 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.apache.ibatis.session.RowBounds;
@@ -52,6 +54,7 @@ public class SQLUtils {
 
 
   public static CustTrdCmpyExtExample getCustCmpyTrdExample(QueryParam queryParam) {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     CustTrdCmpyExtExample.Criteria criteria = custTrdCmpyExtExample.createCriteria();
 
@@ -61,6 +64,24 @@ public class SQLUtils {
     if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
       criteria.andCmpyProvinceIn( queryParam.getCustCity());
     }
+    if(null != queryParam.getLatestStartDay()){
+      Date latestStartDay;
+      try {
+        latestStartDay = formatter.parse(String.format("%s 00:00:00",queryParam.getLatestStartDay()));
+      } catch (ParseException e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      criteria.andUpdateTimeGreaterThanOrEqualTo(latestStartDay);
+    }
+    if (null != queryParam.getLatestEndDay()){
+      Date latestEndDay;
+      try {
+        latestEndDay = formatter.parse(String.format("%s 23:59:59",queryParam.getLatestEndDay()));
+      } catch (ParseException e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      criteria.andUpdateTimeGreaterThanOrEqualTo(latestEndDay);
+    }
     return custTrdCmpyExtExample;
   }
   public static String getFilterByForCustTrd(QueryParam queryParam){
@@ -69,8 +90,17 @@ public class SQLUtils {
       sb.append(" and ");
       sb.append(ALIAS_CUST_TRD_INFO);
       if(queryParam.getCity().endsWith("000")){
-        sb.append(".").append("debt_city like '").append(queryParam.getCity().substring(0,
-            queryParam.getCity().length() -4)).append("%'");
+        String locationCode = queryParam.getCity();
+        for(int idx = locationCode.length() -1; idx >= 0; idx--){
+          if(Character.compare(locationCode.charAt(idx), '0') == 0){
+            continue;
+          }else{
+            locationCode = locationCode.substring(0, idx+1);
+            break;
+          }
+
+        }
+        sb.append(".").append("debt_city like '").append(locationCode).append("%'");
       }else{
         sb.append(".").append("debt_city =" ).append(queryParam.getCity());
       }
@@ -122,9 +152,31 @@ public class SQLUtils {
     return sb.toString();
   }
 
-  public static String getFilterForLatestDate(QueryParam queryParam){
+  public static String getTrdCmpyExtWhereClause(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();
-    if(queryParam.getLatestStartDay() != null){
+    if(!StringUtils.isEmpty(queryParam.getName())){
+      if(sb.length()>0){
+        sb.append(" and ");
+      }
+      sb.append("ctc.cmpy_name like ").append(String.format("%s%s%s","'%",queryParam.getName(),"%'"));
+    }
+    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
+      if(sb.length()>0){
+        sb.append(" and ");
+      }
+      List<String> custCity =queryParam.getCustCity();
+      StringBuffer proviceSb = new StringBuffer();
+      for(String provice : custCity){
+        if(proviceSb.length()>0){
+          proviceSb.append(",");
+        }
+        proviceSb.append("'");
+        proviceSb.append(provice);
+        proviceSb.append("'");
+      }
+      sb.append("ctc.cmpy_province in ").append("(").append(proviceSb.toString()).append(")");
+    }
+    if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
       try {
         formatter.parse(queryParam.getLatestStartDay());
@@ -132,11 +184,11 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       if(sb.length()>0){
-        sb.append("and ");
+        sb.append(" and ");
       }
       sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
     }
-    if(queryParam.getLatestEndDay() != null){
+    if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
       SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
       try {
         formatter.parse(queryParam.getLatestEndDay());
@@ -144,7 +196,7 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       if(sb.length() > 0){
-        sb.append("and ");
+        sb.append(" and ");
       }
       sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
     }

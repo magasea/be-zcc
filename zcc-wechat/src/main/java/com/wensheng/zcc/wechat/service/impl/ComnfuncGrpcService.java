@@ -1,10 +1,14 @@
 package com.wensheng.zcc.wechat.service.impl;
 
 import com.wensheng.zcc.common.module.LatLng;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
+import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wenshengamc.zcc.common.Common.GeoJson;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.GeoLngLatReq;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.GeoLocationResp;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.PhoneMsgReq;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenReq;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.WXPubTokenResp;
@@ -68,4 +72,17 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
     return comnFuncStub.sendVerifyCode(pmrBuilder.build()).getResult();
   }
 
+
+  public AmcRegionInfo getRegionInfo(UserLngLat userLngLat){
+    GeoLngLatReq.Builder gllrBuildr = GeoLngLatReq.newBuilder();
+    gllrBuildr.setLng(userLngLat.getLng()).setLat(userLngLat.getLat());
+
+    GeoLocationResp geoLocationResp =  comnFuncStub.getAmcGeoInfoByLngLat(gllrBuildr.build());
+    AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
+    amcRegionInfo.setCityName(geoLocationResp.getCityName());
+    amcRegionInfo.setCityCode(geoLocationResp.getCityCode());
+    amcRegionInfo.setProvCode(geoLocationResp.getProvCode());
+    amcRegionInfo.setProvName(geoLocationResp.getProvName());
+    return amcRegionInfo;
+  }
 }

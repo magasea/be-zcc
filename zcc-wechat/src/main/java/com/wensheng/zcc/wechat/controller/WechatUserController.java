@@ -1,10 +1,12 @@
 package com.wensheng.zcc.wechat.controller;
 
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXBindPhoneVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
@@ -270,6 +272,14 @@ public class WechatUserController {
   public  List<WXUserWatchOnObject> checkUserWatchOn(@RequestBody WXUserWatchOnCheckVo wxUserWatchOnCheckVo ) throws Exception {
 
     return wxService.checkUserFavor( wxUserWatchOnCheckVo);
+
+  }
+
+  @RequestMapping(value = "/user/getUserLocation", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcRegionInfo getUserLocation(@RequestBody UserLngLat userLngLat ) throws Exception {
+
+    return wxService.getUserLocation( userLngLat);
 
   }
 

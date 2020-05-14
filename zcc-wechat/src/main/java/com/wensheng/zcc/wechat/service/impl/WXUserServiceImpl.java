@@ -4,6 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
@@ -20,6 +21,7 @@ import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.TagCreate;
 import com.wensheng.zcc.wechat.module.vo.TagDel;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
@@ -737,6 +739,12 @@ public class WXUserServiceImpl implements WXUserService {
       }
       return wxUserWatchOnObjectsResult;
     }
+
+  }
+
+  @Override
+  public AmcRegionInfo getUserLocation(UserLngLat userLngLat) {
+    return comnfuncGrpcService.getRegionInfo(userLngLat);
 
   }
 

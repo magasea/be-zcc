@@ -13,5 +13,6 @@ public interface PhoneMsgService {
    */
   String generateVerificationCodeToPhone(String phoneNum, String vcode);
 
+  public String generateVerificationCodeToPhoneByAliYun(String phoneNum, String vcode);
 
 }

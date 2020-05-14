@@ -1,7 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
-import java.util.List;
+import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import lombok.Data;
 
 @Data

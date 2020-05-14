@@ -5,14 +5,12 @@ import com.wensheng.zcc.amc.aop.QuerySSOContactorChecker;
 import com.wensheng.zcc.amc.controller.helper.QueryCurtParam;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.module.dao.helper.*;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
-import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
-import com.wensheng.zcc.amc.module.vo.AmcFilterContentDebt;
-import com.wensheng.zcc.amc.module.vo.AmcFilterContentTag;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentTag;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcExcelFileService;
@@ -20,12 +18,11 @@ import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
+import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
-import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 
 import java.io.File;
@@ -34,8 +31,6 @@ import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.data.domain.Sort.Direction;
@@ -93,7 +88,16 @@ public class AmcBasicInfoController {
   }
 
 
+  @RequestMapping(value = "/debtAssetTypeEnum", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getDebtAssetTypeEnum(){
 
+    List<String> result = new ArrayList<>();
+    for(AmcDebtAssetTypeEnum debtAssetTypeEnum : AmcDebtAssetTypeEnum.values()){
+      result.add(String.format("%d:%s", debtAssetTypeEnum.getId(), debtAssetTypeEnum.getName()));
+    }
+    return result;
+  }
 
 
   @RequestMapping(value = "/publishStates", method = RequestMethod.GET)

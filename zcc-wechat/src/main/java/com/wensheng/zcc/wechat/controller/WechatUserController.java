@@ -1,9 +1,14 @@
 package com.wensheng.zcc.wechat.controller;
 
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.WXBindPhoneVo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
@@ -197,7 +202,16 @@ public class WechatUserController {
   public boolean sendVerifyCode(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
 
     String vcode = AmcNumberUtils.getValidationCode();
-    return wxService.sendPhoneVcode( wxBindPhoneVo.getPhone(), wxBindPhoneVo.getOpenId(), vcode);
+    return wxService.sendPhoneVcode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone(),vcode);
+
+  }
+
+  @RequestMapping(value = "/user/sendVerifyCodeTest", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean sendVerifyCodeTest(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
+
+    String vcode = AmcNumberUtils.getValidationCode();
+    return wxService.sendPhoneVcodeTest(  wxBindPhoneVo.getOpenId(),wxBindPhoneVo.getPhone(), vcode);
 
   }
 
@@ -205,15 +219,58 @@ public class WechatUserController {
   @ResponseBody
   public boolean bindPhone(@RequestBody WXBindPhoneVo wxBindPhoneVo ) throws Exception {
 
-    return wxService.bindPhone( wxBindPhoneVo.getPhone(), wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getVcode());
+    return wxService.bindPhone(wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getPhone(),  wxBindPhoneVo.getVcode());
 
   }
 
   @RequestMapping(value = "/user/watchOn", method = RequestMethod.POST)
   @ResponseBody
-  public boolean watchOn(@RequestBody WXBindPhoneVo wxBindPhoneVo ) throws Exception {
+  public boolean watchOn(@RequestBody WXUserWatchOnVo wxUserWatchOnVo ) throws Exception {
 
-    return wxService.bindPhone( wxBindPhoneVo.getPhone(), wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getVcode());
+    return wxService.watchOnObject( wxUserWatchOnVo.getOpenId(), wxUserWatchOnVo.getPhone(), wxUserWatchOnVo.getObjectId(),
+        wxUserWatchOnVo.getType());
 
   }
+
+  @RequestMapping(value = "/user/userWatched", method = RequestMethod.POST)
+  @ResponseBody
+  public List<WXUserWatchObject> userWatched(@RequestBody String openId ) throws Exception {
+
+    return wxService.getUserWatched( openId);
+
+  }
+
+
+  @RequestMapping(value = "/user/getObjectWatchedUsers", method = RequestMethod.POST)
+  @ResponseBody
+  public List<WXUserWatchObject> getObjectWatchedUsers(@RequestBody WXUserWatchOnVo wxUserWatchOnVo ) throws Exception {
+
+    return wxService.getObjectWatchedUsers( wxUserWatchOnVo.getObjectId(), wxUserWatchOnVo.getType());
+
+  }
+
+  @RequestMapping(value = "/user/saveUserFavor", method = RequestMethod.POST)
+  @ResponseBody
+  public  boolean saveUserFavor(@RequestBody WXUserFavor wxUserFavor ) throws Exception {
+
+    return wxService.saveUserFavor( wxUserFavor);
+
+  }
+
+  @RequestMapping(value = "/user/getUserFavor", method = RequestMethod.POST)
+  @ResponseBody
+  public  WXUserFavor getUserFavor(@RequestBody String openId ) throws Exception {
+
+    return wxService.getUserFavor( openId);
+
+  }
+
+  @RequestMapping(value = "/user/checkUserWatchOn", method = RequestMethod.POST)
+  @ResponseBody
+  public  List<WXUserWatchOnObject> checkUserWatchOn(@RequestBody WXUserWatchOnCheckVo wxUserWatchOnCheckVo ) throws Exception {
+
+    return wxService.checkUserFavor( wxUserWatchOnCheckVo);
+
+  }
+
 }

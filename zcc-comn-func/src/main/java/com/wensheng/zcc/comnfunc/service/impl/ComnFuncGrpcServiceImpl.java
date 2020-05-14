@@ -155,7 +155,7 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
     String code = request.getCode();
     String phone = request.getPhoneNum();
     try{
-      String result = phoneMsgService.generateVerificationCodeToPhone(phone, code);
+      String result = phoneMsgService.generateVerificationCodeToPhoneByAliYun(phone, code);
       PhoneMsgRep.Builder pmBuilder = PhoneMsgRep.newBuilder();
       pmBuilder.setResult(result);
       responseObserver.onNext(pmBuilder.build());

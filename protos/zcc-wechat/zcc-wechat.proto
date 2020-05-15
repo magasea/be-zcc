@@ -63,9 +63,32 @@ message UploadDebtImg2WechatResp {
   repeated DebtImageUploadResult results =1;
 }
 
+message WXUserReq{
+  string openId = 1;
+}
+
+message WXUserWatchOnObj{
+  int64 objectId = 1;
+  int32 type = 2;
+}
+
+message WXUserWatchOnObjResp{
+  string openId = 1;
+  repeated WXUserWatchOnObj wxUserWatchOnObjs = 2;
+}
+
+message WXUserFavor{
+  string userFavor = 1;
+}
+
+
 service WechatGrpcService {
   rpc uploadImage2Wechat(UploadImg2WechatReq) returns (UploadImg2WechatResp);
 
   rpc uploadDebtImage2Wechat(UploadDebtImg2WechatReq) returns (UploadDebtImg2WechatResp);
+
+  rpc getWXUserWatchOnObjs(WXUserReq) returns (WXUserWatchOnObjResp);
+
+  rpc getWXUserFavor(WXUserReq) returns (WXUserFavor);
 
 }

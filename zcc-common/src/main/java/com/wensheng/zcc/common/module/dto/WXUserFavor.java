@@ -1,30 +1,24 @@
 package com.wensheng.zcc.common.module.dto;
 
-import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 import javax.persistence.Id;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document(collection = "WECHAT_USERWATCHOBJECT")
-@CompoundIndexes({
-    @CompoundIndex(name = "openId_objectId_type", def = "{'openId' : 1, 'objectId': 1, 'type':1}", unique = true)
-})
+@Document(collection = "WECHAT_WXUSERFAVOR")
 @Data
-public class WXUserWatchObject {
+public class WXUserFavor {
 
   @Id
   String id;
-
-  Integer type;//1-债权 2-资产
-
+  @Indexed
   String openId;
   String unionId;
   String phone;
-  Long objectId;
+  AmcSaleFilter amcSaleFilter;
   Date createTime;
   Date updateTime;
 

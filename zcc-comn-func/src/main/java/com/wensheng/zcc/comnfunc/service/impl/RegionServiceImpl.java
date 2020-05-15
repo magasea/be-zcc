@@ -1,7 +1,9 @@
 package com.wensheng.zcc.comnfunc.service.impl;
 
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegion;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegionItem;
+import com.wensheng.zcc.comnfunc.module.dto.AmcGeoInfoResponse;
 import com.wensheng.zcc.comnfunc.service.RegionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -23,6 +25,9 @@ public class RegionServiceImpl implements RegionService {
     @Value("${amc.urls.getRegion}")
     String getRegionUrl;
 
+    @Value("${amc.urls.getGeoInfo}")
+    String getGeoInfoUrl;
+
     @PostConstruct
     void init(){
         restTemplate = new RestTemplate();
@@ -40,5 +45,17 @@ public class RegionServiceImpl implements RegionService {
         AmcRegion resp = restTemplate.getForEntity(url, AmcRegion.class).getBody();
 
         return Arrays.asList(resp.getData());
+    }
+
+    @Override
+    public AmcRegionInfo getRegionInfoByLngLat(Double lng, Double lat) {
+        String url = String.format(getGeoInfoUrl, String.format("%s,%s", lng,lat));
+        AmcGeoInfoResponse resp = restTemplate.getForEntity(url, AmcGeoInfoResponse.class).getBody();
+        AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
+        amcRegionInfo.setProvName(resp.getResult().getStatsResult().getProvince().get(1));
+        amcRegionInfo.setProvCode(resp.getResult().getStatsResult().getProvince().get(0));
+        amcRegionInfo.setCityName(resp.getResult().getStatsResult().getCity().get(1));
+        amcRegionInfo.setCityCode(resp.getResult().getStatsResult().getCity().get(0));
+        return amcRegionInfo;
     }
 }

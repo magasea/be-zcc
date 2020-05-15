@@ -2,9 +2,15 @@ package com.wensheng.zcc.comnfunc.service.impl;
 
 import com.wensheng.zcc.comnfunc.service.PhoneMsgService;
 import java.nio.charset.Charset;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -63,7 +69,29 @@ public class PhoneMsgServiceImpl implements PhoneMsgService {
     }
   }
 
+    @Override
+    public String generateVerificationCodeToPhoneByAliYun(String phoneNum, String vcode) {
 
+      String url = "http://101.132.27.96:6900/api/message?phones=%s&message=验证码:%s, 有效期20分钟";
+      String finalUrl = String.format(url,phoneNum,vcode);
+      HttpEntity<Map> entity = new HttpEntity<>(null, getHttpJsonHeader());
+      ResponseEntity<String> resp = restTemplate.exchange(finalUrl, HttpMethod.GET, entity, String.class);
+      if(resp.getBody().contains("errorcode=0")){
+        return vcode;
+      }else{
+        log.error(String.format("call message service failed with:%s", resp.getBody()));
+        return resp.getBody();
+      }
+  }
+
+  public HttpHeaders getHttpJsonHeader(){
+    HttpHeaders headers = new HttpHeaders();
+    headers.getAccept().clear();
+    headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+    headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    headers.setBasicAuth("wensheng","M0b!le");
+    return headers;
+  }
 
 
 }

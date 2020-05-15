@@ -1,7 +1,9 @@
-package com.wensheng.zcc.amc.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
+import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentTag;
 import java.io.Serializable;
-import java.util.List;
 import lombok.Data;
 
 @Data

@@ -4,6 +4,7 @@ import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
@@ -21,8 +22,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 @Service
 @GRpcService(interceptors = LogInterceptor.class)
@@ -155,7 +154,7 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
     String code = request.getCode();
     String phone = request.getPhoneNum();
     try{
-      String result = phoneMsgService.generateVerificationCodeToPhone(phone, code);
+      String result = phoneMsgService.generateVerificationCodeToPhoneByAliYun(phone, code);
       PhoneMsgRep.Builder pmBuilder = PhoneMsgRep.newBuilder();
       pmBuilder.setResult(result);
       responseObserver.onNext(pmBuilder.build());
@@ -167,5 +166,25 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 
   }
 
+
+  /**
+   */
+  @Override
+  public void getAmcGeoInfoByLngLat(com.wenshengamc.zcc.comnfunc.gaodegeo.GeoLngLatReq request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.GeoLocationResp> responseObserver) {
+    try{
+      GeoLocationResp.Builder glrBuilder = GeoLocationResp.newBuilder();
+      AmcRegionInfo amcRegionInfo = regionService.getRegionInfoByLngLat(request.getLng(), request.getLat());
+      glrBuilder.setCityName(amcRegionInfo.getCityName());
+      glrBuilder.setCityCode(amcRegionInfo.getCityCode());
+      glrBuilder.setProvName(amcRegionInfo.getProvName());
+      glrBuilder.setProvCode(amcRegionInfo.getProvCode());
+      responseObserver.onNext(glrBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception ex){
+      responseObserver.onError(ex);
+    }
+
+  }
 
 }

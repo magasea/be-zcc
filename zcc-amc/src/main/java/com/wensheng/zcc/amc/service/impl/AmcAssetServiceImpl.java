@@ -16,7 +16,7 @@ import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
-import com.wensheng.zcc.amc.module.vo.AmcFilterContentAsset;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;

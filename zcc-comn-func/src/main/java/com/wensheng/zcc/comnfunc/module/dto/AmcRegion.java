@@ -7,3 +7,6 @@ public class AmcRegion {
     AmcRegionItem[] data;
     int total;
 }
+///home/chenwei/working/be-amc/zcc-amc/src/main/resources/test
+
+

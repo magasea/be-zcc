@@ -1,4 +1,4 @@
-package com.wensheng.zcc.amc.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
 import com.wensheng.zcc.common.aop.SQLInjectionSafe;
 import java.io.Serializable;

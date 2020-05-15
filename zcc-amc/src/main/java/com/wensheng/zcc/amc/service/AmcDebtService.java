@@ -13,7 +13,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
-import com.wensheng.zcc.amc.module.vo.AmcFilterContentDebt;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
 import java.util.Map;

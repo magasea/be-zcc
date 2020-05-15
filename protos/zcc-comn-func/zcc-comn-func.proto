@@ -71,6 +71,17 @@ message PhoneMsgRep {
   string result = 1;
 }
 
+message GeoLngLatReq {
+  double lng = 1;
+  double lat = 2;
+}
+message GeoLocationResp {
+  string provName = 1;
+  string provCode = 2;
+  string cityName = 3;
+  string cityCode = 4;
+}
+
 service ComnFuncService {
   rpc getAddress(WXUserGeoReq) returns (WXUserGeoReq);
 
@@ -83,5 +94,7 @@ service ComnFuncService {
   rpc getAmcRegionByName(AmcRegionReq) returns (AmcRegionResp);
 
   rpc sendVerifyCode(PhoneMsgReq) returns (PhoneMsgRep);
+
+  rpc getAmcGeoInfoByLngLat(GeoLngLatReq) returns (GeoLocationResp);
 
 }

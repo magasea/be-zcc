@@ -2,7 +2,14 @@ package com.wensheng.zcc.wechat.service.impl;
 
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
+import com.google.gson.Gson;
+import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
+import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wenshengamc.zcc.wechat.AmcAssetImage;
 import com.wenshengamc.zcc.wechat.AmcDebtImage;
 import com.wenshengamc.zcc.wechat.DebtImageUploadResult;
@@ -10,15 +17,20 @@ import com.wenshengamc.zcc.wechat.ImageUploadResult;
 import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatResp;
+import com.wenshengamc.zcc.wechat.WXUserFavor;
+import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
+import com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp;
 import com.wenshengamc.zcc.wechat.WechatAssetImage;
 import com.wenshengamc.zcc.wechat.WechatAssetImageOrBuilder;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceImplBase;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 @Service
@@ -29,6 +41,11 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
   @Autowired
   WXMaterialServiceImpl wxMaterialService;
+
+  @Autowired
+  WXUserService wxUserService;
+
+  private Gson gson = new Gson();
 
   @Override
   public void uploadImage2Wechat(com.wenshengamc.zcc.wechat.UploadImg2WechatReq request,
@@ -113,6 +130,45 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
 
   }
+  /**
+   */
+  @Override
+  public void getWXUserWatchOnObjs(com.wenshengamc.zcc.wechat.WXUserReq request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp> responseObserver) {
+    if(StringUtils.isEmpty(request.getOpenId())){
+      responseObserver.onError(ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM,"openId为空"));
+      return;
+    }
+    List<WXUserWatchOnObject> wxUserWatchOnObjects =  wxUserService.getUserWatchedOn(request.getOpenId());
+    WXUserWatchOnObjResp.Builder WXWOORB = WXUserWatchOnObjResp.newBuilder();
+    if(CollectionUtils.isEmpty(wxUserWatchOnObjects)){
+      responseObserver.onNext(WXWOORB.build());
+      responseObserver.onCompleted();
+      return;
+    }
+    for (WXUserWatchOnObject wxUserWatchOnObj: wxUserWatchOnObjects){
+      WXUserWatchOnObj.Builder WXUWOOB = WXUserWatchOnObj.newBuilder();
+      WXUWOOB.setObjectId(wxUserWatchOnObj.getObjectId());
+      WXUWOOB.setType(wxUserWatchOnObj.getType());
+      WXWOORB.addWxUserWatchOnObjs(WXUWOOB);
+    }
+    responseObserver.onNext(WXWOORB.build());
+    responseObserver.onCompleted();
 
+  }
+
+  /**
+   */
+  @Override
+  public void getWXUserFavor(com.wenshengamc.zcc.wechat.WXUserReq request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.wechat.WXUserFavor> responseObserver) {
+      AmcSaleFilter amcSaleFilter = wxUserService.getUserFavor(request.getOpenId()).getAmcSaleFilter();
+      WXUserFavor.Builder WXUFB = WXUserFavor.newBuilder();
+     if(amcSaleFilter != null){
+       WXUFB.setUserFavor(gson.toJson(amcSaleFilter));
+     }
+     responseObserver.onNext(WXUFB.build());
+     responseObserver.onCompleted();
+  }
 
 }

@@ -1,7 +1,5 @@
-package com.wensheng.zcc.amc.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
-import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
-import com.wensheng.zcc.common.aop.SQLInjectionSafe;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;

@@ -4,7 +4,8 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
-import com.wensheng.zcc.amc.module.vo.AmcSaleFilter;
+import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
+import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSalePageModVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorPageVo;
@@ -12,6 +13,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import java.util.List;
 
 /**
@@ -86,4 +88,12 @@ public interface AmcSaleService {
     AmcSaleBannerPageVo getBannerPageWithFilter(AmcSalePageModVo amcSalePageModVo) throws Exception;
 
     AmcSaleMenuPageVo getMenuPageWithFilter(AmcSalePageModVo amcSalePageModVo) throws Exception;
+
+  AmcSaleWatchonPageVo getUserWatchonPage(List<WXUserWatchObject> wxUserWatchObjects)
+      throws Exception;
+
+    AmcSaleWatchonPageVo getUserWatchonPage(String openId)
+        throws Exception;
+
+    AmcSaleWatchonPageVo getUserFavorPage(String openId) throws Exception;
 }

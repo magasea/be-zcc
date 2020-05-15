@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.module.vo;
 
+import com.wensheng.zcc.common.module.dto.AmcFilterContentItem;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Data;

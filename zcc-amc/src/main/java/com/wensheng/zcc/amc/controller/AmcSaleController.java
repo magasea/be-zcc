@@ -13,8 +13,10 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
@@ -265,4 +267,22 @@ public class AmcSaleController {
     return amcSaleService.getFloorPageWithFilter(amcSaleFloorPageModVo);
   }
 
+
+  @RequestMapping(value = "/getUserWatchonPage", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleWatchonPageVo getUserWatchonPage( @RequestBody List<WXUserWatchObject> wxUserWatchObjects) throws Exception {
+    return amcSaleService.getUserWatchonPage(wxUserWatchObjects);
+  }
+
+  @RequestMapping(value = "/getUserWatchonPageByOpenId", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleWatchonPageVo getUserWatchonPageByOpenId( @RequestBody String openId) throws Exception {
+    return amcSaleService.getUserWatchonPage(openId);
+  }
+
+  @RequestMapping(value = "/getUserFavorPageByOpenId", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleWatchonPageVo getUserFavorPageByOpenId( @RequestBody String openId) throws Exception {
+    return amcSaleService.getUserFavorPage(openId);
+  }
 }

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.mq.kafka.module.AmcWechatUser;
@@ -19,7 +21,10 @@ import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.TagCreate;
 import com.wensheng.zcc.wechat.module.vo.TagDel;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import com.wensheng.zcc.wechat.module.vo.WechatTagVo;
 import com.wensheng.zcc.wechat.module.vo.WechatUserInfoResp;
 import com.wensheng.zcc.wechat.module.vo.WechatUserInfoVo;
@@ -31,8 +36,11 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -118,7 +126,7 @@ public class WXUserServiceImpl implements WXUserService {
   @Autowired
   WechatUserMapper wechatUserMapper;
 
-  private final Long MAX_TIME_LAG = 120L;
+  private final Long MAX_TIME_LAG = 1200L;
 
 
   private Gson gson = new Gson();
@@ -475,25 +483,59 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Override
   public boolean sendPhoneVcode(String openId, String phone, String code) throws Exception {
-
+//throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
     WechatUserExample wechatUserExample = new WechatUserExample();
     wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    WechatUser wechatUser = null;
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
     if(CollectionUtils.isEmpty(wechatUsers)){
-      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
+      throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,String.format("没有找到该用户", openId));
+    }else{
+      wechatUser = wechatUsers.get(0);
     }
 
-    if(!StringUtils.isEmpty(wechatUsers.get(0).getVerifyCode()) ){
+    if(!StringUtils.isEmpty(wechatUser.getVerifyCode()) && !wechatUser.getVerifyCode().equals("-1")){
       Date currDate = AmcDateUtils.getCurrentDate();
-      if(currDate.toInstant().getEpochSecond() < (wechatUsers.get(0).getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG)){
+      if(currDate.toInstant().getEpochSecond() < (wechatUser.getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG/10)){
         throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR, "请过2分钟后再次申请");
       }
     }
     String result =  comnfuncGrpcService.sendVCode(phone, code);
 //    wechatUsers.get(0).setMobile(phone);
-    wechatUsers.get(0).setVerifyCode(code);
-    wechatUsers.get(0).setVcodeTime(AmcDateUtils.getCurrentDate());
-    wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
+    wechatUser.setVerifyCode(code);
+    wechatUser.setVcodeTime(AmcDateUtils.getCurrentDate());
+    wechatUserMapper.updateByPrimaryKeySelective(wechatUser);
+    return true;
+  }
+
+  @Override
+  public boolean sendPhoneVcodeTest(String openId, String phone, String code) throws Exception {
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    WechatUser wechatUser = null;
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      wechatUser = new WechatUser();
+      wechatUser.setMobile(phone);
+      wechatUser.setOpenId(openId);
+      wechatUserMapper.insertSelective(wechatUser);
+    }else{
+      wechatUser = wechatUsers.get(0);
+    }
+
+    if(!StringUtils.isEmpty(wechatUser.getVerifyCode()) && !wechatUser.getVerifyCode().equals("-1")){
+      Date currDate = AmcDateUtils.getCurrentDate();
+      if(currDate.toInstant().getEpochSecond() < (wechatUser.getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG/10)){
+        throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR, "请过2分钟后再次申请");
+      }
+    }
+    String result =  comnfuncGrpcService.sendVCode(phone, code);
+//    wechatUsers.get(0).setMobile(phone);
+    wechatUser.setVerifyCode(code);
+    wechatUser.setVcodeTime(AmcDateUtils.getCurrentDate());
+    wechatUserMapper.updateByPrimaryKeySelective(wechatUser);
+
     return true;
   }
 
@@ -546,9 +588,61 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserWatchObject.setUpdateTime(AmcDateUtils.getCurrentDate());
       mongoTemplate.save(wxUserWatchObject);
     }else{
-
+      wxUserWatchObjects.get(0).setUpdateTime(AmcDateUtils.getCurrentDate());
+      mongoTemplate.save(wxUserWatchObjects.get(0));
     }
-    return false;
+    return true;
+  }
+
+  @Override
+  public List<WXUserWatchOnObject> getUserWatchedOn(String openId) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId));
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+
+    List<WXUserWatchOnObject> wxUserWatchOnObjects = new ArrayList<>();
+    for(WXUserWatchObject wxUserWatchObject: wxUserWatchObjects){
+      WXUserWatchOnObject wxUserWatchOnObject = new WXUserWatchOnObject();
+      AmcBeanUtils.copyProperties(wxUserWatchObject, wxUserWatchOnObject);
+      wxUserWatchOnObjects.add(wxUserWatchOnObject);
+    }
+    return wxUserWatchOnObjects;
+  }
+
+  @Override
+  public List<WXUserWatchObject> getObjectWatchedUsers(Long objectId, Integer type) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("objectId").is(objectId).and("type").is(type));
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+    return wxUserWatchObjects;
+  }
+
+  @Override
+  public boolean saveUserFavor(WXUserFavor wxUserFavor) {
+    if(StringUtils.isEmpty(wxUserFavor.getOpenId())){
+      log.error("no openId there , no need to save");
+      return false;
+    }else{
+      WechatUserExample wechatUserExample = new WechatUserExample();
+      wechatUserExample.createCriteria().andOpenIdEqualTo(wxUserFavor.getOpenId());
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(CollectionUtils.isEmpty(wechatUsers)){
+        WechatUser wechatUser = new WechatUser();
+        wechatUser.setOpenId(wxUserFavor.getOpenId());
+        wechatUserMapper.insertSelective(wechatUser);
+      }
+    }
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(wxUserFavor.getOpenId()));
+    List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+    if(CollectionUtils.isEmpty(wxUserFavors)){
+      //make new favors
+      mongoTemplate.save(wxUserFavor);
+    }else{
+      wxUserFavors.get(0).setAmcSaleFilter(wxUserFavor.getAmcSaleFilter());
+      mongoTemplate.save(wxUserFavor);
+    }
+    return true;
   }
 
   private void refreshUserTags(Long id, List<Integer> tagIdList) {
@@ -603,6 +697,55 @@ public class WXUserServiceImpl implements WXUserService {
     }
 
     return;
+  }
+
+  public List<WXUserWatchObject> getUserWatched(String openId) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId));
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+    return wxUserWatchObjects;
+  }
+
+  @Override
+  public WXUserFavor getUserFavor(String openId) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId));
+    List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+    if(CollectionUtils.isEmpty(wxUserFavors)){
+      return null;
+    }
+    return wxUserFavors.get(0);
+  }
+
+  @Override
+  public List<WXUserWatchOnObject> checkUserFavor(WXUserWatchOnCheckVo wxUserWatchOnCheckVo) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(wxUserWatchOnCheckVo.getOpenId()));
+    Set<String> wxUserWatchOnObjectSet =  new HashSet<>();
+    for(WXUserWatchOnObject wxUserWatchOnObject: wxUserWatchOnCheckVo.getWxUserWatchOnObjects()){
+      wxUserWatchOnObjectSet.add(String.format("%s-%s", wxUserWatchOnObject.getType(), wxUserWatchOnObject.getObjectId()));
+    }
+    List<WXUserWatchOnObject> wxUserWatchOnObjectsResult = new ArrayList<>();
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+    if(CollectionUtils.isEmpty(wxUserWatchObjects)){
+      return null;
+    }else{
+      for(WXUserWatchObject wxUserWatchObject: wxUserWatchObjects){
+        if(wxUserWatchOnObjectSet.contains(String.format("%s-%s", wxUserWatchObject.getType(), wxUserWatchObject.getObjectId()))){
+          WXUserWatchOnObject wxUserWatchOnObject = new WXUserWatchOnObject();
+          AmcBeanUtils.copyProperties(wxUserWatchObject, wxUserWatchOnObject);
+          wxUserWatchOnObjectsResult.add(wxUserWatchOnObject);
+        }
+      }
+      return wxUserWatchOnObjectsResult;
+    }
+
+  }
+
+  @Override
+  public AmcRegionInfo getUserLocation(UserLngLat userLngLat) {
+    return comnfuncGrpcService.getRegionInfo(userLngLat);
+
   }
 
 

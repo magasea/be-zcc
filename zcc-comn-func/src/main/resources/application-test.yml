@@ -97,7 +97,7 @@ spring:
 amc:
     urls:
         getRegion: http://${env.regionhost}:${env.regionport}/pre/region_code/api?pk=%s
-
+        getGeoInfo: http://${env.amaphost}:${env.amapport}/pre/amap_code/api?location=%s
 weixin:
     prod:
         appId: wx6f60584065dd3e45
@@ -163,6 +163,8 @@ env:
     image-repo: /backup/temp
     regionhost: 10.20.100.228
     regionport: 5050
+    amaphost: 10.20.200.100
+    amapport: 5050
     oauth2:
         host: 10.20.100.238
         authLink: http://${env.oauth2.host}:10002

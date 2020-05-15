@@ -115,6 +115,9 @@ public class SyncServiceImpl implements SyncService {
   @Autowired
   CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
 
+  @Autowired
+  CommonHandler commonHandler;
+
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
 //    @Autowired
@@ -927,10 +930,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       return custTrdSeller.getId();
     }
 
-    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
-    custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(custCmpyInfoFromSync.getCmpyName());
-    custTrdCmpyExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",custCmpyInfoFromSync.getCmpyName(),"%"));
-    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+    List<CustTrdCmpy> custTrdCmpyList = commonHandler.queryCmpyByName(custCmpyInfoFromSync.getCmpyName());
     int action = -1;
     Date updateTime = AmcDateUtils.toUTCDate(custCmpyInfoFromSync.getUpdateTime());
     if(CollectionUtils.isEmpty(custTrdCmpyList)){

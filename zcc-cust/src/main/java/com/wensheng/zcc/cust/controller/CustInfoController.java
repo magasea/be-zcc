@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.controller;
 
+import com.google.gson.Gson;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
@@ -10,6 +11,9 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
+import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
+import com.wensheng.zcc.cust.module.sync.CmpyBizInfoResult;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
@@ -21,6 +25,7 @@ import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.ExcelGenerator;
 import java.io.File;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +37,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
@@ -59,6 +65,9 @@ public class CustInfoController {
 
   @Autowired
   ExcelGenerator excelGenerator;
+
+  @Autowired
+  KafkaTemplate crawlSystemKafkaTemplate;
 
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
@@ -172,8 +181,6 @@ public class CustInfoController {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
 
-
-
     List<CustTrdInfoVo> queryResults = null;
     Long totalCount = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
@@ -255,8 +262,6 @@ public class CustInfoController {
   public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
 
-
-
     List<CustTrdInfoExcelVo> queryResults = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
@@ -315,7 +320,6 @@ public class CustInfoController {
      custInfoService.patchDuplicateCmpyName();
   }
 
-
   @RequestMapping(value = "/patchCmpyProvince", method = RequestMethod.POST)
   @ResponseBody
   public void patchCmpyProvince(@RequestParam(required = false) String province) throws Exception {
@@ -326,6 +330,46 @@ public class CustInfoController {
   @ResponseBody
   public void patchAddCmpyProvince() throws Exception {
     custInfoService.patchAddCmpyProvince();
+  }
+
+  @RequestMapping(value = "/addCrawlCmpyKafkaTest", method = RequestMethod.POST)
+  @ResponseBody
+  public String addCrawlCmpy(@RequestParam String cmpyNames) throws Exception {
+    final String TOPIC = "ent_info";
+    AddCrawlCmpyDTO addCrawlCmpyDTO = new AddCrawlCmpyDTO();
+    addCrawlCmpyDTO.setAppName("zcc");
+    addCrawlCmpyDTO.setCmpyNames(cmpyNames);
+    String addCrawlCmpyJson = new Gson().toJson(addCrawlCmpyDTO);
+    try {
+      crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyJson);
+      log.info("请求添加爬取公司信息kafka发送成功,addCrawlCmpyJson:{}", addCrawlCmpyJson);
+    } catch (Exception e) {
+      log.error("请求添加爬取公司信息失败，,addCrawlCmpyJson:{}", addCrawlCmpyJson);
+    }
+    return "success";
+  }
+
+  @RequestMapping(value = "/addCrawlCmpyResulKafkaTest", method = RequestMethod.POST)
+  @ResponseBody
+  public String addCrawlCmpyResult() throws Exception {
+    final String TOPIC = "ent_info_result_zcc";
+    AddCrawlCmpyResultDTO addCrawlCmpyResultDTO = new AddCrawlCmpyResultDTO();
+    addCrawlCmpyResultDTO.setAppName("zcc");
+    List<CmpyBizInfoResult> cmpyBizInfoResultList = new ArrayList<>();
+    CmpyBizInfoResult cmpyBizInfoResult = new CmpyBizInfoResult();
+    cmpyBizInfoResult.setCmpyName("测试公司");
+    cmpyBizInfoResult.setStatus("1");
+    cmpyBizInfoResult.setErrorMsg(null);
+    cmpyBizInfoResultList.add(cmpyBizInfoResult);
+    addCrawlCmpyResultDTO.setCmpyBizInfoResultList(cmpyBizInfoResultList);
+    String addCrawlCmpyResultDTOJson = new Gson().toJson(addCrawlCmpyResultDTO);
+    try {
+      crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyResultDTOJson);
+      log.info("请求添加爬取公司信息kafka发送成功,addCrawlCmpyJson:{}", addCrawlCmpyResultDTOJson);
+    } catch (Exception e) {
+      log.error("请求添加爬取公司信息失败，,addCrawlCmpyJson:{}", addCrawlCmpyResultDTOJson);
+    }
+    return "success";
   }
 
 }

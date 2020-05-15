@@ -7,6 +7,8 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustWechatInfoMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustWechatInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustWechatInfoExample;
+import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
+import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
@@ -57,11 +59,33 @@ public class KafkaServiceImpl {
 
         custWechatInfoMapper.updateByExampleSelective(custWechatInfoList.get(0), custWechatInfoExample);
       }
-
-
     }catch (Exception ex){
       log.error("Failed to handle:{}", gsonStr, ex);
     }
+  }
+
+  final String TOPIC = "ent_info";
+  @KafkaListener(topics = {TOPIC}, containerFactory = "crawlSystemKafkaListenerContainerFactory")
+  public void listenerOne(ConsumerRecord<?, ?> record) {
+    log.info(" listenerOne 接收到消息：{}", record.value());
+    AddCrawlCmpyDTO addCrawlCmpyDTO = new Gson().fromJson((String) record.value(),AddCrawlCmpyDTO.class);
+    System.out.println(addCrawlCmpyDTO);
+  }
+
+  final String RESULT_TOPIC = "ent_info_result_zcc";
+  @KafkaListener(topics = {RESULT_TOPIC}, containerFactory = "crawlSystemKafkaListenerContainerFactory")
+  public void listenerResult(ConsumerRecord<?, ?> record) {
+    log.info(" listenerResult 接收到消息：{}", record.value());
+    AddCrawlCmpyResultDTO addCrawlCmpyResultDTO = new Gson().fromJson((String) record.value(),AddCrawlCmpyResultDTO.class);
+
+    //查询本数据库对应的数据1、公司名称。2、修改名称。
+
+
+    //对应公司名称，查询基础库数，更新公司信息
+
+
+    //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
+
 
   }
 

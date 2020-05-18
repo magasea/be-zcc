@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="cmpy_id" jdbcType="BIGINT" property="cmpyId" />
+    <result column="update_method" jdbcType="CHAR" property="updateMethod" />
     <result column="cmpy_name" jdbcType="CHAR" property="cmpyName" />
     <result column="cmpy_name_history" jdbcType="VARCHAR" property="cmpyNameHistory" />
     <result column="uni_social_code" jdbcType="VARCHAR" property="uniSocialCode" />
@@ -91,8 +92,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, cmpy_id, cmpy_name, cmpy_name_history, uni_social_code, legal_reptive, cmpy_phone, 
-    cmpy_phone_update, history_cmpy_phone, cmpy_province, cmpy_addr, cmpy_addr_update, 
+    id, cmpy_id, update_method, cmpy_name, cmpy_name_history, uni_social_code, legal_reptive, 
+    cmpy_phone, cmpy_phone_update, history_cmpy_phone, cmpy_province, cmpy_addr, cmpy_addr_update, 
     history_cmpy_addr, annu_rept_phone, annu_rept_addr, favorite_city_update, favorite_type_update, 
     fav_type_note, cmpy_type, note, data_status, data_quality, update_time, update_by, 
     create_time, create_by, sync_time, cmpy_name_update, crawled_status
@@ -132,26 +133,26 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_CMPY_HISTORY (cmpy_id, cmpy_name, cmpy_name_history, 
-      uni_social_code, legal_reptive, cmpy_phone, 
-      cmpy_phone_update, history_cmpy_phone, cmpy_province, 
-      cmpy_addr, cmpy_addr_update, history_cmpy_addr, 
-      annu_rept_phone, annu_rept_addr, favorite_city_update, 
-      favorite_type_update, fav_type_note, cmpy_type, 
-      note, data_status, data_quality, 
-      update_time, update_by, create_time, 
-      create_by, sync_time, cmpy_name_update, 
-      crawled_status)
-    values (#{cmpyId,jdbcType=BIGINT}, #{cmpyName,jdbcType=CHAR}, #{cmpyNameHistory,jdbcType=VARCHAR}, 
-      #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, #{cmpyPhone,jdbcType=CHAR}, 
-      #{cmpyPhoneUpdate,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyProvince,jdbcType=CHAR}, 
-      #{cmpyAddr,jdbcType=VARCHAR}, #{cmpyAddrUpdate,jdbcType=VARCHAR}, #{historyCmpyAddr,jdbcType=VARCHAR}, 
-      #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, 
-      #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{cmpyType,jdbcType=INTEGER}, 
-      #{note,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
-      #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP}, #{cmpyNameUpdate,jdbcType=VARCHAR}, 
-      #{crawledStatus,jdbcType=VARCHAR})
+    insert into CUST_TRD_CMPY_HISTORY (cmpy_id, update_method, cmpy_name, 
+      cmpy_name_history, uni_social_code, legal_reptive, 
+      cmpy_phone, cmpy_phone_update, history_cmpy_phone, 
+      cmpy_province, cmpy_addr, cmpy_addr_update, 
+      history_cmpy_addr, annu_rept_phone, annu_rept_addr, 
+      favorite_city_update, favorite_type_update, fav_type_note, 
+      cmpy_type, note, data_status, 
+      data_quality, update_time, update_by, 
+      create_time, create_by, sync_time, 
+      cmpy_name_update, crawled_status)
+    values (#{cmpyId,jdbcType=BIGINT}, #{updateMethod,jdbcType=CHAR}, #{cmpyName,jdbcType=CHAR}, 
+      #{cmpyNameHistory,jdbcType=VARCHAR}, #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, 
+      #{cmpyPhone,jdbcType=CHAR}, #{cmpyPhoneUpdate,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, 
+      #{cmpyProvince,jdbcType=CHAR}, #{cmpyAddr,jdbcType=VARCHAR}, #{cmpyAddrUpdate,jdbcType=VARCHAR}, 
+      #{historyCmpyAddr,jdbcType=VARCHAR}, #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, 
+      #{favoriteCityUpdate,jdbcType=CHAR}, #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, 
+      #{cmpyType,jdbcType=INTEGER}, #{note,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, 
+      #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP}, 
+      #{cmpyNameUpdate,jdbcType=VARCHAR}, #{crawledStatus,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -161,6 +162,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="cmpyId != null">
         cmpy_id,
+      </if>
+      <if test="updateMethod != null">
+        update_method,
       </if>
       <if test="cmpyName != null">
         cmpy_name,
@@ -247,6 +251,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpyId != null">
         #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="updateMethod != null">
+        #{updateMethod,jdbcType=CHAR},
       </if>
       <if test="cmpyName != null">
         #{cmpyName,jdbcType=CHAR},
@@ -346,6 +353,9 @@
       <if test="record.cmpyId != null">
         cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
       </if>
+      <if test="record.updateMethod != null">
+        update_method = #{record.updateMethod,jdbcType=CHAR},
+      </if>
       <if test="record.cmpyName != null">
         cmpy_name = #{record.cmpyName,jdbcType=CHAR},
       </if>
@@ -436,6 +446,7 @@
     update CUST_TRD_CMPY_HISTORY
     set id = #{record.id,jdbcType=BIGINT},
       cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
+      update_method = #{record.updateMethod,jdbcType=CHAR},
       cmpy_name = #{record.cmpyName,jdbcType=CHAR},
       cmpy_name_history = #{record.cmpyNameHistory,jdbcType=VARCHAR},
       uni_social_code = #{record.uniSocialCode,jdbcType=VARCHAR},
@@ -472,6 +483,9 @@
     <set>
       <if test="cmpyId != null">
         cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="updateMethod != null">
+        update_method = #{updateMethod,jdbcType=CHAR},
       </if>
       <if test="cmpyName != null">
         cmpy_name = #{cmpyName,jdbcType=CHAR},
@@ -560,6 +574,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
     update CUST_TRD_CMPY_HISTORY
     set cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      update_method = #{updateMethod,jdbcType=CHAR},
       cmpy_name = #{cmpyName,jdbcType=CHAR},
       cmpy_name_history = #{cmpyNameHistory,jdbcType=VARCHAR},
       uni_social_code = #{uniSocialCode,jdbcType=VARCHAR},

@@ -219,6 +219,42 @@ public class AmcAspect {
       return joinPoint.proceed(joinPoint.getArgs());
   }
 
+  @Around("@annotation(ModifyCheckerCustCmpycontactor) ")
+  public Object modifyCheckerCustCmpycontactor(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    if (joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null) {
+      log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    CustAmcCmpycontactor custAmcCmpycontactor = (CustAmcCmpycontactor) joinPoint.getArgs()[0];
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
+    }
+    log.info(authentication.getDetails().toString());
+
+
+    Map<String, Object> detailsParam =
+            (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+    if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+      Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
+      if (joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
+              "create")) {
+        custAmcCmpycontactor.setCreateBy(ssoUserId);
+        custAmcCmpycontactor.setUpdateTime(AmcDateUtils.getCurrentDate());
+        custAmcCmpycontactor.setCreateTime(AmcDateUtils.getCurrentDate());
+      }
+      if (joinPoint.getSignature().getName().startsWith("update") || joinPoint.getSignature().getName().startsWith(
+              "mod")) {
+        custAmcCmpycontactor.setUpdateBy(ssoUserId);
+        custAmcCmpycontactor.setUpdateTime(AmcDateUtils.getCurrentDate());
+      }
+    }
+      return joinPoint.proceed(joinPoint.getArgs());
+  }
+
 
 
   @Around("@annotation(QueryValidCmpy)")

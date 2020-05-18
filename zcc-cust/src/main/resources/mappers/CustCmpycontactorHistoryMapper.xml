@@ -4,6 +4,7 @@
   <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="cmpycontactor_id" jdbcType="BIGINT" property="cmpycontactorId" />
+    <result column="update_method" jdbcType="CHAR" property="updateMethod" />
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="phone" jdbcType="CHAR" property="phone" />
     <result column="mobile" jdbcType="CHAR" property="mobile" />
@@ -92,10 +93,11 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, cmpycontactor_id, name, phone, mobile, trd_phone, mobile_update, mobile_prep, 
-    mobile_history, phone_update, phone_prep, phone_history, province, city, county, 
-    address, title, cmpy_id, company, branch_cmpy, history_cmpy, recorder_name, favorite_city_update, 
-    favorite_type_update, fav_type_note, note, create_by, create_time, update_by, update_time
+    id, cmpycontactor_id, update_method, name, phone, mobile, trd_phone, mobile_update, 
+    mobile_prep, mobile_history, phone_update, phone_prep, phone_history, province, city, 
+    county, address, title, cmpy_id, company, branch_cmpy, history_cmpy, recorder_name, 
+    favorite_city_update, favorite_type_update, fav_type_note, note, create_by, create_time, 
+    update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultMap="BaseResultMap">
     select
@@ -132,8 +134,8 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_CMPYCONTACTOR_HISTORY (cmpycontactor_id, name, phone, 
-      mobile, trd_phone, mobile_update, 
+    insert into CUST_CMPYCONTACTOR_HISTORY (cmpycontactor_id, update_method, name, 
+      phone, mobile, trd_phone, mobile_update, 
       mobile_prep, mobile_history, phone_update, 
       phone_prep, phone_history, province, 
       city, county, address, title, 
@@ -142,8 +144,8 @@
       favorite_type_update, fav_type_note, note, 
       create_by, create_time, update_by, 
       update_time)
-    values (#{cmpycontactorId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, 
-      #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, #{mobileUpdate,jdbcType=CHAR}, 
+    values (#{cmpycontactorId,jdbcType=BIGINT}, #{updateMethod,jdbcType=CHAR}, #{name,jdbcType=CHAR}, 
+      #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, #{mobileUpdate,jdbcType=CHAR}, 
       #{mobilePrep,jdbcType=CHAR}, #{mobileHistory,jdbcType=CHAR}, #{phoneUpdate,jdbcType=CHAR}, 
       #{phonePrep,jdbcType=CHAR}, #{phoneHistory,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
       #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{title,jdbcType=CHAR}, 
@@ -161,6 +163,9 @@
     <trim prefix="(" suffix=")" suffixOverrides=",">
       <if test="cmpycontactorId != null">
         cmpycontactor_id,
+      </if>
+      <if test="updateMethod != null">
+        update_method,
       </if>
       <if test="name != null">
         name,
@@ -250,6 +255,9 @@
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpycontactorId != null">
         #{cmpycontactorId,jdbcType=BIGINT},
+      </if>
+      <if test="updateMethod != null">
+        #{updateMethod,jdbcType=CHAR},
       </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
@@ -352,6 +360,9 @@
       <if test="record.cmpycontactorId != null">
         cmpycontactor_id = #{record.cmpycontactorId,jdbcType=BIGINT},
       </if>
+      <if test="record.updateMethod != null">
+        update_method = #{record.updateMethod,jdbcType=CHAR},
+      </if>
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
@@ -445,6 +456,7 @@
     update CUST_CMPYCONTACTOR_HISTORY
     set id = #{record.id,jdbcType=BIGINT},
       cmpycontactor_id = #{record.cmpycontactorId,jdbcType=BIGINT},
+      update_method = #{record.updateMethod,jdbcType=CHAR},
       name = #{record.name,jdbcType=CHAR},
       phone = #{record.phone,jdbcType=CHAR},
       mobile = #{record.mobile,jdbcType=CHAR},
@@ -482,6 +494,9 @@
     <set>
       <if test="cmpycontactorId != null">
         cmpycontactor_id = #{cmpycontactorId,jdbcType=BIGINT},
+      </if>
+      <if test="updateMethod != null">
+        update_method = #{updateMethod,jdbcType=CHAR},
       </if>
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
@@ -573,6 +588,7 @@
   <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
     update CUST_CMPYCONTACTOR_HISTORY
     set cmpycontactor_id = #{cmpycontactorId,jdbcType=BIGINT},
+      update_method = #{updateMethod,jdbcType=CHAR},
       name = #{name,jdbcType=CHAR},
       phone = #{phone,jdbcType=CHAR},
       mobile = #{mobile,jdbcType=CHAR},

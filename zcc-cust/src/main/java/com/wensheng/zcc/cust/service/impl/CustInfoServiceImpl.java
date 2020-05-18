@@ -88,9 +88,6 @@ public class CustInfoServiceImpl implements CustInfoService {
   CustTrdCmpyMapper custTrdCmpyMapper;
 
   @Autowired
-  CustTrdCmpyHistoryMapper custTrdCmpyHistoryMapper;
-
-  @Autowired
   CustTrdPersonMapper custTrdPersonMapper;
 
   @Autowired
@@ -184,7 +181,6 @@ public class CustInfoServiceImpl implements CustInfoService {
         throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
             String.format("已存在该公司，名称是：%s",custTrdCmpy.getCmpyNameUpdate()));
       }
-
       //查询爬虫基础库中信息
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
       String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
@@ -203,7 +199,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
         if(match){
           //保存公司修改记录
-          creatCmpyHistory(custTrdCmpy.getUpdateBy(), custTrdCmpyOriginal);
+          commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany", custTrdCmpyOriginal);
 
           custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getCmpyName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
@@ -220,7 +216,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }else {
         //保存公司修改记录
-        creatCmpyHistory(custTrdCmpy.getUpdateBy(), custTrdCmpyOriginal);
+        commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany", custTrdCmpyOriginal);
         //没有查到数据则添加爬取公司数据任务，状态为1
         custTrdCmpy.setCrawledStatus("1");
         addCrawlCmpy(custTrdCmpy.getCmpyName());
@@ -228,21 +224,12 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
     }else {
       //保存公司修改记录
-      creatCmpyHistory(custTrdCmpy.getUpdateBy(), custTrdCmpyOriginal);
+      commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany", custTrdCmpyOriginal);
       //不修改名称则直接修改公司
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }
   }
 
-  private void creatCmpyHistory(Long updateBy, CustTrdCmpy custTrdCmpyOriginal) {
-    //保存公司历史信息
-    CustTrdCmpyHistory custTrdCmpyHistory = new CustTrdCmpyHistory();
-    AmcBeanUtils.copyProperties(custTrdCmpyOriginal, custTrdCmpyHistory);
-    custTrdCmpyHistory.setId(null);
-    custTrdCmpyHistory.setCreateBy(updateBy);
-    custTrdCmpyHistory.setCreateTime(new Date());
-    custTrdCmpyHistoryMapper.insertSelective(custTrdCmpyHistory);
-  }
 
   @Override
   public CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson) {

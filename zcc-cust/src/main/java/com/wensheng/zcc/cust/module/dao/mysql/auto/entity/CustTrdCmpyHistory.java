@@ -7,6 +7,8 @@ public class CustTrdCmpyHistory {
 
     private Long cmpyId;
 
+    private String updateMethod;
+
     private String cmpyName;
 
     private String cmpyNameHistory;
@@ -75,6 +77,14 @@ public class CustTrdCmpyHistory {
 
     public void setCmpyId(Long cmpyId) {
         this.cmpyId = cmpyId;
+    }
+
+    public String getUpdateMethod() {
+        return updateMethod;
+    }
+
+    public void setUpdateMethod(String updateMethod) {
+        this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
     public String getCmpyName() {

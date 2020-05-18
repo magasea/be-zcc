@@ -41,6 +41,9 @@ public class KafkaServiceImpl {
   @Autowired
   CustTrdCmpyMapper custTrdCmpyMapper;
 
+  @Autowired
+  CommonHandler commonHandler;
+
   @Value("${cust.syncUrls.getCompanyInfoByName}")
   String getCompanyInfoByNameUrl;
 
@@ -99,9 +102,12 @@ public class KafkaServiceImpl {
     custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyBizInfoResult.getCmpyName());
     custTrdCmpyExtExample.or().andCmpyNameUpdateEqualTo(cmpyBizInfoResult.getCmpyName());
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+    CustTrdCmpy custTrdCmpyOriginal = custTrdCmpyList.get(0);
+
     CmpyBasicBizInfoSync cmpyBasicBizInfoSync =null;
     CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
-    custTrdCmpy.setId(custTrdCmpyList.get(0).getId());
+    custTrdCmpy.setId(custTrdCmpyOriginal.getId());
+
     //成功
     if("1".equals(cmpyBizInfoResult.getStatus())){
       //查询爬虫基础库中信息
@@ -118,11 +124,12 @@ public class KafkaServiceImpl {
     }
 
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
-    if(custTrdCmpyList.get(0).getCmpyNameUpdate().equals(cmpyBizInfoResult.getCmpyName())){
+    if(custTrdCmpyOriginal.getCmpyNameUpdate().equals(cmpyBizInfoResult.getCmpyName())){
       custTrdCmpy.setCmpyName(custTrdCmpy.getCmpyName());
       custTrdCmpy.setCmpyNameHistory("-1");
       custTrdCmpy.setCrawledStatus("-1");
     }
+    commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",custTrdCmpyOriginal);
 
     //修改信息
     custTrdCmpy.setCmpyNameUpdate(cmpyBasicBizInfoSync.getHistoryName());

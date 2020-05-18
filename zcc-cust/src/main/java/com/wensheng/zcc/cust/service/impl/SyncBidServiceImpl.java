@@ -109,11 +109,11 @@ public class SyncBidServiceImpl implements SyncBidService {
     @Autowired
     CustTrdPersonExtMapper custTrdPersonExtMapper;
 
-  @Autowired
-  CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
+    @Autowired
+    CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
 
-  @Autowired
-  CommonHandler commonHandler;
+    @Autowired
+    CommonHandler commonHandler;
 
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
@@ -989,6 +989,9 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     }else if(action == 2 ){
       CustTrdCmpy custTrdCmpyHis = custTrdCmpyList.get(0);
+      //创建历史
+      commonHandler.creatCmpyHistory(null,"SyncBidServiceImpl",custTrdCmpyHis);
+
       //update 取最近的
       if(custTrdCmpy.getUpdateTime().before(custTrdCmpyHis.getUpdateTime())){
         custTrdCmpy.setUpdateTime(custTrdCmpyHis.getUpdateTime());

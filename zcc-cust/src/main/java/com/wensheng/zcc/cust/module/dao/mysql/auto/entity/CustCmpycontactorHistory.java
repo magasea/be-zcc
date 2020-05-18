@@ -7,6 +7,8 @@ public class CustCmpycontactorHistory {
 
     private Long cmpycontactorId;
 
+    private String updateMethod;
+
     private String name;
 
     private String phone;
@@ -77,6 +79,14 @@ public class CustCmpycontactorHistory {
 
     public void setCmpycontactorId(Long cmpycontactorId) {
         this.cmpycontactorId = cmpycontactorId;
+    }
+
+    public String getUpdateMethod() {
+        return updateMethod;
+    }
+
+    public void setUpdateMethod(String updateMethod) {
+        this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
     public String getName() {

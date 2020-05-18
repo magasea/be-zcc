@@ -225,6 +225,76 @@ public class CustTrdCmpyHistoryExample {
             return (Criteria) this;
         }
 
+        public Criteria andUpdateMethodIsNull() {
+            addCriterion("update_method is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodIsNotNull() {
+            addCriterion("update_method is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodEqualTo(String value) {
+            addCriterion("update_method =", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodNotEqualTo(String value) {
+            addCriterion("update_method <>", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodGreaterThan(String value) {
+            addCriterion("update_method >", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodGreaterThanOrEqualTo(String value) {
+            addCriterion("update_method >=", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodLessThan(String value) {
+            addCriterion("update_method <", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodLessThanOrEqualTo(String value) {
+            addCriterion("update_method <=", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodLike(String value) {
+            addCriterion("update_method like", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodNotLike(String value) {
+            addCriterion("update_method not like", value, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodIn(List<String> values) {
+            addCriterion("update_method in", values, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodNotIn(List<String> values) {
+            addCriterion("update_method not in", values, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodBetween(String value1, String value2) {
+            addCriterion("update_method between", value1, value2, "updateMethod");
+            return (Criteria) this;
+        }
+
+        public Criteria andUpdateMethodNotBetween(String value1, String value2) {
+            addCriterion("update_method not between", value1, value2, "updateMethod");
+            return (Criteria) this;
+        }
+
         public Criteria andCmpyNameIsNull() {
             addCriterion("cmpy_name is null");
             return (Criteria) this;

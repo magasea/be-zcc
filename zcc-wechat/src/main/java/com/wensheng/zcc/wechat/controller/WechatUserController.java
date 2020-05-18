@@ -5,6 +5,7 @@ import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
+import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXBindPhoneVo;
@@ -67,6 +68,7 @@ public class WechatUserController {
   public String reportLocation(@RequestBody  String xmlMsg) {
 
     String response = null ;
+    log.info(xmlMsg);
     if(xmlMsg.contains("LOCATION")){
       response = wxService.recordLocation(xmlMsg);
     }else if(xmlMsg.contains("MASSSENDJOBFINISH")){
@@ -283,4 +285,12 @@ public class WechatUserController {
 
   }
 
+
+  @RequestMapping(value = "/user/getUserInfo", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcWechatUserInfo getUserInfo(@RequestBody String openId ) throws Exception {
+
+    return wxService.getUserInfo( openId);
+
+  }
 }

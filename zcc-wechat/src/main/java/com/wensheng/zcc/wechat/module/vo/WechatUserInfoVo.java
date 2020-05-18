@@ -43,7 +43,7 @@ public class WechatUserInfoVo {
   String province;
   String country;
   @SerializedName("headimgurl")
-  String headImgurl;
+  String headImgUrl;
   @SerializedName("subscribe_time")
   Long subscribeTime;
   String unionid;

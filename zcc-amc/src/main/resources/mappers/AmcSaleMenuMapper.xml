@@ -7,6 +7,7 @@
     <result column="filter_content" jdbcType="VARCHAR" property="filterContent" />
     <result column="seq" jdbcType="INTEGER" property="seq" />
     <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="page_img_url" jdbcType="VARCHAR" property="pageImgUrl" />
     <result column="publish_state" jdbcType="INTEGER" property="publishState" />
     <result column="create_by" jdbcType="BIGINT" property="createBy" />
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
@@ -72,8 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, name, filter_content, seq, img_url, publish_state, create_by, create_time, update_by, 
-    update_time
+    id, name, filter_content, seq, img_url, page_img_url, publish_state, create_by, create_time, 
+    update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample" resultMap="BaseResultMap">
     select
@@ -111,13 +112,13 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into AMC_SALE_MENU (name, filter_content, seq, 
-      img_url, publish_state, create_by, 
-      create_time, update_by, update_time
-      )
+      img_url, page_img_url, publish_state, 
+      create_by, create_time, update_by, 
+      update_time)
     values (#{name,jdbcType=CHAR}, #{filterContent,jdbcType=VARCHAR}, #{seq,jdbcType=INTEGER}, 
-      #{imgUrl,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, #{createBy,jdbcType=BIGINT}, 
-      #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP}
-      )
+      #{imgUrl,jdbcType=VARCHAR}, #{pageImgUrl,jdbcType=VARCHAR}, #{publishState,jdbcType=INTEGER}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -136,6 +137,9 @@
       </if>
       <if test="imgUrl != null">
         img_url,
+      </if>
+      <if test="pageImgUrl != null">
+        page_img_url,
       </if>
       <if test="publishState != null">
         publish_state,
@@ -165,6 +169,9 @@
       </if>
       <if test="imgUrl != null">
         #{imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pageImgUrl != null">
+        #{pageImgUrl,jdbcType=VARCHAR},
       </if>
       <if test="publishState != null">
         #{publishState,jdbcType=INTEGER},
@@ -207,6 +214,9 @@
       <if test="record.imgUrl != null">
         img_url = #{record.imgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="record.pageImgUrl != null">
+        page_img_url = #{record.pageImgUrl,jdbcType=VARCHAR},
+      </if>
       <if test="record.publishState != null">
         publish_state = #{record.publishState,jdbcType=INTEGER},
       </if>
@@ -234,6 +244,7 @@
       filter_content = #{record.filterContent,jdbcType=VARCHAR},
       seq = #{record.seq,jdbcType=INTEGER},
       img_url = #{record.imgUrl,jdbcType=VARCHAR},
+      page_img_url = #{record.pageImgUrl,jdbcType=VARCHAR},
       publish_state = #{record.publishState,jdbcType=INTEGER},
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
@@ -257,6 +268,9 @@
       </if>
       <if test="imgUrl != null">
         img_url = #{imgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="pageImgUrl != null">
+        page_img_url = #{pageImgUrl,jdbcType=VARCHAR},
       </if>
       <if test="publishState != null">
         publish_state = #{publishState,jdbcType=INTEGER},
@@ -282,6 +296,7 @@
       filter_content = #{filterContent,jdbcType=VARCHAR},
       seq = #{seq,jdbcType=INTEGER},
       img_url = #{imgUrl,jdbcType=VARCHAR},
+      page_img_url = #{pageImgUrl,jdbcType=VARCHAR},
       publish_state = #{publishState,jdbcType=INTEGER},
       create_by = #{createBy,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},

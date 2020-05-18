@@ -15,6 +15,8 @@ public class AmcSaleFloor {
 
     private String slogan;
 
+    private String pageImgUrl;
+
     private Date floorStartTime;
 
     private Date floorEndTime;
@@ -81,6 +83,14 @@ public class AmcSaleFloor {
 
     public void setSlogan(String slogan) {
         this.slogan = slogan == null ? null : slogan.trim();
+    }
+
+    public String getPageImgUrl() {
+        return pageImgUrl;
+    }
+
+    public void setPageImgUrl(String pageImgUrl) {
+        this.pageImgUrl = pageImgUrl == null ? null : pageImgUrl.trim();
     }
 
     public Date getFloorStartTime() {

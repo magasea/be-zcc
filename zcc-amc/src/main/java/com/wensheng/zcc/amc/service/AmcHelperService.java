@@ -32,6 +32,7 @@ public interface AmcHelperService {
 
   CurtInfo addCurt(CurtInfo curtInfo) throws Exception;
   List<CurtInfo> getAllCurts() throws Exception;
+  List<CurtInfo> getCurtByIds(List<Long> ids) throws Exception;
   boolean delCurt(Long curtId) throws Exception;
   boolean delCurtByQuery(QueryCurtParam queryCurtParam) throws Exception;
 

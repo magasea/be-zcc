@@ -13,6 +13,8 @@ public class AmcSaleMenu {
 
     private String imgUrl;
 
+    private String pageImgUrl;
+
     private Integer publishState;
 
     private Long createBy;
@@ -61,6 +63,14 @@ public class AmcSaleMenu {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl == null ? null : imgUrl.trim();
+    }
+
+    public String getPageImgUrl() {
+        return pageImgUrl;
+    }
+
+    public void setPageImgUrl(String pageImgUrl) {
+        this.pageImgUrl = pageImgUrl == null ? null : pageImgUrl.trim();
     }
 
     public Integer getPublishState() {

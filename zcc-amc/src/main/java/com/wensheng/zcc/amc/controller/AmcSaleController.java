@@ -159,6 +159,35 @@ public class AmcSaleController {
 
 
   }
+  @RequestMapping(value = "saleMenu/pageimage/add", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public AmcSaleMenu uploadSaleMenuPageImg(@RequestParam("saleMenuId") Long saleMenuId,
+      @RequestParam("images") MultipartFile uploadingImage) throws Exception {
+    if (saleMenuId == null || saleMenuId < 0) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("saleMenuId %s is not valid",
+          saleMenuId));
+    }
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    List<String> filePaths = new ArrayList<>();
+
+    try {
+      String filePath = amcOssFileService
+          .handleMultiPartFile(uploadingImage, saleMenuId, ImagePathClassEnum.SALEMENUPAGE.getName());
+      String ossPath = amcOssFileService.handleFile2Oss(filePath, amcSaleService.getSaleMenuPrepath(saleMenuId));
+      return amcSaleService.updateSaleMenuPageImage(saleMenuId, ossPath);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
+    }
+
+
+
+
+
+  }
 
 
   @RequestMapping(value = "/getMenuPage", method = RequestMethod.POST)
@@ -235,6 +264,31 @@ public class AmcSaleController {
     }
   }
 
+  @RequestMapping(value = "saleBanner/pageimage/add", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public AmcSaleBanner uploadSaleBannerPageImg(@RequestParam("saleBannerId") Long saleBannerId,
+      @RequestParam("images") MultipartFile uploadingImage) throws Exception {
+    if (saleBannerId == null || saleBannerId < 0) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("saleMenuId %s is not valid",
+          saleBannerId));
+    }
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    List<String> filePaths = new ArrayList<>();
+
+    try {
+      String filePath = amcOssFileService
+          .handleMultiPartFile(uploadingImage, saleBannerId, ImagePathClassEnum.SALEBANNERPAGE.getName());
+      String ossPath = amcOssFileService.handleFile2Oss(filePath, amcSaleService.getSaleBannerPrepath(saleBannerId));
+      return amcSaleService.updateSaleBannerPageImage(saleBannerId, ossPath);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
+    }
+  }
+
   @RequestMapping(value = "/getBannerPage", method = RequestMethod.POST)
   @ResponseBody
   AmcSaleBannerPageVo getBannerPage( @RequestBody Long bannerId ) throws Exception {
@@ -284,5 +338,35 @@ public class AmcSaleController {
   @ResponseBody
   AmcSaleWatchonPageVo getUserFavorPageByOpenId( @RequestBody String openId) throws Exception {
     return amcSaleService.getUserFavorPage(openId);
+  }
+
+  @RequestMapping(value = "salefloor/pageimage/add", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public AmcSaleFloor uploadSaleFloorPageImg(@RequestParam("saleMenuId") Long saleMenuId,
+      @RequestParam("images") MultipartFile uploadingImage) throws Exception {
+    if (saleMenuId == null || saleMenuId < 0) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("saleMenuId %s is not valid",
+          saleMenuId));
+    }
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    List<String> filePaths = new ArrayList<>();
+
+    try {
+      String filePath = amcOssFileService
+          .handleMultiPartFile(uploadingImage, saleMenuId, ImagePathClassEnum.SALEFLOORPAGE.getName());
+      String ossPath = amcOssFileService.handleFile2Oss(filePath, amcSaleService.getSaleMenuPrepath(saleMenuId));
+      return amcSaleService.updateSaleFloorPageImage(saleMenuId, ossPath);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
+    }
+
+
+
+
+
   }
 }

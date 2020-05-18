@@ -85,6 +85,16 @@ public class AmcHelperServiceImpl implements AmcHelperService {
   }
 
   @Override
+  @Cacheable
+  @LogExecutionTime
+  public List<CurtInfo> getCurtByIds(List<Long> ids) throws Exception {
+    CurtInfoExample curtInfoExample = new CurtInfoExample();
+    curtInfoExample.createCriteria().andIdIn(ids);
+    return curtInfoMapper.selectByExample(curtInfoExample);
+
+  }
+
+  @Override
   public boolean delCurt(Long curtId) throws Exception {
     curtInfoMapper.deleteByPrimaryKey(curtId);
     return true;

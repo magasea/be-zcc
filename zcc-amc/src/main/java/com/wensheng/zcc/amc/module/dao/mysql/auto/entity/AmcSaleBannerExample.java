@@ -445,6 +445,76 @@ public class AmcSaleBannerExample {
             return (Criteria) this;
         }
 
+        public Criteria andPageImgUrlIsNull() {
+            addCriterion("page_img_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlIsNotNull() {
+            addCriterion("page_img_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlEqualTo(String value) {
+            addCriterion("page_img_url =", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlNotEqualTo(String value) {
+            addCriterion("page_img_url <>", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlGreaterThan(String value) {
+            addCriterion("page_img_url >", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("page_img_url >=", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlLessThan(String value) {
+            addCriterion("page_img_url <", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlLessThanOrEqualTo(String value) {
+            addCriterion("page_img_url <=", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlLike(String value) {
+            addCriterion("page_img_url like", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlNotLike(String value) {
+            addCriterion("page_img_url not like", value, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlIn(List<String> values) {
+            addCriterion("page_img_url in", values, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlNotIn(List<String> values) {
+            addCriterion("page_img_url not in", values, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlBetween(String value1, String value2) {
+            addCriterion("page_img_url between", value1, value2, "pageImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andPageImgUrlNotBetween(String value1, String value2) {
+            addCriterion("page_img_url not between", value1, value2, "pageImgUrl");
+            return (Criteria) this;
+        }
+
         public Criteria andLinkTypeIsNull() {
             addCriterion("link_type is null");
             return (Criteria) this;

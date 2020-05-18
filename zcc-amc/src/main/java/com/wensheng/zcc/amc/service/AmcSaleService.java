@@ -66,7 +66,10 @@ public interface AmcSaleService {
 
     AmcSaleMenu updateSaleMenuImage(Long saleMenuId, String ossPath);
 
+  AmcSaleMenu updateSaleMenuPageImage(Long saleMenuId, String ossPath);
+
     AmcSaleBanner updateSaleBannerImage(Long saleBannerId, String ossPath);
+  AmcSaleBanner updateSaleBannerPageImage(Long saleBannerId, String ossPath);
 
     AmcSaleHomePage getAmcSaleHome() throws Exception;
 
@@ -96,4 +99,6 @@ public interface AmcSaleService {
         throws Exception;
 
     AmcSaleWatchonPageVo getUserFavorPage(String openId) throws Exception;
+
+  AmcSaleFloor updateSaleFloorPageImage(Long saleFloorId, String ossPath);
 }

@@ -72,6 +72,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -617,6 +618,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
       amcDebtVos.add(amcDebtVo);
     }
+    updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
     return amcDebtVos;
   }
 
@@ -1425,8 +1427,26 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcDebtVos.add(convertDo2Vo(amcDebtExt));
     }
 
-     updateDebtVosWithMongoFixOrder(amcDebtVos);
+    updateDebtVosWithMongoFixOrder(amcDebtVos);
+    updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
     return amcDebtVos;
+  }
+
+  private void updateDebtVosWithCurtInfoFixOrder(List<AmcDebtVo> amcDebtVos) throws Exception {
+    if(CollectionUtils.isEmpty(amcDebtVos)){
+      return;
+    }
+    List<CurtInfo> curtInfos =
+amcHelperService.getCurtByIds(amcDebtVos.stream().map(item->item.getCourtId()).collect(Collectors.toUnmodifiableList()));
+    if(CollectionUtils.isEmpty(curtInfos)){
+      return;
+    }
+    Map<Long, String> curtId2NameMap = curtInfos.stream().collect(Collectors.toMap(item-> item.getId(), item-> item.getCurtName()));
+    for(AmcDebtVo amcDebtVo: amcDebtVos){
+      if(curtId2NameMap.containsKey(amcDebtVo.getCourtId())){
+        amcDebtVo.setCourtName(curtId2NameMap.get(amcDebtVo.getCourtId()));
+      }
+    }
   }
 
   private void updateDebtVosWithMongoFixOrder(List<AmcDebtVo> amcDebtVos){

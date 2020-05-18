@@ -193,6 +193,14 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
             new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEMENU.getName()+
                 File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
+
+      case "salemenupage":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEMENUPAGE.getName()+
+            File.separator +id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEMENUPAGE.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
       case "salebanner":
         SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNER.getName()+
             File.separator + id);
@@ -200,8 +208,23 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
             new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNER.getName()+
                 File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
-        default:
-          throw new Exception("type"+type + "is not debt or asset or sale");
+
+      case "salebannerpage":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNERPAGE.getName()+
+            File.separator + id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNERPAGE.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
+      case "salefloorpage":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
+            File.separator + id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
+      default:
+        throw new Exception("type"+type + "is not debt or asset or sale");
     }
 
     multipartFile.transferTo(targetFile);

@@ -57,6 +57,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
@@ -171,6 +172,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Transactional
     public boolean updateFloor(AmcSaleFloorVo amcSaleFloorVo) throws Exception {
         checkFilterContent(amcSaleFloorVo);
         amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloorVo.getAmcSaleFloor());
@@ -178,9 +180,11 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Transactional
     public boolean updateFloorSeq(List<Long> floorIds) throws Exception {
+        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
         for(int idx = 1; idx <= floorIds.size(); idx++){
-            AmcSaleFloor amcSaleFloor =  amcSaleFloorMapper.selectByPrimaryKey(floorIds.get(idx-1));
+            amcSaleFloor.setId(floorIds.get(idx-1));
             amcSaleFloor.setFloorSeq(idx);
             amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloor);
         }
@@ -339,6 +343,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Transactional
     public boolean updateFloorFilter(Long floorId, AmcSaleFilter amcSaleFilter) {
         AmcSaleFloor amcSaleFloor = amcSaleFloorMapper.selectByPrimaryKey(floorId);
         if(amcSaleFloor == null ){
@@ -356,6 +361,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Transactional
     public boolean updateFloorBasic(AmcSaleFloor amcSaleFloor) {
         amcSaleFloor.setFilterContent(null);
         amcSaleFloor.setRecomItems(null);
@@ -430,15 +436,18 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Transactional
     public AmcSaleMenu updateSaleMenu(AmcSaleMenu amcSaleMenu) {
         amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
         return amcSaleMenu;
     }
 
     @Override
+    @Transactional
     public boolean updateSaleMenuSeq(List<Long> menuIds) {
+        AmcSaleMenu amcSaleMenu = new AmcSaleMenu();
         for(int idx = 1; idx <= menuIds.size(); idx++){
-            AmcSaleMenu amcSaleMenu =  amcSaleMenuMapper.selectByPrimaryKey(menuIds.get(idx-1));
+            amcSaleMenu.setId(menuIds.get(idx-1));
             amcSaleMenu.setSeq(idx);
             amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
         }
@@ -494,17 +503,22 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
 
     @Override
+    @Transactional
     public AmcSaleBanner updateSaleBanner(AmcSaleBanner amcSaleBanner) {
         amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
         return amcSaleBanner;
     }
 
     @Override
+    @Transactional
     public boolean updateBannerSeq(List<Long> bannerIds) {
+        AmcSaleBanner amcSaleBanner = new AmcSaleBanner();
         for(int idx = 1; idx <= bannerIds.size(); idx++){
-            AmcSaleBanner amcSaleBanner =  amcSaleBannerMapper.selectByPrimaryKey(bannerIds.get(idx-1));
+
             amcSaleBanner.setSeq(idx);
+            amcSaleBanner.setId(bannerIds.get(idx-1));
             amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
+
         }
         return true;
     }
@@ -550,7 +564,13 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
         return amcSaleMenu;
     }
-
+    @Override
+    public AmcSaleMenu updateSaleMenuPageImage(Long saleMenuId, String ossPath) {
+        AmcSaleMenu amcSaleMenu =  amcSaleMenuMapper.selectByPrimaryKey(saleMenuId);
+        amcSaleMenu.setPageImgUrl(ossPath);
+        amcSaleMenuMapper.updateByPrimaryKeySelective(amcSaleMenu);
+        return amcSaleMenu;
+    }
     @Override
     public AmcSaleBanner updateSaleBannerImage(Long saleBannerId, String ossPath) {
         AmcSaleBanner amcSaleBanner = amcSaleBannerMapper.selectByPrimaryKey(saleBannerId);
@@ -559,7 +579,14 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         return amcSaleBanner;
 
     }
+    @Override
+    public AmcSaleBanner updateSaleBannerPageImage(Long saleBannerId, String ossPath) {
+        AmcSaleBanner amcSaleBanner = amcSaleBannerMapper.selectByPrimaryKey(saleBannerId);
+        amcSaleBanner.setPageImgUrl(ossPath);
+        amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
+        return amcSaleBanner;
 
+    }
     @Override
     public AmcSaleHomePage getAmcSaleHome() throws Exception {
         AmcSaleHomePage amcSaleHomePage = new AmcSaleHomePage();
@@ -825,6 +852,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
 
     @Override
+    @Transactional
     public AmcSaleMenuVo updateSaleMenuVo(AmcSaleMenuVo amcSaleMenuVo) throws Exception {
         boolean hasFilter = false;
         if(amcSaleMenuVo.getAmcSaleFilter().getFilterAsset() != null){
@@ -847,6 +875,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Transactional
     public AmcSaleBannerVo updateSaleBannerWithFilter(AmcSaleBannerVo amcSaleBannerVo)
         throws Exception {
         if(amcSaleBannerVo.getAmcSaleFilter() != null){
@@ -884,6 +913,12 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         List<AmcAssetVo> amcAssetVos = amcAssetService.getFloorFilteredAsset(filterAsset);
         return amcAssetVos;
     }
-
+    @Override
+    public AmcSaleFloor updateSaleFloorPageImage(Long saleFloorId, String ossPath) {
+        AmcSaleFloor amcSaleFloor =  amcSaleFloorMapper.selectByPrimaryKey(saleFloorId);
+        amcSaleFloor.setPageImgUrl(ossPath);
+        amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloor);
+        return amcSaleFloor;
+    }
 
 }

@@ -18,7 +18,7 @@ public class CaffeineConfig {
     CaffeineCache debtPack = buildCache("DEBTPACK", ticker, 2);
     CaffeineCache debt = buildCache("DEBT", ticker, 2);
     CaffeineCache asset = buildCache("ASSET", ticker, 2);
-    CaffeineCache court = buildCache("COURT", ticker, 2);
+    CaffeineCache court = buildCache("COURT", ticker, 20);
     CaffeineCache floor = buildCache("FLOOR", ticker, 2);
 
 //    CaffeineCache notificationCache = buildCache("notifications", ticker, 60);

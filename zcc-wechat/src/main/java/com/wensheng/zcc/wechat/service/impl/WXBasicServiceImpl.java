@@ -68,6 +68,7 @@ public class WXBasicServiceImpl implements WXBasicService {
     restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
   }
 
+  @Override
   public String checkWechatResp(Long timeStamp, String nonce, String echoStr, String signature)
       throws AesException {
 

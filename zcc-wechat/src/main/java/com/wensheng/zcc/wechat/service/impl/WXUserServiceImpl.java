@@ -17,6 +17,7 @@ import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
+import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.GeneralResp;
 import com.wensheng.zcc.wechat.module.vo.TagCreate;
 import com.wensheng.zcc.wechat.module.vo.TagDel;
@@ -554,6 +555,11 @@ public class WXUserServiceImpl implements WXUserService {
     }
     if(code.equals(wechatUsers.get(0).getVerifyCode())){
       wechatUsers.get(0).setMobile(phone);
+      wechatUsers.get(0).setVerifyCode("-1");
+      wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
+    }else{
+      wechatUsers.get(0).setMobile("-1");
+
       wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
     }
 
@@ -746,6 +752,36 @@ public class WXUserServiceImpl implements WXUserService {
   public AmcRegionInfo getUserLocation(UserLngLat userLngLat) {
     return comnfuncGrpcService.getRegionInfo(userLngLat);
 
+  }
+
+  @Override
+  public AmcWechatUserInfo getUserInfo(String openId) {
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      return null;
+    }else{
+      AmcWechatUserInfo amcWechatUserInfo = new AmcWechatUserInfo();
+      if(!wechatUsers.get(0).getVerifyCode().equals("-1") && !wechatUsers.get(0).getMobile().equals("-1")){
+        log.error("user:{} havent finish verify mobile:{}", wechatUsers.get(0).getOpenId(), wechatUsers.get(0).getMobile());
+        wechatUsers.get(0).setMobile(null);
+      }
+      amcWechatUserInfo.setWechatUser(wechatUsers.get(0));
+      Query query = new Query();
+      query.addCriteria(Criteria.where("openId").is(openId));
+
+      List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+
+      List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+      if(!CollectionUtils.isEmpty(wxUserWatchObjects)){
+        amcWechatUserInfo.setWxUserWatchObjectList(wxUserWatchObjects);
+      }
+      if(!CollectionUtils.isEmpty(wxUserFavors)){
+        amcWechatUserInfo.setWxUserFavor(wxUserFavors.get(0));
+      }
+      return amcWechatUserInfo;
+    }
   }
 
 

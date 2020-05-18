@@ -9,6 +9,10 @@ public enum ImagePathClassEnum {
   ASSET(2, "asset"),
   SALEMENU(3, "salemenu"),
   SALEBANNER(4, "salebanner"),
+  SALEMENUPAGE(5, "salemenupage"),
+  SALEBANNERPAGE(6, "salebannerpage"),
+
+  SALEFLOORPAGE(6, "salefloorpage"),
   ;
   int id;
   String name;

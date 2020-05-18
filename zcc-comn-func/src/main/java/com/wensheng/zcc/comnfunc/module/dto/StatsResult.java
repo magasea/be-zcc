@@ -14,10 +14,10 @@ public class StatsResult{
 	private List<String> city;
 
 	@SerializedName("county")
-	private List<Long> county;
+	private List<String> county;
 
 	@SerializedName("township")
-	private List<Long> township;
+	private List<String> township;
 
 
 

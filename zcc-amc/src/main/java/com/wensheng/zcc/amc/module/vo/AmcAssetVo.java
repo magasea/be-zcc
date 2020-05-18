@@ -78,6 +78,10 @@ public class AmcAssetVo {
 
   private String note;
 
+  private Long visitCount;
+
+  private Integer hasImg;
+
 //  private AmcDebtContactor amcContactorId;
 
   AssetAdditional assetAdditional;

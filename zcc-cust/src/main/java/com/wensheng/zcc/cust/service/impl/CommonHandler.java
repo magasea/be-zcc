@@ -1,13 +1,23 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
+
+@Component
 public class CommonHandler {
+  @Autowired
+  CustTrdCmpyMapper custTrdCmpyMapper;
 
   private static RestTemplate restTemplate;
 
@@ -24,6 +34,37 @@ public class CommonHandler {
       }
     }
     return restTemplate;
+  }
+
+  /**
+   *根据公司名称查询,是否已经有该公司。
+   * @return
+   */
+  public List<CustTrdCmpy> queryCmpyByName(String cmpyName){
+    //按照公司名称和公司历史名称进行查询
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyName);
+    custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",cmpyName,"%"));
+    List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+    List<CustTrdCmpy> custTrdCmpyList = new ArrayList<>();
+    for (CustTrdCmpy custTrdCmpy : custTrdCmpies) {
+      if(cmpyName.equals(custTrdCmpy.getCmpyName())){
+        custTrdCmpyList.add(custTrdCmpy);
+        continue;
+      }
+      String[] cmpyNameHistoryArray =custTrdCmpy.getCmpyNameHistory().split(";");
+      boolean match =false;
+      for (int i = 0; i < cmpyNameHistoryArray.length; i++) {
+        if(cmpyName.equals(cmpyNameHistoryArray[i])){
+          match =true;
+          continue;
+        }
+      }
+      if(match){
+        custTrdCmpyList.add(custTrdCmpy);
+      }
+    }
+    return custTrdCmpyList;
   }
 
 

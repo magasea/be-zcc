@@ -110,6 +110,19 @@ public class AmcContactorServiceImpl implements AmcContactorService {
               custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
     }
 
+    //first check name and phone unique
+    List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorBymobileList(custAmcCmpycontactor);
+    if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
+      //cannot insert
+      log.error("There is already person name:{} company name:{} phone:{} reject insert",
+          custAmcCmpycontactor.getName(),
+          custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
+      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format("已经 "
+              + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
+          custAmcCmpycontactor.getName(),
+          custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+    }
+
     //手机号放在mobileUpdate
     if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
       custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());

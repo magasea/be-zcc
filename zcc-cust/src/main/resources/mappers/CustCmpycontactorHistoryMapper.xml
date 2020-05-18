@@ -1,0 +1,621 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustCmpycontactorHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cmpycontactor_id" jdbcType="BIGINT" property="cmpycontactorId" />
+    <result column="name" jdbcType="CHAR" property="name" />
+    <result column="phone" jdbcType="CHAR" property="phone" />
+    <result column="mobile" jdbcType="CHAR" property="mobile" />
+    <result column="trd_phone" jdbcType="CHAR" property="trdPhone" />
+    <result column="mobile_update" jdbcType="CHAR" property="mobileUpdate" />
+    <result column="mobile_prep" jdbcType="CHAR" property="mobilePrep" />
+    <result column="mobile_history" jdbcType="CHAR" property="mobileHistory" />
+    <result column="phone_update" jdbcType="CHAR" property="phoneUpdate" />
+    <result column="phone_prep" jdbcType="CHAR" property="phonePrep" />
+    <result column="phone_history" jdbcType="CHAR" property="phoneHistory" />
+    <result column="province" jdbcType="CHAR" property="province" />
+    <result column="city" jdbcType="CHAR" property="city" />
+    <result column="county" jdbcType="CHAR" property="county" />
+    <result column="address" jdbcType="CHAR" property="address" />
+    <result column="title" jdbcType="CHAR" property="title" />
+    <result column="cmpy_id" jdbcType="BIGINT" property="cmpyId" />
+    <result column="company" jdbcType="CHAR" property="company" />
+    <result column="branch_cmpy" jdbcType="CHAR" property="branchCmpy" />
+    <result column="history_cmpy" jdbcType="CHAR" property="historyCmpy" />
+    <result column="recorder_name" jdbcType="CHAR" property="recorderName" />
+    <result column="favorite_city_update" jdbcType="CHAR" property="favoriteCityUpdate" />
+    <result column="favorite_type_update" jdbcType="CHAR" property="favoriteTypeUpdate" />
+    <result column="fav_type_note" jdbcType="CHAR" property="favTypeNote" />
+    <result column="note" jdbcType="CHAR" property="note" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, cmpycontactor_id, name, phone, mobile, trd_phone, mobile_update, mobile_prep, 
+    mobile_history, phone_update, phone_prep, phone_history, province, city, county, 
+    address, title, cmpy_id, company, branch_cmpy, history_cmpy, recorder_name, favorite_city_update, 
+    favorite_type_update, fav_type_note, note, create_by, create_time, update_by, update_time
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_CMPYCONTACTOR_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_CMPYCONTACTOR_HISTORY
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from CUST_CMPYCONTACTOR_HISTORY
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample">
+    delete from CUST_CMPYCONTACTOR_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into CUST_CMPYCONTACTOR_HISTORY (cmpycontactor_id, name, phone, 
+      mobile, trd_phone, mobile_update, 
+      mobile_prep, mobile_history, phone_update, 
+      phone_prep, phone_history, province, 
+      city, county, address, title, 
+      cmpy_id, company, branch_cmpy, 
+      history_cmpy, recorder_name, favorite_city_update, 
+      favorite_type_update, fav_type_note, note, 
+      create_by, create_time, update_by, 
+      update_time)
+    values (#{cmpycontactorId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{phone,jdbcType=CHAR}, 
+      #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, #{mobileUpdate,jdbcType=CHAR}, 
+      #{mobilePrep,jdbcType=CHAR}, #{mobileHistory,jdbcType=CHAR}, #{phoneUpdate,jdbcType=CHAR}, 
+      #{phonePrep,jdbcType=CHAR}, #{phoneHistory,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{title,jdbcType=CHAR}, 
+      #{cmpyId,jdbcType=BIGINT}, #{company,jdbcType=CHAR}, #{branchCmpy,jdbcType=CHAR}, 
+      #{historyCmpy,jdbcType=CHAR}, #{recorderName,jdbcType=CHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, 
+      #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{note,jdbcType=CHAR}, 
+      #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into CUST_CMPYCONTACTOR_HISTORY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cmpycontactorId != null">
+        cmpycontactor_id,
+      </if>
+      <if test="name != null">
+        name,
+      </if>
+      <if test="phone != null">
+        phone,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="trdPhone != null">
+        trd_phone,
+      </if>
+      <if test="mobileUpdate != null">
+        mobile_update,
+      </if>
+      <if test="mobilePrep != null">
+        mobile_prep,
+      </if>
+      <if test="mobileHistory != null">
+        mobile_history,
+      </if>
+      <if test="phoneUpdate != null">
+        phone_update,
+      </if>
+      <if test="phonePrep != null">
+        phone_prep,
+      </if>
+      <if test="phoneHistory != null">
+        phone_history,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="county != null">
+        county,
+      </if>
+      <if test="address != null">
+        address,
+      </if>
+      <if test="title != null">
+        title,
+      </if>
+      <if test="cmpyId != null">
+        cmpy_id,
+      </if>
+      <if test="company != null">
+        company,
+      </if>
+      <if test="branchCmpy != null">
+        branch_cmpy,
+      </if>
+      <if test="historyCmpy != null">
+        history_cmpy,
+      </if>
+      <if test="recorderName != null">
+        recorder_name,
+      </if>
+      <if test="favoriteCityUpdate != null">
+        favorite_city_update,
+      </if>
+      <if test="favoriteTypeUpdate != null">
+        favorite_type_update,
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cmpycontactorId != null">
+        #{cmpycontactorId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        #{name,jdbcType=CHAR},
+      </if>
+      <if test="phone != null">
+        #{phone,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="trdPhone != null">
+        #{trdPhone,jdbcType=CHAR},
+      </if>
+      <if test="mobileUpdate != null">
+        #{mobileUpdate,jdbcType=CHAR},
+      </if>
+      <if test="mobilePrep != null">
+        #{mobilePrep,jdbcType=CHAR},
+      </if>
+      <if test="mobileHistory != null">
+        #{mobileHistory,jdbcType=CHAR},
+      </if>
+      <if test="phoneUpdate != null">
+        #{phoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="phonePrep != null">
+        #{phonePrep,jdbcType=CHAR},
+      </if>
+      <if test="phoneHistory != null">
+        #{phoneHistory,jdbcType=CHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=CHAR},
+      </if>
+      <if test="county != null">
+        #{county,jdbcType=CHAR},
+      </if>
+      <if test="address != null">
+        #{address,jdbcType=CHAR},
+      </if>
+      <if test="title != null">
+        #{title,jdbcType=CHAR},
+      </if>
+      <if test="cmpyId != null">
+        #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="company != null">
+        #{company,jdbcType=CHAR},
+      </if>
+      <if test="branchCmpy != null">
+        #{branchCmpy,jdbcType=CHAR},
+      </if>
+      <if test="historyCmpy != null">
+        #{historyCmpy,jdbcType=CHAR},
+      </if>
+      <if test="recorderName != null">
+        #{recorderName,jdbcType=CHAR},
+      </if>
+      <if test="favoriteCityUpdate != null">
+        #{favoriteCityUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favoriteTypeUpdate != null">
+        #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultType="java.lang.Long">
+    select count(*) from CUST_CMPYCONTACTOR_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update CUST_CMPYCONTACTOR_HISTORY
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.cmpycontactorId != null">
+        cmpycontactor_id = #{record.cmpycontactorId,jdbcType=BIGINT},
+      </if>
+      <if test="record.name != null">
+        name = #{record.name,jdbcType=CHAR},
+      </if>
+      <if test="record.phone != null">
+        phone = #{record.phone,jdbcType=CHAR},
+      </if>
+      <if test="record.mobile != null">
+        mobile = #{record.mobile,jdbcType=CHAR},
+      </if>
+      <if test="record.trdPhone != null">
+        trd_phone = #{record.trdPhone,jdbcType=CHAR},
+      </if>
+      <if test="record.mobileUpdate != null">
+        mobile_update = #{record.mobileUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.mobilePrep != null">
+        mobile_prep = #{record.mobilePrep,jdbcType=CHAR},
+      </if>
+      <if test="record.mobileHistory != null">
+        mobile_history = #{record.mobileHistory,jdbcType=CHAR},
+      </if>
+      <if test="record.phoneUpdate != null">
+        phone_update = #{record.phoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.phonePrep != null">
+        phone_prep = #{record.phonePrep,jdbcType=CHAR},
+      </if>
+      <if test="record.phoneHistory != null">
+        phone_history = #{record.phoneHistory,jdbcType=CHAR},
+      </if>
+      <if test="record.province != null">
+        province = #{record.province,jdbcType=CHAR},
+      </if>
+      <if test="record.city != null">
+        city = #{record.city,jdbcType=CHAR},
+      </if>
+      <if test="record.county != null">
+        county = #{record.county,jdbcType=CHAR},
+      </if>
+      <if test="record.address != null">
+        address = #{record.address,jdbcType=CHAR},
+      </if>
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=CHAR},
+      </if>
+      <if test="record.cmpyId != null">
+        cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.company != null">
+        company = #{record.company,jdbcType=CHAR},
+      </if>
+      <if test="record.branchCmpy != null">
+        branch_cmpy = #{record.branchCmpy,jdbcType=CHAR},
+      </if>
+      <if test="record.historyCmpy != null">
+        history_cmpy = #{record.historyCmpy,jdbcType=CHAR},
+      </if>
+      <if test="record.recorderName != null">
+        recorder_name = #{record.recorderName,jdbcType=CHAR},
+      </if>
+      <if test="record.favoriteCityUpdate != null">
+        favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.favoriteTypeUpdate != null">
+        favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.favTypeNote != null">
+        fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=CHAR},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update CUST_CMPYCONTACTOR_HISTORY
+    set id = #{record.id,jdbcType=BIGINT},
+      cmpycontactor_id = #{record.cmpycontactorId,jdbcType=BIGINT},
+      name = #{record.name,jdbcType=CHAR},
+      phone = #{record.phone,jdbcType=CHAR},
+      mobile = #{record.mobile,jdbcType=CHAR},
+      trd_phone = #{record.trdPhone,jdbcType=CHAR},
+      mobile_update = #{record.mobileUpdate,jdbcType=CHAR},
+      mobile_prep = #{record.mobilePrep,jdbcType=CHAR},
+      mobile_history = #{record.mobileHistory,jdbcType=CHAR},
+      phone_update = #{record.phoneUpdate,jdbcType=CHAR},
+      phone_prep = #{record.phonePrep,jdbcType=CHAR},
+      phone_history = #{record.phoneHistory,jdbcType=CHAR},
+      province = #{record.province,jdbcType=CHAR},
+      city = #{record.city,jdbcType=CHAR},
+      county = #{record.county,jdbcType=CHAR},
+      address = #{record.address,jdbcType=CHAR},
+      title = #{record.title,jdbcType=CHAR},
+      cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
+      company = #{record.company,jdbcType=CHAR},
+      branch_cmpy = #{record.branchCmpy,jdbcType=CHAR},
+      history_cmpy = #{record.historyCmpy,jdbcType=CHAR},
+      recorder_name = #{record.recorderName,jdbcType=CHAR},
+      favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
+      favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      note = #{record.note,jdbcType=CHAR},
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
+    update CUST_CMPYCONTACTOR_HISTORY
+    <set>
+      <if test="cmpycontactorId != null">
+        cmpycontactor_id = #{cmpycontactorId,jdbcType=BIGINT},
+      </if>
+      <if test="name != null">
+        name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="phone != null">
+        phone = #{phone,jdbcType=CHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="trdPhone != null">
+        trd_phone = #{trdPhone,jdbcType=CHAR},
+      </if>
+      <if test="mobileUpdate != null">
+        mobile_update = #{mobileUpdate,jdbcType=CHAR},
+      </if>
+      <if test="mobilePrep != null">
+        mobile_prep = #{mobilePrep,jdbcType=CHAR},
+      </if>
+      <if test="mobileHistory != null">
+        mobile_history = #{mobileHistory,jdbcType=CHAR},
+      </if>
+      <if test="phoneUpdate != null">
+        phone_update = #{phoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="phonePrep != null">
+        phone_prep = #{phonePrep,jdbcType=CHAR},
+      </if>
+      <if test="phoneHistory != null">
+        phone_history = #{phoneHistory,jdbcType=CHAR},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=CHAR},
+      </if>
+      <if test="county != null">
+        county = #{county,jdbcType=CHAR},
+      </if>
+      <if test="address != null">
+        address = #{address,jdbcType=CHAR},
+      </if>
+      <if test="title != null">
+        title = #{title,jdbcType=CHAR},
+      </if>
+      <if test="cmpyId != null">
+        cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="company != null">
+        company = #{company,jdbcType=CHAR},
+      </if>
+      <if test="branchCmpy != null">
+        branch_cmpy = #{branchCmpy,jdbcType=CHAR},
+      </if>
+      <if test="historyCmpy != null">
+        history_cmpy = #{historyCmpy,jdbcType=CHAR},
+      </if>
+      <if test="recorderName != null">
+        recorder_name = #{recorderName,jdbcType=CHAR},
+      </if>
+      <if test="favoriteCityUpdate != null">
+        favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favoriteTypeUpdate != null">
+        favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=CHAR},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
+    update CUST_CMPYCONTACTOR_HISTORY
+    set cmpycontactor_id = #{cmpycontactorId,jdbcType=BIGINT},
+      name = #{name,jdbcType=CHAR},
+      phone = #{phone,jdbcType=CHAR},
+      mobile = #{mobile,jdbcType=CHAR},
+      trd_phone = #{trdPhone,jdbcType=CHAR},
+      mobile_update = #{mobileUpdate,jdbcType=CHAR},
+      mobile_prep = #{mobilePrep,jdbcType=CHAR},
+      mobile_history = #{mobileHistory,jdbcType=CHAR},
+      phone_update = #{phoneUpdate,jdbcType=CHAR},
+      phone_prep = #{phonePrep,jdbcType=CHAR},
+      phone_history = #{phoneHistory,jdbcType=CHAR},
+      province = #{province,jdbcType=CHAR},
+      city = #{city,jdbcType=CHAR},
+      county = #{county,jdbcType=CHAR},
+      address = #{address,jdbcType=CHAR},
+      title = #{title,jdbcType=CHAR},
+      cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      company = #{company,jdbcType=CHAR},
+      branch_cmpy = #{branchCmpy,jdbcType=CHAR},
+      history_cmpy = #{historyCmpy,jdbcType=CHAR},
+      recorder_name = #{recorderName,jdbcType=CHAR},
+      favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
+      favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      note = #{note,jdbcType=CHAR},
+      create_by = #{createBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_CMPYCONTACTOR_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

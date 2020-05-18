@@ -5,11 +5,13 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustCmpycontactorHistoryMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustAmcCmpycontactorExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -41,6 +43,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Autowired
   CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
+
+  @Autowired
+  CustCmpycontactorHistoryMapper custCmpycontactorHistoryMapper;
 
   @Autowired
   CustTrdCmpyMapper custTrdCmpyMapper;
@@ -171,6 +176,14 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
     }
 
+    //创建历史信息
+    CustCmpycontactorHistory custCmpycontactorHistory = new CustCmpycontactorHistory();
+    AmcBeanUtils.copyProperties(originalCmpycontactor, custCmpycontactorHistory);
+    custCmpycontactorHistory.setCmpyId(originalCmpycontactor.getId());
+    custCmpycontactorHistory.setId(null);
+    custCmpycontactorHistory.setCreateBy(custAmcCmpycontactor.getUpdateBy());
+    custCmpycontactorHistory.setCreateTime(new Date());
+    custCmpycontactorHistoryMapper.insertSelective(custCmpycontactorHistory);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
   }
 

@@ -120,6 +120,7 @@ public class KafkaServiceImpl {
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
     if(custTrdCmpyList.get(0).getCmpyNameUpdate().equals(cmpyBizInfoResult.getCmpyName())){
       custTrdCmpy.setCmpyName(custTrdCmpy.getCmpyName());
+      custTrdCmpy.setCmpyNameHistory("-1");
       custTrdCmpy.setCrawledStatus("-1");
     }
 

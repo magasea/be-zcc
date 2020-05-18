@@ -1,0 +1,607 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="cmpy_id" jdbcType="BIGINT" property="cmpyId" />
+    <result column="cmpy_name" jdbcType="CHAR" property="cmpyName" />
+    <result column="cmpy_name_history" jdbcType="VARCHAR" property="cmpyNameHistory" />
+    <result column="uni_social_code" jdbcType="VARCHAR" property="uniSocialCode" />
+    <result column="legal_reptive" jdbcType="VARCHAR" property="legalReptive" />
+    <result column="cmpy_phone" jdbcType="CHAR" property="cmpyPhone" />
+    <result column="cmpy_phone_update" jdbcType="CHAR" property="cmpyPhoneUpdate" />
+    <result column="history_cmpy_phone" jdbcType="VARCHAR" property="historyCmpyPhone" />
+    <result column="cmpy_province" jdbcType="CHAR" property="cmpyProvince" />
+    <result column="cmpy_addr" jdbcType="VARCHAR" property="cmpyAddr" />
+    <result column="cmpy_addr_update" jdbcType="VARCHAR" property="cmpyAddrUpdate" />
+    <result column="history_cmpy_addr" jdbcType="VARCHAR" property="historyCmpyAddr" />
+    <result column="annu_rept_phone" jdbcType="CHAR" property="annuReptPhone" />
+    <result column="annu_rept_addr" jdbcType="VARCHAR" property="annuReptAddr" />
+    <result column="favorite_city_update" jdbcType="CHAR" property="favoriteCityUpdate" />
+    <result column="favorite_type_update" jdbcType="CHAR" property="favoriteTypeUpdate" />
+    <result column="fav_type_note" jdbcType="CHAR" property="favTypeNote" />
+    <result column="cmpy_type" jdbcType="INTEGER" property="cmpyType" />
+    <result column="note" jdbcType="CHAR" property="note" />
+    <result column="data_status" jdbcType="INTEGER" property="dataStatus" />
+    <result column="data_quality" jdbcType="INTEGER" property="dataQuality" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
+    <result column="sync_time" jdbcType="TIMESTAMP" property="syncTime" />
+    <result column="cmpy_name_update" jdbcType="VARCHAR" property="cmpyNameUpdate" />
+    <result column="crawled_status" jdbcType="VARCHAR" property="crawledStatus" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, cmpy_id, cmpy_name, cmpy_name_history, uni_social_code, legal_reptive, cmpy_phone, 
+    cmpy_phone_update, history_cmpy_phone, cmpy_province, cmpy_addr, cmpy_addr_update, 
+    history_cmpy_addr, annu_rept_phone, annu_rept_addr, favorite_city_update, favorite_type_update, 
+    fav_type_note, cmpy_type, note, data_status, data_quality, update_time, update_by, 
+    create_time, create_by, sync_time, cmpy_name_update, crawled_status
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistoryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_TRD_CMPY_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_TRD_CMPY_HISTORY
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from CUST_TRD_CMPY_HISTORY
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistoryExample">
+    delete from CUST_TRD_CMPY_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into CUST_TRD_CMPY_HISTORY (cmpy_id, cmpy_name, cmpy_name_history, 
+      uni_social_code, legal_reptive, cmpy_phone, 
+      cmpy_phone_update, history_cmpy_phone, cmpy_province, 
+      cmpy_addr, cmpy_addr_update, history_cmpy_addr, 
+      annu_rept_phone, annu_rept_addr, favorite_city_update, 
+      favorite_type_update, fav_type_note, cmpy_type, 
+      note, data_status, data_quality, 
+      update_time, update_by, create_time, 
+      create_by, sync_time, cmpy_name_update, 
+      crawled_status)
+    values (#{cmpyId,jdbcType=BIGINT}, #{cmpyName,jdbcType=CHAR}, #{cmpyNameHistory,jdbcType=VARCHAR}, 
+      #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, #{cmpyPhone,jdbcType=CHAR}, 
+      #{cmpyPhoneUpdate,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, #{cmpyProvince,jdbcType=CHAR}, 
+      #{cmpyAddr,jdbcType=VARCHAR}, #{cmpyAddrUpdate,jdbcType=VARCHAR}, #{historyCmpyAddr,jdbcType=VARCHAR}, 
+      #{annuReptPhone,jdbcType=CHAR}, #{annuReptAddr,jdbcType=VARCHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, 
+      #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{cmpyType,jdbcType=INTEGER}, 
+      #{note,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP}, #{cmpyNameUpdate,jdbcType=VARCHAR}, 
+      #{crawledStatus,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into CUST_TRD_CMPY_HISTORY
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="cmpyId != null">
+        cmpy_id,
+      </if>
+      <if test="cmpyName != null">
+        cmpy_name,
+      </if>
+      <if test="cmpyNameHistory != null">
+        cmpy_name_history,
+      </if>
+      <if test="uniSocialCode != null">
+        uni_social_code,
+      </if>
+      <if test="legalReptive != null">
+        legal_reptive,
+      </if>
+      <if test="cmpyPhone != null">
+        cmpy_phone,
+      </if>
+      <if test="cmpyPhoneUpdate != null">
+        cmpy_phone_update,
+      </if>
+      <if test="historyCmpyPhone != null">
+        history_cmpy_phone,
+      </if>
+      <if test="cmpyProvince != null">
+        cmpy_province,
+      </if>
+      <if test="cmpyAddr != null">
+        cmpy_addr,
+      </if>
+      <if test="cmpyAddrUpdate != null">
+        cmpy_addr_update,
+      </if>
+      <if test="historyCmpyAddr != null">
+        history_cmpy_addr,
+      </if>
+      <if test="annuReptPhone != null">
+        annu_rept_phone,
+      </if>
+      <if test="annuReptAddr != null">
+        annu_rept_addr,
+      </if>
+      <if test="favoriteCityUpdate != null">
+        favorite_city_update,
+      </if>
+      <if test="favoriteTypeUpdate != null">
+        favorite_type_update,
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note,
+      </if>
+      <if test="cmpyType != null">
+        cmpy_type,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="dataStatus != null">
+        data_status,
+      </if>
+      <if test="dataQuality != null">
+        data_quality,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
+      </if>
+      <if test="syncTime != null">
+        sync_time,
+      </if>
+      <if test="cmpyNameUpdate != null">
+        cmpy_name_update,
+      </if>
+      <if test="crawledStatus != null">
+        crawled_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="cmpyId != null">
+        #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="cmpyName != null">
+        #{cmpyName,jdbcType=CHAR},
+      </if>
+      <if test="cmpyNameHistory != null">
+        #{cmpyNameHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="uniSocialCode != null">
+        #{uniSocialCode,jdbcType=VARCHAR},
+      </if>
+      <if test="legalReptive != null">
+        #{legalReptive,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyPhone != null">
+        #{cmpyPhone,jdbcType=CHAR},
+      </if>
+      <if test="cmpyPhoneUpdate != null">
+        #{cmpyPhoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="historyCmpyPhone != null">
+        #{historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyProvince != null">
+        #{cmpyProvince,jdbcType=CHAR},
+      </if>
+      <if test="cmpyAddr != null">
+        #{cmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyAddrUpdate != null">
+        #{cmpyAddrUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="historyCmpyAddr != null">
+        #{historyCmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="annuReptPhone != null">
+        #{annuReptPhone,jdbcType=CHAR},
+      </if>
+      <if test="annuReptAddr != null">
+        #{annuReptAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="favoriteCityUpdate != null">
+        #{favoriteCityUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favoriteTypeUpdate != null">
+        #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="cmpyType != null">
+        #{cmpyType,jdbcType=INTEGER},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=CHAR},
+      </if>
+      <if test="dataStatus != null">
+        #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dataQuality != null">
+        #{dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="syncTime != null">
+        #{syncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cmpyNameUpdate != null">
+        #{cmpyNameUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="crawledStatus != null">
+        #{crawledStatus,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistoryExample" resultType="java.lang.Long">
+    select count(*) from CUST_TRD_CMPY_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update CUST_TRD_CMPY_HISTORY
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.cmpyId != null">
+        cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="record.cmpyName != null">
+        cmpy_name = #{record.cmpyName,jdbcType=CHAR},
+      </if>
+      <if test="record.cmpyNameHistory != null">
+        cmpy_name_history = #{record.cmpyNameHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.uniSocialCode != null">
+        uni_social_code = #{record.uniSocialCode,jdbcType=VARCHAR},
+      </if>
+      <if test="record.legalReptive != null">
+        legal_reptive = #{record.legalReptive,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cmpyPhone != null">
+        cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
+      </if>
+      <if test="record.cmpyPhoneUpdate != null">
+        cmpy_phone_update = #{record.cmpyPhoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.historyCmpyPhone != null">
+        history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cmpyProvince != null">
+        cmpy_province = #{record.cmpyProvince,jdbcType=CHAR},
+      </if>
+      <if test="record.cmpyAddr != null">
+        cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.cmpyAddrUpdate != null">
+        cmpy_addr_update = #{record.cmpyAddrUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.historyCmpyAddr != null">
+        history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.annuReptPhone != null">
+        annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
+      </if>
+      <if test="record.annuReptAddr != null">
+        annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.favoriteCityUpdate != null">
+        favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.favoriteTypeUpdate != null">
+        favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="record.favTypeNote != null">
+        fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="record.cmpyType != null">
+        cmpy_type = #{record.cmpyType,jdbcType=INTEGER},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=CHAR},
+      </if>
+      <if test="record.dataStatus != null">
+        data_status = #{record.dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="record.dataQuality != null">
+        data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.syncTime != null">
+        sync_time = #{record.syncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.cmpyNameUpdate != null">
+        cmpy_name_update = #{record.cmpyNameUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="record.crawledStatus != null">
+        crawled_status = #{record.crawledStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update CUST_TRD_CMPY_HISTORY
+    set id = #{record.id,jdbcType=BIGINT},
+      cmpy_id = #{record.cmpyId,jdbcType=BIGINT},
+      cmpy_name = #{record.cmpyName,jdbcType=CHAR},
+      cmpy_name_history = #{record.cmpyNameHistory,jdbcType=VARCHAR},
+      uni_social_code = #{record.uniSocialCode,jdbcType=VARCHAR},
+      legal_reptive = #{record.legalReptive,jdbcType=VARCHAR},
+      cmpy_phone = #{record.cmpyPhone,jdbcType=CHAR},
+      cmpy_phone_update = #{record.cmpyPhoneUpdate,jdbcType=CHAR},
+      history_cmpy_phone = #{record.historyCmpyPhone,jdbcType=VARCHAR},
+      cmpy_province = #{record.cmpyProvince,jdbcType=CHAR},
+      cmpy_addr = #{record.cmpyAddr,jdbcType=VARCHAR},
+      cmpy_addr_update = #{record.cmpyAddrUpdate,jdbcType=VARCHAR},
+      history_cmpy_addr = #{record.historyCmpyAddr,jdbcType=VARCHAR},
+      annu_rept_phone = #{record.annuReptPhone,jdbcType=CHAR},
+      annu_rept_addr = #{record.annuReptAddr,jdbcType=VARCHAR},
+      favorite_city_update = #{record.favoriteCityUpdate,jdbcType=CHAR},
+      favorite_type_update = #{record.favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{record.favTypeNote,jdbcType=CHAR},
+      cmpy_type = #{record.cmpyType,jdbcType=INTEGER},
+      note = #{record.note,jdbcType=CHAR},
+      data_status = #{record.dataStatus,jdbcType=INTEGER},
+      data_quality = #{record.dataQuality,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_by = #{record.createBy,jdbcType=BIGINT},
+      sync_time = #{record.syncTime,jdbcType=TIMESTAMP},
+      cmpy_name_update = #{record.cmpyNameUpdate,jdbcType=VARCHAR},
+      crawled_status = #{record.crawledStatus,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
+    update CUST_TRD_CMPY_HISTORY
+    <set>
+      <if test="cmpyId != null">
+        cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      </if>
+      <if test="cmpyName != null">
+        cmpy_name = #{cmpyName,jdbcType=CHAR},
+      </if>
+      <if test="cmpyNameHistory != null">
+        cmpy_name_history = #{cmpyNameHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="uniSocialCode != null">
+        uni_social_code = #{uniSocialCode,jdbcType=VARCHAR},
+      </if>
+      <if test="legalReptive != null">
+        legal_reptive = #{legalReptive,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyPhone != null">
+        cmpy_phone = #{cmpyPhone,jdbcType=CHAR},
+      </if>
+      <if test="cmpyPhoneUpdate != null">
+        cmpy_phone_update = #{cmpyPhoneUpdate,jdbcType=CHAR},
+      </if>
+      <if test="historyCmpyPhone != null">
+        history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyProvince != null">
+        cmpy_province = #{cmpyProvince,jdbcType=CHAR},
+      </if>
+      <if test="cmpyAddr != null">
+        cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="cmpyAddrUpdate != null">
+        cmpy_addr_update = #{cmpyAddrUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="historyCmpyAddr != null">
+        history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="annuReptPhone != null">
+        annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
+      </if>
+      <if test="annuReptAddr != null">
+        annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
+      </if>
+      <if test="favoriteCityUpdate != null">
+        favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favoriteTypeUpdate != null">
+        favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      </if>
+      <if test="favTypeNote != null">
+        fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      </if>
+      <if test="cmpyType != null">
+        cmpy_type = #{cmpyType,jdbcType=INTEGER},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=CHAR},
+      </if>
+      <if test="dataStatus != null">
+        data_status = #{dataStatus,jdbcType=INTEGER},
+      </if>
+      <if test="dataQuality != null">
+        data_quality = #{dataQuality,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
+      </if>
+      <if test="syncTime != null">
+        sync_time = #{syncTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="cmpyNameUpdate != null">
+        cmpy_name_update = #{cmpyNameUpdate,jdbcType=VARCHAR},
+      </if>
+      <if test="crawledStatus != null">
+        crawled_status = #{crawledStatus,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
+    update CUST_TRD_CMPY_HISTORY
+    set cmpy_id = #{cmpyId,jdbcType=BIGINT},
+      cmpy_name = #{cmpyName,jdbcType=CHAR},
+      cmpy_name_history = #{cmpyNameHistory,jdbcType=VARCHAR},
+      uni_social_code = #{uniSocialCode,jdbcType=VARCHAR},
+      legal_reptive = #{legalReptive,jdbcType=VARCHAR},
+      cmpy_phone = #{cmpyPhone,jdbcType=CHAR},
+      cmpy_phone_update = #{cmpyPhoneUpdate,jdbcType=CHAR},
+      history_cmpy_phone = #{historyCmpyPhone,jdbcType=VARCHAR},
+      cmpy_province = #{cmpyProvince,jdbcType=CHAR},
+      cmpy_addr = #{cmpyAddr,jdbcType=VARCHAR},
+      cmpy_addr_update = #{cmpyAddrUpdate,jdbcType=VARCHAR},
+      history_cmpy_addr = #{historyCmpyAddr,jdbcType=VARCHAR},
+      annu_rept_phone = #{annuReptPhone,jdbcType=CHAR},
+      annu_rept_addr = #{annuReptAddr,jdbcType=VARCHAR},
+      favorite_city_update = #{favoriteCityUpdate,jdbcType=CHAR},
+      favorite_type_update = #{favoriteTypeUpdate,jdbcType=CHAR},
+      fav_type_note = #{favTypeNote,jdbcType=CHAR},
+      cmpy_type = #{cmpyType,jdbcType=INTEGER},
+      note = #{note,jdbcType=CHAR},
+      data_status = #{dataStatus,jdbcType=INTEGER},
+      data_quality = #{dataQuality,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=BIGINT},
+      sync_time = #{syncTime,jdbcType=TIMESTAMP},
+      cmpy_name_update = #{cmpyNameUpdate,jdbcType=VARCHAR},
+      crawled_status = #{crawledStatus,jdbcType=VARCHAR}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistoryExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from CUST_TRD_CMPY_HISTORY
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

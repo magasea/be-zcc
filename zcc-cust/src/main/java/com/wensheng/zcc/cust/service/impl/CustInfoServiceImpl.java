@@ -199,7 +199,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
         if(match){
           //保存公司修改记录
-          commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany", custTrdCmpyOriginal);
+          commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+              "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
 
           custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getCmpyName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
@@ -216,7 +217,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }
       }else {
         //保存公司修改记录
-        commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany", custTrdCmpyOriginal);
+        commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+            "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
         //没有查到数据则添加爬取公司数据任务，状态为1
         custTrdCmpy.setCrawledStatus("1");
         addCrawlCmpy(custTrdCmpy.getCmpyName());
@@ -224,7 +226,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
     }else {
       //保存公司修改记录
-      commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany", custTrdCmpyOriginal);
+      commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+          "人工修改基础信息", custTrdCmpyOriginal);
       //不修改名称则直接修改公司
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }

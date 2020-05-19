@@ -65,6 +65,8 @@ public class CustCmpycontactorHistory {
 
     private Date updateTime;
 
+    private String remark;
+
     public Long getId() {
         return id;
     }
@@ -311,5 +313,13 @@ public class CustCmpycontactorHistory {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

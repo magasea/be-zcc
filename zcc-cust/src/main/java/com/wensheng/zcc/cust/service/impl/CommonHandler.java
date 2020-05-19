@@ -80,7 +80,8 @@ public class CommonHandler {
     return custTrdCmpyList;
   }
 
-  public void creatCmpyHistory(Long updateBy, String updateMethod, CustTrdCmpy custTrdCmpyOriginal) {
+  public void creatCmpyHistory(Long updateBy, String updateMethod, String remark,
+      CustTrdCmpy custTrdCmpyOriginal) {
     //保存公司历史信息
     CustTrdCmpyHistory custTrdCmpyHistory = new CustTrdCmpyHistory();
     AmcBeanUtils.copyProperties(custTrdCmpyOriginal, custTrdCmpyHistory);
@@ -89,10 +90,12 @@ public class CommonHandler {
     custTrdCmpyHistory.setCreateBy(updateBy);
     custTrdCmpyHistory.setCreateTime(new Date());
     custTrdCmpyHistory.setUpdateMethod(updateMethod);
+    custTrdCmpyHistory.setRemark(remark);
     custTrdCmpyHistoryMapper.insertSelective(custTrdCmpyHistory);
   }
 
-  public void creatCmpycontactorHistory(Long updateBy, String updateMethod, CustAmcCmpycontactor originalCmpycontactor) {
+  public void creatCmpycontactorHistory(Long updateBy, String updateMethod, String remark,
+      CustAmcCmpycontactor originalCmpycontactor) {
     CustCmpycontactorHistory custCmpycontactorHistory = new CustCmpycontactorHistory();
     AmcBeanUtils.copyProperties(originalCmpycontactor, custCmpycontactorHistory);
     custCmpycontactorHistory.setCmpycontactorId(originalCmpycontactor.getId());
@@ -100,6 +103,7 @@ public class CommonHandler {
     custCmpycontactorHistory.setCreateBy(updateBy);
     custCmpycontactorHistory.setCreateTime(new Date());
     custCmpycontactorHistory.setUpdateMethod(updateMethod);
+    custCmpycontactorHistory.setRemark(remark);
     custCmpycontactorHistoryMapper.insertSelective(custCmpycontactorHistory);
   }
 

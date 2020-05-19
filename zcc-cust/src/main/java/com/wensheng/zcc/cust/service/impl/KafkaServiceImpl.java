@@ -103,7 +103,7 @@ public class KafkaServiceImpl {
     custTrdCmpyExtExample.or().andCmpyNameUpdateEqualTo(cmpyBizInfoResult.getCmpyName());
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     CustTrdCmpy custTrdCmpyOriginal = custTrdCmpyList.get(0);
-
+    log.info("要修改的公司信息custTrdCmpyOriginal：{}",custTrdCmpyOriginal);
     CmpyBasicBizInfoSync cmpyBasicBizInfoSync =null;
     CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
     custTrdCmpy.setId(custTrdCmpyOriginal.getId());
@@ -118,27 +118,45 @@ public class KafkaServiceImpl {
     }else {
       //不成功记，录信息把公司状态改为-1
       log.error("爬取公司信息失败，公司名称为：{}", cmpyBizInfoResult.getCmpyName());
+      commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
+          "kafka爬取公司信息失败",custTrdCmpyOriginal);
       custTrdCmpy.setCrawledStatus("-1");
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       return;
     }
 
+    custTrdCmpy.setCmpyNameHistory("-1");
+    custTrdCmpy.setCrawledStatus("-1");
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
-    if(custTrdCmpyOriginal.getCmpyNameUpdate().equals(cmpyBizInfoResult.getCmpyName())){
+    if(cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
+      log.error("kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", cmpyBizInfoResult.getCmpyName());
+      commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
+          "kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", custTrdCmpyOriginal);
       custTrdCmpy.setCmpyName(custTrdCmpy.getCmpyName());
-      custTrdCmpy.setCmpyNameHistory("-1");
-      custTrdCmpy.setCrawledStatus("-1");
+      //修改信息
+      custTrdCmpy.setCmpyNameUpdate(cmpyBasicBizInfoSync.getHistoryName());
+      custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getCmpyProvince());
+      custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
+      custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getCmpyPhone());
+      custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getCmpyAddress());
+      custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
+      custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
+    }else {
+      commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
+          "kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", custTrdCmpyOriginal);
     }
-    commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",custTrdCmpyOriginal);
-
-    //修改信息
-    custTrdCmpy.setCmpyNameUpdate(cmpyBasicBizInfoSync.getHistoryName());
-    custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getCmpyProvince());
-    custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
-    custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getCmpyPhone());
-    custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getCmpyAddress());
-    custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
-    custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }
+
+
+  private Boolean cmpyNameMatch(String nameHistorys, String originalName){
+    String[] nameHistoryArray = nameHistorys.split(",");
+    for (int i = 0; i < nameHistoryArray.length; i++) {
+      if(originalName.equals(nameHistoryArray[i])){
+        return true;
+      }
+    }
+    return false;
+  }
+
 }

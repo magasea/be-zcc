@@ -999,7 +999,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }else if(action == 2 ){
       CustTrdCmpy custTrdCmpyHis = custTrdCmpyList.get(0);
       //创建历史
-      commonHandler.creatCmpyHistory(null,"SyncServiceImpl",custTrdCmpyHis);
+      commonHandler.creatCmpyHistory(null,"SyncServiceImpl",
+          "同步交易信息时更新公司信息", custTrdCmpyHis);
 
       custTrdCmpyHis.setSyncTime(AmcDateUtils.getCurrentDate());
       //update 取最近的

@@ -33,6 +33,7 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -97,7 +98,7 @@
     mobile_prep, mobile_history, phone_update, phone_prep, phone_history, province, city, 
     county, address, title, cmpy_id, company, branch_cmpy, history_cmpy, recorder_name, 
     favorite_city_update, favorite_type_update, fav_type_note, note, create_by, create_time, 
-    update_by, update_time
+    update_by, update_time, remark
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultMap="BaseResultMap">
     select
@@ -143,7 +144,7 @@
       history_cmpy, recorder_name, favorite_city_update, 
       favorite_type_update, fav_type_note, note, 
       create_by, create_time, update_by, 
-      update_time)
+      update_time, remark)
     values (#{cmpycontactorId,jdbcType=BIGINT}, #{updateMethod,jdbcType=CHAR}, #{name,jdbcType=CHAR}, 
       #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, #{mobileUpdate,jdbcType=CHAR}, 
       #{mobilePrep,jdbcType=CHAR}, #{mobileHistory,jdbcType=CHAR}, #{phoneUpdate,jdbcType=CHAR}, 
@@ -153,7 +154,7 @@
       #{historyCmpy,jdbcType=CHAR}, #{recorderName,jdbcType=CHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, 
       #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{note,jdbcType=CHAR}, 
       #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -251,6 +252,9 @@
       <if test="updateTime != null">
         update_time,
       </if>
+      <if test="remark != null">
+        remark,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpycontactorId != null">
@@ -342,6 +346,9 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -447,6 +454,9 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -484,7 +494,8 @@
       create_by = #{record.createBy,jdbcType=BIGINT},
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_by = #{record.updateBy,jdbcType=BIGINT},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -582,6 +593,9 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -616,7 +630,8 @@
       create_by = #{createBy,jdbcType=BIGINT},
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=BIGINT},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultMap="BaseResultMap">

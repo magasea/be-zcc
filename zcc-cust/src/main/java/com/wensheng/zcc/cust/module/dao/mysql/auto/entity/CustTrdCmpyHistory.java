@@ -63,6 +63,8 @@ public class CustTrdCmpyHistory {
 
     private String crawledStatus;
 
+    private String remark;
+
     public Long getId() {
         return id;
     }
@@ -301,5 +303,13 @@ public class CustTrdCmpyHistory {
 
     public void setCrawledStatus(String crawledStatus) {
         this.crawledStatus = crawledStatus == null ? null : crawledStatus.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

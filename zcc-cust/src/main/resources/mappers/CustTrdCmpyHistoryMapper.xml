@@ -32,6 +32,7 @@
     <result column="sync_time" jdbcType="TIMESTAMP" property="syncTime" />
     <result column="cmpy_name_update" jdbcType="VARCHAR" property="cmpyNameUpdate" />
     <result column="crawled_status" jdbcType="VARCHAR" property="crawledStatus" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -96,7 +97,7 @@
     cmpy_phone, cmpy_phone_update, history_cmpy_phone, cmpy_province, cmpy_addr, cmpy_addr_update, 
     history_cmpy_addr, annu_rept_phone, annu_rept_addr, favorite_city_update, favorite_type_update, 
     fav_type_note, cmpy_type, note, data_status, data_quality, update_time, update_by, 
-    create_time, create_by, sync_time, cmpy_name_update, crawled_status
+    create_time, create_by, sync_time, cmpy_name_update, crawled_status, remark
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistoryExample" resultMap="BaseResultMap">
     select
@@ -142,7 +143,8 @@
       cmpy_type, note, data_status, 
       data_quality, update_time, update_by, 
       create_time, create_by, sync_time, 
-      cmpy_name_update, crawled_status)
+      cmpy_name_update, crawled_status, remark
+      )
     values (#{cmpyId,jdbcType=BIGINT}, #{updateMethod,jdbcType=CHAR}, #{cmpyName,jdbcType=CHAR}, 
       #{cmpyNameHistory,jdbcType=VARCHAR}, #{uniSocialCode,jdbcType=VARCHAR}, #{legalReptive,jdbcType=VARCHAR}, 
       #{cmpyPhone,jdbcType=CHAR}, #{cmpyPhoneUpdate,jdbcType=CHAR}, #{historyCmpyPhone,jdbcType=VARCHAR}, 
@@ -152,7 +154,8 @@
       #{cmpyType,jdbcType=INTEGER}, #{note,jdbcType=CHAR}, #{dataStatus,jdbcType=INTEGER}, 
       #{dataQuality,jdbcType=INTEGER}, #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{createBy,jdbcType=BIGINT}, #{syncTime,jdbcType=TIMESTAMP}, 
-      #{cmpyNameUpdate,jdbcType=VARCHAR}, #{crawledStatus,jdbcType=VARCHAR})
+      #{cmpyNameUpdate,jdbcType=VARCHAR}, #{crawledStatus,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -247,6 +250,9 @@
       <if test="crawledStatus != null">
         crawled_status,
       </if>
+      <if test="remark != null">
+        remark,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="cmpyId != null">
@@ -335,6 +341,9 @@
       </if>
       <if test="crawledStatus != null">
         #{crawledStatus,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -437,6 +446,9 @@
       <if test="record.crawledStatus != null">
         crawled_status = #{record.crawledStatus,jdbcType=VARCHAR},
       </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -473,7 +485,8 @@
       create_by = #{record.createBy,jdbcType=BIGINT},
       sync_time = #{record.syncTime,jdbcType=TIMESTAMP},
       cmpy_name_update = #{record.cmpyNameUpdate,jdbcType=VARCHAR},
-      crawled_status = #{record.crawledStatus,jdbcType=VARCHAR}
+      crawled_status = #{record.crawledStatus,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -568,6 +581,9 @@
       <if test="crawledStatus != null">
         crawled_status = #{crawledStatus,jdbcType=VARCHAR},
       </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -601,7 +617,8 @@
       create_by = #{createBy,jdbcType=BIGINT},
       sync_time = #{syncTime,jdbcType=TIMESTAMP},
       cmpy_name_update = #{cmpyNameUpdate,jdbcType=VARCHAR},
-      crawled_status = #{crawledStatus,jdbcType=VARCHAR}
+      crawled_status = #{crawledStatus,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistoryExample" resultMap="BaseResultMap">

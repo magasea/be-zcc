@@ -343,6 +343,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             CustAmcCmpycontactor custAmcCmpycontactor = initCmpycontactor(custTrdInfo, cmpyId, custTrdCmpy.getCmpyName());
             custAmcCmpycontactor.setId(custTrdInfo.getTrdCmpycontactorId());
             custAmcCmpycontactor.setUpdateTime(new Date());
+
+            commonHandler.creatCmpycontactorHistory(null, "getCmpyAmcContactor",
+                "同步爬虫数据修改", custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId()).getCustAmcCmpycontactor());
             custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
           }
 

@@ -95,6 +95,7 @@ public class KafkaServiceImpl {
     log.info(" listenerResult 接收到消息：{}", record.value());
     AddCrawlCmpyResultDTO addCrawlCmpyResultDTO = new Gson().fromJson((String) record.value(),AddCrawlCmpyResultDTO.class);
     List<CmpyBizInfoResult> cmpyBizInfoResultList = addCrawlCmpyResultDTO.getCmpyBizInfoResultList();
+    //只有一个。
     CmpyBizInfoResult cmpyBizInfoResult = cmpyBizInfoResultList.get(0);
 
     //查询本数据库对应的数据1、公司名称。2、修改名称。

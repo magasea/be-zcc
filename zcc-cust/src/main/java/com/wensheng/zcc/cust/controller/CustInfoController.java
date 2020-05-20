@@ -339,6 +339,7 @@ public class CustInfoController {
     AddCrawlCmpyDTO addCrawlCmpyDTO = new AddCrawlCmpyDTO();
     addCrawlCmpyDTO.setAppName("zcc");
     addCrawlCmpyDTO.setCmpyNames(cmpyNames);
+    addCrawlCmpyDTO.setCmpyCount(1);
     String addCrawlCmpyJson = new Gson().toJson(addCrawlCmpyDTO);
     try {
       crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyJson);

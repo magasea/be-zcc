@@ -1289,6 +1289,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         StringBuilder sbMobileNum = new StringBuilder();
         StringBuilder sbTelNum = new StringBuilder();
         String mobileNum = custTrdPerson.getMobileNum();
+        String mobileNumBak = custTrdPerson.getMobileNum();
         mobileNum = mobileNum.replace(";","；");
         mobileNum = mobileNum.replace(",","，");
         String[] telMobiles =mobileNum.split(sign);
@@ -1320,6 +1321,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }else {
           custTrdPersonNew.setMobileNum("-1");
         }
+        custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
 
       }
@@ -1329,12 +1331,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     List<CustTrdPerson> custTrdPersonList = custTrdPersonExtMapper.selectTrdPersonByRightPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonList){
       String mobileNum = custTrdPerson.getMobileNum();
+      String mobileNumBak = custTrdPerson.getMobileNum();
       Boolean isMobile = checkMobile(mobileNum);
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
       custTrdPersonNew.setId(custTrdPerson.getId());
       if(!isMobile){
         custTrdPersonNew.setTelNum(mobileNum);
         custTrdPersonNew.setMobileNum("-1");
+        custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
       }
     }
@@ -1343,9 +1347,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     List<CustTrdPerson> custTrdPersonListAllTel = custTrdPersonExtMapper.selectTrdPersonByUnknowPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonListAllTel) {
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+      String mobileNumBak = custTrdPerson.getMobileNum();
       custTrdPersonNew.setId(custTrdPerson.getId());
       custTrdPersonNew.setTelNum(custTrdPerson.getMobileNum());
       custTrdPersonNew.setMobileNum("-1");
+      custTrdPersonNew.setMobileNumBak(mobileNumBak);
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
     }
 

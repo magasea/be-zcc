@@ -1544,6 +1544,76 @@ public class CustTrdPersonExample {
             addCriterion("sync_time not between", value1, value2, "syncTime");
             return (Criteria) this;
         }
+
+        public Criteria andMobileNumBakIsNull() {
+            addCriterion("mobile_num_bak is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakIsNotNull() {
+            addCriterion("mobile_num_bak is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakEqualTo(String value) {
+            addCriterion("mobile_num_bak =", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakNotEqualTo(String value) {
+            addCriterion("mobile_num_bak <>", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakGreaterThan(String value) {
+            addCriterion("mobile_num_bak >", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakGreaterThanOrEqualTo(String value) {
+            addCriterion("mobile_num_bak >=", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakLessThan(String value) {
+            addCriterion("mobile_num_bak <", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakLessThanOrEqualTo(String value) {
+            addCriterion("mobile_num_bak <=", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakLike(String value) {
+            addCriterion("mobile_num_bak like", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakNotLike(String value) {
+            addCriterion("mobile_num_bak not like", value, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakIn(List<String> values) {
+            addCriterion("mobile_num_bak in", values, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakNotIn(List<String> values) {
+            addCriterion("mobile_num_bak not in", values, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakBetween(String value1, String value2) {
+            addCriterion("mobile_num_bak between", value1, value2, "mobileNumBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andMobileNumBakNotBetween(String value1, String value2) {
+            addCriterion("mobile_num_bak not between", value1, value2, "mobileNumBak");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

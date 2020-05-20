@@ -47,6 +47,8 @@ public class CustTrdPerson {
 
     private Date syncTime;
 
+    private String mobileNumBak;
+
     public Long getId() {
         return id;
     }
@@ -221,5 +223,13 @@ public class CustTrdPerson {
 
     public void setSyncTime(Date syncTime) {
         this.syncTime = syncTime;
+    }
+
+    public String getMobileNumBak() {
+        return mobileNumBak;
+    }
+
+    public void setMobileNumBak(String mobileNumBak) {
+        this.mobileNumBak = mobileNumBak == null ? null : mobileNumBak.trim();
     }
 }

@@ -5,11 +5,13 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustCmpycontactorHistoryMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustAmcCmpycontactorExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -43,6 +45,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
 
   @Autowired
+  CustCmpycontactorHistoryMapper custCmpycontactorHistoryMapper;
+
+  @Autowired
   CustTrdCmpyMapper custTrdCmpyMapper;
 
   @Autowired
@@ -50,6 +55,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Autowired
   CustAmcCmpycontactorExtMapper custAmcCmpycontactorExtMapper;
+
+  @Autowired
+  CommonHandler commonHandler;
 
   @Value("${cust.syncUrls.getAddressCodeByAddress}")
   private String getAddressCodeByAddress;
@@ -112,15 +120,20 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
     //first check name and phone unique
     List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorBymobileList(custAmcCmpycontactor);
+
     if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
-      //cannot insert
-      log.error("There is already person name:{} company name:{} phone:{} reject insert",
-          custAmcCmpycontactor.getName(),
-          custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
-      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format("已经 "
-              + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
-          custAmcCmpycontactor.getName(),
-          custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+      if(custAmcCmpycontactors.size() ==1 && custAmcCmpycontactors.get(0).getId().equals(custAmcCmpycontactor.getId())){
+        log.info("查询到自身");
+      }else {
+        //cannot update
+        log.error("There is already person name:{} company name:{} phone:{} reject insert",
+            custAmcCmpycontactor.getName(),
+            custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
+        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format("已经 "
+                + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
+            custAmcCmpycontactor.getName(),
+            custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+      }
     }
 
     //手机号放在mobileUpdate
@@ -171,6 +184,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
     }
 
+    //创建历史信息
+    commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
+        "人工修改",originalCmpycontactor);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
   }
 
@@ -327,6 +343,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             CustAmcCmpycontactor custAmcCmpycontactor = initCmpycontactor(custTrdInfo, cmpyId, custTrdCmpy.getCmpyName());
             custAmcCmpycontactor.setId(custTrdInfo.getTrdCmpycontactorId());
             custAmcCmpycontactor.setUpdateTime(new Date());
+
+            commonHandler.creatCmpycontactorHistory(null, "getCmpyAmcContactor",
+                "同步爬虫数据修改", custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId()).getCustAmcCmpycontactor());
             custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
           }
 

@@ -1,10 +1,17 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustCmpycontactorHistoryMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyHistoryMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -18,6 +25,12 @@ import org.springframework.web.client.RestTemplate;
 public class CommonHandler {
   @Autowired
   CustTrdCmpyMapper custTrdCmpyMapper;
+
+  @Autowired
+  CustTrdCmpyHistoryMapper custTrdCmpyHistoryMapper;
+
+  @Autowired
+  CustCmpycontactorHistoryMapper custCmpycontactorHistoryMapper;
 
   private static RestTemplate restTemplate;
 
@@ -65,6 +78,33 @@ public class CommonHandler {
       }
     }
     return custTrdCmpyList;
+  }
+
+  public void creatCmpyHistory(Long updateBy, String updateMethod, String remark,
+      CustTrdCmpy custTrdCmpyOriginal) {
+    //保存公司历史信息
+    CustTrdCmpyHistory custTrdCmpyHistory = new CustTrdCmpyHistory();
+    AmcBeanUtils.copyProperties(custTrdCmpyOriginal, custTrdCmpyHistory);
+    custTrdCmpyHistory.setCmpyId(custTrdCmpyOriginal.getId());
+    custTrdCmpyHistory.setId(null);
+    custTrdCmpyHistory.setCreateBy(updateBy);
+    custTrdCmpyHistory.setCreateTime(new Date());
+    custTrdCmpyHistory.setUpdateMethod(updateMethod);
+    custTrdCmpyHistory.setRemark(remark);
+    custTrdCmpyHistoryMapper.insertSelective(custTrdCmpyHistory);
+  }
+
+  public void creatCmpycontactorHistory(Long updateBy, String updateMethod, String remark,
+      CustAmcCmpycontactor originalCmpycontactor) {
+    CustCmpycontactorHistory custCmpycontactorHistory = new CustCmpycontactorHistory();
+    AmcBeanUtils.copyProperties(originalCmpycontactor, custCmpycontactorHistory);
+    custCmpycontactorHistory.setCmpycontactorId(originalCmpycontactor.getId());
+    custCmpycontactorHistory.setId(null);
+    custCmpycontactorHistory.setCreateBy(updateBy);
+    custCmpycontactorHistory.setCreateTime(new Date());
+    custCmpycontactorHistory.setUpdateMethod(updateMethod);
+    custCmpycontactorHistory.setRemark(remark);
+    custCmpycontactorHistoryMapper.insertSelective(custCmpycontactorHistory);
   }
 
 

@@ -10,6 +10,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionDetailMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustRegionMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyHistoryMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
@@ -19,6 +20,7 @@ import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyHistory;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
@@ -155,6 +157,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     AddCrawlCmpyDTO addCrawlCmpyDTO = new AddCrawlCmpyDTO();
     addCrawlCmpyDTO.setAppName(APP_NAME);
     addCrawlCmpyDTO.setCmpyNames(cmpyName);
+    addCrawlCmpyDTO.setCmpyCount(1);
     String addCrawlCmpyJson = new Gson().toJson(addCrawlCmpyDTO);
     try {
       crawlSystemKafkaTemplate.send(ADD_CRAWL_CMPY_TOPIC, addCrawlCmpyJson);
@@ -171,6 +174,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdCmpyExtExample.createCriteria().andIdEqualTo(custTrdCmpy.getId());
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
+
     if(null != custTrdCmpy.getCmpyNameUpdate()){
       //修改公司名称，先判断是否已有该公司
       List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(custTrdCmpy.getCmpyNameUpdate());
@@ -178,7 +182,6 @@ public class CustInfoServiceImpl implements CustInfoService {
         throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
             String.format("已存在该公司，名称是：%s",custTrdCmpy.getCmpyNameUpdate()));
       }
-
       //查询爬虫基础库中信息
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
       String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
@@ -196,6 +199,10 @@ public class CustInfoServiceImpl implements CustInfoService {
           }
         }
         if(match){
+          //保存公司修改记录
+          commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+              "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
+
           custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getCmpyName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
           custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName());
@@ -210,16 +217,23 @@ public class CustInfoServiceImpl implements CustInfoService {
               custTrdCmpyOriginal.getCmpyName(),cmpyBasicBizInfoSync);
         }
       }else {
+        //保存公司修改记录
+        commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+            "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
         //没有查到数据则添加爬取公司数据任务，状态为1
         custTrdCmpy.setCrawledStatus("1");
         addCrawlCmpy(custTrdCmpy.getCmpyName());
         custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       }
     }else {
+      //保存公司修改记录
+      commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+          "人工修改基础信息", custTrdCmpyOriginal);
       //不修改名称则直接修改公司
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
     }
   }
+
 
   @Override
   public CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson) {

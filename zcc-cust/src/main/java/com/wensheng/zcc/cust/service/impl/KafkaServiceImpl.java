@@ -4,21 +4,28 @@ import com.google.gson.Gson;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustWechatInfoMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustWechatInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustWechatInfoExample;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
+import com.wensheng.zcc.cust.module.sync.CmpyBasicBizInfoSync;
+import com.wensheng.zcc.cust.module.sync.CmpyBizInfoResult;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.common.header.Headers;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author chenwei on 4/17/19
@@ -30,6 +37,16 @@ public class KafkaServiceImpl {
 
   @Autowired
   CustWechatInfoMapper custWechatInfoMapper;
+
+  @Autowired
+  CustTrdCmpyMapper custTrdCmpyMapper;
+
+  @Autowired
+  CommonHandler commonHandler;
+
+  @Value("${cust.syncUrls.getCompanyInfoByName}")
+  String getCompanyInfoByNameUrl;
+
 
   private Gson gson = new Gson();
 
@@ -77,16 +94,70 @@ public class KafkaServiceImpl {
   public void listenerResult(ConsumerRecord<?, ?> record) {
     log.info(" listenerResult 接收到消息：{}", record.value());
     AddCrawlCmpyResultDTO addCrawlCmpyResultDTO = new Gson().fromJson((String) record.value(),AddCrawlCmpyResultDTO.class);
+    List<CmpyBizInfoResult> cmpyBizInfoResultList = addCrawlCmpyResultDTO.getCmpyBizInfoResultList();
+    //只有一个。
+    CmpyBizInfoResult cmpyBizInfoResult = cmpyBizInfoResultList.get(0);
 
     //查询本数据库对应的数据1、公司名称。2、修改名称。
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyBizInfoResult.getCmpyName());
+    custTrdCmpyExtExample.or().andCmpyNameUpdateEqualTo(cmpyBizInfoResult.getCmpyName());
+    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+    CustTrdCmpy custTrdCmpyOriginal = custTrdCmpyList.get(0);
+    log.info("要修改的公司信息custTrdCmpyOriginal：{}",custTrdCmpyOriginal);
+    CmpyBasicBizInfoSync cmpyBasicBizInfoSync =null;
+    CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
+    custTrdCmpy.setId(custTrdCmpyOriginal.getId());
 
+    //成功
+    if("1".equals(cmpyBizInfoResult.getStatus())){
+      //查询爬虫基础库中信息
+      RestTemplate restTemplate = CommonHandler.getRestTemplate();
+      String url = String.format(getCompanyInfoByNameUrl, cmpyBizInfoResult.getCmpyName());
+      cmpyBasicBizInfoSync = restTemplate.getForEntity(
+          url, CmpyBasicBizInfoSync.class).getBody();
+    }else {
+      //不成功记，录信息把公司状态改为-1
+      log.error("爬取公司信息失败，公司名称为：{}", cmpyBizInfoResult.getCmpyName());
+      commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
+          "kafka爬取公司信息失败",custTrdCmpyOriginal);
+      custTrdCmpy.setCrawledStatus("-1");
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+      return;
+    }
 
-    //对应公司名称，查询基础库数，更新公司信息
-
-
+    custTrdCmpy.setCmpyNameHistory("-1");
+    custTrdCmpy.setCrawledStatus("-1");
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
+    if(cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
+      log.error("kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", cmpyBizInfoResult.getCmpyName());
+      commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
+          "kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", custTrdCmpyOriginal);
+      custTrdCmpy.setCmpyName(custTrdCmpy.getCmpyName());
+      //修改信息
+      custTrdCmpy.setCmpyNameUpdate(cmpyBasicBizInfoSync.getHistoryName());
+      custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getCmpyProvince());
+      custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
+      custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getCmpyPhone());
+      custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getCmpyAddress());
+      custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
+      custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
+    }else {
+      commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
+          "kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", custTrdCmpyOriginal);
+    }
+    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+  }
 
 
+  private Boolean cmpyNameMatch(String nameHistorys, String originalName){
+    String[] nameHistoryArray = nameHistorys.split(",");
+    for (int i = 0; i < nameHistoryArray.length; i++) {
+      if(originalName.equals(nameHistoryArray[i])){
+        return true;
+      }
+    }
+    return false;
   }
 
 }

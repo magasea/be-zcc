@@ -138,9 +138,8 @@
   <select id="selectCmpyContactorBymobileList"
           resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustAmcCmpycontactorMapper.BaseResultMap">
     select
-    <include refid="cust_amc_cmpycontactor">
-      <property name="prefix" value="cac."/>
-    </include>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
     from CUST_AMC_CMPYCONTACTOR cac
     where cac.company = #{company}
     and cac.name = #{name}

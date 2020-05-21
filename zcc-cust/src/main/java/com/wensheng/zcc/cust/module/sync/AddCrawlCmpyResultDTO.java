@@ -6,7 +6,10 @@ import lombok.Data;
 @Data
 public class AddCrawlCmpyResultDTO {
   String appName;
-  String packageName;
-  String packageId;
+  String batchName;
+  String batchId;
+  String mqRequestName;
+  int cmpyCount;
+  int responseType;
   List<CmpyBizInfoResult> cmpyBizInfoResultList;
 }

@@ -109,11 +109,11 @@ public class SyncBidServiceImpl implements SyncBidService {
     @Autowired
     CustTrdPersonExtMapper custTrdPersonExtMapper;
 
-  @Autowired
-  CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
+    @Autowired
+    CustAmcCmpycontactorMapper custAmcCmpycontactorMapper;
 
-  @Autowired
-  CommonHandler commonHandler;
+    @Autowired
+    CommonHandler commonHandler;
 
     private final String makeTrdDataUrl = "http://10.20.200.100:8085/debts/get/%s";
 
@@ -989,6 +989,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
     }else if(action == 2 ){
       CustTrdCmpy custTrdCmpyHis = custTrdCmpyList.get(0);
+      //创建历史
+      commonHandler.creatCmpyHistory(null,"SyncBidServiceImpl",
+          "同步交易信息时更新公司信息", custTrdCmpyHis);
+
       //update 取最近的
       if(custTrdCmpy.getUpdateTime().before(custTrdCmpyHis.getUpdateTime())){
         custTrdCmpy.setUpdateTime(custTrdCmpyHis.getUpdateTime());
@@ -1285,6 +1289,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         StringBuilder sbMobileNum = new StringBuilder();
         StringBuilder sbTelNum = new StringBuilder();
         String mobileNum = custTrdPerson.getMobileNum();
+        String mobileNumBak = custTrdPerson.getMobileNum();
         mobileNum = mobileNum.replace(";","；");
         mobileNum = mobileNum.replace(",","，");
         String[] telMobiles =mobileNum.split(sign);
@@ -1316,6 +1321,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         }else {
           custTrdPersonNew.setMobileNum("-1");
         }
+        custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
 
       }
@@ -1325,12 +1331,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     List<CustTrdPerson> custTrdPersonList = custTrdPersonExtMapper.selectTrdPersonByRightPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonList){
       String mobileNum = custTrdPerson.getMobileNum();
+      String mobileNumBak = custTrdPerson.getMobileNum();
       Boolean isMobile = checkMobile(mobileNum);
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
       custTrdPersonNew.setId(custTrdPerson.getId());
       if(!isMobile){
         custTrdPersonNew.setTelNum(mobileNum);
         custTrdPersonNew.setMobileNum("-1");
+        custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
       }
     }
@@ -1339,9 +1347,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     List<CustTrdPerson> custTrdPersonListAllTel = custTrdPersonExtMapper.selectTrdPersonByUnknowPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonListAllTel) {
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
+      String mobileNumBak = custTrdPerson.getMobileNum();
       custTrdPersonNew.setId(custTrdPerson.getId());
       custTrdPersonNew.setTelNum(custTrdPerson.getMobileNum());
       custTrdPersonNew.setMobileNum("-1");
+      custTrdPersonNew.setMobileNumBak(mobileNumBak);
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
     }
 

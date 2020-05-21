@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
+import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
 import com.wensheng.zcc.cust.config.aop.QueryChecker;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
@@ -51,6 +52,7 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
+  @ModifyCheckerCustCmpycontactor
   public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor)
       throws Exception {
     amcContactorService.createAmcCmpyContactor(custAmcCmpycontactor);
@@ -60,6 +62,7 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
+  @ModifyCheckerCustCmpycontactor
   public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
     amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
   }

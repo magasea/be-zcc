@@ -335,7 +335,7 @@ public class CustInfoController {
   @RequestMapping(value = "/addCrawlCmpyKafkaTest", method = RequestMethod.POST)
   @ResponseBody
   public String addCrawlCmpy(@RequestParam String cmpyNames) throws Exception {
-    final String TOPIC = "ent_info";
+    final String TOPIC = "cmpy_biz_info";
     AddCrawlCmpyDTO addCrawlCmpyDTO = new AddCrawlCmpyDTO();
     addCrawlCmpyDTO.setAppName("zcc");
     addCrawlCmpyDTO.setCmpyNames(cmpyNames);
@@ -352,17 +352,17 @@ public class CustInfoController {
 
   @RequestMapping(value = "/addCrawlCmpyResulKafkaTest", method = RequestMethod.POST)
   @ResponseBody
-  public String addCrawlCmpyResult() throws Exception {
-    final String TOPIC = "ent_info_result_zcc";
+  public String addCrawlCmpyResult(@RequestParam String cmpyNames) throws Exception {
+    final String TOPIC = "crawler_response_zcc";
     AddCrawlCmpyResultDTO addCrawlCmpyResultDTO = new AddCrawlCmpyResultDTO();
     addCrawlCmpyResultDTO.setAppName("zcc");
     List<CmpyBizInfoResult> cmpyBizInfoResultList = new ArrayList<>();
     CmpyBizInfoResult cmpyBizInfoResult = new CmpyBizInfoResult();
-    cmpyBizInfoResult.setCmpyName("测试公司");
+    cmpyBizInfoResult.setCmpyName(cmpyNames);
     cmpyBizInfoResult.setStatus("1");
     cmpyBizInfoResult.setErrorMsg(null);
     cmpyBizInfoResultList.add(cmpyBizInfoResult);
-    addCrawlCmpyResultDTO.setCmpyBizInfoResultList(cmpyBizInfoResultList);
+    addCrawlCmpyResultDTO.setCmpyBizInfoResults(cmpyBizInfoResultList);
     String addCrawlCmpyResultDTOJson = new Gson().toJson(addCrawlCmpyResultDTO);
     try {
       crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyResultDTOJson);

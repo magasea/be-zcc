@@ -126,7 +126,7 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   ThreadLocal<String> provinceToHandle;
   final String APP_NAME = "zcc";
-  final String ADD_CRAWL_CMPY_TOPIC = "ent_info";
+  final String ADD_CRAWL_CMPY_TOPIC = "cmpy_biz_info";
 
   static final String SEP_INDICATOR_EDITABLE = "|$|";
   static final String SEP_INDICATOR_ORIGINAL = "|#|";
@@ -203,11 +203,11 @@ public class CustInfoServiceImpl implements CustInfoService {
           commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
               "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
 
-          custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getCmpyName());
+          custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
           custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName());
-          custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getCmpyPhone());
-          custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getCmpyAddress());
+          custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getEntPhone());
+          custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getEntAddress());
           custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
           custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
           custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getCmpyProvince());
@@ -222,7 +222,7 @@ public class CustInfoServiceImpl implements CustInfoService {
             "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
         //没有查到数据则添加爬取公司数据任务，状态为1
         custTrdCmpy.setCrawledStatus("1");
-        addCrawlCmpy(custTrdCmpy.getCmpyName());
+        addCrawlCmpy(custTrdCmpy.getCmpyNameUpdate());
         custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       }
     }else {

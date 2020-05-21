@@ -956,7 +956,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
               custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
             }
           }
-          custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpyList.get(idx).getId());
 
           //before delete check the related id in custAmcCmpycontactor and update it with current cmpy id
           custAmcCmpycontactorExample.clear();
@@ -969,7 +968,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
               custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
             }
           }
-
+          commonHandler.creatCmpyHistory(null,"SyncServiceImpl",
+              "同步交易信息时删除重复公司信息", custTrdCmpyList.get(idx));
           custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpyList.get(idx).getId());
         }
       }

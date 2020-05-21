@@ -24,7 +24,8 @@ public interface WXUserService {
 
   String userMsg(String xmlMsg);
 
-  boolean watchOnObject(String openId, String phone, Long objectId, Integer objectType);
+  boolean watchOnObject(String openId, String phone, Long objectId, Integer objectType)
+      throws Exception;
 
   List<WXUserWatchOnObject> getUserWatchedOn(String openId);
 
@@ -39,4 +40,6 @@ public interface WXUserService {
   AmcRegionInfo getUserLocation(UserLngLat userLngLat);
 
   public AmcWechatUserInfo getUserInfo(String openId);
+
+  boolean unWatchOn(String openId, String phone, Long objectId, Integer type);
 }

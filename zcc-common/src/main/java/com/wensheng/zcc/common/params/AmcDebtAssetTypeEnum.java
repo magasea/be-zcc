@@ -11,7 +11,7 @@ public enum AmcDebtAssetTypeEnum {
   ;
   private String name;
   private String cname;
-  private Integer id;
+  private int id;
 
   AmcDebtAssetTypeEnum(String name, String cname, int id){
     this.name = name;
@@ -36,7 +36,7 @@ public enum AmcDebtAssetTypeEnum {
     return name;
   }
 
-  public Integer getId() {
+  public int getId() {
     return id;
   }
 

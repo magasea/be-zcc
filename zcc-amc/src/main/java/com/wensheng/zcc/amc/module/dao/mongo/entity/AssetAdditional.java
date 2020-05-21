@@ -49,5 +49,7 @@ public class AssetAdditional {
     String bidLink; //拍卖链接
     String warrant; //权证信息
 
+    int bizCount=0;//业务设置访问次数
+
 
 }

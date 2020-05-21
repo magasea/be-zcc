@@ -8,6 +8,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,9 @@ public interface AmcAssetService {
    List<AmcAsset> getSimpleAssets(List<Long> ids);
 
    List<AmcAsset> getAssetByDebtAndAssetTitle(String debtTitle, String assetTitle) throws Exception;
+
+  List<AmcAssetVo> getAssetByTitleLike(String assetTitle) throws Exception;
+
     String getAssetOssPrepath(Long assetId);
 
   AssetImage saveImageInfo( AssetImage assetImage);
@@ -89,4 +93,7 @@ public interface AmcAssetService {
     void patchRecomm();
 
   List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset) throws Exception;
+
+  List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset, AmcSaleGetListInPage pageInfo)
+      throws Exception;
 }

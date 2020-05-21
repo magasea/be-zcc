@@ -15,11 +15,13 @@ import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceBlockin
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceImplBase;
 import io.grpc.ManagedChannel;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 @Service
+@Slf4j
 public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
 
@@ -49,7 +51,14 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
   public AmcSaleFilter getWXUserFavor(String openId){
     WXUserReq.Builder WXURB = WXUserReq.newBuilder();
     WXURB.setOpenId(openId);
-    WXUserFavor wxUserFavor  = wechatServiceStub.getWXUserFavor(WXURB.build());
+    WXUserFavor wxUserFavor  = null;
+    try{
+      wxUserFavor = wechatServiceStub.getWXUserFavor(WXURB.build());
+
+    }catch (Exception ex){
+      log.error("Failed to get user favor with openId:{}",openId, ex);
+      return null;
+    }
     if(StringUtils.isEmpty(wxUserFavor.getUserFavor())){
       return null;
     }

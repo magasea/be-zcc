@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.service;
 
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AmcOperLog;
+import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -13,6 +14,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
@@ -71,7 +73,8 @@ public interface AmcDebtService {
 
   public void connDebt2Debtors(List<AmcDebtor> amcDebtors, Long debtId);
 
-  public void saveDebtDesc(String debtDesc, Long debtId);
+
+  void saveDebtAddition(DebtAdditional debtAdditional, Long debtId);
 
   public AmcInfo getAmcInfo(Long amcDebtId) throws Exception;
 
@@ -127,6 +130,8 @@ public interface AmcDebtService {
 
   List<AmcDebt> getDebtSimpleByTitleLike(String title);
 
+  List<AmcDebtVo> getDebtsByTitleLike(String title) throws Exception;
+
   Long getDebtIdByTitle(String title) throws Exception;
 
   DebtImage uploadDebtImage(String imagePath, String ossPrePath, Long debtId, String desc) throws Exception;
@@ -136,4 +141,7 @@ public interface AmcDebtService {
   List<AmcContactorDTO> getDebtContactorByDebtIds(List<Long> debtIds);
 
   List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt) throws Exception;
+
+  List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt, AmcSaleGetListInPage pageInfo)
+      throws Exception;
 }

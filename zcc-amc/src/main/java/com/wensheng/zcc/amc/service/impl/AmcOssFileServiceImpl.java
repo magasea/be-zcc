@@ -209,13 +209,13 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
                 File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
 
-      case "salebannerpage":
-        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNERPAGE.getName()+
-            File.separator + id);
-        targetFile =
-            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNERPAGE.getName()+
-                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
-        break;
+//      case "salebannerpage":
+//        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNERPAGE.getName()+
+//            File.separator + id);
+//        targetFile =
+//            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEBANNERPAGE.getName()+
+//                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+//        break;
       case "salefloorpage":
         SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
             File.separator + id);

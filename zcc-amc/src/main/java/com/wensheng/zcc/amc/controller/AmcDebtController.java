@@ -347,7 +347,7 @@ public class AmcDebtController {
 
 
     if(createVo.getDebtAdditional() != null && createVo.getDebtAdditional().getDesc() != null){
-      amcDebtService.saveDebtDesc(createVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
+      amcDebtService.saveDebtAddition(createVo.getDebtAdditional(), amcDebtVo.getId());
     }
 
     kafkaService.sendDebtCreate(amcDebtVo);
@@ -425,7 +425,7 @@ public class AmcDebtController {
       handleDebtors(amcDebtVo, amcDebtVo.getId());
 //      amcDebtService.saveOperLog(amcDebtUpdateAct,"");
       if(amcDebtVo.getDebtAdditional() != null  && amcDebtVo.getDebtAdditional().getDesc() != null && !StringUtils.isEmpty(amcDebtVo.getDebtAdditional().getDesc())){
-        amcDebtService.saveDebtDesc(amcDebtVo.getDebtAdditional().getDesc(), amcDebtVo.getId());
+        amcDebtService.saveDebtAddition(amcDebtVo.getDebtAdditional(), amcDebt.getId());
       }
 
     } catch (Exception ex) {

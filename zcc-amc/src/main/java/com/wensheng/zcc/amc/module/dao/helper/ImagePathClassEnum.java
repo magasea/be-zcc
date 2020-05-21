@@ -10,7 +10,7 @@ public enum ImagePathClassEnum {
   SALEMENU(3, "salemenu"),
   SALEBANNER(4, "salebanner"),
   SALEMENUPAGE(5, "salemenupage"),
-  SALEBANNERPAGE(6, "salebannerpage"),
+//  SALEBANNERPAGE(6, "salebannerpage"),
 
   SALEFLOORPAGE(6, "salefloorpage"),
   ;

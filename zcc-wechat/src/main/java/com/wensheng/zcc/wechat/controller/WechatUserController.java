@@ -74,8 +74,10 @@ public class WechatUserController {
     }else if(xmlMsg.contains("MASSSENDJOBFINISH")){
       response = wxMaterialService.recordMsgResult(xmlMsg);
     }else if(xmlMsg.contains("subscribe")){
+      log.info("call subscrib service");
       response = wxUserService.userSubscribe(xmlMsg);
     }else if(xmlMsg.contains("text")){
+      log.info("call user msg service");
       response = wxUserService.userMsg(xmlMsg);
     }
     return response;
@@ -232,6 +234,15 @@ public class WechatUserController {
   public boolean watchOn(@RequestBody WXUserWatchOnVo wxUserWatchOnVo ) throws Exception {
 
     return wxService.watchOnObject( wxUserWatchOnVo.getOpenId(), wxUserWatchOnVo.getPhone(), wxUserWatchOnVo.getObjectId(),
+        wxUserWatchOnVo.getType());
+
+  }
+
+  @RequestMapping(value = "/user/unWatchOn", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean unWatchOn(@RequestBody WXUserWatchOnVo wxUserWatchOnVo ) throws Exception {
+
+    return wxService.unWatchOn( wxUserWatchOnVo.getOpenId(), wxUserWatchOnVo.getPhone(), wxUserWatchOnVo.getObjectId(),
         wxUserWatchOnVo.getType());
 
   }

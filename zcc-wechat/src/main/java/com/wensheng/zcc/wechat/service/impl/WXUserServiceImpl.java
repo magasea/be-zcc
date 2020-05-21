@@ -58,6 +58,7 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -568,19 +569,25 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Override
   public String userSubscribe(String xmlMsg) {
-    //todo: call sunhongtao function to record subscribe event
-    return null;
+    HttpEntity<String> entity = new HttpEntity<>(xmlMsg, getHttpJsonHeader());
+    ResponseEntity<String> result =  restTemplate.exchange(sendSubMsg, HttpMethod.POST, entity, String.class);
+    return result.getBody();
   }
 
   @Override
   public String userMsg(String xmlMsg) {
-    //todo: call sunhongtao function to record subscribe event
-    return null;
+    HttpEntity<String> entity = new HttpEntity<>(xmlMsg, getHttpJsonHeader());
+    ResponseEntity<String> result =  restTemplate.exchange(sendWechatMsg, HttpMethod.POST, entity, String.class);
+    return result.getBody();
 
   }
 
   @Override
-  public boolean watchOnObject(String openId, String phone, Long objectId, Integer objectType) {
+  public boolean watchOnObject(String openId, String phone, Long objectId, Integer objectType)
+      throws Exception {
+    if(StringUtils.isEmpty(openId) || openId.equals("-1")){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, openId);
+    }
     Query query = new Query();
     query.addCriteria(Criteria.where("openId").is(openId).and("objectId").is(objectId).and("type").is(objectType));
     List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
@@ -646,7 +653,7 @@ public class WXUserServiceImpl implements WXUserService {
       mongoTemplate.save(wxUserFavor);
     }else{
       wxUserFavors.get(0).setAmcSaleFilter(wxUserFavor.getAmcSaleFilter());
-      mongoTemplate.save(wxUserFavor);
+      mongoTemplate.save(wxUserFavors.get(0));
     }
     return true;
   }
@@ -782,6 +789,21 @@ public class WXUserServiceImpl implements WXUserService {
       }
       return amcWechatUserInfo;
     }
+  }
+
+  @Override
+  public boolean unWatchOn(String openId, String phone, Long objectId, Integer type) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId).and("objectId").is(objectId).and("type").is(type));
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+    if(CollectionUtils.isEmpty(wxUserWatchObjects)){
+      return true;
+    }else{
+      for(WXUserWatchObject wxUserWatchObject: wxUserWatchObjects){
+        mongoTemplate.remove(wxUserWatchObject);
+      }
+    }
+    return true;
   }
 
 

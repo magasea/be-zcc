@@ -40,6 +40,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
@@ -49,6 +50,7 @@ import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
+import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -579,29 +581,16 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }catch (Exception ex){
       log.error("there is no orderBy params:" + ex.getMessage());
     }
-
-
-
     List<AmcDebt> amcDebtList = amcDebtMapper.selectByExample(amcDebtExample);
-//    AmcDebtorExample amcDebtorExample = new AmcDebtorExample();
-    List<Long> debtIds = amcDebtList.stream().map(item -> item.getId()).collect(Collectors.toList());
-//    amcDebtorExample.createCriteria().andDebtIdIn(debtIds);
-//    List<AmcDebtor> amcDebtors = amcDebtorMapper.selectByExample(amcDebtorExample);
-//
-//    Map<Long , List<AmcDebtor>> debtId2Debtor = new HashMap<>();
-//    for(AmcDebtor amcDebtor: amcDebtors){
-//      if(debtId2Debtor.containsKey(amcDebtor.getDebtId())){
-//        debtId2Debtor.get(amcDebtor.getDebtId()).add(amcDebtor);
-//      }else{
-//        debtId2Debtor.put(amcDebtor.getDebtId(), new ArrayList<AmcDebtor>());
-//      }
-//    }
-    Query query = new Query();
-//    query.addCriteria(Criteria.where("debtId").in(debtIds));
+    return getDebtVos(amcDebtList);
 
-//    List<DebtAdditional> debtAdditionals =  wszccTemplate.find(query, DebtAdditional.class);
-//    Map<Long, DebtAdditional> debtAdditionalMap =
-//        debtAdditionals.stream().collect(Collectors.toMap(item->item.getAmcDebtId(), item -> item));
+  }
+
+  private List<AmcDebtVo> getDebtVos(List<AmcDebt> amcDebtList) throws Exception {
+    List<Long> debtIds = amcDebtList.stream().map(item -> item.getId()).collect(Collectors.toList());
+
+    Query query = new Query();
+
 
     query.addCriteria(Criteria.where("debtId").in(debtIds));
     List<DebtImage> debtImages = wszccTemplate.find(query, DebtImage.class);
@@ -836,16 +825,40 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
   }
 
+//  @Override
+//  public void saveDebtDesc(String debtDesc, Long debtId) {
+//    DebtAdditional debtAdditional = new DebtAdditional();
+//    debtAdditional.setAmcDebtId(debtId);
+//    debtAdditional.setDesc(debtDesc);
+//    Query query = new Query();
+//    query.addCriteria(Criteria.where("amcDebtId").is(debtId.longValue()));
+//    List<DebtAdditional> histAdds = wszccTemplate.find(query, DebtAdditional.class);
+//    if(CollectionUtils.isEmpty(histAdds)){
+//      wszccTemplate.save(debtAdditional);
+//    }else{
+//      histAdds.get(0).setDesc(debtDesc);
+//      wszccTemplate.save(histAdds.get(0));
+//    }
+//
+//
+//    return;
+//
+//  }
   @Override
-  public void saveDebtDesc(String debtDesc, Long debtId) {
-    DebtAdditional debtAdditional = new DebtAdditional();
+  public void saveDebtAddition(DebtAdditional debtAdditional, Long debtId) {
+    DebtAdditional debtAdditionalLocal = new DebtAdditional();
+    AmcBeanUtils.copyProperties(debtAdditional, debtAdditionalLocal);
     debtAdditional.setAmcDebtId(debtId);
-    debtAdditional.setDesc(debtDesc);
+
     Query query = new Query();
-    query.addCriteria(Criteria.where("debtId").is(debtId));
-    Update update = new Update();
-    update.set("desc", debtDesc);
-    wszccTemplate.upsert(query, update, DebtAdditional.class);
+    query.addCriteria(Criteria.where("amcDebtId").is(debtId.longValue()));
+    List<DebtAdditional> histAdds = wszccTemplate.find(query, DebtAdditional.class);
+    if(CollectionUtils.isEmpty(histAdds)){
+      wszccTemplate.save(debtAdditional);
+    }else{
+      debtAdditionalLocal.set_id(histAdds.get(0).get_id());
+      wszccTemplate.save(debtAdditionalLocal);
+    }
 
     return;
 
@@ -904,6 +917,10 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Query query = new Query();
     query.addCriteria(Criteria.where("debtId").is(debtImage.getDebtId()).and("ossPath").is(debtImage.getOssPath()));
     wszccTemplate.findAllAndRemove(query, DebtImage.class);
+    AmcDebt amcDebt = new AmcDebt();
+    amcDebt.setId(debtImage.getDebtId());
+    amcDebt.setHasImg(HasImageEnum.NOIMAGE.getStatus());
+    amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
 
   }
 
@@ -1357,6 +1374,12 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
+  public List<AmcDebtVo> getDebtsByTitleLike(String title) throws Exception {
+    List<AmcDebt> amcDebts = getDebtSimpleByTitleLike(title);
+    return getDebtVos(amcDebts);
+  }
+
+  @Override
   public Long getDebtIdByTitle(String title) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
 
@@ -1430,6 +1453,85 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     updateDebtVosWithMongoFixOrder(amcDebtVos);
     updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
     return amcDebtVos;
+  }
+
+  @Override
+  public List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt,
+      AmcSaleGetListInPage pageInfo) throws Exception {
+    AmcDebtExample amcDebtExample = getAmcDebtExampleWithFloorFilter(filterDebt, pageInfo);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    for(AmcDebt amcDebt: amcDebts){
+      amcDebtVos.add(convertDo2Vo(amcDebt));
+    }
+
+    updateDebtVosWithMongoFixOrder(amcDebtVos);
+    updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
+    return amcDebtVos;
+  }
+
+  private AmcDebtExample getAmcDebtExampleWithFloorFilter(AmcFilterContentDebt floorDebtFilter, AmcSaleGetListInPage pageInfo)
+      throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+
+    AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
+
+
+    List<CurtInfo> curtInfos = null;
+    List<CurtInfo> curtInfosTotal = new ArrayList<>();
+    if(floorDebtFilter.getCourtCities() != null && !CollectionUtils.isEmpty(floorDebtFilter.getCourtCities())){
+      curtInfos = amcHelperService.queryCurtInfoByCityNames(floorDebtFilter.getCourtCities());
+      if(!CollectionUtils.isEmpty(curtInfos)){
+        curtInfosTotal.addAll(curtInfos);
+      }
+    }
+
+    if(floorDebtFilter.getCourtProvs() != null && !CollectionUtils.isEmpty(floorDebtFilter.getCourtProvs())){
+      curtInfos = amcHelperService.queryCurtInfoByProvNames(floorDebtFilter.getCourtProvs());
+      curtInfosTotal.addAll(curtInfos);
+    }
+    if( !CollectionUtils.isEmpty(curtInfosTotal)){
+      criteria.andCourtIdIn(curtInfosTotal.stream().map(item->item.getId()).collect(Collectors.toList()));
+    }
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getGuarantType())){
+      criteria.andGuarantTypeIn(floorDebtFilter.getGuarantType());
+    }
+
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getDebtType())){
+      criteria.andDebtTypeIn(floorDebtFilter.getDebtType());
+    }
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getBaseAmount())){
+
+      Long lowLimit = -1L;
+      Long highLimit = -1L;
+      if(floorDebtFilter.getBaseAmount().get(0) < floorDebtFilter.getBaseAmount().get(1)){
+        lowLimit = floorDebtFilter.getBaseAmount().get(0)*100;
+        highLimit = floorDebtFilter.getBaseAmount().get(1)*100;
+      }else{
+        lowLimit = floorDebtFilter.getBaseAmount().get(1)*100;
+        highLimit = floorDebtFilter.getBaseAmount().get(0)*100;
+      }
+      criteria.andBaseAmountBetween(lowLimit, highLimit);
+    }
+    criteria.andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    StringBuilder sbOrderBy = new StringBuilder();
+    if(floorDebtFilter.getOrderByField() == OrderByFieldEnum.VISITCOUNT.getId()){
+      sbOrderBy.append(" visit_count desc ");
+    }else{
+      sbOrderBy.append(" has_img desc, id desc ");
+    }
+    if(pageInfo.getLastDebtId() != null  ){
+      if(pageInfo.getLastDebtId() > 0){
+        criteria.andIdLessThan(pageInfo.getLastDebtId());
+      }
+      sbOrderBy.append(" limit ").append(pageInfo.getPgSize());
+    }else{
+      sbOrderBy.append(" limit ").append(0);
+    }
+
+    amcDebtExample.setOrderByClause(sbOrderBy.toString());
+
+    return amcDebtExample;
   }
 
   private void updateDebtVosWithCurtInfoFixOrder(List<AmcDebtVo> amcDebtVos) throws Exception {

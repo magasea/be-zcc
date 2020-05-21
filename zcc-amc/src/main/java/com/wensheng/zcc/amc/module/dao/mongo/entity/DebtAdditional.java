@@ -29,4 +29,5 @@ public class DebtAdditional implements Serializable {
     @JsonDeserialize(using = GeoJsonDeserializer.class)
 
     GeoJson location;
+    int bizCount;//业务设置访问次数
 }

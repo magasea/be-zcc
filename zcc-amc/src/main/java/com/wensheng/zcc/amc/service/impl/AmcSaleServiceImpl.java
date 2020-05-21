@@ -13,6 +13,7 @@ import com.wensheng.zcc.amc.module.dao.helper.DebtTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.FloorPublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
 import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
@@ -25,6 +26,8 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTagExample;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
@@ -365,7 +368,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     public boolean updateFloorBasic(AmcSaleFloor amcSaleFloor) {
         amcSaleFloor.setFilterContent(null);
         amcSaleFloor.setRecomItems(null);
-        if(amcSaleFloor.getPublishState().equals(FloorPublishStateEnum.UNPUBLISHED.getStatus())){
+        if(amcSaleFloor.getPublishState() != null && amcSaleFloor.getPublishState().equals(FloorPublishStateEnum.UNPUBLISHED.getStatus())){
             AmcSaleFloor hisFloor = amcSaleFloorMapper.selectByPrimaryKey(amcSaleFloor.getId());
             if(hisFloor.getPublishState().equals(FloorPublishStateEnum.PUBLISHED.getStatus())
                 && hisFloor.getFloorStartTime().before(AmcDateUtils.getCurrentDate())
@@ -579,14 +582,14 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         return amcSaleBanner;
 
     }
-    @Override
-    public AmcSaleBanner updateSaleBannerPageImage(Long saleBannerId, String ossPath) {
-        AmcSaleBanner amcSaleBanner = amcSaleBannerMapper.selectByPrimaryKey(saleBannerId);
-        amcSaleBanner.setPageImgUrl(ossPath);
-        amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
-        return amcSaleBanner;
-
-    }
+//    @Override
+//    public AmcSaleBanner updateSaleBannerPageImage(Long saleBannerId, String ossPath) {
+//        AmcSaleBanner amcSaleBanner = amcSaleBannerMapper.selectByPrimaryKey(saleBannerId);
+//        amcSaleBanner.setPageImgUrl(ossPath);
+//        amcSaleBannerMapper.updateByPrimaryKeySelective(amcSaleBanner);
+//        return amcSaleBanner;
+//
+//    }
     @Override
     public AmcSaleHomePage getAmcSaleHome() throws Exception {
         AmcSaleHomePage amcSaleHomePage = new AmcSaleHomePage();
@@ -662,6 +665,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         if(amcSaleMenu == null){
             return amcSaleMenuPageVo;
         }
+        amcSaleMenuPageVo.setAmcSaleMenu(amcSaleMenu);
         if(amcSaleMenu.getFilterContent() != null && !StringUtils.isEmpty(amcSaleMenu.getFilterContent())){
 
             AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleMenu.getFilterContent(), AmcSaleFilter.class);
@@ -774,10 +778,18 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         AmcSaleWatchonPageVo amcSaleWatchonPageVo = new AmcSaleWatchonPageVo();
 
         AmcSaleFilter amcSaleFilter = wechatGrpcService.getWXUserFavor(openId);
+        if(null == amcSaleFilter){
+            amcSaleFilter = new AmcSaleFilter();
+            amcSaleFilter.setFilterAsset(getDefaultAssetFilter());
+            amcSaleFilter.setFilterDebt(getDefaultDebtFilter());
+        }
+
+
         if(!CollectionUtils.isEmpty(amcSaleFilter.getFilterAsset().getValuation())){
             log.info("ignore price section for user");
             amcSaleFilter.getFilterAsset().setValuation(null);
         }
+
         List<AmcAssetVo> amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset());
 
         if(!CollectionUtils.isEmpty(amcAssetVos)){
@@ -791,6 +803,18 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         }
 
         return amcSaleWatchonPageVo;
+    }
+
+    private AmcFilterContentDebt getDefaultDebtFilter() {
+        AmcFilterContentDebt amcFilterContentDebt = new AmcFilterContentDebt();
+        amcFilterContentDebt.setOrderByField(OrderByFieldEnum.VISITCOUNT.getId());
+        return amcFilterContentDebt;
+    }
+
+    private AmcFilterContentAsset getDefaultAssetFilter() {
+        AmcFilterContentAsset amcFilterContentAsset = new AmcFilterContentAsset();
+        amcFilterContentAsset.setOrderByField(OrderByFieldEnum.VISITCOUNT.getId());
+        return amcFilterContentAsset;
     }
 
     @Override
@@ -919,6 +943,108 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleFloor.setPageImgUrl(ossPath);
         amcSaleFloorMapper.updateByPrimaryKeySelective(amcSaleFloor);
         return amcSaleFloor;
+    }
+
+    @Override
+    public AmcSaleWatchonPageVo getObjectsByTitle(String keyWord) throws Exception {
+        AmcSaleWatchonPageVo amcSaleWatchonPageVo = new AmcSaleWatchonPageVo();
+        List<AmcAssetVo> assetByTitleLike = amcAssetService.getAssetByTitleLike(keyWord);
+        if(!CollectionUtils.isEmpty(assetByTitleLike)){
+            amcSaleWatchonPageVo.setAssetList(new ArrayList<>());
+            amcSaleWatchonPageVo.getAssetList().addAll(assetByTitleLike);
+        }
+        List<AmcDebtVo> amcDebtVos = amcDebtService.getDebtsByTitleLike(keyWord);
+        if(!CollectionUtils.isEmpty(amcDebtVos)){
+            amcSaleWatchonPageVo.setDebtLists(new ArrayList<>());
+            amcSaleWatchonPageVo.getDebtLists().addAll(amcDebtVos);
+        }
+        return amcSaleWatchonPageVo;
+    }
+
+  @Override
+  public AmcSaleWatchonPageVo getUserFavorPage(AmcSaleGetListByOpenId amcSaleGetListByOpenId)
+      throws Exception {
+      AmcSaleWatchonPageVo amcSaleWatchonPageVo = new AmcSaleWatchonPageVo();
+      AmcSaleFilter amcSaleFilter = null;
+      if(amcSaleGetListByOpenId.getAmcSaleFilter() == null){
+          amcSaleFilter = wechatGrpcService.getWXUserFavor(amcSaleGetListByOpenId.getOpenId());
+      }
+
+
+      amcSaleWatchonPageVo.setAmcSaleFilter(amcSaleFilter);
+      //todo: 1.0 version will not filter with user favor
+//      if(null == amcSaleFilter){
+          amcSaleFilter = new AmcSaleFilter();
+          amcSaleFilter.setFilterAsset(getDefaultAssetFilter());
+          amcSaleFilter.setFilterDebt(getDefaultDebtFilter());
+//      }
+
+
+      if(!CollectionUtils.isEmpty(amcSaleFilter.getFilterAsset().getValuation())){
+          log.info("ignore price section for user");
+          amcSaleFilter.getFilterAsset().setValuation(null);
+      }
+      int origPageSize = amcSaleGetListByOpenId.getPageInfo().getPgSize();
+      boolean needAssets = false;
+      boolean needDebts = false;
+      if(amcSaleGetListByOpenId.getPageInfo().getLastAssetId() != null && amcSaleGetListByOpenId.getPageInfo().getLastDebtId() != null){
+          needAssets = true;
+          needDebts = true;
+          amcSaleGetListByOpenId.getPageInfo().setPgSize(origPageSize/2);
+      }else if(amcSaleGetListByOpenId.getPageInfo().getLastAssetId() != null){
+          amcSaleGetListByOpenId.getPageInfo().setPgSize(origPageSize);
+          needAssets = true;
+      }else if(amcSaleGetListByOpenId.getPageInfo().getLastDebtId() != null){
+          amcSaleGetListByOpenId.getPageInfo().setPgSize(origPageSize);
+          needDebts = true;
+      }
+      List<AmcAssetVo> amcAssetVos = null;
+      if(needAssets){
+        amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset(), amcSaleGetListByOpenId.getPageInfo());
+      }
+      int currentTotal = 0;
+
+      if(!CollectionUtils.isEmpty(amcAssetVos)){
+          amcSaleWatchonPageVo.setAssetList(new ArrayList<>());
+          amcSaleWatchonPageVo.getAssetList().addAll(amcAssetVos);
+          currentTotal += amcAssetVos.size();
+      }
+
+      if(origPageSize/2 > amcAssetVos.size() && needDebts){
+          amcSaleGetListByOpenId.getPageInfo().setPgSize(origPageSize - amcAssetVos.size());
+      }else if(!needAssets){
+          amcSaleGetListByOpenId.getPageInfo().setPgSize(origPageSize);
+      }
+      List<AmcDebtVo> amcDebVos = getFilterDebts(amcSaleFilter.getFilterDebt(), amcSaleGetListByOpenId.getPageInfo());
+      if(!CollectionUtils.isEmpty(amcDebVos)){
+          amcSaleWatchonPageVo.setDebtLists(new ArrayList<>());
+          amcSaleWatchonPageVo.getDebtLists().addAll(amcDebVos);
+          currentTotal += amcDebVos.size();
+      }
+
+      if( currentTotal < amcSaleGetListByOpenId.getPageInfo().getPgSize() && amcAssetVos.size() >= origPageSize /2){
+          log.info("need fill asset list again");
+          amcSaleGetListByOpenId.getPageInfo().setPgSize(origPageSize - currentTotal);
+          amcSaleGetListByOpenId.getPageInfo().setLastAssetId(amcAssetVos.get(amcAssetVos.size() -1).getId());
+          amcAssetVos = getFilterAssets(amcSaleFilter.getFilterAsset(), amcSaleGetListByOpenId.getPageInfo());
+          amcSaleWatchonPageVo.getAssetList().addAll(amcAssetVos);
+      }
+
+      return amcSaleWatchonPageVo;
+  }
+
+    private List<AmcDebtVo> getFilterDebts(AmcFilterContentDebt filterDebt,
+        AmcSaleGetListInPage pageInfo) throws Exception {
+        List<AmcDebtVo> amcDebtVos = amcDebtService.getFloorFilteredDebt(filterDebt, pageInfo);
+        return amcDebtVos;
+    }
+
+    private List<AmcAssetVo> getFilterAssets(AmcFilterContentAsset filterAsset, AmcSaleGetListInPage pageInfo)
+        throws Exception {
+
+        List<AmcAssetVo> amcAssetVos = amcAssetService.getFloorFilteredAsset(filterAsset, pageInfo);
+        return amcAssetVos;
+
     }
 
 }

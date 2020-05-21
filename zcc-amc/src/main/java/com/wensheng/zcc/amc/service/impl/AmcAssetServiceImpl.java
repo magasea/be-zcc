@@ -16,6 +16,7 @@ import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -24,6 +25,7 @@ import com.wensheng.zcc.amc.service.RegionService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.module.dto.Region;
+import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -440,28 +442,11 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         amcAssetExample.setOrderByClause(SQLUtils.getOrderBy(orderByParam));
         RowBounds rowBounds = new RowBounds(offset, pageSize);
         List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
-        List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
-        if(CollectionUtils.isEmpty(amcAssetVos)){
-            return amcAssetVos;
-        }
+        return getAssetListVo(amcAssets);
 
-        List<Long> assetIds = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList());
-//        Set<Long> assetIdSet = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toSet());
-//        TreeMap<Long, AmcAssetVo> amcAssetVoMap = amcAssetVos.stream().collect(Collectors.toMap(item-> item.getId(),
-//            item->item));
-        Query query = new Query();
-        query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
-        List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
-        query = new Query();
-        query.addCriteria(Criteria.where("amcAssetId").in(assetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
-        List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
-        setAddInfos(assetAdditionals, amcAssetVos);
-
-        setImages(assetImages, amcAssetVos);
-
-            return amcAssetVos;
 
     }
+
     private void setImages(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
       Map<Long, AssetImage> assetImageMap = assetImages.stream().filter(item->item.getAmcAssetId() != null)
           .collect(Collectors.toMap(item->item.getAmcAssetId(), item-> item));
@@ -470,9 +455,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
           if(assetImageMap.containsKey(amcAssetVos.get(idx).getId())){
             amcAssetVos.get(idx).setAssetImage(assetImageMap.get(amcAssetVos.get(idx).getId()));
           }
-
         }
-
     }
 
   private void setImagesAndKeepOrder(List<AssetImage> assetImages, List<AmcAssetVo> amcAssetVos){
@@ -564,7 +547,37 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         return amcAssets;
     }
 
-    @Override
+  @Override
+  public List<AmcAssetVo> getAssetByTitleLike(String assetTitle) throws Exception {
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      StringBuilder sb = new StringBuilder("%");
+      amcAssetExample.createCriteria().andTitleLike(sb.append(assetTitle).append("%").toString());
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+
+
+
+      return getAssetListVo(amcAssets);
+  }
+
+  List<AmcAssetVo> getAssetListVo(List<AmcAsset> amcAssets) throws Exception {
+    if(CollectionUtils.isEmpty(amcAssets)){
+      return new ArrayList<>();
+    }
+    List<Long> assetIds = amcAssets.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList());
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
+    List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+    query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(assetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
+    List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+    List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+    setAddInfos(assetAdditionals, amcAssetVos);
+    setImages(assetImages, amcAssetVos);
+    return amcAssetVos;
+  }
+
+  @Override
     public String getAssetOssPrepath(Long assetId){
         return new StringBuilder(ImagePathClassEnum.ASSET.getName()).append("/").append(envName).append("/").append(assetId).append("/").toString();
     }
@@ -779,6 +792,132 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     return amcAssetVos;
+
+  }
+
+  @Override
+  public List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset,
+      AmcSaleGetListInPage pageInfo) throws Exception {
+    AmcAssetExample amcAssetExample = getAmcAssetExampleWithFloorFilter(filterAsset, pageInfo);
+    List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+    List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+    if(CollectionUtils.isEmpty(amcAssetVos)){
+      return amcAssetVos;
+    }
+    List<Long> amcAssetIds = amcAssetVos.stream().map(item->item.getId()).collect(Collectors.toList());
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetIds));
+    List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
+    query = new Query();
+    query.addCriteria(Criteria.where("amcAssetId").in(amcAssetIds).and("tag").is(ImageClassEnum.MAIN.getId()));
+    List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+    setImagesAndKeepOrder(assetImages, amcAssetVos);
+    setAddInfos(assetAdditionals, amcAssetVos);
+
+
+    return amcAssetVos;
+  }
+
+  private AmcAssetExample getAmcAssetExampleWithFloorFilter(AmcFilterContentAsset filterAsset, AmcSaleGetListInPage pageInfo) {
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    StringBuilder sbOrderBy = new StringBuilder();
+
+    if(filterAsset.getOrderByField() == OrderByFieldEnum.VISITCOUNT.getId()){
+      sbOrderBy.append(" has_img desc , id desc");
+    }else{
+      sbOrderBy.append(" visit_count desc ");
+    }
+    if(pageInfo.getPgSize() > 0 ){
+      sbOrderBy.append(" limit ").append(pageInfo.getPgSize()).append(" ");
+    }else{
+      sbOrderBy.append(" limit ").append(0).append(" ");
+    }
+    amcAssetExample.setOrderByClause(sbOrderBy.toString());
+
+    AmcAssetExample.Criteria criteria = amcAssetExample.createCriteria();
+
+
+
+    if(!CollectionUtils.isEmpty(filterAsset.getAssetTypes())){
+      criteria.andTypeIn(filterAsset.getAssetTypes());
+    }
+    if(!CollectionUtils.isEmpty(filterAsset.getCityCode())){
+      if(filterAsset.getCityCode().size() == 1){
+
+        criteria.andCityEqualTo(filterAsset.getCityCode().get(0));
+
+      }else{
+        criteria.andCityIn(filterAsset.getCityCode());
+      }
+
+    }
+    if(!CollectionUtils.isEmpty(filterAsset.getProvCode())){
+      if(filterAsset.getProvCode().size() == 1){
+
+        criteria.andProvinceEqualTo(filterAsset.getProvCode().get(0));
+
+      }else{
+        criteria.andProvinceIn(filterAsset.getProvCode());
+      }
+
+    }
+
+    if(!CollectionUtils.isEmpty(filterAsset.getValuation())){
+      Long lowLimit;
+      Long highLimit;
+      if(filterAsset.getValuation().get(0) < filterAsset.getValuation().get(1)){
+        lowLimit = filterAsset.getValuation().get(0)*100;
+        highLimit = filterAsset.getValuation().get(1)*100;
+      }else{
+        highLimit = filterAsset.getValuation().get(0)*100;
+        lowLimit = filterAsset.getValuation().get(1)*100;
+      }
+      criteria.andTotalValuationBetween(lowLimit, highLimit);
+    }
+
+
+    if(!CollectionUtils.isEmpty(filterAsset.getArea())){
+      Long lowLimit;
+      Long highLimit;
+      if(filterAsset.getArea().get(0) < filterAsset.getArea().get(1)){
+        lowLimit = filterAsset.getArea().get(0)*100;
+        highLimit = filterAsset.getArea().get(1)*100;
+      }else{
+        highLimit = filterAsset.getArea().get(0)*100;
+        lowLimit = filterAsset.getArea().get(1)*100;
+      }
+      criteria.andBuildingAreaBetween(lowLimit, highLimit);
+    }
+
+    if(!CollectionUtils.isEmpty(filterAsset.getLandArea())){
+
+      Long lowLimit;
+      Long highLimit;
+      if(filterAsset.getLandArea().get(0) < filterAsset.getLandArea().get(1)){
+        lowLimit = filterAsset.getLandArea().get(0)*100;
+        highLimit = filterAsset.getLandArea().get(1)*100;
+      }else{
+        highLimit = filterAsset.getLandArea().get(0)*100;
+        lowLimit = filterAsset.getLandArea().get(1)*100;
+      }
+      criteria.andLandAreaBetween(lowLimit, highLimit);
+    }
+
+
+    if(!CollectionUtils.isEmpty(filterAsset.getSealStatus())){
+      criteria.andSealedStateIn(filterAsset.getSealStatus());
+    }
+
+
+
+
+
+    criteria.andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    if(pageInfo.getLastAssetId() > 0 ){
+      criteria.andIdLessThan(pageInfo.getLastAssetId());
+    }
+
+    return amcAssetExample;
 
   }
 

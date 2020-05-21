@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
@@ -69,7 +70,7 @@ public interface AmcSaleService {
   AmcSaleMenu updateSaleMenuPageImage(Long saleMenuId, String ossPath);
 
     AmcSaleBanner updateSaleBannerImage(Long saleBannerId, String ossPath);
-  AmcSaleBanner updateSaleBannerPageImage(Long saleBannerId, String ossPath);
+//  AmcSaleBanner updateSaleBannerPageImage(Long saleBannerId, String ossPath);
 
     AmcSaleHomePage getAmcSaleHome() throws Exception;
 
@@ -101,4 +102,10 @@ public interface AmcSaleService {
     AmcSaleWatchonPageVo getUserFavorPage(String openId) throws Exception;
 
   AmcSaleFloor updateSaleFloorPageImage(Long saleFloorId, String ossPath);
+
+  AmcSaleWatchonPageVo getObjectsByTitle(String keyWord) throws Exception;
+
+
+  AmcSaleWatchonPageVo getUserFavorPage(AmcSaleGetListByOpenId amcSaleGetListByOpenId)
+      throws Exception;
 }

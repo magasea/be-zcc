@@ -162,7 +162,13 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
   @Override
   public void getWXUserFavor(com.wenshengamc.zcc.wechat.WXUserReq request,
       io.grpc.stub.StreamObserver<com.wenshengamc.zcc.wechat.WXUserFavor> responseObserver) {
-      AmcSaleFilter amcSaleFilter = wxUserService.getUserFavor(request.getOpenId()).getAmcSaleFilter();
+    com.wensheng.zcc.common.module.dto.WXUserFavor wxUserFavor = wxUserService.getUserFavor(request.getOpenId());
+    if(wxUserFavor == null){
+      log.error("Failed to get user favor for:{}", request.getOpenId());
+      responseObserver.onError(new Exception(String.format("Failed to get user favor for:%s", request.getOpenId())));
+      return;
+    }
+    AmcSaleFilter amcSaleFilter = wxUserService.getUserFavor(request.getOpenId()).getAmcSaleFilter();
       WXUserFavor.Builder WXUFB = WXUserFavor.newBuilder();
      if(amcSaleFilter != null){
        WXUFB.setUserFavor(gson.toJson(amcSaleFilter));

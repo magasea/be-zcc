@@ -14,7 +14,7 @@ public class WXUserFavor {
 
   @Id
   String id;
-  @Indexed
+  @Indexed(unique = true)
   String openId;
   String unionId;
   String phone;

@@ -13,8 +13,6 @@ public class AmcSaleBanner {
 
     private String imgUrl;
 
-    private String pageImgUrl;
-
     private Integer linkType;
 
     private String linkUrl;
@@ -77,14 +75,6 @@ public class AmcSaleBanner {
 
     public void setImgUrl(String imgUrl) {
         this.imgUrl = imgUrl == null ? null : imgUrl.trim();
-    }
-
-    public String getPageImgUrl() {
-        return pageImgUrl;
-    }
-
-    public void setPageImgUrl(String pageImgUrl) {
-        this.pageImgUrl = pageImgUrl == null ? null : pageImgUrl.trim();
     }
 
     public Integer getLinkType() {

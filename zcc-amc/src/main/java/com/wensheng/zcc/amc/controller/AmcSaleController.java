@@ -4,9 +4,11 @@ import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
+import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSalePageModVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
@@ -264,30 +266,7 @@ public class AmcSaleController {
     }
   }
 
-  @RequestMapping(value = "saleBanner/pageimage/add", headers = "Content-Type= multipart/form-data",method =
-      RequestMethod.POST)
-  @ResponseBody
-  public AmcSaleBanner uploadSaleBannerPageImg(@RequestParam("saleBannerId") Long saleBannerId,
-      @RequestParam("images") MultipartFile uploadingImage) throws Exception {
-    if (saleBannerId == null || saleBannerId < 0) {
-      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("saleMenuId %s is not valid",
-          saleBannerId));
-    }
 
-//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
-    List<String> filePaths = new ArrayList<>();
-
-    try {
-      String filePath = amcOssFileService
-          .handleMultiPartFile(uploadingImage, saleBannerId, ImagePathClassEnum.SALEBANNERPAGE.getName());
-      String ossPath = amcOssFileService.handleFile2Oss(filePath, amcSaleService.getSaleBannerPrepath(saleBannerId));
-      return amcSaleService.updateSaleBannerPageImage(saleBannerId, ossPath);
-
-    } catch (Exception e) {
-      e.printStackTrace();
-      throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
-    }
-  }
 
   @RequestMapping(value = "/getBannerPage", method = RequestMethod.POST)
   @ResponseBody
@@ -336,18 +315,18 @@ public class AmcSaleController {
 
   @RequestMapping(value = "/getUserFavorPageByOpenId", method = RequestMethod.POST)
   @ResponseBody
-  AmcSaleWatchonPageVo getUserFavorPageByOpenId( @RequestBody String openId) throws Exception {
-    return amcSaleService.getUserFavorPage(openId);
+  AmcSaleWatchonPageVo getUserFavorPageByOpenId( @RequestBody AmcSaleGetListByOpenId amcSaleGetListByOpenId) throws Exception {
+    return amcSaleService.getUserFavorPage(amcSaleGetListByOpenId);
   }
 
   @RequestMapping(value = "salefloor/pageimage/add", headers = "Content-Type= multipart/form-data",method =
       RequestMethod.POST)
   @ResponseBody
-  public AmcSaleFloor uploadSaleFloorPageImg(@RequestParam("saleMenuId") Long saleMenuId,
+  public AmcSaleFloor uploadSaleFloorPageImg(@RequestParam("saleFloorId") Long saleFloorId,
       @RequestParam("images") MultipartFile uploadingImage) throws Exception {
-    if (saleMenuId == null || saleMenuId < 0) {
+    if (saleFloorId == null || saleFloorId < 0) {
       throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("saleMenuId %s is not valid",
-          saleMenuId));
+          saleFloorId));
     }
 
 //    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
@@ -355,18 +334,20 @@ public class AmcSaleController {
 
     try {
       String filePath = amcOssFileService
-          .handleMultiPartFile(uploadingImage, saleMenuId, ImagePathClassEnum.SALEFLOORPAGE.getName());
-      String ossPath = amcOssFileService.handleFile2Oss(filePath, amcSaleService.getSaleMenuPrepath(saleMenuId));
-      return amcSaleService.updateSaleFloorPageImage(saleMenuId, ossPath);
+          .handleMultiPartFile(uploadingImage, saleFloorId, ImagePathClassEnum.SALEFLOORPAGE.getName());
+      String ossPath = amcOssFileService.handleFile2Oss(filePath, amcSaleService.getSaleMenuPrepath(saleFloorId));
+      return amcSaleService.updateSaleFloorPageImage(saleFloorId, ossPath);
 
     } catch (Exception e) {
       e.printStackTrace();
       throw new ResponseStatusException(HttpStatus.MULTI_STATUS, e.getStackTrace().toString());
     }
+  }
 
 
-
-
-
+  @RequestMapping(value = "salehome/keyword", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcSaleWatchonPageVo keyWordSearch(@RequestBody String keyWord) throws Exception {
+      return amcSaleService.getObjectsByTitle(keyWord);
   }
 }

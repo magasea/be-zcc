@@ -168,7 +168,9 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
                 }
             }
             amcDebtMapper.insertSelective(amcDebt);
-            amcDebtService.saveDebtDesc(amcDebtPre.getDebtDesc(), amcDebt.getId());
+            DebtAdditional debtAdditional = new DebtAdditional();
+            debtAdditional.setDesc(amcDebtPre.getDebtDesc());
+            amcDebtService.saveDebtAddition(debtAdditional, amcDebt.getId());
             if(!StringUtils.isEmpty(amcDebtPre.getGuarantee())){
                 makeGrantors(amcDebtPre.getGuarantee(), amcDebt.getId());
             }

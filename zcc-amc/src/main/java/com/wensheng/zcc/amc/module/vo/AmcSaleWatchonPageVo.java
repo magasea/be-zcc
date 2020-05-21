@@ -11,4 +11,6 @@ public class AmcSaleWatchonPageVo {
 
   List<Object> assetList;
   List<Object> debtLists;
+  AmcSaleGetListInPage pageInfo;
+  AmcSaleFilter amcSaleFilter;
 }

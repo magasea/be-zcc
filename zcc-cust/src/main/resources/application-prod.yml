@@ -80,7 +80,7 @@ spring:
         crawl-system:
             bootstrap-servers: ${env.crawl-system-kfkhost}:9092
             consumer:
-                group-id: grp-zcc-cust-dev
+                group-id: grp-zcc-cust-pro
                 auto-offset-reset: earliest
                 enable-auto-commit: true
 

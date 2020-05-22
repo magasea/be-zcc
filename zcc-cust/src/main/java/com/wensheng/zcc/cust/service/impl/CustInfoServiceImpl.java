@@ -34,6 +34,7 @@ import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CmpyBasicBizInfoSync;
+import com.wensheng.zcc.cust.module.sync.CrawlResultDTO;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
@@ -114,6 +115,9 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Value("${cust.syncUrls.getAddressCodeByAddress}")
   private String getAddressCodeByAddress;
 
+  @Value("${cust.syncUrls.getCompanyBasicBizInfo}")
+  String getCompanyBasicBizInfo;
+
   @Autowired
   SyncService syncService;
 
@@ -182,14 +186,24 @@ public class CustInfoServiceImpl implements CustInfoService {
         throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
             String.format("已存在该公司，名称是：%s",custTrdCmpy.getCmpyNameUpdate()));
       }
+
+//      //查询爬虫基础库中信息
+//      RestTemplate restTemplate = CommonHandler.getRestTemplate();
+//      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
+//      CmpyBasicBizInfoSync cmpyBasicBizInfoSync = restTemplate.getForEntity(
+//          url, CmpyBasicBizInfoSync.class).getBody();
+
       //查询爬虫基础库中信息
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
-      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
-      CmpyBasicBizInfoSync cmpyBasicBizInfoSync = restTemplate.getForEntity(
-          url, CmpyBasicBizInfoSync.class).getBody();
+      String url = String.format(getCompanyBasicBizInfo, custTrdCmpy.getCmpyNameUpdate());
+      log.info("查询爬虫基础库中信息url:{}",url);
+      CrawlResultDTO crawlResultDTO = restTemplate.getForEntity(
+          url, CrawlResultDTO.class).getBody();
 
-      if(null != cmpyBasicBizInfoSync){
+
+      if(null != crawlResultDTO && !CollectionUtils.isEmpty(crawlResultDTO.getList())){
         //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
+        CmpyBasicBizInfoSync cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
         String cmpyHistoryName = cmpyBasicBizInfoSync.getHistoryName();
         String[] cmpyHistoryArry = cmpyHistoryName.split(",");
         boolean match = false;

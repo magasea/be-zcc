@@ -188,16 +188,13 @@ public class KafkaServiceImpl {
       log.info("查询爬虫基础库中信息,暂无信息");
       return;
     }
-
-
     log.info("kafka爬取公司信息成功", cmpyBizInfoResult.getCmpyName());
-
 
     cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
     log.info("查询爬虫基础库中信息,cmpyBasicBizInfoSync{}", cmpyBasicBizInfoSync);
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
     if(custTrdCmpyOriginal.getCmpyName().equals(cmpyBasicBizInfoSync.getName()) || cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
-      custTrdCmpy.setCmpyName(custTrdCmpy.getCmpyName());
+      custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
       //修改信息
       custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName());
       custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getCmpyProvince());
@@ -216,6 +213,7 @@ public class KafkaServiceImpl {
       commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
           "kafka爬取公司信息成功,和原公司不匹配", custTrdCmpyOriginal);
     }
+    custTrdCmpy.setSyncTime(new Date());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }
 

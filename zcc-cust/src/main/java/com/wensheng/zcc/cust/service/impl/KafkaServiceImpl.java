@@ -142,7 +142,7 @@ public class KafkaServiceImpl {
 
     log.info("kafka爬取公司信息成功", cmpyBizInfoResult.getCmpyName());
     commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
-        "kafka爬取公司信息成功，原公司名称是查询公司信息的曾用名中", custTrdCmpyOriginal);
+        "kafka爬取公司信息成功", custTrdCmpyOriginal);
 
     cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
     log.info("查询爬虫基础库中信息,cmpyBasicBizInfoSync{}", cmpyBasicBizInfoSync);
@@ -160,6 +160,7 @@ public class KafkaServiceImpl {
       custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
       custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
       custTrdCmpy.setLegalReptive(cmpyBasicBizInfoSync.getLegalPerson());
+      custTrdCmpy.setCrawledStatus("2");
       custTrdCmpy.setUpdateTime(new Date());
     }
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);

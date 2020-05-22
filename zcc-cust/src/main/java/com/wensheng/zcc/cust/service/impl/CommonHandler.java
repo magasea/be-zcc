@@ -58,6 +58,7 @@ public class CommonHandler {
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyName);
     custTrdCmpyExtExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",cmpyName,"%"));
+    custTrdCmpyExtExample.setOrderByClause(" id desc");
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     List<CustTrdCmpy> custTrdCmpyList = new ArrayList<>();
     for (CustTrdCmpy custTrdCmpy : custTrdCmpies) {

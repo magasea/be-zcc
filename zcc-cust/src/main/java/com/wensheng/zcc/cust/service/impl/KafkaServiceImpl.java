@@ -98,13 +98,13 @@ public class KafkaServiceImpl {
     }
   }
 
-  final String TOPIC = "cmpy_biz_info";
-  @KafkaListener(topics = {TOPIC}, containerFactory = "crawlSystemKafkaListenerContainerFactory")
-  public void listenerOne(ConsumerRecord<?, ?> record) {
-    log.info(" listenerOne 接收到消息：{}", record.value());
-    AddCrawlCmpyDTO addCrawlCmpyDTO = new Gson().fromJson((String) record.value(),AddCrawlCmpyDTO.class);
-    System.out.println(addCrawlCmpyDTO);
-  }
+//  final String TOPIC = "cmpy_biz_info";
+//  @KafkaListener(topics = {TOPIC}, containerFactory = "crawlSystemKafkaListenerContainerFactory")
+//  public void listenerOne(ConsumerRecord<?, ?> record) {
+//    log.info(" listenerOne 接收到消息：{}", record.value());
+//    AddCrawlCmpyDTO addCrawlCmpyDTO = new Gson().fromJson((String) record.value(),AddCrawlCmpyDTO.class);
+//    System.out.println(addCrawlCmpyDTO);
+//  }
 
   final String RESULT_TOPIC = "crawler_response_zcc";
   @KafkaListener(topics = {RESULT_TOPIC}, containerFactory = "crawlSystemKafkaListenerContainerFactory")

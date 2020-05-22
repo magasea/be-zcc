@@ -388,6 +388,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       if (entry.getValue().getCustAmcCmpycontactor().getCreateBy() != null
           && entry.getValue().getCustAmcCmpycontactor().getCreateBy() == -1L
           && entry.getValue().getCustAmcCmpycontactor().getUpdateBy() == -1L
+          && "-1".equals(entry.getValue().getCustAmcCmpycontactor().getPhoneUpdate())
           && CollectionUtils.isEmpty(entry.getValue().getCustTrdInfoList())) {
         commonHandler.creatCmpycontactorHistory(null, "getCmpyAmcContactor",
             "同步爬虫数据删除重复联系人", entry.getValue().getCustAmcCmpycontactor());

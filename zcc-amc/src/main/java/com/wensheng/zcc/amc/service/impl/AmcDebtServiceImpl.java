@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.google.api.Http;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -82,6 +83,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import jdk.incubator.http.HttpResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -90,6 +92,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -103,6 +106,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
@@ -505,9 +509,28 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> getMostVisitedDebtsBy(int num) {
+  public List<AmcDebtVo> getMostVisitedDebtsByRecomm(int num) {
     String url = String.format(getTopVisited, "debt", num);
+    List<Long> response = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Long>>() {
+    } ).getBody();
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
 
+
+
+    if(response != null && CollectionUtils.isEmpty(response) && response.size() >= num){
+
+      amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andIdIn(response);
+
+    }else{
+      amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+      StringBuilder stringBuilder = new StringBuilder("has_img desc , visit_count desc limit ");
+      stringBuilder.append(" ").append(num).append(" ");
+      amcDebtExample.setOrderByClause(stringBuilder.toString());
+    }
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(!CollectionUtils.isEmpty(amcDebts)){
+      return doList2VoList(amcDebts);
+    }
     return null;
   }
 

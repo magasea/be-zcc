@@ -51,7 +51,7 @@ public interface AmcDebtService {
 
   public List<AmcDebtVo> queryBySeqIds(List<Long> debtIds);
   public List<AmcDebtVo> getMostVisitedDebts(int num);
-  public List<AmcDebtVo> getMostVisitedDebtsBy(int num);
+  public List<AmcDebtVo> getMostVisitedDebtsByRecomm(int num);
 
   List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy,
       Map<String, Object> queryParam) throws Exception;

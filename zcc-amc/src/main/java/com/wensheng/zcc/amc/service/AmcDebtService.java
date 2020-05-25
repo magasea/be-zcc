@@ -155,4 +155,6 @@ public interface AmcDebtService {
       throws Exception;
 
   void patchDebtClue(String cellDebtTitle, String cellDebtClue) throws Exception;
+
+    void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception;
 }

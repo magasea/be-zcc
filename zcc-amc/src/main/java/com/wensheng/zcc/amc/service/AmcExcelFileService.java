@@ -21,6 +21,8 @@ public interface AmcExcelFileService {
   public List<DebtBatchImportErr> handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception;
   public void handleMultiPartFilePatchDebtClue(MultipartFile multipartFile) throws Exception;
 
+  public void handleMultiPartFilePatchDebtCurt(MultipartFile multipartFile) throws Exception;
+
   public File handleMultiPartFileCurtInfo(MultipartFile multipartFile) throws Exception;
 
   SSOAmcUser getAmcContactorByName(String name);

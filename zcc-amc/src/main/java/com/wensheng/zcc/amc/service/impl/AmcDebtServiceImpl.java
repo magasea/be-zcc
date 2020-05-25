@@ -1584,6 +1584,23 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   }
 
+  @Override
+  public void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andTitleEqualTo(cellDebtTitle);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(CollectionUtils.isEmpty(amcDebts)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("%s not found",cellDebtTitle));
+    }
+
+    if(amcDebts.size() > 1){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("%s found more than one:%s",
+              cellDebtTitle, amcDebts.stream().map(item->item.getId().toString()).reduce("", String::concat)));
+    }
+    amcDebts.get(0).setCourtId(courtId);
+    amcDebtMapper.updateByPrimaryKeySelective(amcDebts.get(0));
+  }
+
   private AmcDebtExample getAmcDebtExampleWithFloorRandomFilter(AmcFilterContentDebt floorDebtFilter, AmcSaleGetRandomListInPage pageInfo)
       throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();

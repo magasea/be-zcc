@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSalePageModVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
@@ -319,6 +320,12 @@ public class AmcSaleController {
     return amcSaleService.getUserFavorPage(amcSaleGetListByOpenId);
   }
 
+
+  @RequestMapping(value = "/getUserFavorRandomPageByOpenId", method = RequestMethod.POST)
+  @ResponseBody
+  AmcSaleWatchonPageVo getUserFavorRandomPageByOpenId( @RequestBody AmcSaleGetRandomListByOpenId amcSaleGetRandomListByOpenId) throws Exception {
+    return amcSaleService.getUserFavorRandomPage(amcSaleGetRandomListByOpenId);
+  }
   @RequestMapping(value = "salefloor/pageimage/add", headers = "Content-Type= multipart/form-data",method =
       RequestMethod.POST)
   @ResponseBody
@@ -349,5 +356,11 @@ public class AmcSaleController {
   @ResponseBody
   public AmcSaleWatchonPageVo keyWordSearch(@RequestBody String keyWord) throws Exception {
       return amcSaleService.getObjectsByTitle(keyWord);
+  }
+
+  @RequestMapping(value = "salefloor/initFixFloors", method = RequestMethod.POST)
+  @ResponseBody
+  public void initFixFloors() throws Exception {
+     amcSaleService.initFixFloors();
   }
 }

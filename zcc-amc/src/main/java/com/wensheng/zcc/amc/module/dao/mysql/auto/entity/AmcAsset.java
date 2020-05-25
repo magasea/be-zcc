@@ -63,6 +63,8 @@ public class AmcAsset {
 
     private String amcContactorPhone;
 
+    private Integer amcContactorSex;
+
     private String note;
 
     private Long visitCount;
@@ -307,6 +309,14 @@ public class AmcAsset {
 
     public void setAmcContactorPhone(String amcContactorPhone) {
         this.amcContactorPhone = amcContactorPhone == null ? null : amcContactorPhone.trim();
+    }
+
+    public Integer getAmcContactorSex() {
+        return amcContactorSex;
+    }
+
+    public void setAmcContactorSex(Integer amcContactorSex) {
+        this.amcContactorSex = amcContactorSex;
     }
 
     public String getNote() {

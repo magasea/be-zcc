@@ -19,7 +19,7 @@
     <result column="land_area" jdbcType="BIGINT" property="landArea" />
     <result column="land_area_unit" jdbcType="INTEGER" property="landAreaUnit" />
     <result column="land_unit_price" jdbcType="BIGINT" property="landUnitPrice" />
-    <result column="publish_date" jdbcType="DATE" property="publishDate" />
+    <result column="publish_date" jdbcType="TIMESTAMP" property="publishDate" />
     <result column="province" jdbcType="CHAR" property="province" />
     <result column="city" jdbcType="CHAR" property="city" />
     <result column="county" jdbcType="CHAR" property="county" />
@@ -32,6 +32,7 @@
     <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
     <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
     <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
+    <result column="amc_contactor_sex" jdbcType="INTEGER" property="amcContactorSex" />
     <result column="note" jdbcType="CHAR" property="note" />
     <result column="visit_count" jdbcType="BIGINT" property="visitCount" />
     <result column="has_img" jdbcType="INTEGER" property="hasImg" />
@@ -99,7 +100,7 @@
     zcc_asset_code, total_valuation, debt_id, building_area, building_unit_price, land_area, 
     land_area_unit, land_unit_price, publish_date, province, city, county, address, building_name, 
     update_by, update_date, created_by, created_date, amc_contactor_id, amc_contactor_name, 
-    amc_contactor_phone, note, visit_count, has_img
+    amc_contactor_phone, amc_contactor_sex, note, visit_count, has_img
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample" resultMap="BaseResultMap">
     select
@@ -145,19 +146,19 @@
       city, county, address, building_name, 
       update_by, update_date, created_by, 
       created_date, amc_contactor_id, amc_contactor_name, 
-      amc_contactor_phone, note, visit_count, 
-      has_img)
+      amc_contactor_phone, amc_contactor_sex, note, 
+      visit_count, has_img)
     values (#{title,jdbcType=CHAR}, #{type,jdbcType=INTEGER}, #{sealedState,jdbcType=INTEGER}, 
       #{assetNature,jdbcType=INTEGER}, #{publishState,jdbcType=INTEGER}, #{isRecom,jdbcType=INTEGER}, 
       #{amcId,jdbcType=BIGINT}, #{amcAssetCode,jdbcType=CHAR}, #{zccAssetCode,jdbcType=CHAR}, 
       #{totalValuation,jdbcType=BIGINT}, #{debtId,jdbcType=BIGINT}, #{buildingArea,jdbcType=BIGINT}, 
       #{buildingUnitPrice,jdbcType=BIGINT}, #{landArea,jdbcType=BIGINT}, #{landAreaUnit,jdbcType=INTEGER}, 
-      #{landUnitPrice,jdbcType=BIGINT}, #{publishDate,jdbcType=DATE}, #{province,jdbcType=CHAR}, 
+      #{landUnitPrice,jdbcType=BIGINT}, #{publishDate,jdbcType=TIMESTAMP}, #{province,jdbcType=CHAR}, 
       #{city,jdbcType=CHAR}, #{county,jdbcType=CHAR}, #{address,jdbcType=CHAR}, #{buildingName,jdbcType=CHAR}, 
       #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
       #{createdDate,jdbcType=TIMESTAMP}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactorName,jdbcType=CHAR}, 
-      #{amcContactorPhone,jdbcType=CHAR}, #{note,jdbcType=CHAR}, #{visitCount,jdbcType=BIGINT}, 
-      #{hasImg,jdbcType=INTEGER})
+      #{amcContactorPhone,jdbcType=CHAR}, #{amcContactorSex,jdbcType=INTEGER}, #{note,jdbcType=CHAR}, 
+      #{visitCount,jdbcType=BIGINT}, #{hasImg,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -252,6 +253,9 @@
       <if test="amcContactorPhone != null">
         amc_contactor_phone,
       </if>
+      <if test="amcContactorSex != null">
+        amc_contactor_sex,
+      </if>
       <if test="note != null">
         note,
       </if>
@@ -312,7 +316,7 @@
         #{landUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="publishDate != null">
-        #{publishDate,jdbcType=DATE},
+        #{publishDate,jdbcType=TIMESTAMP},
       </if>
       <if test="province != null">
         #{province,jdbcType=CHAR},
@@ -349,6 +353,9 @@
       </if>
       <if test="amcContactorPhone != null">
         #{amcContactorPhone,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorSex != null">
+        #{amcContactorSex,jdbcType=INTEGER},
       </if>
       <if test="note != null">
         #{note,jdbcType=CHAR},
@@ -422,7 +429,7 @@
         land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="record.publishDate != null">
-        publish_date = #{record.publishDate,jdbcType=DATE},
+        publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
       </if>
       <if test="record.province != null">
         province = #{record.province,jdbcType=CHAR},
@@ -460,6 +467,9 @@
       <if test="record.amcContactorPhone != null">
         amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
       </if>
+      <if test="record.amcContactorSex != null">
+        amc_contactor_sex = #{record.amcContactorSex,jdbcType=INTEGER},
+      </if>
       <if test="record.note != null">
         note = #{record.note,jdbcType=CHAR},
       </if>
@@ -493,7 +503,7 @@
       land_area = #{record.landArea,jdbcType=BIGINT},
       land_area_unit = #{record.landAreaUnit,jdbcType=INTEGER},
       land_unit_price = #{record.landUnitPrice,jdbcType=BIGINT},
-      publish_date = #{record.publishDate,jdbcType=DATE},
+      publish_date = #{record.publishDate,jdbcType=TIMESTAMP},
       province = #{record.province,jdbcType=CHAR},
       city = #{record.city,jdbcType=CHAR},
       county = #{record.county,jdbcType=CHAR},
@@ -506,6 +516,7 @@
       amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
+      amc_contactor_sex = #{record.amcContactorSex,jdbcType=INTEGER},
       note = #{record.note,jdbcType=CHAR},
       visit_count = #{record.visitCount,jdbcType=BIGINT},
       has_img = #{record.hasImg,jdbcType=INTEGER}
@@ -565,7 +576,7 @@
         land_unit_price = #{landUnitPrice,jdbcType=BIGINT},
       </if>
       <if test="publishDate != null">
-        publish_date = #{publishDate,jdbcType=DATE},
+        publish_date = #{publishDate,jdbcType=TIMESTAMP},
       </if>
       <if test="province != null">
         province = #{province,jdbcType=CHAR},
@@ -603,6 +614,9 @@
       <if test="amcContactorPhone != null">
         amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
       </if>
+      <if test="amcContactorSex != null">
+        amc_contactor_sex = #{amcContactorSex,jdbcType=INTEGER},
+      </if>
       <if test="note != null">
         note = #{note,jdbcType=CHAR},
       </if>
@@ -633,7 +647,7 @@
       land_area = #{landArea,jdbcType=BIGINT},
       land_area_unit = #{landAreaUnit,jdbcType=INTEGER},
       land_unit_price = #{landUnitPrice,jdbcType=BIGINT},
-      publish_date = #{publishDate,jdbcType=DATE},
+      publish_date = #{publishDate,jdbcType=TIMESTAMP},
       province = #{province,jdbcType=CHAR},
       city = #{city,jdbcType=CHAR},
       county = #{county,jdbcType=CHAR},
@@ -646,6 +660,7 @@
       amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
+      amc_contactor_sex = #{amcContactorSex,jdbcType=INTEGER},
       note = #{note,jdbcType=CHAR},
       visit_count = #{visitCount,jdbcType=BIGINT},
       has_img = #{hasImg,jdbcType=INTEGER}

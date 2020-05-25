@@ -28,6 +28,7 @@
     <result column="amc_contactor_id" jdbcType="BIGINT" property="amcContactorId" />
     <result column="amc_contactor_name" jdbcType="CHAR" property="amcContactorName" />
     <result column="amc_contactor_phone" jdbcType="CHAR" property="amcContactorPhone" />
+    <result column="amc_contactor_sex" jdbcType="INTEGER" property="amcContactorSex" />
     <result column="amc_contactor2_id" jdbcType="BIGINT" property="amcContactor2Id" />
     <result column="is_recommanded" jdbcType="INTEGER" property="isRecommanded" />
     <result column="guarant_type" jdbcType="INTEGER" property="guarantType" />
@@ -107,9 +108,9 @@
     interest_amount, total_amount, total_amount_desc, settle_date, curt_prov, curt_city, 
     curt_county, court_id, zcc_debt_code, amc_debt_code, publish_state, publish_date, 
     lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor_name, 
-    amc_contactor_phone, amc_contactor2_id, is_recommanded, guarant_type, recomm_start_date, 
-    recomm_end_date, orig_creditor_id, orig_creditor_name, brief_desc, update_by, update_date, 
-    created_by, created_date, note, visit_count, has_img
+    amc_contactor_phone, amc_contactor_sex, amc_contactor2_id, is_recommanded, guarant_type, 
+    recomm_start_date, recomm_end_date, orig_creditor_id, orig_creditor_name, brief_desc, 
+    update_by, update_date, created_by, created_date, note, visit_count, has_img
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMap">
     select
@@ -154,12 +155,12 @@
       zcc_debt_code, amc_debt_code, publish_state, 
       publish_date, lawsuit_state, lawsuit_state_desc, 
       valuation, amc_contactor_id, amc_contactor_name, 
-      amc_contactor_phone, amc_contactor2_id, is_recommanded, 
-      guarant_type, recomm_start_date, recomm_end_date, 
-      orig_creditor_id, orig_creditor_name, brief_desc, 
-      update_by, update_date, created_by, 
-      created_date, note, visit_count, 
-      has_img)
+      amc_contactor_phone, amc_contactor_sex, amc_contactor2_id, 
+      is_recommanded, guarant_type, recomm_start_date, 
+      recomm_end_date, orig_creditor_id, orig_creditor_name, 
+      brief_desc, update_by, update_date, 
+      created_by, created_date, note, 
+      visit_count, has_img)
     values (#{debtType,jdbcType=INTEGER}, #{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, 
       #{title,jdbcType=CHAR}, #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, 
       #{baseDate,jdbcType=TIMESTAMP}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
@@ -168,12 +169,12 @@
       #{zccDebtCode,jdbcType=VARCHAR}, #{amcDebtCode,jdbcType=CHAR}, #{publishState,jdbcType=INTEGER}, 
       #{publishDate,jdbcType=TIMESTAMP}, #{lawsuitState,jdbcType=INTEGER}, #{lawsuitStateDesc,jdbcType=VARCHAR}, 
       #{valuation,jdbcType=BIGINT}, #{amcContactorId,jdbcType=BIGINT}, #{amcContactorName,jdbcType=CHAR}, 
-      #{amcContactorPhone,jdbcType=CHAR}, #{amcContactor2Id,jdbcType=BIGINT}, #{isRecommanded,jdbcType=INTEGER}, 
-      #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, 
-      #{origCreditorId,jdbcType=BIGINT}, #{origCreditorName,jdbcType=CHAR}, #{briefDesc,jdbcType=VARCHAR}, 
-      #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, 
-      #{createdDate,jdbcType=TIMESTAMP}, #{note,jdbcType=CHAR}, #{visitCount,jdbcType=BIGINT}, 
-      #{hasImg,jdbcType=INTEGER})
+      #{amcContactorPhone,jdbcType=CHAR}, #{amcContactorSex,jdbcType=INTEGER}, #{amcContactor2Id,jdbcType=BIGINT}, 
+      #{isRecommanded,jdbcType=INTEGER}, #{guarantType,jdbcType=INTEGER}, #{recommStartDate,jdbcType=TIMESTAMP}, 
+      #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, #{origCreditorName,jdbcType=CHAR}, 
+      #{briefDesc,jdbcType=VARCHAR}, #{updateBy,jdbcType=BIGINT}, #{updateDate,jdbcType=TIMESTAMP}, 
+      #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}, #{note,jdbcType=CHAR}, 
+      #{visitCount,jdbcType=BIGINT}, #{hasImg,jdbcType=INTEGER})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -255,6 +256,9 @@
       </if>
       <if test="amcContactorPhone != null">
         amc_contactor_phone,
+      </if>
+      <if test="amcContactorSex != null">
+        amc_contactor_sex,
       </if>
       <if test="amcContactor2Id != null">
         amc_contactor2_id,
@@ -377,6 +381,9 @@
       </if>
       <if test="amcContactorPhone != null">
         #{amcContactorPhone,jdbcType=CHAR},
+      </if>
+      <if test="amcContactorSex != null">
+        #{amcContactorSex,jdbcType=INTEGER},
       </if>
       <if test="amcContactor2Id != null">
         #{amcContactor2Id,jdbcType=BIGINT},
@@ -512,6 +519,9 @@
       <if test="record.amcContactorPhone != null">
         amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
       </if>
+      <if test="record.amcContactorSex != null">
+        amc_contactor_sex = #{record.amcContactorSex,jdbcType=INTEGER},
+      </if>
       <if test="record.amcContactor2Id != null">
         amc_contactor2_id = #{record.amcContactor2Id,jdbcType=BIGINT},
       </if>
@@ -590,6 +600,7 @@
       amc_contactor_id = #{record.amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{record.amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{record.amcContactorPhone,jdbcType=CHAR},
+      amc_contactor_sex = #{record.amcContactorSex,jdbcType=INTEGER},
       amc_contactor2_id = #{record.amcContactor2Id,jdbcType=BIGINT},
       is_recommanded = #{record.isRecommanded,jdbcType=INTEGER},
       guarant_type = #{record.guarantType,jdbcType=INTEGER},
@@ -687,6 +698,9 @@
       <if test="amcContactorPhone != null">
         amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
       </if>
+      <if test="amcContactorSex != null">
+        amc_contactor_sex = #{amcContactorSex,jdbcType=INTEGER},
+      </if>
       <if test="amcContactor2Id != null">
         amc_contactor2_id = #{amcContactor2Id,jdbcType=BIGINT},
       </if>
@@ -762,6 +776,7 @@
       amc_contactor_id = #{amcContactorId,jdbcType=BIGINT},
       amc_contactor_name = #{amcContactorName,jdbcType=CHAR},
       amc_contactor_phone = #{amcContactorPhone,jdbcType=CHAR},
+      amc_contactor_sex = #{amcContactorSex,jdbcType=INTEGER},
       amc_contactor2_id = #{amcContactor2Id,jdbcType=BIGINT},
       is_recommanded = #{isRecommanded,jdbcType=INTEGER},
       guarant_type = #{guarantType,jdbcType=INTEGER},

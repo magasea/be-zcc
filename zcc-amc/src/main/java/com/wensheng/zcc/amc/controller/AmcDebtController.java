@@ -18,6 +18,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -81,6 +82,9 @@ public class AmcDebtController {
 
   @Autowired
   AmcAssetService amcAssetService;
+
+  @Autowired
+  AmcMiscService amcMiscService;
 
 
 
@@ -509,6 +513,9 @@ public class AmcDebtController {
           + " updateDebtState inteerface");
     }
     amcDebt.setPublishState(debtVoBaseActionVo.getContent().getPublishState());
+    if(debtVoBaseActionVo.getContent().getPublishState().equals(PublishStateEnum.PUBLISHED.getStatus())){
+      amcDebt.setPublishDate(AmcDateUtils.getCurrentDate());
+    }
     amcDebt.setId(debtVoBaseActionVo.getContent().getId());
     amcDebt.setUpdateBy(debtVoBaseActionVo.getContent().getUpdateBy());
 //    amcDebtService.saveOperLog(debtVoBaseActionVo,"");
@@ -735,6 +742,20 @@ public class AmcDebtController {
     amcPatchService.patchAmcDebtContactor();
   }
 
+
+  @RequestMapping(value = "/patchAmcDebtAssetContactor", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAmcDebtAssetContactor() throws Exception {
+    amcPatchService.patchAmcDebtAssetContactor();
+  }
+
+  @RequestMapping(value = "/patchAmcDebtAssetPublishDate", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAmcDebtAssetPublishDate() throws Exception {
+    amcPatchService.patchPublishDate();
+  }
+
+
   @RequestMapping(value = "/imageBatchImport", method = RequestMethod.POST)
   @ResponseBody
   public void imageBatchImport(@RequestParam("zipImages") MultipartFile zipImages) throws Exception {
@@ -797,7 +818,17 @@ public class AmcDebtController {
 
   }
 
+  @RequestMapping(value = "/patchImageTag", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchImageTag() throws Exception {
+     amcMiscService.updateHasImgTag();
+  }
 
+  @RequestMapping(value = "/patchContactorSex", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchContactorSex(@RequestParam String contactorName, @RequestParam Integer sex) throws Exception {
+    amcMiscService.patchContactorSex(contactorName, sex);
+  }
 
 
 }

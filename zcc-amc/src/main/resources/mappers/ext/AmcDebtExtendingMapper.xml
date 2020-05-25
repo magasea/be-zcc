@@ -96,6 +96,7 @@
   ${prefix}amc_contactor_id as amc_contactor_id,
   ${prefix}amc_contactor_name as amc_contactor_name,
   ${prefix}amc_contactor_phone as amc_contactor_phone,
+  ${prefix}amc_contactor_sex as amc_contactor_sex,
   ${prefix}amc_contactor2_id as amc_contactor2_id,
   ${prefix}is_recommanded as is_recommanded,
   ${prefix}guarant_type as guarant_type,
@@ -139,6 +140,7 @@
   ${prefix}amc_contactor_id as ${alias}amc_contactor_id,
   ${prefix}amc_contactor_name as ${alias}amc_contactor_name,
   ${prefix}amc_contactor_phone as ${alias}amc_contactor_phone,
+  ${prefix}amc_contactor_sex as ${alias}amc_contactor_sex,
   ${prefix}note as ${alias}note
   </sql>
 

@@ -76,6 +76,8 @@ public class AmcAssetVo {
 
   private String amcContactorPhone;
 
+  private Integer amcContactorSex;
+
   private String note;
 
   private Long visitCount;

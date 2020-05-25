@@ -64,6 +64,8 @@ public class AmcDebtVo {
 
   private String amcContactorPhone;
 
+  private Integer amcContactorSex;
+
   private Integer isRecommanded;
 
   private Integer guarantType;

@@ -565,6 +565,76 @@ public class AmcDebtContactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andWxImgUrlIsNull() {
+            addCriterion("wx_img_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlIsNotNull() {
+            addCriterion("wx_img_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlEqualTo(String value) {
+            addCriterion("wx_img_url =", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlNotEqualTo(String value) {
+            addCriterion("wx_img_url <>", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlGreaterThan(String value) {
+            addCriterion("wx_img_url >", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("wx_img_url >=", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlLessThan(String value) {
+            addCriterion("wx_img_url <", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlLessThanOrEqualTo(String value) {
+            addCriterion("wx_img_url <=", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlLike(String value) {
+            addCriterion("wx_img_url like", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlNotLike(String value) {
+            addCriterion("wx_img_url not like", value, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlIn(List<String> values) {
+            addCriterion("wx_img_url in", values, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlNotIn(List<String> values) {
+            addCriterion("wx_img_url not in", values, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlBetween(String value1, String value2) {
+            addCriterion("wx_img_url between", value1, value2, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andWxImgUrlNotBetween(String value1, String value2) {
+            addCriterion("wx_img_url not between", value1, value2, "wxImgUrl");
+            return (Criteria) this;
+        }
+
         public Criteria andUpdateTimeIsNull() {
             addCriterion("update_time is null");
             return (Criteria) this;

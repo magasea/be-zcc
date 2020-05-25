@@ -20,6 +20,7 @@ import com.wensheng.zcc.amc.service.AmcSaleService;
 import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
 import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.AmcSexEnum;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
@@ -98,7 +99,26 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+  @RequestMapping(value = "/saleFloorTypeEnum", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getSaleFloorTypeEnum(){
 
+    List<String> result = new ArrayList<>();
+    for(SaleFloorEnum saleFloorEnum : SaleFloorEnum.values()){
+      result.add(String.format("%d:%s", saleFloorEnum.getId(), saleFloorEnum.getName()));
+    }
+    return result;
+  }
+  @RequestMapping(value = "/amcSex", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAmcSex(){
+
+    List<String> result = new ArrayList<>();
+    for(AmcSexEnum amcSexEnum : AmcSexEnum.values()){
+      result.add(String.format("%d:%s", amcSexEnum.getId(), amcSexEnum.getName()));
+    }
+    return result;
+  }
 
   @RequestMapping(value = "/publishStates", method = RequestMethod.GET)
   @ResponseBody
@@ -436,26 +456,7 @@ public class AmcBasicInfoController {
     return result;
   }
 
-  @RequestMapping(value = "/amcAssetFilter", method = RequestMethod.POST)
-  @ResponseBody
-  public void showAmcAssetFilter(@RequestBody AmcFilterContentAsset amcFilterContentAsset){
 
-    return;
-  }
-
-  @RequestMapping(value = "/amcDebtFilter", method = RequestMethod.POST)
-  @ResponseBody
-  public void showAmcDebtFilter(@RequestBody AmcFilterContentDebt amcFilterContentDebt){
-
-    return;
-  }
-
-  @RequestMapping(value = "/amcTagFilter", method = RequestMethod.POST)
-  @ResponseBody
-  public void showAmcTagFilter(@RequestBody AmcFilterContentTag amcFilterContentTag){
-
-    return;
-  }
 
   @RequestMapping(value = "/checkGeoInfo", method = RequestMethod.POST)
   @ResponseBody

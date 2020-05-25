@@ -17,6 +17,8 @@ public class AmcDebtContactor {
 
     private String notes;
 
+    private String wxImgUrl;
+
     private Date updateTime;
 
     public Long getId() {
@@ -73,6 +75,14 @@ public class AmcDebtContactor {
 
     public void setNotes(String notes) {
         this.notes = notes == null ? null : notes.trim();
+    }
+
+    public String getWxImgUrl() {
+        return wxImgUrl;
+    }
+
+    public void setWxImgUrl(String wxImgUrl) {
+        this.wxImgUrl = wxImgUrl == null ? null : wxImgUrl.trim();
     }
 
     public Date getUpdateTime() {

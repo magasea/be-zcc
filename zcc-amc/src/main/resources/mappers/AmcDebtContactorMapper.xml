@@ -9,6 +9,7 @@
     <result column="location" jdbcType="INTEGER" property="location" />
     <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
+    <result column="wx_img_url" jdbcType="VARCHAR" property="wxImgUrl" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -70,7 +71,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, branch_id, name, nikname, location, phone_number, notes, update_time
+    id, branch_id, name, nikname, location, phone_number, notes, wx_img_url, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
@@ -109,10 +110,10 @@
     </selectKey>
     insert into AMC_DEBT_CONTACTOR (branch_id, name, nikname, 
       location, phone_number, notes, 
-      update_time)
+      wx_img_url, update_time)
     values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{nikname,jdbcType=CHAR}, 
       #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+      #{wxImgUrl,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -138,6 +139,9 @@
       <if test="notes != null">
         notes,
       </if>
+      <if test="wxImgUrl != null">
+        wx_img_url,
+      </if>
       <if test="updateTime != null">
         update_time,
       </if>
@@ -160,6 +164,9 @@
       </if>
       <if test="notes != null">
         #{notes,jdbcType=VARCHAR},
+      </if>
+      <if test="wxImgUrl != null">
+        #{wxImgUrl,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
@@ -196,6 +203,9 @@
       <if test="record.notes != null">
         notes = #{record.notes,jdbcType=VARCHAR},
       </if>
+      <if test="record.wxImgUrl != null">
+        wx_img_url = #{record.wxImgUrl,jdbcType=VARCHAR},
+      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -213,6 +223,7 @@
       location = #{record.location,jdbcType=INTEGER},
       phone_number = #{record.phoneNumber,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
+      wx_img_url = #{record.wxImgUrl,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -239,6 +250,9 @@
       <if test="notes != null">
         notes = #{notes,jdbcType=VARCHAR},
       </if>
+      <if test="wxImgUrl != null">
+        wx_img_url = #{wxImgUrl,jdbcType=VARCHAR},
+      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -253,6 +267,7 @@
       location = #{location,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR},
+      wx_img_url = #{wxImgUrl,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

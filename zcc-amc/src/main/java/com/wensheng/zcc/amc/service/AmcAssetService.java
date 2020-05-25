@@ -9,6 +9,7 @@ import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import java.util.List;
 import java.util.Map;
@@ -74,6 +75,8 @@ public interface AmcAssetService {
 
   List<AmcAssetVo> getAssetsByIds(List<Long> assetIds) throws Exception;
 
+  List<AmcAssetVo> getLatestNumOfAssets(int num) throws Exception;
+
   Map<Long, List<String>> uploadAmcAssetsImage2WechatByIds(List<Long> assetIds);
 
   Map<Long, Map<Long, List<AssetImage>>> getAssetImgsByDebtIds(List<Long> debtIds);
@@ -83,6 +86,7 @@ public interface AmcAssetService {
   public void checkGeoInfoWorker();
 
   Map<Long, AssetAdditional> getAssetAdditions(Long amcDebtId);
+  Map<Long, AssetImage> getAssetImages(Long amcDebtId);
 
   List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
 
@@ -95,5 +99,10 @@ public interface AmcAssetService {
   List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset) throws Exception;
 
   List<AmcAssetVo> getFloorFilteredAsset(AmcFilterContentAsset filterAsset, AmcSaleGetListInPage pageInfo)
+      throws Exception;
+
+  List<Long> getLatestIds();
+
+  List<AmcAssetVo> getFloorFilteredRandomAssets(AmcFilterContentAsset filterAsset, AmcSaleGetRandomListInPage pageInfo)
       throws Exception;
 }

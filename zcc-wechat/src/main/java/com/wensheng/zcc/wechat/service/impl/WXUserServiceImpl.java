@@ -9,6 +9,7 @@ import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.mq.kafka.module.AmcWechatUser;
+import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -24,6 +25,7 @@ import com.wensheng.zcc.wechat.module.vo.TagDel;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import com.wensheng.zcc.wechat.module.vo.WechatTagVo;
@@ -31,6 +33,7 @@ import com.wensheng.zcc.wechat.module.vo.WechatUserInfoResp;
 import com.wensheng.zcc.wechat.module.vo.WechatUserInfoVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
+import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
@@ -47,8 +50,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -804,6 +810,40 @@ public class WXUserServiceImpl implements WXUserService {
       }
     }
     return true;
+  }
+
+  public Page<WechatUser> getUserInfos(PageInfo pageInfo) {
+    return null;
+  }
+
+  @Override
+  public List<WechatUser> getAllWechatUsers(int offset, int size,
+      Map<String, Direction> orderByParam) {
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.setOrderByClause(" id desc ");
+    RowBounds rowBounds = new RowBounds(offset, size);
+    List<WechatUser> wechatUsers =  wechatUserMapper.selectByExampleWithRowbounds(wechatUserExample, rowBounds);
+    return wechatUsers;
+  }
+
+  @Override
+  public List<WXUserWatchCount> getWXUserWatchCount(List<WXUserWatchOnObject> objectList) {
+    List<WXUserWatchCount> wxUserWatchCounts = new ArrayList<>();
+    for(WXUserWatchOnObject wxUserWatchOnObject: objectList){
+      WXUserWatchCount wxUserWatchCount = new WXUserWatchCount();
+      Query query = new Query();
+      query.addCriteria(Criteria.where("objectId").is(wxUserWatchOnObject.getObjectId()).and("type").is(wxUserWatchOnObject.getType()));
+      List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+      wxUserWatchCount.setObjId(wxUserWatchOnObject.getObjectId());
+      wxUserWatchCount.setObjType(wxUserWatchOnObject.getType());
+      wxUserWatchCount.setCount(wxUserWatchObjects.size());
+      wxUserWatchCounts.add(wxUserWatchCount);
+    }
+    return wxUserWatchCounts;
+  }
+
+  public Long getAllWechatUserCount() {
+    return wechatUserMapper.countByExample(null);
   }
 
 

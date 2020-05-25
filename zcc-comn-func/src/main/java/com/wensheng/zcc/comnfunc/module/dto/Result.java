@@ -1,9 +1,7 @@
 package com.wensheng.zcc.comnfunc.module.dto;
 
 import com.google.gson.annotations.SerializedName;
-import lombok.Data;
 
-@Data
 public class Result{
 
 	@SerializedName("input_address")
@@ -18,5 +16,19 @@ public class Result{
 	@SerializedName("amap_result")
 	private AmapResult amapResult;
 
+	public String getInputAddress(){
+		return inputAddress;
+	}
 
+	public StatsResult getStatsResult(){
+		return statsResult;
+	}
+
+	public BaiduResult getBaiduResult(){
+		return baiduResult;
+	}
+
+	public AmapResult getAmapResult(){
+		return amapResult;
+	}
 }

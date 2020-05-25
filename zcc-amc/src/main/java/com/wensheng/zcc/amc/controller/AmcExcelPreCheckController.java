@@ -1,6 +1,7 @@
 package com.wensheng.zcc.amc.controller;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
+import com.wensheng.zcc.amc.service.AmcExcelFileService;
 import com.wensheng.zcc.amc.service.AmcExcelPreCheckService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * @author chenwei on 1/3/19
@@ -20,6 +22,9 @@ public class AmcExcelPreCheckController {
 
   @Autowired
   AmcExcelPreCheckService amcExcelPreCheckService;
+
+  @Autowired
+  AmcExcelFileService amcExcelFileService;
 
 
 
@@ -57,6 +62,17 @@ public class AmcExcelPreCheckController {
     transferResult = amcExcelPreCheckService.transferAssetPre2Asset(amcAssetPres);
     return transferResult;
   }
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/excel/patchDebtClue", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public void patchDebtClue (@PathVariable Long amcid,
+      @RequestParam("excel") MultipartFile excelFile) throws Exception {
 
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    amcExcelFileService.handleMultiPartFilePatchDebtClue(excelFile);
+
+
+  }
 
 }

@@ -6,9 +6,12 @@ import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import java.util.List;
+import java.util.Map;
+import org.springframework.data.domain.Sort.Direction;
 
 public interface WXUserService {
   public void tagUserTask() throws Exception;
@@ -42,4 +45,10 @@ public interface WXUserService {
   public AmcWechatUserInfo getUserInfo(String openId);
 
   boolean unWatchOn(String openId, String phone, Long objectId, Integer type);
+
+  public List<WechatUser> getAllWechatUsers(int offset, int size,
+      Map<String, Direction> orderByParam);
+
+  public List<WXUserWatchCount> getWXUserWatchCount(List<WXUserWatchOnObject> objectList);
+
 }

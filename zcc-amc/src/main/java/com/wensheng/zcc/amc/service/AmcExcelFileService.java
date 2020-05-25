@@ -19,6 +19,7 @@ public interface AmcExcelFileService {
   public List<String> importExcel4DebtAsset(MultipartFile multipartFile) throws Exception;
 
   public List<DebtBatchImportErr> handleMultiPartFilePrecheck(MultipartFile multipartFile) throws Exception;
+  public void handleMultiPartFilePatchDebtClue(MultipartFile multipartFile) throws Exception;
 
   public File handleMultiPartFileCurtInfo(MultipartFile multipartFile) throws Exception;
 

@@ -79,6 +79,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
     static final String strLandSupplyType = "供地方式";
     static final String strWarrantInfo = "权证信息";
     static final String strNote = "备注";
+    static final String strDebtClue = "财产线索";
 
     static final String SEP_CHAR = ",";
     static final String KEY_WORD_CMPY = "公司";
@@ -187,6 +188,114 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         return errorInfo;
     }
 
+    @Override
+    public void handleMultiPartFilePatchDebtClue(MultipartFile multipartFile)
+        throws Exception {
+        File targetFile = null;
+        targetFile =
+            new File(debtImageRepo+File.separator  +multipartFile.getOriginalFilename());
+
+
+        multipartFile.transferTo(targetFile);
+
+// Creating a Workbook from an Excel file (.xls or .xlsx)
+        Workbook workbook = WorkbookFactory.create(targetFile);
+
+        // Retrieving the number of sheets in the Workbook
+        System.out.println("Workbook has " + workbook.getNumberOfSheets() + " Sheets : ");
+
+     /*
+           ==================================================================
+           Iterating over all the rows and columns in a Sheet (Multiple ways)
+           ==================================================================
+        */
+
+        // Getting the Sheet at index zero
+        Sheet sheetDebt = workbook.getSheetAt(0);
+
+        Map<String, AmcDebtPre> debtMap = new HashMap<>();
+        Map<String, Long> regionMap = new HashMap<>();
+        // 1. You can obtain a rowIterator and columnIterator and iterate over them
+        Iterator<Row> rowIterator = sheetDebt.rowIterator();
+
+        int idxDebtTitle = -1;
+        int idxDebtClue = -1;
+
+        boolean hasGotHeader = false;
+        while (rowIterator.hasNext()) {
+            Row row = rowIterator.next();
+            if(row.getLastCellNum() - row.getFirstCellNum() <= 5 ){
+                if(!hasGotHeader ){
+                    // it is header rows
+                    continue;
+                }else{
+                    break;
+                }
+
+            }
+            String cellValue = dataFormatter.formatCellValue(row.getCell(0));
+            String secondCellValue = dataFormatter.formatCellValue(row.getCell(1));
+            if(StringUtils.isEmpty(cellValue) || StringUtils.isEmpty(secondCellValue)){
+                continue;
+            }
+            if(!hasGotHeader){
+                log.info("now got first row, it is title row");
+                // Now let's iterate over the columns of the current row
+                Iterator<Cell> cellIterator = row.cellIterator();
+                int idxOfCell = -1;
+                while (cellIterator.hasNext()) {
+                    Cell cell = cellIterator.next();
+                    idxOfCell++;
+                    cellValue = dataFormatter.formatCellValue(cell);
+
+                    System.out.print(cellValue + "\t");
+                    switch (cellValue) {
+                        case strDebtTitle:
+                            idxDebtTitle = idxOfCell;
+                            break;
+                        case strDebtClue:
+                            idxDebtClue = idxOfCell;
+                            break;
+//
+//                        default:
+//                            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
+
+                    }
+                }
+                // now check if there is missing headers
+                if((idxDebtTitle + 1) * (idxDebtClue + 1)  == 0){
+                    String missingHeader = null;
+                    if(idxDebtTitle == -1){
+                        missingHeader = strDebtTitle;
+                    }
+                    if(idxDebtClue == -1){
+                        missingHeader = strDebtClue;
+                    }
+
+                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                }else{
+                    hasGotHeader = true;
+                }
+            }else{
+                // can generate debt and asset
+                String cellDebtTitle = dataFormatter.formatCellValue(row.getCell(idxDebtTitle));
+                String cellDebtClue = dataFormatter.formatCellValue(row.getCell(idxDebtClue));
+
+                if(StringUtils.isEmpty(cellDebtTitle) && StringUtils.isEmpty(cellDebtClue)){
+                    continue;
+                }
+                try{
+                    amcDebtService.patchDebtClue(cellDebtTitle, cellDebtClue);
+
+                }catch (Exception ex){
+                    log.error("Failed to handle :", ex);
+                }
+
+            }
+
+        }
+
+    }
 
 
     @Override

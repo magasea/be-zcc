@@ -225,6 +225,66 @@ public class AmcSaleFloorExample {
             return (Criteria) this;
         }
 
+        public Criteria andFloorTypeIsNull() {
+            addCriterion("floor_type is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeIsNotNull() {
+            addCriterion("floor_type is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeEqualTo(Integer value) {
+            addCriterion("floor_type =", value, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeNotEqualTo(Integer value) {
+            addCriterion("floor_type <>", value, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeGreaterThan(Integer value) {
+            addCriterion("floor_type >", value, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeGreaterThanOrEqualTo(Integer value) {
+            addCriterion("floor_type >=", value, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeLessThan(Integer value) {
+            addCriterion("floor_type <", value, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeLessThanOrEqualTo(Integer value) {
+            addCriterion("floor_type <=", value, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeIn(List<Integer> values) {
+            addCriterion("floor_type in", values, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeNotIn(List<Integer> values) {
+            addCriterion("floor_type not in", values, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeBetween(Integer value1, Integer value2) {
+            addCriterion("floor_type between", value1, value2, "floorType");
+            return (Criteria) this;
+        }
+
+        public Criteria andFloorTypeNotBetween(Integer value1, Integer value2) {
+            addCriterion("floor_type not between", value1, value2, "floorType");
+            return (Criteria) this;
+        }
+
         public Criteria andFloorSeqIsNull() {
             addCriterion("floor_seq is null");
             return (Criteria) this;

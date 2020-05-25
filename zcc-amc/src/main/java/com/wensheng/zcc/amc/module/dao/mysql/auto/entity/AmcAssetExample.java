@@ -2,7 +2,6 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.entity;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 public class AmcAssetExample {
@@ -104,32 +103,6 @@ public class AmcAssetExample {
                 throw new RuntimeException("Between values for " + property + " cannot be null");
             }
             criteria.add(new Criterion(condition, value1, value2));
-        }
-
-        protected void addCriterionForJDBCDate(String condition, Date value, String property) {
-            if (value == null) {
-                throw new RuntimeException("Value for " + property + " cannot be null");
-            }
-            addCriterion(condition, new java.sql.Date(value.getTime()), property);
-        }
-
-        protected void addCriterionForJDBCDate(String condition, List<Date> values, String property) {
-            if (values == null || values.size() == 0) {
-                throw new RuntimeException("Value list for " + property + " cannot be null or empty");
-            }
-            List<java.sql.Date> dateList = new ArrayList<java.sql.Date>();
-            Iterator<Date> iter = values.iterator();
-            while (iter.hasNext()) {
-                dateList.add(new java.sql.Date(iter.next().getTime()));
-            }
-            addCriterion(condition, dateList, property);
-        }
-
-        protected void addCriterionForJDBCDate(String condition, Date value1, Date value2, String property) {
-            if (value1 == null || value2 == null) {
-                throw new RuntimeException("Between values for " + property + " cannot be null");
-            }
-            addCriterion(condition, new java.sql.Date(value1.getTime()), new java.sql.Date(value2.getTime()), property);
         }
 
         public Criteria andIdIsNull() {
@@ -1193,52 +1166,52 @@ public class AmcAssetExample {
         }
 
         public Criteria andPublishDateEqualTo(Date value) {
-            addCriterionForJDBCDate("publish_date =", value, "publishDate");
+            addCriterion("publish_date =", value, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateNotEqualTo(Date value) {
-            addCriterionForJDBCDate("publish_date <>", value, "publishDate");
+            addCriterion("publish_date <>", value, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateGreaterThan(Date value) {
-            addCriterionForJDBCDate("publish_date >", value, "publishDate");
+            addCriterion("publish_date >", value, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateGreaterThanOrEqualTo(Date value) {
-            addCriterionForJDBCDate("publish_date >=", value, "publishDate");
+            addCriterion("publish_date >=", value, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateLessThan(Date value) {
-            addCriterionForJDBCDate("publish_date <", value, "publishDate");
+            addCriterion("publish_date <", value, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateLessThanOrEqualTo(Date value) {
-            addCriterionForJDBCDate("publish_date <=", value, "publishDate");
+            addCriterion("publish_date <=", value, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateIn(List<Date> values) {
-            addCriterionForJDBCDate("publish_date in", values, "publishDate");
+            addCriterion("publish_date in", values, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateNotIn(List<Date> values) {
-            addCriterionForJDBCDate("publish_date not in", values, "publishDate");
+            addCriterion("publish_date not in", values, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateBetween(Date value1, Date value2) {
-            addCriterionForJDBCDate("publish_date between", value1, value2, "publishDate");
+            addCriterion("publish_date between", value1, value2, "publishDate");
             return (Criteria) this;
         }
 
         public Criteria andPublishDateNotBetween(Date value1, Date value2) {
-            addCriterionForJDBCDate("publish_date not between", value1, value2, "publishDate");
+            addCriterion("publish_date not between", value1, value2, "publishDate");
             return (Criteria) this;
         }
 
@@ -2029,6 +2002,66 @@ public class AmcAssetExample {
 
         public Criteria andAmcContactorPhoneNotBetween(String value1, String value2) {
             addCriterion("amc_contactor_phone not between", value1, value2, "amcContactorPhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexIsNull() {
+            addCriterion("amc_contactor_sex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexIsNotNull() {
+            addCriterion("amc_contactor_sex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex =", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexNotEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex <>", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexGreaterThan(Integer value) {
+            addCriterion("amc_contactor_sex >", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexGreaterThanOrEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex >=", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexLessThan(Integer value) {
+            addCriterion("amc_contactor_sex <", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexLessThanOrEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex <=", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexIn(List<Integer> values) {
+            addCriterion("amc_contactor_sex in", values, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexNotIn(List<Integer> values) {
+            addCriterion("amc_contactor_sex not in", values, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexBetween(Integer value1, Integer value2) {
+            addCriterion("amc_contactor_sex between", value1, value2, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexNotBetween(Integer value1, Integer value2) {
+            addCriterion("amc_contactor_sex not between", value1, value2, "amcContactorSex");
             return (Criteria) this;
         }
 

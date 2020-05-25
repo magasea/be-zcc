@@ -3,7 +3,7 @@ package com.wensheng.zcc.comnfunc.service.impl;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegion;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegionItem;
-import com.wensheng.zcc.comnfunc.module.dto.AmcGeoInfoResponse;
+import com.wensheng.zcc.comnfunc.module.dto.Response;
 import com.wensheng.zcc.comnfunc.service.RegionService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -50,7 +50,7 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public AmcRegionInfo getRegionInfoByLngLat(Double lng, Double lat) {
         String url = String.format(getGeoInfoUrl, String.format("%s,%s", lng,lat));
-        AmcGeoInfoResponse resp = restTemplate.getForEntity(url, AmcGeoInfoResponse.class).getBody();
+        Response resp = restTemplate.getForEntity(url, Response.class).getBody();
         AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
         amcRegionInfo.setProvName(resp.getResult().getStatsResult().getProvince().get(1));
         amcRegionInfo.setProvCode(resp.getResult().getStatsResult().getProvince().get(0));

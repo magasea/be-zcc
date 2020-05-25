@@ -219,7 +219,9 @@ public class CustInfoServiceImpl implements CustInfoService {
 
           custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
-          custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
+          if(null != cmpyBasicBizInfoSync.getHistoryName()){
+            custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
+          }
           custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getEntPhone());
           custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getEntAddress());
           custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());

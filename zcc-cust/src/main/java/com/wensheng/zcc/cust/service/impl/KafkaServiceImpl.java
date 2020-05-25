@@ -197,7 +197,10 @@ public class KafkaServiceImpl {
         cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
       custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
       //修改信息
-      custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
+      if(null!= cmpyBasicBizInfoSync.getHistoryName()){
+        custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
+      }
+
       if(null != cmpyBasicBizInfoSync.getRegionCode()){
         custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
       }

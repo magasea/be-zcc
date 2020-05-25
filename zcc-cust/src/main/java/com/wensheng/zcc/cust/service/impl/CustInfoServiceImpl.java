@@ -233,6 +233,8 @@ public class CustInfoServiceImpl implements CustInfoService {
         }else {
           log.error("根据修改公司名称查询到基础库信息与被修改公司信息不匹配，被修改公司名称为：{}，基础库公司cmpyBasicBizInfoSync：{}",
               custTrdCmpyOriginal.getCmpyName(),cmpyBasicBizInfoSync);
+          throw ExceptionUtils.getAmcException(AmcExceptions.COMPANY_UPDATE_ERROR,
+              String.format("根据修改公司名称查询到基础库信息与被修改公司信息不匹配"));
         }
       }else {
         //保存公司修改记录

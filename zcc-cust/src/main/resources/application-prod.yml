@@ -70,12 +70,21 @@ spring:
                         authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
     kafka:
+        bootstrap-servers: ${env.kfkhost}:9092
         consumer:
             group-id: grp-zcc-cust
             auto-offset-reset: earliest
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
-        bootstrap-servers: ${env.kfkhost}:9092
+        #crawl-systemk faka
+        crawl-system:
+            bootstrap-servers: ${env.crawl-system-kfkhost}:9092
+            consumer:
+                group-id: grp-zcc-cust-pro
+                auto-offset-reset: earliest
+                enable-auto-commit: true
+
+
     data:
         mongodb:
             database: wszcc_cust
@@ -137,7 +146,7 @@ kafka:
 logging:
     level:
         com:
-            wensheng: TRACE
+            wensheng: INFO
         root: WARN
 cust:
     syncUrls:
@@ -157,6 +166,9 @@ cust:
         getTrdContactorInfoByTrdId: http://10.20.100.252:8086/debtTradeResources/getJsonById/%s
         getAddressCodeByAddress: http://10.20.200.100:5050/pre/amap_code/api?address=%s
         crawledCompany: http://10.20.100.252:8086/debtTradeCompanys/forceSave?cmpyName=%s
+        getCompanyBasicBizInfo: http://10.20.100.252:8000/entInfos/getJson?page=1&name=%s
+
+        
 recom:
     urls:
         getAssetCusts: http://${env.recomhost}:${env.recomport}/api/sug/asset2investor/%s
@@ -174,6 +186,7 @@ env:
     recomhost: 10.20.100.236
     recomport: 7654
     kfkhost: 10.20.100.238
+    crawl-system-kfkhost: 10.20.200.88
     image-repo: /home/chenwei/working/zcc/temp
     oauth2:
         host: 10.20.100.238

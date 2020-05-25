@@ -81,6 +81,7 @@ public class ExceptionUtils {
     INVALID_FLOOR_FILTER_ERROR(1050, "invalid floor filter error", "楼层过滤参数错误"),
     INVALID_MENU_FILTER_ERROR(1051, "invalid menu filter error", "菜单过滤参数错误"),
     INVALID_BANNER_FILTER_ERROR(1052, "invalid banner filter error", "广告位过滤参数错误"),
+    COMPANY_UPDATE_ERROR(1053, "company update error", "公司信息修改错误"),
     ;
     int code;
     String name;

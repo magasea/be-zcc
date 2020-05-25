@@ -11,5 +11,5 @@ public class AddCrawlCmpyResultDTO {
   String mqRequestName;
   int cmpyCount;
   int responseType;
-  List<CmpyBizInfoResult> cmpyBizInfoResultList;
+  List<CmpyBizInfoResult> cmpyBizInfoResults;
 }

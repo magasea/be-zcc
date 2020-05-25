@@ -88,7 +88,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
           custAmcCmpycontactor.getName(),
           custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
     }
-
+    custAmcCmpycontactor.setCreateTime(new Date());
     custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
   }
 
@@ -388,7 +388,11 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       if (entry.getValue().getCustAmcCmpycontactor().getCreateBy() != null
           && entry.getValue().getCustAmcCmpycontactor().getCreateBy() == -1L
           && entry.getValue().getCustAmcCmpycontactor().getUpdateBy() == -1L
+          && "-1".equals(entry.getValue().getCustAmcCmpycontactor().getPhoneUpdate())
+          && "-1".equals(entry.getValue().getCustAmcCmpycontactor().getMobileUpdate())
           && CollectionUtils.isEmpty(entry.getValue().getCustTrdInfoList())) {
+        commonHandler.creatCmpycontactorHistory(null, "getCmpyAmcContactor",
+            "同步爬虫数据删除重复联系人", entry.getValue().getCustAmcCmpycontactor());
         custAmcCmpycontactorMapper
             .deleteByPrimaryKey(entry.getValue().getCustAmcCmpycontactor().getId());
         iterator.remove();
@@ -660,6 +664,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
     //数据库无对应的联系人新增
     if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
+      custAmcCmpycontactor.setCreateTime(new Date());
       custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
       custTrdInfo.setTrdCmpycontactorId(custAmcCmpycontactor.getId());
       custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfo);
@@ -674,6 +679,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       //判断是否需要更新联系人
       if(custAmcCmpycontactors.get(0).getUpdateTime().before(custTrdInfo.getUpdateTime())){
         custAmcCmpycontactor.setId(cmpycontactorId);
+        commonHandler.creatCmpycontactorHistory(null, "getCmpyAmcContactor",
+            "同步爬虫数据修改", custAmcCmpycontactors.get(0));
         custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
       }
       return custAmcCmpycontactors.get(0);

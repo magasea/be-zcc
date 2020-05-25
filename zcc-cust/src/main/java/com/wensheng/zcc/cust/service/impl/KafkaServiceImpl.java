@@ -193,10 +193,11 @@ public class KafkaServiceImpl {
     cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
     log.info("查询爬虫基础库中信息,cmpyBasicBizInfoSync{}", cmpyBasicBizInfoSync);
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
-    if(custTrdCmpyOriginal.getCmpyName().equals(cmpyBasicBizInfoSync.getName()) || cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
+    if(custTrdCmpyOriginal.getCmpyName().equals(cmpyBasicBizInfoSync.getName()) ||
+        cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
       custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
       //修改信息
-      custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName());
+      custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
       if(null != cmpyBasicBizInfoSync.getRegionCode()){
         custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
       }

@@ -45,5 +45,5 @@ public class CmpyBasicBizInfoSync {
   private String reportAddress;
   private String stockInfo;
   private long crawlingTime;
-  private String cmpyProvince;
+  private String regionCode;
 }

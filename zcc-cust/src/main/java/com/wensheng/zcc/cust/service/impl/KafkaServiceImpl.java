@@ -197,7 +197,7 @@ public class KafkaServiceImpl {
       custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
       //修改信息
       custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName());
-      custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getCmpyProvince());
+      custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
       custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
       custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getEntPhone());
       custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getEntAddress());

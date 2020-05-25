@@ -224,7 +224,9 @@ public class CustInfoServiceImpl implements CustInfoService {
           custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getEntAddress());
           custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
           custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
-          custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
+          if(null != cmpyBasicBizInfoSync.getRegionCode()){
+            custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
+          }
           custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
         }else {
           log.error("根据修改公司名称查询到基础库信息与被修改公司信息不匹配，被修改公司名称为：{}，基础库公司cmpyBasicBizInfoSync：{}",

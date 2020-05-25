@@ -334,12 +334,17 @@ public class CustInfoController {
 
   @RequestMapping(value = "/addCrawlCmpyKafkaTest", method = RequestMethod.POST)
   @ResponseBody
-  public String addCrawlCmpy(@RequestParam String cmpyNames) throws Exception {
+  public String addCrawlCmpy(@RequestParam String cmpyNames, @RequestParam String batchName,
+      @RequestParam String responseType) throws Exception {
     final String TOPIC = "cmpy_biz_info";
     AddCrawlCmpyDTO addCrawlCmpyDTO = new AddCrawlCmpyDTO();
     addCrawlCmpyDTO.setAppName("zcc");
     addCrawlCmpyDTO.setCmpyNames(cmpyNames);
-    addCrawlCmpyDTO.setCmpyCount(1);
+    addCrawlCmpyDTO.setBatchName(batchName);
+    addCrawlCmpyDTO.setBatchId(batchName);
+    String[] cmpyNameArray = cmpyNames.split(",");
+    addCrawlCmpyDTO.setCmpyCount(cmpyNameArray.length);
+    addCrawlCmpyDTO.setResponseType(responseType);
     String addCrawlCmpyJson = new Gson().toJson(addCrawlCmpyDTO);
     try {
       crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyJson);

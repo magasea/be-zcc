@@ -125,7 +125,8 @@ public class KafkaServiceImpl {
       log.error("未找到与kafka匹配的公司信息");
       return;
     }
-    //查到多个公司时删除只留一个
+
+    //去重，查到多个公司时删除只留一个
     if(custTrdCmpyList.size() > 1){
       for (int i = 1; i < custTrdCmpyList.size(); i++) {
         CustTrdCmpy custTrdCmpy = custTrdCmpyList.get(i);
@@ -159,6 +160,7 @@ public class KafkaServiceImpl {
         custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpy.getId());
       }
     }
+
     CustTrdCmpy custTrdCmpyOriginal = custTrdCmpyList.get(0);
 
     log.info("要修改的公司信息custTrdCmpyOriginal：{}",custTrdCmpyOriginal);
@@ -176,19 +178,20 @@ public class KafkaServiceImpl {
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       return;
     }
+
     //查询爬虫基础库中信息
     RestTemplate restTemplate = CommonHandler.getRestTemplate();
     String url = String.format(getCompanyBasicBizInfo, cmpyBizInfoResult.getCmpyName());
     log.info("查询爬虫基础库中信息url:{}",url);
-    crawlResultDTO = restTemplate.getForEntity(
-        url, CrawlResultDTO.class).getBody();
-
+    crawlResultDTO = restTemplate.getForEntity(url, CrawlResultDTO.class).getBody();
     if(null == crawlResultDTO || CollectionUtils.isEmpty(crawlResultDTO.getList())){
       log.info("查询爬虫基础库中信息,暂无信息");
       return;
     }
+    //此场景只有一个
     cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
     log.info("查询爬虫基础库中信息,cmpyBasicBizInfoSync: {}", cmpyBasicBizInfoSync);
+
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，
     if(custTrdCmpyOriginal.getCmpyName().equals(cmpyBasicBizInfoSync.getName()) ||
         cmpyNameMatch(cmpyBasicBizInfoSync.getHistoryName(),custTrdCmpyOriginal.getCmpyName())){
@@ -218,6 +221,7 @@ public class KafkaServiceImpl {
           "kafka爬取公司信息成功,和原公司不匹配", custTrdCmpyOriginal);
       log.info("kafka爬取公司信息成功,和原公司不匹配");
     }
+
     custTrdCmpy.setSyncTime(new Date());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }

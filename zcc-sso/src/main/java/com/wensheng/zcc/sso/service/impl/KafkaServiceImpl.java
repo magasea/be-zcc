@@ -1,6 +1,7 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
@@ -72,7 +73,7 @@ public class KafkaServiceImpl implements KafkaService {
 
   @Override
   public void send(AmcWechatUser amcWechatUser) {
-    kafkaTemplate.send(topicWXuserZccLogin, amcWechatUser);
+    kafkaTemplate.send(MQ_TOPIC_WECHAT_USERCREATE, amcWechatUser);
   }
 
   @Override
@@ -110,5 +111,10 @@ public class KafkaServiceImpl implements KafkaService {
 
   public String getLoginTopic(){
     return topicAmcLogin;
+  }
+
+  @Override
+  public void send(WechatCode2SessionVo body) {
+    kafkaTemplate.send(topicWXuserZccLogin, body);
   }
 }

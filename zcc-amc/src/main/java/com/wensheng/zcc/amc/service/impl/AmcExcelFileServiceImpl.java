@@ -82,6 +82,8 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
     static final String strDebtClue = "财产线索";
 
     static final String SEP_CHAR = ",";
+    static final String LEFT_ENCLOSE_CHAR = "（";
+    static final String RIGHT_ENCLOSE_CHAR = "）";
     static final String KEY_WORD_CMPY = "公司";
     static final String KEY_WORD_CURT = "法院";
 
@@ -1261,8 +1263,10 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 
                 // after debt created , then make the related object
 
-                if(!StringUtils.isEmpty(cellGrantor) && !duplicateEvent){
+                if(!StringUtils.isEmpty(cellGrantor) && !amcDebtPre.getGuarantType().equals(GuarantTypeEnum.CREDIT.getType()) && !duplicateEvent){
                    amcDebtPreInDb.setGuarantee(checkGrantorsOrBrowwer(cellGrantor, errorInfo, sheetDebt, row, strGrantor));
+                }else if(StringUtils.isEmpty(cellGrantor) && amcDebtPre.getGuarantType().equals(GuarantTypeEnum.CREDIT.getType())){
+                    log.info("Allow empty granntor for credit type");
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantor, cellGrantor, null);
 //                    log.error(String.format("错误提示： %s %s 担保人不能为空", sheetDebt.getSheetName(), row.getRowNum()));
@@ -1936,7 +1940,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 //    }
     private String checkGrantorsOrBrowwer(String cellGrantorOrBrowwer, List<DebtBatchImportErr> errorInfo, Sheet sheetDebt, Row row, String columnName) {
 
-        if(!StringToolUtils.isNormalString(cellGrantorOrBrowwer) && !cellGrantorOrBrowwer.contains(SEP_CHAR)){
+        if(!StringToolUtils.isNormalString(cellGrantorOrBrowwer) && (!cellGrantorOrBrowwer.contains(SEP_CHAR) && !cellGrantorOrBrowwer.contains(LEFT_ENCLOSE_CHAR))){
             addErrorInfo(errorInfo, DebtPrecheckErrorEnum.SPEC_CHAR_ERR, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, columnName, cellGrantorOrBrowwer, null);
         }
         if(cellGrantorOrBrowwer.contains(SEP_CHAR)){

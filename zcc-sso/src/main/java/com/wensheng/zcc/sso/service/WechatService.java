@@ -2,7 +2,7 @@ package com.wensheng.zcc.sso.service;
 
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
-import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
+import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 import com.wensheng.zcc.sso.module.vo.WechatUserInfo;

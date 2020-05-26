@@ -52,6 +52,6 @@ public interface WXUserService {
 
   public List<WXUserWatchCount> getWXUserWatchCount(List<WXUserWatchOnObject> objectList);
 
-  WechatUserInfo getWechatUserInfo(String openId, String accessToken)
+  WechatUserInfo getWechatUserInfo(String openId, String accessToken);
 
 }

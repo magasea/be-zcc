@@ -48,17 +48,7 @@ public class KafkaServiceImpl implements KafkaService {
       @Payload WechatCode2SessionVo amcUser) {
     log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),
         typeIdHeader(cr.headers()), amcUser, cr.toString());
-    String gsonStr = null;
-    try{
-//      gsonStr = gson.toJson(payload);
-//      AmcUser amcUser = new AmcUser();
-//      AmcBeanUtils.copyProperties(payload, amcUser);
-      amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
-//      wszccTemplate.save(amcUser);
-      amcUserService.createUser(amcUser);
-    }catch (Exception ex){
-      log.error("Failed to handle:{}", gsonStr, ex);
-    }
+
 
   }
 

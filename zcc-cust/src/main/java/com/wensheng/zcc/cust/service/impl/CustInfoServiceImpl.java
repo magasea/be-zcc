@@ -153,6 +153,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
       addCrawlCmpy(custTrdCmpy.getCmpyName());
     }
+    log.info("人工新增公司custTrdCmpy：{}",custTrdCmpy);
     custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
   }
@@ -209,7 +210,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           //保存公司修改记录
           commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
               "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
-
+          log.info("人工修改公司名称，查询基础库符合,根据基础库内容更新公司：cmpyBasicBizInfoSync{}",cmpyBasicBizInfoSync);
           custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
           if(null != cmpyBasicBizInfoSync.getHistoryName()){
@@ -233,6 +234,7 @@ public class CustInfoServiceImpl implements CustInfoService {
               String.format("根据修改公司名称查询到基础库信息与被修改公司信息不匹配"));
         }
       }else {
+        log.info("人工修改公司名称，添加爬取公司信息任务");
         //保存公司修改记录,添加爬取公司数据任务
         commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
             "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
@@ -242,6 +244,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       }
     }else {
+      log.info("没有修改公司名称，则根据修改信息跟新数据库：custTrdCmpy：{}",custTrdCmpy);
       //保存公司修改记录
       commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
           "人工修改基础信息", custTrdCmpyOriginal);

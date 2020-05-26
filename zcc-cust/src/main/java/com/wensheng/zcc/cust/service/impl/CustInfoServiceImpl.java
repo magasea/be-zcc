@@ -180,77 +180,90 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
 
-    if(null != custTrdCmpy.getCmpyNameUpdate()){
-      //修改公司名称，先判断是否已有该公司
-      List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(custTrdCmpy.getCmpyNameUpdate());
-      if (!CollectionUtils.isEmpty(custTrdCmpieList)){
-        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
-            String.format("已存在该公司，名称是：%s",custTrdCmpieList.get(0).getCmpyName()));
-      }
+    if(null == custTrdCmpy.getCmpyNameUpdate()){
+      log.info("人工修改公司名称，添加爬取公司信息任务");
+      //保存公司修改记录,添加爬取公司数据任务
+      commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+          "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
+      //没有查到数据则添加爬取公司数据任务，状态为1
+      custTrdCmpy.setCrawledStatus("1");
+      addCrawlCmpy(custTrdCmpy.getCmpyNameUpdate());
+      custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+      return;
+    }
 
-      //查询爬虫基础库中信息
-      RestTemplate restTemplate = CommonHandler.getRestTemplate();
-      String url = String.format(getCompanyBasicBizInfo, custTrdCmpy.getCmpyNameUpdate());
-      log.info("查询爬虫基础库中信息url:{}",url);
-      CrawlResultDTO crawlResultDTO = restTemplate.getForEntity(
-          url, CrawlResultDTO.class).getBody();
+    //修改公司名称，先判断是否已有该公司
+    List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(custTrdCmpy.getCmpyNameUpdate());
+    if (!CollectionUtils.isEmpty(custTrdCmpieList)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
+          String.format("已存在该公司，名称是：%s",custTrdCmpieList.get(0).getCmpyName()));
+    }
 
-      if(null != crawlResultDTO && !CollectionUtils.isEmpty(crawlResultDTO.getList())){
-        //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
-        CmpyBasicBizInfoSync cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
-        String cmpyHistoryName = cmpyBasicBizInfoSync.getHistoryName();
-        String[] cmpyHistoryArry = cmpyHistoryName.split(",");
-        boolean match = false;
-        for (int i = 0; i < cmpyHistoryArry.length; i++) {
-          if(custTrdCmpyOriginal.getCmpyName().equals(cmpyHistoryArry[i])){
-            match = true;
-          }
-        }
-        if(match){
-          //保存公司修改记录
-          commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
-              "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
-          log.info("人工修改公司名称，查询基础库符合,根据基础库内容更新公司：cmpyBasicBizInfoSync{}",cmpyBasicBizInfoSync);
-          custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
-          custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
-          if(null != cmpyBasicBizInfoSync.getHistoryName()){
-            custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
-          }
-          custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getEntPhone());
-          custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getEntAddress());
-          custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
-          custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
-          if(null != cmpyBasicBizInfoSync.getRegionCode()){
-            custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
-          }
-          custTrdCmpy.setLegalReptive(cmpyBasicBizInfoSync.getLegalPerson());
-          custTrdCmpy.setSyncTime(new Date());
-          custTrdCmpy.setUpdateTime(new Date());
-          custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
-        }else {
-          log.error("根据修改公司名称查询到基础库信息与被修改公司信息不匹配，被修改公司名称为：{}，基础库公司cmpyBasicBizInfoSync：{}",
-              custTrdCmpyOriginal.getCmpyName(),cmpyBasicBizInfoSync);
-          throw ExceptionUtils.getAmcException(AmcExceptions.COMPANY_UPDATE_ERROR,
-              String.format("根据修改公司名称查询到基础库信息与被修改公司信息不匹配"));
-        }
-      }else {
-        log.info("人工修改公司名称，添加爬取公司信息任务");
-        //保存公司修改记录,添加爬取公司数据任务
-        commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
-            "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
-        //没有查到数据则添加爬取公司数据任务，状态为1
-        custTrdCmpy.setCrawledStatus("1");
-        addCrawlCmpy(custTrdCmpy.getCmpyNameUpdate());
-        custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
-      }
-    }else {
+    //查询爬虫基础库中信息
+    RestTemplate restTemplate = CommonHandler.getRestTemplate();
+    String url = String.format(getCompanyBasicBizInfo, custTrdCmpy.getCmpyNameUpdate());
+    log.info("查询爬虫基础库中信息url:{}",url);
+    CrawlResultDTO crawlResultDTO = restTemplate.getForEntity(
+        url, CrawlResultDTO.class).getBody();
+    if(null == crawlResultDTO || CollectionUtils.isEmpty(crawlResultDTO.getList())){
       log.info("没有修改公司名称，则根据修改信息跟新数据库：custTrdCmpy：{}",custTrdCmpy);
       //保存公司修改记录
       commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
           "人工修改基础信息", custTrdCmpyOriginal);
       //不修改名称则直接修改公司
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
+      return;
     }
+
+    //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
+    CmpyBasicBizInfoSync cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
+    String cmpyHistoryName = cmpyBasicBizInfoSync.getHistoryName();
+    String[] cmpyHistoryArry = cmpyHistoryName.split(",");
+    boolean match = false;
+    for (int i = 0; i < cmpyHistoryArry.length; i++) {
+      if(custTrdCmpyOriginal.getCmpyName().equals(cmpyHistoryArry[i])){
+        match = true;
+      }
+    }
+
+    if(!match){
+      log.error("根据修改公司名称查询到基础库信息与被修改公司信息不匹配，被修改公司名称为：{}，基础库公司cmpyBasicBizInfoSync：{}",
+          custTrdCmpyOriginal.getCmpyName(),cmpyBasicBizInfoSync);
+      throw ExceptionUtils.getAmcException(AmcExceptions.COMPANY_UPDATE_ERROR,
+          String.format("根据修改公司名称查询到基础库信息与被修改公司信息不匹配"));
+    }
+    //人工修改公司名称，查询基础库符合,根据基础库内容更新公司
+    updateCompanyBySync(custTrdCmpyOriginal, cmpyBasicBizInfoSync);
+
+  }
+
+  /**
+   * 根据基础库数据更新数据库
+   * @param custTrdCmpyOriginal
+   * @param cmpyBasicBizInfoSync
+   */
+  private void updateCompanyBySync(CustTrdCmpy custTrdCmpyOriginal, CmpyBasicBizInfoSync cmpyBasicBizInfoSync) {
+    CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
+    //保存公司修改记录
+    commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
+        "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
+    log.info("人工修改公司名称，查询基础库符合,根据基础库内容更新公司：cmpyBasicBizInfoSync{}",cmpyBasicBizInfoSync);
+    custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
+    custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
+    if(null != cmpyBasicBizInfoSync.getHistoryName()){
+      custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSync.getHistoryName().replace(",",";"));
+    }
+    custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSync.getEntPhone());
+    custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSync.getEntAddress());
+    custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSync.getReportPhone());
+    custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSync.getReportAddress());
+    if(null != cmpyBasicBizInfoSync.getRegionCode()){
+      custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
+    }
+    custTrdCmpy.setLegalReptive(cmpyBasicBizInfoSync.getLegalPerson());
+    custTrdCmpy.setSyncTime(new Date());
+    custTrdCmpy.setUpdateTime(new Date());
+    custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }
 
 

@@ -151,7 +151,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     //判断基础库是否有数据
     RestTemplate restTemplate = CommonHandler.getRestTemplate();
-    String url = String.format(getCompanyBasicBizInfo, custTrdCmpy.getCmpyNameUpdate());
+    String url = String.format(getCompanyBasicBizInfo, custTrdCmpy.getCmpyName());
     CrawlResultDTO crawlResultDTO = restTemplate.getForEntity(
         url, CrawlResultDTO.class).getBody();
     log.info("查询爬虫基础库中信息url:{},查询结果crawlResultDTO：{}", url, crawlResultDTO);

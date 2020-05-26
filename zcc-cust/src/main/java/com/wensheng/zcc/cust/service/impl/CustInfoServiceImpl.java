@@ -153,6 +153,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
       addCrawlCmpy(custTrdCmpy.getCmpyName());
     }
+    log.info("人工新增公司custTrdCmpy：{}",custTrdCmpy);
     custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
   }
@@ -184,14 +185,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(custTrdCmpy.getCmpyNameUpdate());
       if (!CollectionUtils.isEmpty(custTrdCmpieList)){
         throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR ,
-            String.format("已存在该公司，名称是：%s",custTrdCmpy.getCmpyNameUpdate()));
+            String.format("已存在该公司，名称是：%s",custTrdCmpieList.get(0).getCmpyName()));
       }
-
-//      //查询爬虫基础库中信息
-//      RestTemplate restTemplate = CommonHandler.getRestTemplate();
-//      String url = String.format(getCompanyInfoByNameUrl, custTrdCmpy.getCmpyNameUpdate());
-//      CmpyBasicBizInfoSync cmpyBasicBizInfoSync = restTemplate.getForEntity(
-//          url, CmpyBasicBizInfoSync.class).getBody();
 
       //查询爬虫基础库中信息
       RestTemplate restTemplate = CommonHandler.getRestTemplate();
@@ -199,7 +194,6 @@ public class CustInfoServiceImpl implements CustInfoService {
       log.info("查询爬虫基础库中信息url:{}",url);
       CrawlResultDTO crawlResultDTO = restTemplate.getForEntity(
           url, CrawlResultDTO.class).getBody();
-
 
       if(null != crawlResultDTO && !CollectionUtils.isEmpty(crawlResultDTO.getList())){
         //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
@@ -216,7 +210,7 @@ public class CustInfoServiceImpl implements CustInfoService {
           //保存公司修改记录
           commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
               "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
-
+          log.info("人工修改公司名称，查询基础库符合,根据基础库内容更新公司：cmpyBasicBizInfoSync{}",cmpyBasicBizInfoSync);
           custTrdCmpy.setCmpyName(cmpyBasicBizInfoSync.getName());
           custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSync.getSocialCode());
           if(null != cmpyBasicBizInfoSync.getHistoryName()){
@@ -229,6 +223,9 @@ public class CustInfoServiceImpl implements CustInfoService {
           if(null != cmpyBasicBizInfoSync.getRegionCode()){
             custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSync.getRegionCode().substring(0,6));
           }
+          custTrdCmpy.setLegalReptive(cmpyBasicBizInfoSync.getLegalPerson());
+          custTrdCmpy.setSyncTime(new Date());
+          custTrdCmpy.setUpdateTime(new Date());
           custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
         }else {
           log.error("根据修改公司名称查询到基础库信息与被修改公司信息不匹配，被修改公司名称为：{}，基础库公司cmpyBasicBizInfoSync：{}",
@@ -237,7 +234,8 @@ public class CustInfoServiceImpl implements CustInfoService {
               String.format("根据修改公司名称查询到基础库信息与被修改公司信息不匹配"));
         }
       }else {
-        //保存公司修改记录
+        log.info("人工修改公司名称，添加爬取公司信息任务");
+        //保存公司修改记录,添加爬取公司数据任务
         commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
             "人工修改公司名称，添加爬取公司信息任务", custTrdCmpyOriginal);
         //没有查到数据则添加爬取公司数据任务，状态为1
@@ -246,6 +244,7 @@ public class CustInfoServiceImpl implements CustInfoService {
         custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       }
     }else {
+      log.info("没有修改公司名称，则根据修改信息跟新数据库：custTrdCmpy：{}",custTrdCmpy);
       //保存公司修改记录
       commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
           "人工修改基础信息", custTrdCmpyOriginal);

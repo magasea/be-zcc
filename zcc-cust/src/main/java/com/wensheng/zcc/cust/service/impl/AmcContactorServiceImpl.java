@@ -89,6 +89,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
           custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
     }
     custAmcCmpycontactor.setCreateTime(new Date());
+    log.info("人工新增联系人custAmcCmpycontactor：{}",custAmcCmpycontactor);
     custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
   }
 
@@ -331,7 +332,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     //根据交易信息组装数据custAmcCmpycontactorMap
     for (CustTrdInfo custTrdInfo : custTrdInfos) {
       //有trdCmpycontactorId，组装数据
-      if(custTrdInfo.getTrdCmpycontactorId()==null || custTrdInfo.getTrdCmpycontactorId() != -1L){
+      if(custTrdInfo.getTrdCmpycontactorId()!=null && custTrdInfo.getTrdCmpycontactorId() != -1L){
         //组装数据
         if(null != custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId())){
           custAmcCmpycontactorMap.get(custTrdInfo.getTrdCmpycontactorId()).getCustTrdInfoList().add(custTrdInfo);

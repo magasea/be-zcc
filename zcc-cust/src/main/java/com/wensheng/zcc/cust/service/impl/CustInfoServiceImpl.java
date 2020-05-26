@@ -150,9 +150,9 @@ public class CustInfoServiceImpl implements CustInfoService {
               String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
     }
     //判断是否有注册地址，没有注册地址则向爬虫系统增加一条爬虫任务
-    if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
+//    if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
       addCrawlCmpy(custTrdCmpy.getCmpyName());
-    }
+//    }
     log.info("人工新增公司custTrdCmpy：{}",custTrdCmpy);
     custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
@@ -1172,10 +1172,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       }else{
         custTrdFavorVo.getInvestType2Counts().put(favType, 1);
       }
-
-
     }
-
     return custTrdFavorVo;
   }
 
@@ -1184,13 +1181,9 @@ public class CustInfoServiceImpl implements CustInfoService {
     if(StringUtils.isEmpty(companyName) || companyName.contains("%")){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_COMPANY_NAME_ERROR);
     }
-    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
-    custTrdCmpyExample.createCriteria().andCmpyNameEqualTo(companyName);
-    custTrdCmpyExample.or().andCmpyNameHistoryLike(String.format("%s%s%s","%",companyName,"%"));
-    List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
-    //判断是否真的匹配
-
-    return custTrdCmpyList;
+    //修改公司名称，先判断是否已有该公司
+    List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(companyName);
+    return custTrdCmpieList;
   }
 
   @Override

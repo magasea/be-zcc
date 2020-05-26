@@ -2684,6 +2684,76 @@ public class AmcDebtPreExample {
             addCriterion("row_num not between", value1, value2, "rowNum");
             return (Criteria) this;
         }
+
+        public Criteria andDebtClueIsNull() {
+            addCriterion("debt_clue is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueIsNotNull() {
+            addCriterion("debt_clue is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueEqualTo(String value) {
+            addCriterion("debt_clue =", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueNotEqualTo(String value) {
+            addCriterion("debt_clue <>", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueGreaterThan(String value) {
+            addCriterion("debt_clue >", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueGreaterThanOrEqualTo(String value) {
+            addCriterion("debt_clue >=", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueLessThan(String value) {
+            addCriterion("debt_clue <", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueLessThanOrEqualTo(String value) {
+            addCriterion("debt_clue <=", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueLike(String value) {
+            addCriterion("debt_clue like", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueNotLike(String value) {
+            addCriterion("debt_clue not like", value, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueIn(List<String> values) {
+            addCriterion("debt_clue in", values, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueNotIn(List<String> values) {
+            addCriterion("debt_clue not in", values, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueBetween(String value1, String value2) {
+            addCriterion("debt_clue between", value1, value2, "debtClue");
+            return (Criteria) this;
+        }
+
+        public Criteria andDebtClueNotBetween(String value1, String value2) {
+            addCriterion("debt_clue not between", value1, value2, "debtClue");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

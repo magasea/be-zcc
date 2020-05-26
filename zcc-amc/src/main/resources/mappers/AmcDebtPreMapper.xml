@@ -43,6 +43,7 @@
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
     <result column="created_date" jdbcType="TIMESTAMP" property="createdDate" />
     <result column="row_num" jdbcType="INTEGER" property="rowNum" />
+    <result column="debt_clue" jdbcType="VARCHAR" property="debtClue" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -109,7 +110,7 @@
     publish_date, lawsuit_state, lawsuit_state_desc, valuation, amc_contactor_id, amc_contactor_name, 
     amc_contactor_phone, amc_contactor2_id, is_recommanded, guarant_type, recomm_start_date, 
     recomm_end_date, orig_creditor_id, orig_creditor_name, debt_desc, update_by, update_date, 
-    created_by, created_date, row_num
+    created_by, created_date, row_num, debt_clue
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPreExample" resultMap="BaseResultMap">
     select
@@ -159,7 +160,7 @@
       recomm_start_date, recomm_end_date, orig_creditor_id, 
       orig_creditor_name, debt_desc, update_by, 
       update_date, created_by, created_date, 
-      row_num)
+      row_num, debt_clue)
     values (#{debtpackId,jdbcType=BIGINT}, #{amcId,jdbcType=BIGINT}, #{title,jdbcType=CHAR}, 
       #{debtType,jdbcType=INTEGER}, #{baseAmount,jdbcType=BIGINT}, #{baseAmountDesc,jdbcType=VARCHAR}, 
       #{baseDate,jdbcType=TIMESTAMP}, #{interestAmount,jdbcType=BIGINT}, #{totalAmount,jdbcType=BIGINT}, 
@@ -173,7 +174,7 @@
       #{recommStartDate,jdbcType=TIMESTAMP}, #{recommEndDate,jdbcType=TIMESTAMP}, #{origCreditorId,jdbcType=BIGINT}, 
       #{origCreditorName,jdbcType=CHAR}, #{debtDesc,jdbcType=VARCHAR}, #{updateBy,jdbcType=BIGINT}, 
       #{updateDate,jdbcType=TIMESTAMP}, #{createdBy,jdbcType=BIGINT}, #{createdDate,jdbcType=TIMESTAMP}, 
-      #{rowNum,jdbcType=INTEGER})
+      #{rowNum,jdbcType=INTEGER}, #{debtClue,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPre">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -301,6 +302,9 @@
       <if test="rowNum != null">
         row_num,
       </if>
+      <if test="debtClue != null">
+        debt_clue,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="debtpackId != null">
@@ -422,6 +426,9 @@
       </if>
       <if test="rowNum != null">
         #{rowNum,jdbcType=INTEGER},
+      </if>
+      <if test="debtClue != null">
+        #{debtClue,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -557,6 +564,9 @@
       <if test="record.rowNum != null">
         row_num = #{record.rowNum,jdbcType=INTEGER},
       </if>
+      <if test="record.debtClue != null">
+        debt_clue = #{record.debtClue,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -604,7 +614,8 @@
       update_date = #{record.updateDate,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
       created_date = #{record.createdDate,jdbcType=TIMESTAMP},
-      row_num = #{record.rowNum,jdbcType=INTEGER}
+      row_num = #{record.rowNum,jdbcType=INTEGER},
+      debt_clue = #{record.debtClue,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -732,6 +743,9 @@
       <if test="rowNum != null">
         row_num = #{rowNum,jdbcType=INTEGER},
       </if>
+      <if test="debtClue != null">
+        debt_clue = #{debtClue,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -776,7 +790,8 @@
       update_date = #{updateDate,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},
       created_date = #{createdDate,jdbcType=TIMESTAMP},
-      row_num = #{rowNum,jdbcType=INTEGER}
+      row_num = #{rowNum,jdbcType=INTEGER},
+      debt_clue = #{debtClue,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtPreExample" resultMap="BaseResultMap">

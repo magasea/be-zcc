@@ -5,11 +5,13 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="branch_id" jdbcType="BIGINT" property="branchId" />
     <result column="name" jdbcType="CHAR" property="name" />
+    <result column="sex" jdbcType="INTEGER" property="sex" />
     <result column="nikname" jdbcType="CHAR" property="nikname" />
     <result column="location" jdbcType="INTEGER" property="location" />
     <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="wx_img_url" jdbcType="VARCHAR" property="wxImgUrl" />
+    <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -71,7 +73,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, branch_id, name, nikname, location, phone_number, notes, wx_img_url, update_time
+    id, branch_id, name, sex, nikname, location, phone_number, notes, wx_img_url, img_url, 
+    update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
@@ -108,12 +111,14 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBT_CONTACTOR (branch_id, name, nikname, 
-      location, phone_number, notes, 
-      wx_img_url, update_time)
-    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{nikname,jdbcType=CHAR}, 
-      #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, 
-      #{wxImgUrl,jdbcType=VARCHAR}, #{updateTime,jdbcType=TIMESTAMP})
+    insert into AMC_DEBT_CONTACTOR (branch_id, name, sex, 
+      nikname, location, phone_number, 
+      notes, wx_img_url, img_url, 
+      update_time)
+    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{sex,jdbcType=INTEGER}, 
+      #{nikname,jdbcType=CHAR}, #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, 
+      #{notes,jdbcType=VARCHAR}, #{wxImgUrl,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR}, 
+      #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -126,6 +131,9 @@
       </if>
       <if test="name != null">
         name,
+      </if>
+      <if test="sex != null">
+        sex,
       </if>
       <if test="nikname != null">
         nikname,
@@ -142,6 +150,9 @@
       <if test="wxImgUrl != null">
         wx_img_url,
       </if>
+      <if test="imgUrl != null">
+        img_url,
+      </if>
       <if test="updateTime != null">
         update_time,
       </if>
@@ -152,6 +163,9 @@
       </if>
       <if test="name != null">
         #{name,jdbcType=CHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
       </if>
       <if test="nikname != null">
         #{nikname,jdbcType=CHAR},
@@ -167,6 +181,9 @@
       </if>
       <if test="wxImgUrl != null">
         #{wxImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="imgUrl != null">
+        #{imgUrl,jdbcType=VARCHAR},
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
@@ -191,6 +208,9 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
+      <if test="record.sex != null">
+        sex = #{record.sex,jdbcType=INTEGER},
+      </if>
       <if test="record.nikname != null">
         nikname = #{record.nikname,jdbcType=CHAR},
       </if>
@@ -206,6 +226,9 @@
       <if test="record.wxImgUrl != null">
         wx_img_url = #{record.wxImgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="record.imgUrl != null">
+        img_url = #{record.imgUrl,jdbcType=VARCHAR},
+      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -219,11 +242,13 @@
     set id = #{record.id,jdbcType=BIGINT},
       branch_id = #{record.branchId,jdbcType=BIGINT},
       name = #{record.name,jdbcType=CHAR},
+      sex = #{record.sex,jdbcType=INTEGER},
       nikname = #{record.nikname,jdbcType=CHAR},
       location = #{record.location,jdbcType=INTEGER},
       phone_number = #{record.phoneNumber,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       wx_img_url = #{record.wxImgUrl,jdbcType=VARCHAR},
+      img_url = #{record.imgUrl,jdbcType=VARCHAR},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -237,6 +262,9 @@
       </if>
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
       </if>
       <if test="nikname != null">
         nikname = #{nikname,jdbcType=CHAR},
@@ -253,6 +281,9 @@
       <if test="wxImgUrl != null">
         wx_img_url = #{wxImgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="imgUrl != null">
+        img_url = #{imgUrl,jdbcType=VARCHAR},
+      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
@@ -263,11 +294,13 @@
     update AMC_DEBT_CONTACTOR
     set branch_id = #{branchId,jdbcType=BIGINT},
       name = #{name,jdbcType=CHAR},
+      sex = #{sex,jdbcType=INTEGER},
       nikname = #{nikname,jdbcType=CHAR},
       location = #{location,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR},
       wx_img_url = #{wxImgUrl,jdbcType=VARCHAR},
+      img_url = #{imgUrl,jdbcType=VARCHAR},
       update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>

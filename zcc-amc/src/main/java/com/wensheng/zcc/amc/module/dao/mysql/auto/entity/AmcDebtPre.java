@@ -85,6 +85,8 @@ public class AmcDebtPre {
 
     private Integer rowNum;
 
+    private String debtClue;
+
     public Long getId() {
         return id;
     }
@@ -411,5 +413,13 @@ public class AmcDebtPre {
 
     public void setRowNum(Integer rowNum) {
         this.rowNum = rowNum;
+    }
+
+    public String getDebtClue() {
+        return debtClue;
+    }
+
+    public void setDebtClue(String debtClue) {
+        this.debtClue = debtClue == null ? null : debtClue.trim();
     }
 }

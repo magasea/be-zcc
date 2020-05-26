@@ -295,6 +295,66 @@ public class AmcDebtContactorExample {
             return (Criteria) this;
         }
 
+        public Criteria andSexIsNull() {
+            addCriterion("sex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexIsNotNull() {
+            addCriterion("sex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexEqualTo(Integer value) {
+            addCriterion("sex =", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotEqualTo(Integer value) {
+            addCriterion("sex <>", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexGreaterThan(Integer value) {
+            addCriterion("sex >", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexGreaterThanOrEqualTo(Integer value) {
+            addCriterion("sex >=", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexLessThan(Integer value) {
+            addCriterion("sex <", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexLessThanOrEqualTo(Integer value) {
+            addCriterion("sex <=", value, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexIn(List<Integer> values) {
+            addCriterion("sex in", values, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotIn(List<Integer> values) {
+            addCriterion("sex not in", values, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexBetween(Integer value1, Integer value2) {
+            addCriterion("sex between", value1, value2, "sex");
+            return (Criteria) this;
+        }
+
+        public Criteria andSexNotBetween(Integer value1, Integer value2) {
+            addCriterion("sex not between", value1, value2, "sex");
+            return (Criteria) this;
+        }
+
         public Criteria andNiknameIsNull() {
             addCriterion("nikname is null");
             return (Criteria) this;
@@ -632,6 +692,76 @@ public class AmcDebtContactorExample {
 
         public Criteria andWxImgUrlNotBetween(String value1, String value2) {
             addCriterion("wx_img_url not between", value1, value2, "wxImgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlIsNull() {
+            addCriterion("img_url is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlIsNotNull() {
+            addCriterion("img_url is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlEqualTo(String value) {
+            addCriterion("img_url =", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlNotEqualTo(String value) {
+            addCriterion("img_url <>", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlGreaterThan(String value) {
+            addCriterion("img_url >", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlGreaterThanOrEqualTo(String value) {
+            addCriterion("img_url >=", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlLessThan(String value) {
+            addCriterion("img_url <", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlLessThanOrEqualTo(String value) {
+            addCriterion("img_url <=", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlLike(String value) {
+            addCriterion("img_url like", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlNotLike(String value) {
+            addCriterion("img_url not like", value, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlIn(List<String> values) {
+            addCriterion("img_url in", values, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlNotIn(List<String> values) {
+            addCriterion("img_url not in", values, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlBetween(String value1, String value2) {
+            addCriterion("img_url between", value1, value2, "imgUrl");
+            return (Criteria) this;
+        }
+
+        public Criteria andImgUrlNotBetween(String value1, String value2) {
+            addCriterion("img_url not between", value1, value2, "imgUrl");
             return (Criteria) this;
         }
 

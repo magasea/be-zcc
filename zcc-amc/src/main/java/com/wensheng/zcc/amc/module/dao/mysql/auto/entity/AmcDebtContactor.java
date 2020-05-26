@@ -9,6 +9,8 @@ public class AmcDebtContactor {
 
     private String name;
 
+    private Integer sex;
+
     private String nikname;
 
     private Integer location;
@@ -18,6 +20,8 @@ public class AmcDebtContactor {
     private String notes;
 
     private String wxImgUrl;
+
+    private String imgUrl;
 
     private Date updateTime;
 
@@ -43,6 +47,14 @@ public class AmcDebtContactor {
 
     public void setName(String name) {
         this.name = name == null ? null : name.trim();
+    }
+
+    public Integer getSex() {
+        return sex;
+    }
+
+    public void setSex(Integer sex) {
+        this.sex = sex;
     }
 
     public String getNikname() {
@@ -83,6 +95,14 @@ public class AmcDebtContactor {
 
     public void setWxImgUrl(String wxImgUrl) {
         this.wxImgUrl = wxImgUrl == null ? null : wxImgUrl.trim();
+    }
+
+    public String getImgUrl() {
+        return imgUrl;
+    }
+
+    public void setImgUrl(String imgUrl) {
+        this.imgUrl = imgUrl == null ? null : imgUrl.trim();
     }
 
     public Date getUpdateTime() {

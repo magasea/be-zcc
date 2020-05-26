@@ -1172,7 +1172,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 if(!StringUtils.isEmpty(cellCourt)){
                     Long curtId = getCourt(cellCourtProv, cellCourtCity, cellCourtCounty, cellCourt);
                     if(curtId <= -1L){
-                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strCourt, cellCourt, "没有找到该法院");
+                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.TYPE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strCourt, cellCourt, "没有找到该法院");
 //                        log.error(String.format("告警提示： %s %s 当前后台系统中没有找到该法院:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourt));
                     }else{
                         amcDebtPre.setCourtId(curtId);
@@ -1201,7 +1201,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         regionMap.put(cellCourtCity, regions.get(0).getId());
                     }else{
                         log.error(String.format("错误提示： %s %s 找不到对应的法院所属市:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCity));
-                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strCourtCity, cellCourtCity, null);
+                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strCourtCity, cellCourtCity, null);
                         regionMap.put(cellCourtCity, -1L);
                     }
                 }else if(regionMap.containsKey(cellCourtCity)){
@@ -1215,7 +1215,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         regionMap.put(cellCourtCounty, regions.get(0).getId());
                     }else{
 //                        log.error(String.format("错误提示： %s %s 找不到对应的法院所属区县:%s", sheetDebt.getSheetName(), row.getRowNum(), cellCourtCounty));
-                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_WARN, strCourtCounty, cellCourtCounty, null);
+                        addErrorInfo(errorInfo, DebtPrecheckErrorEnum.LOCATIONCODE_NOTAVAIL, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strCourtCounty, cellCourtCounty, null);
                         regionMap.put(cellCourtCounty, -1L);
                     }
                 }else if(regionMap.containsKey(cellCourtCounty)){

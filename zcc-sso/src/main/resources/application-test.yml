@@ -129,7 +129,7 @@ message:
 kafka:
     topic-sso-userchanged: topic_sso_userchanged_${env.name}
     topic_amc_login: topic_amc_userLogin_${env.name}
-
+    topic_wxuser_zcclogin: topic_wxuser_zcclogin_${env.name}
 
 logging:
     level:

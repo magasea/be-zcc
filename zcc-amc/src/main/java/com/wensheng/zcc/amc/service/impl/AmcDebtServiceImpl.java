@@ -1,6 +1,5 @@
 package com.wensheng.zcc.amc.service.impl;
 
-import com.google.api.Http;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -21,8 +20,6 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -45,7 +42,6 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
-import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -54,7 +50,7 @@ import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
-import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
+import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
@@ -80,10 +76,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
-import jdk.incubator.http.HttpResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -155,8 +149,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcCmpyMapper amcCmpyMapper;
 
 
-  @Autowired
-  RestTemplate restTemplate;
+
+  private RestTemplate restTemplate;
 
   @Autowired
   AmcOrigCreditorMapper amcOrigCreditorMapper;
@@ -494,7 +488,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> getMostVisitedDebts(int num) {
+  public List<AmcDebtVo> getMostVisitedDebts(int num) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
     StringBuilder stringBuilder = new StringBuilder("has_img desc , visit_count desc limit ");
@@ -502,7 +496,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtExample.setOrderByClause(stringBuilder.toString());
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
     if(!CollectionUtils.isEmpty(amcDebts)){
-      return doList2VoList(amcDebts);
+      List<AmcDebtVo> amcDebtVos = doList2VoList(amcDebts);
+      updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
+      return amcDebtVos;
     }
 
     return null;

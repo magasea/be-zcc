@@ -228,6 +228,8 @@ public class AmcSaleServiceImpl implements AmcSaleService {
             amcSaleFloor.setRecomItems(gson.toJson(amcSaleFloorVo.getAmcRecommItem()));
 
 
+        }else{
+            amcSaleFloor.setRecomItems("-1");
         }
         if(amcSaleFloorVo.getAmcSaleFilter() != null && (amcSaleFloorVo.getAmcSaleFilter().getFilterDebt() != null
         || amcSaleFloorVo.getAmcSaleFilter().getFilterAsset() != null
@@ -244,9 +246,10 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                     gson.toJson(amcSaleFloorVo.getAmcSaleFilter().getFilterAsset()));
             }
             amcSaleFloor.setFilterContent(gson.toJson(amcSaleFloorVo.getAmcSaleFilter()));
+        }else{
+            amcSaleFloor.setFilterContent("-1");
         }
         amcSaleFloorVo.setAmcSaleFloor(amcSaleFloor);
-
     }
 
     private boolean checkFilterContentAsset(AmcFilterContentAsset filterAsset) {

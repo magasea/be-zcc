@@ -42,6 +42,9 @@ public class KafkaServiceImpl implements KafkaService {
   @Value("${env.name}")
   String env;
 
+  @Value("${kafka.topic_wxuser_zcclogin}")
+  String topicWXuserZccLogin;
+
   @Autowired
   AmcTokenService amcTokenService;
 
@@ -69,7 +72,7 @@ public class KafkaServiceImpl implements KafkaService {
 
   @Override
   public void send(AmcWechatUser amcWechatUser) {
-    kafkaTemplate.send(MQ_TOPIC_WECHAT_USERCREATE, amcWechatUser);
+    kafkaTemplate.send(topicWXuserZccLogin, amcWechatUser);
   }
 
   @Override

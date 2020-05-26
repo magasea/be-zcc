@@ -74,7 +74,7 @@ public class AmcAssetController {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(assetQueryParam.getPageInfo());
     if(CollectionUtils.isEmpty(orderByParam)){
       orderByParam.put("has_img", Direction.DESC);
-      orderByParam.put("id", Direction.DESC);
+      orderByParam.put("visit_count", Direction.DESC);
 
     }
     Map<String, Object> queryParam = SQLUtils.getQueryParams(assetQueryParam);

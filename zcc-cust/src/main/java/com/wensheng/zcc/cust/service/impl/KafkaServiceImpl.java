@@ -119,6 +119,7 @@ public class KafkaServiceImpl {
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     custTrdCmpyExtExample.createCriteria().andCmpyNameEqualTo(cmpyBizInfoResult.getCmpyName());
     custTrdCmpyExtExample.or().andCmpyNameUpdateEqualTo(cmpyBizInfoResult.getCmpyName());
+    custTrdCmpyExtExample.setOrderByClause(" id desc");
     List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
 
     if(CollectionUtils.isEmpty(custTrdCmpyList)){

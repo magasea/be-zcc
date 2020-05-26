@@ -8,7 +8,7 @@ import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcWechatUserMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample;
-import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
+import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 import com.wensheng.zcc.sso.module.vo.WechatUserInfo;
@@ -193,6 +193,7 @@ public class WechatServiceImpl implements WechatService {
     if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
       wechatLoginResult.setOAuth2AccessToken(generateToken(responseEntity.getBody()));
     }
+    kafkaService.send(responseEntity.getBody());
     CUWechatUser((responseEntity.getBody()));
     return wechatLoginResult;
   }

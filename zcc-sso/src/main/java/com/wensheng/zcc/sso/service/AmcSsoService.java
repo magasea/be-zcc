@@ -1,17 +1,10 @@
 package com.wensheng.zcc.sso.service;
 
-import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
 import com.wensheng.zcc.common.params.sso.AmcSSOTitleEnum;
-import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUserRoleRule;
-import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.vo.AmcSpecialUserVo;
-import com.wensheng.zcc.sso.module.vo.WechatCode2SessionVo;
-import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
-import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
-import com.wensheng.zcc.sso.module.vo.WechatUserInfo;
 import java.util.List;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;

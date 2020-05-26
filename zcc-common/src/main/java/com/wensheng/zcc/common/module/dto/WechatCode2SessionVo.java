@@ -1,4 +1,4 @@
-package com.wensheng.zcc.sso.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;

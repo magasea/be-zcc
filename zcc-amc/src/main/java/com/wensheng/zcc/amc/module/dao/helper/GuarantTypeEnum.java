@@ -14,6 +14,7 @@ public enum GuarantTypeEnum {
   COMBINED1(4, "抵押+保证+质押"),
   CHIBOR(5, "拆借"),
   PLEDGE(6, "质押"),
+  CREDIT(7, "信用"),
   ;
 
   GuarantTypeEnum(int type, String name){

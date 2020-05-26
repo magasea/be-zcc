@@ -235,18 +235,6 @@ public class CustInfoServiceImpl implements CustInfoService {
           String.format("根据修改公司名称查询到基础库信息与被修改公司信息不匹配"));
     }
 
-    //人工修改公司名称，查询基础库符合,根据基础库内容更新公司
-    updateCompanyBySync(custTrdCmpyOriginal, cmpyBasicBizInfoSync);
-
-  }
-
-  /**
-   * 根据基础库数据更新数据库
-   * @param custTrdCmpyOriginal
-   * @param cmpyBasicBizInfoSync
-   */
-  private void updateCompanyBySync(CustTrdCmpy custTrdCmpyOriginal, CmpyBasicBizInfoSync cmpyBasicBizInfoSync) {
-    CustTrdCmpy custTrdCmpy = new CustTrdCmpy();
     //保存公司修改记录
     commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
         "人工修改公司名称，查询基础库符合", custTrdCmpyOriginal);
@@ -268,7 +256,6 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdCmpy.setUpdateTime(new Date());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }
-
 
   @Override
   public CustTrdPerson addTrdPerson(CustTrdPerson custTrdPerson) {

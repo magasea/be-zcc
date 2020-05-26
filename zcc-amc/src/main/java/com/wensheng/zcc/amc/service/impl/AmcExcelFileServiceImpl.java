@@ -922,6 +922,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         int idxCourt = -1;
         int idxAmcContactor = -1;
         int idxDesc = -1;
+        int idxDebtClue = -1;
         boolean hasGotHeader = false;
         while (rowIterator.hasNext()) {
             Row row = rowIterator.next();
@@ -990,6 +991,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         case strLawState:
                             idxLawState = idxOfCell;
                             break;
+                        case strDebtClue:
+                            idxDebtClue = idxOfCell;
+                            break;
                         default:
                             throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
 
@@ -998,7 +1002,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 // now check if there is missing headers
                 if(((idxDebtTitle + 1) * (idxBrowwer + 1) * (idxDebtBaseAmount + 1) * (idxDebtInterestAmount +1) * (idxLawState + 1) *
                         (idxGrantType + 1) * (idxGrantor + 1) * (idxCourtProv + 1) * (idxCourtCity + 1) * (idxDebtType + 1) *
-                        (idxCourtCounty + 1) * (idxCourt + 1) * (idxAmcContactor + 1) * (idxDesc + 1) ) == 0){
+                        (idxCourtCounty + 1) * (idxCourt + 1) * (idxAmcContactor + 1) * (idxDesc + 1)*(idxDebtClue +1) ) == 0){
                     String missingHeader = null;
                     if(idxDebtTitle == -1){
                         missingHeader = strDebtTitle;
@@ -1045,6 +1049,9 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     if(idxDesc == -1){
                         missingHeader = strDesc;
                     }
+                    if(idxDebtClue == -1){
+                        missingHeader = strDebtClue;
+                    }
                     throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
                 }else{
                     hasGotHeader = true;
@@ -1066,6 +1073,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 String cellCourt = dataFormatter.formatCellValue(row.getCell(idxCourt));
                 String cellAmcContactor = dataFormatter.formatCellValue(row.getCell(idxAmcContactor));
                 String cellDesc = dataFormatter.formatCellValue(row.getCell(idxDesc));
+                String cellDebtClue = dataFormatter.formatCellValue(row.getCell(idxDebtClue));
 
 
                 if(StringUtils.isEmpty(cellDebtTitle) && StringUtils.isEmpty(cellBrowwer)){
@@ -1246,7 +1254,10 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     amcDebtPreInDb.setDebtDesc(cellDesc);
 
                 }
+                if(!StringUtils.isEmpty(cellDebtClue) ){
+                    amcDebtPreInDb.setDebtClue(cellDebtClue);
 
+                }
 
                 // after debt created , then make the related object
 

@@ -149,11 +149,49 @@ public class CustInfoServiceImpl implements CustInfoService {
       throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR ,
               String.format("已存在该公司，名称是：%s",custTrdCmpies.get(0).getCmpyName()));
     }
-    //判断是否有注册地址，没有注册地址则向爬虫系统增加一条爬虫任务
-//    if(StringUtils.isEmpty(custTrdCmpy.getCmpyAddr())) {
+    //判断基础库是否有数据
+    RestTemplate restTemplate = CommonHandler.getRestTemplate();
+    String url = String.format(getCompanyBasicBizInfo, custTrdCmpy.getCmpyNameUpdate());
+    CrawlResultDTO crawlResultDTO = restTemplate.getForEntity(
+        url, CrawlResultDTO.class).getBody();
+    log.info("查询爬虫基础库中信息url:{},查询结果crawlResultDTO：{}", url, crawlResultDTO);
+
+    //模糊匹配改精确匹配
+    CmpyBasicBizInfoSync cmpyBasicBizInfoSyncNew = null;
+    List<CmpyBasicBizInfoSync>  cmpyBasicBizInfoSyncArrayList= crawlResultDTO.getList();
+    if(!CollectionUtils.isEmpty(cmpyBasicBizInfoSyncArrayList)){
+      for (CmpyBasicBizInfoSync cmpyBasicBizInfoSync : cmpyBasicBizInfoSyncArrayList){
+        if(custTrdCmpy.getCmpyName().equals(cmpyBasicBizInfoSync.getName())){
+          cmpyBasicBizInfoSyncNew = cmpyBasicBizInfoSync;
+        }
+      }
+    }
+
+    //判断基础库是否为空
+    if(null == cmpyBasicBizInfoSyncNew ){
       addCrawlCmpy(custTrdCmpy.getCmpyName());
-//    }
-    log.info("人工新增公司custTrdCmpy：{}",custTrdCmpy);
+      log.info("人工新增公司custTrdCmpy：{}",custTrdCmpy);
+      custTrdCmpyMapper.insertSelective(custTrdCmpy);
+      return custTrdCmpy;
+    }
+
+    //保存信息
+    custTrdCmpy.setCmpyName(cmpyBasicBizInfoSyncNew.getName());
+    custTrdCmpy.setUniSocialCode(cmpyBasicBizInfoSyncNew.getSocialCode());
+    if(null != cmpyBasicBizInfoSyncNew.getHistoryName()){
+      custTrdCmpy.setCmpyNameHistory(cmpyBasicBizInfoSyncNew.getHistoryName().replace(",",";"));
+    }
+    custTrdCmpy.setCmpyPhone(cmpyBasicBizInfoSyncNew.getEntPhone());
+    custTrdCmpy.setCmpyAddr(cmpyBasicBizInfoSyncNew.getEntAddress());
+    custTrdCmpy.setAnnuReptPhone(cmpyBasicBizInfoSyncNew.getReportPhone());
+    custTrdCmpy.setAnnuReptAddr(cmpyBasicBizInfoSyncNew.getReportAddress());
+    if(null != cmpyBasicBizInfoSyncNew.getRegionCode()){
+      custTrdCmpy.setCmpyProvince(cmpyBasicBizInfoSyncNew.getRegionCode().substring(0,6));
+    }
+    custTrdCmpy.setLegalReptive(cmpyBasicBizInfoSyncNew.getLegalPerson());
+    custTrdCmpy.setSyncTime(new Date());
+    custTrdCmpy.setUpdateTime(new Date());
+    log.info("根据基础库数据新增公司信息custTrdCmpy：{}",custTrdCmpy);
     custTrdCmpyMapper.insertSelective(custTrdCmpy);
     return custTrdCmpy;
   }

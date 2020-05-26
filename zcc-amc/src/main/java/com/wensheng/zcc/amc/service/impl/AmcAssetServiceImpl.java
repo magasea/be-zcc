@@ -1432,6 +1432,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                         }
 
                     }
+                    if(sb.length() == 3) {
+                        sb.append(0);
+                    }
                     criteria.andCityLike(sbCode.append("%").toString());
                 }
                 if(item.getKey().equals("AmcContactorId")){

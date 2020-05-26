@@ -180,7 +180,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdCmpy> custTrdCmpies= custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
     CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
 
-    if(null == custTrdCmpy.getCmpyNameUpdate()){
+    if(null != custTrdCmpy.getCmpyNameUpdate()){
       log.info("人工修改公司名称，添加爬取公司信息任务");
       //保存公司修改记录,添加爬取公司数据任务
       commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",

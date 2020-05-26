@@ -8,6 +8,7 @@ import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.mq.kafka.module.AmcWechatUser;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -123,6 +124,8 @@ public class WXUserServiceImpl implements WXUserService {
   @Value("${recomm.urls.sendWechatMsg}")
   String sendWechatMsg;
 
+  @Value("${weixin.open.getUserInfoUrl}")
+  String getUserInfoUrl;
 
   @Autowired
   MongoTemplate mongoTemplate;
@@ -840,6 +843,25 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserWatchCounts.add(wxUserWatchCount);
     }
     return wxUserWatchCounts;
+  }
+
+  @Override
+  public WechatUserInfo getWechatUserInfo(String openId, String accessToken) {
+    String url = String.format(getUserInfoUrl, accessToken, openId);
+    ResponseEntity<WechatUserInfo> responseEntity = restTemplate.getForEntity(url,
+        WechatUserInfo.class);
+    String info = gson.toJson(responseEntity.getBody());
+    log.info(String.format("got response from wechat:%s", info));
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    WechatUserInfo wechatUserInfo = responseEntity.getBody();
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      WechatUser wechatUser = new WechatUser();
+      AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
+      wechatUserMapper.insertSelective(wechatUser);
+    }
+    return responseEntity.getBody();
   }
 
   public Long getAllWechatUserCount() {

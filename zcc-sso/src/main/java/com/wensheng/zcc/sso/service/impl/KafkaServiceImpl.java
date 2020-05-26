@@ -114,7 +114,7 @@ public class KafkaServiceImpl implements KafkaService {
   }
 
   @Override
-  public void send(WechatCode2SessionVo body) {
-    kafkaTemplate.send(topicWXuserZccLogin, body);
+  public void send(WechatCode2SessionVo wechatCode2SessionVo) {
+    kafkaTemplate.send(topicWXuserZccLogin, wechatCode2SessionVo);
   }
 }

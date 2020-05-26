@@ -2,6 +2,7 @@ package com.wensheng.zcc.wechat.config;
 
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.ser.std.StringSerializer;
+import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
 import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
@@ -84,7 +85,7 @@ public class KafkaConfig {
   public ConsumerFactory<String, Object> consumerFactory() {
     final GsonDeserializer<Object> gsonSerializer = new GsonDeserializer<>();
     Map<String, String> config = new HashMap<>();
-    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, WechatUserLocation.class.getName());
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, WechatCode2SessionVo.class.getName());
     gsonSerializer.configure(config, false);
     gsonSerializer.close();
     return new DefaultKafkaConsumerFactory<>(

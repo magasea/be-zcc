@@ -11,7 +11,7 @@ import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample;
 import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
-import com.wensheng.zcc.sso.module.vo.WechatUserInfo;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.sso.service.KafkaService;
 import com.wensheng.zcc.sso.service.WechatService;
 import java.security.AlgorithmParameters;

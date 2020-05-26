@@ -3,6 +3,7 @@ package com.wensheng.zcc.wechat.service;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
@@ -50,5 +51,7 @@ public interface WXUserService {
       Map<String, Direction> orderByParam);
 
   public List<WXUserWatchCount> getWXUserWatchCount(List<WXUserWatchOnObject> objectList);
+
+  WechatUserInfo getWechatUserInfo(String openId, String accessToken)
 
 }

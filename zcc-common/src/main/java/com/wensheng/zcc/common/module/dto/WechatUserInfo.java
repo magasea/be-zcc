@@ -1,4 +1,4 @@
-package com.wensheng.zcc.sso.module.vo;
+package com.wensheng.zcc.common.module.dto;
 
 import java.util.List;
 import lombok.Data;

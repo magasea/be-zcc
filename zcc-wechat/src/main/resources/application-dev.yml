@@ -130,6 +130,11 @@ weixin:
         userListUrl: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s
         loginUrl: https://api.weixin.qq.com/sns/jscode2session?appid=${weixin.test.appId}&secret=${weixin.test.appSecret}&js_code=JSCODE&grant_type=authorization_code
         get_public_token_url: https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=${weixin.test.appId}&secret=${weixin.test.appSecret}
+    open:
+        appId: wx6d88c0a98ec3d700
+        appSecret: acec37bccfe93dae52390e36a957bd64
+        loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.open.appId}&secret=${weixin.open.appSecret}&code=%s&grant_type=authorization_code
+        getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=$s
 
 
 

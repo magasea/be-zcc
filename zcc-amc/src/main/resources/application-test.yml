@@ -166,6 +166,7 @@ cust:
 recom:
   urls:
     getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/?%s
+    getTopVisited: http://${env.recmhost}:${env.recmport}/api/suggest/action/operationDetail/realHeatMax/?type=%s&number=%s
 env:
   name: test
   dbhost: 10.20.100.238

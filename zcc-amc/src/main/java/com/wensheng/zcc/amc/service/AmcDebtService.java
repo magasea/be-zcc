@@ -15,6 +15,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import java.util.List;
@@ -49,6 +50,8 @@ public interface AmcDebtService {
   public List<AmcDebtVo> query(AmcDebt queryCond, int offset, int size);
 
   public List<AmcDebtVo> queryBySeqIds(List<Long> debtIds);
+  public List<AmcDebtVo> getMostVisitedDebts(int num);
+  public List<AmcDebtVo> getMostVisitedDebtsByRecomm(int num);
 
   List<AmcDebtVo> queryAllExt(Long offset, int size, Map<String, Sort.Direction> orderBy,
       Map<String, Object> queryParam) throws Exception;
@@ -144,4 +147,14 @@ public interface AmcDebtService {
 
   List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt, AmcSaleGetListInPage pageInfo)
       throws Exception;
+
+  List<Long> getLatestIds();
+
+
+  List<AmcDebtVo> getFloorFilteredRandomDebts(AmcFilterContentDebt filterDebt, AmcSaleGetRandomListInPage pageInfo)
+      throws Exception;
+
+  void patchDebtClue(String cellDebtTitle, String cellDebtClue) throws Exception;
+
+    void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception;
 }

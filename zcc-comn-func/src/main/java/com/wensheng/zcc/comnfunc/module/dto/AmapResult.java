@@ -2,13 +2,11 @@ package com.wensheng.zcc.comnfunc.module.dto;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
-import lombok.Data;
 
-@Data
 public class AmapResult{
 
 	@SerializedName("city")
-	private String city;
+	private List<Object> city;
 
 	@SerializedName("level")
 	private String level;
@@ -46,5 +44,55 @@ public class AmapResult{
 	@SerializedName("lat")
 	private String lat;
 
+	public List<Object> getCity(){
+		return city;
+	}
 
+	public String getLevel(){
+		return level;
+	}
+
+	public String getCounty(){
+		return county;
+	}
+
+	public String getLon(){
+		return lon;
+	}
+
+	public String getAmapAddress(){
+		return amapAddress;
+	}
+
+	public String getProvince(){
+		return province;
+	}
+
+	public String getTowncode(){
+		return towncode;
+	}
+
+	public String getAddressBefore(){
+		return addressBefore;
+	}
+
+	public String getStreetNumber(){
+		return streetNumber;
+	}
+
+	public List<Object> getNeType(){
+		return neType;
+	}
+
+	public List<Object> getNeighborhood(){
+		return neighborhood;
+	}
+
+	public String getTownship(){
+		return township;
+	}
+
+	public String getLat(){
+		return lat;
+	}
 }

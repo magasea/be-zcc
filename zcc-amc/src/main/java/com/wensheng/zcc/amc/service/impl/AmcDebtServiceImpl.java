@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.google.api.Http;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcCmpyMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -20,6 +21,8 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpyExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -41,6 +44,7 @@ import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
 import com.wensheng.zcc.amc.service.AmcAssetService;
@@ -52,6 +56,7 @@ import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -69,6 +74,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -76,6 +82,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
+import jdk.incubator.http.HttpResponse;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
@@ -84,6 +92,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -97,11 +106,17 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.GsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * @author chenwei on 1/4/19
@@ -140,6 +155,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcCmpyMapper amcCmpyMapper;
 
 
+  @Autowired
+  RestTemplate restTemplate;
 
   @Autowired
   AmcOrigCreditorMapper amcOrigCreditorMapper;
@@ -169,8 +186,21 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Autowired
   AmcMiscServiceImpl amcMiscService;
 
+  @Value("${recom.urls.getTopVisited}")
+  String getTopVisited;
+
   @Value("${env.name}")
   String envName;
+
+  @PostConstruct
+  void init(){
+    restTemplate = new RestTemplate();
+    GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    gsonHttpMessageConverter.setSupportedMediaTypes(Collections.singletonList(MediaType.ALL) );
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
+    restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2XmlHttpMessageConverter);
+    restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
+  }
 
   @Override
   public synchronized DebtImage  saveImageInfo(String ossPath, String originName, Long debtId, String fileDesc,
@@ -228,6 +258,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Transactional
   @CacheEvict(allEntries = true)
   public AmcDebtVo create(AmcDebt amcDebt) {
+    amcDebt.setCreatedDate(AmcDateUtils.getCurrentDate());
     amcDebtMapper.insertSelective(amcDebt);
     amcDebt.setZccDebtCode(amcMiscService.generateZccDebtCode(amcDebt.getDebtpackId(), amcDebt.getId()));
     amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
@@ -377,9 +408,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtExtVo.setAmcDebtVo(amcDebtVo);
 
     Map<Long, AssetAdditional> assetAdditionalMap = getAssetAdditions(amcDebtId);
+    Map<Long, AssetImage> assetImageMap = getAssetImgs(amcDebtId);
     for( AmcAssetVo amcAssetVo:  amcDebtExtVo.getAmcDebtVo().getAssetVos()){
       if(assetAdditionalMap.containsKey(amcAssetVo.getId())){
         amcAssetVo.setAssetAdditional(assetAdditionalMap.get(amcAssetVo.getId()));
+      }
+      if(assetImageMap.containsKey(amcAssetVo.getId())){
+        amcAssetVo.setAssetImage(assetImageMap.get(amcAssetVo.getId()));
       }
     }
     AmcInfo amcInfo = getAmcInfo(amcDebtId);
@@ -402,6 +437,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcAssetService.getAssetAdditions(amcDebtId);
   }
 
+
+  private Map<Long, AssetImage> getAssetImgs(Long amcDebtId) {
+
+    return amcAssetService.getAssetImages(amcDebtId);
+  }
   @Override
   public List<AmcDebtExtVo> getByIds(List<Long> amcDebtIds) throws Exception {
     List<AmcDebtExtVo> amcDebtExtVos = new ArrayList<>();
@@ -450,6 +490,47 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       return doSeqList2VoList(amcDebts, debtIds);
     }
 
+    return null;
+  }
+
+  @Override
+  public List<AmcDebtVo> getMostVisitedDebts(int num) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    StringBuilder stringBuilder = new StringBuilder("has_img desc , visit_count desc limit ");
+    stringBuilder.append(" ").append(num).append(" ");
+    amcDebtExample.setOrderByClause(stringBuilder.toString());
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(!CollectionUtils.isEmpty(amcDebts)){
+      return doList2VoList(amcDebts);
+    }
+
+    return null;
+  }
+
+  @Override
+  public List<AmcDebtVo> getMostVisitedDebtsByRecomm(int num) {
+    String url = String.format(getTopVisited, "debt", num);
+    List<Long> response = restTemplate.exchange(url, HttpMethod.GET, null, new ParameterizedTypeReference<List<Long>>() {
+    } ).getBody();
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+
+
+
+    if(response != null && CollectionUtils.isEmpty(response) && response.size() >= num){
+
+      amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andIdIn(response);
+
+    }else{
+      amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+      StringBuilder stringBuilder = new StringBuilder("has_img desc , visit_count desc limit ");
+      stringBuilder.append(" ").append(num).append(" ");
+      amcDebtExample.setOrderByClause(stringBuilder.toString());
+    }
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(!CollectionUtils.isEmpty(amcDebts)){
+      return doList2VoList(amcDebts);
+    }
     return null;
   }
 
@@ -1468,6 +1549,149 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     updateDebtVosWithMongoFixOrder(amcDebtVos);
     updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
     return amcDebtVos;
+  }
+
+  @Override
+  public List<Long> getLatestIds() {
+
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    amcDebtExample.setOrderByClause("has_img desc , id desc limit 5");
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+
+    return amcDebts.stream().map(item-> item.getId()).collect(Collectors.toList());
+  }
+
+  @Override
+  public List<AmcDebtVo> getFloorFilteredRandomDebts(AmcFilterContentDebt filterDebt,
+      AmcSaleGetRandomListInPage pageInfo) throws Exception {
+    AmcDebtExample amcDebtExample = getAmcDebtExampleWithFloorRandomFilter(filterDebt, pageInfo);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    for(AmcDebt amcDebt: amcDebts){
+      amcDebtVos.add(convertDo2Vo(amcDebt));
+    }
+
+    updateDebtVosWithMongoFixOrder(amcDebtVos);
+    updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
+    return amcDebtVos;
+  }
+
+  @Override
+  public void patchDebtClue(String cellDebtTitle, String cellDebtClue) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andTitleEqualTo(cellDebtTitle);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(CollectionUtils.isEmpty(amcDebts)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("%s not found",cellDebtTitle));
+    }
+
+    if(amcDebts.size() > 1){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("%s found more than one:%s",
+          cellDebtTitle, amcDebts.stream().map(item->item.getId().toString()).reduce("", String::concat)));
+    }
+    Long debtId = amcDebts.get(0).getId();
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
+    DebtAdditional debtAdditional = null;
+    if(CollectionUtils.isEmpty(debtAdditionals)){
+      debtAdditional = new DebtAdditional();
+      debtAdditional.setAmcDebtId(debtId);
+    }else{
+      debtAdditional = debtAdditionals.get(0);
+    }
+    debtAdditional.setDebtClue(cellDebtClue);
+
+    wszccTemplate.save(debtAdditional);
+
+  }
+
+  @Override
+  public void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andTitleEqualTo(cellDebtTitle);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(CollectionUtils.isEmpty(amcDebts)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("%s not found",cellDebtTitle));
+    }
+
+    if(amcDebts.size() > 1){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, String.format("%s found more than one:%s",
+              cellDebtTitle, amcDebts.stream().map(item->item.getId().toString()).reduce("", String::concat)));
+    }
+    amcDebts.get(0).setCourtId(courtId);
+    amcDebtMapper.updateByPrimaryKeySelective(amcDebts.get(0));
+  }
+
+  private AmcDebtExample getAmcDebtExampleWithFloorRandomFilter(AmcFilterContentDebt floorDebtFilter, AmcSaleGetRandomListInPage pageInfo)
+      throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+
+    AmcDebtExample.Criteria criteria = amcDebtExample.createCriteria();
+
+
+    List<CurtInfo> curtInfos = null;
+    List<CurtInfo> curtInfosTotal = new ArrayList<>();
+    if(floorDebtFilter.getCourtCities() != null && !CollectionUtils.isEmpty(floorDebtFilter.getCourtCities())){
+      curtInfos = amcHelperService.queryCurtInfoByCityNames(floorDebtFilter.getCourtCities());
+      if(!CollectionUtils.isEmpty(curtInfos)){
+        curtInfosTotal.addAll(curtInfos);
+      }
+    }
+
+    if(floorDebtFilter.getCourtProvs() != null && !CollectionUtils.isEmpty(floorDebtFilter.getCourtProvs())){
+      curtInfos = amcHelperService.queryCurtInfoByProvNames(floorDebtFilter.getCourtProvs());
+      curtInfosTotal.addAll(curtInfos);
+    }
+    if( !CollectionUtils.isEmpty(curtInfosTotal)){
+      criteria.andCourtIdIn(curtInfosTotal.stream().map(item->item.getId()).collect(Collectors.toList()));
+    }
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getGuarantType())){
+      criteria.andGuarantTypeIn(floorDebtFilter.getGuarantType());
+    }
+
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getDebtType())){
+      criteria.andDebtTypeIn(floorDebtFilter.getDebtType());
+    }
+    if(!CollectionUtils.isEmpty(floorDebtFilter.getBaseAmount())){
+
+      Long lowLimit = -1L;
+      Long highLimit = -1L;
+      if(floorDebtFilter.getBaseAmount().get(0) < floorDebtFilter.getBaseAmount().get(1)){
+        lowLimit = floorDebtFilter.getBaseAmount().get(0)*100;
+        highLimit = floorDebtFilter.getBaseAmount().get(1)*100;
+      }else{
+        lowLimit = floorDebtFilter.getBaseAmount().get(1)*100;
+        highLimit = floorDebtFilter.getBaseAmount().get(0)*100;
+      }
+      criteria.andBaseAmountBetween(lowLimit, highLimit);
+    }
+    criteria.andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    StringBuilder sbOrderBy = new StringBuilder();
+    if(floorDebtFilter.getOrderByField() == OrderByFieldEnum.VISITCOUNT.getId()){
+      sbOrderBy.append(" visit_count desc ");
+    }else{
+      sbOrderBy.append("  rand() ");
+      criteria.andHasImgEqualTo(HasImageEnum.HASIMAGE.getStatus());
+
+    }
+    if(pageInfo.getDebtIds() != null && !CollectionUtils.isEmpty(pageInfo.getDebtIds())  ){
+
+        criteria.andIdNotIn(pageInfo.getDebtIds());
+
+
+    }
+    if(pageInfo.getPgSize() != null && pageInfo.getPgSize() > 0){
+      sbOrderBy.append(" limit ").append(pageInfo.getPgSize());
+    }
+    else{
+      sbOrderBy.append(" limit ").append(0);
+    }
+
+    amcDebtExample.setOrderByClause(sbOrderBy.toString());
+    return amcDebtExample;
+
   }
 
   private AmcDebtExample getAmcDebtExampleWithFloorFilter(AmcFilterContentDebt floorDebtFilter, AmcSaleGetListInPage pageInfo)

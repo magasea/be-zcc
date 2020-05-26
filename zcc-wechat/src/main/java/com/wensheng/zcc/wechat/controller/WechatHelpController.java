@@ -1,5 +1,6 @@
 package com.wensheng.zcc.wechat.controller;
 
+import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.service.impl.AmcGaoDeGrpcServImpl;
 import com.wensheng.zcc.wechat.service.impl.AmcGaoDeLogisQuery;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
@@ -21,6 +22,9 @@ public class WechatHelpController {
   @Autowired
   AmcGaoDeGrpcServImpl amcGaoDeGrpcServ;
 
+  @Autowired
+  WXUserService wxUserService;
+
   @RequestMapping(value = "/fillUserGeoAddr", method = RequestMethod.POST)
   @ResponseBody
   public String fillUserGeoAddr() throws Exception {
@@ -41,4 +45,14 @@ public class WechatHelpController {
 
   }
 
+
+  @RequestMapping(value = "/syncwxuser", method = RequestMethod.POST)
+  @ResponseBody
+  public String syncwxuser() throws Exception {
+
+
+    wxUserService.syncUserInfoFromWX();
+    return "success";
+
+  }
 }

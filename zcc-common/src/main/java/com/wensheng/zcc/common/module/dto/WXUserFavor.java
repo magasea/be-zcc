@@ -18,6 +18,8 @@ public class WXUserFavor {
   String openId;
   String unionId;
   String phone;
+  //城市编码
+  String locationCode;
   AmcSaleFilter amcSaleFilter;
   Date createTime;
   Date updateTime;

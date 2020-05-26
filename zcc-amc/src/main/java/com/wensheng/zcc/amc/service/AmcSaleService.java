@@ -5,6 +5,8 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListByOpenId;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
@@ -108,4 +110,8 @@ public interface AmcSaleService {
 
   AmcSaleWatchonPageVo getUserFavorPage(AmcSaleGetListByOpenId amcSaleGetListByOpenId)
       throws Exception;
+  AmcSaleWatchonPageVo getUserFavorRandomPage(
+      AmcSaleGetRandomListByOpenId amcSaleGetRandomListInPage)
+      throws Exception;
+  public void initFixFloors();
 }

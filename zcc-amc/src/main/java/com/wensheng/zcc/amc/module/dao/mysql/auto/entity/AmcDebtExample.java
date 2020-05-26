@@ -1745,6 +1745,66 @@ public class AmcDebtExample {
             return (Criteria) this;
         }
 
+        public Criteria andAmcContactorSexIsNull() {
+            addCriterion("amc_contactor_sex is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexIsNotNull() {
+            addCriterion("amc_contactor_sex is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex =", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexNotEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex <>", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexGreaterThan(Integer value) {
+            addCriterion("amc_contactor_sex >", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexGreaterThanOrEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex >=", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexLessThan(Integer value) {
+            addCriterion("amc_contactor_sex <", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexLessThanOrEqualTo(Integer value) {
+            addCriterion("amc_contactor_sex <=", value, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexIn(List<Integer> values) {
+            addCriterion("amc_contactor_sex in", values, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexNotIn(List<Integer> values) {
+            addCriterion("amc_contactor_sex not in", values, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexBetween(Integer value1, Integer value2) {
+            addCriterion("amc_contactor_sex between", value1, value2, "amcContactorSex");
+            return (Criteria) this;
+        }
+
+        public Criteria andAmcContactorSexNotBetween(Integer value1, Integer value2) {
+            addCriterion("amc_contactor_sex not between", value1, value2, "amcContactorSex");
+            return (Criteria) this;
+        }
+
         public Criteria andAmcContactor2IdIsNull() {
             addCriterion("amc_contactor2_id is null");
             return (Criteria) this;

@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ZccDebtpackMapper;
 import com.wensheng.zcc.amc.module.dao.helper.HasImageEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
@@ -15,8 +16,10 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
 import com.wensheng.zcc.amc.service.AmcMiscService;
+import com.wensheng.zcc.common.params.AmcSexEnum;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import java.text.ParseException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +28,7 @@ import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -38,6 +42,7 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -276,4 +281,58 @@ public class AmcMiscServiceImpl implements AmcMiscService {
     }
   }
 
+  @Override
+  public void patchAmcDebtAssetContactor() {
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    amcAssetExample.createCriteria().andAmcContactorNameEqualTo("-1");
+    List<AmcAsset> amcAssets =  amcAssetMapper.selectByExample(amcAssetExample);
+    for(AmcAsset amcAsset : amcAssets){
+      AmcDebt amcDebt =  amcDebtMapper.selectByPrimaryKey(amcAsset.getDebtId());
+      if(amcDebt != null && !StringUtils.isEmpty(amcDebt.getAmcContactorName()) &&
+          !StringUtils.isEmpty(amcDebt.getAmcContactorPhone())){
+
+        amcAsset.setAmcContactorName(amcDebt.getAmcContactorName());
+        amcAsset.setAmcContactorPhone(amcDebt.getAmcContactorPhone());
+        amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+      }
+    }
+
+  }
+
+  @Override
+  public void patchPublishDate() throws ParseException {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andPublishDateLessThan(AmcDateUtils.getDateFromStr("1950-01-01"));
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    for(AmcDebt amcDebt: amcDebts){
+      if(amcDebt.getUpdateDate().after(AmcDateUtils.getDateFromStr("1950-01-01"))){
+        amcDebt.setPublishDate(amcDebt.getUpdateDate());
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebt.getId());
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        for(AmcAsset amcAsset: amcAssets){
+          amcAsset.setPublishDate(amcDebt.getPublishDate());
+        }
+      }else{
+        log.error("DebtId:{} need manual update publish date", amcDebt.getId());
+      }
+
+    }
+
+  }
+
+  @Override
+  public void patchContactorSex(String contactorName, Integer sex) {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andAmcContactorNameEqualTo(contactorName);
+    AmcDebt amcDebt = new AmcDebt();
+    amcDebt.setAmcContactorSex(sex);
+    amcDebtMapper.updateByExampleSelective(amcDebt, amcDebtExample);
+
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    amcAssetExample.createCriteria().andAmcContactorNameEqualTo(contactorName);
+    AmcAsset amcAsset = new AmcAsset();
+    amcAsset.setAmcContactorSex(sex);
+    amcAssetMapper.updateByExampleSelective(amcAsset, amcAssetExample);
+  }
 }

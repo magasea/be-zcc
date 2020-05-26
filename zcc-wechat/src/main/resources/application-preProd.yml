@@ -213,7 +213,7 @@ env:
     pubport: 5444
     mongodb-host: 10.20.100.235
     image-repo: /home/chenwei/temp
-    recmhost: 10.20.100.228
+    recmhost: 10.20.100.236
     recmport: 7654
     oauth2:
         host: 10.20.100.235

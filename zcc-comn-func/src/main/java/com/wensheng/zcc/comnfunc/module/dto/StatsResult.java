@@ -2,9 +2,7 @@ package com.wensheng.zcc.comnfunc.module.dto;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
-import lombok.Data;
 
-@Data
 public class StatsResult{
 
 	@SerializedName("province")
@@ -19,7 +17,19 @@ public class StatsResult{
 	@SerializedName("township")
 	private List<String> township;
 
+	public List<String> getProvince(){
+		return province;
+	}
 
+	public List<String> getCity(){
+		return city;
+	}
 
+	public List<String> getCounty(){
+		return county;
+	}
 
+	public List<String> getTownship(){
+		return township;
+	}
 }

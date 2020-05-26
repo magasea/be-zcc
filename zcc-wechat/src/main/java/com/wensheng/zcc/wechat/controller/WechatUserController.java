@@ -3,12 +3,16 @@ package com.wensheng.zcc.wechat.controller;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.params.AmcPage;
+import com.wensheng.zcc.common.params.PageInfo;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXBindPhoneVo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnVo;
@@ -22,10 +26,15 @@ import com.wensheng.zcc.wechat.utils.wechat.AesException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -254,7 +263,13 @@ public class WechatUserController {
     return wxService.getUserWatched( openId);
 
   }
+  @RequestMapping(value = "/user/userWatchCount", method = RequestMethod.POST)
+  @ResponseBody
+  public List<WXUserWatchCount> wxUserWatchCounts(@RequestBody List<WXUserWatchOnObject> objectList ) throws Exception {
 
+    return wxService.getWXUserWatchCount(objectList);
+
+  }
 
   @RequestMapping(value = "/user/getObjectWatchedUsers", method = RequestMethod.POST)
   @ResponseBody
@@ -304,4 +319,36 @@ public class WechatUserController {
     return wxService.getUserInfo( openId);
 
   }
+  @RequestMapping(value = "/user/getUserInfoByGet", method = RequestMethod.GET)
+  @ResponseBody
+  public AmcWechatUserInfo getUserInfoByGet(@RequestParam String openId ) throws Exception {
+
+    return wxService.getUserInfo( openId);
+
+  }
+
+  @RequestMapping(value = "/user/getUserInfos", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcPage<WechatUser> getUserInfos(@RequestBody PageInfo pageInfo) throws Exception {
+
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
+    if (CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("id", Direction.DESC);
+    }
+
+    int offset = PageReqRepHelper.getOffset(pageInfo);
+    List<WechatUser> wechatUsers;
+    try {
+      wechatUsers = wxService.getAllWechatUsers(offset, pageInfo.getSize(), orderByParam);
+
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = wxService.getAllWechatUserCount();
+//    Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
+    return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
+
+  }
+
 }

@@ -14,8 +14,8 @@ import com.wensheng.zcc.amc.module.dao.helper.FloorPublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.GuarantTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
+import com.wensheng.zcc.amc.module.dao.helper.SaleFloorEnum;
 import com.wensheng.zcc.amc.module.dao.helper.SealStateEnum;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBannerExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
@@ -28,6 +28,10 @@ import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListByOpenId;
+import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleRecommAssets;
+import com.wensheng.zcc.amc.module.vo.AmcSaleRecommDebts;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
@@ -55,6 +59,7 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +105,11 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
     @Autowired
     WechatGrpcService wechatGrpcService;
+
+    final static String FIX_SLOGON_LATEST_ASSET = "2020最新发布资产就在这儿";
+    final static String FIX_TITLE_LATEST_ASSET = "最新资产";
+    final static String FIX_SLOGON_LATEST_DEBT = "这儿有大家都关注的债权";
+    final static String FIX_TITLE_LATEST_DEBT = "最热债权";
 
     @Value("${env.name}")
     String envName;
@@ -150,7 +160,13 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         for(AmcSaleFloor amcSaleFloor : amcSaleFloors){
             AmcSaleFloorFrontEndVo amcSaleFloorFrontEndVo = new AmcSaleFloorFrontEndVo();
             amcSaleFloorFrontEndVo.setAmcSaleFloor(amcSaleFloor);
-            if(amcSaleFloor.getRecomItems() != null && !amcSaleFloor.getRecomItems().equals("-1")){
+            if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.HOTDEBT)){
+                //get latest debts
+                amcSaleFloorFrontEndVo.setAmcDebtVos(amcDebtService.getMostVisitedDebts(5));
+            }else if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.LATESTASSET.getId())){
+                //get latest assets
+                amcSaleFloorFrontEndVo.setAmcAssetVos(amcAssetService.getLatestNumOfAssets(5));
+            }else if(amcSaleFloor.getRecomItems() != null && !amcSaleFloor.getRecomItems().equals("-1")){
                 AmcSaleRecomItems amcSaleRecomItems = null;
                 try{
                     amcSaleRecomItems =  gson.fromJson(amcSaleFloor.getRecomItems(), AmcSaleRecomItems.class);
@@ -609,6 +625,11 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         if(amcSaleFloor == null){
             return amcSaleFloorPageVo;
         }
+        if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.LATESTASSET.getId())){
+            resultList.addAll(amcAssetService.getLatestNumOfAssets(12));
+        }else if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.HOTDEBT.getId())){
+            resultList.addAll(amcDebtService.getMostVisitedDebts(12));
+        }else
         if(amcSaleFloor.getFilterContent() != null && !StringUtils.isEmpty(amcSaleFloor.getFilterContent()) && !amcSaleFloor.getFilterContent().equals("-1")){
             AmcSaleFilter amcSaleFilter =  gson.fromJson(amcSaleFloor.getFilterContent(), AmcSaleFilter.class);
             amcSaleFloorPageVo.setAmcSaleFilter(amcSaleFilter);
@@ -779,6 +800,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
         AmcSaleFilter amcSaleFilter = wechatGrpcService.getWXUserFavor(openId);
         if(null == amcSaleFilter){
+            log.info("user :{} have not config favor", openId);
             amcSaleFilter = new AmcSaleFilter();
             amcSaleFilter.setFilterAsset(getDefaultAssetFilter());
             amcSaleFilter.setFilterDebt(getDefaultDebtFilter());
@@ -811,12 +833,24 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         return amcFilterContentDebt;
     }
 
+
+    private AmcFilterContentDebt getDefaultHasImgDebtFilter() {
+        AmcFilterContentDebt amcFilterContentDebt = new AmcFilterContentDebt();
+
+        return amcFilterContentDebt;
+    }
     private AmcFilterContentAsset getDefaultAssetFilter() {
         AmcFilterContentAsset amcFilterContentAsset = new AmcFilterContentAsset();
         amcFilterContentAsset.setOrderByField(OrderByFieldEnum.VISITCOUNT.getId());
         return amcFilterContentAsset;
     }
 
+
+    private AmcFilterContentAsset getDefaultHasImgAssetFilter() {
+        AmcFilterContentAsset amcFilterContentAsset = new AmcFilterContentAsset();
+
+        return amcFilterContentAsset;
+    }
     @Override
     public AmcSaleBannerPageVo getBannerPage(Long bannerId) throws Exception {
         AmcSaleBannerPageVo amcSaleBannerPageVo = new AmcSaleBannerPageVo();
@@ -1033,6 +1067,102 @@ public class AmcSaleServiceImpl implements AmcSaleService {
       return amcSaleWatchonPageVo;
   }
 
+
+    @Override
+    public AmcSaleWatchonPageVo getUserFavorRandomPage(
+        AmcSaleGetRandomListByOpenId amcSaleGetRandomListByOpenId)
+        throws Exception {
+        AmcSaleWatchonPageVo amcSaleWatchonPageVo = new AmcSaleWatchonPageVo();
+        AmcSaleFilter amcSaleFilter = null;
+        if(amcSaleGetRandomListByOpenId.getAmcSaleFilter() == null){
+            amcSaleFilter = wechatGrpcService.getWXUserFavor(amcSaleGetRandomListByOpenId.getOpenId());
+        }
+
+
+        amcSaleWatchonPageVo.setAmcSaleFilter(amcSaleFilter);
+        //todo: 1.0 version will not filter with user favor
+//      if(null == amcSaleFilter){
+        amcSaleFilter = new AmcSaleFilter();
+        amcSaleFilter.setFilterAsset(getDefaultHasImgAssetFilter());
+        amcSaleFilter.setFilterDebt(getDefaultHasImgDebtFilter());
+//      }
+        amcSaleWatchonPageVo.setDebtLists(new ArrayList<>());
+        amcSaleWatchonPageVo.setAssetList(new ArrayList<>());
+
+        if(!CollectionUtils.isEmpty(amcSaleFilter.getFilterAsset().getValuation())){
+            log.info("ignore price section for user");
+            amcSaleFilter.getFilterAsset().setValuation(null);
+        }
+        int origPageSize = amcSaleGetRandomListByOpenId.getPageInfo().getPgSize();
+
+
+
+        List<AmcAssetVo> amcAssetVos = getFilterRandomAssets(amcSaleFilter.getFilterAsset(), amcSaleGetRandomListByOpenId.getPageInfo());
+
+
+        List<AmcDebtVo> amcDebtVos = getFilterRandomDebts(amcSaleFilter.getFilterDebt(), amcSaleGetRandomListByOpenId.getPageInfo());
+
+        if(amcAssetVos.size() < amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2){
+            log.info("less asset than half pageSize:{}", amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2);
+            amcSaleWatchonPageVo.getAssetList().addAll(amcAssetVos);
+            if(amcDebtVos.size() > amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2){
+                for(int idx = 0; idx < amcSaleGetRandomListByOpenId.getPageInfo().getPgSize() - amcAssetVos.size(); idx ++){
+                    amcSaleWatchonPageVo.getDebtLists().add(amcDebtVos.get(idx));
+                }
+            }
+        } else if(amcDebtVos.size() < amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2){
+            log.info("less debts than half pageSize:{}", amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2);
+            if(!CollectionUtils.isEmpty(amcDebtVos)){
+                amcSaleWatchonPageVo.getDebtLists().addAll(amcDebtVos);
+            }
+            if(amcAssetVos.size() > amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2){
+                for(int idx = 0; idx < amcSaleGetRandomListByOpenId.getPageInfo().getPgSize() - amcDebtVos.size(); idx ++){
+                    amcSaleWatchonPageVo.getAssetList().add(amcAssetVos.get(idx));
+                }
+            }
+        }else{
+            for(int idx = 0; idx < amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2; idx++){
+                amcSaleWatchonPageVo.getDebtLists().add(amcDebtVos.get(idx));
+            }
+            for(int idx = 0; idx < amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()/2; idx++){
+                amcSaleWatchonPageVo.getAssetList().add(amcAssetVos.get(idx));
+            }
+        }
+
+
+        if(amcSaleWatchonPageVo.getAssetList().size() + amcSaleWatchonPageVo.getDebtLists().size()
+            > amcSaleGetRandomListByOpenId.getPageInfo().getPgSize()){
+            log.error("exceed pageSize {}", amcSaleGetRandomListByOpenId.getPageInfo().getPgSize() );
+            int exceedNum = amcSaleWatchonPageVo.getAssetList().size() + amcSaleWatchonPageVo.getDebtLists().size()
+                - amcSaleGetRandomListByOpenId.getPageInfo().getPgSize();
+            if(amcSaleWatchonPageVo.getAssetList().size() > amcSaleWatchonPageVo.getDebtLists().size()){
+                for(int idx = 0; idx < exceedNum; idx ++){
+                    amcSaleWatchonPageVo.getAssetList().remove(amcSaleWatchonPageVo.getAssetList().size()-1);
+                }
+            }else if(amcSaleWatchonPageVo.getAssetList().size() < amcSaleWatchonPageVo.getDebtLists().size()){
+                for(int idx = 0; idx < exceedNum; idx ++){
+                    amcSaleWatchonPageVo.getDebtLists().remove(amcSaleWatchonPageVo.getDebtLists().size()-1);
+                }
+            }
+        }
+
+
+
+        return amcSaleWatchonPageVo;
+    }
+
+    private List<AmcDebtVo> getFilterRandomDebts(AmcFilterContentDebt filterDebt,
+        AmcSaleGetRandomListInPage pageInfo) throws Exception {
+        List<AmcDebtVo> amcDebtVos = amcDebtService.getFloorFilteredRandomDebts(filterDebt, pageInfo);
+        return amcDebtVos;
+    }
+
+    private List<AmcAssetVo> getFilterRandomAssets(AmcFilterContentAsset filterAsset,
+        AmcSaleGetRandomListInPage pageInfo) throws Exception {
+        List<AmcAssetVo> amcAssetVos = amcAssetService.getFloorFilteredRandomAssets(filterAsset, pageInfo);
+        return amcAssetVos;
+    }
+
     private List<AmcDebtVo> getFilterDebts(AmcFilterContentDebt filterDebt,
         AmcSaleGetListInPage pageInfo) throws Exception {
         List<AmcDebtVo> amcDebtVos = amcDebtService.getFloorFilteredDebt(filterDebt, pageInfo);
@@ -1045,6 +1175,84 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         List<AmcAssetVo> amcAssetVos = amcAssetService.getFloorFilteredAsset(filterAsset, pageInfo);
         return amcAssetVos;
 
+    }
+
+    @Override
+    public void initFixFloors(){
+        //1. init latest asset floor
+        AmcSaleFloor amcSaleFloorLatestAsset = getLatestAssetFloor();
+        //2. init latest debt floor
+        AmcSaleFloor amcSaleFloorLatestDebt = getLatestDebtFloor();
+
+        AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
+        amcSaleFloorExample.createCriteria().andFloorTypeIn(Arrays.asList(SaleFloorEnum.LATESTASSET.getId(),
+            SaleFloorEnum.HOTDEBT.getId()));
+        List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
+        if(CollectionUtils.isEmpty(amcSaleFloors)){
+            amcSaleFloorMapper.insertSelective(amcSaleFloorLatestAsset);
+            amcSaleFloorMapper.insertSelective(amcSaleFloorLatestDebt);
+        }else{
+            boolean needAsset = true;
+            boolean needDebt = true;
+            for(AmcSaleFloor amcSaleFloor: amcSaleFloors){
+                if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.LATESTASSET.getId())){
+                    log.info("No need to init latest asset floor");
+                    needAsset = false;
+                    continue;
+                }
+                if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.HOTDEBT.getId())){
+                    log.info("No need to init latest debt floor");
+                    needDebt = false;
+                    continue;
+                }
+
+            }
+            if(needAsset){
+                amcSaleFloorMapper.insertSelective(amcSaleFloorLatestAsset);
+            }
+            if(needDebt){
+                amcSaleFloorMapper.insertSelective(amcSaleFloorLatestDebt);
+            }
+        }
+
+
+
+
+
+    }
+
+    private AmcSaleFloor getLatestDebtFloor() {
+        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
+        AmcSaleFilter amcSaleFilter = new AmcSaleFilter();
+        AmcSaleRecomItems amcSaleRecomItems = new AmcSaleRecomItems();
+        AmcSaleRecommDebts amcSaleRecommDebts = new AmcSaleRecommDebts();
+        amcSaleRecomItems.setAmcSaleRecommDebts(amcSaleRecommDebts);
+        List<Long> latestDebtIds = amcDebtService.getLatestIds();
+        amcSaleRecomItems.getAmcSaleRecommDebts().setDebtIds(latestDebtIds);
+        amcSaleFilter.setFilterDebt(new AmcFilterContentDebt());
+        amcSaleFloor.setFilterContent(gson.toJson(amcSaleFilter));
+        amcSaleFloor.setRecomItems(gson.toJson(amcSaleRecomItems));
+        amcSaleFloor.setSlogan(FIX_SLOGON_LATEST_DEBT);
+        amcSaleFloor.setTitle(FIX_TITLE_LATEST_DEBT);
+        amcSaleFloor.setFloorType(SaleFloorEnum.HOTDEBT.getId());
+        return amcSaleFloor;
+    }
+
+    private AmcSaleFloor getLatestAssetFloor() {
+        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
+        AmcSaleFilter amcSaleFilter = new AmcSaleFilter();
+        AmcSaleRecomItems amcSaleRecomItems = new AmcSaleRecomItems();
+        AmcSaleRecommAssets amcSaleRecommAssets = new AmcSaleRecommAssets();
+        amcSaleRecomItems.setAmcSaleRecommAssets(amcSaleRecommAssets);
+        List<Long> latestAssetIds = amcAssetService.getLatestIds();
+        amcSaleRecomItems.getAmcSaleRecommAssets().setAssetIds(latestAssetIds);
+        amcSaleFilter.setFilterAsset(new AmcFilterContentAsset());
+        amcSaleFloor.setFilterContent(gson.toJson(amcSaleFilter));
+        amcSaleFloor.setRecomItems(gson.toJson(amcSaleRecomItems));
+        amcSaleFloor.setSlogan(FIX_SLOGON_LATEST_ASSET);
+        amcSaleFloor.setTitle(FIX_TITLE_LATEST_ASSET);
+        amcSaleFloor.setFloorType(SaleFloorEnum.LATESTASSET.getId());
+        return amcSaleFloor;
     }
 
 }

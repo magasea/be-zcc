@@ -55,6 +55,8 @@ public class AmcDebt {
 
     private String amcContactorPhone;
 
+    private Integer amcContactorSex;
+
     private Long amcContactor2Id;
 
     private Integer isRecommanded;
@@ -291,6 +293,14 @@ public class AmcDebt {
 
     public void setAmcContactorPhone(String amcContactorPhone) {
         this.amcContactorPhone = amcContactorPhone == null ? null : amcContactorPhone.trim();
+    }
+
+    public Integer getAmcContactorSex() {
+        return amcContactorSex;
+    }
+
+    public void setAmcContactorSex(Integer amcContactorSex) {
+        this.amcContactorSex = amcContactorSex;
     }
 
     public Long getAmcContactor2Id() {

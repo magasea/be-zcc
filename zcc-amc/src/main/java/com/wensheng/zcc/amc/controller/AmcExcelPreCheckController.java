@@ -75,4 +75,17 @@ public class AmcExcelPreCheckController {
 
   }
 
+  @RequestMapping(value = "/api/amcid/{amcid}/debt/excel/patchDebtCourt", headers = "Content-Type= multipart/form-data",method =
+      RequestMethod.POST)
+  @ResponseBody
+  public void patchDebtCourt (@PathVariable Long amcid,
+      @RequestParam("excel") MultipartFile excelFile) throws Exception {
+
+
+//    MultipartFile[] uploadingImages = debtImageBaseActionVo.getContent().getMultipartFiles();
+    amcExcelFileService.handleMultiPartFilePatchDebtCurt(excelFile);
+
+
+  }
+
 }

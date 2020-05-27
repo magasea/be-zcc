@@ -202,6 +202,7 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
       responseObserver.onNext(wxviBuilder.build());
       responseObserver.onCompleted();
     } catch (Exception ex){
+      log.error("Failed to save:", ex);
       responseObserver.onError(ex);
     }
 

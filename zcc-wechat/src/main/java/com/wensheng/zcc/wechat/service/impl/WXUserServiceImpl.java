@@ -1,5 +1,7 @@
 package com.wensheng.zcc.wechat.service.impl;
 
+import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpConstants.DEFAULT_CHARSET;
+
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
@@ -118,6 +120,7 @@ public class WXUserServiceImpl implements WXUserService {
   void init(){
     restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
     GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
+    gsonHttpMessageConverter.setSupportedMediaTypes(Arrays.asList(new MediaType("text","plain", DEFAULT_CHARSET )));
     restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
   }
 
@@ -135,6 +138,7 @@ public class WXUserServiceImpl implements WXUserService {
     headers.getAccept().clear();
     headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+    headers.set("Accept", MediaType.TEXT_PLAIN_VALUE);
     return headers;
   }
 
@@ -817,22 +821,56 @@ public class WXUserServiceImpl implements WXUserService {
   }
 
   @Override
-  public WechatUserInfo getWechatUserInfo(String openId, String accessToken) {
+  public WechatUserInfo saveWechatUserInfo(String openId, String accessToken) {
     String url = String.format(getUserInfoUrl, accessToken, openId);
-    ResponseEntity<WechatUserInfo> responseEntity = restTemplate.getForEntity(url,
-        WechatUserInfo.class);
-    String info = gson.toJson(responseEntity.getBody());
-    log.info(String.format("got response from wechat:%s", info));
+    ResponseEntity<WechatUserInfo> responseEntity = null;
+    WechatUserInfo wechatUserInfo = null;
+    try{
+      responseEntity = restTemplate.getForEntity(url,
+          WechatUserInfo.class);
+      wechatUserInfo = responseEntity.getBody();
+    }catch (Exception ex){
+      log.error("Failed to get userInfo by accessToken:{}, openId:{}", accessToken, openId, ex);
+      ResponseEntity<String> responseStrEntity = restTemplate.getForEntity(url,
+          String.class);
+      log.info(responseStrEntity.getBody());
+      wechatUserInfo = gson.fromJson(responseStrEntity.getBody(), WechatUserInfo.class);
+    }
+
+    if(wechatUserInfo == null || wechatUserInfo.getNickName() == null){
+      return null;
+    }
     WechatUserExample wechatUserExample = new WechatUserExample();
     wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
-    WechatUserInfo wechatUserInfo = responseEntity.getBody();
+
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
     if(CollectionUtils.isEmpty(wechatUsers)){
       WechatUser wechatUser = new WechatUser();
       AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
       wechatUserMapper.insertSelective(wechatUser);
     }
-    return responseEntity.getBody();
+
+    return wechatUserInfo;
+  }
+
+  @Override
+  public WechatUserInfo saveRpcWXVisitorInfo(WechatUserInfo wechatUserInfo, String accessToken) {
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(wechatUserInfo.getOpenId());
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      WechatUser wechatUser = new WechatUser();
+      if(StringUtils.isEmpty(wechatUserInfo.getUnionId()) && StringUtils.isEmpty(wechatUserInfo.getHeadImgUrl())){
+        WechatUserInfo saveAgainResult = saveWechatUserInfo(wechatUserInfo.getOpenId(), accessToken);
+        AmcBeanUtils.copyProperties(saveAgainResult, wechatUser);
+      }else{
+        AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
+      }
+
+      wechatUserMapper.insertSelective(wechatUser);
+    }
+    return wechatUserInfo;
   }
 
   public Long getAllWechatUserCount() {

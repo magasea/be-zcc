@@ -86,6 +86,9 @@ public class AmcDebtController {
   @Autowired
   AmcMiscService amcMiscService;
 
+  @Autowired
+  AmcContactorService amcContactorService;
+
 
 
 
@@ -830,5 +833,12 @@ public class AmcDebtController {
     amcMiscService.patchContactorSex(contactorName, sex);
   }
 
+
+
+  @RequestMapping(value = "/initContactorInDebt", method = RequestMethod.POST)
+  @ResponseBody
+  public void initContactorInDebt() throws Exception {
+    amcContactorService.initializeDebtContactor();
+  }
 
 }

@@ -4,6 +4,7 @@ import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -20,6 +21,7 @@ import com.wenshengamc.zcc.wechat.UploadImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WXUserFavor;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp;
+import com.wenshengamc.zcc.wechat.WXVistorInfo;
 import com.wenshengamc.zcc.wechat.WechatAssetImage;
 import com.wenshengamc.zcc.wechat.WechatAssetImageOrBuilder;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceImplBase;
@@ -29,6 +31,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.checkerframework.checker.units.qual.A;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -175,6 +178,35 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
      }
      responseObserver.onNext(WXUFB.build());
      responseObserver.onCompleted();
+  }
+
+  /**
+   */
+  @Override
+  public void saveWXVistorInfo(com.wenshengamc.zcc.wechat.WXVistorInfo request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.wechat.WXVistorInfo> responseObserver) {
+    WechatUserInfo wechatUserInfo = new WechatUserInfo();
+    wechatUserInfo.setCity(request.getCity());
+    wechatUserInfo.setCountry(request.getCountry());
+    wechatUserInfo.setHeadImgUrl(request.getHeadimgurl());
+    wechatUserInfo.setLanguage(request.getLanguage());
+    wechatUserInfo.setSex(request.getSex());
+    wechatUserInfo.setOpenId(request.getOpenid());
+    wechatUserInfo.setNickName(request.getNickname());
+    wechatUserInfo.setUnionId(request.getUnionid());
+
+    try{
+      WechatUserInfo result = wxUserService.saveRpcWXVisitorInfo(wechatUserInfo, request.getAccessToken());
+      WXVistorInfo.Builder wxviBuilder = WXVistorInfo.newBuilder();
+      AmcBeanUtils.copyProperties(result, wxviBuilder);
+      responseObserver.onNext(wxviBuilder.build());
+      responseObserver.onCompleted();
+    } catch (Exception ex){
+      responseObserver.onError(ex);
+    }
+
+
+
   }
 
 }

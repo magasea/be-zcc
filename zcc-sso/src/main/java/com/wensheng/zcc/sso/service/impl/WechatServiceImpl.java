@@ -128,6 +128,8 @@ public class WechatServiceImpl implements WechatService {
   JwtAccessTokenConverter accessTokenConverter;
 
 
+  @Autowired
+  WechatGrpcService wechatGrpcService;
 
   public static final int INIT_VECTOR_LENGTH = 16;
 
@@ -187,7 +189,7 @@ public class WechatServiceImpl implements WechatService {
     ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
         WechatCode2SessionVo.class);
     String info = gson.toJson(responseEntity.getBody());
-    log.info(String.format("got response from wechat:%s", info));
+    log.info(String.format("loginWechat got response from wechat:%s", info));
     WechatLoginResult wechatLoginResult = new WechatLoginResult();
     wechatLoginResult.setResp(info);
     if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
@@ -197,6 +199,7 @@ public class WechatServiceImpl implements WechatService {
     CUWechatUser((responseEntity.getBody()));
     return wechatLoginResult;
   }
+
 
   @Override
   public AmcWechatUser CUWechatUser(WechatCode2SessionVo wechatCode2SessionVo) {
@@ -260,7 +263,7 @@ public class WechatServiceImpl implements WechatService {
     ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
         WechatCode2SessionVo.class);
     String info = gson.toJson(responseEntity.getBody());
-    log.info(String.format("got response from wechat:%s", info));
+    log.info(String.format("loginWechatOpenPlatform got response from wechat:%s", info));
     WechatLoginResult wechatLoginResult = new WechatLoginResult();
     wechatLoginResult.setResp(info);
     if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
@@ -276,8 +279,14 @@ public class WechatServiceImpl implements WechatService {
     ResponseEntity<WechatUserInfo> responseEntity = restTemplate.getForEntity(url,
         WechatUserInfo.class);
     String info = gson.toJson(responseEntity.getBody());
-    log.info(String.format("got response from wechat:%s", info));
+    log.info(String.format("getWechatUserInfo got response from wechat:%s", info));
+    WechatUserInfo wechatUserInfo = responseEntity.getBody();
+    try{
+      wechatGrpcService.saveWXVisitorInfo(wechatUserInfo);
 
+    }catch (Exception ex){
+      log.error("Failed to save wechat visitor:", ex);
+    }
     return responseEntity.getBody();
   }
 
@@ -288,12 +297,13 @@ public class WechatServiceImpl implements WechatService {
     ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
         WechatCode2SessionVo.class);
     String info = gson.toJson(responseEntity.getBody());
-    log.info(String.format("got response from wechat:%s", info));
+    log.info(String.format("loginPubWechat got response from wechat:%s", info));
     WechatLoginResult wechatLoginResult = new WechatLoginResult();
     wechatLoginResult.setResp(info);
     if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
       wechatLoginResult.setOAuth2AccessToken(generateToken(responseEntity.getBody()));
     }
+    kafkaService.send(responseEntity.getBody());
     CUWechatUser((responseEntity.getBody()));
     return wechatLoginResult;
   }

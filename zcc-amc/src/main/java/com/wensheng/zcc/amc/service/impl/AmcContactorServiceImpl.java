@@ -1,7 +1,10 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
@@ -16,6 +19,7 @@ import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.time.Instant;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -45,7 +49,48 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   @Autowired
   AmcDebtMapper amcDebtMapper;
 
+  @Autowired
+  AmcAssetMapper amcAssetMapper;
 
+  private void connectDebtWithContactor(List<AmcDebt> amcDebts){
+    for(AmcDebt amcDebt: amcDebts){
+      String amcDebtContactor = amcDebt.getAmcContactorName();
+      AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+      amcDebtContactorExample.createCriteria().andNameEqualTo(amcDebtContactor);
+      List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper.selectByExample(amcDebtContactorExample);
+      if(!CollectionUtils.isEmpty(amcDebtContactors)){
+        if(amcDebtContactors.size() > 1){
+          log.error("duplicate name in amcDebtContactors:{}", amcDebtContactor);
+          continue;
+        }
+        amcDebt.setAmcContactorId(amcDebtContactors.get(0).getId());
+        AmcAssetExample amcAssetExample = new AmcAssetExample();
+        amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebt.getId());
+        List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+        for(AmcAsset amcAsset: amcAssets){
+          amcAsset.setAmcContactorId(amcDebtContactors.get(0).getId());
+          amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+        }
+        amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+      }
+    }
+  }
+
+  @Override
+  public void initializeDebtContactor(){
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.setOrderByClause(" id desc ");
+    Integer offset = 0;
+    Integer pageSize = 20;
+    RowBounds rowBounds = new RowBounds(offset, pageSize);
+    List<AmcDebt> amcDebts =  amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+    while(!CollectionUtils.isEmpty(amcDebts)){
+      connectDebtWithContactor(amcDebts);
+      offset += pageSize;
+      rowBounds = new RowBounds(offset, pageSize);
+      amcDebts =  amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+    }
+  }
 
 
   @Override

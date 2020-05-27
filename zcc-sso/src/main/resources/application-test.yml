@@ -1,5 +1,17 @@
 server:
     port: 10002
+grpc:
+    enabled: true
+    port: 10012
+    in-process-server-name: ssoGrpcServ
+    #    server:
+    client:
+        wechat:
+            host: ${env.rpchost}
+            port: 10015
+        comnfunc:
+            host: ${env.rpchost}
+            port: 10016
 spring:
     autoconfigure:
         exclude:
@@ -145,6 +157,7 @@ env:
     name: test
     dbhost: 10.20.100.238
     ssohost: 10.20.100.238
+    rpchost: 10.20.100.238
     dbusername: ssouser
     dbpasswd: Wensheng#123
     kfkhost: 10.20.100.238

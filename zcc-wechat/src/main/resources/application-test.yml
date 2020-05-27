@@ -195,6 +195,7 @@ message:
 
 kafka:
     topic_wechatuser: topic_wechatuser_${env.env-hint}
+    topic_wxuser_zcclogin: topic_wxuser_zcclogin_${env.env-hint}
 
 logging:
     level:

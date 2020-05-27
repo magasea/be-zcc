@@ -81,6 +81,22 @@ message WXUserFavor{
   string userFavor = 1;
 }
 
+message WXVistorInfo{
+
+  string openid = 1;
+  string nickname = 2;
+  int32 sex = 3;
+  string province = 4;
+  string city = 5;
+  string country = 6;
+  string headimgurl = 7;
+  string language = 8;
+  repeated string privilege = 9;
+  string unionid = 10;
+  string accessToken = 11;
+
+}
+
 
 service WechatGrpcService {
   rpc uploadImage2Wechat(UploadImg2WechatReq) returns (UploadImg2WechatResp);
@@ -90,5 +106,7 @@ service WechatGrpcService {
   rpc getWXUserWatchOnObjs(WXUserReq) returns (WXUserWatchOnObjResp);
 
   rpc getWXUserFavor(WXUserReq) returns (WXUserFavor);
+
+  rpc saveWXVistorInfo(WXVistorInfo) returns(WXVistorInfo);
 
 }

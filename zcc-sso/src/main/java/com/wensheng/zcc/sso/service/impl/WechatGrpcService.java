@@ -1,19 +1,17 @@
-package com.wensheng.zcc.amc.service.impl;
-
-import static io.grpc.stub.ClientCalls.blockingUnaryCall;
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+package com.wensheng.zcc.sso.service.impl;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
-import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WXUserFavor;
 import com.wenshengamc.zcc.wechat.WXUserReq;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp;
+import com.wenshengamc.zcc.wechat.WXVistorInfo;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceBlockingStub;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceImplBase;
-import io.grpc.ManagedChannel;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +30,12 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
 
 
+  public void saveWXVisitorInfo(WechatUserInfo wechatUserInfo){
+    WXVistorInfo.Builder wxviBuilder = WXVistorInfo.newBuilder();
+    AmcBeanUtils.copyProperties(wechatUserInfo, wxviBuilder);
+    wechatServiceStub.saveWXVistorInfo(wxviBuilder.build());
+  }
+
 
   public com.wenshengamc.zcc.wechat.UploadImg2WechatResp uploadImage2Wechat(com.wenshengamc.zcc.wechat.UploadImg2WechatReq request) {
     return wechatServiceStub.uploadImage2Wechat(request);
@@ -49,9 +53,6 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
   }
 
   public AmcSaleFilter getWXUserFavor(String openId){
-    if(StringUtils.isEmpty(openId)){
-      return null;
-    }
     WXUserReq.Builder WXURB = WXUserReq.newBuilder();
     WXURB.setOpenId(openId);
     WXUserFavor wxUserFavor  = null;

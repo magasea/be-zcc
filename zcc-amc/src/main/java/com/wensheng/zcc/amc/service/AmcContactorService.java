@@ -13,4 +13,6 @@ public interface AmcContactorService {
   void syncContactorWithNewUser(SSOAmcUser amcUser);
 
   AmcPage<SSOAmcUser> getSsoAmcUsers(SSOQueryParam ssoQueryParam);
+
+  void initializeDebtContactor();
 }

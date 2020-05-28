@@ -249,7 +249,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CmpyBasicBizInfoSync>  cmpyBasicBizInfoSyncArrayList= crawlResultDTO.getList();
     if(!CollectionUtils.isEmpty(cmpyBasicBizInfoSyncArrayList)){
       for (CmpyBasicBizInfoSync cmpyBasicBizInfoSyncNew : cmpyBasicBizInfoSyncArrayList){
-        if(custTrdCmpy.getCmpyName().equals(cmpyBasicBizInfoSyncNew.getName())){
+        if(custTrdCmpy.getCmpyNameUpdate().equals(cmpyBasicBizInfoSyncNew.getName())){
           cmpyBasicBizInfoSync = cmpyBasicBizInfoSyncNew;
         }
       }

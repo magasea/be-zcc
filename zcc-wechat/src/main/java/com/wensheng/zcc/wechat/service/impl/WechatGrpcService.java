@@ -196,9 +196,44 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
     wechatUserInfo.setUnionId(request.getUnionid());
 
     try{
-      WechatUserInfo result = wxUserService.saveRpcWXVisitorInfo(wechatUserInfo, request.getAccessToken());
+
+      WechatUserInfo result = wxUserService.saveRpcWXVisitorInfo(wechatUserInfo, request.getAccessToken(), request.getStateInfo());
       WXVistorInfo.Builder wxviBuilder = WXVistorInfo.newBuilder();
-      AmcBeanUtils.copyProperties(result, wxviBuilder);
+//      AmcBeanUtils.copyProperties(result, wxviBuilder);
+      if(result.getCity() != null){
+        wxviBuilder.setCity(result.getCity());
+      }
+      if(result.getCountry() != null){
+        wxviBuilder.setCountry(result.getCountry());
+      }
+      if(result.getHeadImgUrl() != null){
+        wxviBuilder.setHeadimgurl(result.getHeadImgUrl());
+      }
+      if(result.getLanguage() != null){
+        wxviBuilder.setLanguage(result.getLanguage());
+      }
+      if(result.getOpenId() != null){
+        wxviBuilder.setOpenid(result.getOpenId());
+      }
+      if(result.getNickName() != null){
+        wxviBuilder.setNickname(result.getNickName());;
+      }
+      if(result.getProvince() != null){
+        wxviBuilder.setProvince(result.getProvince());
+      }
+
+      wxviBuilder.setSex(result.getSex());
+
+      if(result.getUnionId() != null){
+        wxviBuilder.setUnionid(result.getUnionId());
+      }
+
+      if(result.getPrivilege() != null && !CollectionUtils.isEmpty(result.getPrivilege())){
+        for(Object priv: result.getPrivilege()){
+          wxviBuilder.getPrivilegeList().add(priv.toString());
+        }
+      }
+
       responseObserver.onNext(wxviBuilder.build());
       responseObserver.onCompleted();
     } catch (Exception ex){

@@ -23,4 +23,5 @@ public class WechatCode2SessionVo {
   String scope;
   String errcode;
   String errmsg;
+  String stateInfo;
 }

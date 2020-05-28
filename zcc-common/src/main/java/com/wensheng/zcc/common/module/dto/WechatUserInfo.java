@@ -35,7 +35,7 @@ public class WechatUserInfo {
   private String language;
 
   @SerializedName("privilege")
-  private List<Object> privilege;
+  private List<String> privilege;
 
 
 }

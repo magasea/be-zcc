@@ -53,7 +53,7 @@ public class KafkaServiceImpl implements KafkaService {
       log.error("Wrong params for:{}", amcUserCode);
       return;
     }
-    wxUserService.saveWechatUserInfo(amcUserCode.getOpenid(), amcUserCode.getAccessToken());
+    wxUserService.saveWechatUserInfo(amcUserCode.getOpenid(), amcUserCode.getAccessToken(), amcUserCode.getStateInfo());
 
   }
 

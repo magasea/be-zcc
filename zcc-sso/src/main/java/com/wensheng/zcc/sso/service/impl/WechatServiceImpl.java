@@ -9,6 +9,7 @@ import com.wensheng.zcc.sso.dao.mysql.mapper.AmcWechatUserMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUserExample;
 import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
+import com.wensheng.zcc.sso.module.vo.WechatLogin;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
@@ -282,18 +283,18 @@ public class WechatServiceImpl implements WechatService {
     log.info(String.format("getWechatUserInfo got response from wechat:%s", info));
     WechatUserInfo wechatUserInfo = responseEntity.getBody();
     try{
-      wechatGrpcService.saveWXVisitorInfo(wechatUserInfo);
+      wechatUserInfo = wechatGrpcService.saveWXVisitorInfo(wechatUserInfo);
 
     }catch (Exception ex){
       log.error("Failed to save wechat visitor:", ex);
     }
-    return responseEntity.getBody();
+    return wechatUserInfo;
   }
 
   @Override
-  public WechatLoginResult loginPubWechat(String code) {
+  public WechatLoginResult loginPubWechat(WechatLogin login) {
 
-    String loginWechatUrl = String.format(loginPubUrl, code);
+    String loginWechatUrl = String.format(loginPubUrl, login.getCode());
     ResponseEntity<WechatCode2SessionVo> responseEntity = restTemplate.getForEntity(loginWechatUrl,
         WechatCode2SessionVo.class);
     String info = gson.toJson(responseEntity.getBody());
@@ -303,6 +304,7 @@ public class WechatServiceImpl implements WechatService {
     if(StringUtils.isEmpty(responseEntity.getBody().getErrcode())){
       wechatLoginResult.setOAuth2AccessToken(generateToken(responseEntity.getBody()));
     }
+    responseEntity.getBody().setStateInfo(login.getState());
     kafkaService.send(responseEntity.getBody());
     CUWechatUser((responseEntity.getBody()));
     return wechatLoginResult;

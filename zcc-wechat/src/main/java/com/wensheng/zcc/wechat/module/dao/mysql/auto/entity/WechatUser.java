@@ -43,6 +43,8 @@ public class WechatUser {
 
     private Date vcodeTime;
 
+    private String stateInfo;
+
     public Long getId() {
         return id;
     }
@@ -201,5 +203,13 @@ public class WechatUser {
 
     public void setVcodeTime(Date vcodeTime) {
         this.vcodeTime = vcodeTime;
+    }
+
+    public String getStateInfo() {
+        return stateInfo;
+    }
+
+    public void setStateInfo(String stateInfo) {
+        this.stateInfo = stateInfo == null ? null : stateInfo.trim();
     }
 }

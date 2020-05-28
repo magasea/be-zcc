@@ -1434,6 +1434,76 @@ public class WechatUserExample {
             addCriterion("vcode_time not between", value1, value2, "vcodeTime");
             return (Criteria) this;
         }
+
+        public Criteria andStateInfoIsNull() {
+            addCriterion("state_info is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoIsNotNull() {
+            addCriterion("state_info is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoEqualTo(String value) {
+            addCriterion("state_info =", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoNotEqualTo(String value) {
+            addCriterion("state_info <>", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoGreaterThan(String value) {
+            addCriterion("state_info >", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoGreaterThanOrEqualTo(String value) {
+            addCriterion("state_info >=", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoLessThan(String value) {
+            addCriterion("state_info <", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoLessThanOrEqualTo(String value) {
+            addCriterion("state_info <=", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoLike(String value) {
+            addCriterion("state_info like", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoNotLike(String value) {
+            addCriterion("state_info not like", value, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoIn(List<String> values) {
+            addCriterion("state_info in", values, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoNotIn(List<String> values) {
+            addCriterion("state_info not in", values, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoBetween(String value1, String value2) {
+            addCriterion("state_info between", value1, value2, "stateInfo");
+            return (Criteria) this;
+        }
+
+        public Criteria andStateInfoNotBetween(String value1, String value2) {
+            addCriterion("state_info not between", value1, value2, "stateInfo");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

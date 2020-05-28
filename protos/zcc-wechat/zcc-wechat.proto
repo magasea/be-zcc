@@ -94,7 +94,7 @@ message WXVistorInfo{
   repeated string privilege = 9;
   string unionid = 10;
   string accessToken = 11;
-
+  string stateInfo = 12;
 }
 
 

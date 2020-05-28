@@ -9,5 +9,6 @@ import lombok.Data;
 @Data
 public class WechatLogin {
   String code;
+  String state;
 
 }

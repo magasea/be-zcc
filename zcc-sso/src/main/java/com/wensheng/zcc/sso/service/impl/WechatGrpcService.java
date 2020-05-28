@@ -30,10 +30,22 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
 
 
-  public void saveWXVisitorInfo(WechatUserInfo wechatUserInfo){
+  public WechatUserInfo saveWXVisitorInfo(WechatUserInfo wechatUserInfo){
     WXVistorInfo.Builder wxviBuilder = WXVistorInfo.newBuilder();
     AmcBeanUtils.copyProperties(wechatUserInfo, wxviBuilder);
-    wechatServiceStub.saveWXVistorInfo(wxviBuilder.build());
+    WXVistorInfo vistorInfo =  wechatServiceStub.saveWXVistorInfo(wxviBuilder.build());
+    if(StringUtils.isEmpty(wechatUserInfo.getNickName())){
+      wechatUserInfo.setNickName(vistorInfo.getNickname());
+      wechatUserInfo.setHeadImgUrl(vistorInfo.getHeadimgurl());
+      wechatUserInfo.setUnionId(vistorInfo.getUnionid());
+      wechatUserInfo.setSex(vistorInfo.getSex());
+      wechatUserInfo.setLanguage(vistorInfo.getLanguage());
+      wechatUserInfo.setCountry(vistorInfo.getCountry());
+      wechatUserInfo.setCity(vistorInfo.getCity());
+      wechatUserInfo.setPrivilege(vistorInfo.getPrivilegeList());
+      wechatUserInfo.setProvince(vistorInfo.getProvince());
+    }
+    return wechatUserInfo;
   }
 
 

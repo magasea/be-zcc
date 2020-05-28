@@ -120,7 +120,8 @@ public class WXUserServiceImpl implements WXUserService {
   void init(){
     restTemplate.getMessageConverters().removeIf(item -> item instanceof MappingJackson2HttpMessageConverter);
     GsonHttpMessageConverter gsonHttpMessageConverter = new GsonHttpMessageConverter();
-    gsonHttpMessageConverter.setSupportedMediaTypes(Arrays.asList(new MediaType("text","plain", DEFAULT_CHARSET )));
+    gsonHttpMessageConverter.setSupportedMediaTypes(Arrays.asList(new MediaType("text","plain", DEFAULT_CHARSET ),
+        new MediaType("application","json", DEFAULT_CHARSET)));
     restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
   }
 
@@ -426,6 +427,7 @@ public class WXUserServiceImpl implements WXUserService {
     for(WechatUserInfoVo userInfoVo: wechatUserInfoVos){
       WechatUser wechatUser = new WechatUser();
       AmcBeanUtils.copyProperties(userInfoVo, wechatUser);
+      wechatUser.setSubscribeTime(AmcDateUtils.toUTCDate(userInfoVo.getSubscribeTime()));
       wechatUserExample.clear();
       if(!StringUtils.isEmpty(wechatUser.getUnionId())){
         wechatUserExample.createCriteria().andUnionIdEqualTo(wechatUser.getUnionId());
@@ -821,7 +823,7 @@ public class WXUserServiceImpl implements WXUserService {
   }
 
   @Override
-  public WechatUserInfo saveWechatUserInfo(String openId, String accessToken) {
+  public WechatUserInfo saveWechatUserInfo(String openId, String accessToken, String stateInfo) {
     String url = String.format(getUserInfoUrl, accessToken, openId);
     ResponseEntity<WechatUserInfo> responseEntity = null;
     WechatUserInfo wechatUserInfo = null;
@@ -847,28 +849,50 @@ public class WXUserServiceImpl implements WXUserService {
     if(CollectionUtils.isEmpty(wechatUsers)){
       WechatUser wechatUser = new WechatUser();
       AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
+      wechatUser.setProvince(wechatUserInfo.getProvince());
+      wechatUser.setUnionId(wechatUserInfo.getUnionId());
+      wechatUser.setNickName(wechatUserInfo.getNickName());
+      wechatUser.setHeadImgUrl(wechatUserInfo.getHeadImgUrl());
+      wechatUser.setCountry(wechatUserInfo.getCountry());
+      wechatUser.setLanguage(wechatUserInfo.getLanguage());
+      wechatUser.setCity(wechatUserInfo.getCity());
+      wechatUser.setSex(wechatUserInfo.getSex());
+      if(!StringUtils.isEmpty(stateInfo)){
+        wechatUser.setStateInfo(stateInfo);
+      }
       wechatUserMapper.insertSelective(wechatUser);
+    }else if(wechatUsers.get(0).getStateInfo() == null || wechatUsers.get(0).getStateInfo().equals("-1")){
+      log.info("need update sate info ? ");
     }
 
     return wechatUserInfo;
   }
 
   @Override
-  public WechatUserInfo saveRpcWXVisitorInfo(WechatUserInfo wechatUserInfo, String accessToken) {
+  public WechatUserInfo saveRpcWXVisitorInfo(WechatUserInfo wechatUserInfo, String accessToken, String stateInfo) {
 
     WechatUserExample wechatUserExample = new WechatUserExample();
     wechatUserExample.createCriteria().andOpenIdEqualTo(wechatUserInfo.getOpenId());
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
     if(CollectionUtils.isEmpty(wechatUsers)){
-      WechatUser wechatUser = new WechatUser();
-      if(StringUtils.isEmpty(wechatUserInfo.getUnionId()) && StringUtils.isEmpty(wechatUserInfo.getHeadImgUrl())){
-        WechatUserInfo saveAgainResult = saveWechatUserInfo(wechatUserInfo.getOpenId(), accessToken);
-        AmcBeanUtils.copyProperties(saveAgainResult, wechatUser);
+      WechatUserInfo saveAgainResult = saveWechatUserInfo(wechatUserInfo.getOpenId(), accessToken, stateInfo);
+      if(saveAgainResult != null && !StringUtils.isEmpty(saveAgainResult.getNickName())){
+        return saveAgainResult;
       }else{
-        AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
+        //use the rpc userInfo directlly
+        WechatUser wechatUser = new WechatUser();
+        wechatUser.setOpenId(wechatUserInfo.getOpenId());
+        wechatUser.setCity(wechatUserInfo.getCity());
+        wechatUser.setCountry(wechatUserInfo.getCountry());
+        wechatUser.setHeadImgUrl(wechatUserInfo.getHeadImgUrl());
+        wechatUser.setNickName(wechatUserInfo.getNickName());
+        wechatUser.setUnionId(wechatUserInfo.getUnionId());
+        wechatUser.setProvince(wechatUserInfo.getProvince());
+        if(!StringUtils.isEmpty(stateInfo)){
+          wechatUser.setStateInfo(stateInfo);
+        }
+        wechatUserMapper.insertSelective(wechatUser);
       }
-
-      wechatUserMapper.insertSelective(wechatUser);
     }
     return wechatUserInfo;
   }

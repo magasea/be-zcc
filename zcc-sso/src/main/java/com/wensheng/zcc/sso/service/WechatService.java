@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.service;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcWechatUser;
 import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
+import com.wensheng.zcc.sso.module.vo.WechatLogin;
 import com.wensheng.zcc.sso.module.vo.WechatLoginResult;
 import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
@@ -25,5 +26,5 @@ public interface WechatService {
 
   WechatUserInfo getWechatUserInfo(String openId, String accessToken);
 
-  WechatLoginResult loginPubWechat(String code);
+  WechatLoginResult loginPubWechat(WechatLogin login);
 }

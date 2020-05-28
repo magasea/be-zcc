@@ -40,7 +40,7 @@ public class WechatUserController {
   @ResponseBody
   public WechatLoginResult wechatPubLogin(@RequestBody WechatLogin login) throws IOException {
 
-    return wechatService.loginPubWechat(login.getCode());
+    return wechatService.loginPubWechat(login);
 
   }
 

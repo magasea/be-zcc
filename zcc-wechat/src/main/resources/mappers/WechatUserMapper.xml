@@ -16,12 +16,13 @@
     <result column="union_id" jdbcType="CHAR" property="unionId" />
     <result column="remark" jdbcType="CHAR" property="remark" />
     <result column="group_id" jdbcType="INTEGER" property="groupId" />
-    <result column="subscribe_scene" jdbcType="CHAR" property="subscribeScene" />
+    <result column="subscribe_scene" jdbcType="VARCHAR" property="subscribeScene" />
     <result column="qr_scene" jdbcType="INTEGER" property="qrScene" />
     <result column="qr_scene_str" jdbcType="VARCHAR" property="qrSceneStr" />
     <result column="mobile" jdbcType="CHAR" property="mobile" />
     <result column="verify_code" jdbcType="CHAR" property="verifyCode" />
     <result column="vcode_time" jdbcType="TIMESTAMP" property="vcodeTime" />
+    <result column="state_info" jdbcType="VARCHAR" property="stateInfo" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -84,7 +85,7 @@
   <sql id="Base_Column_List">
     id, subscribe, open_id, nick_name, sex, language, city, province, country, head_img_url, 
     subscribe_time, union_id, remark, group_id, subscribe_scene, qr_scene, qr_scene_str, 
-    mobile, verify_code, vcode_time
+    mobile, verify_code, vcode_time, state_info
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
     select
@@ -126,15 +127,15 @@
       country, head_img_url, subscribe_time, 
       union_id, remark, group_id, 
       subscribe_scene, qr_scene, qr_scene_str, 
-      mobile, verify_code, vcode_time
-      )
+      mobile, verify_code, vcode_time, 
+      state_info)
     values (#{subscribe,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR}, #{nickName,jdbcType=CHAR}, 
       #{sex,jdbcType=INTEGER}, #{language,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
       #{country,jdbcType=CHAR}, #{headImgUrl,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=TIMESTAMP}, 
       #{unionId,jdbcType=CHAR}, #{remark,jdbcType=CHAR}, #{groupId,jdbcType=INTEGER}, 
-      #{subscribeScene,jdbcType=CHAR}, #{qrScene,jdbcType=INTEGER}, #{qrSceneStr,jdbcType=VARCHAR}, 
-      #{mobile,jdbcType=CHAR}, #{verifyCode,jdbcType=CHAR}, #{vcodeTime,jdbcType=TIMESTAMP}
-      )
+      #{subscribeScene,jdbcType=VARCHAR}, #{qrScene,jdbcType=INTEGER}, #{qrSceneStr,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=CHAR}, #{verifyCode,jdbcType=CHAR}, #{vcodeTime,jdbcType=TIMESTAMP}, 
+      #{stateInfo,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -199,6 +200,9 @@
       <if test="vcodeTime != null">
         vcode_time,
       </if>
+      <if test="stateInfo != null">
+        state_info,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="subscribe != null">
@@ -241,7 +245,7 @@
         #{groupId,jdbcType=INTEGER},
       </if>
       <if test="subscribeScene != null">
-        #{subscribeScene,jdbcType=CHAR},
+        #{subscribeScene,jdbcType=VARCHAR},
       </if>
       <if test="qrScene != null">
         #{qrScene,jdbcType=INTEGER},
@@ -257,6 +261,9 @@
       </if>
       <if test="vcodeTime != null">
         #{vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stateInfo != null">
+        #{stateInfo,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -312,7 +319,7 @@
         group_id = #{record.groupId,jdbcType=INTEGER},
       </if>
       <if test="record.subscribeScene != null">
-        subscribe_scene = #{record.subscribeScene,jdbcType=CHAR},
+        subscribe_scene = #{record.subscribeScene,jdbcType=VARCHAR},
       </if>
       <if test="record.qrScene != null">
         qr_scene = #{record.qrScene,jdbcType=INTEGER},
@@ -328,6 +335,9 @@
       </if>
       <if test="record.vcodeTime != null">
         vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.stateInfo != null">
+        state_info = #{record.stateInfo,jdbcType=VARCHAR},
       </if>
     </set>
     <if test="_parameter != null">
@@ -350,12 +360,13 @@
       union_id = #{record.unionId,jdbcType=CHAR},
       remark = #{record.remark,jdbcType=CHAR},
       group_id = #{record.groupId,jdbcType=INTEGER},
-      subscribe_scene = #{record.subscribeScene,jdbcType=CHAR},
+      subscribe_scene = #{record.subscribeScene,jdbcType=VARCHAR},
       qr_scene = #{record.qrScene,jdbcType=INTEGER},
       qr_scene_str = #{record.qrSceneStr,jdbcType=VARCHAR},
       mobile = #{record.mobile,jdbcType=CHAR},
       verify_code = #{record.verifyCode,jdbcType=CHAR},
-      vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP}
+      vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
+      state_info = #{record.stateInfo,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -403,7 +414,7 @@
         group_id = #{groupId,jdbcType=INTEGER},
       </if>
       <if test="subscribeScene != null">
-        subscribe_scene = #{subscribeScene,jdbcType=CHAR},
+        subscribe_scene = #{subscribeScene,jdbcType=VARCHAR},
       </if>
       <if test="qrScene != null">
         qr_scene = #{qrScene,jdbcType=INTEGER},
@@ -419,6 +430,9 @@
       </if>
       <if test="vcodeTime != null">
         vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stateInfo != null">
+        state_info = #{stateInfo,jdbcType=VARCHAR},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -438,12 +452,13 @@
       union_id = #{unionId,jdbcType=CHAR},
       remark = #{remark,jdbcType=CHAR},
       group_id = #{groupId,jdbcType=INTEGER},
-      subscribe_scene = #{subscribeScene,jdbcType=CHAR},
+      subscribe_scene = #{subscribeScene,jdbcType=VARCHAR},
       qr_scene = #{qrScene,jdbcType=INTEGER},
       qr_scene_str = #{qrSceneStr,jdbcType=VARCHAR},
       mobile = #{mobile,jdbcType=CHAR},
       verify_code = #{verifyCode,jdbcType=CHAR},
-      vcode_time = #{vcodeTime,jdbcType=TIMESTAMP}
+      vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
+      state_info = #{stateInfo,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">

@@ -222,7 +222,7 @@ public class KafkaServiceImpl {
           "kafka爬取公司信息成功,和原公司不匹配", custTrdCmpyOriginal);
       log.info("kafka爬取公司信息成功,和原公司不匹配");
     }
-
+    custTrdCmpy.setCmpyNameUpdate("-1");
     custTrdCmpy.setSyncTime(new Date());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }

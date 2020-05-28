@@ -168,7 +168,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
 
     //判断基础库是否为空
-    if(null == cmpyBasicBizInfoSyncNew ){
+    if(null == cmpyBasicBizInfoSyncNew ||  null == cmpyBasicBizInfoSyncNew.getEntAddress()){
       addCrawlCmpy(custTrdCmpy.getCmpyName());
       log.info("人工新增公司custTrdCmpy：{}",custTrdCmpy);
       custTrdCmpyMapper.insertSelective(custTrdCmpy);
@@ -243,7 +243,20 @@ public class CustInfoServiceImpl implements CustInfoService {
         url, CrawlResultDTO.class).getBody();
     log.info("查询爬虫基础库中信息url:{},查询结果crawlResultDTO：{}", url, crawlResultDTO);
 
-    if(null == crawlResultDTO || CollectionUtils.isEmpty(crawlResultDTO.getList())){
+    //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
+    //模糊匹配改精确匹配
+    CmpyBasicBizInfoSync cmpyBasicBizInfoSync = null;
+    List<CmpyBasicBizInfoSync>  cmpyBasicBizInfoSyncArrayList= crawlResultDTO.getList();
+    if(!CollectionUtils.isEmpty(cmpyBasicBizInfoSyncArrayList)){
+      for (CmpyBasicBizInfoSync cmpyBasicBizInfoSyncNew : cmpyBasicBizInfoSyncArrayList){
+        if(custTrdCmpy.getCmpyName().equals(cmpyBasicBizInfoSyncNew.getName())){
+          cmpyBasicBizInfoSync = cmpyBasicBizInfoSyncNew;
+        }
+      }
+    }
+
+    //判断基础库是否为空
+    if(null == cmpyBasicBizInfoSync ||  null == cmpyBasicBizInfoSync.getEntAddress()){
       log.info("人工修改公司名称,，添加爬取公司信息任务");
       //保存公司修改记录,添加爬取公司数据任务
       commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
@@ -255,8 +268,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       return;
     }
 
-    //查到数据比较爬虫数据的历史数据是否有原公司名称，按照基础库数据更新公司名称和曾用名，状态为-1
-    CmpyBasicBizInfoSync cmpyBasicBizInfoSync = crawlResultDTO.getList().get(0);
+//    CmpyBasicBizInfoSync cmpyBasicBizInfoSync = cmpyBasicBizInfoSyncNew;
     String cmpyHistoryName = cmpyBasicBizInfoSync.getHistoryName();
     String[] cmpyHistoryArry = cmpyHistoryName.split(",");
     boolean match = false;

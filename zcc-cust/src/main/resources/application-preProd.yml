@@ -71,12 +71,20 @@ spring:
                         authorizedGrantTypes: password, authorization_code, refresh_token, client_credentials
 
     kafka:
+        bootstrap-servers: ${env.kfkhost}:9092
         consumer:
             group-id: grp-zcc-cust
             auto-offset-reset: earliest
         # change this property if you are using your own
         # Kafka cluster or your Docker IP is different
-        bootstrap-servers: ${env.kfkhost}:9092
+        #crawl-systemk faka
+        crawl-system:
+            bootstrap-servers: ${env.crawl-system-kfkhost}:9092
+            consumer:
+                group-id: grp-zcc-cust-test
+                auto-offset-reset: earliest
+                enable-auto-commit: true
+
     data:
         mongodb:
             database: wszcc_cust
@@ -177,6 +185,7 @@ env:
     recomhost: 10.20.100.236
     recomport: 7654
     kfkhost: 10.20.100.235
+    crawl-system-kfkhost: 10.20.200.88
     image-repo: /home/chenwei/working/zcc/temp
     oauth2:
         host: 10.20.100.235

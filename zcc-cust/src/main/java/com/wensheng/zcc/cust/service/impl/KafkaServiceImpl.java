@@ -127,40 +127,40 @@ public class KafkaServiceImpl {
       return;
     }
 
-    //去重，查到多个公司时删除只留一个
-    if(custTrdCmpyList.size() > 1){
-      for (int i = 1; i < custTrdCmpyList.size(); i++) {
-        CustTrdCmpy custTrdCmpy = custTrdCmpyList.get(i);
-
-        CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-        CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
-        //before delete check the related id in trdInfo and update it with current cmpy id
-        custTrdInfoExample.clear();
-        custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdCmpy.getId()).andBuyerTypeEqualTo(
-            CustTypeEnum.COMPANY.getId());
-        List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
-        if(!CollectionUtils.isEmpty(custTrdInfos)){
-          for(CustTrdInfo custTrdInfoOld: custTrdInfos){
-            custTrdInfoOld.setBuyerId(custTrdCmpyList.get(0).getId());
-            custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
-          }
-        }
-        //before delete check the related id in custAmcCmpycontactor and update it with current cmpy id
-        custAmcCmpycontactorExample.clear();
-        custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpy.getId());
-        List<CustAmcCmpycontactor> custAmcCmpycontactors =
-            custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
-        if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
-          for(CustAmcCmpycontactor custAmcCmpycontactor: custAmcCmpycontactors){
-            custAmcCmpycontactor.setCmpyId(custTrdCmpyList.get(0).getId());
-            custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
-          }
-        }
-        commonHandler.creatCmpyHistory(null,"listenerResult",
-            "接收Kafka信息时删除重复公司信息", custTrdCmpy);
-        custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpy.getId());
-      }
-    }
+    //去重，查到多个公司时删除只留一个，
+//    if(custTrdCmpyList.size() > 1){
+//      for (int i = 1; i < custTrdCmpyList.size(); i++) {
+//        CustTrdCmpy custTrdCmpy = custTrdCmpyList.get(i);
+//
+//        CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+//        CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
+//        //before delete check the related id in trdInfo and update it with current cmpy id
+//        custTrdInfoExample.clear();
+//        custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdCmpy.getId()).andBuyerTypeEqualTo(
+//            CustTypeEnum.COMPANY.getId());
+//        List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+//        if(!CollectionUtils.isEmpty(custTrdInfos)){
+//          for(CustTrdInfo custTrdInfoOld: custTrdInfos){
+//            custTrdInfoOld.setBuyerId(custTrdCmpyList.get(0).getId());
+//            custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
+//          }
+//        }
+//        //before delete check the related id in custAmcCmpycontactor and update it with current cmpy id
+//        custAmcCmpycontactorExample.clear();
+//        custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpy.getId());
+//        List<CustAmcCmpycontactor> custAmcCmpycontactors =
+//            custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+//        if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
+//          for(CustAmcCmpycontactor custAmcCmpycontactor: custAmcCmpycontactors){
+//            custAmcCmpycontactor.setCmpyId(custTrdCmpyList.get(0).getId());
+//            custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+//          }
+//        }
+//        commonHandler.creatCmpyHistory(null,"listenerResult",
+//            "接收Kafka信息时删除重复公司信息", custTrdCmpy);
+//        custTrdCmpyMapper.deleteByPrimaryKey(custTrdCmpy.getId());
+//      }
+//    }
 
     CustTrdCmpy custTrdCmpyOriginal = custTrdCmpyList.get(0);
 
@@ -176,6 +176,7 @@ public class KafkaServiceImpl {
       commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
           "kafka爬取公司信息失败",custTrdCmpyOriginal);
       custTrdCmpy.setCrawledStatus("-1");
+//      custTrdCmpy.setCmpyNameUpdate("-1");
       custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
       return;
     }
@@ -222,7 +223,7 @@ public class KafkaServiceImpl {
           "kafka爬取公司信息成功,和原公司不匹配", custTrdCmpyOriginal);
       log.info("kafka爬取公司信息成功,和原公司不匹配");
     }
-    custTrdCmpy.setCmpyNameUpdate("-1");
+//    custTrdCmpy.setCmpyNameUpdate("-1");
     custTrdCmpy.setSyncTime(new Date());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }

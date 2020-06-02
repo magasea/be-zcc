@@ -3,6 +3,8 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
+import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
+import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
@@ -10,16 +12,25 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
 import com.wensheng.zcc.amc.service.AmcContactorService;
+import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
+import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.logging.log4j.util.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -28,7 +39,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
@@ -52,7 +62,14 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   @Autowired
   AmcAssetMapper amcAssetMapper;
 
-  private void connectDebtWithContactor(List<AmcDebt> amcDebts){
+  @Value("${env.name}")
+  String envName;
+
+  @Autowired
+  AmcOssFileService amcOssFileService;
+
+  private List<Long> connectDebtWithContactor(List<AmcDebt> amcDebts){
+    Set<Long> contactorIds = new HashSet<>();
     for(AmcDebt amcDebt: amcDebts){
       String amcDebtContactor = amcDebt.getAmcContactorName();
       AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
@@ -61,8 +78,10 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       if(!CollectionUtils.isEmpty(amcDebtContactors)){
         if(amcDebtContactors.size() > 1){
           log.error("duplicate name in amcDebtContactors:{}", amcDebtContactor);
+          contactorIds.addAll(amcDebtContactors.stream().map(item->item.getId()).collect(Collectors.toList()));
           continue;
         }
+        contactorIds.add(amcDebtContactors.get(0).getId());
         amcDebt.setAmcContactorId(amcDebtContactors.get(0).getId());
         AmcAssetExample amcAssetExample = new AmcAssetExample();
         amcAssetExample.createCriteria().andDebtIdEqualTo(amcDebt.getId());
@@ -74,10 +93,13 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
       }
     }
+    List<Long> contactorIdList = new ArrayList<>(contactorIds);
+    return contactorIdList;
   }
 
   @Override
   public void initializeDebtContactor(){
+    List<Long> contactIdsToKeep = new ArrayList<>();
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.setOrderByClause(" id desc ");
     Integer offset = 0;
@@ -85,16 +107,127 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     RowBounds rowBounds = new RowBounds(offset, pageSize);
     List<AmcDebt> amcDebts =  amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
     while(!CollectionUtils.isEmpty(amcDebts)){
-      connectDebtWithContactor(amcDebts);
+      contactIdsToKeep.addAll(connectDebtWithContactor(amcDebts));
       offset += pageSize;
       rowBounds = new RowBounds(offset, pageSize);
       amcDebts =  amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
     }
+    //cleanup
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.createCriteria().andIdNotIn(contactIdsToKeep);
+    AmcDebtContactor amcDebtContactor = new AmcDebtContactor();
+    amcDebtContactor.setStatus(AmcUserValidEnum.DELETED.getId());
+    amcDebtContactorMapper.updateByExampleSelective(amcDebtContactor, amcDebtContactorExample);
+    amcDebtContactor.setStatus(AmcUserValidEnum.VALID.getId());
+    amcDebtContactorExample.clear();
+    amcDebtContactorExample.createCriteria().andIdIn(contactIdsToKeep);
+    amcDebtContactorMapper.updateByExampleSelective(amcDebtContactor, amcDebtContactorExample);
+  }
+
+  @Override
+  public List<AmcDebtContactor> getAllDebtContactor() {
+
+    return amcDebtContactorMapper.selectByExample(null);
+  }
+
+  @Override
+  public List<AmcDebtContactor> getDebtContactors() {
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.setOrderByClause(" id desc ");
+    amcDebtContactorExample.createCriteria().andStatusEqualTo(AmcUserValidEnum.VALID.getId());
+    return amcDebtContactorMapper.selectByExample(amcDebtContactorExample);
   }
 
 
   @Override
-  @Scheduled(cron = "${spring.task.scheduling.cronExprSSO}")
+  public AmcDebtContactor addContactor(AmcDebtContactor amcDebtContactor) throws Exception {
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.createCriteria().andPhoneNumberEqualTo(amcDebtContactor.getPhoneNumber());
+    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper.selectByExample(amcDebtContactorExample);
+    if(!CollectionUtils.isEmpty(amcDebtContactors)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR, String.format("已经有用户:%s 有相同的手机号！",
+          Strings.join(amcDebtContactors.stream().map(item->item.getId()).collect(Collectors.toList()), ';')));
+    }
+
+    amcDebtContactorMapper.insertSelective(amcDebtContactor);
+    return amcDebtContactor;
+  }
+
+  @Override
+  public AmcDebtContactor updateContactor(AmcDebtContactor amcDebtContactor) {
+    amcDebtContactorMapper.updateByPrimaryKeySelective(amcDebtContactor);
+    return amcDebtContactor;
+  }
+
+  @Override
+  public boolean deleteContactor(Long contactId) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andAmcContactorIdEqualTo(contactId);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    if(!CollectionUtils.isEmpty(amcDebts)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.CANNOT_DELETE, String.format("该经理人还有如下债权关联他:%s",
+          Strings.join(amcDebts.stream().map(item->item.getId()).collect(Collectors.toList()), ';')));
+    }
+    AmcDebtContactor amcDebtContactor = new AmcDebtContactor();
+    amcDebtContactor.setStatus(AmcUserValidEnum.DELETED.getId());
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.createCriteria().andIdEqualTo(contactId);
+    amcDebtContactorMapper.updateByExampleSelective(amcDebtContactor, amcDebtContactorExample );
+    return true;
+  }
+
+  @Override
+  public boolean changeContactor(Long originContactorId, Long newContactorId) throws Exception {
+    AmcDebtContactor amcDebtContactorOrig = amcDebtContactorMapper.selectByPrimaryKey(originContactorId);
+    if(amcDebtContactorOrig == null){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_PARAMETER_NOOBJAVAIL_ERROR, originContactorId.toString());
+    }
+    AmcDebtContactor amcDebtContactorNew = amcDebtContactorMapper.selectByPrimaryKey(newContactorId);
+    if(amcDebtContactorNew == null){
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_PARAMETER_NOOBJAVAIL_ERROR, newContactorId.toString());
+    }
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andAmcContactorIdEqualTo(originContactorId);
+    AmcDebt amcDebt = new AmcDebt();
+    amcDebt.setAmcContactorId(newContactorId);
+    amcDebtMapper.updateByExampleSelective(amcDebt, amcDebtExample);
+    return true;
+  }
+
+
+  @Override
+  public String getDebtContactorOssPrePath(String imgClass, Long debtId) {
+    String prePath = new StringBuilder(imgClass).append("/").append(envName).append("/").
+        append(debtId).append( "/").toString();
+    return prePath;
+  }
+
+  @Override
+  public AmcDebtContactor uploadContactorImage(String imagePath, String ossPrepath,
+      Long amcDebtContactorId, String imageClassName) throws Exception {
+//    String prePath = ImagePathClassEnum.DEBT.getName() + "/" + debtId + "/";
+    String ossPath = null;
+    try {
+      ossPath = amcOssFileService.handleFile2Oss(imagePath, ossPrepath);
+
+    } catch (Exception e) {
+      e.printStackTrace();
+      throw e;
+    }
+    AmcDebtContactor amcDebtContactor = amcDebtContactorMapper.selectByPrimaryKey(amcDebtContactorId);
+    if( ImagePathClassEnum.lookupByDisplayNameUtil(imageClassName).getId() == ImagePathClassEnum.CONTACTORIMG.getId()){
+      amcDebtContactor.setImgUrl(ossPath);
+    }else if(ImagePathClassEnum.lookupByDisplayNameUtil(imageClassName).getId() == ImagePathClassEnum.CONTACTORWXIMG.getId()){
+      amcDebtContactor.setWxImgUrl(ossPath);
+    }
+    amcDebtContactorMapper.updateByPrimaryKeySelective(amcDebtContactor);
+    return  amcDebtContactor;
+
+
+  }
+
+  @Override
+//  @Scheduled(cron = "${spring.task.scheduling.cronExprSSO}")
   public void syncContactorWithSSO() {
     SSOQueryParam ssoQueryParam = new SSOQueryParam();
     PageInfo pageInfo = new PageInfo();
@@ -164,7 +297,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     AmcDebtContactor amcDebtContactor = new AmcDebtContactor();
     amcDebtContactor.setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
     amcDebtContactor.setPhoneNumber(amcUser.getMobilePhone());
-    amcDebtContactor.setNikname(String.format("%s经理", amcUser.getUserCname().substring(0, 1)));
+    amcDebtContactor.setTitle(String.format("%s经理", amcUser.getUserCname().substring(0, 1)));
     amcDebtContactor.setLocation(amcUser.getLocation());
     amcDebtContactor.setName(amcUser.getUserCname());
     amcDebtContactorMapper.insertSelective(amcDebtContactor);
@@ -197,6 +330,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     return resp;
   }
 
+
+
+
   private void updateOrInsertContactor(List<SSOAmcUser> ssoAmcUsers) {
     AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
     AmcDebtContactor amcDebtContactor = null;
@@ -217,7 +353,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         amcDebtContactor.setLocation(ssoAmcUser.getLocation());
         amcDebtContactor.setPhoneNumber(ssoAmcUser.getMobilePhone());
         log.info(ssoAmcUser.getUserName());
-        amcDebtContactor.setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
+        amcDebtContactor.setTitle(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
         amcDebtContactor.setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
         amcDebtContactorMapper.insertSelective(amcDebtContactor);
       }else{
@@ -227,7 +363,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
           amcDebtContactor = new AmcDebtContactor();
           amcDebtContactor.setName(ssoAmcUser.getUserCname());
           amcDebtContactor.setLocation(ssoAmcUser.getLocation());
-          amcDebtContactor.setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
+          amcDebtContactor.setTitle(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
           amcDebtContactor.setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
           amcDebtContactor.setPhoneNumber(ssoAmcUser.getMobilePhone());
           amcDebtContactorMapper.insertSelective(amcDebtContactor);
@@ -236,7 +372,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             log.info("it is one month early record, need update");
             amcDebtContactors.get(0).setLocation(ssoAmcUser.getLocation());
             amcDebtContactors.get(0).setName(ssoAmcUser.getUserCname());
-            amcDebtContactors.get(0).setNikname(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
+            amcDebtContactors.get(0).setTitle(String.format("%s经理", ssoAmcUser.getUserCname().substring(0, 1)));
             amcDebtContactors.get(0).setUpdateTime(AmcDateUtils.toUTCDate(Instant.now().getEpochSecond()));
             amcDebtContactorMapper.updateByPrimaryKey(amcDebtContactors.get(0));
 //          }
@@ -253,4 +389,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
     return headers;
   }
+
+
+
 }

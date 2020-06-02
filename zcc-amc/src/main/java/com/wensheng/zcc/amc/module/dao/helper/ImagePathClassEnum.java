@@ -1,5 +1,8 @@
 package com.wensheng.zcc.amc.module.dao.helper;
 
+import com.wensheng.zcc.common.utils.base.EnumUtils;
+import java.util.function.Function;
+
 /**
  * @author chenwei on 1/15/19
  * @project zcc-backend
@@ -13,6 +16,8 @@ public enum ImagePathClassEnum {
 //  SALEBANNERPAGE(6, "salebannerpage"),
 
   SALEFLOORPAGE(6, "salefloorpage"),
+  CONTACTORIMG(7, "contactorimg"),
+  CONTACTORWXIMG(8, "contactorwximg"),
   ;
   int id;
   String name;
@@ -21,12 +26,26 @@ public enum ImagePathClassEnum {
     this.name = name;
   }
 
-  public int getId(){
-    return id;
-  }
+
 
   public String getName(){
     return name;
   }
+
+  private static final Function<String, ImagePathClassEnum> func =
+      EnumUtils.lookupMap(ImagePathClassEnum.class, e -> e.getName());
+  public static ImagePathClassEnum lookupByDisplayNameUtil(String name) {
+    return func.apply(name);
+  }
+
+  private static final Function<Integer, ImagePathClassEnum> funcId =
+      EnumUtils.lookupMap(ImagePathClassEnum.class, e -> e.getId());
+  public static ImagePathClassEnum lookupByIdUtil(Integer id) {
+    return funcId.apply(id);
+  }
+  public int getId() {
+    return id;
+  }
+
 
 }

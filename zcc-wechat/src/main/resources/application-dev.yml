@@ -180,6 +180,9 @@ weixin:
 
     get_ticket_url: https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi
 
+    get_user_summary_url: https://api.weixin.qq.com/datacube/getusersummary?access_token=%s
+    get_user_cumulate_url: https://api.weixin.qq.com/datacube/getusercumulate?access_token=%s
+
 baidu:
     logis:
         appName: amc-lgs

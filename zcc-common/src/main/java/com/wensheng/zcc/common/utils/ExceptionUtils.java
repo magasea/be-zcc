@@ -82,6 +82,8 @@ public class ExceptionUtils {
     INVALID_MENU_FILTER_ERROR(1051, "invalid menu filter error", "菜单过滤参数错误"),
     INVALID_BANNER_FILTER_ERROR(1052, "invalid banner filter error", "广告位过滤参数错误"),
     COMPANY_UPDATE_ERROR(1053, "company update error", "公司信息修改错误"),
+    INVALID_PARAMETER_NOOBJAVAIL_ERROR(1054, "invalid parameter no object available", "参数错误查不到"),
+    CANNOT_DELETE(1055, "cannot delete", "不能删除"),
     ;
     int code;
     String name;

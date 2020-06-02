@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.module.dao.mysql.auto.ext;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import java.util.List;
 import lombok.Data;
@@ -20,4 +21,5 @@ public class AmcDebtExt  {
 
 
   List<AmcDebtor> amcDebtors;
+  AmcDebtContactor amcDebtContactor;
 }

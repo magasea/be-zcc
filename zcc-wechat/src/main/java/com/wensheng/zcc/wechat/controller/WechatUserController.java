@@ -12,6 +12,7 @@ import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXBindPhoneVo;
+import com.wensheng.zcc.wechat.module.vo.WXUserStatistics;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
@@ -88,6 +89,9 @@ public class WechatUserController {
     }else if(xmlMsg.contains("text")){
       log.info("call user msg service");
       response = wxUserService.userMsg(xmlMsg);
+    }else{
+      log.info("maybe it is event");
+      response = wxUserService.sendEvent(xmlMsg);
     }
     return response;
 
@@ -350,5 +354,9 @@ public class WechatUserController {
     return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
 
   }
-
+  @RequestMapping(value = "/user/getUserStatistics", method = RequestMethod.POST)
+  @ResponseBody
+  public WXUserStatistics getUserStatistics(@RequestParam String startDate, @RequestParam String endDate) throws Exception {
+    return wxService.getUserStaticFromWX(startDate, endDate);
+  }
 }

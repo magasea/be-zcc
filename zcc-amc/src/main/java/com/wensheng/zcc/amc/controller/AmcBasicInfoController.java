@@ -23,6 +23,7 @@ import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.AmcSexEnum;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
+import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 
@@ -119,7 +120,16 @@ public class AmcBasicInfoController {
     }
     return result;
   }
+  @RequestMapping(value = "/amcUserValid", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAmcUserValid(){
 
+    List<String> result = new ArrayList<>();
+    for(AmcUserValidEnum amcUserValidEnum : AmcUserValidEnum.values()){
+      result.add(String.format("%d:%s", amcUserValidEnum.getId(), amcUserValidEnum.getName()));
+    }
+    return result;
+  }
   @RequestMapping(value = "/publishStates", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getPublishStateList(){
@@ -131,6 +141,17 @@ public class AmcBasicInfoController {
     return result;
   }
 
+
+  @RequestMapping(value = "/amcLocations", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getAmcLocations(){
+
+    List<String> result = new ArrayList<>();
+    for(AmcLocationEnum amcLocationEnum : AmcLocationEnum.values()){
+      result.add(String.format("%d:%s", amcLocationEnum.getId(), amcLocationEnum.getName()));
+    }
+    return result;
+  }
   @RequestMapping(value = "/status", method = RequestMethod.GET)
   @ResponseBody
   public List<String> getStatusList(){

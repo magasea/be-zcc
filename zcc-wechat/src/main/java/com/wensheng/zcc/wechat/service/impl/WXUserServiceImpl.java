@@ -16,13 +16,24 @@ import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
+import com.wensheng.zcc.wechat.module.dto.ResponseOfWxUserCummulate;
+import com.wensheng.zcc.wechat.module.dto.ResponseOfWxUserSummary;
+import com.wensheng.zcc.wechat.module.dto.UserCumulateItem;
+import com.wensheng.zcc.wechat.module.dto.UserSummaryItem;
 import com.wensheng.zcc.wechat.module.vo.*;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -100,9 +111,16 @@ public class WXUserServiceImpl implements WXUserService {
   @Value("${weixin.open.getUserInfoUrl}")
   String getUserInfoUrl;
 
+  @Value("${weixin.get_user_summary_url}")
+  String getUserSummaryUrl;
+
+  @Value("${weixin.get_user_cumulate_url}")
+  String getUserCumulate;
+
   @Autowired
   MongoTemplate mongoTemplate;
 
+  static final int WXQUERY_LIMIT_DAYS = 7;
 
   @Autowired
   ComnfuncGrpcService comnfuncGrpcService;
@@ -267,6 +285,116 @@ public class WXUserServiceImpl implements WXUserService {
     Map<String, String> respMap = (Map)response.getBody();
     return String.format("%s:%s", respMap.get("errcode"), respMap.get("errmsg") );
 
+  }
+
+  public synchronized WXUserStatistics getUserStaticFromWX(String dateStart, String dateEnd)
+      throws ParseException {
+    String token = wxBasicService.getPublicToken();
+    Date dateStartCalender = AmcDateUtils.getDateFromStr(dateStart);
+    Date dateEndCalender = AmcDateUtils.getDateFromStr(dateEnd);
+    LocalDate localDateStart = AmcDateUtils.convertToLocalDateViaDate(dateStartCalender);
+    LocalDate localDateEnd = AmcDateUtils.convertToLocalDateViaDate(dateEndCalender);
+    if(ChronoUnit.DAYS.between(localDateStart, localDateEnd) >= WXQUERY_LIMIT_DAYS){
+      return callMoreDaysStaticFromWX(dateStartCalender, dateEndCalender, token);
+
+    }
+    String userSumUrl = String.format(getUserSummaryUrl, token );
+    HttpHeaders headers = getHttpJsonHeader();
+    TimePeriod timePeriod = new TimePeriod();
+    timePeriod.setBeginDate( dateStart);
+    timePeriod.setEndDate(dateEnd);
+    HttpEntity<TimePeriod> entity = new HttpEntity<>(timePeriod, headers);
+    ResponseEntity<ResponseOfWxUserSummary> responseUserSummary = restTemplate.exchange(userSumUrl, HttpMethod.POST, entity, ResponseOfWxUserSummary.class);
+
+    String userCumulateUrl = String.format(getUserCumulate, token );
+    WXUserStatistics wxUserStatic = new WXUserStatistics();
+    wxUserStatic.setUserSummary(responseUserSummary.getBody());
+    ResponseEntity<ResponseOfWxUserCummulate> responseUserCumulate = restTemplate.exchange(userCumulateUrl, HttpMethod.POST, entity, ResponseOfWxUserCummulate.class);
+    wxUserStatic.setUserCummulate(responseUserCumulate.getBody());
+    return wxUserStatic;
+
+  }
+
+  private WXUserStatistics callMoreDaysStaticFromWX(Date dateStartCalender, Date dateEndCalender, String token) {
+    WXUserStatistics wxUserStatic = new WXUserStatistics();
+    wxUserStatic.setUserCummulate(new ResponseOfWxUserCummulate());
+    wxUserStatic.getUserCummulate().setList(new ArrayList<>());
+    wxUserStatic.setUserSummary(new ResponseOfWxUserSummary());
+    wxUserStatic.getUserSummary().setList(new ArrayList<>());
+    LocalDate localDateStart = AmcDateUtils.convertToLocalDateViaDate(dateStartCalender);
+    LocalDate localDateEnd = AmcDateUtils.convertToLocalDateViaDate(dateEndCalender);
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    while(ChronoUnit.DAYS.between(localDateStart, localDateEnd) >= (WXQUERY_LIMIT_DAYS-1) && localDateStart.isBefore(localDateEnd)){
+
+      fillWith7DaysStatics(DateUtils.addDays(dateEndCalender,-(WXQUERY_LIMIT_DAYS-1)), dateEndCalender, token, wxUserStatic);
+      dateEndCalender = DateUtils.addDays(dateEndCalender, -(WXQUERY_LIMIT_DAYS-1));
+       localDateStart = AmcDateUtils.convertToLocalDateViaDate(dateStartCalender);
+       localDateEnd = AmcDateUtils.convertToLocalDateViaDate(dateEndCalender);
+    }
+    String userSumUrl = String.format(getUserSummaryUrl, token );
+    HttpHeaders headers = getHttpJsonHeader();
+    TimePeriod timePeriod = new TimePeriod();
+    timePeriod.setBeginDate( simpleDateFormat.format(dateStartCalender));
+    timePeriod.setEndDate(simpleDateFormat.format(dateEndCalender));
+    HttpEntity<TimePeriod> entity = new HttpEntity<>(timePeriod, headers);
+    ResponseEntity<ResponseOfWxUserSummary> responseUserSummary = restTemplate.exchange(userSumUrl, HttpMethod.POST, entity, ResponseOfWxUserSummary.class);
+
+    String userCumulateUrl = String.format(getUserCumulate, token );
+
+    if(responseUserSummary.getBody().getList() != null && !CollectionUtils.isEmpty(responseUserSummary.getBody().getList())){
+      wxUserStatic.getUserSummary().setList(ListUtils.union(wxUserStatic.getUserSummary().getList(),responseUserSummary.getBody().getList()));
+    }
+    ResponseEntity<ResponseOfWxUserCummulate> responseUserCumulate = restTemplate.exchange(userCumulateUrl, HttpMethod.POST, entity, ResponseOfWxUserCummulate.class);
+    if(responseUserCumulate.getBody().getList() != null && !CollectionUtils.isEmpty(responseUserCumulate.getBody().getList())){
+      wxUserStatic.getUserCummulate().setList(ListUtils.union(wxUserStatic.getUserCummulate().getList(), responseUserCumulate.getBody().getList()));
+    }
+    wxUserStatic.getUserCummulate().getList().sort(
+        new Comparator<UserCumulateItem>() {
+          @Override
+          public int compare(UserCumulateItem o1, UserCumulateItem o2) {
+
+            try {
+              return AmcDateUtils.getDateFromStr(o1.getRefDate()).compareTo(AmcDateUtils.getDateFromStr(o2.getRefDate()));
+            } catch (ParseException e) {
+              e.printStackTrace();
+              return o1.getRefDate().compareTo(o2.getRefDate());
+            }
+          }
+        });
+
+    wxUserStatic.getUserSummary().getList().sort(new Comparator<UserSummaryItem>() {
+      @Override
+      public int compare(UserSummaryItem o1, UserSummaryItem o2) {
+        try {
+          return AmcDateUtils.getDateFromStr(o1.getRefDate()).compareTo(AmcDateUtils.getDateFromStr(o2.getRefDate()));
+        } catch (ParseException e) {
+          e.printStackTrace();
+          return o1.getRefDate().compareTo(o2.getRefDate());
+        }
+      }
+    });
+    return wxUserStatic;
+  }
+
+  private void fillWith7DaysStatics(Date dateStartCalender, Date dateEndCalender, String token,
+      WXUserStatistics wxUserStatic) {
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    String userSumUrl = String.format(getUserSummaryUrl, token );
+    HttpHeaders headers = getHttpJsonHeader();
+    TimePeriod timePeriod = new TimePeriod();
+    timePeriod.setBeginDate( simpleDateFormat.format(dateStartCalender));
+    timePeriod.setEndDate(simpleDateFormat.format(dateEndCalender));
+    HttpEntity<TimePeriod> entity = new HttpEntity<>(timePeriod, headers);
+    ResponseEntity<ResponseOfWxUserSummary> responseUserSummary = restTemplate.exchange(userSumUrl, HttpMethod.POST, entity, ResponseOfWxUserSummary.class);
+
+    String userCumulateUrl = String.format(getUserCumulate, token );
+    if(responseUserSummary.getBody().getList() != null && !CollectionUtils.isEmpty(responseUserSummary.getBody().getList())){
+      wxUserStatic.getUserSummary().setList(ListUtils.union(wxUserStatic.getUserSummary().getList(), responseUserSummary.getBody().getList()));
+    }
+    ResponseEntity<ResponseOfWxUserCummulate> responseUserCumulate = restTemplate.exchange(userCumulateUrl, HttpMethod.POST, entity, ResponseOfWxUserCummulate.class);
+    if(responseUserCumulate.getBody().getList() != null && !CollectionUtils.isEmpty(responseUserCumulate.getBody().getList())){
+      wxUserStatic.getUserCummulate().setList(ListUtils.union(wxUserStatic.getUserCummulate().getList(), responseUserCumulate.getBody().getList()));
+    }
   }
 
   public synchronized String tagWechatPublicUserBatch(List<String> openIds, Long tagId){
@@ -839,7 +967,7 @@ public class WXUserServiceImpl implements WXUserService {
       wechatUserInfo = gson.fromJson(responseStrEntity.getBody(), WechatUserInfo.class);
     }
 
-    if(wechatUserInfo == null || wechatUserInfo.getNickName() == null){
+    if(wechatUserInfo == null || (wechatUserInfo.getNickName() == null && wechatUserInfo.getOpenId() == null)){
       return null;
     }
     WechatUserExample wechatUserExample = new WechatUserExample();
@@ -861,8 +989,8 @@ public class WXUserServiceImpl implements WXUserService {
         wechatUser.setStateInfo(stateInfo);
       }
       wechatUserMapper.insertSelective(wechatUser);
-    }else if(wechatUsers.get(0).getStateInfo() == null || wechatUsers.get(0).getStateInfo().equals("-1")){
-      log.info("need update sate info ? ");
+    }else if(wechatUsers.get(0).getStateInfo() != null || wechatUsers.get(0).getStateInfo().equals("-1")){
+      log.info("should we update sate info ? ");
     }
 
     return wechatUserInfo;
@@ -895,6 +1023,11 @@ public class WXUserServiceImpl implements WXUserService {
       }
     }
     return wechatUserInfo;
+  }
+
+  @Override
+  public String sendEvent(String xmlMsg) {
+    return null;
   }
 
   public Long getAllWechatUserCount() {
@@ -960,6 +1093,14 @@ public class WXUserServiceImpl implements WXUserService {
     List<String> openIdList;
     @SerializedName("tagid")
     Long tagId;
+  }
+
+  @Data
+  public class TimePeriod{
+    @SerializedName("begin_date")
+    String beginDate;
+    @SerializedName("end_date")
+    String endDate;
   }
 
 }

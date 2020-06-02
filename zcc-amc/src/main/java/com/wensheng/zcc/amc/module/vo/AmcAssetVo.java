@@ -2,8 +2,10 @@ package com.wensheng.zcc.amc.module.vo;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 import lombok.Data;
 
 /**
@@ -90,4 +92,5 @@ public class AmcAssetVo {
 
   AssetImage assetImage;
 
+  AmcDebtContactor amcDebtContactor;
 }

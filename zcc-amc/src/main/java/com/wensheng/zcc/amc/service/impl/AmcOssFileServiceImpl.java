@@ -223,8 +223,26 @@ public class AmcOssFileServiceImpl implements AmcOssFileService {
             new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
                 File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
         break;
+
+
+      case "contactorimg":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
+            File.separator + id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
+
+
+      case "contactorwximg":
+        SystemUtils.checkAndMakeDir(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
+            File.separator + id);
+        targetFile =
+            new File(saleImageRepo+File.separator + ImagePathClassEnum.SALEFLOORPAGE.getName()+
+                File.separator + id+ File.separatorChar +multipartFile.getOriginalFilename());
+        break;
       default:
-        throw new Exception("type"+type + "is not debt or asset or sale");
+        throw new Exception("type"+type + "is not debt or asset or sale or contactorwximg or contactorimg");
     }
 
     multipartFile.transferTo(targetFile);

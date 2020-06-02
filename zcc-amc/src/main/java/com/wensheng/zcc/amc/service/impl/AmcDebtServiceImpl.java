@@ -423,6 +423,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtExtVo.setAmcInfos(amcInfo);
     amcDebtExtVo.setAmcDebtors(amcDebtors);
     amcDebtExtVo.setOrigCreditor(origCreditor);
+    amcDebtExtVo.setAmcDebtContactor(amcDebtExts.get(0).getAmcDebtContactor());
     return amcDebtExtVo;
   }
 
@@ -615,13 +616,6 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebtExt.getDebtInfo().getInterestAmount() > 0){
       amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getInterestAmount()));
     }
-//    if(amcDebtExt.getDebtInfo().getAmcContactorId() > 0){
-//      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactorId()));
-//    }
-//
-//    if(amcDebtExt.getDebtInfo().getAmcContactor2Id() != null && amcDebtExt.getDebtInfo().getAmcContactor2Id() > 0){
-//      amcDebtVo.setAmcContactor2Id(amcHelperService.getAmcDebtContactor(amcDebtExt.getDebtInfo().getAmcContactor2Id()));
-//    }
 
     if(CollectionUtils.isEmpty(amcDebtExt.getAmcAssets())){
       return amcDebtVo;
@@ -1516,6 +1510,17 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       amcContactorDTOS.add(amcContactorDTO);
     }
     return amcContactorDTOS;
+  }
+
+  @Override
+  public AmcDebtContactor getDebtContactorByDebtId(Long debtId) {
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
+    if(amcDebt.getAmcContactorId() < 0){
+      return null;
+    }else{
+      return amcDebtContactorMapper.selectByPrimaryKey(amcDebt.getAmcContactorId());
+    }
+
   }
 
   @Override

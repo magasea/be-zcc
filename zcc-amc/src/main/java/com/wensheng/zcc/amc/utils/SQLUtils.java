@@ -37,8 +37,12 @@ public class SQLUtils {
     for(Map.Entry<String, Sort.Direction> item : orderByParam.entrySet()){
       sb.append(item.getKey()).append(" ").append(item.getValue().name()).append(",");
     }
+    if(sb.charAt(sb.length()-1) == ','){
+      sb.setLength(sb.length()-1);
+    }
+
     if(rowBounds != null && rowBounds.getOffset() >= 0 && rowBounds.getLimit() > 0){
-       sb.deleteCharAt(sb.length() -1).append(" LIMIT ").append(rowBounds.getOffset()).append(
+       sb.append(" LIMIT ").append(rowBounds.getOffset()).append(
            " , ").append(rowBounds.getLimit());
     }
     return sb.toString();

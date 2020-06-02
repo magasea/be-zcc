@@ -20,6 +20,7 @@ public class WXUserFavor {
   String phone;
   //城市编码
   String locationCode;
+  String locationCityName;
   AmcSaleFilter amcSaleFilter;
   Date createTime;
   Date updateTime;

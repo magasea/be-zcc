@@ -5,14 +5,20 @@
     <id column="id" jdbcType="BIGINT" property="id" />
     <result column="branch_id" jdbcType="BIGINT" property="branchId" />
     <result column="name" jdbcType="CHAR" property="name" />
+    <result column="family_name" jdbcType="CHAR" property="familyName" />
     <result column="sex" jdbcType="INTEGER" property="sex" />
-    <result column="nikname" jdbcType="CHAR" property="nikname" />
+    <result column="title" jdbcType="CHAR" property="title" />
     <result column="location" jdbcType="INTEGER" property="location" />
     <result column="phone_number" jdbcType="CHAR" property="phoneNumber" />
     <result column="notes" jdbcType="VARCHAR" property="notes" />
     <result column="wx_img_url" jdbcType="VARCHAR" property="wxImgUrl" />
     <result column="img_url" jdbcType="VARCHAR" property="imgUrl" />
+    <result column="sso_user_id" jdbcType="BIGINT" property="ssoUserId" />
+    <result column="status" jdbcType="INTEGER" property="status" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="create_by" jdbcType="BIGINT" property="createBy" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -73,8 +79,8 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, branch_id, name, sex, nikname, location, phone_number, notes, wx_img_url, img_url, 
-    update_time
+    id, branch_id, name, family_name, sex, title, location, phone_number, notes, wx_img_url, 
+    img_url, sso_user_id, status, update_time, update_by, create_time, create_by
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">
     select
@@ -111,14 +117,18 @@
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into AMC_DEBT_CONTACTOR (branch_id, name, sex, 
-      nikname, location, phone_number, 
-      notes, wx_img_url, img_url, 
-      update_time)
-    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{sex,jdbcType=INTEGER}, 
-      #{nikname,jdbcType=CHAR}, #{location,jdbcType=INTEGER}, #{phoneNumber,jdbcType=CHAR}, 
-      #{notes,jdbcType=VARCHAR}, #{wxImgUrl,jdbcType=VARCHAR}, #{imgUrl,jdbcType=VARCHAR}, 
-      #{updateTime,jdbcType=TIMESTAMP})
+    insert into AMC_DEBT_CONTACTOR (branch_id, name, family_name, 
+      sex, title, location, 
+      phone_number, notes, wx_img_url, 
+      img_url, sso_user_id, status, 
+      update_time, update_by, create_time, 
+      create_by)
+    values (#{branchId,jdbcType=BIGINT}, #{name,jdbcType=CHAR}, #{familyName,jdbcType=CHAR}, 
+      #{sex,jdbcType=INTEGER}, #{title,jdbcType=CHAR}, #{location,jdbcType=INTEGER}, 
+      #{phoneNumber,jdbcType=CHAR}, #{notes,jdbcType=VARCHAR}, #{wxImgUrl,jdbcType=VARCHAR}, 
+      #{imgUrl,jdbcType=VARCHAR}, #{ssoUserId,jdbcType=BIGINT}, #{status,jdbcType=INTEGER}, 
+      #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{createBy,jdbcType=BIGINT})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -132,11 +142,14 @@
       <if test="name != null">
         name,
       </if>
+      <if test="familyName != null">
+        family_name,
+      </if>
       <if test="sex != null">
         sex,
       </if>
-      <if test="nikname != null">
-        nikname,
+      <if test="title != null">
+        title,
       </if>
       <if test="location != null">
         location,
@@ -153,8 +166,23 @@
       <if test="imgUrl != null">
         img_url,
       </if>
+      <if test="ssoUserId != null">
+        sso_user_id,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
       <if test="updateTime != null">
         update_time,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="createBy != null">
+        create_by,
       </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
@@ -164,11 +192,14 @@
       <if test="name != null">
         #{name,jdbcType=CHAR},
       </if>
+      <if test="familyName != null">
+        #{familyName,jdbcType=CHAR},
+      </if>
       <if test="sex != null">
         #{sex,jdbcType=INTEGER},
       </if>
-      <if test="nikname != null">
-        #{nikname,jdbcType=CHAR},
+      <if test="title != null">
+        #{title,jdbcType=CHAR},
       </if>
       <if test="location != null">
         #{location,jdbcType=INTEGER},
@@ -185,8 +216,23 @@
       <if test="imgUrl != null">
         #{imgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="ssoUserId != null">
+        #{ssoUserId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        #{createBy,jdbcType=BIGINT},
       </if>
     </trim>
   </insert>
@@ -208,11 +254,14 @@
       <if test="record.name != null">
         name = #{record.name,jdbcType=CHAR},
       </if>
+      <if test="record.familyName != null">
+        family_name = #{record.familyName,jdbcType=CHAR},
+      </if>
       <if test="record.sex != null">
         sex = #{record.sex,jdbcType=INTEGER},
       </if>
-      <if test="record.nikname != null">
-        nikname = #{record.nikname,jdbcType=CHAR},
+      <if test="record.title != null">
+        title = #{record.title,jdbcType=CHAR},
       </if>
       <if test="record.location != null">
         location = #{record.location,jdbcType=INTEGER},
@@ -229,8 +278,23 @@
       <if test="record.imgUrl != null">
         img_url = #{record.imgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="record.ssoUserId != null">
+        sso_user_id = #{record.ssoUserId,jdbcType=BIGINT},
+      </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.createTime != null">
+        create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.createBy != null">
+        create_by = #{record.createBy,jdbcType=BIGINT},
       </if>
     </set>
     <if test="_parameter != null">
@@ -242,14 +306,20 @@
     set id = #{record.id,jdbcType=BIGINT},
       branch_id = #{record.branchId,jdbcType=BIGINT},
       name = #{record.name,jdbcType=CHAR},
+      family_name = #{record.familyName,jdbcType=CHAR},
       sex = #{record.sex,jdbcType=INTEGER},
-      nikname = #{record.nikname,jdbcType=CHAR},
+      title = #{record.title,jdbcType=CHAR},
       location = #{record.location,jdbcType=INTEGER},
       phone_number = #{record.phoneNumber,jdbcType=CHAR},
       notes = #{record.notes,jdbcType=VARCHAR},
       wx_img_url = #{record.wxImgUrl,jdbcType=VARCHAR},
       img_url = #{record.imgUrl,jdbcType=VARCHAR},
-      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
+      sso_user_id = #{record.ssoUserId,jdbcType=BIGINT},
+      status = #{record.status,jdbcType=INTEGER},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      create_time = #{record.createTime,jdbcType=TIMESTAMP},
+      create_by = #{record.createBy,jdbcType=BIGINT}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -263,11 +333,14 @@
       <if test="name != null">
         name = #{name,jdbcType=CHAR},
       </if>
+      <if test="familyName != null">
+        family_name = #{familyName,jdbcType=CHAR},
+      </if>
       <if test="sex != null">
         sex = #{sex,jdbcType=INTEGER},
       </if>
-      <if test="nikname != null">
-        nikname = #{nikname,jdbcType=CHAR},
+      <if test="title != null">
+        title = #{title,jdbcType=CHAR},
       </if>
       <if test="location != null">
         location = #{location,jdbcType=INTEGER},
@@ -284,8 +357,23 @@
       <if test="imgUrl != null">
         img_url = #{imgUrl,jdbcType=VARCHAR},
       </if>
+      <if test="ssoUserId != null">
+        sso_user_id = #{ssoUserId,jdbcType=BIGINT},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="createBy != null">
+        create_by = #{createBy,jdbcType=BIGINT},
       </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
@@ -294,14 +382,20 @@
     update AMC_DEBT_CONTACTOR
     set branch_id = #{branchId,jdbcType=BIGINT},
       name = #{name,jdbcType=CHAR},
+      family_name = #{familyName,jdbcType=CHAR},
       sex = #{sex,jdbcType=INTEGER},
-      nikname = #{nikname,jdbcType=CHAR},
+      title = #{title,jdbcType=CHAR},
       location = #{location,jdbcType=INTEGER},
       phone_number = #{phoneNumber,jdbcType=CHAR},
       notes = #{notes,jdbcType=VARCHAR},
       wx_img_url = #{wxImgUrl,jdbcType=VARCHAR},
       img_url = #{imgUrl,jdbcType=VARCHAR},
-      update_time = #{updateTime,jdbcType=TIMESTAMP}
+      sso_user_id = #{ssoUserId,jdbcType=BIGINT},
+      status = #{status,jdbcType=INTEGER},
+      update_time = #{updateTime,jdbcType=TIMESTAMP},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      create_by = #{createBy,jdbcType=BIGINT}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactorExample" resultMap="BaseResultMap">

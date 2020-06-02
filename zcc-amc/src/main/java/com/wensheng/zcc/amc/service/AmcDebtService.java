@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
@@ -142,6 +143,8 @@ public interface AmcDebtService {
   String getDebtOssPrePath(Long debtId);
 
   List<AmcContactorDTO> getDebtContactorByDebtIds(List<Long> debtIds);
+
+  AmcDebtContactor getDebtContactorByDebtId(Long debtId);
 
   List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt) throws Exception;
 

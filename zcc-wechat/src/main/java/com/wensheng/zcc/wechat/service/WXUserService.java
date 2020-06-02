@@ -55,4 +55,6 @@ public interface WXUserService {
   WechatUserInfo saveWechatUserInfo(String openId, String accessToken, String stateInfo);
 
   WechatUserInfo saveRpcWXVisitorInfo(WechatUserInfo wechatUserInfo, String accessToken, String state);
+
+  String sendEvent(String xmlMsg);
 }

@@ -113,4 +113,10 @@ public class AmcDateUtils {
   public static Date getDateFromLocalDate(LocalDateTime localDateTime){
     return Date.from(localDateTime.atZone(ZoneId.of("UTC")).toInstant());
   }
+
+  public static LocalDate convertToLocalDateViaDate(Date dateToConvert) {
+    return dateToConvert.toInstant()
+        .atZone(ZoneId.systemDefault())
+        .toLocalDate();
+  }
 }

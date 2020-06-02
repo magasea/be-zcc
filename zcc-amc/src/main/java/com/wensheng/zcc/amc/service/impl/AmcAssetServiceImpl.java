@@ -286,7 +286,17 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     }
 
     List<Long> assetIds = amcAssetVos.stream().map(item -> item.getId()).collect(Collectors.toUnmodifiableList());
-
+    Map<Long, Long> asset2debtIdMap = amcAssetVos.stream().collect(Collectors.toMap(item->item.getId(), item->item.getDebtId()));
+    Set<Long> debtIds = asset2debtIdMap.values().stream().collect(Collectors.toSet());
+    List<AmcDebt> debtSimpleByIds = amcDebtService
+        .getDebtSimpleByIds(debtIds.stream().collect(Collectors.toList()));
+    Map<Long, Long> debtId2ContactorIdMap = debtSimpleByIds.stream().collect(Collectors.toMap(item->item.getId(), item->item.getAmcContactorId()));
+    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+    amcDebtContactorExample.createCriteria().andIdIn(debtId2ContactorIdMap.values().stream().collect(Collectors.toList()));
+    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper
+        .selectByExample(amcDebtContactorExample);
+    Map<Long, AmcDebtContactor> amcDebtContactorMap = amcDebtContactors.stream()
+        .collect(Collectors.toMap(item -> item.getId(), item -> item));
     Query query = new Query();
     query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
     List<AssetAdditional> assetAdditionals = wszccTemplate.find(query, AssetAdditional.class);
@@ -296,9 +306,26 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     setAddInfos(assetAdditionals, amcAssetVos);
 
     setImages(assetImages, amcAssetVos);
+    setContactors(asset2debtIdMap, debtId2ContactorIdMap, amcAssetVos, amcDebtContactorMap);
 
     return amcAssetVos;
 
+  }
+
+  private void setContactors(Map<Long, Long> asset2debtIdMap, Map<Long, Long> debtId2ContactorIdMap,
+      List<AmcAssetVo> amcAssetVos,
+      Map<Long, AmcDebtContactor> amcDebtContactors) {
+
+      for(AmcAssetVo amcAssetVo: amcAssetVos){
+        if(asset2debtIdMap.containsKey(amcAssetVo.getId())){
+          if(debtId2ContactorIdMap.containsKey(asset2debtIdMap.get(amcAssetVo.getId()))){
+            Long contactorId = debtId2ContactorIdMap.get(asset2debtIdMap.get(amcAssetVo.getId()));
+            if(amcDebtContactors.containsKey(contactorId)){
+              amcAssetVo.setAmcDebtContactor(amcDebtContactors.get(contactorId));
+            }
+          }
+        }
+      }
   }
 
   @Override
@@ -321,6 +348,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             }
 
         }
+        AmcDebtContactor amcDebtContactor = amcDebtService.getDebtContactorByDebtId(amcAsset.getDebtId());
+        amcAssetDetailVo.setAmcDebtContactor(amcDebtContactor);
         return amcAssetDetailVo;
     }
 

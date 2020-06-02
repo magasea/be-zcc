@@ -41,4 +41,6 @@ public class GaoDeServiceImplTest {
       log.info(gaodeGeoQueryVal.getFormattedAddress());
     }
   }
+
+
 }

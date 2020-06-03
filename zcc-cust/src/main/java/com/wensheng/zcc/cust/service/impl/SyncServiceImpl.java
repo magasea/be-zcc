@@ -342,7 +342,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   private boolean updatePersonInfo(CustPersonInfoFromSync custPersonInfoFromSync) {
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobileNumEqualTo(
+    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobilePrepEqualTo(
         StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
         andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
     List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
@@ -797,7 +797,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     } else {
       dataQuality = dataQuality + 1;
     }
-    if (StringUtils.isEmpty(custTrdPerson.getTelNum())) {
+    if (StringUtils.isEmpty(custTrdPerson.getPhonePrep())) {
       dataQuality = dataQuality ;
     } else {
       dataQuality = dataQuality + 1;
@@ -809,7 +809,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       dataQuality = dataQuality + 1;
     }
 
-    if (StringUtils.isEmpty(custTrdPerson.getMobileNum())) {
+    if (StringUtils.isEmpty(custTrdPerson.getMobilePrep())) {
       dataQuality = -1 ;
     } else {
       dataQuality = dataQuality + 1;
@@ -827,11 +827,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdPerson.setGender(custPersonInfoFromSync.getGender());
     custTrdPerson.setIdCardNum(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())?null:
         custPersonInfoFromSync.getIdCardNum()) ;
-    custTrdPerson.setMobileNum(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
-        custPersonInfoFromSync.getMobileNum()) ;
+    custTrdPerson.setMobilePrep(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
+        custPersonInfoFromSync.getMobileNum()); ;
     custTrdPerson.setName(StringUtils.isEmpty(custPersonInfoFromSync.getName())? null: custPersonInfoFromSync.getName());
     custTrdPerson.setProvince(custPersonInfoFromSync.getProvince());
-    custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
+    custTrdPerson.setPhonePrep(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     custTrdPerson.setUpdateTime(updateTime);
     custTrdPerson.setSyncTime(AmcDateUtils.getCurrentDate());

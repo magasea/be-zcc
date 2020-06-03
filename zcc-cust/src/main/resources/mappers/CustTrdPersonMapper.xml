@@ -7,9 +7,12 @@
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="age_range" jdbcType="INTEGER" property="ageRange" />
     <result column="gender" jdbcType="INTEGER" property="gender" />
-    <result column="mobile_num" jdbcType="CHAR" property="mobileNum" />
-    <result column="history_mobile_num" jdbcType="VARCHAR" property="historyMobileNum" />
-    <result column="tel_num" jdbcType="CHAR" property="telNum" />
+    <result column="mobile_update" jdbcType="VARCHAR" property="mobileUpdate" />
+    <result column="mobile_prep" jdbcType="VARCHAR" property="mobilePrep" />
+    <result column="mobile_history" jdbcType="VARCHAR" property="mobileHistory" />
+    <result column="phone_prep" jdbcType="VARCHAR" property="phonePrep" />
+    <result column="phone_history" jdbcType="VARCHAR" property="phoneHistory" />
+    <result column="phone_update" jdbcType="VARCHAR" property="phoneUpdate" />
     <result column="email" jdbcType="CHAR" property="email" />
     <result column="id_card_num" jdbcType="CHAR" property="idCardNum" />
     <result column="province" jdbcType="CHAR" property="province" />
@@ -85,9 +88,10 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, orig_id, name, age_range, gender, mobile_num, history_mobile_num, tel_num, email, 
-    id_card_num, province, city, addr, history_addr, notes, data_status, data_quality, 
-    update_time, update_by, create_by, create_time, sync_time, mobile_num_bak
+    id, orig_id, name, age_range, gender, mobile_update, mobile_prep, mobile_history, 
+    phone_prep, phone_history, phone_update, email, id_card_num, province, city, addr, 
+    history_addr, notes, data_status, data_quality, update_time, update_by, create_by, 
+    create_time, sync_time, mobile_num_bak
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
     select
@@ -125,17 +129,19 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into CUST_TRD_PERSON (orig_id, name, age_range, 
-      gender, mobile_num, history_mobile_num, 
-      tel_num, email, id_card_num, province, 
-      city, addr, history_addr, 
+      gender, mobile_update, mobile_prep, 
+      mobile_history, phone_prep, phone_history, 
+      phone_update, email, id_card_num, 
+      province, city, addr, history_addr, 
       notes, data_status, data_quality, 
       update_time, update_by, create_by, 
       create_time, sync_time, mobile_num_bak
       )
     values (#{origId,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, 
-      #{gender,jdbcType=INTEGER}, #{mobileNum,jdbcType=CHAR}, #{historyMobileNum,jdbcType=VARCHAR}, 
-      #{telNum,jdbcType=CHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
-      #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{historyAddr,jdbcType=VARCHAR}, 
+      #{gender,jdbcType=INTEGER}, #{mobileUpdate,jdbcType=VARCHAR}, #{mobilePrep,jdbcType=VARCHAR}, 
+      #{mobileHistory,jdbcType=VARCHAR}, #{phonePrep,jdbcType=VARCHAR}, #{phoneHistory,jdbcType=VARCHAR}, 
+      #{phoneUpdate,jdbcType=VARCHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, 
+      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{historyAddr,jdbcType=VARCHAR}, 
       #{notes,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{syncTime,jdbcType=TIMESTAMP}, #{mobileNumBak,jdbcType=VARCHAR}
@@ -159,14 +165,23 @@
       <if test="gender != null">
         gender,
       </if>
-      <if test="mobileNum != null">
-        mobile_num,
+      <if test="mobileUpdate != null">
+        mobile_update,
       </if>
-      <if test="historyMobileNum != null">
-        history_mobile_num,
+      <if test="mobilePrep != null">
+        mobile_prep,
       </if>
-      <if test="telNum != null">
-        tel_num,
+      <if test="mobileHistory != null">
+        mobile_history,
+      </if>
+      <if test="phonePrep != null">
+        phone_prep,
+      </if>
+      <if test="phoneHistory != null">
+        phone_history,
+      </if>
+      <if test="phoneUpdate != null">
+        phone_update,
       </if>
       <if test="email != null">
         email,
@@ -227,14 +242,23 @@
       <if test="gender != null">
         #{gender,jdbcType=INTEGER},
       </if>
-      <if test="mobileNum != null">
-        #{mobileNum,jdbcType=CHAR},
+      <if test="mobileUpdate != null">
+        #{mobileUpdate,jdbcType=VARCHAR},
       </if>
-      <if test="historyMobileNum != null">
-        #{historyMobileNum,jdbcType=VARCHAR},
+      <if test="mobilePrep != null">
+        #{mobilePrep,jdbcType=VARCHAR},
       </if>
-      <if test="telNum != null">
-        #{telNum,jdbcType=CHAR},
+      <if test="mobileHistory != null">
+        #{mobileHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="phonePrep != null">
+        #{phonePrep,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneHistory != null">
+        #{phoneHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneUpdate != null">
+        #{phoneUpdate,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         #{email,jdbcType=CHAR},
@@ -307,14 +331,23 @@
       <if test="record.gender != null">
         gender = #{record.gender,jdbcType=INTEGER},
       </if>
-      <if test="record.mobileNum != null">
-        mobile_num = #{record.mobileNum,jdbcType=CHAR},
+      <if test="record.mobileUpdate != null">
+        mobile_update = #{record.mobileUpdate,jdbcType=VARCHAR},
       </if>
-      <if test="record.historyMobileNum != null">
-        history_mobile_num = #{record.historyMobileNum,jdbcType=VARCHAR},
+      <if test="record.mobilePrep != null">
+        mobile_prep = #{record.mobilePrep,jdbcType=VARCHAR},
       </if>
-      <if test="record.telNum != null">
-        tel_num = #{record.telNum,jdbcType=CHAR},
+      <if test="record.mobileHistory != null">
+        mobile_history = #{record.mobileHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phonePrep != null">
+        phone_prep = #{record.phonePrep,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phoneHistory != null">
+        phone_history = #{record.phoneHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="record.phoneUpdate != null">
+        phone_update = #{record.phoneUpdate,jdbcType=VARCHAR},
       </if>
       <if test="record.email != null">
         email = #{record.email,jdbcType=CHAR},
@@ -373,9 +406,12 @@
       name = #{record.name,jdbcType=CHAR},
       age_range = #{record.ageRange,jdbcType=INTEGER},
       gender = #{record.gender,jdbcType=INTEGER},
-      mobile_num = #{record.mobileNum,jdbcType=CHAR},
-      history_mobile_num = #{record.historyMobileNum,jdbcType=VARCHAR},
-      tel_num = #{record.telNum,jdbcType=CHAR},
+      mobile_update = #{record.mobileUpdate,jdbcType=VARCHAR},
+      mobile_prep = #{record.mobilePrep,jdbcType=VARCHAR},
+      mobile_history = #{record.mobileHistory,jdbcType=VARCHAR},
+      phone_prep = #{record.phonePrep,jdbcType=VARCHAR},
+      phone_history = #{record.phoneHistory,jdbcType=VARCHAR},
+      phone_update = #{record.phoneUpdate,jdbcType=VARCHAR},
       email = #{record.email,jdbcType=CHAR},
       id_card_num = #{record.idCardNum,jdbcType=CHAR},
       province = #{record.province,jdbcType=CHAR},
@@ -410,14 +446,23 @@
       <if test="gender != null">
         gender = #{gender,jdbcType=INTEGER},
       </if>
-      <if test="mobileNum != null">
-        mobile_num = #{mobileNum,jdbcType=CHAR},
+      <if test="mobileUpdate != null">
+        mobile_update = #{mobileUpdate,jdbcType=VARCHAR},
       </if>
-      <if test="historyMobileNum != null">
-        history_mobile_num = #{historyMobileNum,jdbcType=VARCHAR},
+      <if test="mobilePrep != null">
+        mobile_prep = #{mobilePrep,jdbcType=VARCHAR},
       </if>
-      <if test="telNum != null">
-        tel_num = #{telNum,jdbcType=CHAR},
+      <if test="mobileHistory != null">
+        mobile_history = #{mobileHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="phonePrep != null">
+        phone_prep = #{phonePrep,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneHistory != null">
+        phone_history = #{phoneHistory,jdbcType=VARCHAR},
+      </if>
+      <if test="phoneUpdate != null">
+        phone_update = #{phoneUpdate,jdbcType=VARCHAR},
       </if>
       <if test="email != null">
         email = #{email,jdbcType=CHAR},
@@ -473,9 +518,12 @@
       name = #{name,jdbcType=CHAR},
       age_range = #{ageRange,jdbcType=INTEGER},
       gender = #{gender,jdbcType=INTEGER},
-      mobile_num = #{mobileNum,jdbcType=CHAR},
-      history_mobile_num = #{historyMobileNum,jdbcType=VARCHAR},
-      tel_num = #{telNum,jdbcType=CHAR},
+      mobile_update = #{mobileUpdate,jdbcType=VARCHAR},
+      mobile_prep = #{mobilePrep,jdbcType=VARCHAR},
+      mobile_history = #{mobileHistory,jdbcType=VARCHAR},
+      phone_prep = #{phonePrep,jdbcType=VARCHAR},
+      phone_history = #{phoneHistory,jdbcType=VARCHAR},
+      phone_update = #{phoneUpdate,jdbcType=VARCHAR},
       email = #{email,jdbcType=CHAR},
       id_card_num = #{idCardNum,jdbcType=CHAR},
       province = #{province,jdbcType=CHAR},

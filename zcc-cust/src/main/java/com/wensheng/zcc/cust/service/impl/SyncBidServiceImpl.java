@@ -346,7 +346,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   private boolean updatePersonInfo(CustPersonInfoFromSync custPersonInfoFromSync) {
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobileNumEqualTo(
+    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobilePrepEqualTo(
         StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
         andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
     List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
@@ -598,7 +598,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
        //insert person with name directlly
        CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
        custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(trdInfoFromSync.getBuyerName())?"-1":
-           trdInfoFromSync.getBuyerName()).andMobileNumEqualTo("-1");
+           trdInfoFromSync.getBuyerName()).andMobilePrepEqualTo("-1");
        List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
        if(CollectionUtils.isEmpty(custTrdPeople)){
          CustTrdPerson custTrdPerson = new CustTrdPerson();
@@ -811,7 +811,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     } else {
       dataQuality = dataQuality + 1;
     }
-    if (StringUtils.isEmpty(custTrdPerson.getTelNum())) {
+    if (StringUtils.isEmpty(custTrdPerson.getPhonePrep())) {
       dataQuality = dataQuality ;
     } else {
       dataQuality = dataQuality + 1;
@@ -823,7 +823,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       dataQuality = dataQuality + 1;
     }
 
-    if (StringUtils.isEmpty(custTrdPerson.getMobileNum())) {
+    if (StringUtils.isEmpty(custTrdPerson.getMobilePrep())) {
       dataQuality = -1 ;
     } else {
       dataQuality = dataQuality + 1;
@@ -841,11 +841,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdPerson.setGender(custPersonInfoFromSync.getGender());
     custTrdPerson.setIdCardNum(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())?null:
         custPersonInfoFromSync.getIdCardNum()) ;
-    custTrdPerson.setMobileNum(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
-        custPersonInfoFromSync.getMobileNum()) ;
+    custTrdPerson.setMobilePrep(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
+        custPersonInfoFromSync.getMobileNum()); ;
     custTrdPerson.setName(StringUtils.isEmpty(custPersonInfoFromSync.getName())? null: custPersonInfoFromSync.getName());
     custTrdPerson.setProvince(custPersonInfoFromSync.getProvince());
-    custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
+    custTrdPerson.setPhonePrep(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     custTrdPerson.setUpdateTime(updateTime);
     custTrdPerson.setSyncTime(AmcDateUtils.getCurrentDate());
@@ -1289,8 +1289,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
         StringBuilder sbMobileNum = new StringBuilder();
         StringBuilder sbTelNum = new StringBuilder();
-        String mobileNum = custTrdPerson.getMobileNum();
-        String mobileNumBak = custTrdPerson.getMobileNum();
+        String mobileNum = custTrdPerson.getMobilePrep();
+        String mobileNumBak = custTrdPerson.getMobilePrep();
         mobileNum = mobileNum.replace(";","；");
         mobileNum = mobileNum.replace(",","，");
         String[] telMobiles =mobileNum.split(sign);
@@ -1315,12 +1315,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
         custTrdPersonNew.setId(custTrdPerson.getId());
         if(sbTelNum.length()>=1){
-          custTrdPersonNew.setTelNum(sbTelNum.toString());
+          custTrdPersonNew.setPhonePrep(sbTelNum.toString());
         }
         if(sbMobileNum.length()>=1){
-          custTrdPersonNew.setMobileNum(sbMobileNum.toString());
+          custTrdPersonNew.setMobilePrep(sbMobileNum.toString());
         }else {
-          custTrdPersonNew.setMobileNum("-1");
+          custTrdPersonNew.setMobilePrep("-1");
         }
         custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
@@ -1331,14 +1331,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     //只有手机号和固话
     List<CustTrdPerson> custTrdPersonList = custTrdPersonExtMapper.selectTrdPersonByRightPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonList){
-      String mobileNum = custTrdPerson.getMobileNum();
-      String mobileNumBak = custTrdPerson.getMobileNum();
+      String mobileNum = custTrdPerson.getMobilePrep();
+      String mobileNumBak = custTrdPerson.getMobilePrep();
       Boolean isMobile = checkMobile(mobileNum);
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
       custTrdPersonNew.setId(custTrdPerson.getId());
       if(!isMobile){
-        custTrdPersonNew.setTelNum(mobileNum);
-        custTrdPersonNew.setMobileNum("-1");
+        custTrdPersonNew.setPhonePrep(mobileNum);
+        custTrdPersonNew.setMobilePrep("-1");
         custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
       }
@@ -1348,10 +1348,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     List<CustTrdPerson> custTrdPersonListAllTel = custTrdPersonExtMapper.selectTrdPersonByUnknowPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonListAllTel) {
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
-      String mobileNumBak = custTrdPerson.getMobileNum();
+      String mobileNumBak = custTrdPerson.getMobilePrep();
       custTrdPersonNew.setId(custTrdPerson.getId());
-      custTrdPersonNew.setTelNum(custTrdPerson.getMobileNum());
-      custTrdPersonNew.setMobileNum("-1");
+      custTrdPersonNew.setPhonePrep(custTrdPerson.getMobilePrep());
+      custTrdPersonNew.setMobilePrep("-1");
       custTrdPersonNew.setMobileNumBak(mobileNumBak);
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
     }

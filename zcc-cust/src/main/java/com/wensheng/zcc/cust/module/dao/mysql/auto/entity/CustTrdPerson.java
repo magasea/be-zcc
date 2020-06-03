@@ -13,11 +13,17 @@ public class CustTrdPerson {
 
     private Integer gender;
 
-    private String mobileNum;
+    private String mobileUpdate;
 
-    private String historyMobileNum;
+    private String mobilePrep;
 
-    private String telNum;
+    private String mobileHistory;
+
+    private String phonePrep;
+
+    private String phoneHistory;
+
+    private String phoneUpdate;
 
     private String email;
 
@@ -89,28 +95,52 @@ public class CustTrdPerson {
         this.gender = gender;
     }
 
-    public String getMobileNum() {
-        return mobileNum;
+    public String getMobileUpdate() {
+        return mobileUpdate;
     }
 
-    public void setMobileNum(String mobileNum) {
-        this.mobileNum = mobileNum == null ? null : mobileNum.trim();
+    public void setMobileUpdate(String mobileUpdate) {
+        this.mobileUpdate = mobileUpdate == null ? null : mobileUpdate.trim();
     }
 
-    public String getHistoryMobileNum() {
-        return historyMobileNum;
+    public String getMobilePrep() {
+        return mobilePrep;
     }
 
-    public void setHistoryMobileNum(String historyMobileNum) {
-        this.historyMobileNum = historyMobileNum == null ? null : historyMobileNum.trim();
+    public void setMobilePrep(String mobilePrep) {
+        this.mobilePrep = mobilePrep == null ? null : mobilePrep.trim();
     }
 
-    public String getTelNum() {
-        return telNum;
+    public String getMobileHistory() {
+        return mobileHistory;
     }
 
-    public void setTelNum(String telNum) {
-        this.telNum = telNum == null ? null : telNum.trim();
+    public void setMobileHistory(String mobileHistory) {
+        this.mobileHistory = mobileHistory == null ? null : mobileHistory.trim();
+    }
+
+    public String getPhonePrep() {
+        return phonePrep;
+    }
+
+    public void setPhonePrep(String phonePrep) {
+        this.phonePrep = phonePrep == null ? null : phonePrep.trim();
+    }
+
+    public String getPhoneHistory() {
+        return phoneHistory;
+    }
+
+    public void setPhoneHistory(String phoneHistory) {
+        this.phoneHistory = phoneHistory == null ? null : phoneHistory.trim();
+    }
+
+    public String getPhoneUpdate() {
+        return phoneUpdate;
+    }
+
+    public void setPhoneUpdate(String phoneUpdate) {
+        this.phoneUpdate = phoneUpdate == null ? null : phoneUpdate.trim();
     }
 
     public String getEmail() {

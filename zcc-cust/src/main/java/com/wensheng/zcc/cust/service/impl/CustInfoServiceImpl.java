@@ -656,8 +656,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
       custTrdInfoExcelVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
       custTrdInfoExcelVo.setPhone(String.format("%s;%s",
-          custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
-          custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
+          custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
+          custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
       custTrdInfoExcelVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long debtTotalAmount = 0L;
       Long trdTotalAmount = 0L;
@@ -749,14 +749,14 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdPerson custTrdPerson =  custTrdPersonMapper.selectByPrimaryKey(personId);
     CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
     AmcBeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
-    if(!StringUtils.isEmpty(custTrdPerson.getHistoryMobileNum()) && (custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)
-    ||custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_ORIGINAL))){
+    if(!StringUtils.isEmpty(custTrdPerson.getMobileHistory()) && (custTrdPerson.getMobileHistory().contains(SEP_INDICATOR_EDITABLE)
+    ||custTrdPerson.getMobileHistory().contains(SEP_INDICATOR_ORIGINAL))){
       List<String> listEditable = new ArrayList<>();
-      if(custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)){
-        listEditable = Lists.newArrayList(custTrdPerson.getHistoryMobileNum().split(SEP_INDICATOR_EDITABLE_USED));
+      if(custTrdPerson.getMobileHistory().contains(SEP_INDICATOR_EDITABLE)){
+        listEditable = Lists.newArrayList(custTrdPerson.getMobileHistory().split(SEP_INDICATOR_EDITABLE_USED));
 
       }else{
-        listEditable.add(custTrdPerson.getHistoryMobileNum());
+        listEditable.add(custTrdPerson.getMobileHistory());
       }
       if(!CollectionUtils.isEmpty(listEditable)){
         for(int idx = listEditable.size() -1; idx >= 0 ; idx--){
@@ -770,7 +770,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       custTrdPersonVo.setHistoryPhoneNums(listEditable);
     }else{
-      custTrdPersonVo.setOriginPhoneNum(custTrdPerson.getMobileNum());
+      custTrdPersonVo.setOriginPhoneNum(custTrdPerson.getMobilePrep());
     }
 
     if(!StringUtils.isEmpty(custTrdPerson.getHistoryAddr())
@@ -857,8 +857,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
       custTrdInfoVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
       custTrdInfoVo.setPhone(String.format("%s;%s",
-          custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
-          custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
+          custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
+          custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
       custTrdInfoVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
@@ -915,16 +915,16 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     if(CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
       log.error("no history mobiles");
-      custTrdPersonVo.setHistoryMobileNum(custTrdPersonVo.getOriginPhoneNum());
+      custTrdPersonVo.setMobileHistory(custTrdPersonVo.getOriginPhoneNum());
     }else{
       StringBuilder historyMobileNums =
           new StringBuilder(Joiner.on(SEP_INDICATOR_EDITABLE).join(custTrdPersonVo.getHistoryPhoneNums()));
       historyMobileNums.append(SEP_INDICATOR_ORIGINAL).append(custTrdPersonVo.getOriginPhoneNum());
-      custTrdPersonVo.setHistoryMobileNum(historyMobileNums.toString());
+      custTrdPersonVo.setMobileHistory(historyMobileNums.toString());
     }
 
     if(null != custTrdPersonVo.getHistoryPhoneNums() && !CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
-      updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobileNum(),
+      updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobilePrep(),
           custTrdPersonVo.getName(), custTrdPersonVo.getId());
     }
 
@@ -1252,7 +1252,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       Long currentCustPersonId){
     // find origin cust and search the trd info of the cust, update the trd info ref buyer id to the
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andMobileNumEqualTo(phoneNum).andNameEqualTo(custName);
+    custTrdPersonExample.createCriteria().andMobilePrepEqualTo(phoneNum).andNameEqualTo(custName);
     List<CustTrdPerson> custTrdPeople = custTrdPersonMapper.selectByExample(custTrdPersonExample);
     if(CollectionUtils.isEmpty(custTrdPeople)){
       return true;
@@ -1260,11 +1260,11 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdPerson> merged = new ArrayList();
     for(String custHistPhone: histPhoneNumList){
       custTrdPersonExample.clear();
-      custTrdPersonExample.createCriteria().andMobileNumEqualTo(custHistPhone).andNameEqualTo(custName);
+      custTrdPersonExample.createCriteria().andMobilePrepEqualTo(custHistPhone).andNameEqualTo(custName);
       List<CustTrdPerson> custTrdPeopleHistory = custTrdPersonMapper.selectByExample(custTrdPersonExample);
       merged =  ListUtils.union(custTrdPeople, custTrdPeopleHistory);
     }
-    custTrdPeople = merged.stream().filter(item -> item.getId() != currentCustPersonId).collect(Collectors.toList());
+    custTrdPeople = merged.stream().filter(item -> !item.getId().equals(currentCustPersonId)).collect(Collectors.toList());
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     for(CustTrdPerson custTrdPerson: custTrdPeople){
       custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPerson.getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
@@ -1354,7 +1354,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdPersonExample.createCriteria().andIdIn(personIds.keySet().stream().collect(Collectors.toList()));
       List<CustTrdPerson> custTrdPersonList =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
       for(CustTrdPerson custTrdPerson: custTrdPersonList){
-        if(StringUtils.isEmpty(custTrdPerson.getMobileNum())||custTrdPerson.getMobileNum().equals("-1")){
+        if(StringUtils.isEmpty(custTrdPerson.getMobilePrep())||custTrdPerson.getMobilePrep().equals("-1")){
           log.error("Ignore not useful info for custTrdPerson:{}", custTrdPerson.getId());
           continue;
         }

@@ -67,13 +67,14 @@
     </where>
   </sql>
 <!--  <sql id="Base_Column_List">-->
-<!--    id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, -->
+<!--    id, name, age_range, gender, mobile_prep, tel_num, email, id_card_num, province, city, -->
 <!--    addr, notes, create_by, create_time-->
 <!--  </sql>-->
   <sql id="All_Base_Column_List">
-    id, orig_id, name, age_range, gender, mobile_num, history_mobile_num, tel_num, email,
-    id_card_num, province, city, addr, history_addr, notes, data_status, data_quality,
-    update_time, update_by, create_by, create_time, sync_time
+    id, orig_id, name, age_range, gender, mobile_update, mobile_prep, mobile_history,
+    phone_prep, phone_history, phone_update, email, id_card_num, province, city, addr,
+    history_addr, notes, data_status, data_quality, update_time, update_by, create_by,
+    create_time, sync_time, mobile_num_bak
   </sql>
 
   <sql id="Base_Column_List">
@@ -81,7 +82,7 @@
     ${prefix}name as name,
     ${prefix}age_range as age_range,
     ${prefix}gender as gender,
-    ${prefix}mobile_num as mobile_num,
+    ${prefix}mobile_prep as mobile_prep,
     ${prefix}tel_num as tel_num,
     ${prefix}email as email,
     ${prefix}id_card_num as id_card_num,
@@ -318,7 +319,7 @@
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    mobile_num LIKE CONCAT('%',#{sign},'%')
+    mobile_prep LIKE CONCAT('%',#{sign},'%')
   </select>
 
   <select id="selectTrdPersonByRightPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
@@ -327,7 +328,7 @@
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    LENGTH(mobile_num) <![CDATA[<=]]> 15 AND mobile_num !=-1
+    LENGTH(mobile_prep) <![CDATA[<=]]> 15 AND mobile_prep !=-1
   </select>
 
   <select id="selectTrdPersonByUnknowPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
@@ -336,12 +337,12 @@
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    mobile_num !=-1
-    AND mobile_num not LIKE '%、%'
-    AND mobile_num not LIKE '%/%'
-    AND LENGTH(mobile_num) > 15
-    AND mobile_num not LIKE '%，%'
-    AND mobile_num not LIKE '%；%'
+    mobile_prep !=-1
+    AND mobile_prep not LIKE '%、%'
+    AND mobile_prep not LIKE '%/%'
+    AND LENGTH(mobile_prep) > 15
+    AND mobile_prep not LIKE '%，%'
+    AND mobile_prep not LIKE '%；%'
   </select>
 
   <select id="selectTrePersonBymobileList"
@@ -356,7 +357,7 @@
       and (
       1=2
       <foreach item="item" index="index" collection="mobileList">
-        OR mobile_num LIKE CONCAT('%',#{item},'%')
+        OR mobile_prep LIKE CONCAT('%',#{item},'%')
       </foreach>
       )
     </if>

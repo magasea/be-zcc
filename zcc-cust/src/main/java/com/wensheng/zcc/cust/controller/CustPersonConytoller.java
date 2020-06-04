@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.controller;
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,9 @@ public class CustPersonConytoller {
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustCmpycontactor
-  public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception {
+  public void addCmpyAmcContactor(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
+
+
 
 
   }

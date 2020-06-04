@@ -66,14 +66,14 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Override
   public void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception {
-    //兼容老逻辑手机号放在mobileUpdate
-    if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
-      custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
-    }
-    //兼容老逻辑固话号放在phoneUpdate
-    if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
-      custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
-    }
+//    //兼容老逻辑手机号放在mobileUpdate
+//    if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
+//      custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
+//    }
+//    //兼容老逻辑固话号放在phoneUpdate
+//    if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
+//      custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
+//    }
 
     //first check name and phone unique
     List<CustAmcCmpycontactor>  custAmcCmpycontactors = queryCmpyContactorBymobileList(custAmcCmpycontactor);

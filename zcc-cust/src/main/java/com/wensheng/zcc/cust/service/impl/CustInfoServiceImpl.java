@@ -219,7 +219,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdCmpy custTrdCmpyOriginal= custTrdCmpies.get(0);
 
     //判断公司名称是否更改
-    if(null == custTrdCmpy.getCmpyNameUpdate()){
+    if(null == custTrdCmpy.getCmpyNameUpdate() || "-1".equals(custTrdCmpy.getCmpyNameUpdate())){
       log.info("没有修改公司名称，则根据修改信息跟新数据库：custTrdCmpy：{}",custTrdCmpy);
       //保存公司修改记录
       commonHandler.creatCmpyHistory(custTrdCmpy.getUpdateBy(),"updateCompany",
@@ -735,8 +735,10 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public CustTrdCmpy getCompany(Long companyId) {
 
-    return custTrdCmpyMapper.selectByPrimaryKey(companyId);
-
+    CustTrdCmpy custTrdCmpy = custTrdCmpyMapper.selectByPrimaryKey(companyId);
+    //修改的名称不用给前端
+    custTrdCmpy.setCmpyNameUpdate("-1");
+    return custTrdCmpy;
   }
 
   @Override

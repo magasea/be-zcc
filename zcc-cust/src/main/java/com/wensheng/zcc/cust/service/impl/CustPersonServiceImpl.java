@@ -2,9 +2,13 @@ package com.wensheng.zcc.cust.service.impl;
 
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.ArrayList;
@@ -16,6 +20,7 @@ import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
 @Service
@@ -27,7 +32,10 @@ public class CustPersonServiceImpl implements CustPersonService {
   @Autowired
   CustTrdPersonExtMapper custTrdPersonExtMapper;
   @Autowired
+  CustTrdInfoMapper custTrdInfoMapper;
+  @Autowired
   CommonHandler commonHandler;
+
 
   @Override
   public void createCustPerson(CustTrdPerson custTrdPerson) throws Exception {
@@ -165,7 +173,8 @@ public class CustPersonServiceImpl implements CustPersonService {
   }
 
   @Override
-  public void mergeCustPerson(List<Long> fromPersonIds, String toPersonId) throws Exception {
+  @Transactional(rollbackFor = Exception.class)
+  public void mergeCustPerson(List<Long> fromPersonIds, Long toPersonId) throws Exception {
     List<CustTrdPerson> custTrdPersonList = new ArrayList<>();
     //查询要合并的原订单
     for (Long personId : fromPersonIds) {
@@ -173,10 +182,36 @@ public class CustPersonServiceImpl implements CustPersonService {
       custTrdPerson.setId(personId);
       custTrdPerson.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
       custTrdPersonList.add(custTrdPerson);
+
+      //查询要更改的交易
+      CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+      custTrdInfoExample.createCriteria().andBuyerIdEqualTo(personId).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+      List<CustTrdInfo> custTrdInfoList = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+      StringBuilder sbTrdInfoBak = new StringBuilder();
+
+      if (!CollectionUtils.isEmpty(custTrdInfoList)){
+        sbTrdInfoBak.append("trdInfoId:");
+        for(CustTrdInfo custTrdInfo : custTrdInfoList){
+          if(sbTrdInfoBak.length()>0){
+            sbTrdInfoBak.append(",");
+          }
+          sbTrdInfoBak.append(custTrdInfo);
+
+          CustTrdInfo custTrdInfoNew = new CustTrdInfo();
+          custTrdInfoNew.setId(custTrdInfo.getId());
+          custTrdInfoNew.setBuyerId(toPersonId);
+          //修改更改的交易指向新自然人
+          custTrdInfoMapper.updateByPrimaryKey(custTrdInfoNew);
+        }
+      }
+      if(sbTrdInfoBak.length()>0){
+        sbTrdInfoBak.append(";");
+      }
+      sbTrdInfoBak.append("toPersonId:");
+      sbTrdInfoBak.append(toPersonId);
+      custTrdPerson.setTrdInfoBak(sbTrdInfoBak.toString());
+      custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     }
-
-    //
-
   }
 
 

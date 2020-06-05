@@ -20,6 +20,8 @@ public interface CustTrdPersonExtMapper {
     List<Long> selectByPreFilterAllowNoTrd(CustTrdPersonExample example);
     Long countByFilter(CustTrdPersonExtExample example);
     Long countByFilterAllowNoTrd(CustTrdPersonExtExample example);
+    List<CustTrdPerson> selectPersonByMobileList(@Param("name")String name,
+                                             @Param("mobileList") List<String> mobileList);
 
     List<CustTrdPerson> selectTrdPersonByPhoneSign(@Param("sign") String sign);
     List<CustTrdPerson> selectTrdPersonByRightPhone();

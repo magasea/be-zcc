@@ -82,11 +82,11 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       //cannot insert
       log.error("There is already person name:{} company name:{} phone:{} reject insert",
           custAmcCmpycontactor.getName(),
-          custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
+          custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobileUpdate());
       throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format("已经 "
               + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
           custAmcCmpycontactor.getName(),
-          custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+          custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobileUpdate()));
     }
     custAmcCmpycontactor.setCreateTime(new Date());
     log.info("人工新增联系人custAmcCmpycontactor：{}",custAmcCmpycontactor);
@@ -111,12 +111,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   public void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
     CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(custAmcCmpycontactor.getId());
     if(null == originalCmpycontactor){
-      log.error("There is no person in db name:{} company name:{} phone:{} reject insert",
-              custAmcCmpycontactor.getName(),
-              custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
-      throw ExceptionUtils.getAmcException(AmcExceptions.NO_CMPY_CONTACTOR_ERROR, String.format("数据库中没有对应的公司联系人"
-                      + "姓名为:%s 所属公司Id为:%s 电话为:%s", custAmcCmpycontactor.getName(),
-              custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+      log.error("There is no person in db id:{}", custAmcCmpycontactor.getId());
+      throw ExceptionUtils.getAmcException(AmcExceptions.NO_ORIGINAL_INFO_ERROR, String.format(
+          "数据库中没有对应的公司联系人id为:%s", custAmcCmpycontactor.getId()));
     }
 
     //first check name and phone unique
@@ -129,27 +126,29 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         //cannot update
         log.error("There is already person name:{} company name:{} phone:{} reject insert",
             custAmcCmpycontactor.getName(),
-            custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobile());
+            custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobileUpdate());
         throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format("已经 "
                 + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
             custAmcCmpycontactor.getName(),
-            custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobile()));
+            custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobileUpdate()));
       }
     }
 
-    //手机号放在mobileUpdate
-    if(!StringUtils.isEmpty(custAmcCmpycontactor.getMobile())){
-      custAmcCmpycontactor.setMobileUpdate(custAmcCmpycontactor.getMobile());
-    }
-    //固话号放在phoneUpdate
-    if(!StringUtils.isEmpty(custAmcCmpycontactor.getPhone())){
-      custAmcCmpycontactor.setPhoneUpdate(custAmcCmpycontactor.getPhone());
-    }
+    //电话号存入历史数据
+    creatMobilePhoneHistory(custAmcCmpycontactor, originalCmpycontactor);
 
+    //创建历史信息
+    commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
+        "人工修改",originalCmpycontactor);
+    custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+  }
+
+
+  private void creatMobilePhoneHistory(CustAmcCmpycontactor custAmcCmpycontactor,
+      CustAmcCmpycontactor originalCmpycontactor) {
     //若改变了手机号和固话号，存入历史数据时要去重
     if(null != custAmcCmpycontactor.getMobileUpdate() &&
             !custAmcCmpycontactor.getMobileUpdate().equals(originalCmpycontactor.getMobileUpdate())){
-
       //对比出修改的手机号
       StringBuilder sbMobileChange = new StringBuilder();
       String[] mobileUpdateOriginalArray = originalCmpycontactor.getMobileUpdate().split(";");
@@ -209,11 +208,6 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         custAmcCmpycontactor.setPhoneHistory(sbPhoneHistory.toString());
       }
     }
-
-    //创建历史信息
-    commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
-        "人工修改",originalCmpycontactor);
-    custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
   }
 
   @Override

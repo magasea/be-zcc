@@ -313,6 +313,24 @@
     ) as tmp
   </select>
 
+  <select id="selectPersonByMobileList" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
+    SELECT
+      'true' as QUERYID,
+      <include refid="All_Base_Column_List" />
+    from CUST_TRD_PERSON
+    where name =  #{name}
+    <if test="mobileList != null">
+      and (
+      1=2
+      <foreach item="item" index="index" collection="mobileList">
+        OR cac.mobile_update LIKE CONCAT('%',#{item},'%')
+        OR cac.mobile_prep LIKE CONCAT('%',#{item},'%')
+        OR cac.mobile_history LIKE CONCAT('%',#{item},'%')
+      </foreach>
+      )
+    </if>
+  </select>
+
   <select id="selectTrdPersonByPhoneSign" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
     select
     'true' as QUERYID,

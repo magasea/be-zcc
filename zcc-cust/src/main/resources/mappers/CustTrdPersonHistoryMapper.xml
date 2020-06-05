@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
+<mapper namespace="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonHistoryMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistory">
     <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="person_id" jdbcType="BIGINT" property="personId" />
+    <result column="update_method" jdbcType="CHAR" property="updateMethod" />
     <result column="orig_id" jdbcType="CHAR" property="origId" />
     <result column="name" jdbcType="CHAR" property="name" />
     <result column="age_range" jdbcType="INTEGER" property="ageRange" />
@@ -30,6 +32,7 @@
     <result column="status" jdbcType="INTEGER" property="status" />
     <result column="trd_info_bak" jdbcType="VARCHAR" property="trdInfoBak" />
     <result column="mobile_num_bak" jdbcType="VARCHAR" property="mobileNumBak" />
+    <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -90,19 +93,19 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, orig_id, name, age_range, gender, mobile_update, mobile_prep, mobile_history, 
-    phone_prep, phone_history, phone_update, email, id_card_num, province, city, addr, 
-    history_addr, notes, data_status, data_quality, update_time, update_by, create_by, 
-    create_time, sync_time, status, trd_info_bak, mobile_num_bak
+    id, person_id, update_method, orig_id, name, age_range, gender, mobile_update, mobile_prep, 
+    mobile_history, phone_prep, phone_history, phone_update, email, id_card_num, province, 
+    city, addr, history_addr, notes, data_status, data_quality, update_time, update_by, 
+    create_by, create_time, sync_time, status, trd_info_bak, mobile_num_bak, remark
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
+  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistoryExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from CUST_TRD_PERSON
+    from CUST_TRD_PERSON_HISTORY
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -113,48 +116,58 @@
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from CUST_TRD_PERSON
+    from CUST_TRD_PERSON_HISTORY
     where id = #{id,jdbcType=BIGINT}
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
-    delete from CUST_TRD_PERSON
+    delete from CUST_TRD_PERSON_HISTORY
     where id = #{id,jdbcType=BIGINT}
   </delete>
-  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample">
-    delete from CUST_TRD_PERSON
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistoryExample">
+    delete from CUST_TRD_PERSON_HISTORY
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </delete>
-  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
+  <insert id="insert" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistory">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_PERSON (orig_id, name, age_range, 
-      gender, mobile_update, mobile_prep, 
-      mobile_history, phone_prep, phone_history, 
-      phone_update, email, id_card_num, 
-      province, city, addr, history_addr, 
+    insert into CUST_TRD_PERSON_HISTORY (person_id, update_method, orig_id, 
+      name, age_range, gender, 
+      mobile_update, mobile_prep, mobile_history, 
+      phone_prep, phone_history, phone_update, 
+      email, id_card_num, province, 
+      city, addr, history_addr, 
       notes, data_status, data_quality, 
       update_time, update_by, create_by, 
       create_time, sync_time, status, 
-      trd_info_bak, mobile_num_bak)
-    values (#{origId,jdbcType=CHAR}, #{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, 
-      #{gender,jdbcType=INTEGER}, #{mobileUpdate,jdbcType=VARCHAR}, #{mobilePrep,jdbcType=VARCHAR}, 
-      #{mobileHistory,jdbcType=VARCHAR}, #{phonePrep,jdbcType=VARCHAR}, #{phoneHistory,jdbcType=VARCHAR}, 
-      #{phoneUpdate,jdbcType=VARCHAR}, #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, 
-      #{province,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{historyAddr,jdbcType=VARCHAR}, 
+      trd_info_bak, mobile_num_bak, remark
+      )
+    values (#{personId,jdbcType=BIGINT}, #{updateMethod,jdbcType=CHAR}, #{origId,jdbcType=CHAR}, 
+      #{name,jdbcType=CHAR}, #{ageRange,jdbcType=INTEGER}, #{gender,jdbcType=INTEGER}, 
+      #{mobileUpdate,jdbcType=VARCHAR}, #{mobilePrep,jdbcType=VARCHAR}, #{mobileHistory,jdbcType=VARCHAR}, 
+      #{phonePrep,jdbcType=VARCHAR}, #{phoneHistory,jdbcType=VARCHAR}, #{phoneUpdate,jdbcType=VARCHAR}, 
+      #{email,jdbcType=CHAR}, #{idCardNum,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
+      #{city,jdbcType=CHAR}, #{addr,jdbcType=VARCHAR}, #{historyAddr,jdbcType=VARCHAR}, 
       #{notes,jdbcType=VARCHAR}, #{dataStatus,jdbcType=INTEGER}, #{dataQuality,jdbcType=INTEGER}, 
       #{updateTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, #{createBy,jdbcType=BIGINT}, 
       #{createTime,jdbcType=TIMESTAMP}, #{syncTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, 
-      #{trdInfoBak,jdbcType=VARCHAR}, #{mobileNumBak,jdbcType=VARCHAR})
+      #{trdInfoBak,jdbcType=VARCHAR}, #{mobileNumBak,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}
+      )
   </insert>
-  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistory">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
       SELECT LAST_INSERT_ID()
     </selectKey>
-    insert into CUST_TRD_PERSON
+    insert into CUST_TRD_PERSON_HISTORY
     <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="personId != null">
+        person_id,
+      </if>
+      <if test="updateMethod != null">
+        update_method,
+      </if>
       <if test="origId != null">
         orig_id,
       </if>
@@ -236,8 +249,17 @@
       <if test="mobileNumBak != null">
         mobile_num_bak,
       </if>
+      <if test="remark != null">
+        remark,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="personId != null">
+        #{personId,jdbcType=BIGINT},
+      </if>
+      <if test="updateMethod != null">
+        #{updateMethod,jdbcType=CHAR},
+      </if>
       <if test="origId != null">
         #{origId,jdbcType=CHAR},
       </if>
@@ -319,19 +341,28 @@
       <if test="mobileNumBak != null">
         #{mobileNumBak,jdbcType=VARCHAR},
       </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
     </trim>
   </insert>
-  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultType="java.lang.Long">
-    select count(*) from CUST_TRD_PERSON
+  <select id="countByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistoryExample" resultType="java.lang.Long">
+    select count(*) from CUST_TRD_PERSON_HISTORY
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
-    update CUST_TRD_PERSON
+    update CUST_TRD_PERSON_HISTORY
     <set>
       <if test="record.id != null">
         id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.personId != null">
+        person_id = #{record.personId,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateMethod != null">
+        update_method = #{record.updateMethod,jdbcType=CHAR},
       </if>
       <if test="record.origId != null">
         orig_id = #{record.origId,jdbcType=CHAR},
@@ -414,14 +445,19 @@
       <if test="record.mobileNumBak != null">
         mobile_num_bak = #{record.mobileNumBak,jdbcType=VARCHAR},
       </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
   <update id="updateByExample" parameterType="map">
-    update CUST_TRD_PERSON
+    update CUST_TRD_PERSON_HISTORY
     set id = #{record.id,jdbcType=BIGINT},
+      person_id = #{record.personId,jdbcType=BIGINT},
+      update_method = #{record.updateMethod,jdbcType=CHAR},
       orig_id = #{record.origId,jdbcType=CHAR},
       name = #{record.name,jdbcType=CHAR},
       age_range = #{record.ageRange,jdbcType=INTEGER},
@@ -448,14 +484,21 @@
       sync_time = #{record.syncTime,jdbcType=TIMESTAMP},
       status = #{record.status,jdbcType=INTEGER},
       trd_info_bak = #{record.trdInfoBak,jdbcType=VARCHAR},
-      mobile_num_bak = #{record.mobileNumBak,jdbcType=VARCHAR}
+      mobile_num_bak = #{record.mobileNumBak,jdbcType=VARCHAR},
+      remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
   </update>
-  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
-    update CUST_TRD_PERSON
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistory">
+    update CUST_TRD_PERSON_HISTORY
     <set>
+      <if test="personId != null">
+        person_id = #{personId,jdbcType=BIGINT},
+      </if>
+      <if test="updateMethod != null">
+        update_method = #{updateMethod,jdbcType=CHAR},
+      </if>
       <if test="origId != null">
         orig_id = #{origId,jdbcType=CHAR},
       </if>
@@ -537,12 +580,17 @@
       <if test="mobileNumBak != null">
         mobile_num_bak = #{mobileNumBak,jdbcType=VARCHAR},
       </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson">
-    update CUST_TRD_PERSON
-    set orig_id = #{origId,jdbcType=CHAR},
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistory">
+    update CUST_TRD_PERSON_HISTORY
+    set person_id = #{personId,jdbcType=BIGINT},
+      update_method = #{updateMethod,jdbcType=CHAR},
+      orig_id = #{origId,jdbcType=CHAR},
       name = #{name,jdbcType=CHAR},
       age_range = #{ageRange,jdbcType=INTEGER},
       gender = #{gender,jdbcType=INTEGER},
@@ -568,17 +616,18 @@
       sync_time = #{syncTime,jdbcType=TIMESTAMP},
       status = #{status,jdbcType=INTEGER},
       trd_info_bak = #{trdInfoBak,jdbcType=VARCHAR},
-      mobile_num_bak = #{mobileNumBak,jdbcType=VARCHAR}
+      mobile_num_bak = #{mobileNumBak,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistoryExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
     <include refid="Base_Column_List" />
-    from CUST_TRD_PERSON
+    from CUST_TRD_PERSON_HISTORY
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

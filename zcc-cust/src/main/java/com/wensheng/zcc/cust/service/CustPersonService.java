@@ -27,6 +27,6 @@ public interface CustPersonService {
    * @param toPersonId
    * @throws Exception
    */
-  void mergeCustPerson(List<String> fromPersonIds, String toPersonId ) throws Exception;
+  void mergeCustPerson(List<Long> fromPersonIds, String toPersonId ) throws Exception;
 
 }

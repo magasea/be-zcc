@@ -2,8 +2,12 @@ package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
 import java.util.Date;
 
-public class CustTrdPerson {
+public class CustTrdPersonHistory {
     private Long id;
+
+    private Long personId;
+
+    private String updateMethod;
 
     private String origId;
 
@@ -59,12 +63,30 @@ public class CustTrdPerson {
 
     private String mobileNumBak;
 
+    private String remark;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public Long getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(Long personId) {
+        this.personId = personId;
+    }
+
+    public String getUpdateMethod() {
+        return updateMethod;
+    }
+
+    public void setUpdateMethod(String updateMethod) {
+        this.updateMethod = updateMethod == null ? null : updateMethod.trim();
     }
 
     public String getOrigId() {
@@ -281,5 +303,13 @@ public class CustTrdPerson {
 
     public void setMobileNumBak(String mobileNumBak) {
         this.mobileNumBak = mobileNumBak == null ? null : mobileNumBak.trim();
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark == null ? null : remark.trim();
     }
 }

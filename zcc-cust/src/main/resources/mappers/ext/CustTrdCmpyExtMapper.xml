@@ -159,6 +159,10 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
+    <if test="whereClause != null">
+      WHERE
+      ${whereClause}
+    </if>
     <if test="orderByClause != null">
        group by ctc.id order by ${orderByClause}
     </if>
@@ -209,6 +213,10 @@
     </if>
     <if test="filterByClause != null">
       ${filterByClause}
+    </if>
+    <if test="whereClause != null">
+      WHERE
+      ${whereClause}
     </if>
     group by ctc.id
     ) as tmp

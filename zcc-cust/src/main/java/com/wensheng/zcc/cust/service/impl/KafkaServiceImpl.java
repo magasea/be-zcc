@@ -214,6 +214,7 @@ public class KafkaServiceImpl {
       custTrdCmpy.setLegalReptive(cmpyBasicBizInfoSync.getLegalPerson());
       custTrdCmpy.setCrawledStatus("2");
       custTrdCmpy.setUpdateTime(new Date());
+      custTrdCmpy.setSyncTime(new Date());
       commonHandler.creatCmpyHistory(null,"KafkaServiceImpl",
           "kafka爬取公司信息成功", custTrdCmpyOriginal);
       log.info("kafka爬取公司信息成功");
@@ -224,7 +225,6 @@ public class KafkaServiceImpl {
       log.info("kafka爬取公司信息成功,和原公司不匹配");
     }
 //    custTrdCmpy.setCmpyNameUpdate("-1");
-    custTrdCmpy.setSyncTime(new Date());
     custTrdCmpyMapper.updateByPrimaryKeySelective(custTrdCmpy);
   }
 

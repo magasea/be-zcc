@@ -11,6 +11,8 @@ public interface AmcContactorService {
 
   void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
+  void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId) throws Exception;
+
   List<CustAmcCmpycontactor> getCmpyAmcContactor(String cmpyName);
 
   List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(Long cmpyId);

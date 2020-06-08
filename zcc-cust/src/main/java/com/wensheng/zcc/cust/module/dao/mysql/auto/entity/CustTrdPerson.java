@@ -19,11 +19,11 @@ public class CustTrdPerson {
 
     private String mobileHistory;
 
+    private String phoneUpdate;
+
     private String phonePrep;
 
     private String phoneHistory;
-
-    private String phoneUpdate;
 
     private String email;
 
@@ -123,6 +123,14 @@ public class CustTrdPerson {
         this.mobileHistory = mobileHistory == null ? null : mobileHistory.trim();
     }
 
+    public String getPhoneUpdate() {
+        return phoneUpdate;
+    }
+
+    public void setPhoneUpdate(String phoneUpdate) {
+        this.phoneUpdate = phoneUpdate == null ? null : phoneUpdate.trim();
+    }
+
     public String getPhonePrep() {
         return phonePrep;
     }
@@ -137,14 +145,6 @@ public class CustTrdPerson {
 
     public void setPhoneHistory(String phoneHistory) {
         this.phoneHistory = phoneHistory == null ? null : phoneHistory.trim();
-    }
-
-    public String getPhoneUpdate() {
-        return phoneUpdate;
-    }
-
-    public void setPhoneUpdate(String phoneUpdate) {
-        this.phoneUpdate = phoneUpdate == null ? null : phoneUpdate.trim();
     }
 
     public String getEmail() {

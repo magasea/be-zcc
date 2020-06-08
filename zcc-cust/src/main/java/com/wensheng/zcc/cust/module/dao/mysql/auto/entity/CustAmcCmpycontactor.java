@@ -61,6 +61,10 @@ public class CustAmcCmpycontactor {
 
     private Date updateTime;
 
+    private Integer status;
+
+    private String trdInfoBak;
+
     public Long getId() {
         return id;
     }
@@ -291,5 +295,21 @@ public class CustAmcCmpycontactor {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getTrdInfoBak() {
+        return trdInfoBak;
+    }
+
+    public void setTrdInfoBak(String trdInfoBak) {
+        this.trdInfoBak = trdInfoBak == null ? null : trdInfoBak.trim();
     }
 }

@@ -58,13 +58,18 @@ public class AmcCmpyContactorController {
     amcContactorService.createAmcCmpyContactor(custAmcCmpycontactor);
   }
 
-
-
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustCmpycontactor
   public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
     amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
+  }
+
+  @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
+  @ResponseBody
+  @ModifyCheckerCustCmpycontactor
+  public void mergeCmpyAmcContactor(@RequestBody List<Long> fromContactorIds,@RequestBody Long toContactorId) throws Exception{
+    amcContactorService.mergeCmpycontactor(fromContactorIds, toContactorId);
   }
 
 

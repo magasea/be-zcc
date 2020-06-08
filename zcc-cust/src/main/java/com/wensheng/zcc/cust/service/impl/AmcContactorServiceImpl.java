@@ -16,9 +16,11 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustAmcCmpycontactorExt;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
@@ -33,6 +35,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
@@ -136,11 +139,55 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
     //电话号存入历史数据
     creatMobilePhoneHistory(custAmcCmpycontactor, originalCmpycontactor);
-
     //创建历史信息
     commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
         "人工修改",originalCmpycontactor);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+  }
+
+  @Override
+  public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId) throws Exception {
+    List<CustAmcCmpycontactor> custAmcCmpycontactorList = new ArrayList<>();
+    //查询要合并的原订单
+    for (Long cmpycontactorId : fromContactorIds) {
+      CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(cmpycontactorId);
+
+      CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
+      custAmcCmpycontactor.setId(cmpycontactorId);
+      custAmcCmpycontactor.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
+      custAmcCmpycontactorList.add(custAmcCmpycontactor);
+
+      //查询要更改的交易
+      CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+      custTrdInfoExample.createCriteria().andTrdCmpycontactorIdEqualTo(cmpycontactorId);
+      List<CustTrdInfo> custTrdInfoList = custTrdInfoMapper.selectByExample(custTrdInfoExample);
+      StringBuilder sbTrdInfoBak = new StringBuilder();
+
+      if (!CollectionUtils.isEmpty(custTrdInfoList)){
+        sbTrdInfoBak.append("trdInfoId:");
+        for(CustTrdInfo custTrdInfo : custTrdInfoList){
+          if(sbTrdInfoBak.length()>0){
+            sbTrdInfoBak.append(",");
+          }
+          sbTrdInfoBak.append(custTrdInfo);
+
+          CustTrdInfo custTrdInfoNew = new CustTrdInfo();
+          custTrdInfoNew.setId(custTrdInfo.getId());
+          custTrdInfoNew.setBuyerId(toContactorId);
+          //修改更改的交易指向新自然人
+          custTrdInfoMapper.updateByPrimaryKey(custTrdInfoNew);
+        }
+      }
+      if(sbTrdInfoBak.length()>0){
+        sbTrdInfoBak.append(";");
+      }
+      sbTrdInfoBak.append("toPersonId:");
+      sbTrdInfoBak.append(toContactorId);
+      custAmcCmpycontactor.setTrdInfoBak(sbTrdInfoBak.toString());
+      commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "mergeCmpycontactor",
+          "人工合并", originalCmpycontactor);
+      custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+    }
   }
 
 

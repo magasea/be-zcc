@@ -635,6 +635,76 @@ public class CustTrdPersonExample {
             return (Criteria) this;
         }
 
+        public Criteria andPhoneUpdateIsNull() {
+            addCriterion("phone_update is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateIsNotNull() {
+            addCriterion("phone_update is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateEqualTo(String value) {
+            addCriterion("phone_update =", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotEqualTo(String value) {
+            addCriterion("phone_update <>", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateGreaterThan(String value) {
+            addCriterion("phone_update >", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateGreaterThanOrEqualTo(String value) {
+            addCriterion("phone_update >=", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateLessThan(String value) {
+            addCriterion("phone_update <", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateLessThanOrEqualTo(String value) {
+            addCriterion("phone_update <=", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateLike(String value) {
+            addCriterion("phone_update like", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotLike(String value) {
+            addCriterion("phone_update not like", value, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateIn(List<String> values) {
+            addCriterion("phone_update in", values, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotIn(List<String> values) {
+            addCriterion("phone_update not in", values, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateBetween(String value1, String value2) {
+            addCriterion("phone_update between", value1, value2, "phoneUpdate");
+            return (Criteria) this;
+        }
+
+        public Criteria andPhoneUpdateNotBetween(String value1, String value2) {
+            addCriterion("phone_update not between", value1, value2, "phoneUpdate");
+            return (Criteria) this;
+        }
+
         public Criteria andPhonePrepIsNull() {
             addCriterion("phone_prep is null");
             return (Criteria) this;
@@ -772,76 +842,6 @@ public class CustTrdPersonExample {
 
         public Criteria andPhoneHistoryNotBetween(String value1, String value2) {
             addCriterion("phone_history not between", value1, value2, "phoneHistory");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateIsNull() {
-            addCriterion("phone_update is null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateIsNotNull() {
-            addCriterion("phone_update is not null");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateEqualTo(String value) {
-            addCriterion("phone_update =", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateNotEqualTo(String value) {
-            addCriterion("phone_update <>", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateGreaterThan(String value) {
-            addCriterion("phone_update >", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateGreaterThanOrEqualTo(String value) {
-            addCriterion("phone_update >=", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateLessThan(String value) {
-            addCriterion("phone_update <", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateLessThanOrEqualTo(String value) {
-            addCriterion("phone_update <=", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateLike(String value) {
-            addCriterion("phone_update like", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateNotLike(String value) {
-            addCriterion("phone_update not like", value, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateIn(List<String> values) {
-            addCriterion("phone_update in", values, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateNotIn(List<String> values) {
-            addCriterion("phone_update not in", values, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateBetween(String value1, String value2) {
-            addCriterion("phone_update between", value1, value2, "phoneUpdate");
-            return (Criteria) this;
-        }
-
-        public Criteria andPhoneUpdateNotBetween(String value1, String value2) {
-            addCriterion("phone_update not between", value1, value2, "phoneUpdate");
             return (Criteria) this;
         }
 

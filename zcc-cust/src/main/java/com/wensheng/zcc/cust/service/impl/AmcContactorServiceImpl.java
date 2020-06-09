@@ -148,9 +148,17 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   @Override
   public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId) throws Exception {
     List<CustAmcCmpycontactor> custAmcCmpycontactorList = new ArrayList<>();
+    CustAmcCmpycontactor toCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(toContactorId);
+    if(null == toCmpycontactor){
+      throw new Exception("未查到对应的公司联系人");
+    }
+
     //查询要合并的原订单
     for (Long cmpycontactorId : fromContactorIds) {
       CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(cmpycontactorId);
+      if(null == originalCmpycontactor){
+        throw new Exception("未查到对应的公司联系人");
+      }
 
       CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
       custAmcCmpycontactor.setId(cmpycontactorId);
@@ -260,7 +268,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   @Override
   public List<CustAmcCmpycontactor> getCmpyAmcContactor(String cmpyName) {
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
-    custAmcCmpycontactorExample.createCriteria().andCompanyEqualTo(cmpyName);
+    custAmcCmpycontactorExample.createCriteria().andCompanyEqualTo(cmpyName).andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustAmcCmpycontactor> custAmcCmpycontactors =
         custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     return custAmcCmpycontactors;
@@ -271,7 +279,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     List<CustAmcCmpycontactorExtVo> custAmcCmpycontactorExtVos = null;
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
     custAmcCmpycontactorExample.setOrderByClause(" id desc ");
-    custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId);
+    custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId).andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustAmcCmpycontactor> custAmcCmpycontactors =
             custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
@@ -368,7 +376,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     //查询公司联系人
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
     custAmcCmpycontactorExample.setOrderByClause(" id desc ");
-    custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId);
+    custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId).andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustAmcCmpycontactor> custAmcCmpycontactors =
             custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
 
@@ -673,8 +681,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
     custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId)
-            .andNameEqualTo(custAmcCmpycontactor.getName())
-            .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
+        .andNameEqualTo(custAmcCmpycontactor.getName())
+        .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone())
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustAmcCmpycontactor> custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
       custAmcCmpycontactorMapper.insertSelective(custAmcCmpycontactor);
@@ -715,7 +724,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
       custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(cmpyId)
               .andNameEqualTo(custAmcCmpycontactor.getName())
-              .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
+              .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone())
+          .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       custAmcCmpycontactorExample.setOrderByClause(" id desc ");
        custAmcCmpycontactors = custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     }else {
@@ -881,8 +891,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
             custAmcCmpycontactorExample.clear();
             custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpy.getId())
                 .andNameEqualTo(custAmcCmpycontactor.getName())
-                .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
-
+                .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone())
+                .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
             List<CustAmcCmpycontactor> custAmcCmpycontactors =
                 custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
             if(CollectionUtils.isEmpty(custAmcCmpycontactors)){
@@ -992,7 +1002,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         //now check the contactor exist or not
         custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpy.getId())
             .andNameEqualTo(custAmcCmpycontactor.getName())
-            .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone());
+            .andTrdPhoneEqualTo(custAmcCmpycontactor.getTrdPhone())
+            .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
 
         List<CustAmcCmpycontactor> custAmcCmpycontactors =
             custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);

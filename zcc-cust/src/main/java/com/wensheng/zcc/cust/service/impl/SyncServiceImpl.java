@@ -25,6 +25,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
@@ -344,7 +345,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
     custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobilePrepEqualTo(
         StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
-        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
+        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum())
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
     int action = -1;
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
@@ -959,7 +961,9 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
           //before delete check the related id in custAmcCmpycontactor and update it with current cmpy id
           custAmcCmpycontactorExample.clear();
-          custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpyList.get(idx).getId());
+          custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpyList.get(idx).getId())
+              .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId())
+              .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
           List<CustAmcCmpycontactor> custAmcCmpycontactors =
               custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
           if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){

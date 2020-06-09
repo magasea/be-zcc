@@ -8,6 +8,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.vo.helper.PageResult;
 import com.wensheng.zcc.cust.module.vo.recom.Cust4Asset;
 import com.wensheng.zcc.cust.module.vo.recom.Cust4Debt;
@@ -106,7 +107,7 @@ public class RecommServiceImpl implements RecommService {
     }
     if(!CollectionUtils.isEmpty(personIds)){
       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-      custTrdPersonExample.createCriteria().andIdIn(personIds);
+      custTrdPersonExample.createCriteria().andIdIn(personIds).andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
       cust4Debt.setCustTrdPeople(custTrdPersonList);
     }
@@ -159,7 +160,7 @@ public class RecommServiceImpl implements RecommService {
     }
     if(!CollectionUtils.isEmpty(personIds)){
       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-      custTrdPersonExample.createCriteria().andIdIn(personIds);
+      custTrdPersonExample.createCriteria().andIdIn(personIds).andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
       cust4Asset.setCustTrdPeople(custTrdPersonList);
     }

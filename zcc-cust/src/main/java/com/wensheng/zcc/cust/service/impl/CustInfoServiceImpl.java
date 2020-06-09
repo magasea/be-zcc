@@ -31,6 +31,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CmpyBasicBizInfoSync;
@@ -947,7 +948,8 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdPerson> getPersonFromDate(Date beginDate) {
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(beginDate);
+    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(beginDate)
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
     return custTrdPersonList;
   }
@@ -960,7 +962,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdCmpy> custTrdCmpyList =  custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
 
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(startDate);
+    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(startDate)
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
 
     List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
 
@@ -1254,7 +1257,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       Long currentCustPersonId){
     // find origin cust and search the trd info of the cust, update the trd info ref buyer id to the
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andMobilePrepEqualTo(phoneNum).andNameEqualTo(custName);
+    custTrdPersonExample.createCriteria().andMobilePrepEqualTo(phoneNum).andNameEqualTo(custName)
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustTrdPerson> custTrdPeople = custTrdPersonMapper.selectByExample(custTrdPersonExample);
     if(CollectionUtils.isEmpty(custTrdPeople)){
       return true;
@@ -1262,7 +1266,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdPerson> merged = new ArrayList();
     for(String custHistPhone: histPhoneNumList){
       custTrdPersonExample.clear();
-      custTrdPersonExample.createCriteria().andMobilePrepEqualTo(custHistPhone).andNameEqualTo(custName);
+      custTrdPersonExample.createCriteria().andMobilePrepEqualTo(custHistPhone).andNameEqualTo(custName)
+          .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       List<CustTrdPerson> custTrdPeopleHistory = custTrdPersonMapper.selectByExample(custTrdPersonExample);
       merged =  ListUtils.union(custTrdPeople, custTrdPeopleHistory);
     }
@@ -1353,7 +1358,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     if(!CollectionUtils.isEmpty(personIds)){
       custInfoGeoNear.setCustTrdPersonList( new ArrayList<>());
       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-      custTrdPersonExample.createCriteria().andIdIn(personIds.keySet().stream().collect(Collectors.toList()));
+      custTrdPersonExample.createCriteria().andIdIn(personIds.keySet().stream().collect(Collectors.toList()))
+          .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       List<CustTrdPerson> custTrdPersonList =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
       for(CustTrdPerson custTrdPerson: custTrdPersonList){
         if(StringUtils.isEmpty(custTrdPerson.getMobilePrep())||custTrdPerson.getMobilePrep().equals("-1")){

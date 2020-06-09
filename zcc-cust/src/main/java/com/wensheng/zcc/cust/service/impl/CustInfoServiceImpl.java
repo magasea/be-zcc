@@ -204,6 +204,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     addCrawlCmpyDTO.setCmpyCount(1);
     String addCrawlCmpyJson = new Gson().toJson(addCrawlCmpyDTO);
     try {
+      log.info("请求添加爬取公司信息kafka");
       crawlSystemKafkaTemplate.send(ADD_CRAWL_CMPY_TOPIC, addCrawlCmpyJson);
       log.info("请求添加爬取公司信息kafka发送成功,addCrawlCmpyJson:{}",addCrawlCmpyJson);
     }catch (Exception e){

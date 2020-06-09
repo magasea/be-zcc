@@ -96,9 +96,11 @@ public class SQLUtils {
             continue;
           }else{
             locationCode = locationCode.substring(0, idx+1);
+            if(locationCode.length()%2!=0){
+              locationCode=locationCode+"0";
+            }
             break;
           }
-
         }
         sb.append(".").append("debt_city like '").append(locationCode).append("%'");
       }else{

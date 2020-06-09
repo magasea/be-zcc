@@ -149,11 +149,24 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     //若改变了手机号和固话号，存入历史数据时要去重
     if(null != custAmcCmpycontactor.getMobileUpdate() &&
             !custAmcCmpycontactor.getMobileUpdate().equals(originalCmpycontactor.getMobileUpdate())){
+
+      //对比出修改的手机号
+      StringBuilder sbMobileChange = new StringBuilder();
+      String[] mobileUpdateOriginalArray = originalCmpycontactor.getMobileUpdate().split(";");
+      for (int i = 0; i < mobileUpdateOriginalArray.length; i++) {
+        if(!custAmcCmpycontactor.getMobileUpdate().contains(mobileUpdateOriginalArray[i])){
+          if(sbMobileChange.length() >1){
+            sbMobileChange.append(";");
+          }
+          sbMobileChange.append(mobileUpdateOriginalArray[i]);
+        }
+      }
+
       if("-1".equals(originalCmpycontactor.getMobileHistory())){
-        custAmcCmpycontactor.setMobileHistory(originalCmpycontactor.getMobileUpdate());
+        custAmcCmpycontactor.setMobileHistory(sbMobileChange.toString());
       }else {
         String mobileHistory = String.format("%s;%s",originalCmpycontactor.getMobileHistory(),
-                custAmcCmpycontactor.getMobileUpdate());
+            sbMobileChange.toString());
         Set<String> mobileHistorySet = new HashSet(Arrays.asList(mobileHistory.split(";")));
         StringBuilder sbmobileHistory = new StringBuilder();
         for (String mobile : mobileHistorySet) {
@@ -168,11 +181,23 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
     if(null != custAmcCmpycontactor.getPhoneUpdate() &&
             !custAmcCmpycontactor.getPhoneUpdate().equals(originalCmpycontactor.getPhoneUpdate())){
+      //对比出修改的固话号
+      StringBuilder sbPhoneChange = new StringBuilder();
+      String[] phoneUpdateOriginalArray = originalCmpycontactor.getPhoneUpdate().split(";");
+      for (int i = 0; i < phoneUpdateOriginalArray.length; i++) {
+        if(!custAmcCmpycontactor.getPhoneUpdate().contains(phoneUpdateOriginalArray[i])){
+          if(sbPhoneChange.length() >1){
+            sbPhoneChange.append(";");
+          }
+          sbPhoneChange.append(phoneUpdateOriginalArray[i]);
+        }
+      }
+
       if("-1".equals(originalCmpycontactor.getPhoneHistory())){
-        custAmcCmpycontactor.setPhoneHistory(originalCmpycontactor.getPhoneUpdate());
+        custAmcCmpycontactor.setPhoneHistory(sbPhoneChange.toString());
       }else {
         String phoneHistory = String.format("%s;%s",originalCmpycontactor.getPhoneHistory(),
-                custAmcCmpycontactor.getPhoneUpdate());
+            sbPhoneChange.toString());
         Set<String> phoneHistorySet = new HashSet(Arrays.asList(phoneHistory.split(";")));
         StringBuilder sbPhoneHistory = new StringBuilder();
         for (String phone : phoneHistorySet) {

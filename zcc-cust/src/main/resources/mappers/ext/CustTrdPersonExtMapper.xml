@@ -83,7 +83,7 @@
     ${prefix}age_range as age_range,
     ${prefix}gender as gender,
     ${prefix}mobile_prep as mobile_prep,
-    ${prefix}tel_num as tel_num,
+    ${prefix}phone_prep as phone_prep,
     ${prefix}email as email,
     ${prefix}id_card_num as id_card_num,
     ${prefix}province as province,

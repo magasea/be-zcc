@@ -4,6 +4,7 @@ import lombok.Data;
 
 @Data
 public class UserLngLat {
+  String openId;
   Double lng;
   Double lat;
 }

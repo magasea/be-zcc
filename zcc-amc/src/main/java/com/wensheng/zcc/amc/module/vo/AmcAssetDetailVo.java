@@ -6,6 +6,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetWarrantInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import java.util.List;
 import lombok.Data;
 
@@ -16,7 +17,7 @@ import lombok.Data;
 @Data
 public class AmcAssetDetailVo {
   AmcAssetVo amcAssetVo;
-  AmcDebtContactor amcDebtContactor;
+  SSOAmcUser amcDebtContactor;
   AssetAdditional assetAdditional;
   List<AssetComment> assetComments;
   List<AssetDocument> assetDocument;

@@ -1,12 +1,14 @@
 package com.wensheng.zcc.wechat.controller;
 
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.wechat.controller.helper.WechatUserSortEnum;
 import com.wensheng.zcc.wechat.module.vo.Article;
 import com.wensheng.zcc.wechat.module.vo.ArticleVo;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.module.vo.helper.NeedOpenCommentEnum;
 import com.wensheng.zcc.wechat.module.vo.helper.OnlyFansCanCommentEnum;
 import com.wensheng.zcc.wechat.module.vo.helper.ShowCoverPicEnum;
+import com.wensheng.zcc.wechat.module.vo.helper.WechatUserTagEnum;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
 import java.io.File;
 import java.util.ArrayList;
@@ -66,6 +68,28 @@ public class WechatBasicInfoController {
     List<String> result = new ArrayList<>();
     for(MaterialTypeEnum materialTypeEnum : MaterialTypeEnum.values()){
       result.add(String.format("%d:%s", materialTypeEnum.getId(), materialTypeEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/wechatUserTagEnum", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getWechatUserTagEnum(){
+
+    List<String> result = new ArrayList<>();
+    for(WechatUserTagEnum wechatUserTagEnum : WechatUserTagEnum.values()){
+      result.add(String.format("%d:%s", wechatUserTagEnum.getId(), wechatUserTagEnum.getName()));
+    }
+    return result;
+  }
+
+  @RequestMapping(value = "/wechatUserSortEnum", method = RequestMethod.GET)
+  @ResponseBody
+  public List<String> getWechatUserSortEnum(){
+
+    List<String> result = new ArrayList<>();
+    for(WechatUserSortEnum wechatUserSortEnum : WechatUserSortEnum.values()){
+      result.add(String.format("%d:%s", wechatUserSortEnum.getId(), wechatUserSortEnum.getName()));
     }
     return result;
   }

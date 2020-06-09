@@ -51,6 +51,7 @@ import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
@@ -70,12 +71,15 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.Data;
@@ -171,6 +175,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   WechatGrpcService wechatGrpcService;
 
   @Autowired
+  AmcSSORpcServiceImpl amcSSORpcService;
+
+  @Autowired
   CurtInfoMapper curtInfoMapper;
 
   @Autowired
@@ -179,6 +186,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Autowired
   AmcMiscServiceImpl amcMiscService;
+
+  @Autowired
+
 
   @Value("${recom.urls.getTopVisited}")
   String getTopVisited;
@@ -369,8 +379,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   public AmcDebtExtVo get(Long amcDebtId, boolean needAdditionInfo) throws Exception {
 
     List<AmcDebtExt> amcDebtExts = amcDebtExtMapper.selectByPrimaryKeyExt(amcDebtId);
+    List<SSOAmcUser> ssoUsersByIds = amcSSORpcService.getSSOUsersByIds(
+        Arrays.asList(amcDebtExts.get(0).getDebtInfo().getAmcContactorId()));
     if(CollectionUtils.isEmpty(amcDebtExts )){
       throw ExceptionUtils.getAmcException(AmcExceptions.NO_AMCDEBT_AVAILABLE);
+    }
+    if(!CollectionUtils.isEmpty(ssoUsersByIds)){
+      amcDebtExts.get(0).setAmcDebtContactor(ssoUsersByIds.get(0));
     }
     AmcDebtExtVo amcDebtExtVo = new AmcDebtExtVo();
 
@@ -1410,14 +1425,18 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds) {
+  public List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds) throws Exception {
     if(CollectionUtils.isEmpty(debtIds)){
       return new ArrayList<>();
     }
     AmcDebtExample amcDebtExample = new AmcDebtExample();
-    amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());;
+    amcDebtExample.createCriteria().andIdIn(debtIds);
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
-
+    Map<Long, Long> amcDebtId2ssoUserIdMap = amcDebts.stream().collect(Collectors.toMap(item->item.getId(), item->item.getAmcContactorId()));
+    Set<Long> ssoUserIdsSet = amcDebtId2ssoUserIdMap.values().stream().collect(Collectors.toSet());
+    List<SSOAmcUser> ssoAmcUsers = amcSSORpcService.getSSOUsersByIds(new ArrayList(ssoUserIdsSet));
+    Map<Long, SSOAmcUser> ssoAmcUserMap = ssoAmcUsers.stream()
+        .collect(Collectors.toMap(item -> item.getId(), item -> item));
     List<DebtImage> debtImages = queryImages(debtIds);
     Map<Long, DebtImage> debtImageMap = new HashMap<>();
     debtImages.forEach(item -> debtImageMap.put(item.getDebtId(), item));
@@ -1427,10 +1446,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       if(debtImageMap.containsKey(amcDebtVo.getId())){
         amcDebtVo.setDebtImage(debtImageMap.get(amcDebtVo.getId()));
       }
-
+      if(ssoAmcUserMap.containsKey(amcDebtVo.getAmcContactorId())){
+        amcDebtVo.setDebtContactor(ssoAmcUserMap.get(amcDebtVo.getAmcContactorId()));
+      }
       amcDebtVos.add(amcDebtVo);
 
     }
+    updateDebtVosWithCurtInfoFixOrder(amcDebtVos);
     return amcDebtVos;
   }
 
@@ -1439,7 +1461,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     StringBuilder sb = new StringBuilder("%");
     sb.append(title).append("%");
-    amcDebtExample.createCriteria().andTitleLike(sb.toString()).andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andTitleLike(sb.toString()).andPublishStateNotEqualTo(PublishStateEnum.DELETED.getStatus());
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
     return amcDebts;
   }
@@ -1513,12 +1535,19 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public AmcDebtContactor getDebtContactorByDebtId(Long debtId) {
+  public SSOAmcUser getDebtContactorByDebtId(Long debtId) {
+
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
     if(amcDebt.getAmcContactorId() < 0){
       return null;
     }else{
-      return amcDebtContactorMapper.selectByPrimaryKey(amcDebt.getAmcContactorId());
+      List<SSOAmcUser> ssoUsersByIds = amcSSORpcService
+          .getSSOUsersByIds(Arrays.asList(amcDebt.getAmcContactorId()));
+      if(CollectionUtils.isEmpty(ssoUsersByIds)){
+        return null;
+      }else {
+        return ssoUsersByIds.get(0);
+      }
     }
 
   }

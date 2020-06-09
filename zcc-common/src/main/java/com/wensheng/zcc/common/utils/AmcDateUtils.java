@@ -82,6 +82,15 @@ public class AmcDateUtils {
         "UTC")).toInstant());
 
   }
+  public static Date toUTCDateFromLocal(Long timestamp){
+    long timeStampLocal = timestamp;
+    if(String.valueOf(timestamp).length() <= 11){
+      timeStampLocal = timestamp*1000;
+    }
+    return Date.from(LocalDateTime.ofInstant(Instant.ofEpochMilli(timeStampLocal), ZoneId.systemDefault()).atZone(ZoneId.of(
+        "UTC")).toInstant());
+
+  }
 
   public static Date toLocalDateTime(Long timestamp){
     ZoneId defaultZoneId = ZoneId.systemDefault();

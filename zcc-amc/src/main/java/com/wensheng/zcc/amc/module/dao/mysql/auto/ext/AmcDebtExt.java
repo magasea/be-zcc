@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import java.util.List;
 import lombok.Data;
 
@@ -21,5 +22,5 @@ public class AmcDebtExt  {
 
 
   List<AmcDebtor> amcDebtors;
-  AmcDebtContactor amcDebtContactor;
+  SSOAmcUser amcDebtContactor;
 }

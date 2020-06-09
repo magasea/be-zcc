@@ -1,6 +1,7 @@
 package com.wensheng.zcc.common.module.dto;
 
 import java.util.Date;
+import java.util.List;
 import javax.persistence.Id;
 import lombok.Data;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
@@ -22,6 +23,7 @@ public class WXUserFavor {
   String locationCode;
   String locationCityName;
   AmcSaleFilter amcSaleFilter;
+  List<Long> contactorIds;
   Date createTime;
   Date updateTime;
 

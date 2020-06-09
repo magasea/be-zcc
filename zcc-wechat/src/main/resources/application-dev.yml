@@ -88,6 +88,7 @@ spring:
             thread-name-prefix: synchWithScrapySystem
             cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
             cronTagUserExpr: 0 0 23 * * *
+            cronSyncUserFromRecommExpr: 0 0 11,23 * * *
 
 
     cache:
@@ -200,6 +201,8 @@ recomm:
     urls:
         sendSubMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSubMsg
         sendWechatMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSendMsg
+        notifyUserLogin: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/registerUser
+        getUsrVisitInfo: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/lastFetchAndTimespent
 
 message:
     url: http://esms100.10690007.net/sms/mt

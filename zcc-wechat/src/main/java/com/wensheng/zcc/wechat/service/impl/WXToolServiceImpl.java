@@ -2,9 +2,19 @@ package com.wensheng.zcc.wechat.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.ext.WechatUserExtMapper;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample;
 import com.wensheng.zcc.wechat.module.vo.WXGetTicketResp;
 import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
 import com.wensheng.zcc.wechat.module.vo.WXSign4Url;
@@ -14,10 +24,19 @@ import com.wensheng.zcc.wechat.utils.WxToolsUtil;
 import com.wensheng.zcc.wechat.utils.wechat.SHA1;
 import java.time.Instant;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.annotation.PostConstruct;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,7 +45,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -38,6 +59,22 @@ public class WXToolServiceImpl implements WXToolService {
 
   @Value("${weixin.get_ticket_url}")
   String getTicketUrl;
+
+  @Value("${recomm.urls.notifyUserLogin}")
+  String notifyUserLogin;
+
+  @Value("${recomm.urls.getUsrVisitInfo}")
+  String getUsrVisitInfo;
+
+  @Autowired
+  WechatUserMapper wechatUserMapper;
+
+  @Autowired
+  WechatUserStaticMapper wechatUserStaticMapper;
+
+  @Autowired
+  MongoTemplate mongoTemplate;
+
 
   private Gson gson = new Gson();
 
@@ -97,4 +134,92 @@ public class WXToolServiceImpl implements WXToolService {
     return wxSign4Url;
 
   }
+
+  @Override
+  @Scheduled(cron = "${spring.task.scheduling.cronSyncUserFromRecommExpr}")
+  public void syncUserVisitInfoWithRecomm() {
+    int page = 0;
+    int pageSize = 20;
+    HttpHeaders httpHeaders = getHttpJsonHeader();
+    Map<String, Integer> param = new HashMap<>();
+    param.put("page", page);
+    param.put("pageSize", pageSize);
+    HttpEntity<Map> entity = new HttpEntity<>(param, httpHeaders);
+    ResponseEntity<RecommUserInfoResp> resp = restTemplate.exchange(getUsrVisitInfo, HttpMethod.POST, entity, RecommUserInfoResp.class);
+    while(!CollectionUtils.isEmpty(resp.getBody().getInfos())){
+      processRecommUserInfo(resp.getBody().getInfos());
+      page += 1;
+      param.clear();
+      param.put("page", page);
+      param.put("pageSize", pageSize);
+      resp = restTemplate.exchange(getUsrVisitInfo, HttpMethod.POST, entity, RecommUserInfoResp.class);
+    }
+
+  }
+
+  private void processRecommUserInfo(List<RecmmUserInfo> infos) {
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    WechatUserStaticExample wechatUserStaticExample = new WechatUserStaticExample();
+    Query query = null;
+    for(RecmmUserInfo recmmUserInfo: infos){
+      wechatUserExample.clear();
+      wechatUserStaticExample.clear();
+      wechatUserExample.createCriteria().andOpenIdEqualTo(recmmUserInfo.getOpenId());
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(CollectionUtils.isEmpty(wechatUsers)){
+        log.error("There is no such user in zcc for openId:{}", recmmUserInfo.getOpenId());
+        continue;
+      }
+      wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+      List<WechatUserStatic> wechatUserStatics = wechatUserStaticMapper.selectByExample(wechatUserStaticExample);
+      WechatUserStatic wechatUserStatic = null;
+      if(CollectionUtils.isEmpty(wechatUserStatics)){
+        wechatUserStatic = new WechatUserStatic();
+        wechatUserStatic.setWechatUserId(wechatUsers.get(0).getId());
+        wechatUserStaticMapper.insertSelective(wechatUserStatic);
+
+      }else{
+        wechatUserStatic = wechatUserStatics.get(0);
+      }
+      if(recmmUserInfo.getTimestamp() != null){
+        wechatUserStatic.setLastTime(AmcDateUtils.toUTCDateFromLocal(recmmUserInfo.getTimestamp()));
+      }
+      wechatUserStatic.setOnlineTime(recmmUserInfo.getTimeSpent());
+      query = new Query();
+      query.addCriteria(Criteria.where("openId").is(recmmUserInfo.getOpenId()));
+      List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+      wechatUserStatic.setWatchCount(Long.valueOf(wxUserWatchObjects.size()));
+      wechatUserStaticMapper.updateByPrimaryKeySelective(wechatUserStatic);
+      query = null;
+
+    }
+  }
+
+  @Override
+  public void notifyWechatUserLogin(WechatUserInfo wechatUserInfo) {
+    HttpHeaders httpHeaders = getHttpJsonHeader();
+    HttpEntity<WechatUserInfo> httpEntity = new HttpEntity<>(wechatUserInfo, httpHeaders);
+    ResponseEntity resp = restTemplate.exchange(notifyUserLogin, HttpMethod.POST, httpEntity, String.class);
+  }
+
+  @Data
+  class RecommUserInfoResp{
+    Integer page;
+    Integer pageSize;
+    List<String> openIds;
+    List<RecmmUserInfo> infos;
+  }
+
+  @Data
+  class RecmmUserInfo{
+    @SerializedName("openid")
+    String openId;
+    Long timeSpent;
+    String disposal;
+    String link;
+    String title;
+    Long timestamp;
+  }
+
+
 }

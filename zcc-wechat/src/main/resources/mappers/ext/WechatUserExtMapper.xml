@@ -1,33 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper">
-  <resultMap id="BaseResultMap" type="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
-    <id column="id" jdbcType="BIGINT" property="id" />
-    <result column="subscribe" jdbcType="INTEGER" property="subscribe" />
-    <result column="open_id" jdbcType="VARCHAR" property="openId" />
-    <result column="nick_name" jdbcType="CHAR" property="nickName" />
-    <result column="sex" jdbcType="INTEGER" property="sex" />
-    <result column="language" jdbcType="CHAR" property="language" />
-    <result column="city" jdbcType="CHAR" property="city" />
-    <result column="province" jdbcType="CHAR" property="province" />
-    <result column="country" jdbcType="CHAR" property="country" />
-    <result column="head_img_url" jdbcType="VARCHAR" property="headImgUrl" />
-    <result column="subscribe_time" jdbcType="TIMESTAMP" property="subscribeTime" />
-    <result column="union_id" jdbcType="CHAR" property="unionId" />
-    <result column="remark" jdbcType="CHAR" property="remark" />
-    <result column="group_id" jdbcType="INTEGER" property="groupId" />
-    <result column="subscribe_scene" jdbcType="VARCHAR" property="subscribeScene" />
-    <result column="qr_scene" jdbcType="INTEGER" property="qrScene" />
-    <result column="qr_scene_str" jdbcType="VARCHAR" property="qrSceneStr" />
-    <result column="mobile" jdbcType="CHAR" property="mobile" />
-    <result column="verify_code" jdbcType="CHAR" property="verifyCode" />
-    <result column="vcode_time" jdbcType="TIMESTAMP" property="vcodeTime" />
-    <result column="state_info" jdbcType="VARCHAR" property="stateInfo" />
-    <result column="wxusername" jdbcType="CHAR" property="wxusername" />
-    <result column="amc_tag" jdbcType="INTEGER" property="amcTag" />
-    <result column="online_time" jdbcType="BIGINT" property="onlineTime" />
-    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
-    <result column="note" jdbcType="VARCHAR" property="note" />
+<mapper namespace="com.wensheng.zcc.wechat.dao.mysql.mapper.ext.WechatUserExtMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.wechat.module.vo.WechatUserVo">
+
+    <association property="wechatUser"  resultMap="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper.BaseResultMap" columnPrefix="wu_"/>
+    <association property="wechatUserStatic" resultMap="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper.BaseResultMap" columnPrefix="wus_"/>
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -90,17 +67,60 @@
   <sql id="Base_Column_List">
     id, subscribe, open_id, nick_name, sex, language, city, province, country, head_img_url, 
     subscribe_time, union_id, remark, group_id, subscribe_scene, qr_scene, qr_scene_str, 
-    mobile, verify_code, vcode_time, state_info, wxusername, amc_tag, online_time, last_time, 
-    note
+    mobile, verify_code, vcode_time, state_info, wxusername, amc_tag, online_time, last_time
   </sql>
-  <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
+
+  <sql id="alias_column_list">
+    ${prefix}id as ${alias}id,
+    ${prefix}subscribe as ${alias}subscribe,
+    ${prefix}open_id as ${alias}open_id,
+    ${prefix}nick_name as ${alias}nick_name,
+    ${prefix}sex as ${alias}sex,
+    ${prefix}language as ${alias}language,
+    ${prefix}city as ${alias}city,
+    ${prefix}province as ${alias}province,
+    ${prefix}country as ${alias}country,
+    ${prefix}head_img_url as ${alias}head_img_url,
+    ${prefix}subscribe_time as ${alias}subscribe_time,
+    ${prefix}union_id as ${alias}union_id,
+    ${prefix}remark as ${alias}remark,
+    ${prefix}group_id as ${alias}group_id,
+    ${prefix}subscribe_scene as ${alias}subscribe_scene,
+    ${prefix}qr_scene as ${alias}qr_scene,
+    ${prefix}qr_scene_str as ${alias}qr_scene_str,
+    ${prefix}mobile as ${alias}mobile,
+    ${prefix}verify_code as ${alias}verify_code,
+    ${prefix}vcode_time as ${alias}vcode_time,
+    ${prefix}state_info as ${alias}state_info,
+    ${prefix}wxusername as ${alias}wxusername,
+    ${prefix}amc_tag as ${alias}amc_tag,
+    ${prefix}online_time as ${alias}online_time,
+    ${prefix}last_time as ${alias}last_time
+  </sql>
+
+
+  <sql id="WechatUserStatic_Column_List">
+    ${prefix}online_time as ${alias}online_time,
+    ${prefix}last_time as ${alias}last_time,
+    ${prefix}watch_count as ${alias}watch_count
+  </sql>
+  <select id="selectByExtExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from WECHAT_USER
+    <include
+      refid="alias_column_list"><property name="prefix" value="wu."></property><property name="alias"
+      value="wu_"></property>
+    </include>,
+    <include
+      refid="WechatUserStatic_Column_List"><property name="prefix" value="wus."></property><property name="alias"
+      value="wus_"></property>
+    </include>
+    from WECHAT_USER wu
+    left join WECHAT_USER_STATIC as wus
+    on wu.id = wus.id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
@@ -135,8 +155,7 @@
       subscribe_scene, qr_scene, qr_scene_str, 
       mobile, verify_code, vcode_time, 
       state_info, wxusername, amc_tag, 
-      online_time, last_time, note
-      )
+      online_time, last_time)
     values (#{subscribe,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR}, #{nickName,jdbcType=CHAR}, 
       #{sex,jdbcType=INTEGER}, #{language,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
       #{country,jdbcType=CHAR}, #{headImgUrl,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=TIMESTAMP}, 
@@ -144,8 +163,7 @@
       #{subscribeScene,jdbcType=VARCHAR}, #{qrScene,jdbcType=INTEGER}, #{qrSceneStr,jdbcType=VARCHAR}, 
       #{mobile,jdbcType=CHAR}, #{verifyCode,jdbcType=CHAR}, #{vcodeTime,jdbcType=TIMESTAMP}, 
       #{stateInfo,jdbcType=VARCHAR}, #{wxusername,jdbcType=CHAR}, #{amcTag,jdbcType=INTEGER}, 
-      #{onlineTime,jdbcType=BIGINT}, #{lastTime,jdbcType=TIMESTAMP}, #{note,jdbcType=VARCHAR}
-      )
+      #{onlineTime,jdbcType=BIGINT}, #{lastTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -225,9 +243,6 @@
       <if test="lastTime != null">
         last_time,
       </if>
-      <if test="note != null">
-        note,
-      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="subscribe != null">
@@ -301,9 +316,6 @@
       </if>
       <if test="lastTime != null">
         #{lastTime,jdbcType=TIMESTAMP},
-      </if>
-      <if test="note != null">
-        #{note,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -391,9 +403,6 @@
       <if test="record.lastTime != null">
         last_time = #{record.lastTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="record.note != null">
-        note = #{record.note,jdbcType=VARCHAR},
-      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -425,8 +434,7 @@
       wxusername = #{record.wxusername,jdbcType=CHAR},
       amc_tag = #{record.amcTag,jdbcType=INTEGER},
       online_time = #{record.onlineTime,jdbcType=BIGINT},
-      last_time = #{record.lastTime,jdbcType=TIMESTAMP},
-      note = #{record.note,jdbcType=VARCHAR}
+      last_time = #{record.lastTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -506,9 +514,6 @@
       <if test="lastTime != null">
         last_time = #{lastTime,jdbcType=TIMESTAMP},
       </if>
-      <if test="note != null">
-        note = #{note,jdbcType=VARCHAR},
-      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -537,18 +542,25 @@
       wxusername = #{wxusername,jdbcType=CHAR},
       amc_tag = #{amcTag,jdbcType=INTEGER},
       online_time = #{onlineTime,jdbcType=BIGINT},
-      last_time = #{lastTime,jdbcType=TIMESTAMP},
-      note = #{note,jdbcType=VARCHAR}
+      last_time = #{lastTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
-  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
+  <select id="selectByExampleWithRowboundsExt" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
     select
     <if test="distinct">
       distinct
     </if>
     'true' as QUERYID,
-    <include refid="Base_Column_List" />
-    from WECHAT_USER
+    <include
+      refid="alias_column_list"><property name="prefix" value="wu."></property><property name="alias"
+      value="wu_"></property>
+    </include>,
+    <include
+    refid="WechatUserStatic_Column_List"><property name="prefix" value="wus."></property><property name="alias"
+    value="wus_"></property>
+    </include>
+    from WECHAT_USER wu left join WECHAT_USER_STATIC wus
+    on wu.id = wus.wechat_user_id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>

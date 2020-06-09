@@ -116,6 +116,9 @@
                                 <resource>
                                     <directory>../protos/zcc-amc/</directory>
                                 </resource>
+                                <resource>
+                                    <directory>../protos/amc-sso/</directory>
+                                </resource>
                             </resources>
                         </configuration>
                     </execution>

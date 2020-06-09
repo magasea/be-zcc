@@ -18,6 +18,7 @@ import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
+import com.wensheng.zcc.amc.service.AmcSSORpcService;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -27,6 +28,7 @@ import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.module.dto.Region;
 import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -93,6 +95,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     @Autowired
     WechatGrpcService wechatGrpcService;
+
+    @Autowired
+    AmcSSORpcService amcSSORpcService;
 
     @Autowired
     ComnFuncServiceBlockingStub comnfuncServiceStub;
@@ -291,11 +296,15 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     List<AmcDebt> debtSimpleByIds = amcDebtService
         .getDebtSimpleByIds(debtIds.stream().collect(Collectors.toList()));
     Map<Long, Long> debtId2ContactorIdMap = debtSimpleByIds.stream().collect(Collectors.toMap(item->item.getId(), item->item.getAmcContactorId()));
-    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
-    amcDebtContactorExample.createCriteria().andIdIn(debtId2ContactorIdMap.values().stream().collect(Collectors.toList()));
-    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper
-        .selectByExample(amcDebtContactorExample);
-    Map<Long, AmcDebtContactor> amcDebtContactorMap = amcDebtContactors.stream()
+    Set<Long> contactorIdsSet =  debtId2ContactorIdMap.values().stream().collect(Collectors.toSet());
+    List<Long> contactorIds = new ArrayList<>(contactorIdsSet);
+    List<SSOAmcUser> ssoAmcUsers =  amcSSORpcService.getSSOUsersByIds(contactorIds);
+    //    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+//    amcDebtContactorExample.createCriteria().andIdIn(debtId2ContactorIdMap.values().stream().collect(Collectors.toList()));
+//    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper
+//        .selectByExample(amcDebtContactorExample);
+
+    Map<Long, SSOAmcUser> amcDebtContactorMap = ssoAmcUsers.stream()
         .collect(Collectors.toMap(item -> item.getId(), item -> item));
     Query query = new Query();
     query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
@@ -314,7 +323,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
   private void setContactors(Map<Long, Long> asset2debtIdMap, Map<Long, Long> debtId2ContactorIdMap,
       List<AmcAssetVo> amcAssetVos,
-      Map<Long, AmcDebtContactor> amcDebtContactors) {
+      Map<Long, SSOAmcUser> amcDebtContactors) {
 
       for(AmcAssetVo amcAssetVo: amcAssetVos){
         if(asset2debtIdMap.containsKey(amcAssetVo.getId())){
@@ -348,7 +357,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             }
 
         }
-        AmcDebtContactor amcDebtContactor = amcDebtService.getDebtContactorByDebtId(amcAsset.getDebtId());
+        SSOAmcUser amcDebtContactor = amcDebtService.getDebtContactorByDebtId(amcAsset.getDebtId());
         amcAssetDetailVo.setAmcDebtContactor(amcDebtContactor);
         return amcAssetDetailVo;
     }
@@ -586,7 +595,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
   public List<AmcAssetVo> getAssetByTitleLike(String assetTitle) throws Exception {
       AmcAssetExample amcAssetExample = new AmcAssetExample();
       StringBuilder sb = new StringBuilder("%");
-      amcAssetExample.createCriteria().andTitleLike(sb.append(assetTitle).append("%").toString());
+      amcAssetExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andTitleLike(sb.append(assetTitle).append("%").toString());
       List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
 
 

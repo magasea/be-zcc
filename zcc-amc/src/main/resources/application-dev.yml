@@ -18,6 +18,9 @@ grpc:
     recm:
       host: ${env.recmhost}
       port: 10018
+    amcsso:
+      host: ${env.ws-sso-host}
+      port: 11012
 logging:
     level:
         com:

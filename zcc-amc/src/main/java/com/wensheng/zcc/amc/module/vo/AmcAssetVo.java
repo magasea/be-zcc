@@ -3,6 +3,7 @@ package com.wensheng.zcc.amc.module.vo;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -92,5 +93,5 @@ public class AmcAssetVo {
 
   AssetImage assetImage;
 
-  AmcDebtContactor amcDebtContactor;
+  SSOAmcUser amcDebtContactor;
 }

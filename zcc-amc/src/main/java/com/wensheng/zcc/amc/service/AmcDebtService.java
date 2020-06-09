@@ -19,6 +19,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
@@ -130,7 +131,7 @@ public interface AmcDebtService {
 
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
 
-  List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds);
+  List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds) throws Exception;
 
   List<AmcDebt> getDebtSimpleByTitleLike(String title);
 
@@ -144,7 +145,7 @@ public interface AmcDebtService {
 
   List<AmcContactorDTO> getDebtContactorByDebtIds(List<Long> debtIds);
 
-  AmcDebtContactor getDebtContactorByDebtId(Long debtId);
+  SSOAmcUser getDebtContactorByDebtId(Long debtId);
 
   List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt) throws Exception;
 

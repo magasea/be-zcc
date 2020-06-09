@@ -7,6 +7,7 @@ import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
+import com.wensheng.zcc.wechat.controller.helper.QueryParam;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
@@ -17,6 +18,7 @@ import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnVo;
+import com.wensheng.zcc.wechat.module.vo.WechatUserVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
@@ -26,6 +28,7 @@ import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.UserIdsResp;
 import com.wensheng.zcc.wechat.utils.wechat.AesException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
@@ -333,17 +336,21 @@ public class WechatUserController {
 
   @RequestMapping(value = "/user/getUserInfos", method = RequestMethod.POST)
   @ResponseBody
-  public AmcPage<WechatUser> getUserInfos(@RequestBody PageInfo pageInfo) throws Exception {
+  public AmcPage<WechatUserVo> getUserInfos(@RequestBody QueryParam queryParam) throws Exception {
+//    Map<String, Direction> orderByParam = new HashMap<>();
+//    if(queryParam.getPageInfo()!= null && queryParam.getPageInfo().getSort() == null){
+//      orderByParam.put("id", Direction.DESC);
+//    }else{
+//      orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+//    }
+//    if (CollectionUtils.isEmpty(orderByParam)) {
+//      orderByParam.put("id", Direction.DESC);
+//    }
 
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
-    if (CollectionUtils.isEmpty(orderByParam)) {
-      orderByParam.put("id", Direction.DESC);
-    }
-
-    int offset = PageReqRepHelper.getOffset(pageInfo);
-    List<WechatUser> wechatUsers;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    List<WechatUserVo> wechatUsers;
     try {
-      wechatUsers = wxService.getAllWechatUsers(offset, pageInfo.getSize(), orderByParam);
+      wechatUsers = wxService.getAllWechatUsers(offset, queryParam.getPageInfo().getSize(), queryParam);
 
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());

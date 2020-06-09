@@ -146,24 +146,38 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   @Override
+  @Transactional(rollbackFor = Exception.class)
   public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId) throws Exception {
-    List<CustAmcCmpycontactor> custAmcCmpycontactorList = new ArrayList<>();
-    CustAmcCmpycontactor toCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(toContactorId);
-    if(null == toCmpycontactor){
+
+    CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
+    custAmcCmpycontactorExample.createCriteria().andIdIn(fromContactorIds);
+    fromContactorIds.add(toContactorId);
+    List<CustAmcCmpycontactor> custAmcCmpycontactors =
+        custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+    if(fromContactorIds.size() != custAmcCmpycontactors.size()){
       throw new Exception("未查到对应的公司联系人");
     }
 
+    Set<Long> compIds = new HashSet<>();
+    Map<Long,CustAmcCmpycontactor> custAmcCmpycontactorHashMap= new HashMap<>();
+    //转换为map
+    for (CustAmcCmpycontactor custAmcCmpycontactor : custAmcCmpycontactors){
+      compIds.add(custAmcCmpycontactor.getCmpyId());
+      custAmcCmpycontactorHashMap.put(custAmcCmpycontactor.getId(),custAmcCmpycontactor);
+    }
+    //判断是否是同一公司
+    if(compIds.size()!=1){
+      throw new Exception("不是同一个公司联系人，无法合并");
+    }
+
+
     //查询要合并的原订单
     for (Long cmpycontactorId : fromContactorIds) {
-      CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(cmpycontactorId);
-      if(null == originalCmpycontactor){
-        throw new Exception("未查到对应的公司联系人");
-      }
+      CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorHashMap.get(cmpycontactorId);
 
       CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
       custAmcCmpycontactor.setId(cmpycontactorId);
       custAmcCmpycontactor.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
-      custAmcCmpycontactorList.add(custAmcCmpycontactor);
 
       //查询要更改的交易
       CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
@@ -193,9 +207,12 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       sbTrdInfoBak.append(toContactorId);
       custAmcCmpycontactor.setTrdInfoBak(sbTrdInfoBak.toString());
       commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "mergeCmpycontactor",
-          "人工合并", originalCmpycontactor);
+          String.format("人工合并至%d",toContactorId), originalCmpycontactor);
       custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
     }
+
+    //修改合并人的电话
+
   }
 
 

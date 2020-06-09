@@ -5,17 +5,21 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfoExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -175,20 +179,32 @@ public class CustPersonServiceImpl implements CustPersonService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public void mergeCustPerson(List<Long> fromPersonIds, Long toPersonId) throws Exception {
-    List<CustTrdPerson> custTrdPersonList = new ArrayList<>();
+
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    fromPersonIds.add(toPersonId);
+    custTrdPersonExample.createCriteria().andIdIn(fromPersonIds);
+    List<CustTrdPerson>  custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    if(fromPersonIds.size() != custTrdPersonList.size()){
+      throw new Exception("未查到对应的自然人");
+    }
+
+    Map<Long, CustTrdPerson> custTrdPersonHashMap= new HashMap<>();
+    for(CustTrdPerson custTrdPerson : custTrdPersonList){
+      custTrdPersonHashMap.put(custTrdPerson.getId(), custTrdPerson);
+    }
+
     //查询要合并的原订单
     for (Long personId : fromPersonIds) {
+      CustTrdPerson originalCustTrdPerson = custTrdPersonHashMap.get(personId);
+
       CustTrdPerson custTrdPerson = new CustTrdPerson();
       custTrdPerson.setId(personId);
       custTrdPerson.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
-      custTrdPersonList.add(custTrdPerson);
-
       //查询要更改的交易
       CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
       custTrdInfoExample.createCriteria().andBuyerIdEqualTo(personId).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
       List<CustTrdInfo> custTrdInfoList = custTrdInfoMapper.selectByExample(custTrdInfoExample);
       StringBuilder sbTrdInfoBak = new StringBuilder();
-
       if (!CollectionUtils.isEmpty(custTrdInfoList)){
         sbTrdInfoBak.append("trdInfoId:");
         for(CustTrdInfo custTrdInfo : custTrdInfoList){
@@ -210,8 +226,13 @@ public class CustPersonServiceImpl implements CustPersonService {
       sbTrdInfoBak.append("toPersonId:");
       sbTrdInfoBak.append(toPersonId);
       custTrdPerson.setTrdInfoBak(sbTrdInfoBak.toString());
+      commonHandler.creatPersonHistory(custTrdPerson.getUpdateBy(),
+          "mergeCustPerson", String.format("人工合并至：%d",toPersonId), originalCustTrdPerson);
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     }
+
+    //修改合并人的电话
+    
   }
 
 

@@ -30,6 +30,7 @@ import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
+import org.apache.kafka.common.protocol.types.Field.Str;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -147,7 +148,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId) throws Exception {
+  public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId,  Long updateBy) throws Exception {
 
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
     custAmcCmpycontactorExample.createCriteria().andIdIn(fromContactorIds);
@@ -170,11 +171,25 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       throw new Exception("不是同一个公司联系人，无法合并");
     }
 
+    // 合并到的联系人
+    CustAmcCmpycontactor toCustAmcCmpycontactor = custAmcCmpycontactorHashMap.get(toContactorId);
+    CustAmcCmpycontactor toCustAmcCmpycontactorNew = new CustAmcCmpycontactor();
+    toCustAmcCmpycontactorNew.setId(toContactorId);
+    toCustAmcCmpycontactorNew.setMobileUpdate(toCustAmcCmpycontactor.getMobileUpdate());
+    toCustAmcCmpycontactorNew.setMobilePrep(toCustAmcCmpycontactor.getMobilePrep());
+    toCustAmcCmpycontactorNew.setMobileHistory(toCustAmcCmpycontactor.getMobileHistory());
+    toCustAmcCmpycontactorNew.setPhoneUpdate(toCustAmcCmpycontactor.getPhoneUpdate());
+    toCustAmcCmpycontactorNew.setPhonePrep(toCustAmcCmpycontactor.getPhonePrep());
+    toCustAmcCmpycontactorNew.setPhoneHistory(toCustAmcCmpycontactor.getPhoneHistory());
+
 
     //查询要合并的原订单
     for (Long cmpycontactorId : fromContactorIds) {
+      if(cmpycontactorId.equals(toContactorId)){
+        continue;
+      }
       CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorHashMap.get(cmpycontactorId);
-
+      creatCustAmcCmpycontactorNew(toCustAmcCmpycontactorNew, originalCmpycontactor);
       CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
       custAmcCmpycontactor.setId(cmpycontactorId);
       custAmcCmpycontactor.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
@@ -206,15 +221,93 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       sbTrdInfoBak.append("toPersonId:");
       sbTrdInfoBak.append(toContactorId);
       custAmcCmpycontactor.setTrdInfoBak(sbTrdInfoBak.toString());
-      commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "mergeCmpycontactor",
+      commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
           String.format("人工合并至%d",toContactorId), originalCmpycontactor);
       custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
     }
 
+    //去重
+    toCustAmcCmpycontactorNew.setMobileUpdate(removalPhone(toCustAmcCmpycontactorNew.getMobileUpdate()));
+    toCustAmcCmpycontactorNew.setMobilePrep(removalPhone(toCustAmcCmpycontactorNew.getMobilePrep()));
+    toCustAmcCmpycontactorNew.setMobileHistory(removalPhone(toCustAmcCmpycontactorNew.getMobileHistory()));
+    toCustAmcCmpycontactorNew.setPhoneUpdate(removalPhone(toCustAmcCmpycontactorNew.getPhoneUpdate()));
+    toCustAmcCmpycontactorNew.setPhonePrep(removalPhone(toCustAmcCmpycontactorNew.getPhonePrep()));
+    toCustAmcCmpycontactorNew.setPhoneHistory(removalPhone(toCustAmcCmpycontactorNew.getPhoneHistory()));
+
     //修改合并人的电话
+    commonHandler.creatCmpycontactorHistory(updateBy, "toCustAmcCmpycontactor",
+        "人工合并", toCustAmcCmpycontactor);
+    custAmcCmpycontactorMapper.updateByPrimaryKeySelective(toCustAmcCmpycontactorNew);
 
   }
 
+  private String removalPhone(String phone) {
+    String[] phoneArray = phone.split(";");
+    Set<String> phoneSet = new HashSet();
+    for(int i=0;i<phoneArray.length;i++){
+      phoneSet.add(phoneArray[i]);
+    }
+    StringBuffer sbPhoneNew = new StringBuffer();
+    for (String phoneNew:phoneSet){
+      if(sbPhoneNew.length()>0){
+        sbPhoneNew.append(";");
+      }
+      sbPhoneNew.append(phoneNew);
+    }
+
+    return sbPhoneNew.toString();
+  }
+
+  private void creatCustAmcCmpycontactorNew(CustAmcCmpycontactor toCustAmcCmpycontactorNew,
+      CustAmcCmpycontactor originalCmpycontactor) {
+    if(null != originalCmpycontactor.getMobileUpdate() &&!"-1".equals(originalCmpycontactor.getMobileUpdate())){
+      if(null == toCustAmcCmpycontactorNew.getMobileUpdate() || "-1".equals(toCustAmcCmpycontactorNew.getMobileUpdate())){
+        toCustAmcCmpycontactorNew.setMobileUpdate(originalCmpycontactor.getMobileUpdate());
+      }else {
+        toCustAmcCmpycontactorNew.setMobileUpdate(toCustAmcCmpycontactorNew.getMobileUpdate()+";"+originalCmpycontactor.getMobileUpdate());
+      }
+    }
+
+    if(null != originalCmpycontactor.getMobilePrep() &&!"-1".equals(originalCmpycontactor.getMobilePrep())){
+      if(null == toCustAmcCmpycontactorNew.getMobilePrep() || "-1".equals(toCustAmcCmpycontactorNew.getMobilePrep())){
+        toCustAmcCmpycontactorNew.setMobilePrep(originalCmpycontactor.getMobilePrep());
+      }else {
+        toCustAmcCmpycontactorNew.setMobilePrep(toCustAmcCmpycontactorNew.getMobilePrep()+";"+originalCmpycontactor.getMobilePrep());
+      }
+    }
+
+    if(null != originalCmpycontactor.getMobileHistory() &&!"-1".equals(originalCmpycontactor.getMobileHistory())){
+      if(null == toCustAmcCmpycontactorNew.getMobileHistory() || "-1".equals(toCustAmcCmpycontactorNew.getMobileHistory())){
+        toCustAmcCmpycontactorNew.setMobileHistory(originalCmpycontactor.getMobileHistory());
+      }else {
+        toCustAmcCmpycontactorNew.setMobileHistory(toCustAmcCmpycontactorNew.getMobileHistory()+";"+originalCmpycontactor.getMobileHistory());
+      }
+    }
+
+    if(null != originalCmpycontactor.getPhoneUpdate() &&!"-1".equals(originalCmpycontactor.getPhoneUpdate())){
+      if(null == toCustAmcCmpycontactorNew.getPhoneUpdate() || "-1".equals(toCustAmcCmpycontactorNew.getPhoneUpdate())){
+        toCustAmcCmpycontactorNew.setPhoneUpdate(originalCmpycontactor.getPhoneUpdate());
+      }else {
+        toCustAmcCmpycontactorNew.setPhoneUpdate(toCustAmcCmpycontactorNew.getPhoneUpdate()+";"+originalCmpycontactor.getPhoneUpdate());
+      }
+    }
+
+    if(null != originalCmpycontactor.getPhonePrep() &&!"-1".equals(originalCmpycontactor.getPhonePrep())){
+      if(null == toCustAmcCmpycontactorNew.getPhonePrep() || "-1".equals(toCustAmcCmpycontactorNew.getPhonePrep())){
+        toCustAmcCmpycontactorNew.setPhonePrep(originalCmpycontactor.getPhonePrep());
+      }else {
+        toCustAmcCmpycontactorNew.setPhonePrep(toCustAmcCmpycontactorNew.getPhonePrep()+";"+originalCmpycontactor.getPhonePrep());
+      }
+    }
+
+    if(null != originalCmpycontactor.getPhoneHistory() &&!"-1".equals(originalCmpycontactor.getPhoneHistory())){
+      if(null == toCustAmcCmpycontactorNew.getPhoneHistory() || "-1".equals(toCustAmcCmpycontactorNew.getPhoneHistory())){
+        toCustAmcCmpycontactorNew.setPhoneHistory(originalCmpycontactor.getPhoneHistory());
+      }else {
+        toCustAmcCmpycontactorNew.setPhoneHistory(toCustAmcCmpycontactorNew.getPhoneHistory()+";"+originalCmpycontactor.getPhoneHistory());
+      }
+    }
+  }
 
   private void creatMobilePhoneHistory(CustAmcCmpycontactor custAmcCmpycontactor,
       CustAmcCmpycontactor originalCmpycontactor) {

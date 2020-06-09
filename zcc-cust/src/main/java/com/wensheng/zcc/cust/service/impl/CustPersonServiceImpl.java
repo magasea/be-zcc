@@ -195,6 +195,9 @@ public class CustPersonServiceImpl implements CustPersonService {
 
     //查询要合并的原订单
     for (Long personId : fromPersonIds) {
+      if(personId.equals(toPersonId)){
+        continue;
+      }
       CustTrdPerson originalCustTrdPerson = custTrdPersonHashMap.get(personId);
 
       CustTrdPerson custTrdPerson = new CustTrdPerson();

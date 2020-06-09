@@ -67,8 +67,9 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void mergeCmpyAmcContactor(@RequestBody List<Long> fromContactorIds, @RequestParam Long toContactorId) throws Exception{
-    amcContactorService.mergeCmpycontactor(fromContactorIds, toContactorId);
+  public void mergeCmpyAmcContactor(@RequestBody List<Long> fromContactorIds,
+      @RequestParam Long toContactorId, @RequestParam Long updateBy) throws Exception{
+    amcContactorService.mergeCmpycontactor(fromContactorIds, toContactorId, updateBy);
   }
 
 

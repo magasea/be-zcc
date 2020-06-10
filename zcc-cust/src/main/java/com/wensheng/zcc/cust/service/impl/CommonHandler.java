@@ -15,7 +15,9 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -126,6 +128,28 @@ public class CommonHandler {
     custCmpycontactorHistory.setUpdateMethod(updateMethod);
     custCmpycontactorHistory.setRemark(remark);
     custCmpycontactorHistoryMapper.insertSelective(custCmpycontactorHistory);
+  }
+
+  /**
+   * 电话去重
+   * @param phone
+   * @return
+   */
+  public String removalPhone(String phone) {
+    String[] phoneArray = phone.split(";");
+    Set<String> phoneSet = new HashSet();
+    for(int i=0;i<phoneArray.length;i++){
+      phoneSet.add(phoneArray[i]);
+    }
+    StringBuffer sbPhoneNew = new StringBuffer();
+    for (String phoneNew:phoneSet){
+      if(sbPhoneNew.length()>0){
+        sbPhoneNew.append(";");
+      }
+      sbPhoneNew.append(phoneNew);
+    }
+
+    return sbPhoneNew.toString();
   }
 
   /**

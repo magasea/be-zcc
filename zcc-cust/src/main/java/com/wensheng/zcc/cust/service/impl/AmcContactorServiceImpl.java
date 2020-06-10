@@ -151,8 +151,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId,  Long updateBy) throws Exception {
 
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
-    custAmcCmpycontactorExample.createCriteria().andIdIn(fromContactorIds);
     fromContactorIds.add(toContactorId);
+    custAmcCmpycontactorExample.createCriteria().andIdIn(fromContactorIds);
     List<CustAmcCmpycontactor> custAmcCmpycontactors =
         custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
     if(fromContactorIds.size() != custAmcCmpycontactors.size()){
@@ -198,7 +198,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
       custTrdInfoExample.createCriteria().andTrdCmpycontactorIdEqualTo(cmpycontactorId);
       List<CustTrdInfo> custTrdInfoList = custTrdInfoMapper.selectByExample(custTrdInfoExample);
-      StringBuilder sbTrdInfoBak = new StringBuilder();
+      StringBuffer sbTrdInfoBak = new StringBuffer();
 
       if (!CollectionUtils.isEmpty(custTrdInfoList)){
         sbTrdInfoBak.append("trdInfoId:");
@@ -206,13 +206,13 @@ public class AmcContactorServiceImpl implements AmcContactorService {
           if(sbTrdInfoBak.length()>0){
             sbTrdInfoBak.append(",");
           }
-          sbTrdInfoBak.append(custTrdInfo);
+          sbTrdInfoBak.append(custTrdInfo.getId());
 
           CustTrdInfo custTrdInfoNew = new CustTrdInfo();
           custTrdInfoNew.setId(custTrdInfo.getId());
-          custTrdInfoNew.setBuyerId(toContactorId);
+          custTrdInfoNew.setTrdCmpycontactorId(toContactorId);
           //修改更改的交易指向新自然人
-          custTrdInfoMapper.updateByPrimaryKey(custTrdInfoNew);
+          custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoNew);
         }
       }
       if(sbTrdInfoBak.length()>0){
@@ -220,6 +220,8 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       }
       sbTrdInfoBak.append("toPersonId:");
       sbTrdInfoBak.append(toContactorId);
+      custAmcCmpycontactor.setUpdateBy(updateBy);
+      custAmcCmpycontactor.setUpdateTime(new Date());
       custAmcCmpycontactor.setTrdInfoBak(sbTrdInfoBak.toString());
       commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
           String.format("人工合并至%d",toContactorId), originalCmpycontactor);
@@ -227,35 +229,18 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
 
     //去重
-    toCustAmcCmpycontactorNew.setMobileUpdate(removalPhone(toCustAmcCmpycontactorNew.getMobileUpdate()));
-    toCustAmcCmpycontactorNew.setMobilePrep(removalPhone(toCustAmcCmpycontactorNew.getMobilePrep()));
-    toCustAmcCmpycontactorNew.setMobileHistory(removalPhone(toCustAmcCmpycontactorNew.getMobileHistory()));
-    toCustAmcCmpycontactorNew.setPhoneUpdate(removalPhone(toCustAmcCmpycontactorNew.getPhoneUpdate()));
-    toCustAmcCmpycontactorNew.setPhonePrep(removalPhone(toCustAmcCmpycontactorNew.getPhonePrep()));
-    toCustAmcCmpycontactorNew.setPhoneHistory(removalPhone(toCustAmcCmpycontactorNew.getPhoneHistory()));
+    toCustAmcCmpycontactorNew.setMobileUpdate(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobileUpdate()));
+    toCustAmcCmpycontactorNew.setMobilePrep(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobilePrep()));
+    toCustAmcCmpycontactorNew.setMobileHistory(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobileHistory()));
+    toCustAmcCmpycontactorNew.setPhoneUpdate(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhoneUpdate()));
+    toCustAmcCmpycontactorNew.setPhonePrep(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhonePrep()));
+    toCustAmcCmpycontactorNew.setPhoneHistory(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhoneHistory()));
 
     //修改合并人的电话
-    commonHandler.creatCmpycontactorHistory(updateBy, "toCustAmcCmpycontactor",
-        "人工合并", toCustAmcCmpycontactor);
+    commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
+        "合并记录", toCustAmcCmpycontactor);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(toCustAmcCmpycontactorNew);
 
-  }
-
-  private String removalPhone(String phone) {
-    String[] phoneArray = phone.split(";");
-    Set<String> phoneSet = new HashSet();
-    for(int i=0;i<phoneArray.length;i++){
-      phoneSet.add(phoneArray[i]);
-    }
-    StringBuffer sbPhoneNew = new StringBuffer();
-    for (String phoneNew:phoneSet){
-      if(sbPhoneNew.length()>0){
-        sbPhoneNew.append(";");
-      }
-      sbPhoneNew.append(phoneNew);
-    }
-
-    return sbPhoneNew.toString();
   }
 
   private void creatCustAmcCmpycontactorNew(CustAmcCmpycontactor toCustAmcCmpycontactorNew,
@@ -635,16 +620,17 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 //        .andBuyerTypeEqualTo(CustTypeEnum.COMPANY.getId()).andTrdContactorNameEqualTo(custAmcCmpycontactor.getName());
     custTrdInfoExample.createCriteria().andTrdCmpycontactorIdEqualTo(contactorId);
     List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
-    custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(new ArrayList<>());
-    for(CustTrdInfo custTrdInfo : custTrdInfos){
-      if(custTrdInfo.getTrdContactorName().equals(custAmcCmpycontactor.getName())){
-        //get phone info to compare
-        String phone = getPhoneFromTrdInfo(custTrdInfo);
-        if(custAmcCmpycontactor.getTrdPhone().equals(phone)){
-          custAmcCmpycontactorTrdInfoVo.getCustTrdInfoList().add(custTrdInfo);
-        }
-      }
-    }
+//    custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(new ArrayList<>());
+//    for(CustTrdInfo custTrdInfo : custTrdInfos){
+//      if(custTrdInfo.getTrdContactorName().equals(custAmcCmpycontactor.getName())){
+//        //get phone info to compare
+//        String phone = getPhoneFromTrdInfo(custTrdInfo);
+//        if(custAmcCmpycontactor.getTrdPhone().equals(phone)){
+//          custAmcCmpycontactorTrdInfoVo.getCustTrdInfoList().add(custTrdInfo);
+//        }
+//      }
+//    }
+    custAmcCmpycontactorTrdInfoVo.setCustTrdInfoList(custTrdInfos);
     return custAmcCmpycontactorTrdInfoVo;
   }
 

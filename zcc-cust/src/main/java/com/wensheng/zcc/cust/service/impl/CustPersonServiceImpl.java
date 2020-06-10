@@ -178,7 +178,7 @@ public class CustPersonServiceImpl implements CustPersonService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void mergeCustPerson(List<Long> fromPersonIds, Long toPersonId) throws Exception {
+  public void mergeCustPerson(List<Long> fromPersonIds, Long toPersonId, Long updateBy) throws Exception {
 
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
     fromPersonIds.add(toPersonId);
@@ -192,6 +192,17 @@ public class CustPersonServiceImpl implements CustPersonService {
     for(CustTrdPerson custTrdPerson : custTrdPersonList){
       custTrdPersonHashMap.put(custTrdPerson.getId(), custTrdPerson);
     }
+
+    // 合并到的自然人
+    CustTrdPerson toCustTrdPerson = custTrdPersonHashMap.get(toPersonId);
+    CustTrdPerson toCustTrdPersonNew = new CustTrdPerson();
+    toCustTrdPersonNew.setId(toPersonId);
+    toCustTrdPersonNew.setMobileUpdate(toCustTrdPerson.getMobileUpdate());
+    toCustTrdPersonNew.setMobilePrep(toCustTrdPerson.getMobilePrep());
+    toCustTrdPersonNew.setMobileHistory(toCustTrdPerson.getMobileHistory());
+    toCustTrdPersonNew.setPhoneUpdate(toCustTrdPerson.getPhoneUpdate());
+    toCustTrdPersonNew.setPhonePrep(toCustTrdPerson.getPhonePrep());
+    toCustTrdPersonNew.setPhoneHistory(toCustTrdPerson.getPhoneHistory());
 
     //查询要合并的原订单
     for (Long personId : fromPersonIds) {
@@ -207,20 +218,20 @@ public class CustPersonServiceImpl implements CustPersonService {
       CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
       custTrdInfoExample.createCriteria().andBuyerIdEqualTo(personId).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
       List<CustTrdInfo> custTrdInfoList = custTrdInfoMapper.selectByExample(custTrdInfoExample);
-      StringBuilder sbTrdInfoBak = new StringBuilder();
+      StringBuffer sbTrdInfoBak = new StringBuffer();
       if (!CollectionUtils.isEmpty(custTrdInfoList)){
         sbTrdInfoBak.append("trdInfoId:");
         for(CustTrdInfo custTrdInfo : custTrdInfoList){
           if(sbTrdInfoBak.length()>0){
             sbTrdInfoBak.append(",");
           }
-          sbTrdInfoBak.append(custTrdInfo);
+          sbTrdInfoBak.append(custTrdInfo.getId());
 
           CustTrdInfo custTrdInfoNew = new CustTrdInfo();
           custTrdInfoNew.setId(custTrdInfo.getId());
           custTrdInfoNew.setBuyerId(toPersonId);
           //修改更改的交易指向新自然人
-          custTrdInfoMapper.updateByPrimaryKey(custTrdInfoNew);
+          custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoNew);
         }
       }
       if(sbTrdInfoBak.length()>0){
@@ -234,8 +245,18 @@ public class CustPersonServiceImpl implements CustPersonService {
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
     }
 
+    //去重
+    toCustTrdPersonNew.setMobileUpdate(commonHandler.removalPhone(toCustTrdPersonNew.getMobileUpdate()));
+    toCustTrdPersonNew.setMobilePrep(commonHandler.removalPhone(toCustTrdPersonNew.getMobilePrep()));
+    toCustTrdPersonNew.setMobileHistory(commonHandler.removalPhone(toCustTrdPersonNew.getMobileHistory()));
+    toCustTrdPersonNew.setPhoneUpdate(commonHandler.removalPhone(toCustTrdPersonNew.getPhoneUpdate()));
+    toCustTrdPersonNew.setPhonePrep(commonHandler.removalPhone(toCustTrdPersonNew.getPhonePrep()));
+    toCustTrdPersonNew.setPhoneHistory(commonHandler.removalPhone(toCustTrdPersonNew.getPhoneHistory()));
+
     //修改合并人的电话
-    
+    commonHandler.creatPersonHistory(updateBy, "mergeCustPerson",
+        "合并记录", toCustTrdPerson);
+    custTrdPersonMapper.updateByPrimaryKeySelective(toCustTrdPersonNew);
   }
 
 

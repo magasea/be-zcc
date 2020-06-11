@@ -7,6 +7,8 @@
     <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
     <result column="watch_count" jdbcType="BIGINT" property="watchCount" />
     <result column="wechat_user_id" jdbcType="BIGINT" property="wechatUserId" />
+    <result column="login_ip" jdbcType="CHAR" property="loginIp" />
+    <result column="first_login_time" jdbcType="TIMESTAMP" property="firstLoginTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -67,7 +69,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, online_time, last_time, watch_count, wechat_user_id
+    id, online_time, last_time, watch_count, wechat_user_id, login_ip, first_login_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample" resultMap="BaseResultMap">
     select
@@ -105,9 +107,11 @@
       SELECT LAST_INSERT_ID()
     </selectKey>
     insert into WECHAT_USER_STATIC (online_time, last_time, watch_count, 
-      wechat_user_id)
+      wechat_user_id, login_ip, first_login_time
+      )
     values (#{onlineTime,jdbcType=BIGINT}, #{lastTime,jdbcType=TIMESTAMP}, #{watchCount,jdbcType=BIGINT}, 
-      #{wechatUserId,jdbcType=BIGINT})
+      #{wechatUserId,jdbcType=BIGINT}, #{loginIp,jdbcType=CHAR}, #{firstLoginTime,jdbcType=TIMESTAMP}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -127,6 +131,12 @@
       <if test="wechatUserId != null">
         wechat_user_id,
       </if>
+      <if test="loginIp != null">
+        login_ip,
+      </if>
+      <if test="firstLoginTime != null">
+        first_login_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="onlineTime != null">
@@ -140,6 +150,12 @@
       </if>
       <if test="wechatUserId != null">
         #{wechatUserId,jdbcType=BIGINT},
+      </if>
+      <if test="loginIp != null">
+        #{loginIp,jdbcType=CHAR},
+      </if>
+      <if test="firstLoginTime != null">
+        #{firstLoginTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -167,6 +183,12 @@
       <if test="record.wechatUserId != null">
         wechat_user_id = #{record.wechatUserId,jdbcType=BIGINT},
       </if>
+      <if test="record.loginIp != null">
+        login_ip = #{record.loginIp,jdbcType=CHAR},
+      </if>
+      <if test="record.firstLoginTime != null">
+        first_login_time = #{record.firstLoginTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -178,7 +200,9 @@
       online_time = #{record.onlineTime,jdbcType=BIGINT},
       last_time = #{record.lastTime,jdbcType=TIMESTAMP},
       watch_count = #{record.watchCount,jdbcType=BIGINT},
-      wechat_user_id = #{record.wechatUserId,jdbcType=BIGINT}
+      wechat_user_id = #{record.wechatUserId,jdbcType=BIGINT},
+      login_ip = #{record.loginIp,jdbcType=CHAR},
+      first_login_time = #{record.firstLoginTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -198,6 +222,12 @@
       <if test="wechatUserId != null">
         wechat_user_id = #{wechatUserId,jdbcType=BIGINT},
       </if>
+      <if test="loginIp != null">
+        login_ip = #{loginIp,jdbcType=CHAR},
+      </if>
+      <if test="firstLoginTime != null">
+        first_login_time = #{firstLoginTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -206,7 +236,9 @@
     set online_time = #{onlineTime,jdbcType=BIGINT},
       last_time = #{lastTime,jdbcType=TIMESTAMP},
       watch_count = #{watchCount,jdbcType=BIGINT},
-      wechat_user_id = #{wechatUserId,jdbcType=BIGINT}
+      wechat_user_id = #{wechatUserId,jdbcType=BIGINT},
+      login_ip = #{loginIp,jdbcType=CHAR},
+      first_login_time = #{firstLoginTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample" resultMap="BaseResultMap">

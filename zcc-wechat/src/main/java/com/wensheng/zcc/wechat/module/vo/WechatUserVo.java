@@ -16,4 +16,5 @@ public class WechatUserVo  {
     List<WXUserWatchObject> wxUserWatchDebts;
     List<WXUserWatchObject> wxUserWatchAssets;
     WXUserGeoRecord wxUserGeoRecord;
+    WXUserFavor wxUserFavor;
 }

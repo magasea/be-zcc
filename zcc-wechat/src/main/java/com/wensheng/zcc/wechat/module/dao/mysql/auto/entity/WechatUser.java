@@ -55,6 +55,10 @@ public class WechatUser {
 
     private String note;
 
+    private Long updateBy;
+
+    private Date updateTime;
+
     public Long getId() {
         return id;
     }
@@ -261,5 +265,21 @@ public class WechatUser {
 
     public void setNote(String note) {
         this.note = note == null ? null : note.trim();
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

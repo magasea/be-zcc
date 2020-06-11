@@ -1099,6 +1099,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
 //                    log.error(String.format("错误提示： %s %s 后台没有找到对应的联系人信息:%s", sheetDebt.getSheetName(), row.getRowNum(), cellAmcContactor));
 //                    break;
                 }else{
+                    amcDebtPre.setAmcContactorId(ssoAmcUser.getId());
                     amcDebtPre.setAmcContactorName(cellAmcContactor);
                     amcDebtPre.setAmcContactorPhone(ssoAmcUser.getMobilePhone());
                 }

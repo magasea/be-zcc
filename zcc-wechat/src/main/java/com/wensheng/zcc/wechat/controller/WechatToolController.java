@@ -31,4 +31,11 @@ public class WechatToolController {
   }
 
 
+  @RequestMapping(value = "/patchUserFirstLoginTime", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchUserFirstLoginTime(@RequestBody String jsonItems) throws Exception {
+
+     wxToolService.patchUserFirstLoginTime(jsonItems);
+  }
+
 }

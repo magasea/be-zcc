@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +41,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 @Slf4j
@@ -139,6 +143,15 @@ public class WechatUserController {
   {
 
     return  wxService.getWechatPublicUserInfo(openIds);
+
+  }
+
+  @RequestMapping(value = "/updateWXUser", method = RequestMethod.POST)
+  @ResponseBody
+  public void updateWXUser(@RequestBody WechatUser wechatUser)
+  {
+
+      wxService.updateWXUser(wechatUser);
 
   }
 
@@ -263,6 +276,14 @@ public class WechatUserController {
 
   }
 
+  @RequestMapping(value = "/user/unWatchOnList", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean unWatchOnList(@RequestBody List<WXUserWatchOnVo> wxUserWatchOnVos ) throws Exception {
+
+    return wxService.unWatchOnList( wxUserWatchOnVos);
+
+  }
+
   @RequestMapping(value = "/user/userWatched", method = RequestMethod.POST)
   @ResponseBody
   public List<WXUserWatchObject> userWatched(@RequestBody String openId ) throws Exception {
@@ -296,9 +317,9 @@ public class WechatUserController {
 
   @RequestMapping(value = "/user/getUserFavor", method = RequestMethod.POST)
   @ResponseBody
-  public  WXUserFavor getUserFavor(@RequestBody String openId ) throws Exception {
-
-    return wxService.getUserFavor( openId);
+  public  WXUserFavor getUserFavor(@RequestBody String openId, @RequestHeader("X-FORWARDED-FOR") String loginIp ) throws Exception {
+    log.info(loginIp);
+    return wxService.getUserFavor( openId, loginIp);
 
   }
 
@@ -356,7 +377,7 @@ public class WechatUserController {
       log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
-    Long totalCount = wxService.getAllWechatUserCount();
+    Long totalCount = wxService.getAllWechatUserCount(queryParam);
 //    Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
     return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
 

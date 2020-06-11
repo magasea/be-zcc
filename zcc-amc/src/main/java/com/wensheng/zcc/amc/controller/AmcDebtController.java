@@ -833,6 +833,11 @@ public class AmcDebtController {
     amcMiscService.patchContactorSex(contactorName, sex);
   }
 
+  @RequestMapping(value = "/getDebtAssetStatus", method = RequestMethod.POST)
+  @ResponseBody
+  public Map<String, Integer> getDebtAssetStatus(@RequestBody List<String> debtAssetIds) throws Exception {
+    return amcMiscService.getDebtAssetStatus(debtAssetIds);
+  }
 
 
   @RequestMapping(value = "/initContactorInDebt", method = RequestMethod.POST)

@@ -13,6 +13,10 @@ public class WechatUserStatic {
 
     private Long wechatUserId;
 
+    private String loginIp;
+
+    private Date firstLoginTime;
+
     public Long getId() {
         return id;
     }
@@ -51,5 +55,21 @@ public class WechatUserStatic {
 
     public void setWechatUserId(Long wechatUserId) {
         this.wechatUserId = wechatUserId;
+    }
+
+    public String getLoginIp() {
+        return loginIp;
+    }
+
+    public void setLoginIp(String loginIp) {
+        this.loginIp = loginIp == null ? null : loginIp.trim();
+    }
+
+    public Date getFirstLoginTime() {
+        return firstLoginTime;
+    }
+
+    public void setFirstLoginTime(Date firstLoginTime) {
+        this.firstLoginTime = firstLoginTime;
     }
 }

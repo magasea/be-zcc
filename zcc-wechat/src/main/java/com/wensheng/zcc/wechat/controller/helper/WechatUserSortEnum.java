@@ -5,18 +5,20 @@ import com.wensheng.zcc.common.utils.base.EnumUtils;
 import java.util.function.Function;
 
 public enum WechatUserSortEnum {
-  SUBSCRIBE(1, "用户注册时间"),
-  LASTLOGIN(2,"最近登录时间"),
-  TIMESPENT(3,"访问总时长"),
-  WATCHCOUNT(4, "关注数"),
+  FIRSTLOGIN(1, "firstlogin", "用户初次登录时间"),
+  LASTLOGIN(2,"lastlogin","最近登录时间"),
+  ONLINETIME(3,"onlinetime","访问总时长"),
+  WATCHCOUNT(4, "watchcount","关注数"),
 
   ;
 
-  WechatUserSortEnum(int id,String name ){
+  WechatUserSortEnum(int id,String name, String cname ){
     this.name = name;
+    this.cname = cname;
     this.id = id;
   }
   private String name;
+  private String cname;
   private int id;
 
 

@@ -404,6 +404,136 @@ public class WechatUserStaticExample {
             addCriterion("wechat_user_id not between", value1, value2, "wechatUserId");
             return (Criteria) this;
         }
+
+        public Criteria andLoginIpIsNull() {
+            addCriterion("login_ip is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpIsNotNull() {
+            addCriterion("login_ip is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpEqualTo(String value) {
+            addCriterion("login_ip =", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpNotEqualTo(String value) {
+            addCriterion("login_ip <>", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpGreaterThan(String value) {
+            addCriterion("login_ip >", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpGreaterThanOrEqualTo(String value) {
+            addCriterion("login_ip >=", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpLessThan(String value) {
+            addCriterion("login_ip <", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpLessThanOrEqualTo(String value) {
+            addCriterion("login_ip <=", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpLike(String value) {
+            addCriterion("login_ip like", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpNotLike(String value) {
+            addCriterion("login_ip not like", value, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpIn(List<String> values) {
+            addCriterion("login_ip in", values, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpNotIn(List<String> values) {
+            addCriterion("login_ip not in", values, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpBetween(String value1, String value2) {
+            addCriterion("login_ip between", value1, value2, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andLoginIpNotBetween(String value1, String value2) {
+            addCriterion("login_ip not between", value1, value2, "loginIp");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeIsNull() {
+            addCriterion("first_login_time is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeIsNotNull() {
+            addCriterion("first_login_time is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeEqualTo(Date value) {
+            addCriterion("first_login_time =", value, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeNotEqualTo(Date value) {
+            addCriterion("first_login_time <>", value, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeGreaterThan(Date value) {
+            addCriterion("first_login_time >", value, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeGreaterThanOrEqualTo(Date value) {
+            addCriterion("first_login_time >=", value, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeLessThan(Date value) {
+            addCriterion("first_login_time <", value, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeLessThanOrEqualTo(Date value) {
+            addCriterion("first_login_time <=", value, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeIn(List<Date> values) {
+            addCriterion("first_login_time in", values, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeNotIn(List<Date> values) {
+            addCriterion("first_login_time not in", values, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeBetween(Date value1, Date value2) {
+            addCriterion("first_login_time between", value1, value2, "firstLoginTime");
+            return (Criteria) this;
+        }
+
+        public Criteria andFirstLoginTimeNotBetween(Date value1, Date value2) {
+            addCriterion("first_login_time not between", value1, value2, "firstLoginTime");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

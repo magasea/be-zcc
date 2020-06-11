@@ -20,6 +20,7 @@ import com.wensheng.zcc.common.params.AmcSexEnum;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -334,5 +335,45 @@ public class AmcMiscServiceImpl implements AmcMiscService {
     AmcAsset amcAsset = new AmcAsset();
     amcAsset.setAmcContactorSex(sex);
     amcAssetMapper.updateByExampleSelective(amcAsset, amcAssetExample);
+  }
+
+  @Override
+  public Map<String, Integer> getDebtAssetStatus(List<String> debtAssetList) {
+
+    List<Long> assetIds = new ArrayList<>();
+    List<Long> debtIds = new ArrayList<>();
+
+    for(String debtAssetStr : debtAssetList){
+      String[] items = StringUtils.split(debtAssetStr,"_");
+      if(debtAssetStr.startsWith("asset")){
+
+        assetIds.add(Long.valueOf(items[1]));
+      }else if(debtAssetStr.startsWith("debt")){
+        debtIds.add(Long.valueOf(items[1]));
+      }
+    }
+    Map<String, Integer> statusResult = new HashMap<>();
+    if(!CollectionUtils.isEmpty(assetIds)){
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      amcAssetExample.createCriteria().andIdIn(assetIds);
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+      if(!CollectionUtils.isEmpty(amcAssets)){
+        for(AmcAsset amcAsset: amcAssets){
+          statusResult.put(String.format("asset_%s",amcAsset.getId()), amcAsset.getPublishState());
+        }
+      }
+    }
+
+    if(!CollectionUtils.isEmpty(debtIds)){
+      AmcDebtExample amcDebtExample = new AmcDebtExample();
+      amcDebtExample.createCriteria().andIdIn(debtIds);
+      List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+      if(!CollectionUtils.isEmpty(amcDebts)){
+        for(AmcDebt amcDebt: amcDebts){
+          statusResult.put(String.format("debt_%s",amcDebt.getId()), amcDebt.getPublishState());
+        }
+      }
+    }
+    return statusResult;
   }
 }

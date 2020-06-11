@@ -1,10 +1,13 @@
 package com.wensheng.zcc.comnfunc.service.impl;
 
+import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
+
 import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryIPResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
@@ -184,6 +187,24 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
     } catch (Exception ex){
       responseObserver.onError(ex);
     }
+
+  }
+
+  @Override
+  public void getCityByIp(com.wenshengamc.zcc.comnfunc.gaodegeo.GeoIpReq request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.GeoIp2LocationResp> responseObserver) {
+    try {
+      GaodeGeoQueryIPResp addressByIp = gaoDeService.getAddressByIp(request.getIpadd());
+      GeoIp2LocationResp.Builder gilrBuilder = GeoIp2LocationResp.newBuilder();
+
+      AmcBeanUtils.copyProperties(addressByIp, gilrBuilder);
+      responseObserver.onNext(gilrBuilder.build());
+      responseObserver.onCompleted();
+    }catch (Exception ex){
+      log.error("Failed to get add info for:{}", request.getIpadd(), ex);
+      responseObserver.onError(ex);
+    }
+    GaodeGeoQueryIPResp addressByIp = gaoDeService.getAddressByIp(request.getIpadd());
 
   }
 

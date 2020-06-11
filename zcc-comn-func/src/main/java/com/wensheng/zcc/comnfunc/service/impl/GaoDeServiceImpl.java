@@ -6,6 +6,7 @@ import com.wensheng.zcc.common.module.dto.GaoDeReGeoResult;
 import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryIPResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryResp;
@@ -50,7 +51,12 @@ public class GaoDeServiceImpl implements GaoDeService {
   @Value("${gaode.regeocoder}")
   private String regeoCoderUrl;
 
+  @Value("${gaode.geoIp2Addr}")
+  private String geoIp2AddrUrl;
+
+
   private RestTemplate restTemplate  = new RestTemplate();
+
 
 
 
@@ -70,6 +76,7 @@ public class GaoDeServiceImpl implements GaoDeService {
   }
 
 
+  @Override
   public boolean getAddressFromGeoPoint(WXUserGeoRecord wxUserGeoRecord){
     Point geoJson = (Point) wxUserGeoRecord.getLocation();
 
@@ -147,6 +154,18 @@ public class GaoDeServiceImpl implements GaoDeService {
     GaodeRegeoQueryVal gaoRegeoResult = resp.getBody().getRegeocode();
 
     return gaoRegeoResult;
+  }
+
+  @Override
+  public GaodeGeoQueryIPResp getAddressByIp(String ipadd) {
+    String gaodeUrl = String.format(geoIp2AddrUrl, ipadd);
+    ResponseEntity<GaodeGeoQueryIPResp> resp =  restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+        GaodeGeoQueryIPResp.class);
+
+    GaodeGeoQueryIPResp gaoRegeoResult = resp.getBody();
+
+    return gaoRegeoResult;
+
   }
 
 

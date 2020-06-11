@@ -363,4 +363,10 @@ public class AmcSaleController {
   public void initFixFloors() throws Exception {
      amcSaleService.initFixFloors();
   }
+
+  @RequestMapping(value = "salefloor/getUserLocalPage", method = RequestMethod.POST)
+  @ResponseBody
+  public void getUserLocalPage(@RequestBody String openId) throws Exception {
+    amcSaleService.getUserLocalPage(openId);
+  }
 }

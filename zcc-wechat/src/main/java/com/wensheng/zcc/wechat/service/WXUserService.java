@@ -11,7 +11,9 @@ import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnVo;
 import com.wensheng.zcc.wechat.module.vo.WechatUserVo;
+import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 import javax.management.Query;
@@ -40,7 +42,7 @@ public interface WXUserService {
 
   boolean saveUserFavor(WXUserFavor wxUserFavor);
 
-  public WXUserFavor getUserFavor(String openId);
+  public WXUserFavor getUserFavor(String openId, String ipadd);
 
   public List<WXUserWatchOnObject> checkUserFavor(WXUserWatchOnCheckVo wxUserWatchOnCheckVo);
 
@@ -51,7 +53,7 @@ public interface WXUserService {
   boolean unWatchOn(String openId, String phone, Long objectId, Integer type);
 
   public List<WechatUserVo> getAllWechatUsers(int offset, int size,
-      QueryParam queryParam);
+      QueryParam queryParam) throws ParseException;
 
   public List<WXUserWatchCount> getWXUserWatchCount(List<WXUserWatchOnObject> objectList);
 
@@ -62,4 +64,8 @@ public interface WXUserService {
 
 
   String sendEvent(String xmlMsg);
+
+  void updateWXUser(WechatUser wechatUser);
+
+  boolean unWatchOnList(List<WXUserWatchOnVo> wxUserWatchOnVos);
 }

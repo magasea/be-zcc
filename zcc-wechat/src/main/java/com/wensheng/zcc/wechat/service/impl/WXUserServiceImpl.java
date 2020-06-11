@@ -6,7 +6,11 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.gson.Gson;
 import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.common.module.LatLng;
-import com.wensheng.zcc.common.module.dto.*;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -15,23 +19,57 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.controller.helper.QueryParam;
+import com.wensheng.zcc.wechat.controller.helper.WechatUserSortEnum;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.ext.WechatUserExtMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample;
+import com.wensheng.zcc.wechat.module.dao.mysql.ext.WechatUserExtExample;
+import com.wensheng.zcc.wechat.module.dto.GaodeIpCity;
 import com.wensheng.zcc.wechat.module.dto.ResponseOfWxUserCummulate;
 import com.wensheng.zcc.wechat.module.dto.ResponseOfWxUserSummary;
 import com.wensheng.zcc.wechat.module.dto.UserCumulateItem;
 import com.wensheng.zcc.wechat.module.dto.UserSummaryItem;
-import com.wensheng.zcc.wechat.module.vo.*;
+import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
+import com.wensheng.zcc.wechat.module.vo.GeneralResp;
+import com.wensheng.zcc.wechat.module.vo.TagCreate;
+import com.wensheng.zcc.wechat.module.vo.TagDel;
+import com.wensheng.zcc.wechat.module.vo.TagMod;
+import com.wensheng.zcc.wechat.module.vo.UserLngLat;
+import com.wensheng.zcc.wechat.module.vo.WXUserGeoInfo;
+import com.wensheng.zcc.wechat.module.vo.WXUserStatistics;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
+import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnVo;
+import com.wensheng.zcc.wechat.module.vo.WechatTagVo;
+import com.wensheng.zcc.wechat.module.vo.WechatUserInfoResp;
+import com.wensheng.zcc.wechat.module.vo.WechatUserInfoVo;
+import com.wensheng.zcc.wechat.module.vo.WechatUserVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXToolService;
 import com.wensheng.zcc.wechat.service.WXUserService;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
+import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -42,13 +80,16 @@ import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.NearQuery;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -56,11 +97,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
-import javax.annotation.PostConstruct;
-import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneId;
-import java.util.*;
+//import com.mysql.cj.x.protobuf.MysqlxDatatypes.Scalar.String;
 
 @Service
 @Slf4j
@@ -127,6 +164,8 @@ public class WXUserServiceImpl implements WXUserService {
   @Autowired
   MongoTemplate mongoTemplate;
 
+  private SimpleDateFormat sdfOfDay = new SimpleDateFormat("yyyy-MM-dd");
+
   static final int WXQUERY_LIMIT_DAYS = 7;
 
   @Autowired
@@ -137,6 +176,9 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Autowired
   WechatUserExtMapper wechatUserExtMapper;
+
+  @Autowired
+  WechatUserStaticMapper wechatUserStaticMapper;
 
   private final Long MAX_TIME_LAG = 1200L;
 
@@ -728,6 +770,25 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserWatchObjects.get(0).setUpdateTime(AmcDateUtils.getCurrentDate());
       mongoTemplate.save(wxUserWatchObjects.get(0));
     }
+    //update watch count
+    query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId));
+    wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      log.error("This openId:{} is not available in wechatUser table", openId);
+      return true;
+    }
+    WechatUserStatic wechatUserStatic = new WechatUserStatic();
+    wechatUserStatic.setWatchCount(Long.valueOf(wxUserWatchObjects.size()));
+    WechatUserStaticExample wechatUserStaticExample= new WechatUserStaticExample();
+    wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+    wechatUserStaticMapper.updateByExampleSelective(wechatUserStatic, wechatUserStaticExample);
+
     return true;
   }
 
@@ -845,14 +906,38 @@ public class WXUserServiceImpl implements WXUserService {
   }
 
   @Override
-  public WXUserFavor getUserFavor(String openId) {
+  public WXUserFavor getUserFavor(String openId, String ipadd) {
     Query query = new Query();
     query.addCriteria(Criteria.where("openId").is(openId));
+    WXUserFavor wxUserFavor = null;
     List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+    boolean needMakeNewFavor = false;
     if(CollectionUtils.isEmpty(wxUserFavors)){
-      return null;
+      if(StringUtils.isEmpty(ipadd)){
+       return null;
+      }else{
+        needMakeNewFavor = true;
+      }
+
+
     }
-    return wxUserFavors.get(0);
+    if(needMakeNewFavor){
+      wxUserFavor = new WXUserFavor();
+    }else{
+      wxUserFavor = wxUserFavors.get(0);
+    }
+    if(!StringUtils.isEmpty(ipadd) && !ipadd.equals(wxUserFavor.getLastIp())){
+      //call comonfunc to get ipCity
+      GaodeIpCity cityByIp = comnfuncGrpcService.getCityByIp(ipadd);
+      if(cityByIp != null){
+        wxUserFavor.setLastIp(ipadd);
+        wxUserFavor.setLastIpCity(cityByIp.getCity());
+        wxUserFavor.setLastIpCityCode(cityByIp.getAdcode());
+      }
+      mongoTemplate.save(wxUserFavor);
+
+    }
+    return wxUserFavor;
   }
 
   @Override
@@ -882,8 +967,27 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Override
   public AmcRegionInfo getUserLocation(UserLngLat userLngLat) {
-    return comnfuncGrpcService.getRegionInfo(userLngLat);
-
+    AmcRegionInfo regionInfo = comnfuncGrpcService.getRegionInfo(userLngLat);
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(userLngLat.getOpenId()));
+    List<WXUserFavor> wxUserFavorList = mongoTemplate.find(query, WXUserFavor.class);
+    if(CollectionUtils.isEmpty(wxUserFavorList)){
+      WXUserFavor wxUserFavor = new WXUserFavor();
+      wxUserFavor.setOpenId(userLngLat.getOpenId());
+      wxUserFavor.setLastLat(userLngLat.getLat());
+      wxUserFavor.setLastLng(userLngLat.getLng());
+      wxUserFavor.setLocationCode(regionInfo.getCityCode());
+      wxUserFavor.setLocationCityName(regionInfo.getCityName());
+      mongoTemplate.save(wxUserFavor);
+    }
+    else{
+      wxUserFavorList.get(0).setLastLng(userLngLat.getLng());
+      wxUserFavorList.get(0).setLastLat(userLngLat.getLat());
+      wxUserFavorList.get(0).setLocationCode(regionInfo.getCityCode());
+      wxUserFavorList.get(0).setLocationCityName(regionInfo.getCityName());
+      mongoTemplate.save(wxUserFavorList.get(0));
+    }
+    return regionInfo;
   }
 
   @Override
@@ -928,6 +1032,24 @@ public class WXUserServiceImpl implements WXUserService {
         mongoTemplate.remove(wxUserWatchObject);
       }
     }
+    //update watch count
+    query = new Query();
+    query.addCriteria(Criteria.where("openId").is(openId));
+    wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      log.error("This openId:{} is not available in wechatUser table", openId);
+      return true;
+    }
+    WechatUserStatic wechatUserStatic = new WechatUserStatic();
+    wechatUserStatic.setWatchCount(Long.valueOf(wxUserWatchObjects.size()));
+    WechatUserStaticExample wechatUserStaticExample= new WechatUserStaticExample();
+    wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+    wechatUserStaticMapper.updateByExampleSelective(wechatUserStatic, wechatUserStaticExample);
     return true;
   }
 
@@ -936,9 +1058,24 @@ public class WXUserServiceImpl implements WXUserService {
   }
 
   @Override
-  public List<WechatUserVo> getAllWechatUsers(int offset, int size, QueryParam queryParam) {
-    WechatUserExample wechatUserExample = getExampleByParam(queryParam);
-    wechatUserExample.setOrderByClause(" wu.id desc ");
+  public List<WechatUserVo> getAllWechatUsers(int offset, int size, QueryParam queryParam)
+      throws ParseException {
+    WechatUserExtExample wechatUserExample = getExampleByParam(queryParam);
+    if(queryParam.getPageInfo().getSort() == null){
+      wechatUserExample.setOrderByClause(" wu.id desc ");
+    }else{
+      StringBuilder sortSB = new StringBuilder();
+      for(String sortStr: queryParam.getPageInfo().getSort()){
+        WechatUserSortEnum wechatUserSortEnum = WechatUserSortEnum.lookupByDisplayNameUtil(sortStr);
+        if(sortSB.length() > 0 && wechatUserSortEnum != null){
+          sortSB.append(",");
+        }
+        makeSortInfo(sortSB, wechatUserSortEnum);
+      }
+      if(sortSB.length() > 0){
+        wechatUserExample.setOrderByClause(sortSB.toString());
+      }
+    }
     RowBounds rowBounds = new RowBounds(offset, size);
     List<WechatUserVo> wechatUsers =  wechatUserExtMapper.selectByExampleWithRowboundsExt(wechatUserExample, rowBounds);
 
@@ -949,11 +1086,33 @@ public class WXUserServiceImpl implements WXUserService {
     List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
 
     List<WXUserGeoRecord> wxUserGeoRecords = mongoTemplate.find(query, WXUserGeoRecord.class);
-    connectWXUserVos(wxUserWatchObjects, wxUserGeoRecords, wechatUsers);
+
+    List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+    connectWXUserVos(wxUserWatchObjects, wxUserGeoRecords, wxUserFavors , wechatUsers);
     return wechatUsers;
   }
 
-  private void connectWXUserVos(List<WXUserWatchObject> wxUserWatchObjects, List<WXUserGeoRecord> wxUserGeoRecords, List<WechatUserVo> wechatUsers) {
+  private void makeSortInfo(StringBuilder sortSB, WechatUserSortEnum wechatUserSortEnum) {
+    switch (wechatUserSortEnum){
+      case FIRSTLOGIN:
+        sortSB.append(" wus.first_login_time desc ");
+        break;
+      case LASTLOGIN:
+        sortSB.append(" wus.last_time desc ");
+        break;
+      case ONLINETIME:
+        sortSB.append(" wus.online_time desc ");
+        break;
+      case WATCHCOUNT:
+        sortSB.append(" wus.watch_count desc ");
+        break;
+    }
+  }
+
+  private void connectWXUserVos(List<WXUserWatchObject> wxUserWatchObjects,
+      List<WXUserGeoRecord> wxUserGeoRecords,
+      List<WXUserFavor> wxUserFavors,
+      List<WechatUserVo> wechatUsers) {
     Map<String, List<WXUserWatchObject>> wxUserWatchObjectMap = new HashMap<>();
     if(!CollectionUtils.isEmpty(wxUserWatchObjects)){
       for(WXUserWatchObject wxUserWatchObject: wxUserWatchObjects){
@@ -967,6 +1126,10 @@ public class WXUserServiceImpl implements WXUserService {
     Map<String, WXUserGeoRecord> wxUserGeoRecordMap = null;
     if(!CollectionUtils.isEmpty(wxUserGeoRecords)){
       wxUserGeoRecordMap = wxUserGeoRecords.stream().collect(Collectors.toMap(item->item.getOpenId(), item->item));
+    }
+    Map<String, WXUserFavor> wxUserFavorMap = null;
+    if(!CollectionUtils.isEmpty(wxUserFavors)){
+      wxUserFavorMap = wxUserFavors.stream().collect(Collectors.toMap(item->item.getOpenId(), item->item));
     }
     for(WechatUserVo wechatUserVo: wechatUsers){
       if(wxUserWatchObjectMap != null && wxUserWatchObjectMap.containsKey(wechatUserVo.getWechatUser().getOpenId())){
@@ -983,23 +1146,71 @@ public class WXUserServiceImpl implements WXUserService {
       if(wxUserGeoRecordMap != null && wxUserGeoRecordMap.containsKey(wechatUserVo.getWechatUser().getOpenId())){
         wechatUserVo.setWxUserGeoRecord(wxUserGeoRecordMap.get(wechatUserVo.getWechatUser().getOpenId()));
       }
+
+      if(wxUserFavorMap != null && wxUserFavorMap.containsKey(wechatUserVo.getWechatUser().getOpenId())){
+        wechatUserVo.setWxUserFavor(wxUserFavorMap.get(wechatUserVo.getWechatUser().getOpenId()));
+      }
     }
 
   }
 
-  private WechatUserExample getExampleByParam(QueryParam queryParam) {
-    WechatUserExample wechatUserExample = new WechatUserExample();
+  private WechatUserExtExample getExampleByParam(QueryParam queryParam) throws ParseException {
+    WechatUserExtExample wechatUserExample = new WechatUserExtExample();
+    boolean hasCond = false;
     WechatUserExample.Criteria criteria = wechatUserExample.createCriteria();
-    if(queryParam.getPhoneBinded() != null && queryParam.getPhoneBinded().equals(true)){
-      criteria.andMobileNotEqualTo("-1").andVerifyCodeEqualTo("-1");
+    if(queryParam.getPhoneBinded() != null ){
+      if(queryParam.getPhoneBinded().equals(true)){
+        criteria.andMobileNotEqualTo("-1").andVerifyCodeEqualTo("-1");
+        hasCond = true;
+      }
     }
-    if(!CollectionUtils.isEmpty(queryParam.getRegistTime()) && queryParam.getRegistTime().size() >= 2){
-      criteria.andSubscribeTimeBetween(queryParam.getRegistTime().get(0), queryParam.getRegistTime().get(1));
-    }
+
+
     if(!StringUtils.isEmpty(queryParam.getWechatNickName())){
       StringBuilder sb = new StringBuilder("%");
       sb.append(queryParam.getWechatNickName()).append("%");
       criteria.andNickNameLike(sb.toString());
+      hasCond = true;
+    }
+    if(!StringUtils.isEmpty(queryParam.getStateInfo())){
+      StringBuilder sb = new StringBuilder("%");
+      sb.append(queryParam.getStateInfo()).append("%");
+      criteria.andStateInfoLike(sb.toString());
+      hasCond = true;
+    }
+
+    if(!StringUtils.isEmpty(queryParam.getMobileNum())){
+      StringBuilder sb = new StringBuilder("%");
+      sb.append(queryParam.getMobileNum()).append("%");
+      criteria.andMobileLike(sb.toString());
+      hasCond = true;
+    }
+
+
+
+    if(!CollectionUtils.isEmpty(queryParam.getFirstLoginTime()) && queryParam.getFirstLoginTime().size() >= 2){
+//      wechatUserExample.setAndClause();
+      StringBuilder sbFirstLoginTimeSql = new StringBuilder("");
+      if(!hasCond){
+        sbFirstLoginTimeSql.append(" where wus.first_login_time ");
+      }else{
+        sbFirstLoginTimeSql.append(" and wus.first_login_time ");
+      }
+
+      if(queryParam.getFirstLoginTime().get(0).equals("-1")){
+        sbFirstLoginTimeSql.append(" < '").append((queryParam.getFirstLoginTime().get(1))).append("'");
+      }else if(queryParam.getFirstLoginTime().get(1).equals("-1")){
+        sbFirstLoginTimeSql.append(" > '").append((queryParam.getFirstLoginTime().get(0))).append("'");
+      }else{
+        if(sdfOfDay.parse(queryParam.getFirstLoginTime().get(0)).before(sdfOfDay.parse(queryParam.getFirstLoginTime().get(1)))){
+          sbFirstLoginTimeSql.append(" > '").append((queryParam.getFirstLoginTime().get(0))).append("'");
+          sbFirstLoginTimeSql.append(" and wus.first_login_time < '").append((queryParam.getFirstLoginTime().get(1))).append("'");
+        }else if(sdfOfDay.parse(queryParam.getFirstLoginTime().get(0)).after(sdfOfDay.parse(queryParam.getFirstLoginTime().get(1)))){
+          sbFirstLoginTimeSql.append(" < '").append((queryParam.getFirstLoginTime().get(0)));
+          sbFirstLoginTimeSql.append("' and wus.first_login_time > '").append((queryParam.getFirstLoginTime().get(1))).append("'");
+        }
+      }
+      wechatUserExample.setAndClause(sbFirstLoginTimeSql.toString());
     }
     return wechatUserExample;
   }
@@ -1045,6 +1256,7 @@ public class WXUserServiceImpl implements WXUserService {
     wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
 
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+
     if(CollectionUtils.isEmpty(wechatUsers)){
       WechatUser wechatUser = new WechatUser();
       AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
@@ -1060,8 +1272,17 @@ public class WXUserServiceImpl implements WXUserService {
         wechatUser.setStateInfo(stateInfo);
       }
       wechatUserMapper.insertSelective(wechatUser);
-    }else if(wechatUsers.get(0).getStateInfo() != null || wechatUsers.get(0).getStateInfo().equals("-1")){
+      WechatUserStatic wechatUserStatic = new WechatUserStatic();
+      wechatUserStatic.setFirstLoginTime(AmcDateUtils.getCurrentDate());
+      wechatUserStatic.setWechatUserId(wechatUser.getId());
+      wechatUserStaticMapper.insertSelective(wechatUserStatic);
+    }else if(wechatUsers.get(0).getStateInfo() != null && !wechatUsers.get(0).getStateInfo().equals("-1")){
       log.info("should we update sate info ? ");
+    }else if(wechatUsers.get(0).getStateInfo() == null || wechatUsers.get(0).getStateInfo().equals("-1")){
+      if(!StringUtils.isEmpty(stateInfo)){
+        wechatUsers.get(0).setStateInfo(stateInfo);
+      }
+      wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
     }
     wxToolService.notifyWechatUserLogin(wechatUserInfo);
     return wechatUserInfo;
@@ -1102,8 +1323,57 @@ public class WXUserServiceImpl implements WXUserService {
     return null;
   }
 
-  public Long getAllWechatUserCount() {
-    return wechatUserMapper.countByExample(null);
+  @Override
+  public void updateWXUser(WechatUser wechatUser) {
+    WechatUser wechatUserUpdate = new WechatUser();
+    wechatUserUpdate.setId(wechatUser.getId());
+    wechatUserUpdate.setNote(wechatUser.getNote());
+    wechatUserUpdate.setAmcTag(wechatUser.getAmcTag());
+    wechatUserUpdate.setUpdateTime(AmcDateUtils.getCurrentDate());
+    wechatUserMapper.updateByPrimaryKeySelective(wechatUserUpdate);
+
+  }
+
+  @Override
+  public boolean unWatchOnList(List<WXUserWatchOnVo> wxUserWatchOnVos) {
+    for(WXUserWatchOnVo wxUserWatchOnVo: wxUserWatchOnVos){
+      Query query = new Query();
+      query.addCriteria(Criteria.where("openId").is(wxUserWatchOnVo.getOpenId()).and("objectId")
+          .is(wxUserWatchOnVo.getObjectId()).and("type").is(wxUserWatchOnVo.getType()));
+      List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+      if(CollectionUtils.isEmpty(wxUserWatchObjects)){
+        continue;
+      }else{
+        for(WXUserWatchObject wxUserWatchObject: wxUserWatchObjects){
+          mongoTemplate.remove(wxUserWatchObject);
+        }
+      }
+
+    }
+    //update watch count
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").is(wxUserWatchOnVos.get(0).getOpenId()));
+    List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(wxUserWatchObjects.get(0).getOpenId());
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      log.error("This openId:{} is not available in wechatUser table", wxUserWatchObjects.get(0).getOpenId());
+      return true;
+    }
+    WechatUserStatic wechatUserStatic = new WechatUserStatic();
+    wechatUserStatic.setWatchCount(Long.valueOf(wxUserWatchObjects.size()));
+    WechatUserStaticExample wechatUserStaticExample= new WechatUserStaticExample();
+    wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+    wechatUserStaticMapper.updateByExampleSelective(wechatUserStatic, wechatUserStaticExample);
+    return true;
+  }
+
+  public Long getAllWechatUserCount(QueryParam queryParam) throws ParseException {
+    WechatUserExtExample exampleByParam = getExampleByParam(queryParam);
+    return wechatUserExtMapper.countByExample(exampleByParam);
   }
 
 

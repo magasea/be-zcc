@@ -14,6 +14,8 @@ public class SSOAmcUser {
 
   private String mobilePhone;
 
+  private String salePhone;
+
   private String email;
 
   private Long deptId;

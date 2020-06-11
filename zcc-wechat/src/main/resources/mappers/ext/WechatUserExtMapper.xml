@@ -95,14 +95,21 @@
     ${prefix}wxusername as ${alias}wxusername,
     ${prefix}amc_tag as ${alias}amc_tag,
     ${prefix}online_time as ${alias}online_time,
-    ${prefix}last_time as ${alias}last_time
+    ${prefix}last_time as ${alias}last_time,
+    ${prefix}note as ${alias}note,
+    ${prefix}update_by as ${alias}update_by,
+    ${prefix}update_time as ${alias}update_time
   </sql>
 
 
   <sql id="WechatUserStatic_Column_List">
+    ${prefix}id as ${alias}id,
     ${prefix}online_time as ${alias}online_time,
     ${prefix}last_time as ${alias}last_time,
-    ${prefix}watch_count as ${alias}watch_count
+    ${prefix}watch_count as ${alias}watch_count,
+    ${prefix}wechat_user_id as ${alias}wechat_user_id,
+    ${prefix}login_ip as ${alias}login_ip,
+    ${prefix}first_login_time as ${alias}first_login_time
   </sql>
   <select id="selectByExtExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
     select
@@ -124,9 +131,13 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
+    <if test="andClause != null">
+      and ${andClause}
+    </if>
     <if test="orderByClause != null">
       order by ${orderByClause}
     </if>
+
   </select>
   <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
     select 'true' as QUERYID,
@@ -320,9 +331,15 @@
     </trim>
   </insert>
   <select id="countByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultType="java.lang.Long">
-    select count(*) from WECHAT_USER
+
+    select count(*) from WECHAT_USER  wu
+    left join WECHAT_USER_STATIC  wus
+    on wu.id = wus.wechat_user_id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
+    </if>
+    <if test="andClause != null">
+      ${andClause}
     </if>
   </select>
   <update id="updateByExampleSelective" parameterType="map">
@@ -563,6 +580,9 @@
     on wu.id = wus.wechat_user_id
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
+    </if>
+    <if test="andClause != null">
+       ${andClause}
     </if>
     <if test="orderByClause != null">
       order by ${orderByClause}

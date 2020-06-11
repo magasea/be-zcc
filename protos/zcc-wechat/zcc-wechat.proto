@@ -97,6 +97,18 @@ message WXVistorInfo{
   string stateInfo = 12;
 }
 
+message WXUserFavorGrpcInfo{
+  string openId = 1;
+  string unionId = 2;
+  double lastLat = 3;
+  double lastLng = 4;
+  string locationCode = 5;
+  string locationCityName = 6;
+  string lastIp = 7;
+  string lastIpCity = 8;
+  string lastIpCityCode = 9;
+}
+
 
 service WechatGrpcService {
   rpc uploadImage2Wechat(UploadImg2WechatReq) returns (UploadImg2WechatResp);
@@ -108,5 +120,7 @@ service WechatGrpcService {
   rpc getWXUserFavor(WXUserReq) returns (WXUserFavor);
 
   rpc saveWXVistorInfo(WXVistorInfo) returns(WXVistorInfo);
+
+  rpc getWXUserFavorOfRegion(WXUserReq) returns (WXUserFavorGrpcInfo);
 
 }

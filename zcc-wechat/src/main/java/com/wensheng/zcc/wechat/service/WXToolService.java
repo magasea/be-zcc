@@ -7,4 +7,6 @@ public interface WXToolService {
   WXSign4Url makeSignKey(String url) throws Exception;
   public void syncUserVisitInfoWithRecomm();
   public void notifyWechatUserLogin(WechatUserInfo wechatUserInfo);
+
+  void patchUserFirstLoginTime(String jsonItems);
 }

@@ -4,10 +4,13 @@ import static io.grpc.stub.ClientCalls.blockingUnaryCall;
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
 import com.google.gson.Gson;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WXUserFavor;
+import com.wenshengamc.zcc.wechat.WXUserFavorGrpcInfo;
 import com.wenshengamc.zcc.wechat.WXUserReq;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp;
@@ -67,5 +70,22 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
     }
     AmcSaleFilter amcSaleFilter = gson.fromJson(wxUserFavor.getUserFavor(), AmcSaleFilter.class);
     return amcSaleFilter;
+  }
+
+  public WXUserRegionFavor getWXUserRegionFavor(String openId){
+    WXUserReq.Builder wxurBuilder = WXUserReq.newBuilder();
+    wxurBuilder.setOpenId(openId);
+    try{
+      WXUserFavorGrpcInfo wxUserFavorOfRegion = wechatServiceStub
+          .getWXUserFavorOfRegion(wxurBuilder.build());
+      WXUserRegionFavor wxUserRegionFavor = new WXUserRegionFavor();
+      AmcBeanUtils.copyProperties(wxUserFavorOfRegion, wxUserRegionFavor);
+      return wxUserRegionFavor;
+    }catch (Exception ex){
+      log.error("Failed to get user region favor with openId:{}", openId);
+      return null;
+    }
+
+
   }
 }

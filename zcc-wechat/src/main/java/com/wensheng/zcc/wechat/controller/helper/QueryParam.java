@@ -13,9 +13,10 @@ import lombok.Data;
 @Data
 public class QueryParam {
   String wechatNickName = null;
-  List<Date> registTime = null;
+  List<String> firstLoginTime = null;
   String stateInfo = null;
   Boolean phoneBinded = false;
+  String mobileNum = null;
   PageInfo pageInfo;
 
 }

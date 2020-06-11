@@ -20,8 +20,13 @@ public class WXUserFavor {
   String unionId;
   String phone;
   //城市编码
+  Double lastLat;
+  Double lastLng;
   String locationCode;
   String locationCityName;
+  String lastIp;
+  String lastIpCity;
+  String lastIpCityCode;
   AmcSaleFilter amcSaleFilter;
   List<Long> contactorIds;
   Date createTime;

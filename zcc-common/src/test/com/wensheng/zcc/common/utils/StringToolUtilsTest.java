@@ -16,4 +16,12 @@ public class StringToolUtilsTest {
         System.out.println(StringToolUtils.isNormalString(test));
     }
 
+    @Test
+    public void nullStringCmpr() {
+        String strLeft = "test";
+        String right = null;
+        System.out.println(strLeft.equals(right));
+    }
+
+
 }

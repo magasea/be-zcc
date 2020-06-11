@@ -3,6 +3,8 @@ package com.wensheng.zcc.wechat.service.impl;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.mysql.cj.x.protobuf.MysqlxCursor.Open;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
@@ -10,28 +12,26 @@ import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper;
-import com.wensheng.zcc.wechat.dao.mysql.mapper.ext.WechatUserExtMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample;
 import com.wensheng.zcc.wechat.module.vo.WXGetTicketResp;
-import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
 import com.wensheng.zcc.wechat.module.vo.WXSign4Url;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXToolService;
 import com.wensheng.zcc.wechat.utils.WxToolsUtil;
 import com.wensheng.zcc.wechat.utils.wechat.SHA1;
+import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -202,6 +202,34 @@ public class WXToolServiceImpl implements WXToolService {
     ResponseEntity resp = restTemplate.exchange(notifyUserLogin, HttpMethod.POST, httpEntity, String.class);
   }
 
+  @Override
+  public void patchUserFirstLoginTime(String jsonItems) {
+    Type listType = new TypeToken<ArrayList<OpenIdTimestamp>>(){}.getType();
+    List<OpenIdTimestamp> openIdTimestamps = gson.fromJson(jsonItems, listType);
+    for(OpenIdTimestamp openIdTimestamp: openIdTimestamps){
+      log.info(gson.toJson(openIdTimestamp));
+      WechatUserExample wechatUserExample = new WechatUserExample();
+      wechatUserExample.createCriteria().andOpenIdEqualTo(openIdTimestamp.getOpenId());
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(!CollectionUtils.isEmpty(wechatUsers)){
+        WechatUserStaticExample wechatUserStaticExample = new WechatUserStaticExample();
+        wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+        List<WechatUserStatic> wechatUserStatics = wechatUserStaticMapper.selectByExample(wechatUserStaticExample);
+        if(CollectionUtils.isEmpty(wechatUserStatics)){
+          WechatUserStatic wechatUserStatic = new WechatUserStatic();
+          wechatUserStatic.setWechatUserId(wechatUsers.get(0).getId());
+          wechatUserStatic.setFirstLoginTime(AmcDateUtils.toUTCDateFromLocal(openIdTimestamp.getTimeStamp()));
+          wechatUserStaticMapper.insertSelective(wechatUserStatic);
+        }else{
+          wechatUserStatics.get(0).setFirstLoginTime(AmcDateUtils.toUTCDateFromLocal(openIdTimestamp.getTimeStamp()));
+          wechatUserStaticMapper.updateByPrimaryKeySelective(wechatUserStatics.get(0));
+        }
+      }else{
+        log.error( "no such openId:{}", openIdTimestamp.getOpenId());
+      }
+    }
+  }
+
   @Data
   class RecommUserInfoResp{
     Integer page;
@@ -219,6 +247,15 @@ public class WXToolServiceImpl implements WXToolService {
     String link;
     String title;
     Long timestamp;
+  }
+
+  @Data
+  class OpenIdTimestamp{
+    @SerializedName("_id")
+    String openId;
+    @SerializedName("timestamp")
+    Long timeStamp;
+
   }
 
 

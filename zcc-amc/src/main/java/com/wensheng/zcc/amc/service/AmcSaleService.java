@@ -78,6 +78,8 @@ public interface AmcSaleService {
 
     AmcSaleFloorPageVo getFloorPage(Long floorId) throws Exception;
 
+
+
     AmcSaleMenuPageVo getMenuPage(Long menuId) throws Exception;
 
     AmcSaleBannerPageVo getBannerPage(Long bannerId) throws Exception;
@@ -114,4 +116,6 @@ public interface AmcSaleService {
       AmcSaleGetRandomListByOpenId amcSaleGetRandomListInPage)
       throws Exception;
   public void initFixFloors();
+
+  void getUserLocalPage(String openId);
 }

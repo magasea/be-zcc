@@ -38,7 +38,7 @@ public class CustPersonConytoller {
 
   @RequestMapping(value = "/mergeCustPerson", method = RequestMethod.POST)
   @ResponseBody
-  public void mergeCustPerson(@RequestBody List<Long> fromPersonIds,@RequestBody Long toPersonId,
+  public void mergeCustPerson(@RequestBody List<Long> fromPersonIds, @RequestParam Long toPersonId,
       @RequestParam Long updateBy) throws Exception {
     custPersonService.mergeCustPerson(fromPersonIds, toPersonId, updateBy);
   }

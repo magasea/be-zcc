@@ -323,9 +323,9 @@
       and (
       1=2
       <foreach item="item" index="index" collection="mobileList">
-        OR cac.mobile_update LIKE CONCAT('%',#{item},'%')
-        OR cac.mobile_prep LIKE CONCAT('%',#{item},'%')
-        OR cac.mobile_history LIKE CONCAT('%',#{item},'%')
+        OR mobile_update LIKE CONCAT('%',#{item},'%')
+        OR mobile_prep LIKE CONCAT('%',#{item},'%')
+        OR mobile_history LIKE CONCAT('%',#{item},'%')
       </foreach>
       )
     </if>

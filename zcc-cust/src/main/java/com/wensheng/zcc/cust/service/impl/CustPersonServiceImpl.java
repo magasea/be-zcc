@@ -57,7 +57,7 @@ public class CustPersonServiceImpl implements CustPersonService {
     custTrdPerson.setCreateTime(new Date());
 
     //添加数据库
-    custTrdPersonMapper.insert(custTrdPerson);
+    custTrdPersonMapper.insertSelective(custTrdPerson);
   }
 
   private List<CustTrdPerson> getPersonByMobileList(CustTrdPerson custTrdPerson) {

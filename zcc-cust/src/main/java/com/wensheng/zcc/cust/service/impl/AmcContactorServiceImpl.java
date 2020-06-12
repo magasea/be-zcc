@@ -26,6 +26,7 @@ import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 
+import java.text.Collator;
 import java.util.*;
 
 import lombok.extern.slf4j.Slf4j;
@@ -570,9 +571,24 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     }
 
     custAmcCmpycontactorExtVos = convertToVos(new ArrayList(custAmcCmpycontactorMap.values()));
+    listSort(custAmcCmpycontactorExtVos);
     custAmcCmpycontactorMap = null;
     return custAmcCmpycontactorExtVos;
   }
+
+
+  public static void listSort(List<CustAmcCmpycontactorExtVo> custAmcCmpycontactorExtVoList) {
+    Collections.sort(custAmcCmpycontactorExtVoList, new Comparator<CustAmcCmpycontactorExtVo>() {
+      @Override
+      public int compare(CustAmcCmpycontactorExtVo o1, CustAmcCmpycontactorExtVo o2) {
+        String name1=o1.getName();
+        String name2=o2.getName();
+        Collator instance = Collator.getInstance(Locale.CHINA);
+        return instance.compare(name1, name2);
+      }
+    });
+  }
+
 
 
   private String getPhoneFromTrdInfo(CustTrdInfo custTrdInfo){
@@ -676,6 +692,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
       custAmcCmpycontactorExtVo.setCustAmcCmpycontactor(new CustAmcCmpycontactor());
       custAmcCmpycontactorExtVo.setFavorTypePrep(new HashMap<>());
       custAmcCmpycontactorExtVo.setFavorCityPrep(new HashMap<>());
+      custAmcCmpycontactorExtVo.setName(custAmcCmpycontactorExt.getCustAmcCmpycontactor().getName());
       convertToVo(custAmcCmpycontactorExt, custAmcCmpycontactorExtVo);
       custAmcCmpycontactorExtVos.add(custAmcCmpycontactorExtVo);
     }

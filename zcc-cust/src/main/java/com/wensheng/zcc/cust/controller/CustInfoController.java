@@ -239,8 +239,8 @@ public class CustInfoController {
       }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
 
         if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctp.create_time", Direction.DESC);
-          orderByParam.put("ctp.create_time", Direction.DESC);
+          orderByParam.put("ctp.update_time", Direction.DESC);
+          orderByParam.put("ctp.update_time", Direction.DESC);
         }
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);

@@ -578,6 +578,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdInfo.setSellerId(sellerId);
     if(action == 1){
       //make new trdInfo
+      custTrdInfo.setCreateTime(new Date());
       custTrdInfoMapper.insertSelective(custTrdInfo);
     }else if(action == 2){
       //update trdInfo

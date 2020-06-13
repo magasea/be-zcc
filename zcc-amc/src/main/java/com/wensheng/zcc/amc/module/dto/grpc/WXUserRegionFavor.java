@@ -10,7 +10,9 @@ public class WXUserRegionFavor {
   Double lastLng = null;
   String locationCode = null;
   String locationCityName = null;
+  String locationProvName = null;
   String lastIp = null;
   String lastIpCity = null;
   String lastIpCityCode = null;
+  String lastIpProv = null;
 }

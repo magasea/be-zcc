@@ -7,4 +7,6 @@ public class GaodeIpCity {
   String province;
   String city;
   String adcode;
+  Double lat;
+  Double lng;
 }

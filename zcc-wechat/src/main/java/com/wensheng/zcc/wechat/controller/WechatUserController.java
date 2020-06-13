@@ -317,7 +317,7 @@ public class WechatUserController {
 
   @RequestMapping(value = "/user/getUserFavor", method = RequestMethod.POST)
   @ResponseBody
-  public  WXUserFavor getUserFavor(@RequestBody String openId, @RequestHeader("X-FORWARDED-FOR") String loginIp ) throws Exception {
+  public  WXUserFavor getUserFavor(@RequestBody String openId, @RequestHeader(value = "X-FORWARDED-FOR", required = false) String loginIp ) throws Exception {
     log.info(loginIp);
     return wxService.getUserFavor( openId, loginIp);
 

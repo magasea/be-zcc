@@ -198,13 +198,21 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
       GeoIp2LocationResp.Builder gilrBuilder = GeoIp2LocationResp.newBuilder();
 
       AmcBeanUtils.copyProperties(addressByIp, gilrBuilder);
+
+      List<GaodeGeoQueryVal> geoInfoFromAddress = gaoDeService
+          .getGeoInfoFromAddress(addressByIp.getCity(), addressByIp.getCity());
+
+      if(!CollectionUtils.isEmpty(geoInfoFromAddress) && !StringUtils.isEmpty(geoInfoFromAddress.get(0).getLocation())){
+        String[] coordinates = geoInfoFromAddress.get(0).getLocation().split(",");
+        gilrBuilder.setLng(Double.valueOf(coordinates[0]));
+        gilrBuilder.setLat(Double.valueOf(coordinates[1]));
+      }
       responseObserver.onNext(gilrBuilder.build());
       responseObserver.onCompleted();
     }catch (Exception ex){
       log.error("Failed to get add info for:{}", request.getIpadd(), ex);
       responseObserver.onError(ex);
     }
-    GaodeGeoQueryIPResp addressByIp = gaoDeService.getAddressByIp(request.getIpadd());
 
   }
 

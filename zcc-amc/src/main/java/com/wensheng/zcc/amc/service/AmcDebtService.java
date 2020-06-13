@@ -11,6 +11,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
@@ -161,4 +162,6 @@ public interface AmcDebtService {
   void patchDebtClue(String cellDebtTitle, String cellDebtClue) throws Exception;
 
     void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception;
+
+  List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor);
 }

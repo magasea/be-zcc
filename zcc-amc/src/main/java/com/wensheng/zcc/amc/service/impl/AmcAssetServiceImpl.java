@@ -13,6 +13,7 @@ import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
@@ -935,6 +936,25 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
 
     return amcAssetVos;
+  }
+
+  @Override
+  public List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor) {
+      if(!StringUtils.isEmpty(wxUserRegionFavor.getLocationCode())){
+        //query by city
+        List<AmcAssetVo> cityAssets = getAssetByCityCode(wxUserRegionFavor.getLocationCode());
+      }
+    return null;
+  }
+
+  private List<AmcAssetVo> getAssetByCityCode(String locationCode) {
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      amcAssetExample.createCriteria().andCityEqualTo(locationCode);
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+      if(CollectionUtils.isEmpty(amcAssets) || amcAssets.size() < 15){
+
+      }
+    return null;
   }
 
   private AmcAssetExample getAmcAssetExampleWithRandomFloorFilter(AmcFilterContentAsset filterAsset, AmcSaleGetRandomListInPage pageInfo) {

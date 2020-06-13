@@ -200,6 +200,7 @@ public class WXToolServiceImpl implements WXToolService {
     HttpHeaders httpHeaders = getHttpJsonHeader();
     HttpEntity<WechatUserInfo> httpEntity = new HttpEntity<>(wechatUserInfo, httpHeaders);
     ResponseEntity resp = restTemplate.exchange(notifyUserLogin, HttpMethod.POST, httpEntity, String.class);
+    log.info("{} {}",gson.toJson(resp), gson.toJson(wechatUserInfo));
   }
 
   @Override

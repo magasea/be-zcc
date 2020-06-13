@@ -125,7 +125,23 @@ public class GaoDeServiceImpl implements GaoDeService {
       ResponseEntity<String> respStr =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
           String.class);
       log.error("Failed to get geo info for :{} and city:{} from:{}", address, city, respStr);
-      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+      log.error("now use city geo info directlly");
+      geoStr.setLength(0);
+      geoStr.append(String.format(geoCoderUrl,city));
+      if(!StringUtils.isEmpty(city)){
+        geoStr.append(String.format("&city=%s", city));
+      }
+      ResponseEntity<GaodeGeoQueryResp> resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+          GaodeGeoQueryResp.class);
+
+
+      gaoDeReGeoResult = resp.getBody();
+//      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+    }finally {
+      if(gaoDeReGeoResult == null){
+        log.error("failed to get geo info for:{} {}", address, city);
+        throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+      }
     }
     List<GaodeGeoQueryVal> results = new ArrayList(gaoDeReGeoResult.getGeocodes());
     if(CollectionUtils.isEmpty(results)){

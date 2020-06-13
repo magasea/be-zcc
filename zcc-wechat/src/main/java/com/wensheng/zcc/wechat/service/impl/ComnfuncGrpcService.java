@@ -73,8 +73,14 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
   public AmcRegionInfo getRegionInfo(UserLngLat userLngLat){
     GeoLngLatReq.Builder gllrBuildr = GeoLngLatReq.newBuilder();
     gllrBuildr.setLng(userLngLat.getLng()).setLat(userLngLat.getLat());
+    GeoLocationResp geoLocationResp = null;
+    try{
+      geoLocationResp =  comnFuncStub.getAmcGeoInfoByLngLat(gllrBuildr.build());
 
-    GeoLocationResp geoLocationResp =  comnFuncStub.getAmcGeoInfoByLngLat(gllrBuildr.build());
+    }catch (Exception ex){
+      log.error("Failed to get geo info by lat:{},lng:{}",userLngLat.getLat(),userLngLat.getLng(), ex);
+      return null;
+    }
     AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
     amcRegionInfo.setCityName(geoLocationResp.getCityName());
     amcRegionInfo.setCityCode(geoLocationResp.getCityCode());

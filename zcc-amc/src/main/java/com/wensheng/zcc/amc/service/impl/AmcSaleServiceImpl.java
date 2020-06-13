@@ -24,6 +24,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTagExample;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
@@ -32,6 +33,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecommAssets;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecommDebts;
+import com.wensheng.zcc.amc.module.vo.AmcSaleUserLocalFavorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
@@ -51,6 +53,7 @@ import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -1239,12 +1242,23 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
   @Override
-  public void getUserLocalPage(String openId) {
-    //step1 get WXUserFavor info
+  public AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId) {
+      //step 1 get WXUserFavor info
       //step 2 depend on city code to find top 12 asset or debt
       //step 3 if cannot find enough asset or debt with city code, find top 12 asset or debt by provCode
       //step 4 if cannot find enough asset or debt with provCode , find top 12 asset or debt by latlng
-      wechatGrpcService.getWXUserRegionFavor(openId);
+      WXUserRegionFavor wxUserRegionFavor = wechatGrpcService.getWXUserRegionFavor(openId);
+      WXUserFavor wxUserFavor = new WXUserFavor();
+      AmcBeanUtils.copyProperties(wxUserRegionFavor, wxUserFavor);
+      List<AmcAssetVo> amcAssetVos = amcAssetService.getUserLocalAssets(wxUserRegionFavor);
+      List<AmcDebtVo> amcDebtVos = amcDebtService.getUserLocalDebts(wxUserRegionFavor);
+      AmcSaleUserLocalFavorPageVo amcSaleUserFavorPageVo = new AmcSaleUserLocalFavorPageVo();
+      amcSaleUserFavorPageVo.setResultList(new ArrayList<>());
+      amcSaleUserFavorPageVo.getResultList().addAll(amcAssetVos);
+      amcSaleUserFavorPageVo.getResultList().addAll(amcSaleUserFavorPageVo.getResultList().size()-1, amcDebtVos);
+      amcSaleUserFavorPageVo.setWxUserFavor(wxUserFavor);
+
+      return amcSaleUserFavorPageVo;
   }
 
   private AmcSaleFloor getLatestDebtFloor() {

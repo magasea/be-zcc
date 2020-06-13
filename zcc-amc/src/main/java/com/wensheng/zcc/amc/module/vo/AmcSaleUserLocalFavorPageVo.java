@@ -7,7 +7,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class AmcSaleUserFavorPageVo {
+public class AmcSaleUserLocalFavorPageVo {
   WXUserFavor wxUserFavor;
 
   AmcSaleFilter amcSaleFilter;

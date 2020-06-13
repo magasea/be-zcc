@@ -923,6 +923,7 @@ public class WXUserServiceImpl implements WXUserService {
     }
     if(needMakeNewFavor){
       wxUserFavor = new WXUserFavor();
+      wxUserFavor.setOpenId(openId);
     }else{
       wxUserFavor = wxUserFavors.get(0);
     }
@@ -933,6 +934,9 @@ public class WXUserServiceImpl implements WXUserService {
         wxUserFavor.setLastIp(ipadd);
         wxUserFavor.setLastIpCity(cityByIp.getCity());
         wxUserFavor.setLastIpCityCode(cityByIp.getAdcode());
+        wxUserFavor.setLastIpProv(cityByIp.getProvince());
+        wxUserFavor.setLastIpLat(cityByIp.getLat());
+        wxUserFavor.setLastIpLng(cityByIp.getLng());
       }
       mongoTemplate.save(wxUserFavor);
 
@@ -968,6 +972,9 @@ public class WXUserServiceImpl implements WXUserService {
   @Override
   public AmcRegionInfo getUserLocation(UserLngLat userLngLat) {
     AmcRegionInfo regionInfo = comnfuncGrpcService.getRegionInfo(userLngLat);
+    if(regionInfo == null){
+      return null;
+    }
     Query query = new Query();
     query.addCriteria(Criteria.where("openId").is(userLngLat.getOpenId()));
     List<WXUserFavor> wxUserFavorList = mongoTemplate.find(query, WXUserFavor.class);
@@ -978,6 +985,7 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserFavor.setLastLng(userLngLat.getLng());
       wxUserFavor.setLocationCode(regionInfo.getCityCode());
       wxUserFavor.setLocationCityName(regionInfo.getCityName());
+      wxUserFavor.setLocationProvName(regionInfo.getProvName());
       mongoTemplate.save(wxUserFavor);
     }
     else{
@@ -985,6 +993,7 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserFavorList.get(0).setLastLat(userLngLat.getLat());
       wxUserFavorList.get(0).setLocationCode(regionInfo.getCityCode());
       wxUserFavorList.get(0).setLocationCityName(regionInfo.getCityName());
+      wxUserFavorList.get(0).setLocationProvName(regionInfo.getProvName());
       mongoTemplate.save(wxUserFavorList.get(0));
     }
     return regionInfo;

@@ -34,6 +34,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfoExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtCreateVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
@@ -1652,6 +1653,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     amcDebts.get(0).setCourtId(courtId);
     amcDebtMapper.updateByPrimaryKeySelective(amcDebts.get(0));
+  }
+
+  @Override
+  public List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor) {
+    // 1. location city location prov and finally lat lng
+    // 2. ip city, ip prov and finally ip city lat lng
+//    wxUserRegionFavor.getLastIpCityCode()
+    return null;
   }
 
   private AmcDebtExample getAmcDebtExampleWithFloorRandomFilter(AmcFilterContentDebt floorDebtFilter, AmcSaleGetRandomListInPage pageInfo)

@@ -3,6 +3,7 @@ package com.wensheng.zcc.comnfunc.service.impl;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegion;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegionItem;
+import com.wensheng.zcc.comnfunc.module.dto.BaiduResponse;
 import com.wensheng.zcc.comnfunc.module.dto.Response;
 import com.wensheng.zcc.comnfunc.service.RegionService;
 import org.springframework.beans.factory.annotation.Value;

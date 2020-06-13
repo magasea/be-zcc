@@ -24,9 +24,13 @@ public class WXUserFavor {
   Double lastLng;
   String locationCode;
   String locationCityName;
+  String locationProvName;
   String lastIp;
   String lastIpCity;
+  String lastIpProv;
   String lastIpCityCode;
+  Double lastIpLat;
+  Double lastIpLng;
   AmcSaleFilter amcSaleFilter;
   List<Long> contactorIds;
   Date createTime;

@@ -4,7 +4,6 @@ import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleBanner;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
-import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
@@ -16,6 +15,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleFloorVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleHomePage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleMenuVo;
+import com.wensheng.zcc.amc.module.vo.AmcSaleUserLocalFavorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
@@ -366,7 +366,7 @@ public class AmcSaleController {
 
   @RequestMapping(value = "salefloor/getUserLocalPage", method = RequestMethod.POST)
   @ResponseBody
-  public void getUserLocalPage(@RequestBody String openId) throws Exception {
-    amcSaleService.getUserLocalPage(openId);
+  public AmcSaleUserLocalFavorPageVo getUserLocalPage(@RequestBody String openId) throws Exception {
+    return amcSaleService.getUserLocalPage(openId);
   }
 }

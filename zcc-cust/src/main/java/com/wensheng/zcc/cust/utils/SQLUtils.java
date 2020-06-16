@@ -156,6 +156,7 @@ public class SQLUtils {
 
   public static String getTrdCmpyExtWhereClause(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();
+    sb.append(" ctc.status != 2 ");
     if(!StringUtils.isEmpty(queryParam.getName())){
       if(sb.length()>0){
         sb.append(" and ");
@@ -208,6 +209,7 @@ public class SQLUtils {
   public static CustTrdPersonExtExample getCustPersonTrdExample(QueryParam queryParam) {
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
     CustTrdPersonExtExample.Criteria criteria = custTrdPersonExtExample.createCriteria();
+    criteria.andStatusNotEqualTo(2);
     if(!StringUtils.isEmpty(queryParam.getName())){
       criteria.andNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append(
           "%").toString() );

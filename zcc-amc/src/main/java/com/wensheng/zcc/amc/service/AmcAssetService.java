@@ -91,6 +91,8 @@ public interface AmcAssetService {
 
   List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
 
+  List<AmcAssetVo> queryByGeopointWithLimitCount(GeoJsonPoint geoJsonPoint, int limit) throws Exception;
+
   void patchAssetLocationWithCode() throws Exception;
   AssetImage uploadAssetImage(String imagePath, String ossPrepath, Integer tag, Long assetId, String desc) throws Exception;
 
@@ -107,5 +109,5 @@ public interface AmcAssetService {
   List<AmcAssetVo> getFloorFilteredRandomAssets(AmcFilterContentAsset filterAsset, AmcSaleGetRandomListInPage pageInfo)
       throws Exception;
 
-  List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor);
+  List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor) throws Exception;
 }

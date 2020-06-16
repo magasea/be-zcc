@@ -108,14 +108,15 @@ public class AmcBaiDuLogisQuery {
 
     Map paramsMap = new LinkedHashMap<String, String>();
     paramsMap.put("ip", ip);
-    paramsMap.put("output", "json");
+//    paramsMap.put("output", "json");
+    paramsMap.put("coor","bd09ll");
     paramsMap.put("ak", baiduAppAK);
 
     // 调用下面的toQueryString方法，对LinkedHashMap内所有value作utf8编码，拼接返回结果address=%E7%99%BE%E5%BA%A6%E5%A4%A7%E5%8E%A6&output=json&ak=yourak
     String paramsStr = toQueryString(paramsMap);
 
     // 对paramsStr前面拼接上/geocoder/v2/?，后面直接拼接yoursk得到/geocoder/v2/?address=%E7%99%BE%E5%BA%A6%E5%A4%A7%E5%8E%A6&output=json&ak=yourakyoursk
-    String wholeStr = new String("/location/ip" + paramsStr + baiduAppSK);
+    String wholeStr = new String("/location/ip?" + paramsStr + baiduAppSK);
 
     // 对上面wholeStr再作utf8编码
     String tempStr = URLEncoder.encode(wholeStr, "UTF-8");
@@ -123,7 +124,7 @@ public class AmcBaiDuLogisQuery {
     // 调用下面的MD5方法得到最后的sn签名7de5a22212ffaa9e326444c75a58f9a0
     String sn = MD5(tempStr);
     System.out.println(sn);
-    String url = String.format(baiduGeoIp2AddUrl, ip, baiduAppAK, sn );
+    String url = String.format(baiduGeoIp2AddUrl, ip,  sn );
     System.out.println(url);
 
     BaiduResponse resp =

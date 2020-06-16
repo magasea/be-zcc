@@ -971,9 +971,19 @@ public class WXUserServiceImpl implements WXUserService {
 
   @Override
   public AmcRegionInfo getUserLocation(UserLngLat userLngLat) {
-    AmcRegionInfo regionInfo = comnfuncGrpcService.getRegionInfo(userLngLat);
-    if(regionInfo == null){
-      return null;
+    log.info(gson.toJson(userLngLat));
+
+    AmcRegionInfo regionInfo = null;
+    if(userLngLat.getLng() != null && userLngLat.getLat() != null){
+      regionInfo = comnfuncGrpcService.getRegionInfo(userLngLat.getLng(), userLngLat.getLat());
+    }
+    GeoJsonPoint geoJsonPoint = null;
+    if(userLngLat.getLng() == null && !StringUtils.isEmpty(userLngLat.getLastIpCityName())&& !StringUtils.isEmpty(userLngLat.getLastIp())){
+      geoJsonPoint = comnfuncGrpcService.getGeoInfo(userLngLat.getLastIpCityName());
+    }
+    if(geoJsonPoint != null && regionInfo == null){
+      log.info("query again for regionInfo");
+      regionInfo = comnfuncGrpcService.getRegionInfo(geoJsonPoint.getCoordinates().get(0), geoJsonPoint.getCoordinates().get(1));
     }
     Query query = new Query();
     query.addCriteria(Criteria.where("openId").is(userLngLat.getOpenId()));
@@ -983,17 +993,31 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserFavor.setOpenId(userLngLat.getOpenId());
       wxUserFavor.setLastLat(userLngLat.getLat());
       wxUserFavor.setLastLng(userLngLat.getLng());
-      wxUserFavor.setLocationCode(regionInfo.getCityCode());
-      wxUserFavor.setLocationCityName(regionInfo.getCityName());
-      wxUserFavor.setLocationProvName(regionInfo.getProvName());
+      if(regionInfo != null){
+        wxUserFavor.setLocationCode(regionInfo.getCityCode());
+        wxUserFavor.setLocationCityName(regionInfo.getCityName());
+        wxUserFavor.setLocationProvName(regionInfo.getProvName());
+      }
+      if(geoJsonPoint != null ){
+        wxUserFavor.setLastIpLng(geoJsonPoint.getCoordinates().get(0));
+        wxUserFavor.setLastIpLat(geoJsonPoint.getCoordinates().get(1));
+      }
+
       mongoTemplate.save(wxUserFavor);
     }
     else{
       wxUserFavorList.get(0).setLastLng(userLngLat.getLng());
       wxUserFavorList.get(0).setLastLat(userLngLat.getLat());
-      wxUserFavorList.get(0).setLocationCode(regionInfo.getCityCode());
-      wxUserFavorList.get(0).setLocationCityName(regionInfo.getCityName());
-      wxUserFavorList.get(0).setLocationProvName(regionInfo.getProvName());
+      if(regionInfo != null){
+        wxUserFavorList.get(0).setLocationCode(regionInfo.getCityCode());
+        wxUserFavorList.get(0).setLocationCityName(regionInfo.getCityName());
+        wxUserFavorList.get(0).setLocationProvName(regionInfo.getProvName());
+      }
+      if(geoJsonPoint != null ){
+        wxUserFavorList.get(0).setLastIpLng(geoJsonPoint.getCoordinates().get(0));
+        wxUserFavorList.get(0).setLastIpLat(geoJsonPoint.getCoordinates().get(1));
+      }
+
       mongoTemplate.save(wxUserFavorList.get(0));
     }
     return regionInfo;

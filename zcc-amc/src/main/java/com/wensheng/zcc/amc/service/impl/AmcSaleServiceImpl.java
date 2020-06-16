@@ -886,6 +886,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
         }
         amcSaleBannerPageVo.setResultList(resultList);
+        amcSaleBannerPageVo.setAmcSaleBanner(amcSaleBanner);
         return amcSaleBannerPageVo;
     }
 
@@ -1242,7 +1243,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
   @Override
-  public AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId) {
+  public AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId) throws Exception {
       //step 1 get WXUserFavor info
       //step 2 depend on city code to find top 12 asset or debt
       //step 3 if cannot find enough asset or debt with city code, find top 12 asset or debt by provCode

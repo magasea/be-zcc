@@ -117,5 +117,5 @@ public interface AmcSaleService {
       throws Exception;
   public void initFixFloors();
 
-  AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId);
+  AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId) throws Exception;
 }

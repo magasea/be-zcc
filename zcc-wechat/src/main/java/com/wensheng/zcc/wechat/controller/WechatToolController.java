@@ -38,4 +38,11 @@ public class WechatToolController {
      wxToolService.patchUserFirstLoginTime(jsonItems);
   }
 
+
+  @RequestMapping(value = "/patchUserGeoRecord", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchUserGeoRecord() throws Exception {
+
+    wxToolService.patchGeoRecord();
+  }
 }

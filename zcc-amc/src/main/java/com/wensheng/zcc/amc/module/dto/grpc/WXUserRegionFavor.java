@@ -15,4 +15,6 @@ public class WXUserRegionFavor {
   String lastIpCity = null;
   String lastIpCityCode = null;
   String lastIpProv = null;
+  Double lastIpLat = null;
+  Double lastIpLng = null;
 }

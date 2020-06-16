@@ -132,7 +132,7 @@ baidu:
         appId: 16178564
         appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
         getGeoURL: http://api.map.baidu.com/geocoding/v3/?address=%s&output=json&ak=%s&sn=%s
-        getIpAdd: http://api.map.baidu.com/location/ip?ak=${baidu.logis.appAK}&ip=%s&sn=%s
+        getIpAdd: http://api.map.baidu.com/location/ip?ak=${baidu.logis.appAK}&ip=%s&sn=%s&coor=bd09ll
 gaode:
 #    String url = "http://restapi.amap.com/v3/geocode/geo?key=0c53a687090bf18a7394ffc66a0b6432&address="+urlEncoder.encode(address,"utf-8")
     key: 0c53a687090bf18a7394ffc66a0b6432

@@ -80,7 +80,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.Data;
@@ -196,6 +195,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Value("${env.name}")
   String envName;
+  
+  private final int PAGE_ITEM_SIZE = 15;
 
   @PostConstruct
   void init(){
@@ -714,7 +715,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
 
 
-    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample);
+    List<AmcDebtExt> amcDebtExtList = amcDebtExtMapper.selectSimpleByExampleExt(amcDebtExample);
 
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
     for(AmcDebtExt amcDebtExt: amcDebtExtList){
@@ -1366,6 +1367,71 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
 
+  @Override
+  public List<AmcDebtVo> queryNearByDebtsWithLimit(GeoJsonPoint geoJsonPoint, int limit) throws Exception {
+
+
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    int stepLimit = 60;
+    int initR = 0;
+    int rStep = 100;
+    int stepIdx = 0;
+    while(amcDebtVos.size() < limit && stepIdx < stepLimit ){
+      int circleLowR = initR;
+      int circleHighR = initR+rStep;
+      initR += initR + rStep;
+      stepIdx++;
+      List<AmcDebtVo> amcDebtVoList = queryNearByDebts(geoJsonPoint, new Integer[]{circleLowR, circleHighR})
+          ;
+      if(!CollectionUtils.isEmpty(amcDebtVoList)){
+        amcDebtVos.addAll(amcDebtVos.size(), amcDebtVoList);
+      }
+    }
+
+
+
+
+    return amcDebtVos;
+    
+    
+
+  }
+
+  private List<AmcDebtVo> queryNearByDebts(GeoJsonPoint geoJsonPoint, Integer[] distances) throws Exception {
+    if(distances == null || distances.length < 1){
+      throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_MUST_PARAM, "invalid distances params");
+    }
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+
+    NearQuery nearQuery = null;
+    if(distances.length == 1){
+      nearQuery = NearQuery.near(geoJsonPoint).inKilometers().minDistance(distances[0]);
+    }else{
+      nearQuery = NearQuery.near(geoJsonPoint).inKilometers().maxDistance(distances[1]).minDistance(distances[0]);
+    }
+    GeoResults<DebtAdditional> debtAdditionalGeoResults = wszccTemplate.geoNear(nearQuery, DebtAdditional.class);
+    if(debtAdditionalGeoResults != null && ( distances.length == 2 ?
+        debtAdditionalGeoResults.getAverageDistance().getValue() < distances[1] :
+        debtAdditionalGeoResults.getAverageDistance().getValue() > distances[0])){
+      List<Long> debtIds =
+          debtAdditionalGeoResults.getContent().stream().map(item -> item.getContent().getAmcDebtId()).collect(
+              Collectors.toList());
+      amcDebtVos.addAll(getDebtByIds(debtIds));
+    }
+    return amcDebtVos;
+  }
+
+  private List<AmcDebtVo> getDebtByIds(List<Long> debtIds) throws Exception {
+
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    amcDebtExample.setOrderByClause(" has_img desc , id desc ");
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    List<AmcDebtVo> amcDebtVos = getDebtVos(amcDebts);
+    return amcDebtVos;
+
+  }
+
 
   @Override
   public List<AmcDebtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint, Long[] distances) throws Exception {
@@ -1556,7 +1622,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @Override
   public List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt) throws Exception {
     AmcDebtExample amcDebtExample = getAmcDebtExampleWithFloorFilter(filterDebt);
-    List<AmcDebtExt> amcDebtExts = amcDebtExtMapper.selectByExampleWithRowboundsExt(amcDebtExample);
+    List<AmcDebtExt> amcDebtExts = amcDebtExtMapper.selectSimpleByExampleExt(amcDebtExample);
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
     for(AmcDebtExt amcDebtExt: amcDebtExts){
       amcDebtVos.add(convertDo2Vo(amcDebtExt));
@@ -1656,12 +1722,55 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   }
 
   @Override
-  public List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor) {
+  public List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor) throws Exception {
     // 1. location city location prov and finally lat lng
     // 2. ip city, ip prov and finally ip city lat lng
-//    wxUserRegionFavor.getLastIpCityCode()
-    return null;
+    String cityName;
+    List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+    if( !StringUtils.isEmpty(wxUserRegionFavor.getLocationCityName()) ){
+      List<CurtInfo> curtInfos = amcHelperService
+          .queryCurtInfoByCityNames(Arrays.asList(wxUserRegionFavor.getLocationCityName()));
+      List<AmcDebt> amcDebts = getDebtVosByCurtInfos(
+          curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()));
+      if(amcDebts.size() < PAGE_ITEM_SIZE){
+        //not enough , need call geo
+        if(StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName())){
+          curtInfos = amcHelperService.queryCurtInfoByProvNames(Arrays.asList(wxUserRegionFavor.getLocationProvName()));
+          amcDebts = getDebtVosByCurtInfos(
+              curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()));
+        }
+      }else{
+        return getDebtVos(amcDebts);
+      }
+
+      if(amcDebts.size() < PAGE_ITEM_SIZE){
+        log.error("need to use geo query now");
+        //TODO: call geo
+        GeoJsonPoint geoJsonPoint = null;
+        if(wxUserRegionFavor.getLastLng() != null && wxUserRegionFavor.getLastLat() != null){
+          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
+          return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+        }
+        if(wxUserRegionFavor.getLastIpLat() != null && wxUserRegionFavor.getLastIpLng() != null){
+          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
+          return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+        }
+        return amcDebtVos;
+
+      }
+
+    }
+    return amcDebtVos;
   }
+  
+  private List<AmcDebt> getDebtVosByCurtInfos(List<Long> curtIds) throws Exception {
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.setOrderByClause(" has_img desc, id desc ");
+    amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andCourtIdIn(curtIds);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
+  }
+
 
   private AmcDebtExample getAmcDebtExampleWithFloorRandomFilter(AmcFilterContentDebt floorDebtFilter, AmcSaleGetRandomListInPage pageInfo)
       throws Exception {

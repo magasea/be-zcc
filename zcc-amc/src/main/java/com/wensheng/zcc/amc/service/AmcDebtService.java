@@ -128,6 +128,8 @@ public interface AmcDebtService {
 
   public void searchGeoInfoForDebtByCourt();
 
+  public List<AmcDebtVo> queryNearByDebtsWithLimit(GeoJsonPoint geoJsonPoint, int limit) throws Exception;
+
   List<AmcDebtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint, Long[] distances) throws Exception;
 
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
@@ -163,5 +165,5 @@ public interface AmcDebtService {
 
     void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception;
 
-  List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor);
+  List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor) throws Exception;
 }

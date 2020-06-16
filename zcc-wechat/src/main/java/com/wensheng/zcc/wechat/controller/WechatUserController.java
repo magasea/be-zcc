@@ -335,6 +335,7 @@ public class WechatUserController {
   @ResponseBody
   public AmcRegionInfo getUserLocation(@RequestBody UserLngLat userLngLat ) throws Exception {
 
+
     return wxService.getUserLocation( userLngLat);
 
   }

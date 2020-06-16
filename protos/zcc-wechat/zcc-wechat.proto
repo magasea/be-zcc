@@ -109,6 +109,8 @@ message WXUserFavorGrpcInfo{
   string lastIpCity = 9;
   string lastIpCityCode = 10;
   string lastIpProv = 11;
+  double lastIpLat = 12;
+  double lastIpLng = 13;
 }
 
 

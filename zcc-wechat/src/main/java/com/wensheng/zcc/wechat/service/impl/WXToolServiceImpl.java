@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.mysql.cj.x.protobuf.MysqlxCursor.Open;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
@@ -27,8 +28,10 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -222,13 +225,29 @@ public class WXToolServiceImpl implements WXToolService {
           wechatUserStatic.setFirstLoginTime(AmcDateUtils.toUTCDateFromLocal(openIdTimestamp.getTimeStamp()));
           wechatUserStaticMapper.insertSelective(wechatUserStatic);
         }else{
-          wechatUserStatics.get(0).setFirstLoginTime(AmcDateUtils.toUTCDateFromLocal(openIdTimestamp.getTimeStamp()));
+          wechatUserStatics.get(0).setFirstLoginTime(AmcDateUtils.toUTCDate(openIdTimestamp.getTimeStamp()));
           wechatUserStaticMapper.updateByPrimaryKeySelective(wechatUserStatics.get(0));
         }
       }else{
         log.error( "no such openId:{}", openIdTimestamp.getOpenId());
       }
     }
+  }
+
+  @Override
+  public void patchGeoRecord() {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").ne(null));
+     List<WXUserGeoRecord> wxUserGeoRecords = mongoTemplate.find(query, WXUserGeoRecord.class);
+     Set<String> openIds = new HashSet<>();
+     for(WXUserGeoRecord wxUserGeoRecord: wxUserGeoRecords){
+       if(!openIds.contains(wxUserGeoRecord.getOpenId())){
+         openIds.add(wxUserGeoRecord.getOpenId());
+         continue;
+       }else{
+         mongoTemplate.remove(wxUserGeoRecord);
+       }
+     }
   }
 
   @Data
@@ -258,6 +277,8 @@ public class WXToolServiceImpl implements WXToolService {
     Long timeStamp;
 
   }
+
+
 
 
 }

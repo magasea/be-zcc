@@ -9,4 +9,6 @@ public interface WXToolService {
   public void notifyWechatUserLogin(WechatUserInfo wechatUserInfo);
 
   void patchUserFirstLoginTime(String jsonItems);
+
+  void patchGeoRecord();
 }

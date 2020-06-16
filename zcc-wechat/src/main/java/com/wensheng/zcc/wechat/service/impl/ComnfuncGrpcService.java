@@ -7,6 +7,7 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.wechat.module.dto.GaodeIpCity;
 import com.wensheng.zcc.wechat.module.vo.UserLngLat;
 import com.wenshengamc.zcc.common.Common.GeoJson;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.GeoIp2LocationResp;
@@ -21,9 +22,11 @@ import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -70,21 +73,29 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
   }
 
 
-  public AmcRegionInfo getRegionInfo(UserLngLat userLngLat){
+  public AmcRegionInfo getRegionInfo(Double lng, Double lat){
     GeoLngLatReq.Builder gllrBuildr = GeoLngLatReq.newBuilder();
-    gllrBuildr.setLng(userLngLat.getLng()).setLat(userLngLat.getLat());
+    gllrBuildr.setLng(lng).setLat(lat);
     GeoLocationResp geoLocationResp = null;
     try{
       geoLocationResp =  comnFuncStub.getAmcGeoInfoByLngLat(gllrBuildr.build());
 
     }catch (Exception ex){
-      log.error("Failed to get geo info by lat:{},lng:{}",userLngLat.getLat(),userLngLat.getLng(), ex);
+      log.error("Failed to get geo info by lat:{},lng:{}",lat,lng, ex);
       return null;
     }
     AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
     amcRegionInfo.setCityName(geoLocationResp.getCityName());
-    amcRegionInfo.setCityCode(geoLocationResp.getCityCode());
-    amcRegionInfo.setProvCode(geoLocationResp.getProvCode());
+    if(!StringUtils.isEmpty(geoLocationResp.getCityCode())  && geoLocationResp.getCityCode().length() > 6){
+      amcRegionInfo.setCityCode(geoLocationResp.getCityCode().substring(0, 6));
+    }else{
+      amcRegionInfo.setCityCode(geoLocationResp.getCityCode());
+    }
+    if(!StringUtils.isEmpty(geoLocationResp.getProvCode())&& geoLocationResp.getProvCode().length() > 6){
+      amcRegionInfo.setProvCode(geoLocationResp.getProvCode().substring(0,6));
+    }else{
+      amcRegionInfo.setProvCode(geoLocationResp.getProvCode());
+    }
     amcRegionInfo.setProvName(geoLocationResp.getProvName());
     return amcRegionInfo;
   }
@@ -103,5 +114,24 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
     GaodeIpCity gaodeIpCity = new GaodeIpCity();
     AmcBeanUtils.copyProperties(geoLocationResp, gaodeIpCity);
     return gaodeIpCity;
+  }
+
+  public GeoJsonPoint getGeoInfo(String cityName){
+    Address.Builder aBuilder = Address.newBuilder();
+
+    aBuilder.setAddress(cityName);
+    aBuilder.setCity(cityName);
+    GeoJson geoJson;
+    GeoJsonPoint geoJsonPoint = null;
+    try{
+      geoJson = comnFuncStub.getGeoByAddress(aBuilder.build());
+      geoJsonPoint = new GeoJsonPoint(geoJson.getCoordinates(0), geoJson.getCoordinates(1));
+
+    }catch (Exception ex){
+      log.error("", ex);
+
+    }
+    return  geoJsonPoint;
+
   }
 }

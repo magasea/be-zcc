@@ -240,7 +240,6 @@ public class CustInfoController {
 
         if(CollectionUtils.isEmpty(orderByParam)){
           orderByParam.put("ctp.update_time", Direction.DESC);
-          orderByParam.put("ctp.update_time", Direction.DESC);
         }
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);

@@ -604,7 +604,16 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExtExample.setFilterByClause(null);
 
     custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExample(custTrdPersonExtExample);
-    return  custTrdPersonTrdExtList;
+
+    //custTrdCmpyTrdExts 转map
+    Map<Long, CustTrdPersonTrdExt> cmpyTrdExtMap = custTrdPersonTrdExtList.stream().collect(Collectors.toMap(CustTrdPersonTrdExt::getId, custTrdPersonTrdExt -> custTrdPersonTrdExt));
+    //根据id重新排列
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExtArrayList = new ArrayList<>();
+    for (Long id : ids) {
+      custTrdPersonTrdExtArrayList.add(cmpyTrdExtMap.get(id));
+    }
+
+    return  custTrdPersonTrdExtArrayList;
   }
 
   @Override

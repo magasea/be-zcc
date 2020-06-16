@@ -156,7 +156,6 @@ public class SQLUtils {
 
   public static String getTrdCmpyExtWhereClause(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();
-    sb.append(" ctc.status != 2 ");
     if(!StringUtils.isEmpty(queryParam.getName())){
       if(sb.length()>0){
         sb.append(" and ");

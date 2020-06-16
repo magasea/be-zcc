@@ -1,6 +1,7 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
+import com.wensheng.zcc.cust.config.aop.MergeCustChecker;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
@@ -27,21 +28,21 @@ public class CustPersonConytoller {
 
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-//  @ModifyCheckerCustPerson
+  @ModifyCheckerCustPerson
   public void addCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
     custPersonService.createCustPerson(custTrdPerson);
   }
 
   @RequestMapping(value = "/updateCustPerson", method = RequestMethod.POST)
   @ResponseBody
-//  @ModifyCheckerCustPerson
+  @ModifyCheckerCustPerson
   public void updateCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
     custPersonService.updateCustPerson(custTrdPerson);
   }
 
   @RequestMapping(value = "/mergeCustPerson", method = RequestMethod.POST)
   @ResponseBody
-//  @ModifyCheckerCustPerson
+//  @MergeCustChecker
   public void mergeCustPerson(@RequestBody List<Long> fromPersonIds, @RequestParam Long toPersonId,
       @RequestParam Long updateBy) throws Exception {
     custPersonService.mergeCustPerson(fromPersonIds, toPersonId, updateBy);

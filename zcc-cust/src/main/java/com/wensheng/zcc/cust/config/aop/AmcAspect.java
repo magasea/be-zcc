@@ -256,6 +256,32 @@ public class AmcAspect {
       return joinPoint.proceed(joinPoint.getArgs());
   }
 
+  @Around("@annotation(MergeCustChecker) ")
+  public Object mergeCustChecker(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    if (joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null) {
+      log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    Long updateBy = (Long) joinPoint.getArgs()[2];
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
+    }
+    log.info(authentication.getDetails().toString());
+
+
+    Map<String, Object> detailsParam =
+            (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+    if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+      Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
+      updateBy = ssoUserId;
+    }
+      return joinPoint.proceed(joinPoint.getArgs());
+  }
+
 
   @Around("@annotation(ModifyCheckerCustCmpycontactor) ")
   public Object modifyCheckerCustCmpycontactor(ProceedingJoinPoint joinPoint) throws Throwable {

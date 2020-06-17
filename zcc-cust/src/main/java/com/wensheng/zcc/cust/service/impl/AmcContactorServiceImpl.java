@@ -224,7 +224,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
           CustTrdInfo custTrdInfoNew = new CustTrdInfo();
           custTrdInfoNew.setId(custTrdInfo.getId());
           custTrdInfoNew.setTrdCmpycontactorId(toContactorId);
-          //修改更改的交易指向新自然人
+          //修改更改的交易指向新联系人
           custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoNew);
         }
       }

@@ -232,7 +232,7 @@ public class CustPersonServiceImpl implements CustPersonService {
         continue;
       }
       CustTrdPerson originalCustTrdPerson = custTrdPersonHashMap.get(personId);
-
+      creatCustTrdPersonNew(toCustTrdPersonNew,originalCustTrdPerson);
       CustTrdPerson custTrdPerson = new CustTrdPerson();
       custTrdPerson.setId(personId);
       custTrdPerson.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
@@ -281,5 +281,54 @@ public class CustPersonServiceImpl implements CustPersonService {
     custTrdPersonMapper.updateByPrimaryKeySelective(toCustTrdPersonNew);
   }
 
+  private void creatCustTrdPersonNew(CustTrdPerson toCustTrdPersonNew,
+      CustTrdPerson originalCustTrdPerson) {
+    if(null != originalCustTrdPerson.getMobileUpdate() &&!"-1".equals(originalCustTrdPerson.getMobileUpdate())){
+      if(null == toCustTrdPersonNew.getMobileUpdate() || "-1".equals(toCustTrdPersonNew.getMobileUpdate())){
+        toCustTrdPersonNew.setMobileUpdate(originalCustTrdPerson.getMobileUpdate());
+      }else {
+        toCustTrdPersonNew.setMobileUpdate(toCustTrdPersonNew.getMobileUpdate()+";"+originalCustTrdPerson.getMobileUpdate());
+      }
+    }
 
+    if(null != originalCustTrdPerson.getMobilePrep() &&!"-1".equals(originalCustTrdPerson.getMobilePrep())){
+      if(null == toCustTrdPersonNew.getMobilePrep() || "-1".equals(toCustTrdPersonNew.getMobilePrep())){
+        toCustTrdPersonNew.setMobilePrep(originalCustTrdPerson.getMobilePrep());
+      }else {
+        toCustTrdPersonNew.setMobilePrep(toCustTrdPersonNew.getMobilePrep()+";"+originalCustTrdPerson.getMobilePrep());
+      }
+    }
+
+    if(null != originalCustTrdPerson.getMobileHistory() &&!"-1".equals(originalCustTrdPerson.getMobileHistory())){
+      if(null == toCustTrdPersonNew.getMobileHistory() || "-1".equals(toCustTrdPersonNew.getMobileHistory())){
+        toCustTrdPersonNew.setMobileHistory(originalCustTrdPerson.getMobileHistory());
+      }else {
+        toCustTrdPersonNew.setMobileHistory(toCustTrdPersonNew.getMobileHistory()+";"+originalCustTrdPerson.getMobileHistory());
+      }
+    }
+
+    if(null != originalCustTrdPerson.getPhoneUpdate() &&!"-1".equals(originalCustTrdPerson.getPhoneUpdate())){
+      if(null == toCustTrdPersonNew.getPhoneUpdate() || "-1".equals(toCustTrdPersonNew.getPhoneUpdate())){
+        toCustTrdPersonNew.setPhoneUpdate(originalCustTrdPerson.getPhoneUpdate());
+      }else {
+        toCustTrdPersonNew.setPhoneUpdate(toCustTrdPersonNew.getPhoneUpdate()+";"+originalCustTrdPerson.getPhoneUpdate());
+      }
+    }
+
+    if(null != originalCustTrdPerson.getPhonePrep() &&!"-1".equals(originalCustTrdPerson.getPhonePrep())){
+      if(null == toCustTrdPersonNew.getPhonePrep() || "-1".equals(toCustTrdPersonNew.getPhonePrep())){
+        toCustTrdPersonNew.setPhonePrep(originalCustTrdPerson.getPhonePrep());
+      }else {
+        toCustTrdPersonNew.setPhonePrep(toCustTrdPersonNew.getPhonePrep()+";"+originalCustTrdPerson.getPhonePrep());
+      }
+    }
+
+    if(null != originalCustTrdPerson.getPhoneHistory() &&!"-1".equals(originalCustTrdPerson.getPhoneHistory())){
+      if(null == toCustTrdPersonNew.getPhoneHistory() || "-1".equals(toCustTrdPersonNew.getPhoneHistory())){
+        toCustTrdPersonNew.setPhoneHistory(originalCustTrdPerson.getPhoneHistory());
+      }else {
+        toCustTrdPersonNew.setPhoneHistory(toCustTrdPersonNew.getPhoneHistory()+";"+originalCustTrdPerson.getPhoneHistory());
+      }
+    }
+  }
 }

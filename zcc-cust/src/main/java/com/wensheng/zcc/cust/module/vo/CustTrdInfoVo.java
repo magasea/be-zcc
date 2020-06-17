@@ -16,7 +16,14 @@ public class CustTrdInfoVo {
 
   Map<String, Integer> intrestCities;
   String phone;
+
+  String mobileUpdate;
+  String mobilePrep;
+  String phoneUpdate;
+  String phonePrep;
+
   String address;
+  String addressUpdate;
 
   //公司爬取状态
   String crawledStatus;

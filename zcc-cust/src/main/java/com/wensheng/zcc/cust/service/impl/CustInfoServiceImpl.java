@@ -823,11 +823,14 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoVo.setAddressUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddrUpdate());
       custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
+      custTrdInfoVo.setPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone());
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
@@ -874,6 +877,10 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setPhone(String.format("%s;%s",
           custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
           custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
+      custTrdInfoVo.setMobilePrep(custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep());
+      custTrdInfoVo.setMobileUpdate(custTrdPersonTrdExt.getCustTrdPerson().getMobileUpdate());
+      custTrdInfoVo.setPhonePrep(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep());
+      custTrdInfoVo.setPhoneUpdate(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;

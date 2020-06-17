@@ -827,10 +827,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
+      custTrdInfoVo.setPhonePrep(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
-      custTrdInfoVo.setPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone());
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;

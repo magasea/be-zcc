@@ -545,7 +545,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       buyerId = syncCmpyInfoById(trdInfoFromSync, true, action == 1);
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
     }else if(trdInfoFromSync.getBuyerType() == CustTypeSyncEnum.PERSON.getId()){
-      buyerId = syncPersonInfoById(trdInfoFromSync, true, action == 1);
+      buyerId = syncPersonInfoById(trdInfoFromSync, true, action == 1, custTrdInfos);
       custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
     }
     if(buyerId < 0){
@@ -596,7 +596,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   }
 
-  private synchronized Long syncPersonInfoById(BidTrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
+  private synchronized Long syncPersonInfoById(BidTrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd, List<CustTrdInfo> custTrdInfoList) {
      if(trdInfoFromSync.getBuyerId().equals("-1")){
        //insert person with name directlly
        CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
@@ -613,7 +613,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
        }else{
          return custTrdPeople.get(0).getId();
        }
-
      }
 
       CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerId():
@@ -694,42 +693,56 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
 
     String mobileNum =custPersonInfoFromSync.getMobileNum();
-    List<CustTrdPerson> custTrdPeople = null;
-    if(!StringUtils.isEmpty(mobileNum)){
-      List<String> mobileList = Arrays.asList(mobileNum.split(";"));
-      custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
-          StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
-          mobileList);
+    List<CustTrdPerson> custTrdPeopleList = null;
+
+    Long personId = null;
+    if(!CollectionUtils.isEmpty(custTrdInfoList)){
+      personId = custTrdInfoList.get(0).getBuyerId();
+    }
+    if(null != personId && -1 != personId){
+      CustTrdPerson custTrdPeople =  custTrdPersonMapper.selectByPrimaryKey(personId);
+      custTrdPeopleList = new ArrayList<>();
+      custTrdPeopleList.add(custTrdPeople);
+    }else {
+      if (!StringUtils.isEmpty(mobileNum)) {
+        List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+        custTrdPeopleList = custTrdPersonExtMapper.selectTrePersonBymobileList(
+            StringUtils.isEmpty(custPersonInfoFromSync.getName()) ? "-1"
+                : custPersonInfoFromSync.getName(),
+            mobileList);
+      }
     }
 
     int action = -1;
 
-    if(CollectionUtils.isEmpty(custTrdPeople)){
+    if(CollectionUtils.isEmpty(custTrdPeopleList)){
       //make new person
       action = 1;
-    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime)|| isNewTrd || custTrdPeople.get(0).getDataQuality() <= 2){
+    }else if(custTrdPeopleList.get(0).getUpdateTime().before(updateTime)|| isNewTrd || custTrdPeopleList.get(0).getDataQuality() <= 2){
       //update person
       action = 2;
-      if(custTrdPeople.size() > 0){
+      if(custTrdPeopleList.size() > 0){
         CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-        for(int idx = 0; idx < custTrdPeople.size(); idx ++){
+        for(int idx = 0; idx < custTrdPeopleList.size(); idx ++){
           if(idx == 0){
             continue;
           }
           //before delete check the related trd info
           custTrdInfoExample.clear();
-          custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPeople.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+          custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPeopleList.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
           List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
-          for(CustTrdInfo custTrdInfoOld: custTrdInfos){
-            custTrdInfoOld.setBuyerId(custTrdPeople.get(0).getId());
+          for(CustTrdInfo custTrdInfoOld : custTrdInfos){
+            custTrdInfoOld.setBuyerId(custTrdPeopleList.get(0).getId());
             custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
           }
-          custTrdPersonMapper.deleteByPrimaryKey(custTrdPeople.get(idx).getId());
+          commonHandler.creatPersonHistory(null,"SyncServiceImpl",
+              "同步交易信息时删除重复自然人信息", custTrdPeopleList.get(idx));
+          custTrdPersonMapper.deleteByPrimaryKey(custTrdPeopleList.get(idx).getId());
         }
       }
     }else{
-      log.info("no change for this personInfo:{} current record time:{}", custTrdPeople.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
-      return custTrdPeople.get(0).getId();
+      log.info("no change for this personInfo:{} current record time:{}", custTrdPeopleList.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
+      return custTrdPeopleList.get(0).getId();
     }
     CustTrdPerson custTrdPerson = new CustTrdPerson();
     copyPersonSync2PersonInfo(custPersonInfoFromSync, custTrdPerson);
@@ -746,7 +759,9 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       custTrdPersonMapper.insertSelective(custTrdPerson);
 
     }else if(action == 2 ){
-      custTrdPerson = custTrdPeople.get(0);
+      custTrdPerson = custTrdPeopleList.get(0);
+      commonHandler.creatPersonHistory(null,"SyncBidServiceImpl",
+          "同步交易信息时更新自然人信息", custTrdPerson);
       if(isBuyer){
         int count = getTrdCntForPerson(custTrdPerson.getId()).intValue();
         if(isNewTrd){

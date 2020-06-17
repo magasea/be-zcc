@@ -6,6 +6,7 @@ import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -36,8 +37,14 @@ public class CustPersonConytoller {
   @RequestMapping(value = "/updateCustPerson", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustPerson
-  public void updateCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
-    custPersonService.updateCustPerson(custTrdPerson);
+  public UpdateResult updateCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
+   return custPersonService.updateCustPerson(custTrdPerson);
+  }
+
+  @RequestMapping(value = "/getPersonByIdList", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustTrdPerson> getPersonByIdList(@RequestBody List<Long> idList) throws Exception {
+    return custPersonService.selectPersonByIdList(idList);
   }
 
   @RequestMapping(value = "/mergeCustPerson", method = RequestMethod.POST)

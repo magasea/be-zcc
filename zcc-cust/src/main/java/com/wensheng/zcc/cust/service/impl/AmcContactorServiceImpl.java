@@ -24,6 +24,7 @@ import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 
 import java.text.Collator;
@@ -113,7 +114,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   @Override
-  public void updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
+  public UpdateResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
+    UpdateResult updateResult = new UpdateResult();
+    updateResult.setSuccess(true);
     CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(custAmcCmpycontactor.getId());
     if(null == originalCmpycontactor){
       log.error("There is no person in db id:{}", custAmcCmpycontactor.getId());
@@ -132,10 +135,18 @@ public class AmcContactorServiceImpl implements AmcContactorService {
         log.error("There is already person name:{} company name:{} phone:{} reject insert",
             custAmcCmpycontactor.getName(),
             custAmcCmpycontactor.getCompany(), custAmcCmpycontactor.getMobileUpdate());
-        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format("已经 "
-                + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
-            custAmcCmpycontactor.getName(),
-            custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobileUpdate()));
+//        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_UPDATE_ERROR, String.format("已经 "
+//                + "有姓名为:%s 所属公司Id为:%s 电话为:%s 的记录, 请勿重复插入",
+//            custAmcCmpycontactor.getName(),
+//            custAmcCmpycontactor.getCmpyId(), custAmcCmpycontactor.getMobileUpdate()));
+
+        List<Long> duplicateIdList = new ArrayList();
+        custAmcCmpycontactors.forEach( cmpycontactor -> duplicateIdList.add(cmpycontactor.getId()));
+        updateResult.setSuccess(false);
+        updateResult.setErrCode("DUPLICATE_RECORD_UPDATE_ERROR");
+        updateResult.setIdList(duplicateIdList);
+        return updateResult;
+
       }
     }
 
@@ -145,6 +156,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
         "人工修改",originalCmpycontactor);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+    return updateResult;
   }
 
   @Override
@@ -574,6 +586,15 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     listSort(custAmcCmpycontactorExtVos);
     custAmcCmpycontactorMap = null;
     return custAmcCmpycontactorExtVos;
+  }
+
+  @Override
+  public List<CustAmcCmpycontactor> selectContactorByIdlist(List<Long> idList){
+    CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
+    custAmcCmpycontactorExample.createCriteria().andIdIn(idList);
+    List<CustAmcCmpycontactor> custAmcCmpycontactors =
+        custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
+    return custAmcCmpycontactors;
   }
 
 

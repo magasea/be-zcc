@@ -8,6 +8,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.service.SyncService;
@@ -61,8 +62,8 @@ public class AmcCmpyContactorController {
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustCmpycontactor
-  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
-    amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
+  public UpdateResult updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
+   return amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
   }
 
   @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
@@ -84,6 +85,12 @@ public class AmcCmpyContactorController {
   @ResponseBody
   public List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(@RequestBody Long cmpyId){
     return amcContactorService.getCmpyAmcContactorNew(cmpyId);
+  }
+
+  @RequestMapping(value = "/getContactorByIdlist", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustAmcCmpycontactor> getContactorByIdlist(@RequestBody List<Long> idList){
+    return amcContactorService.selectContactorByIdlist(idList);
   }
 
 //  @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)

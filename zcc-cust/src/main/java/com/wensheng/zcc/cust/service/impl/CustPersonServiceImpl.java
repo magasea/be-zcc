@@ -12,6 +12,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
+import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -70,7 +71,10 @@ public class CustPersonServiceImpl implements CustPersonService {
   }
 
   @Override
-  public void updateCustPerson(CustTrdPerson custTrdPerson) throws Exception {
+  public UpdateResult updateCustPerson(CustTrdPerson custTrdPerson) throws Exception {
+
+    UpdateResult updateResult = new UpdateResult();
+    updateResult.setSuccess(true);
     //查询要修改的自然人
     CustTrdPerson originalCustTrdPerson = custTrdPersonMapper.selectByPrimaryKey(custTrdPerson.getId());
     if(null == originalCustTrdPerson){
@@ -80,17 +84,24 @@ public class CustPersonServiceImpl implements CustPersonService {
     }
 
     //校验重复
-    List<CustTrdPerson> custTrdPeopleList = getPersonByMobileList(custTrdPerson);
-    if(!CollectionUtils.isEmpty(custTrdPeopleList)){
-      if(custTrdPeopleList.size() ==1 && custTrdPeopleList.get(0).getId().equals(custTrdPerson.getId())){
+    List<CustTrdPerson> custTrdPersonList = getPersonByMobileList(custTrdPerson);
+    if(!CollectionUtils.isEmpty(custTrdPersonList)){
+      if(custTrdPersonList.size() ==1 && custTrdPersonList.get(0).getId().equals(custTrdPerson.getId())){
         log.info("查询到自身");
       }else {
         //cannot update
         log.error("There is already person name:{} phone:{} reject insert",
             custTrdPerson.getName(), custTrdPerson.getMobileUpdate());
-        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format(
-            "已经有姓名为:%s 电话为:%s 的记录, 请勿重复插入",
-            custTrdPerson.getName(),custTrdPerson.getMobileUpdate()));
+//        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_RECORD_INSERT_ERROR, String.format(
+//            "已经有姓名为:%s 电话为:%s 的记录, 请勿重复插入",
+//            custTrdPerson.getName(),custTrdPerson.getMobileUpdate()));
+
+        List<Long> duplicateIdList = new ArrayList();
+        custTrdPersonList.forEach( person -> duplicateIdList.add(person.getId()));
+        updateResult.setSuccess(false);
+        updateResult.setErrCode("DUPLICATE_RECORD_UPDATE_ERROR");
+        updateResult.setIdList(duplicateIdList);
+        return updateResult;
       }
     }
 
@@ -103,6 +114,17 @@ public class CustPersonServiceImpl implements CustPersonService {
 
     //修改自然人
     custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
+
+    return updateResult;
+  }
+
+
+  @Override
+  public List<CustTrdPerson> selectPersonByIdList(List<Long> idList) throws Exception{
+    CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+    custTrdPersonExample.createCriteria().andIdIn(idList);
+    List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+    return custTrdPersonList;
   }
 
   /**

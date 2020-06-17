@@ -83,7 +83,11 @@
     ${prefix}age_range as age_range,
     ${prefix}gender as gender,
     ${prefix}mobile_prep as mobile_prep,
+    ${prefix}mobile_update as mobile_update,
+    ${prefix}mobile_history as mobile_history,
+    ${prefix}phone_update as phone_update,
     ${prefix}phone_prep as phone_prep,
+    ${prefix}phone_history as phone_history,
     ${prefix}email as email,
     ${prefix}id_card_num as id_card_num,
     ${prefix}province as province,
@@ -93,7 +97,7 @@
     ${prefix}create_by as create_by,
     ${prefix}create_time as create_time,
     ${prefix}data_status as data_status,
-        ${prefix}data_quality as data_quality
+    ${prefix}data_quality as data_quality
 
   </sql>
   <sql id="cust_trd_info_list">

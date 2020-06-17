@@ -5,6 +5,10 @@ grpc:
     port: 10016
     enabled: true
     in-process-server-name: comnfuncGrpcServ
+    client:
+        comnfunc:
+            pubhost: ${env.aliyunhost}
+            pubport: ${env.aliyunrpcport}
 
 spring:
     autoconfigure:
@@ -128,11 +132,11 @@ project:
 baidu:
     logis:
         appName: amc-lgs
-        appAK: LMZGzYuSmmBvE5IS5EMdEsUGROx7r2G8
+        appAK: 4GmvjTHTw02GCdWhv9YdlLDYNEuoR8aV
         appId: 16178564
         appSK: zvrxKOeG7Do7IZOcGZmKfKa2RK09GVYn
-        getGeoURL: http://api.map.baidu.com/geocoding/v3/?address=%s&output=json&ak=%s&sn=%s
-        getIpAdd: http://api.map.baidu.com/location/ip?ak=${baidu.logis.appAK}&ip=%s&sn=%s&coor=bd09ll
+        getGeoURL: http://api.map.baidu.com/geocoding/v3/?address=%s&output=json&ak=%s
+        getIpAdd: http://api.map.baidu.com/location/ip?ak=${baidu.logis.appAK}&ip=%s&coor=bd09ll
 gaode:
 #    String url = "http://restapi.amap.com/v3/geocode/geo?key=0c53a687090bf18a7394ffc66a0b6432&address="+urlEncoder.encode(address,"utf-8")
     key: 0c53a687090bf18a7394ffc66a0b6432
@@ -168,6 +172,9 @@ env:
     env-hint: dev
     dbhost: 10.20.100.238
     kfkhost: 10.20.100.238
+    aliyunhost: 101.132.27.96
+    comnfuncport: 10006
+    aliyunrpcport: 5444
     mongodb-host: 10.20.100.238
     image-repo: /disk/temp
     regionhost: 10.20.100.252

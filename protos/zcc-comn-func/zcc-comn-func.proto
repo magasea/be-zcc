@@ -83,11 +83,12 @@ message GeoLocationResp {
 }
 
 message GeoIp2LocationResp{
-  string privince = 1;
+  string province = 1;
   string city = 2;
   string adcode = 3;
   double lng = 4;
   double lat = 5;
+  string provinceCode = 6;
 }
 
 message GeoIpReq{

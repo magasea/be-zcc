@@ -838,7 +838,13 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserFavor.setCreateTime(AmcDateUtils.getCurrentDate());
       mongoTemplate.save(wxUserFavor);
     }else{
+      wxUserFavor.setCreateTime(null);
       AmcBeanUtils.copyProperties(wxUserFavor, wxUserFavors.get(0));
+      if(wxUserFavors.get(0).getCreateTime() == null){
+        log.info("need to set create time ");
+        wxUserFavors.get(0).setCreateTime(AmcDateUtils.getCurrentDate());
+      }
+      wxUserFavors.get(0).setUpdateTime(AmcDateUtils.getCurrentDate());
       mongoTemplate.save(wxUserFavors.get(0));
     }
     return true;

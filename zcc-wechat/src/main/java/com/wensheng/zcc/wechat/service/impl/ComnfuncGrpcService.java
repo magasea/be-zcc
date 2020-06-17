@@ -113,6 +113,8 @@ public class ComnfuncGrpcService extends WechatGrpcServiceImplBase {
 
     GaodeIpCity gaodeIpCity = new GaodeIpCity();
     AmcBeanUtils.copyProperties(geoLocationResp, gaodeIpCity);
+    gaodeIpCity.setProvince(geoLocationResp.getProvince());
+    gaodeIpCity.setProvinceCode(geoLocationResp.getProvinceCode());
     return gaodeIpCity;
   }
 

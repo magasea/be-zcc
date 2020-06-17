@@ -1255,8 +1255,10 @@ public class AmcSaleServiceImpl implements AmcSaleService {
       List<AmcDebtVo> amcDebtVos = amcDebtService.getUserLocalDebts(wxUserRegionFavor);
       AmcSaleUserLocalFavorPageVo amcSaleUserFavorPageVo = new AmcSaleUserLocalFavorPageVo();
       amcSaleUserFavorPageVo.setResultList(new ArrayList<>());
-      amcSaleUserFavorPageVo.getResultList().addAll(amcAssetVos);
-      amcSaleUserFavorPageVo.getResultList().addAll(amcSaleUserFavorPageVo.getResultList().size()-1, amcDebtVos);
+      if(amcAssetVos != null && !CollectionUtils.isEmpty(amcAssetVos)){
+          amcSaleUserFavorPageVo.getResultList().addAll(amcAssetVos);
+      }
+      amcSaleUserFavorPageVo.getResultList().addAll(amcSaleUserFavorPageVo.getResultList().size(), amcDebtVos);
       amcSaleUserFavorPageVo.setWxUserFavor(wxUserFavor);
 
       return amcSaleUserFavorPageVo;

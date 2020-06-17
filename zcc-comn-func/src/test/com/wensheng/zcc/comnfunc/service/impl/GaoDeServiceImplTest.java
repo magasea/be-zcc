@@ -1,5 +1,7 @@
 package com.wensheng.zcc.comnfunc.service.impl;
 
+import com.google.gson.Gson;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryIPResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.service.GaoDeService;
 import io.grpc.testing.GrpcServerRule;
@@ -24,6 +26,8 @@ public class GaoDeServiceImplTest {
   @Autowired
   GaoDeService gaoDeService;
 
+  private Gson gson = new Gson();
+
   @Rule
   public final GrpcServerRule grpcServerRule = new GrpcServerRule().directExecutor();
 
@@ -42,5 +46,14 @@ public class GaoDeServiceImplTest {
     }
   }
 
+
+  @Test
+  public void getIpAddress() throws Exception {
+    String address = "上海";
+    String ip = "223.104.213.47";
+    GaodeGeoQueryIPResp addressByIp = gaoDeService.getAddressByIp(ip);
+    log.info(gson.toJson(addressByIp));
+
+  }
 
 }

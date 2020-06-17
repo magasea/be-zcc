@@ -5,6 +5,10 @@ grpc:
     port: 10016
     enabled: true
     in-process-server-name: comnfuncGrpcServ
+    client:
+        comnfunc:
+            pubhost: ${env.aliyunhost}
+            pubport: ${env.aliyunrpcport}
 spring:
     autoconfigure:
         exclude:
@@ -162,6 +166,9 @@ env:
     dbhost: 10.20.100.238
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
+    aliyunhost: 101.132.27.96
+    comnfuncport: 10006
+    aliyunrpcport: 5444
     image-repo: /backup/temp
     regionhost: 10.20.100.252
     regionport: 5050

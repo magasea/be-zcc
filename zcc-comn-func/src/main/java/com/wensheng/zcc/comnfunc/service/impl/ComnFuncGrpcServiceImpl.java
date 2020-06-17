@@ -2,11 +2,13 @@ package com.wensheng.zcc.comnfunc.service.impl;
 
 import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
 
+import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
+import com.wensheng.zcc.comnfunc.module.dto.baidu.Content;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryIPResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryVal;
@@ -17,9 +19,11 @@ import com.wensheng.zcc.comnfunc.service.WXBasicService;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.*;
 import io.grpc.Status;
 import java.util.List;
+import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -43,6 +47,24 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
 
   @Autowired
   PhoneMsgService phoneMsgService;
+
+  @Autowired
+  AmcBaiDuLogisQuery amcBaiDuLogisQuery;
+
+  @Autowired
+  Environment environment;
+
+  private Gson gson = new Gson();
+
+  private String activeProfile = null;
+
+  @PostConstruct
+  void init(){
+    for(String envName: environment.getActiveProfiles()){
+      activeProfile = envName;
+
+    }
+  }
 
   @Override
   public void getAddress(com.wenshengamc.zcc.comnfunc.gaodegeo.WXUserGeoReq request,
@@ -195,18 +217,49 @@ public class ComnFuncGrpcServiceImpl  extends ComnFuncServiceGrpc.ComnFuncServic
       io.grpc.stub.StreamObserver<com.wenshengamc.zcc.comnfunc.gaodegeo.GeoIp2LocationResp> responseObserver) {
     try {
       GaodeGeoQueryIPResp addressByIp = gaoDeService.getAddressByIp(request.getIpadd());
-      GeoIp2LocationResp.Builder gilrBuilder = GeoIp2LocationResp.newBuilder();
+      Content addressByIpBaidu = null;
+      if(addressByIp == null){
+        addressByIpBaidu = amcBaiDuLogisQuery.getAddressByIp(request.getIpadd());
+        log.info(gson.toJson(addressByIpBaidu));
 
-      AmcBeanUtils.copyProperties(addressByIp, gilrBuilder);
-
-      List<GaodeGeoQueryVal> geoInfoFromAddress = gaoDeService
-          .getGeoInfoFromAddress(addressByIp.getCity(), addressByIp.getCity());
-
-      if(!CollectionUtils.isEmpty(geoInfoFromAddress) && !StringUtils.isEmpty(geoInfoFromAddress.get(0).getLocation())){
-        String[] coordinates = geoInfoFromAddress.get(0).getLocation().split(",");
-        gilrBuilder.setLng(Double.valueOf(coordinates[0]));
-        gilrBuilder.setLat(Double.valueOf(coordinates[1]));
       }
+      GeoIp2LocationResp.Builder gilrBuilder = GeoIp2LocationResp.newBuilder();
+      if(addressByIp != null){
+        AmcBeanUtils.copyProperties(addressByIp, gilrBuilder);
+        log.info(gson.toJson(addressByIp));
+        List<GaodeGeoQueryVal> geoInfoFromAddress = gaoDeService
+            .getGeoInfoFromAddress(addressByIp.getCity(), addressByIp.getCity());
+
+        if(!CollectionUtils.isEmpty(geoInfoFromAddress) && !StringUtils.isEmpty(geoInfoFromAddress.get(0).getLocation())){
+          String[] coordinates = geoInfoFromAddress.get(0).getLocation().split(",");
+          gilrBuilder.setLng(Double.valueOf(coordinates[0]));
+          gilrBuilder.setLat(Double.valueOf(coordinates[1]));
+        }
+      }else if(addressByIpBaidu != null){
+        if(addressByIpBaidu.getPoint() != null){
+          gilrBuilder.setLat(Double.parseDouble(addressByIpBaidu.getPoint().getY()));
+          gilrBuilder.setLng(Double.parseDouble(addressByIpBaidu.getPoint().getX()));
+        }
+        if(!activeProfile.equals("pub") && addressByIpBaidu.getPoint() != null){
+          AmcRegionInfo regionInfoByLngLat =  regionService
+              .getRegionInfoByLngLat(Double.parseDouble(addressByIpBaidu.getPoint().getX()),
+                  Double.parseDouble(addressByIpBaidu.getPoint().getY()));
+
+            gilrBuilder.setCity(regionInfoByLngLat.getCityName());
+            if(!StringUtils.isEmpty(regionInfoByLngLat.getCityCode()) && regionInfoByLngLat.getCityCode().length() >= 6) {
+              gilrBuilder.setAdcode(regionInfoByLngLat.getCityCode().substring(0,6));
+            }
+
+          gilrBuilder.setProvince(regionInfoByLngLat.getProvName());
+            gilrBuilder.setProvinceCode(regionInfoByLngLat.getProvCode());
+
+        }
+
+
+
+      }
+
+
       responseObserver.onNext(gilrBuilder.build());
       responseObserver.onCompleted();
     }catch (Exception ex){

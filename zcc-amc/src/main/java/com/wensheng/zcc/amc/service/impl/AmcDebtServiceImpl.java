@@ -255,8 +255,11 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       wszccTemplate.save(debtImage);
     }
     AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
-    amcDebt.setHasImg(HasImageEnum.HASIMAGE.getStatus());
-    amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    if(amcDebt != null){
+      amcDebt.setHasImg(HasImageEnum.HASIMAGE.getStatus());
+      amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+    }
+
     return debtImage;
   }
 
@@ -586,10 +589,14 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebt.getBaseAmount() > 0 ){
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getBaseAmount()));
 
+    }else if( 0 == amcDebt.getBaseAmount()){
+      amcDebtVo.setBaseAmount(BigDecimal.ZERO);
     }
     if(amcDebt.getValuation() !=null && amcDebt.getValuation() > 0 ){
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
+    }else if( 0 == amcDebt.getValuation() ){
+      amcDebtVo.setValuation(BigDecimal.ZERO);
     }
     if( amcDebt.getBaseAmount() != null && amcDebt.getBaseAmount() > 0 && amcDebt.getInterestAmount() != null &&
             amcDebt.getInterestAmount() > 0 && (amcDebt.getTotalAmount() == null || amcDebt.getTotalAmount () <= 0L)){
@@ -597,10 +604,15 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     if(amcDebt.getTotalAmount() !=null && amcDebt.getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getTotalAmount()));
+    }else if(0 == amcDebt.getTotalAmount()){
+      amcDebtVo.setTotalAmount(BigDecimal.ZERO);
     }
+
     if(amcDebt.getInterestAmount() !=null && amcDebt.getInterestAmount() > 0 ){
       amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getInterestAmount()));
 
+    }else if(0 == amcDebt.getInterestAmount()){
+      amcDebtVo.setInterestAmount(BigDecimal.ZERO);
     }
 //    if(amcDebt.getAmcContactorId() > 0){
 //      amcDebtVo.setAmcContactorId(amcHelperService.getAmcDebtContactor(amcDebt.getAmcContactorId()));
@@ -621,17 +633,25 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebtExt.getDebtInfo().getBaseAmount() > 0 ){
       amcDebtVo.setBaseAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getBaseAmount()));
 
+    }else if( 0 == amcDebtExt.getDebtInfo().getBaseAmount() ){
+      amcDebtVo.setBaseAmount(BigDecimal.ZERO);
     }
     if(amcDebtExt.getDebtInfo().getValuation() !=null && amcDebtExt.getDebtInfo().getValuation() > 0 ){
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getValuation()));
 
+    }else if(0 == amcDebtExt.getDebtInfo().getValuation()){
+      amcDebtVo.setValuation(BigDecimal.ZERO);
     }
     if(amcDebtExt.getDebtInfo().getTotalAmount() > 0 ){
       amcDebtVo.setTotalAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getTotalAmount()));
 
+    }else if(0 == amcDebtExt.getDebtInfo().getTotalAmount()){
+      amcDebtVo.setTotalAmount(BigDecimal.ZERO);
     }
     if(amcDebtExt.getDebtInfo().getInterestAmount() > 0){
       amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebtExt.getDebtInfo().getInterestAmount()));
+    }else if(0 == amcDebtExt.getDebtInfo().getInterestAmount()){
+      amcDebtVo.setInterestAmount(BigDecimal.ZERO);
     }
 
     if(CollectionUtils.isEmpty(amcDebtExt.getAmcAssets())){

@@ -11,4 +11,6 @@ public interface WXToolService {
   void patchUserFirstLoginTime(String jsonItems);
 
   void patchGeoRecord();
+
+  void patchUserFavor();
 }

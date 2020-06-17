@@ -3,6 +3,7 @@ package com.wensheng.zcc.comnfunc.service.impl;
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.LatLng;
 import com.wensheng.zcc.comnfunc.module.dto.BaiduContent;
+import com.wensheng.zcc.comnfunc.module.dto.baidu.Content;
 import java.io.UnsupportedEncodingException;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class AmcBaiDuLogisQueryTest {
 
   @Test
   public void getAddressByIp() throws UnsupportedEncodingException {
-    BaiduContent addressByIp = amcBaiDuLogisQuery.getAddressByIp("223.104.213.47");
+    Content addressByIp = amcBaiDuLogisQuery.getAddressByIp("223.104.213.47");
     log.info(gson.toJson(addressByIp));
   }
 

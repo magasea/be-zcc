@@ -177,6 +177,7 @@ cust:
   getRegionByNameUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsByName
   getRegionByIdUrl: http://${cust.host}:${cust.port}/amc/cust/basic/regionsById
 
+
 recom:
   urls:
     getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/?%s

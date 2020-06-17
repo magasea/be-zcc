@@ -5,6 +5,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
 import com.mysql.cj.x.protobuf.MysqlxCursor.Open;
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
@@ -248,6 +249,21 @@ public class WXToolServiceImpl implements WXToolService {
          mongoTemplate.remove(wxUserGeoRecord);
        }
      }
+  }
+
+  @Override
+  public void patchUserFavor() {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").ne(null));
+    List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+
+    for(WXUserFavor wxUserFavor: wxUserFavors){
+      if(wxUserFavor.getCreateTime() != null){
+        continue;
+      }
+      wxUserFavor.setCreateTime(AmcDateUtils.getCurrentDate());
+      mongoTemplate.save(wxUserFavor);
+    }
   }
 
   @Data

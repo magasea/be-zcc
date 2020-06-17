@@ -119,6 +119,18 @@ public class GaoDeServiceImpl implements GaoDeService {
           GaodeGeoQueryResp.class);
 
       gaoDeReGeoResult = resp.getBody();
+      if(gaoDeReGeoResult == null || gaoDeReGeoResult.getGeocodes() == null || CollectionUtils.isEmpty(gaoDeReGeoResult.getGeocodes())){
+        geoStr.setLength(0);
+        geoStr.append(String.format(geoCoderUrl,city));
+        if(!StringUtils.isEmpty(city)){
+          geoStr.append(String.format("&city=%s", city));
+        }
+        resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+            GaodeGeoQueryResp.class);
+
+
+        gaoDeReGeoResult = resp.getBody();
+      }
 
     }catch (Exception ex){
       ex.printStackTrace();
@@ -126,16 +138,7 @@ public class GaoDeServiceImpl implements GaoDeService {
           String.class);
       log.error("Failed to get geo info for :{} and city:{} from:{}", address, city, respStr);
       log.error("now use city geo info directlly");
-      geoStr.setLength(0);
-      geoStr.append(String.format(geoCoderUrl,city));
-      if(!StringUtils.isEmpty(city)){
-        geoStr.append(String.format("&city=%s", city));
-      }
-      ResponseEntity<GaodeGeoQueryResp> resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
-          GaodeGeoQueryResp.class);
 
-
-      gaoDeReGeoResult = resp.getBody();
 //      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
     }finally {
       if(gaoDeReGeoResult == null){
@@ -175,8 +178,19 @@ public class GaoDeServiceImpl implements GaoDeService {
   @Override
   public GaodeGeoQueryIPResp getAddressByIp(String ipadd) {
     String gaodeUrl = String.format(geoIp2AddrUrl, ipadd);
-    ResponseEntity<GaodeGeoQueryIPResp> resp =  restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
-        GaodeGeoQueryIPResp.class);
+
+    ResponseEntity<GaodeGeoQueryIPResp> resp = null;
+    try{
+      resp = restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+          GaodeGeoQueryIPResp.class);
+    }catch (Exception ex){
+      log.error("Failed to get address by IP:{}",ipadd);
+      ResponseEntity<String> errorResp = restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+          String.class);
+      log.error("Error info:{}", errorResp.getBody());
+      return null;
+    }
+
 
     GaodeGeoQueryIPResp gaoRegeoResult = resp.getBody();
 

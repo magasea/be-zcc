@@ -941,12 +941,23 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
   @Override
   public List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor) throws Exception {
-      if(!StringUtils.isEmpty(wxUserRegionFavor.getLocationCode()) || !StringUtils.isEmpty(wxUserRegionFavor
-      .getLastIpCityCode())){
+
+      String localCityCode = wxUserRegionFavor.getUserPrefCityCode() != null ? wxUserRegionFavor.getUserPrefCityCode():
+          wxUserRegionFavor.getLastIpCityCode() != null? wxUserRegionFavor.getLastIpCityCode(): wxUserRegionFavor.getLocationCode();
+    GeoJsonPoint geoJsonPoint = null;
+    if(wxUserRegionFavor.getLastIpLat() != null){
+      geoJsonPoint =
+      new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
+    }else if(wxUserRegionFavor.getLastLat() != null){
+      geoJsonPoint
+          = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
+    }
+
+      if(!StringUtils.isEmpty(localCityCode)){
         //query by city
         StringBuilder sbLocation = new StringBuilder();
-        if(!StringUtils.isEmpty(wxUserRegionFavor.getLocationCode())){
-          sbLocation.append( wxUserRegionFavor.getLocationCode().substring(0,4)).append("%");
+        if(!StringUtils.isEmpty(localCityCode)){
+          sbLocation.append( localCityCode.substring(0,4)).append("%");
         }else if(!StringUtils.isEmpty(wxUserRegionFavor.getLastIpCityCode())){
           sbLocation.append( wxUserRegionFavor.getLastIpCityCode().substring(0,4)).append("%");
         }
@@ -954,7 +965,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
           //try to get asset by province
           sbLocation.setLength(0);
-          sbLocation.append(wxUserRegionFavor.getLocationCode().substring(0,2)).append("%");
+          sbLocation.append(localCityCode.substring(0,2)).append("%");
           cityAssets = getAssetByLocationCodeLike(sbLocation.toString());
         }else if(cityAssets != null){
           //todo get vos
@@ -963,13 +974,13 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
           if(wxUserRegionFavor.getLastLat() != null && wxUserRegionFavor.getLastLng() != null){
             //use last lat lng to query
-            GeoJsonPoint geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
+
             List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, 15);
             return amcAssetVos;
 
           }else if(wxUserRegionFavor.getLastIpLng() != null && wxUserRegionFavor.getLastIpLat() != null){
             //use last lat lng to query
-            GeoJsonPoint geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
+
             List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, 15);
             return amcAssetVos;
           }
@@ -1598,7 +1609,17 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 for(AmcAsset amcAsset : amcAssets){
                     AddressTmp addressTmp = new AddressTmp();
                     addressTmp.setAddress(amcAsset.getAddress());
-                    addressTmp.setCity(amcAsset.getCity());
+                    if(Character.isDigit(amcAsset.getCity().charAt(0))){
+                      Region regionById = regionService
+                          .getRegionById(Long.valueOf(amcAsset.getCity()));
+                      if(regionById != null){
+                        addressTmp.setCity(regionById.getName());
+                      }else{
+                        continue;
+                      }
+                    }else{
+                      addressTmp.setCity(amcAsset.getCity());
+                    }
                     addresses.put(amcAsset.getId(), addressTmp);
                 }
                 findGeoAndUpdate(addresses);
@@ -1675,13 +1696,16 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     int initR = 0;
     int rStep = 100;
     int stepIdx = 0;
+    int circleLowR = initR;
+    int circleHighR = initR+rStep;
     while(assetVos.size() < limit && stepIdx < stepLimit ){
-      int circleLowR = initR;
-      int circleHighR = initR+rStep;
+
       initR += initR + rStep;
       stepIdx++;
       List<AmcAssetVo> amcAssetVoList = queryNearByAssets(geoJsonPoint, new Integer[]{circleLowR, circleHighR})
           .getAmcAssetVoList();
+      circleLowR = initR;
+      circleHighR = initR + rStep;
       if(!CollectionUtils.isEmpty(amcAssetVoList)){
         assetVos.addAll(assetVos.size(), amcAssetVoList);
       }

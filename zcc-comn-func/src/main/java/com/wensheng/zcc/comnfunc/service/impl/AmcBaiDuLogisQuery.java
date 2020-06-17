@@ -2,21 +2,30 @@ package com.wensheng.zcc.comnfunc.service.impl;
 
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.LatLng;
-import com.wensheng.zcc.comnfunc.module.dto.BaiduContent;
+import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.comnfunc.module.dto.BaiduResponse;
+import com.wensheng.zcc.comnfunc.module.dto.baidu.AddressDetail;
+import com.wensheng.zcc.comnfunc.module.dto.baidu.Content;
+import com.wensheng.zcc.comnfunc.module.dto.baidu.Point;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.GeoIp2LocationResp;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.GeoIpReq;
+import io.grpc.ManagedChannel;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -44,9 +53,31 @@ public class AmcBaiDuLogisQuery {
   @Value("${baidu.logis.getIpAdd}")
   private String baiduGeoIp2AddUrl;
 
+
+  @Value("${env.aliyunhost}")
+  private String aliyunHost;
+
+  @Value("${env.comnfuncport}")
+  private int comnfuncPort;
+
   private RestTemplate restTemplate  = new RestTemplate();
 
   private Gson gson = new Gson();
+
+  private String activeProfile = null;
+
+  @Autowired
+  Environment environment;
+  @Autowired
+  @Qualifier("comnFuncPubChannel")
+  ManagedChannel comnFuncPubChannel;
+
+  ComnFuncServiceBlockingStub comnFuncPubStub;
+
+  @Autowired
+  RegionServiceImpl regionService;
+
+
 
   @PostConstruct
   void init(){
@@ -54,6 +85,12 @@ public class AmcBaiDuLogisQuery {
     gsonHttpMessageConverter.setSupportedMediaTypes(
         Arrays.asList(MediaType.ALL, MediaType.TEXT_HTML) );
     restTemplate.getMessageConverters().add(gsonHttpMessageConverter);
+    comnFuncPubStub = ComnFuncServiceGrpc.newBlockingStub(comnFuncPubChannel);
+    for(String envName: environment.getActiveProfiles()){
+      activeProfile = envName;
+
+    }
+
   }
 
   public LatLng getLogisByAddress(String  address) throws UnsupportedEncodingException {
@@ -100,10 +137,35 @@ public class AmcBaiDuLogisQuery {
 
   }
 
-  public BaiduContent getAddressByIp(String  ip) throws UnsupportedEncodingException {
+  public Content getAddressByIp(String  ip) throws UnsupportedEncodingException {
+
+    String profileName = activeProfile;
+
+    if(profileName.equals("dev")||profileName.equals("test")||profileName.equals("preProd")){
+      //call aliyun comnfunc service
+      GeoIpReq.Builder girBuilder = GeoIpReq.newBuilder();
+      girBuilder.setIpadd(ip);
+      GeoIp2LocationResp cityByIp =  null;
+      try {
+        cityByIp = comnFuncPubStub.getCityByIp(girBuilder.build());
+      }catch (Exception ex){
+        log.error("Failed to call rpc service to get address by ip", ex);
+        return null;
+      }
 
 
+      Content content = new Content();
+      AddressDetail addressDetail = new AddressDetail();
 
+      Point point = new Point();
+      point.setX(String.valueOf(cityByIp.getLng()));
+      point.setY(String.valueOf(cityByIp.getLat()));
+      content.setPoint(point);
+//      String  url = String.format("http://%s:%s//amc/commFunc/getGeoByIp?ip=%s",aliyunHost, comnfuncPort, ip);
+
+      return content;
+
+    }
 // 计算sn跟参数对出现顺序有关，get请求请使用LinkedHashMap保存<key,value>，该方法根据key的插入顺序排序；post请使用TreeMap保存<key,value>，该方法会自动将key按照字母a-z顺序排序。所以get请求可自定义参数顺序（sn参数必须在最后）发送请求，但是post请求必须按照字母a-z顺序填充body（sn参数必须在最后）。以get请求为例：http://api.map.baidu.com/geocoder/v3/?address=百度大厦&output=json&ak=yourak，paramsMap中先放入address，再放output，然后放ak，放入顺序必须跟get请求中对应参数的出现顺序保持一致。
 
     Map paramsMap = new LinkedHashMap<String, String>();
@@ -122,14 +184,14 @@ public class AmcBaiDuLogisQuery {
     String tempStr = URLEncoder.encode(wholeStr, "UTF-8");
 
     // 调用下面的MD5方法得到最后的sn签名7de5a22212ffaa9e326444c75a58f9a0
-    String sn = MD5(tempStr);
-    System.out.println(sn);
-    String url = String.format(baiduGeoIp2AddUrl, ip,  sn );
+//    String sn = MD5(tempStr);
+//    System.out.println(sn);
+    String url = String.format(baiduGeoIp2AddUrl, ip );
     System.out.println(url);
 
     BaiduResponse resp =
         restTemplate.exchange(url, HttpMethod.GET, null, BaiduResponse.class).getBody();
-
+    System.out.println(gson.toJson(resp));
     return resp.getContent();
 
 

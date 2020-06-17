@@ -779,7 +779,7 @@ public class AmcDebtController {
                                          @RequestParam("path") String path,
                                          @RequestParam("images") MultipartFile uploadingImage) throws Exception {
     if(!path.contains("/")){
-      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FOLDER, "目录分割符号应该为:\\");
+      throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FOLDER, String.format("目录分割符号应该为:/ 实际:%s", path));
     }
     String[] paths = path.split("\\/");
     if(paths.length == 2){

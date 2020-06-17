@@ -51,6 +51,7 @@ public class RegionServiceImpl implements RegionService {
     @Override
     public AmcRegionInfo getRegionInfoByLngLat(Double lng, Double lat) {
         String url = String.format(getGeoInfoUrl, String.format("%s,%s", lng,lat));
+
         Response resp = restTemplate.getForEntity(url, Response.class).getBody();
         AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
         amcRegionInfo.setProvName(resp.getResult().getStatsResult().getProvince().get(1));

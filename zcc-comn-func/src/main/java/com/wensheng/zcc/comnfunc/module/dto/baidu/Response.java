@@ -1,9 +1,8 @@
-package com.wensheng.zcc.comnfunc.module.dto;
+package com.wensheng.zcc.comnfunc.module.dto.baidu;
 
 import com.google.gson.annotations.SerializedName;
-import com.wensheng.zcc.comnfunc.module.dto.baidu.Content;
 
-public class BaiduResponse {
+public class Response{
 
 	@SerializedName("address")
 	private String address;

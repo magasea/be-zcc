@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class UpdateResult {
+public class ModifyResult {
 
   /**
    * 调用是否成功
@@ -20,8 +20,5 @@ public class UpdateResult {
    * 调用重复的id
    */
   private List<Long> idList;
-
-
-
 
 }

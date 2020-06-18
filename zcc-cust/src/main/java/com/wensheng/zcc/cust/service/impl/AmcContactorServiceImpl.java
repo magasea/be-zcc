@@ -24,7 +24,7 @@ import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
-import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 
 import java.text.Collator;
@@ -114,9 +114,9 @@ public class AmcContactorServiceImpl implements AmcContactorService {
   }
 
   @Override
-  public UpdateResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
-    UpdateResult updateResult = new UpdateResult();
-    updateResult.setSuccess(true);
+  public ModifyResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
+    ModifyResult modifyResult = new ModifyResult();
+    modifyResult.setSuccess(true);
     CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorMapper.selectByPrimaryKey(custAmcCmpycontactor.getId());
     if(null == originalCmpycontactor){
       log.error("There is no person in db id:{}", custAmcCmpycontactor.getId());
@@ -142,10 +142,10 @@ public class AmcContactorServiceImpl implements AmcContactorService {
 
         List<Long> duplicateIdList = new ArrayList();
         custAmcCmpycontactors.forEach( cmpycontactor -> duplicateIdList.add(cmpycontactor.getId()));
-        updateResult.setSuccess(false);
-        updateResult.setErrCode("DUPLICATE_RECORD_UPDATE_ERROR");
-        updateResult.setIdList(duplicateIdList);
-        return updateResult;
+        modifyResult.setSuccess(false);
+        modifyResult.setErrCode("DUPLICATE_RECORD_UPDATE_ERROR");
+        modifyResult.setIdList(duplicateIdList);
+        return modifyResult;
 
       }
     }
@@ -156,7 +156,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
         "人工修改",originalCmpycontactor);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
-    return updateResult;
+    return modifyResult;
   }
 
   @Override

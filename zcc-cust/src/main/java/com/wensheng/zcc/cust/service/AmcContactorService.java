@@ -3,14 +3,14 @@ package com.wensheng.zcc.cust.service;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
-import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import java.util.List;
 
 public interface AmcContactorService {
 
   void createAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
-  UpdateResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
+  ModifyResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
   void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId,  Long updateBy) throws Exception;
 

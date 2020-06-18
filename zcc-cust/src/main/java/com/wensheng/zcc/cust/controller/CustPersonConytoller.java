@@ -1,12 +1,9 @@
 package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
-import com.wensheng.zcc.cust.config.aop.MergeCustChecker;
-import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustPerson;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
-import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -30,14 +27,17 @@ public class CustPersonConytoller {
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustPerson
-  public void addCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
+  public ModifyResult addCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
     custPersonService.createCustPerson(custTrdPerson);
+    ModifyResult modifyResult = new ModifyResult();
+    modifyResult.setSuccess(true);
+    return modifyResult;
   }
 
   @RequestMapping(value = "/updateCustPerson", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustPerson
-  public UpdateResult updateCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
+  public ModifyResult updateCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
    return custPersonService.updateCustPerson(custTrdPerson);
   }
 

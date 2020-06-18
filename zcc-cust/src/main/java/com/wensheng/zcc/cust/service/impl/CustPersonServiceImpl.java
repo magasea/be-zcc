@@ -12,7 +12,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
-import com.wensheng.zcc.cust.module.vo.helper.UpdateResult;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -71,10 +71,10 @@ public class CustPersonServiceImpl implements CustPersonService {
   }
 
   @Override
-  public UpdateResult updateCustPerson(CustTrdPerson custTrdPerson) throws Exception {
+  public ModifyResult updateCustPerson(CustTrdPerson custTrdPerson) throws Exception {
 
-    UpdateResult updateResult = new UpdateResult();
-    updateResult.setSuccess(true);
+    ModifyResult modifyResult = new ModifyResult();
+    modifyResult.setSuccess(true);
     //查询要修改的自然人
     CustTrdPerson originalCustTrdPerson = custTrdPersonMapper.selectByPrimaryKey(custTrdPerson.getId());
     if(null == originalCustTrdPerson){
@@ -98,10 +98,10 @@ public class CustPersonServiceImpl implements CustPersonService {
 
         List<Long> duplicateIdList = new ArrayList();
         custTrdPersonList.forEach( person -> duplicateIdList.add(person.getId()));
-        updateResult.setSuccess(false);
-        updateResult.setErrCode("DUPLICATE_RECORD_UPDATE_ERROR");
-        updateResult.setIdList(duplicateIdList);
-        return updateResult;
+        modifyResult.setSuccess(false);
+        modifyResult.setErrCode("DUPLICATE_RECORD_UPDATE_ERROR");
+        modifyResult.setIdList(duplicateIdList);
+        return modifyResult;
       }
     }
 
@@ -115,7 +115,7 @@ public class CustPersonServiceImpl implements CustPersonService {
     //修改自然人
     custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
 
-    return updateResult;
+    return modifyResult;
   }
 
 

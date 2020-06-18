@@ -1,13 +1,17 @@
 package com.wensheng.zcc.cust.service.impl;
 
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustDataDictMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustDataDict;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustDataDictExample;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.service.CustDataDictService;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Slf4j
@@ -17,6 +21,9 @@ public class CustDataDictServiceImpl implements CustDataDictService {
 
   @Autowired
   CustDataDictMapper custDataDictMapper;
+
+  @Autowired
+  CustTrdCmpyMapper custTrdCmpyMapper;
 
   @Override
   public void createCustDataDict(CustDataDict custDataDict) throws Exception {
@@ -55,6 +62,17 @@ public class CustDataDictServiceImpl implements CustDataDictService {
   }
   @Override
   public void deleteDataDict(Long id) throws Exception {
+    CustDataDict custDataDict = custDataDictMapper.selectByPrimaryKey(id);
+    if("CMPY_TYPE".equals(custDataDict.getPcode())){
+      //校验是否可以删除
+      CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
+      custTrdCmpyExample.createCriteria().andCmpyTypeEqualTo(Integer.parseInt(custDataDict.getValue()));
+      List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
+      if(!CollectionUtils.isEmpty(custTrdCmpyList)){
+        throw new Exception("公司类型存在引用，无法删除");
+      }
+    }
+
     CustDataDict custDataDictNew = new CustDataDict();
     custDataDictNew.setId(id);
     //0为删除

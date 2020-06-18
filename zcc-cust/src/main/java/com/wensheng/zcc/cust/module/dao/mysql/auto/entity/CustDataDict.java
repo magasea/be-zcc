@@ -15,9 +15,9 @@ public class CustDataDict {
 
     private String value;
 
-    private Byte status;
+    private Integer status;
 
-    private Byte del;
+    private Integer del;
 
     private Long updatedBy;
 
@@ -75,19 +75,19 @@ public class CustDataDict {
         this.value = value == null ? null : value.trim();
     }
 
-    public Byte getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Byte status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
-    public Byte getDel() {
+    public Integer getDel() {
         return del;
     }
 
-    public void setDel(Byte del) {
+    public void setDel(Integer del) {
         this.del = del;
     }
 

@@ -8,8 +8,8 @@
     <result column="code" jdbcType="VARCHAR" property="code" />
     <result column="name" jdbcType="VARCHAR" property="name" />
     <result column="value" jdbcType="VARCHAR" property="value" />
-    <result column="status" jdbcType="TINYINT" property="status" />
-    <result column="del" jdbcType="TINYINT" property="del" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="del" jdbcType="INTEGER" property="del" />
     <result column="updated_by" jdbcType="BIGINT" property="updatedBy" />
     <result column="updated_at" jdbcType="TIMESTAMP" property="updatedAt" />
     <result column="created_by" jdbcType="BIGINT" property="createdBy" />
@@ -117,8 +117,8 @@
       del, updated_by, updated_at, 
       created_by, created_at)
     values (#{pid,jdbcType=BIGINT}, #{pcode,jdbcType=VARCHAR}, #{code,jdbcType=VARCHAR}, 
-      #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{status,jdbcType=TINYINT}, 
-      #{del,jdbcType=TINYINT}, #{updatedBy,jdbcType=BIGINT}, #{updatedAt,jdbcType=TIMESTAMP}, 
+      #{name,jdbcType=VARCHAR}, #{value,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{del,jdbcType=INTEGER}, #{updatedBy,jdbcType=BIGINT}, #{updatedAt,jdbcType=TIMESTAMP}, 
       #{createdBy,jdbcType=BIGINT}, #{createdAt,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustDataDict">
@@ -178,10 +178,10 @@
         #{value,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        #{status,jdbcType=TINYINT},
+        #{status,jdbcType=INTEGER},
       </if>
       <if test="del != null">
-        #{del,jdbcType=TINYINT},
+        #{del,jdbcType=INTEGER},
       </if>
       <if test="updatedBy != null">
         #{updatedBy,jdbcType=BIGINT},
@@ -225,10 +225,10 @@
         value = #{record.value,jdbcType=VARCHAR},
       </if>
       <if test="record.status != null">
-        status = #{record.status,jdbcType=TINYINT},
+        status = #{record.status,jdbcType=INTEGER},
       </if>
       <if test="record.del != null">
-        del = #{record.del,jdbcType=TINYINT},
+        del = #{record.del,jdbcType=INTEGER},
       </if>
       <if test="record.updatedBy != null">
         updated_by = #{record.updatedBy,jdbcType=BIGINT},
@@ -255,8 +255,8 @@
       code = #{record.code,jdbcType=VARCHAR},
       name = #{record.name,jdbcType=VARCHAR},
       value = #{record.value,jdbcType=VARCHAR},
-      status = #{record.status,jdbcType=TINYINT},
-      del = #{record.del,jdbcType=TINYINT},
+      status = #{record.status,jdbcType=INTEGER},
+      del = #{record.del,jdbcType=INTEGER},
       updated_by = #{record.updatedBy,jdbcType=BIGINT},
       updated_at = #{record.updatedAt,jdbcType=TIMESTAMP},
       created_by = #{record.createdBy,jdbcType=BIGINT},
@@ -284,10 +284,10 @@
         value = #{value,jdbcType=VARCHAR},
       </if>
       <if test="status != null">
-        status = #{status,jdbcType=TINYINT},
+        status = #{status,jdbcType=INTEGER},
       </if>
       <if test="del != null">
-        del = #{del,jdbcType=TINYINT},
+        del = #{del,jdbcType=INTEGER},
       </if>
       <if test="updatedBy != null">
         updated_by = #{updatedBy,jdbcType=BIGINT},
@@ -311,8 +311,8 @@
       code = #{code,jdbcType=VARCHAR},
       name = #{name,jdbcType=VARCHAR},
       value = #{value,jdbcType=VARCHAR},
-      status = #{status,jdbcType=TINYINT},
-      del = #{del,jdbcType=TINYINT},
+      status = #{status,jdbcType=INTEGER},
+      del = #{del,jdbcType=INTEGER},
       updated_by = #{updatedBy,jdbcType=BIGINT},
       updated_at = #{updatedAt,jdbcType=TIMESTAMP},
       created_by = #{createdBy,jdbcType=BIGINT},

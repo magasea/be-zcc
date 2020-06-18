@@ -515,52 +515,52 @@ public class CustDataDictExample {
             return (Criteria) this;
         }
 
-        public Criteria andStatusEqualTo(Byte value) {
+        public Criteria andStatusEqualTo(Integer value) {
             addCriterion("status =", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotEqualTo(Byte value) {
+        public Criteria andStatusNotEqualTo(Integer value) {
             addCriterion("status <>", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThan(Byte value) {
+        public Criteria andStatusGreaterThan(Integer value) {
             addCriterion("status >", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusGreaterThanOrEqualTo(Byte value) {
+        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
             addCriterion("status >=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThan(Byte value) {
+        public Criteria andStatusLessThan(Integer value) {
             addCriterion("status <", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusLessThanOrEqualTo(Byte value) {
+        public Criteria andStatusLessThanOrEqualTo(Integer value) {
             addCriterion("status <=", value, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusIn(List<Byte> values) {
+        public Criteria andStatusIn(List<Integer> values) {
             addCriterion("status in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotIn(List<Byte> values) {
+        public Criteria andStatusNotIn(List<Integer> values) {
             addCriterion("status not in", values, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusBetween(Byte value1, Byte value2) {
+        public Criteria andStatusBetween(Integer value1, Integer value2) {
             addCriterion("status between", value1, value2, "status");
             return (Criteria) this;
         }
 
-        public Criteria andStatusNotBetween(Byte value1, Byte value2) {
+        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
             addCriterion("status not between", value1, value2, "status");
             return (Criteria) this;
         }
@@ -575,52 +575,52 @@ public class CustDataDictExample {
             return (Criteria) this;
         }
 
-        public Criteria andDelEqualTo(Byte value) {
+        public Criteria andDelEqualTo(Integer value) {
             addCriterion("del =", value, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelNotEqualTo(Byte value) {
+        public Criteria andDelNotEqualTo(Integer value) {
             addCriterion("del <>", value, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelGreaterThan(Byte value) {
+        public Criteria andDelGreaterThan(Integer value) {
             addCriterion("del >", value, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelGreaterThanOrEqualTo(Byte value) {
+        public Criteria andDelGreaterThanOrEqualTo(Integer value) {
             addCriterion("del >=", value, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelLessThan(Byte value) {
+        public Criteria andDelLessThan(Integer value) {
             addCriterion("del <", value, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelLessThanOrEqualTo(Byte value) {
+        public Criteria andDelLessThanOrEqualTo(Integer value) {
             addCriterion("del <=", value, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelIn(List<Byte> values) {
+        public Criteria andDelIn(List<Integer> values) {
             addCriterion("del in", values, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelNotIn(List<Byte> values) {
+        public Criteria andDelNotIn(List<Integer> values) {
             addCriterion("del not in", values, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelBetween(Byte value1, Byte value2) {
+        public Criteria andDelBetween(Integer value1, Integer value2) {
             addCriterion("del between", value1, value2, "del");
             return (Criteria) this;
         }
 
-        public Criteria andDelNotBetween(Byte value1, Byte value2) {
+        public Criteria andDelNotBetween(Integer value1, Integer value2) {
             addCriterion("del not between", value1, value2, "del");
             return (Criteria) this;
         }

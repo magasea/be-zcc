@@ -22,7 +22,7 @@ public class CustDataDictController {
   @Autowired
   CustDataDictService custDataDictService;
 
-  @RequestMapping(value = "/createCustDataDict(", method = RequestMethod.POST)
+  @RequestMapping(value = "/createCustDataDict", method = RequestMethod.POST)
   @ResponseBody
   public void createCustDataDict(@RequestBody CustDataDict custDataDict) throws Exception {
     custDataDictService.createCustDataDict((custDataDict));

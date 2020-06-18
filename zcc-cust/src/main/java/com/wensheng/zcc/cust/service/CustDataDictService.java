@@ -12,5 +12,5 @@ public interface CustDataDictService {
 
   List<CustDataDict> getParentDataDict() throws Exception;
 
-  List<CustDataDict> getDataDictByCode(String Code) throws Exception;
+  List<CustDataDict> getDataDictByCode(String code) throws Exception;
 }

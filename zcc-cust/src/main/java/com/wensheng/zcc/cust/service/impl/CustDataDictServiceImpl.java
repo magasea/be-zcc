@@ -30,14 +30,16 @@ public class CustDataDictServiceImpl implements CustDataDictService {
   public List<CustDataDict> getParentDataDict() throws Exception {
     CustDataDictExample custDataDictExample = new CustDataDictExample();
     custDataDictExample.createCriteria().andPidIsNull();
+    custDataDictExample.or().andPidEqualTo(-1L);
     List<CustDataDict> custDataDictList=  custDataDictMapper.selectByExample(custDataDictExample);
     return custDataDictList;
   }
 
   @Override
-  public List<CustDataDict> getDataDictByCode(String Code) throws Exception {
+  public List<CustDataDict> getDataDictByCode(String code) throws Exception {
     CustDataDictExample custDataDictExample = new CustDataDictExample();
-    custDataDictExample.createCriteria().andPcodeEqualTo(Code);
+    custDataDictExample.createCriteria().andPcodeEqualTo(code);
+    custDataDictExample.setOrderByClause("id desc");
     List<CustDataDict> custDataDictList=  custDataDictMapper.selectByExample(custDataDictExample);
     return custDataDictList;
   }

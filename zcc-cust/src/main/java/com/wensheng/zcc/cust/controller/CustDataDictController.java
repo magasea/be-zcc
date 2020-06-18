@@ -46,4 +46,10 @@ public class CustDataDictController {
     return custDataDictService.getDataDictByCode(code);
   }
 
+  @RequestMapping(value = "/deleteDataDict", method = RequestMethod.POST)
+  @ResponseBody
+  public void deleteDataDict(@RequestBody Long id) throws Exception {
+     custDataDictService.deleteDataDict(id);
+  }
+
 }

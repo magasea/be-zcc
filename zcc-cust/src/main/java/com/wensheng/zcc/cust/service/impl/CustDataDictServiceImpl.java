@@ -53,7 +53,7 @@ public class CustDataDictServiceImpl implements CustDataDictService {
     List<CustDataDict> custDataDictList=  custDataDictMapper.selectByExample(custDataDictExample);
     return custDataDictList;
   }
-
+  @Override
   public void deleteDataDict(Long id) throws Exception {
     CustDataDict custDataDictNew = new CustDataDict();
     custDataDictNew.setId(id);

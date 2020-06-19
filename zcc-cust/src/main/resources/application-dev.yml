@@ -8,6 +8,11 @@ grpc:
             host: ${env.rpchost}
             port: 10016
 spring:
+    mail:
+        host: smtp.mxhichina.com
+        port: 25
+        default-encoding: UTF-8
+
     autoconfigure:
         exclude:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration

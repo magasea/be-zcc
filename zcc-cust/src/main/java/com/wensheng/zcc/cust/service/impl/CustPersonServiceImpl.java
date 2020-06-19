@@ -278,6 +278,7 @@ public class CustPersonServiceImpl implements CustPersonService {
     //修改合并人的电话
     commonHandler.creatPersonHistory(updateBy, "mergeCustPerson",
         "合并记录", toCustTrdPerson);
+    toCustTrdPersonNew.setUpdateTime(new Date());
     custTrdPersonMapper.updateByPrimaryKeySelective(toCustTrdPersonNew);
   }
 

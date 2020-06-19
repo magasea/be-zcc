@@ -252,6 +252,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     //修改合并人的电话
     commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
         "合并记录", toCustAmcCmpycontactor);
+    toCustAmcCmpycontactorNew.setUpdateTime(new Date());
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(toCustAmcCmpycontactorNew);
 
   }

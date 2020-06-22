@@ -88,7 +88,7 @@ spring:
             thread-name-prefix: synchWithScrapySystem
             cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
             cronTagUserExpr: 0 0 23 * * *
-            cronSyncUserFromRecommExpr: 0 0 11,23 * * *
+            cronSyncUserFromRecommExpr: 0 0 5,11,17,23 * * *
 
 
     cache:
@@ -102,6 +102,9 @@ spring:
             file-size-threshold: 10240KB
             max-file-size: 10240KB
             max-request-size: 10240KB
+
+    jackson:
+        time-zone: Asia/Shanghai
 
 
 mybatis:

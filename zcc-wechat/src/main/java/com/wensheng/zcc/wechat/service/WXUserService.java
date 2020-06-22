@@ -55,17 +55,23 @@ public interface WXUserService {
   public List<WechatUserVo> getAllWechatUsers(int offset, int size,
       QueryParam queryParam) throws ParseException;
 
+  public List<WechatUser> getSimpleWechatUsers(int offset, int size,
+      QueryParam queryParam) throws ParseException;
+
   public List<WXUserWatchCount> getWXUserWatchCount(List<WXUserWatchOnObject> objectList);
 
   WechatUserInfo saveWechatUserInfo(String openId, String accessToken, String stateInfo);
 
   WechatUserInfo saveRpcWXVisitorInfo(WechatUserInfo wechatUserInfo, String accessToken, String state);
 
-
+  void updateUserVisitInfo(String openId, Long lastTime, Long timeSpent, Long firstLoginTime)
+      throws ParseException;
 
   String sendEvent(String xmlMsg);
 
   void updateWXUser(WechatUser wechatUser);
+
+
 
   boolean unWatchOnList(List<WXUserWatchOnVo> wxUserWatchOnVos);
 }

@@ -4,11 +4,11 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
 import com.google.gson.reflect.TypeToken;
-import com.mysql.cj.x.protobuf.MysqlxCursor.Open;
 import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
@@ -18,10 +18,12 @@ import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample;
+import com.wensheng.zcc.wechat.module.vo.RecomUserVisitInfo;
 import com.wensheng.zcc.wechat.module.vo.WXGetTicketResp;
 import com.wensheng.zcc.wechat.module.vo.WXSign4Url;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXToolService;
+import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.utils.WxToolsUtil;
 import com.wensheng.zcc.wechat.utils.wechat.SHA1;
 import java.lang.reflect.Type;
@@ -32,7 +34,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +76,9 @@ public class WXToolServiceImpl implements WXToolService {
 
   @Autowired
   WechatUserMapper wechatUserMapper;
+
+  @Autowired
+  WXUserService wxUserService;
 
   @Autowired
   WechatUserStaticMapper wechatUserStaticMapper;
@@ -263,6 +270,37 @@ public class WXToolServiceImpl implements WXToolService {
       }
       wxUserFavor.setCreateTime(AmcDateUtils.getCurrentDate());
       mongoTemplate.save(wxUserFavor);
+    }
+  }
+
+  @Override
+  public void pushUserVisitInfo(List<RecomUserVisitInfo> recomUserVisitInfos) {
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.setOrderByClause(" id desc ");
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    Map<String, WechatUser> wechatUserMap = wechatUsers.stream().collect(Collectors.toMap(item->item.getOpenId(), item->item));
+
+    for(RecomUserVisitInfo recomUserVisitInfo: recomUserVisitInfos){
+      try{
+        wxUserService.updateUserVisitInfo(recomUserVisitInfo.getOpenid(), recomUserVisitInfo.getLastTime(),
+            recomUserVisitInfo.getTimeSpent(), recomUserVisitInfo.getFirstLoginTime());
+        wechatUserMap.remove(recomUserVisitInfo.getOpenid());
+
+      }catch (Exception ex){
+        log.error("Failed to update openId:{}, {} {} {}", recomUserVisitInfo.getOpenid(),
+            recomUserVisitInfo.getFirstLoginTime(), recomUserVisitInfo.getLastTime(),
+            recomUserVisitInfo.getTimeSpent());
+      }
+
+    }
+    if(!CollectionUtils.isEmpty(wechatUserMap)){
+      WechatUserInfo wechatUserInfo = new WechatUserInfo();
+      for(Entry<String, WechatUser> item: wechatUserMap.entrySet()){
+        AmcBeanUtils.copyProperties(item.getValue(), wechatUserInfo);
+        notifyWechatUserLogin(wechatUserInfo);
+        AmcBeanUtils.fillNullObjects(wechatUserInfo);
+      }
     }
   }
 

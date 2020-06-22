@@ -6,10 +6,10 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
@@ -165,5 +165,6 @@ public interface AmcDebtService {
 
     void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception;
 
-  List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor) throws Exception;
+  List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor,
+      AmcSaleFloor amcSaleFloor) throws Exception;
 }

@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
+import com.wensheng.zcc.amc.module.dao.helper.SaleFloorLocalTitleEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
@@ -940,10 +941,11 @@ public class AmcAssetServiceImpl implements AmcAssetService {
   }
 
   @Override
-  public List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor) throws Exception {
+  public List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor,
+      AmcSaleFloor amcSaleFloor) throws Exception {
 
-      String localCityCode = wxUserRegionFavor.getUserPrefCityCode() != null ? wxUserRegionFavor.getUserPrefCityCode():
-          wxUserRegionFavor.getLastIpCityCode() != null? wxUserRegionFavor.getLastIpCityCode(): wxUserRegionFavor.getLocationCode();
+      String localCityCode = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefCityCode()) ? wxUserRegionFavor.getUserPrefCityCode():
+          !StringUtils.isEmpty(wxUserRegionFavor.getLastIpCityCode())? wxUserRegionFavor.getLastIpCityCode(): wxUserRegionFavor.getLocationCode();
     GeoJsonPoint geoJsonPoint = null;
     if(wxUserRegionFavor.getLastIpLat() != null){
       geoJsonPoint =
@@ -968,10 +970,13 @@ public class AmcAssetServiceImpl implements AmcAssetService {
           sbLocation.append(localCityCode.substring(0,2)).append("%");
           cityAssets = getAssetByLocationCodeLike(sbLocation.toString());
         }else if(cityAssets != null){
-          //todo get vos
+          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getTitle());
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
           return getAssetListVo(cityAssets);
         }
         if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
+          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle());
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
           if(wxUserRegionFavor.getLastLat() != null && wxUserRegionFavor.getLastLng() != null){
             //use last lat lng to query
 
@@ -985,6 +990,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             return amcAssetVos;
           }
 
+        }else if(cityAssets != null){
+          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getTitle());
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getSlogon());
+          return getAssetListVo(cityAssets);
         }
       }
     return null;
@@ -1610,8 +1619,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     AddressTmp addressTmp = new AddressTmp();
                     addressTmp.setAddress(amcAsset.getAddress());
                     if(Character.isDigit(amcAsset.getCity().charAt(0))){
+
                       Region regionById = regionService
-                          .getRegionById(Long.valueOf(amcAsset.getCity()));
+                          .getRegionById((Long.valueOf(amcAsset.getCity())/100)*100);
                       if(regionById != null){
                         addressTmp.setCity(regionById.getName());
                       }else{

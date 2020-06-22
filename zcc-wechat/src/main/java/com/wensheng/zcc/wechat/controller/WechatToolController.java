@@ -1,5 +1,6 @@
 package com.wensheng.zcc.wechat.controller;
 
+import com.wensheng.zcc.wechat.module.vo.RecomUserVisitInfo;
 import com.wensheng.zcc.wechat.module.vo.WXSign4Url;
 import com.wensheng.zcc.wechat.module.vo.helper.MaterialTypeEnum;
 import com.wensheng.zcc.wechat.module.vo.helper.NeedOpenCommentEnum;
@@ -70,5 +71,19 @@ public class WechatToolController {
   public void synchUserVisitInfo() throws Exception {
 
     wxToolService.syncUserVisitInfoWithRecomm();
+  }
+
+  @RequestMapping(value = "/pushUserVisitInfo", method = RequestMethod.POST)
+  @ResponseBody
+  public void pushUserVisitInfo(@RequestBody List<RecomUserVisitInfo> recomUserVisitInfos) throws Exception {
+
+    wxToolService.pushUserVisitInfo(recomUserVisitInfos);
+  }
+
+  @RequestMapping(value = "/testException", method = RequestMethod.POST)
+  @ResponseBody
+  public void testException() throws Exception {
+
+    throw new Exception("test exception");
   }
 }

@@ -383,6 +383,36 @@ public class WechatUserController {
     return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
 
   }
+
+  @RequestMapping(value = "/user/getSimpleUserInfos", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcPage<WechatUser> getSimpleUserInfos(@RequestBody QueryParam queryParam) throws Exception {
+//    Map<String, Direction> orderByParam = new HashMap<>();
+//    if(queryParam.getPageInfo()!= null && queryParam.getPageInfo().getSort() == null){
+//      orderByParam.put("id", Direction.DESC);
+//    }else{
+//      orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+//    }
+//    if (CollectionUtils.isEmpty(orderByParam)) {
+//      orderByParam.put("id", Direction.DESC);
+//    }
+
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    List<WechatUser> wechatUsers;
+    try {
+      wechatUsers = wxService.getSimpleWechatUsers(offset, queryParam.getPageInfo().getSize(), queryParam);
+
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = wxService.getAllWechatUserCount(queryParam);
+//    Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
+    return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
+
+  }
+
+
   @RequestMapping(value = "/user/getUserStatistics", method = RequestMethod.POST)
   @ResponseBody
   public WXUserStatistics getUserStatistics(@RequestParam String startDate, @RequestParam String endDate) throws Exception {

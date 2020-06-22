@@ -78,6 +78,8 @@ public interface AmcSaleService {
 
     AmcSaleFloorPageVo getFloorPage(Long floorId) throws Exception;
 
+    AmcSaleFloor getFloorByFixType(int type) throws Exception;
+
 
 
     AmcSaleMenuPageVo getMenuPage(Long menuId) throws Exception;

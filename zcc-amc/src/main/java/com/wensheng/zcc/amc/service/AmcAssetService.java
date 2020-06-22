@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
@@ -109,5 +110,6 @@ public interface AmcAssetService {
   List<AmcAssetVo> getFloorFilteredRandomAssets(AmcFilterContentAsset filterAsset, AmcSaleGetRandomListInPage pageInfo)
       throws Exception;
 
-  List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor) throws Exception;
+  List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor,
+      AmcSaleFloor amcSaleFloor) throws Exception;
 }

@@ -67,6 +67,8 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -74,6 +76,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"FLOOR"})
 public class AmcSaleServiceImpl implements AmcSaleService {
     @Autowired
     AmcAssetService amcAssetService;
@@ -121,6 +124,8 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
     private Gson gson = new Gson();
 
+    private final static int PAGE_ITEM_SIZE = 15;
+
     @Override
     public List<AmcSaleFloorVo> getFloors(){
         AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
@@ -157,7 +162,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         // get all published floors
         AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
         amcSaleFloorExample.setOrderByClause(" floor_seq asc ");
-        amcSaleFloorExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus())
+        amcSaleFloorExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus()).andFloorTypeNotEqualTo(SaleFloorEnum.LOCALRECOMM.getId())
             .andFloorStartTimeLessThan(AmcDateUtils.getCurrentDate()).andFloorEndTimeGreaterThan(AmcDateUtils.getCurrentDate());
 
         List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
@@ -659,6 +664,18 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleFloorPageVo.setResultList(resultList);
 
         return amcSaleFloorPageVo;
+    }
+
+    @Override
+    @Cacheable
+    public AmcSaleFloor getFloorByFixType(int type) throws Exception {
+        AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
+        amcSaleFloorExample.createCriteria().andFloorTypeEqualTo(type);
+        List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
+        if(CollectionUtils.isEmpty(amcSaleFloors)){
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_PARAMETER_NOOBJAVAIL_ERROR, String.format("type:%s", type));
+        }
+        return amcSaleFloors.get(0);
     }
 
     @Override
@@ -1251,8 +1268,12 @@ public class AmcSaleServiceImpl implements AmcSaleService {
       WXUserRegionFavor wxUserRegionFavor = wechatGrpcService.getWXUserRegionFavor(openId);
       WXUserFavor wxUserFavor = new WXUserFavor();
       AmcBeanUtils.copyProperties(wxUserRegionFavor, wxUserFavor);
-      List<AmcAssetVo> amcAssetVos = amcAssetService.getUserLocalAssets(wxUserRegionFavor);
-      List<AmcDebtVo> amcDebtVos = amcDebtService.getUserLocalDebts(wxUserRegionFavor);
+      AmcSaleFloor amcSaleFloor = getFloorByFixType(SaleFloorEnum.LOCALRECOMM.getId());
+      List<AmcAssetVo> amcAssetVos = amcAssetService.getUserLocalAssets(wxUserRegionFavor, amcSaleFloor);
+      List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+      if(amcAssetVos == null || amcAssetVos.size() <= PAGE_ITEM_SIZE){
+          amcDebtVos = amcDebtService.getUserLocalDebts(wxUserRegionFavor, amcSaleFloor);
+      }
       AmcSaleUserLocalFavorPageVo amcSaleUserFavorPageVo = new AmcSaleUserLocalFavorPageVo();
       amcSaleUserFavorPageVo.setResultList(new ArrayList<>());
       if(amcAssetVos != null && !CollectionUtils.isEmpty(amcAssetVos)){
@@ -1260,6 +1281,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
       }
       amcSaleUserFavorPageVo.getResultList().addAll(amcSaleUserFavorPageVo.getResultList().size(), amcDebtVos);
       amcSaleUserFavorPageVo.setWxUserFavor(wxUserFavor);
+
+
+      amcSaleUserFavorPageVo.setAmcSaleFloor(amcSaleFloor);
 
       return amcSaleUserFavorPageVo;
   }

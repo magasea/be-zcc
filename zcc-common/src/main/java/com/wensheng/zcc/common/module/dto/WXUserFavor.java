@@ -35,6 +35,8 @@ public class WXUserFavor {
   String userPrefCityCode;
   String userPrefProvName;
   String userPrefProvCode;
+  Double userPrefCityLat;
+  Double userPrefCityLng;
   AmcSaleFilter amcSaleFilter;
   List<Long> contactorIds;
   Date createTime;

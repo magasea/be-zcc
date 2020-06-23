@@ -115,6 +115,8 @@ message WXUserFavorGrpcInfo{
   string userPrefCityCode = 15;
   string userPrefProvName = 16;
   string userPrefProvCode = 17;
+  double userPrefCityLng = 18;
+  double userPrefCityLat = 19;
 }
 
 

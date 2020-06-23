@@ -4,9 +4,9 @@ import com.wensheng.zcc.common.utils.base.EnumUtils;
 import java.util.function.Function;
 
 public enum SaleFloorLocalTitleEnum {
-  LOCAL_LEVEL_CITY(1, "属地优选资产", "智能本地化推介"),
-  LOCAL_LEVEL_PROV(2, "所在省优选资产","智能本地化推荐"),
-  LOCAL_LEVEL_RANGE(3, "距离优选资产","智能距离推荐"),
+  LOCAL_LEVEL_CITY(1, "本地资产热推", "好资产就在身边"),
+  LOCAL_LEVEL_PROV(2, "本地资产热推","好资产就在身边"),
+  LOCAL_LEVEL_RANGE(3, "周边资产推介","好资产离您不远"),
 
   ;
 

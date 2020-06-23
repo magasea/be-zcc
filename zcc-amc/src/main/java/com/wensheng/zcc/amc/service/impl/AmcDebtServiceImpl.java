@@ -1763,13 +1763,13 @@ public class AmcDebtServiceImpl implements AmcDebtService {
         return amcDebtVos;
       }
       List<AmcDebt> amcDebts = getDebtVosByCurtInfos(
-          curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()));
+          curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
       if(amcDebts!= null && amcDebts.size() < PAGE_ITEM_SIZE){
         //not enough , need call geo
         if(StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName())){
           curtInfos = amcHelperService.queryCurtInfoByProvNames(Arrays.asList(wxUserRegionFavor.getLocationProvName()));
           amcDebts = getDebtVosByCurtInfos(
-              curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()));
+              curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
         }
       }else if(amcDebts != null){
         amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
@@ -1784,23 +1784,28 @@ public class AmcDebtServiceImpl implements AmcDebtService {
         curtInfos = amcHelperService
             .queryCurtInfoByProvNames(Arrays.asList(provName));
         amcDebts = getDebtVosByCurtInfos(
-            curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()));
+            curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
       }
 
       if(amcDebts.size() < PAGE_ITEM_SIZE){
         log.error("need to use geo query now");
+        amcSaleFloor.setTitle(StringUtils.isEmpty(provName) ?
+            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s %s", provName,
+            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
         amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
-        amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle());
         GeoJsonPoint geoJsonPoint = null;
-        if(wxUserRegionFavor.getLastLng() != null && wxUserRegionFavor.getLastLat() != null){
+        if(wxUserRegionFavor.getUserPrefCityLng() != null){
+          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getUserPrefCityLng(), wxUserRegionFavor.getUserPrefCityLat());
+        }
+        else if(wxUserRegionFavor.getLastLng() != null && wxUserRegionFavor.getLastLat() != null){
           geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
-          return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
-        }
-        if(wxUserRegionFavor.getLastIpLat() != null && wxUserRegionFavor.getLastIpLng() != null){
+
+        } else if(wxUserRegionFavor.getLastIpLat() != null && wxUserRegionFavor.getLastIpLng() != null){
           geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
-          return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+
         }
-        return amcDebtVos;
+        return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+//        return amcDebtVos;
 
       }else if(amcDebts != null){
         amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getSlogon());
@@ -1812,9 +1817,9 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     return amcDebtVos;
   }
   @Cacheable
-  public List<AmcDebt> getDebtVosByCurtInfos(List<Long> curtIds) throws Exception {
+  public List<AmcDebt> getDebtVosByCurtInfos(List<Long> curtIds, Integer limit) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();
-    amcDebtExample.setOrderByClause(" has_img desc, id desc ");
+    amcDebtExample.setOrderByClause(String.format(" has_img desc, id desc limit %s ", limit));
     amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andCourtIdIn(curtIds);
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
     return amcDebts;

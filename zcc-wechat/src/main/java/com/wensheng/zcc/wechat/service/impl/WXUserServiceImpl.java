@@ -660,6 +660,9 @@ public class WXUserServiceImpl implements WXUserService {
       throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,String.format("没有找到该用户", openId));
     }else{
       wechatUser = wechatUsers.get(0);
+      if(!StringUtils.isEmpty(wechatUsers.get(0).getMobile())&&wechatUsers.get(0).getMobile().equals(phone)&&wechatUsers.get(0).getVerifyCode().equals("-1")){
+        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR, String.format("该手机号码:[%s]已经绑定，无需再次绑定",phone));
+      }
     }
 
     if(!StringUtils.isEmpty(wechatUser.getVerifyCode()) && !wechatUser.getVerifyCode().equals("-1")){
@@ -715,9 +718,7 @@ public class WXUserServiceImpl implements WXUserService {
     if(CollectionUtils.isEmpty(wechatUsers)){
       throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
     }
-    if(!StringUtils.isEmpty(wechatUsers.get(0).getMobile())&&wechatUsers.get(0).getMobile().equals(phone)&&wechatUsers.get(0).getVerifyCode().equals("-1")){
-      throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR, String.format("该手机号码:[%s]已经绑定，无需再次绑定",phone));
-    }
+
     Date currDate = AmcDateUtils.getCurrentDate();
     Long timeLag = currDate.toInstant().getEpochSecond() - wechatUsers.get(0).getVcodeTime().toInstant().getEpochSecond();
     if(timeLag > MAX_TIME_LAG*5){
@@ -838,10 +839,27 @@ public class WXUserServiceImpl implements WXUserService {
     List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
     if(CollectionUtils.isEmpty(wxUserFavors)){
       //make new favors
+      if(!StringUtils.isEmpty(wxUserFavor.getUserPrefCityName())){
+        GeoJsonPoint geoInfo = comnfuncGrpcService.getGeoInfo(wxUserFavor.getUserPrefCityName());
+        if(geoInfo != null && !CollectionUtils.isEmpty(geoInfo.getCoordinates())){
+          log.info("need update user pref city coordinates");
+          wxUserFavor.setUserPrefCityLng(geoInfo.getCoordinates().get(0));
+          wxUserFavor.setUserPrefCityLat(geoInfo.getCoordinates().get(1));
+        }
+      }
       wxUserFavor.setCreateTime(AmcDateUtils.getCurrentDate());
       mongoTemplate.save(wxUserFavor);
     }else{
       wxUserFavor.setCreateTime(null);
+      if(!StringUtils.isEmpty(wxUserFavor.getUserPrefCityName()) &&
+          !wxUserFavor.getUserPrefCityName().equals(wxUserFavors.get(0).getUserPrefCityName()) ){
+        GeoJsonPoint geoInfo = comnfuncGrpcService.getGeoInfo(wxUserFavor.getUserPrefCityName());
+        if(geoInfo != null && !CollectionUtils.isEmpty(geoInfo.getCoordinates())){
+          log.info("need update user pref city coordinates");
+          wxUserFavor.setUserPrefCityLng(geoInfo.getCoordinates().get(0));
+          wxUserFavor.setUserPrefCityLat(geoInfo.getCoordinates().get(1));
+        }
+      }
       AmcBeanUtils.copyProperties(wxUserFavor, wxUserFavors.get(0));
       if(wxUserFavors.get(0).getCreateTime() == null){
         log.info("need to set create time ");
@@ -951,6 +969,15 @@ public class WXUserServiceImpl implements WXUserService {
       }
       mongoTemplate.save(wxUserFavor);
 
+    }
+    if(!StringUtils.isEmpty(wxUserFavor.getUserPrefCityName()) && wxUserFavor.getUserPrefCityLat() == null){
+      GeoJsonPoint geoInfo = comnfuncGrpcService.getGeoInfo(wxUserFavor.getUserPrefCityName());
+      if(geoInfo != null && !CollectionUtils.isEmpty(geoInfo.getCoordinates())){
+        wxUserFavor.setUserPrefCityLng(geoInfo.getCoordinates().get(0));
+        wxUserFavor.setUserPrefCityLat(geoInfo.getCoordinates().get(1));
+        mongoTemplate.save(wxUserFavor);
+
+      }
     }
     return wxUserFavor;
   }

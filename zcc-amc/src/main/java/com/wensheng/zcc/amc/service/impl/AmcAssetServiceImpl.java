@@ -946,14 +946,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
       String localCityCode = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefCityCode()) ? wxUserRegionFavor.getUserPrefCityCode():
           !StringUtils.isEmpty(wxUserRegionFavor.getLastIpCityCode())? wxUserRegionFavor.getLastIpCityCode(): wxUserRegionFavor.getLocationCode();
-    GeoJsonPoint geoJsonPoint = null;
-    if(wxUserRegionFavor.getLastIpLat() != null){
-      geoJsonPoint =
-      new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
-    }else if(wxUserRegionFavor.getLastLat() != null){
-      geoJsonPoint
-          = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
-    }
+
+
 
       if(!StringUtils.isEmpty(localCityCode)){
         //query by city
@@ -963,30 +957,45 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         }else if(!StringUtils.isEmpty(wxUserRegionFavor.getLastIpCityCode())){
           sbLocation.append( wxUserRegionFavor.getLastIpCityCode().substring(0,4)).append("%");
         }
-        List<AmcAsset> cityAssets = getAssetByLocationCodeLike(sbLocation.toString());
+        List<AmcAsset> cityAssets = getAssetByLocationCodeLike(sbLocation.toString(), PAGE_ITEM_SIZE);
         if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
           //try to get asset by province
           sbLocation.setLength(0);
           sbLocation.append(localCityCode.substring(0,2)).append("%");
-          cityAssets = getAssetByLocationCodeLike(sbLocation.toString());
+          cityAssets = getAssetByLocationCodeLike(sbLocation.toString(), PAGE_ITEM_SIZE);
         }else if(cityAssets != null){
           amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getTitle());
           amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
           return getAssetListVo(cityAssets);
         }
+        String localProv = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefProvName()) ? wxUserRegionFavor.getUserPrefProvName():
+            !StringUtils.isEmpty(wxUserRegionFavor.getLastIpProv())? wxUserRegionFavor.getLastIpProv(): wxUserRegionFavor.getLocationProvName();
+        GeoJsonPoint geoJsonPoint = null;
+        if(wxUserRegionFavor.getUserPrefCityLng() != null){
+          geoJsonPoint =
+              new GeoJsonPoint(wxUserRegionFavor.getUserPrefCityLng(), wxUserRegionFavor.getUserPrefCityLat());
+        } else if(wxUserRegionFavor.getLastIpLat() != null){
+          geoJsonPoint =
+              new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
+        }else if(wxUserRegionFavor.getLastLat() != null){
+          geoJsonPoint
+              = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
+        }
         if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
-          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle());
+          amcSaleFloor.setTitle(StringUtils.isEmpty(localProv) ?
+              SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s %s", localProv,
+              SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
           amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
           if(wxUserRegionFavor.getLastLat() != null && wxUserRegionFavor.getLastLng() != null){
             //use last lat lng to query
 
-            List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, 15);
+            List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, PAGE_ITEM_SIZE);
             return amcAssetVos;
 
           }else if(wxUserRegionFavor.getLastIpLng() != null && wxUserRegionFavor.getLastIpLat() != null){
             //use last lat lng to query
 
-            List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, 15);
+            List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, PAGE_ITEM_SIZE);
             return amcAssetVos;
           }
 
@@ -1008,10 +1017,10 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
   }
 
-  private List<AmcAsset> getAssetByLocationCodeLike(String locationCode) throws Exception {
+  private List<AmcAsset> getAssetByLocationCodeLike(String locationCode, Integer limit) throws Exception {
     AmcAssetExample amcAssetExample = new AmcAssetExample();
     amcAssetExample.createCriteria().andCityLike(locationCode);
-    amcAssetExample.setOrderByClause(" has_img desc , id desc");
+    amcAssetExample.setOrderByClause(String.format(" has_img desc , id desc  limit %s",limit));
     List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
     return amcAssets;
 

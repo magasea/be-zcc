@@ -21,4 +21,6 @@ public class WXUserRegionFavor {
   String userPrefCityCode = null;
   String userPrefProvName = null;
   String userPrefProvCode = null;
+  Double userPrefCityLat = null;
+  Double userPrefCityLng = null;
 }

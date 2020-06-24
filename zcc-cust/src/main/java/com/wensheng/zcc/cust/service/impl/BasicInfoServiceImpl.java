@@ -119,6 +119,18 @@ public class BasicInfoServiceImpl implements BasicInfoService {
     return userPrivMap;
   }
 
+  @Override
+  public Map<String, String> getProvinceNameMap() {
+    CustAmcUserprivExample amcUserprivExample = new CustAmcUserprivExample();
+    List<CustAmcUserpriv> custAmcUserprivs = amcUserprivMapper.selectByExample(amcUserprivExample);
+    Map<String, String>  provinceMap = new HashMap<>();
+    for(CustAmcUserpriv custAmcUserpriv: custAmcUserprivs){
+      provinceMap.put(custAmcUserpriv.getProvince(), custAmcUserpriv.getProvName());
+    }
+    log.info("provinceMap:{}",provinceMap);
+    return provinceMap;
+  }
+
 
   @Override
   @Cacheable(key = "#root.target.CACHE_KEY_GETAMCUSERPROVSMAP")

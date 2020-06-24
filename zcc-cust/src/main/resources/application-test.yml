@@ -166,7 +166,7 @@ cust:
         getAddressCodeByAddress: http://10.20.200.100:5050/pre/amap_code/api?address=%s
         crawledCompany: http://10.20.100.252:8086/debtTradeCompanys/forceSave?cmpyName=%s
         getCompanyBasicBizInfo: http://10.20.100.252:8000/entInfos/getJson?page=1&name=%s
-
+        cmpyLinkMould : http://10.20.100.238/amc/market/tradeInfo/list/1/%s/%s/2/1
 
 recom:
     urls:

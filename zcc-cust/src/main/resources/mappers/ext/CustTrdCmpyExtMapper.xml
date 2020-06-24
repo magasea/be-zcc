@@ -95,6 +95,8 @@
     ${prefix}data_quality as ${alias}data_quality
   </sql>
 
+
+
 <!--  <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample"-->
 <!--    resultMap="BaseResultMap">-->
 <!--    select-->
@@ -308,6 +310,26 @@
 
   <select id="selectDuplicateNameCmpy" resultType="java.util.Map">
     select ctc.cmpy_name, count(ctc.cmpy_name) as cnt from CUST_TRD_CMPY ctc group by ctc.cmpy_name having cnt > 1;
+  </select>
+
+  <select id="selectNewCmpyByProvince" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper.BaseResultMap">
+    SELECT
+      'true' as QUERYID,
+      <include refid="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper.Base_Column_List" />
+    FROM
+      CUST_TRD_CMPY
+    WHERE
+      id in(
+        SELECT DISTINCT(buyer_id)
+        FROM CUST_TRD_INFO
+        WHERE buyer_type = 2
+        AND trd_type IN (1,2)
+        AND trd_province IN
+        <foreach item="item" index="index" collection="provinceList" open="(" separator="," close=")">
+          #{item}
+        </foreach>
+        AND update_time >= #{updateTime}
+      )
   </select>
 
 </mapper>

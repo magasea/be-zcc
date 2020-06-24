@@ -225,7 +225,7 @@ public class CustPersonServiceImpl implements CustPersonService {
     toCustTrdPersonNew.setPhoneUpdate(toCustTrdPerson.getPhoneUpdate());
     toCustTrdPersonNew.setPhonePrep(toCustTrdPerson.getPhonePrep());
     toCustTrdPersonNew.setPhoneHistory(toCustTrdPerson.getPhoneHistory());
-
+    toCustTrdPersonNew.setUpdateBy(updateBy);
     //查询要合并的原订单
     for (Long personId : fromPersonIds) {
       if(personId.equals(toPersonId)){

@@ -194,7 +194,7 @@ public class AmcContactorServiceImpl implements AmcContactorService {
     toCustAmcCmpycontactorNew.setPhoneUpdate(toCustAmcCmpycontactor.getPhoneUpdate());
     toCustAmcCmpycontactorNew.setPhonePrep(toCustAmcCmpycontactor.getPhonePrep());
     toCustAmcCmpycontactorNew.setPhoneHistory(toCustAmcCmpycontactor.getPhoneHistory());
-
+    toCustAmcCmpycontactorNew.setUpdateBy(updateBy);
 
     //查询要合并的原订单
     for (Long cmpycontactorId : fromContactorIds) {

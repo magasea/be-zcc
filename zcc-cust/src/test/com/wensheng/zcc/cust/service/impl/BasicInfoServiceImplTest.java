@@ -1,5 +1,7 @@
 package com.wensheng.zcc.cust.service.impl;
 
+import com.wensheng.zcc.cust.dao.mysql.mapper.MailConfigNewCmpyMapper;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpy;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import java.io.File;
 import java.util.List;
@@ -30,6 +32,12 @@ BasicInfoService basicInfoService;
 
 @Autowired
 JavaMailSenderImpl javaMailSender;
+
+@Autowired
+MailConfigNewCmpyMapper mailConfigNewCmpyMapper;
+
+@Autowired
+CustMailConfigServiceImpl custMailConfigService;
 
   @Test
   public void getAmcUserPrivMap() {
@@ -65,4 +73,12 @@ JavaMailSenderImpl javaMailSender;
       log.error("发送失败",e.getMessage());
     }
   }
+
+  @Test
+  public void sendMail() throws Exception {
+    MailConfigNewCmpy mailConfigNewCmpy=mailConfigNewCmpyMapper.selectByPrimaryKey(1l);
+    custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy);
+
+  }
+
 }

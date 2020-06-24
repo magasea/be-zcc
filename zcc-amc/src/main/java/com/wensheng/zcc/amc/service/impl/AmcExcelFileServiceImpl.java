@@ -1139,6 +1139,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                 }else{
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strGrantType, cellGrantType, null);
 //                    log.error(String.format("错误提示： %s %s 担保方式不能为空", sheetDebt.getSheetName(), row.getRowNum()));
+                    continue;
                 }
                 if(StringUtils.isEmpty(cellDebtType)){
                     addErrorInfo(errorInfo, DebtPrecheckErrorEnum.FIELD_EMPTY, sheetDebt.getSheetName(), row.getRowNum(), ERROR_LEVEL_ERR, strDebtType, cellDebtType, null);

@@ -1342,32 +1342,35 @@ public class WXUserServiceImpl implements WXUserService {
     wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
 
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
-
+    WechatUser wechatUser = new WechatUser();
+    AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
+    wechatUser.setProvince(wechatUserInfo.getProvince());
+    wechatUser.setUnionId(wechatUserInfo.getUnionId());
+    wechatUser.setNickName(wechatUserInfo.getNickName());
+    wechatUser.setHeadImgUrl(wechatUserInfo.getHeadImgUrl());
+    wechatUser.setCountry(wechatUserInfo.getCountry());
+    wechatUser.setLanguage(wechatUserInfo.getLanguage());
+    wechatUser.setCity(wechatUserInfo.getCity());
+    wechatUser.setSex(wechatUserInfo.getSex());
+    if(!StringUtils.isEmpty(stateInfo)){
+      wechatUser.setStateInfo(stateInfo);
+    }
     if(CollectionUtils.isEmpty(wechatUsers)){
-      WechatUser wechatUser = new WechatUser();
-      AmcBeanUtils.copyProperties(wechatUserInfo, wechatUser);
-      wechatUser.setProvince(wechatUserInfo.getProvince());
-      wechatUser.setUnionId(wechatUserInfo.getUnionId());
-      wechatUser.setNickName(wechatUserInfo.getNickName());
-      wechatUser.setHeadImgUrl(wechatUserInfo.getHeadImgUrl());
-      wechatUser.setCountry(wechatUserInfo.getCountry());
-      wechatUser.setLanguage(wechatUserInfo.getLanguage());
-      wechatUser.setCity(wechatUserInfo.getCity());
-      wechatUser.setSex(wechatUserInfo.getSex());
-      if(!StringUtils.isEmpty(stateInfo)){
-        wechatUser.setStateInfo(stateInfo);
-      }
+
+
       wechatUserMapper.insertSelective(wechatUser);
       WechatUserStatic wechatUserStatic = new WechatUserStatic();
       wechatUserStatic.setFirstLoginTime(AmcDateUtils.getCurrentDate());
       wechatUserStatic.setWechatUserId(wechatUser.getId());
       wechatUserStaticMapper.insertSelective(wechatUserStatic);
     }else if(wechatUsers.get(0).getStateInfo() != null && !wechatUsers.get(0).getStateInfo().equals("-1")){
-      log.info("should we update sate info ? ");
+      wechatUser.setStateInfo(null);
+      AmcBeanUtils.copyProperties(wechatUser, wechatUsers.get(0));
+      wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
+
     }else if(wechatUsers.get(0).getStateInfo() == null || wechatUsers.get(0).getStateInfo().equals("-1")){
-      if(!StringUtils.isEmpty(stateInfo)){
-        wechatUsers.get(0).setStateInfo(stateInfo);
-      }
+      wechatUser.setStateInfo(stateInfo);
+      AmcBeanUtils.copyProperties(wechatUser, wechatUsers.get(0));
       wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
     }
     wxToolService.notifyWechatUserLogin(wechatUserInfo);

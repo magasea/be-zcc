@@ -983,7 +983,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
         }
         if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
           amcSaleFloor.setTitle(StringUtils.isEmpty(localProv) ?
-              SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s %s", localProv,
+              SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s%s", localProv,
               SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
           amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
           if(wxUserRegionFavor.getLastLat() != null && wxUserRegionFavor.getLastLng() != null){

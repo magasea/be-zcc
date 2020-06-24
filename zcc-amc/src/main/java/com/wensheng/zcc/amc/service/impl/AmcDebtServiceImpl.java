@@ -1790,7 +1790,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       if(amcDebts.size() < PAGE_ITEM_SIZE){
         log.error("need to use geo query now");
         amcSaleFloor.setTitle(StringUtils.isEmpty(provName) ?
-            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s %s", provName,
+            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s%s", provName,
             SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
         amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
         GeoJsonPoint geoJsonPoint = null;

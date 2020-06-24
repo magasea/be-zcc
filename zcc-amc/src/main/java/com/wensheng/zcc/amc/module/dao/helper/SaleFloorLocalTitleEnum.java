@@ -6,7 +6,7 @@ import java.util.function.Function;
 public enum SaleFloorLocalTitleEnum {
   LOCAL_LEVEL_CITY(1, "本地资产热推", "好资产就在身边"),
   LOCAL_LEVEL_PROV(2, "本地资产热推","好资产就在身边"),
-  LOCAL_LEVEL_RANGE(3, "周边资产推介","好资产离您不远"),
+  LOCAL_LEVEL_RANGE(3, "及周边资产推介","好资产离您不远"),
 
   ;
 

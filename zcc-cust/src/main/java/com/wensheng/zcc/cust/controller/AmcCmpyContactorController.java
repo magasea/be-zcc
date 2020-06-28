@@ -5,6 +5,7 @@ import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
 import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import com.wensheng.zcc.cust.service.SyncBidService;
@@ -67,8 +68,10 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public void mergeCmpyAmcContactor(@RequestBody List<Long> fromContactorIds,
-      @RequestParam Long toContactorId, @RequestParam Long updateBy) throws Exception{
+  public void mergeCmpyAmcContactor(@RequestBody MergeCustVo mergeCustVo) throws Exception {
+    List<Long> fromContactorIds = mergeCustVo.getFromPersonIds();
+    Long toContactorId = mergeCustVo.getToPersonId();
+    Long updateBy = mergeCustVo.getUpdateBy();
     amcContactorService.mergeCmpycontactor(fromContactorIds, toContactorId, updateBy);
   }
 

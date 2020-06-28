@@ -11,6 +11,7 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 
 import java.lang.management.ManagementFactory;
@@ -264,7 +265,7 @@ public class AmcAspect {
       return joinPoint.proceed(joinPoint.getArgs());
     }
 
-    Long updateBy = (Long) joinPoint.getArgs()[2];
+    MergeCustVo mergeCustVo = (MergeCustVo) joinPoint.getArgs()[0];
 
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
@@ -277,7 +278,7 @@ public class AmcAspect {
             (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
     if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
       Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
-      updateBy = ssoUserId;
+      mergeCustVo.setUpdateBy(ssoUserId);
     }
       return joinPoint.proceed(joinPoint.getArgs());
   }

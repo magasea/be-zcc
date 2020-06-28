@@ -6,11 +6,12 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcCmpy;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtSummary;
 import com.wensheng.zcc.amc.module.vo.AmcDebtUploadImg2WXRlt;
@@ -19,6 +20,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
 import com.wensheng.zcc.amc.module.vo.base.BaseActionVo;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import java.util.List;
 import java.util.Map;
 import org.springframework.data.domain.Sort;
@@ -126,11 +128,13 @@ public interface AmcDebtService {
 
   public void searchGeoInfoForDebtByCourt();
 
+  public List<AmcDebtVo> queryNearByDebtsWithLimit(GeoJsonPoint geoJsonPoint, int limit) throws Exception;
+
   List<AmcDebtVo> queryAllNearByDebts(GeoJsonPoint geoJsonPoint, Long[] distances) throws Exception;
 
   List<AmcDebt> getDebtSimpleByIds(List<Long> debtIds);
 
-  List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds);
+  List<AmcDebtVo> getByIdsSimpleWithoutAddition(List<Long> debtIds) throws Exception;
 
   List<AmcDebt> getDebtSimpleByTitleLike(String title);
 
@@ -144,7 +148,7 @@ public interface AmcDebtService {
 
   List<AmcContactorDTO> getDebtContactorByDebtIds(List<Long> debtIds);
 
-  AmcDebtContactor getDebtContactorByDebtId(Long debtId);
+  SSOAmcUser getDebtContactorByDebtId(Long debtId);
 
   List<AmcDebtVo> getFloorFilteredDebt(AmcFilterContentDebt filterDebt) throws Exception;
 
@@ -160,4 +164,7 @@ public interface AmcDebtService {
   void patchDebtClue(String cellDebtTitle, String cellDebtClue) throws Exception;
 
     void patchDebtCourt(String cellDebtTitle, Long courtId) throws Exception;
+
+  List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor,
+      AmcSaleFloor amcSaleFloor) throws Exception;
 }

@@ -24,7 +24,7 @@ public class PageReqRepHelper {
   }
 
   public static int getOffset(PageInfo pageable){
-    return pageable.getOffset() > 0 ? pageable.getOffset(): pageable.getPage() > 0?
+    return ( pageable.getOffset() > 0 )? pageable.getOffset(): pageable.getPage() > 0?
         (pageable.getPage()-1)*pageable.getSize(): 0;
   }
 

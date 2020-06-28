@@ -1,0 +1,591 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.wechat.dao.mysql.mapper.ext.WechatUserExtMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.wechat.module.vo.WechatUserVo">
+
+    <association property="wechatUser"  resultMap="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper.BaseResultMap" columnPrefix="wu_"/>
+    <association property="wechatUserStatic" resultMap="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper.BaseResultMap" columnPrefix="wus_"/>
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, subscribe, open_id, nick_name, sex, language, city, province, country, head_img_url, 
+    subscribe_time, union_id, remark, group_id, subscribe_scene, qr_scene, qr_scene_str, 
+    mobile, verify_code, vcode_time, state_info, wxusername, amc_tag, online_time, last_time
+  </sql>
+
+  <sql id="alias_column_list">
+    ${prefix}id as ${alias}id,
+    ${prefix}subscribe as ${alias}subscribe,
+    ${prefix}open_id as ${alias}open_id,
+    ${prefix}nick_name as ${alias}nick_name,
+    ${prefix}sex as ${alias}sex,
+    ${prefix}language as ${alias}language,
+    ${prefix}city as ${alias}city,
+    ${prefix}province as ${alias}province,
+    ${prefix}country as ${alias}country,
+    ${prefix}head_img_url as ${alias}head_img_url,
+    ${prefix}subscribe_time as ${alias}subscribe_time,
+    ${prefix}union_id as ${alias}union_id,
+    ${prefix}remark as ${alias}remark,
+    ${prefix}group_id as ${alias}group_id,
+    ${prefix}subscribe_scene as ${alias}subscribe_scene,
+    ${prefix}qr_scene as ${alias}qr_scene,
+    ${prefix}qr_scene_str as ${alias}qr_scene_str,
+    ${prefix}mobile as ${alias}mobile,
+    ${prefix}verify_code as ${alias}verify_code,
+    ${prefix}vcode_time as ${alias}vcode_time,
+    ${prefix}state_info as ${alias}state_info,
+    ${prefix}wxusername as ${alias}wxusername,
+    ${prefix}amc_tag as ${alias}amc_tag,
+    ${prefix}online_time as ${alias}online_time,
+    ${prefix}last_time as ${alias}last_time,
+    ${prefix}note as ${alias}note,
+    ${prefix}update_by as ${alias}update_by,
+    ${prefix}update_time as ${alias}update_time
+  </sql>
+
+
+  <sql id="WechatUserStatic_Column_List">
+    ${prefix}id as ${alias}id,
+    ${prefix}online_time as ${alias}online_time,
+    ${prefix}last_time as ${alias}last_time,
+    ${prefix}watch_count as ${alias}watch_count,
+    ${prefix}wechat_user_id as ${alias}wechat_user_id,
+    ${prefix}login_ip as ${alias}login_ip,
+    ${prefix}first_login_time as ${alias}first_login_time
+  </sql>
+  <select id="selectByExtExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include
+      refid="alias_column_list"><property name="prefix" value="wu."></property><property name="alias"
+      value="wu_"></property>
+    </include>,
+    <include
+      refid="WechatUserStatic_Column_List"><property name="prefix" value="wus."></property><property name="alias"
+      value="wus_"></property>
+    </include>
+    from WECHAT_USER wu
+    left join WECHAT_USER_STATIC as wus
+    on wu.id = wus.id
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="andClause != null">
+      and ${andClause}
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_USER
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from WECHAT_USER
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample">
+    delete from WECHAT_USER
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_USER (subscribe, open_id, nick_name, 
+      sex, language, city, province, 
+      country, head_img_url, subscribe_time, 
+      union_id, remark, group_id, 
+      subscribe_scene, qr_scene, qr_scene_str, 
+      mobile, verify_code, vcode_time, 
+      state_info, wxusername, amc_tag, 
+      online_time, last_time)
+    values (#{subscribe,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR}, #{nickName,jdbcType=CHAR}, 
+      #{sex,jdbcType=INTEGER}, #{language,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
+      #{country,jdbcType=CHAR}, #{headImgUrl,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=TIMESTAMP}, 
+      #{unionId,jdbcType=CHAR}, #{remark,jdbcType=CHAR}, #{groupId,jdbcType=INTEGER}, 
+      #{subscribeScene,jdbcType=VARCHAR}, #{qrScene,jdbcType=INTEGER}, #{qrSceneStr,jdbcType=VARCHAR}, 
+      #{mobile,jdbcType=CHAR}, #{verifyCode,jdbcType=CHAR}, #{vcodeTime,jdbcType=TIMESTAMP}, 
+      #{stateInfo,jdbcType=VARCHAR}, #{wxusername,jdbcType=CHAR}, #{amcTag,jdbcType=INTEGER}, 
+      #{onlineTime,jdbcType=BIGINT}, #{lastTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_USER
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="subscribe != null">
+        subscribe,
+      </if>
+      <if test="openId != null">
+        open_id,
+      </if>
+      <if test="nickName != null">
+        nick_name,
+      </if>
+      <if test="sex != null">
+        sex,
+      </if>
+      <if test="language != null">
+        language,
+      </if>
+      <if test="city != null">
+        city,
+      </if>
+      <if test="province != null">
+        province,
+      </if>
+      <if test="country != null">
+        country,
+      </if>
+      <if test="headImgUrl != null">
+        head_img_url,
+      </if>
+      <if test="subscribeTime != null">
+        subscribe_time,
+      </if>
+      <if test="unionId != null">
+        union_id,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="groupId != null">
+        group_id,
+      </if>
+      <if test="subscribeScene != null">
+        subscribe_scene,
+      </if>
+      <if test="qrScene != null">
+        qr_scene,
+      </if>
+      <if test="qrSceneStr != null">
+        qr_scene_str,
+      </if>
+      <if test="mobile != null">
+        mobile,
+      </if>
+      <if test="verifyCode != null">
+        verify_code,
+      </if>
+      <if test="vcodeTime != null">
+        vcode_time,
+      </if>
+      <if test="stateInfo != null">
+        state_info,
+      </if>
+      <if test="wxusername != null">
+        wxusername,
+      </if>
+      <if test="amcTag != null">
+        amc_tag,
+      </if>
+      <if test="onlineTime != null">
+        online_time,
+      </if>
+      <if test="lastTime != null">
+        last_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="subscribe != null">
+        #{subscribe,jdbcType=INTEGER},
+      </if>
+      <if test="openId != null">
+        #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        #{nickName,jdbcType=CHAR},
+      </if>
+      <if test="sex != null">
+        #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="language != null">
+        #{language,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        #{city,jdbcType=CHAR},
+      </if>
+      <if test="province != null">
+        #{province,jdbcType=CHAR},
+      </if>
+      <if test="country != null">
+        #{country,jdbcType=CHAR},
+      </if>
+      <if test="headImgUrl != null">
+        #{headImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="subscribeTime != null">
+        #{subscribeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="unionId != null">
+        #{unionId,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=CHAR},
+      </if>
+      <if test="groupId != null">
+        #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="subscribeScene != null">
+        #{subscribeScene,jdbcType=VARCHAR},
+      </if>
+      <if test="qrScene != null">
+        #{qrScene,jdbcType=INTEGER},
+      </if>
+      <if test="qrSceneStr != null">
+        #{qrSceneStr,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="verifyCode != null">
+        #{verifyCode,jdbcType=CHAR},
+      </if>
+      <if test="vcodeTime != null">
+        #{vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stateInfo != null">
+        #{stateInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="wxusername != null">
+        #{wxusername,jdbcType=CHAR},
+      </if>
+      <if test="amcTag != null">
+        #{amcTag,jdbcType=INTEGER},
+      </if>
+      <if test="onlineTime != null">
+        #{onlineTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastTime != null">
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultType="java.lang.Long">
+
+    select count(*) from WECHAT_USER  wu
+    left join WECHAT_USER_STATIC  wus
+    on wu.id = wus.wechat_user_id
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="andClause != null">
+      ${andClause}
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update WECHAT_USER
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.subscribe != null">
+        subscribe = #{record.subscribe,jdbcType=INTEGER},
+      </if>
+      <if test="record.openId != null">
+        open_id = #{record.openId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.nickName != null">
+        nick_name = #{record.nickName,jdbcType=CHAR},
+      </if>
+      <if test="record.sex != null">
+        sex = #{record.sex,jdbcType=INTEGER},
+      </if>
+      <if test="record.language != null">
+        language = #{record.language,jdbcType=CHAR},
+      </if>
+      <if test="record.city != null">
+        city = #{record.city,jdbcType=CHAR},
+      </if>
+      <if test="record.province != null">
+        province = #{record.province,jdbcType=CHAR},
+      </if>
+      <if test="record.country != null">
+        country = #{record.country,jdbcType=CHAR},
+      </if>
+      <if test="record.headImgUrl != null">
+        head_img_url = #{record.headImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="record.subscribeTime != null">
+        subscribe_time = #{record.subscribeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.unionId != null">
+        union_id = #{record.unionId,jdbcType=CHAR},
+      </if>
+      <if test="record.remark != null">
+        remark = #{record.remark,jdbcType=CHAR},
+      </if>
+      <if test="record.groupId != null">
+        group_id = #{record.groupId,jdbcType=INTEGER},
+      </if>
+      <if test="record.subscribeScene != null">
+        subscribe_scene = #{record.subscribeScene,jdbcType=VARCHAR},
+      </if>
+      <if test="record.qrScene != null">
+        qr_scene = #{record.qrScene,jdbcType=INTEGER},
+      </if>
+      <if test="record.qrSceneStr != null">
+        qr_scene_str = #{record.qrSceneStr,jdbcType=VARCHAR},
+      </if>
+      <if test="record.mobile != null">
+        mobile = #{record.mobile,jdbcType=CHAR},
+      </if>
+      <if test="record.verifyCode != null">
+        verify_code = #{record.verifyCode,jdbcType=CHAR},
+      </if>
+      <if test="record.vcodeTime != null">
+        vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.stateInfo != null">
+        state_info = #{record.stateInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="record.wxusername != null">
+        wxusername = #{record.wxusername,jdbcType=CHAR},
+      </if>
+      <if test="record.amcTag != null">
+        amc_tag = #{record.amcTag,jdbcType=INTEGER},
+      </if>
+      <if test="record.onlineTime != null">
+        online_time = #{record.onlineTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.lastTime != null">
+        last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update WECHAT_USER
+    set id = #{record.id,jdbcType=BIGINT},
+      subscribe = #{record.subscribe,jdbcType=INTEGER},
+      open_id = #{record.openId,jdbcType=VARCHAR},
+      nick_name = #{record.nickName,jdbcType=CHAR},
+      sex = #{record.sex,jdbcType=INTEGER},
+      language = #{record.language,jdbcType=CHAR},
+      city = #{record.city,jdbcType=CHAR},
+      province = #{record.province,jdbcType=CHAR},
+      country = #{record.country,jdbcType=CHAR},
+      head_img_url = #{record.headImgUrl,jdbcType=VARCHAR},
+      subscribe_time = #{record.subscribeTime,jdbcType=TIMESTAMP},
+      union_id = #{record.unionId,jdbcType=CHAR},
+      remark = #{record.remark,jdbcType=CHAR},
+      group_id = #{record.groupId,jdbcType=INTEGER},
+      subscribe_scene = #{record.subscribeScene,jdbcType=VARCHAR},
+      qr_scene = #{record.qrScene,jdbcType=INTEGER},
+      qr_scene_str = #{record.qrSceneStr,jdbcType=VARCHAR},
+      mobile = #{record.mobile,jdbcType=CHAR},
+      verify_code = #{record.verifyCode,jdbcType=CHAR},
+      vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
+      state_info = #{record.stateInfo,jdbcType=VARCHAR},
+      wxusername = #{record.wxusername,jdbcType=CHAR},
+      amc_tag = #{record.amcTag,jdbcType=INTEGER},
+      online_time = #{record.onlineTime,jdbcType=BIGINT},
+      last_time = #{record.lastTime,jdbcType=TIMESTAMP}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
+    update WECHAT_USER
+    <set>
+      <if test="subscribe != null">
+        subscribe = #{subscribe,jdbcType=INTEGER},
+      </if>
+      <if test="openId != null">
+        open_id = #{openId,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null">
+        nick_name = #{nickName,jdbcType=CHAR},
+      </if>
+      <if test="sex != null">
+        sex = #{sex,jdbcType=INTEGER},
+      </if>
+      <if test="language != null">
+        language = #{language,jdbcType=CHAR},
+      </if>
+      <if test="city != null">
+        city = #{city,jdbcType=CHAR},
+      </if>
+      <if test="province != null">
+        province = #{province,jdbcType=CHAR},
+      </if>
+      <if test="country != null">
+        country = #{country,jdbcType=CHAR},
+      </if>
+      <if test="headImgUrl != null">
+        head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="subscribeTime != null">
+        subscribe_time = #{subscribeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="unionId != null">
+        union_id = #{unionId,jdbcType=CHAR},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=CHAR},
+      </if>
+      <if test="groupId != null">
+        group_id = #{groupId,jdbcType=INTEGER},
+      </if>
+      <if test="subscribeScene != null">
+        subscribe_scene = #{subscribeScene,jdbcType=VARCHAR},
+      </if>
+      <if test="qrScene != null">
+        qr_scene = #{qrScene,jdbcType=INTEGER},
+      </if>
+      <if test="qrSceneStr != null">
+        qr_scene_str = #{qrSceneStr,jdbcType=VARCHAR},
+      </if>
+      <if test="mobile != null">
+        mobile = #{mobile,jdbcType=CHAR},
+      </if>
+      <if test="verifyCode != null">
+        verify_code = #{verifyCode,jdbcType=CHAR},
+      </if>
+      <if test="vcodeTime != null">
+        vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="stateInfo != null">
+        state_info = #{stateInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="wxusername != null">
+        wxusername = #{wxusername,jdbcType=CHAR},
+      </if>
+      <if test="amcTag != null">
+        amc_tag = #{amcTag,jdbcType=INTEGER},
+      </if>
+      <if test="onlineTime != null">
+        online_time = #{onlineTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastTime != null">
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
+    update WECHAT_USER
+    set subscribe = #{subscribe,jdbcType=INTEGER},
+      open_id = #{openId,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=CHAR},
+      sex = #{sex,jdbcType=INTEGER},
+      language = #{language,jdbcType=CHAR},
+      city = #{city,jdbcType=CHAR},
+      province = #{province,jdbcType=CHAR},
+      country = #{country,jdbcType=CHAR},
+      head_img_url = #{headImgUrl,jdbcType=VARCHAR},
+      subscribe_time = #{subscribeTime,jdbcType=TIMESTAMP},
+      union_id = #{unionId,jdbcType=CHAR},
+      remark = #{remark,jdbcType=CHAR},
+      group_id = #{groupId,jdbcType=INTEGER},
+      subscribe_scene = #{subscribeScene,jdbcType=VARCHAR},
+      qr_scene = #{qrScene,jdbcType=INTEGER},
+      qr_scene_str = #{qrSceneStr,jdbcType=VARCHAR},
+      mobile = #{mobile,jdbcType=CHAR},
+      verify_code = #{verifyCode,jdbcType=CHAR},
+      vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
+      state_info = #{stateInfo,jdbcType=VARCHAR},
+      wxusername = #{wxusername,jdbcType=CHAR},
+      amc_tag = #{amcTag,jdbcType=INTEGER},
+      online_time = #{onlineTime,jdbcType=BIGINT},
+      last_time = #{lastTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowboundsExt" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include
+      refid="alias_column_list"><property name="prefix" value="wu."></property><property name="alias"
+      value="wu_"></property>
+    </include>,
+    <include
+    refid="WechatUserStatic_Column_List"><property name="prefix" value="wus."></property><property name="alias"
+    value="wus_"></property>
+    </include>
+    from WECHAT_USER wu left join WECHAT_USER_STATIC wus
+    on wu.id = wus.wechat_user_id
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="andClause != null">
+       ${andClause}
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

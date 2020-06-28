@@ -5,6 +5,8 @@ import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetDocument;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetImage;
 
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
@@ -90,6 +92,8 @@ public interface AmcAssetService {
 
   List<AmcAssetGeoNear> queryByGeopoint(GeoJsonPoint geoJsonPoint) throws Exception;
 
+  List<AmcAssetVo> queryByGeopointWithLimitCount(GeoJsonPoint geoJsonPoint, int limit) throws Exception;
+
   void patchAssetLocationWithCode() throws Exception;
   AssetImage uploadAssetImage(String imagePath, String ossPrepath, Integer tag, Long assetId, String desc) throws Exception;
 
@@ -105,4 +109,7 @@ public interface AmcAssetService {
 
   List<AmcAssetVo> getFloorFilteredRandomAssets(AmcFilterContentAsset filterAsset, AmcSaleGetRandomListInPage pageInfo)
       throws Exception;
+
+  List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor,
+      AmcSaleFloor amcSaleFloor) throws Exception;
 }

@@ -23,6 +23,13 @@
     <result column="verify_code" jdbcType="CHAR" property="verifyCode" />
     <result column="vcode_time" jdbcType="TIMESTAMP" property="vcodeTime" />
     <result column="state_info" jdbcType="VARCHAR" property="stateInfo" />
+    <result column="wxusername" jdbcType="CHAR" property="wxusername" />
+    <result column="amc_tag" jdbcType="INTEGER" property="amcTag" />
+    <result column="online_time" jdbcType="BIGINT" property="onlineTime" />
+    <result column="last_time" jdbcType="TIMESTAMP" property="lastTime" />
+    <result column="note" jdbcType="VARCHAR" property="note" />
+    <result column="update_by" jdbcType="BIGINT" property="updateBy" />
+    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <where>
@@ -85,7 +92,8 @@
   <sql id="Base_Column_List">
     id, subscribe, open_id, nick_name, sex, language, city, province, country, head_img_url, 
     subscribe_time, union_id, remark, group_id, subscribe_scene, qr_scene, qr_scene_str, 
-    mobile, verify_code, vcode_time, state_info
+    mobile, verify_code, vcode_time, state_info, wxusername, amc_tag, online_time, last_time, 
+    note, update_by, update_time
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">
     select
@@ -128,14 +136,18 @@
       union_id, remark, group_id, 
       subscribe_scene, qr_scene, qr_scene_str, 
       mobile, verify_code, vcode_time, 
-      state_info)
+      state_info, wxusername, amc_tag, 
+      online_time, last_time, note, 
+      update_by, update_time)
     values (#{subscribe,jdbcType=INTEGER}, #{openId,jdbcType=VARCHAR}, #{nickName,jdbcType=CHAR}, 
       #{sex,jdbcType=INTEGER}, #{language,jdbcType=CHAR}, #{city,jdbcType=CHAR}, #{province,jdbcType=CHAR}, 
       #{country,jdbcType=CHAR}, #{headImgUrl,jdbcType=VARCHAR}, #{subscribeTime,jdbcType=TIMESTAMP}, 
       #{unionId,jdbcType=CHAR}, #{remark,jdbcType=CHAR}, #{groupId,jdbcType=INTEGER}, 
       #{subscribeScene,jdbcType=VARCHAR}, #{qrScene,jdbcType=INTEGER}, #{qrSceneStr,jdbcType=VARCHAR}, 
       #{mobile,jdbcType=CHAR}, #{verifyCode,jdbcType=CHAR}, #{vcodeTime,jdbcType=TIMESTAMP}, 
-      #{stateInfo,jdbcType=VARCHAR})
+      #{stateInfo,jdbcType=VARCHAR}, #{wxusername,jdbcType=CHAR}, #{amcTag,jdbcType=INTEGER}, 
+      #{onlineTime,jdbcType=BIGINT}, #{lastTime,jdbcType=TIMESTAMP}, #{note,jdbcType=VARCHAR}, 
+      #{updateBy,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -203,6 +215,27 @@
       <if test="stateInfo != null">
         state_info,
       </if>
+      <if test="wxusername != null">
+        wxusername,
+      </if>
+      <if test="amcTag != null">
+        amc_tag,
+      </if>
+      <if test="onlineTime != null">
+        online_time,
+      </if>
+      <if test="lastTime != null">
+        last_time,
+      </if>
+      <if test="note != null">
+        note,
+      </if>
+      <if test="updateBy != null">
+        update_by,
+      </if>
+      <if test="updateTime != null">
+        update_time,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="subscribe != null">
@@ -264,6 +297,27 @@
       </if>
       <if test="stateInfo != null">
         #{stateInfo,jdbcType=VARCHAR},
+      </if>
+      <if test="wxusername != null">
+        #{wxusername,jdbcType=CHAR},
+      </if>
+      <if test="amcTag != null">
+        #{amcTag,jdbcType=INTEGER},
+      </if>
+      <if test="onlineTime != null">
+        #{onlineTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastTime != null">
+        #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null">
+        #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        #{updateTime,jdbcType=TIMESTAMP},
       </if>
     </trim>
   </insert>
@@ -339,6 +393,27 @@
       <if test="record.stateInfo != null">
         state_info = #{record.stateInfo,jdbcType=VARCHAR},
       </if>
+      <if test="record.wxusername != null">
+        wxusername = #{record.wxusername,jdbcType=CHAR},
+      </if>
+      <if test="record.amcTag != null">
+        amc_tag = #{record.amcTag,jdbcType=INTEGER},
+      </if>
+      <if test="record.onlineTime != null">
+        online_time = #{record.onlineTime,jdbcType=BIGINT},
+      </if>
+      <if test="record.lastTime != null">
+        last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.note != null">
+        note = #{record.note,jdbcType=VARCHAR},
+      </if>
+      <if test="record.updateBy != null">
+        update_by = #{record.updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="record.updateTime != null">
+        update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -366,7 +441,14 @@
       mobile = #{record.mobile,jdbcType=CHAR},
       verify_code = #{record.verifyCode,jdbcType=CHAR},
       vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
-      state_info = #{record.stateInfo,jdbcType=VARCHAR}
+      state_info = #{record.stateInfo,jdbcType=VARCHAR},
+      wxusername = #{record.wxusername,jdbcType=CHAR},
+      amc_tag = #{record.amcTag,jdbcType=INTEGER},
+      online_time = #{record.onlineTime,jdbcType=BIGINT},
+      last_time = #{record.lastTime,jdbcType=TIMESTAMP},
+      note = #{record.note,jdbcType=VARCHAR},
+      update_by = #{record.updateBy,jdbcType=BIGINT},
+      update_time = #{record.updateTime,jdbcType=TIMESTAMP}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -434,6 +516,27 @@
       <if test="stateInfo != null">
         state_info = #{stateInfo,jdbcType=VARCHAR},
       </if>
+      <if test="wxusername != null">
+        wxusername = #{wxusername,jdbcType=CHAR},
+      </if>
+      <if test="amcTag != null">
+        amc_tag = #{amcTag,jdbcType=INTEGER},
+      </if>
+      <if test="onlineTime != null">
+        online_time = #{onlineTime,jdbcType=BIGINT},
+      </if>
+      <if test="lastTime != null">
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="note != null">
+        note = #{note,jdbcType=VARCHAR},
+      </if>
+      <if test="updateBy != null">
+        update_by = #{updateBy,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null">
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
     </set>
     where id = #{id,jdbcType=BIGINT}
   </update>
@@ -458,7 +561,14 @@
       mobile = #{mobile,jdbcType=CHAR},
       verify_code = #{verifyCode,jdbcType=CHAR},
       vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
-      state_info = #{stateInfo,jdbcType=VARCHAR}
+      state_info = #{stateInfo,jdbcType=VARCHAR},
+      wxusername = #{wxusername,jdbcType=CHAR},
+      amc_tag = #{amcTag,jdbcType=INTEGER},
+      online_time = #{onlineTime,jdbcType=BIGINT},
+      last_time = #{lastTime,jdbcType=TIMESTAMP},
+      note = #{note,jdbcType=VARCHAR},
+      update_by = #{updateBy,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
     where id = #{id,jdbcType=BIGINT}
   </update>
   <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample" resultMap="BaseResultMap">

@@ -8,9 +8,13 @@ public class SSOAmcUser {
   private Long id;
 
   private String userName;
+
   private String userCname;
 
+
   private String mobilePhone;
+
+  private String salePhone;
 
   private String email;
 
@@ -24,15 +28,21 @@ public class SSOAmcUser {
 
   private Integer valid;
 
+
+
   private Integer title;
 
   private String nickName;
 
-  private Long createBy;
+  private String note;
 
-  private Date createDate;
+  private String wxImgUrl;
 
-  private Long updateBy;
+  private String imgUrl;
 
-  private Date updateDate;
+  private Integer sex;
+
+  private String familyName;
+
+
 }

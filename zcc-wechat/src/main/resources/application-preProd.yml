@@ -16,7 +16,7 @@ spring:
             - org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
     datasource:
         password: ${env.dbpassword}
-        url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true
+        url: jdbc:mysql://${env.dbhost}:3306/ZCC_WECHAT?useUnicode=true&characterEncoding=utf-8&cachePrepStmts=true&useServerPrepStmts=true&rewriteBatchedStatements=true&serverTimezone=Asia/Shanghai
         username: ${env.dbusername}
         driverClassName: com.mysql.cj.jdbc.Driver
         filters: stat
@@ -89,6 +89,7 @@ spring:
             thread-name-prefix: synchWithScrapySystem
             cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
             cronTagUserExpr: 0 0 23 * * *
+            cronSyncUserFromRecommExpr: 0 0 5,11,17,23 * * *
     cache:
         cache-names: TOKEN
         caffeine:
@@ -99,7 +100,8 @@ spring:
             file-size-threshold: 10240KB
             max-file-size: 10240KB
             max-request-size: 10240KB
-
+    jackson:
+        time-zone: Asia/Shanghai
 mybatis:
     type-aliases-package: com.wensheng.zcc.wechat.module
     mapper-locations:
@@ -208,6 +210,8 @@ recomm:
     urls:
         sendSubMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSubMsg
         sendWechatMsg: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/wxSendMsg
+        notifyUserLogin: http://${env.recmhost}:${env.recmport}/api/suggest/action/wxProfile/registerUser
+        getUsrVisitInfo: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/lastFetchAndTimespent
 
 env:
     env-hint: prod

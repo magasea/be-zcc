@@ -6,6 +6,7 @@ import com.wensheng.zcc.common.module.dto.GaoDeReGeoResult;
 import com.wensheng.zcc.common.module.dto.ReGeoCode;
 import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
+import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryIPResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryResp;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeGeoQueryVal;
 import com.wensheng.zcc.comnfunc.module.vo.base.GaodeRegeoQueryResp;
@@ -50,7 +51,12 @@ public class GaoDeServiceImpl implements GaoDeService {
   @Value("${gaode.regeocoder}")
   private String regeoCoderUrl;
 
+  @Value("${gaode.geoIp2Addr}")
+  private String geoIp2AddrUrl;
+
+
   private RestTemplate restTemplate  = new RestTemplate();
+
 
 
 
@@ -70,6 +76,7 @@ public class GaoDeServiceImpl implements GaoDeService {
   }
 
 
+  @Override
   public boolean getAddressFromGeoPoint(WXUserGeoRecord wxUserGeoRecord){
     Point geoJson = (Point) wxUserGeoRecord.getLocation();
 
@@ -112,13 +119,32 @@ public class GaoDeServiceImpl implements GaoDeService {
           GaodeGeoQueryResp.class);
 
       gaoDeReGeoResult = resp.getBody();
+      if(gaoDeReGeoResult == null || gaoDeReGeoResult.getGeocodes() == null || CollectionUtils.isEmpty(gaoDeReGeoResult.getGeocodes())){
+        geoStr.setLength(0);
+        geoStr.append(String.format(geoCoderUrl,city));
+        if(!StringUtils.isEmpty(city)){
+          geoStr.append(String.format("&city=%s", city));
+        }
+        resp =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
+            GaodeGeoQueryResp.class);
+
+
+        gaoDeReGeoResult = resp.getBody();
+      }
 
     }catch (Exception ex){
       ex.printStackTrace();
       ResponseEntity<String> respStr =  restTemplate.exchange(geoStr.toString(), HttpMethod.GET, null,
           String.class);
       log.error("Failed to get geo info for :{} and city:{} from:{}", address, city, respStr);
-      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+      log.error("now use city geo info directlly");
+
+//      throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+    }finally {
+      if(gaoDeReGeoResult == null){
+        log.error("failed to get geo info for:{} {}", address, city);
+        throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
+      }
     }
     List<GaodeGeoQueryVal> results = new ArrayList(gaoDeReGeoResult.getGeocodes());
     if(CollectionUtils.isEmpty(results)){
@@ -147,6 +173,29 @@ public class GaoDeServiceImpl implements GaoDeService {
     GaodeRegeoQueryVal gaoRegeoResult = resp.getBody().getRegeocode();
 
     return gaoRegeoResult;
+  }
+
+  @Override
+  public GaodeGeoQueryIPResp getAddressByIp(String ipadd) {
+    String gaodeUrl = String.format(geoIp2AddrUrl, ipadd);
+
+    ResponseEntity<GaodeGeoQueryIPResp> resp = null;
+    try{
+      resp = restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+          GaodeGeoQueryIPResp.class);
+    }catch (Exception ex){
+      log.error("Failed to get address by IP:{}",ipadd);
+      ResponseEntity<String> errorResp = restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+          String.class);
+      log.error("Error info:{}", errorResp.getBody());
+      return null;
+    }
+
+
+    GaodeGeoQueryIPResp gaoRegeoResult = resp.getBody();
+
+    return gaoRegeoResult;
+
   }
 
 

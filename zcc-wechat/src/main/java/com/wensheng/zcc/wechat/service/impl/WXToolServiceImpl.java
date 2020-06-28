@@ -2,22 +2,49 @@ package com.wensheng.zcc.wechat.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
+import com.google.gson.reflect.TypeToken;
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
+import com.wensheng.zcc.common.module.dto.WXUserGeoRecord;
+import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
+import com.wensheng.zcc.common.module.dto.WechatUserInfo;
+import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample;
+import com.wensheng.zcc.wechat.module.vo.RecomUserVisitInfo;
 import com.wensheng.zcc.wechat.module.vo.WXGetTicketResp;
-import com.wensheng.zcc.wechat.module.vo.WXMaterialCount;
 import com.wensheng.zcc.wechat.module.vo.WXSign4Url;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXToolService;
+import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.utils.WxToolsUtil;
 import com.wensheng.zcc.wechat.utils.wechat.SHA1;
+import java.lang.reflect.Type;
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -26,7 +53,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -38,6 +67,25 @@ public class WXToolServiceImpl implements WXToolService {
 
   @Value("${weixin.get_ticket_url}")
   String getTicketUrl;
+
+  @Value("${recomm.urls.notifyUserLogin}")
+  String notifyUserLogin;
+
+  @Value("${recomm.urls.getUsrVisitInfo}")
+  String getUsrVisitInfo;
+
+  @Autowired
+  WechatUserMapper wechatUserMapper;
+
+  @Autowired
+  WXUserService wxUserService;
+
+  @Autowired
+  WechatUserStaticMapper wechatUserStaticMapper;
+
+  @Autowired
+  MongoTemplate mongoTemplate;
+
 
   private Gson gson = new Gson();
 
@@ -97,4 +145,194 @@ public class WXToolServiceImpl implements WXToolService {
     return wxSign4Url;
 
   }
+
+  @Override
+  @Scheduled(cron = "${spring.task.scheduling.cronSyncUserFromRecommExpr}")
+  public void syncUserVisitInfoWithRecomm() {
+    int page = 0;
+    int pageSize = 20;
+    HttpHeaders httpHeaders = getHttpJsonHeader();
+    Map<String, Integer> param = new HashMap<>();
+    param.put("page", page);
+    param.put("pageSize", pageSize);
+    HttpEntity<Map> entity = new HttpEntity<>(param, httpHeaders);
+    ResponseEntity<RecommUserInfoResp> resp = restTemplate.exchange(getUsrVisitInfo, HttpMethod.POST, entity, RecommUserInfoResp.class);
+    while(!CollectionUtils.isEmpty(resp.getBody().getInfos())){
+      processRecommUserInfo(resp.getBody().getInfos());
+      page += 1;
+      param.clear();
+      param.put("page", page);
+      param.put("pageSize", pageSize);
+      resp = restTemplate.exchange(getUsrVisitInfo, HttpMethod.POST, entity, RecommUserInfoResp.class);
+    }
+
+  }
+
+  private void processRecommUserInfo(List<RecmmUserInfo> infos) {
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    WechatUserStaticExample wechatUserStaticExample = new WechatUserStaticExample();
+    Query query = null;
+    for(RecmmUserInfo recmmUserInfo: infos){
+      wechatUserExample.clear();
+      wechatUserStaticExample.clear();
+      wechatUserExample.createCriteria().andOpenIdEqualTo(recmmUserInfo.getOpenId());
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(CollectionUtils.isEmpty(wechatUsers)){
+        log.error("There is no such user in zcc for openId:{}", recmmUserInfo.getOpenId());
+        continue;
+      }
+      wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+      List<WechatUserStatic> wechatUserStatics = wechatUserStaticMapper.selectByExample(wechatUserStaticExample);
+      WechatUserStatic wechatUserStatic = null;
+      if(CollectionUtils.isEmpty(wechatUserStatics)){
+        wechatUserStatic = new WechatUserStatic();
+        wechatUserStatic.setWechatUserId(wechatUsers.get(0).getId());
+        wechatUserStaticMapper.insertSelective(wechatUserStatic);
+
+      }else{
+        wechatUserStatic = wechatUserStatics.get(0);
+      }
+      if(recmmUserInfo.getTimestamp() != null){
+        wechatUserStatic.setLastTime(AmcDateUtils.toUTCDateFromLocal(recmmUserInfo.getTimestamp()));
+      }
+      wechatUserStatic.setOnlineTime(recmmUserInfo.getTimeSpent());
+      query = new Query();
+      query.addCriteria(Criteria.where("openId").is(recmmUserInfo.getOpenId()));
+      List<WXUserWatchObject> wxUserWatchObjects = mongoTemplate.find(query, WXUserWatchObject.class);
+      wechatUserStatic.setWatchCount(Long.valueOf(wxUserWatchObjects.size()));
+      wechatUserStaticMapper.updateByPrimaryKeySelective(wechatUserStatic);
+      query = null;
+
+    }
+  }
+
+  @Override
+  public void notifyWechatUserLogin(WechatUserInfo wechatUserInfo) {
+    HttpHeaders httpHeaders = getHttpJsonHeader();
+    HttpEntity<WechatUserInfo> httpEntity = new HttpEntity<>(wechatUserInfo, httpHeaders);
+    ResponseEntity resp = restTemplate.exchange(notifyUserLogin, HttpMethod.POST, httpEntity, String.class);
+    log.info("{} {}",gson.toJson(resp), gson.toJson(wechatUserInfo));
+  }
+
+  @Override
+  public void patchUserFirstLoginTime(String jsonItems) {
+    Type listType = new TypeToken<ArrayList<OpenIdTimestamp>>(){}.getType();
+    List<OpenIdTimestamp> openIdTimestamps = gson.fromJson(jsonItems, listType);
+    for(OpenIdTimestamp openIdTimestamp: openIdTimestamps){
+      log.info(gson.toJson(openIdTimestamp));
+      WechatUserExample wechatUserExample = new WechatUserExample();
+      wechatUserExample.createCriteria().andOpenIdEqualTo(openIdTimestamp.getOpenId());
+      List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+      if(!CollectionUtils.isEmpty(wechatUsers)){
+        WechatUserStaticExample wechatUserStaticExample = new WechatUserStaticExample();
+        wechatUserStaticExample.createCriteria().andWechatUserIdEqualTo(wechatUsers.get(0).getId());
+        List<WechatUserStatic> wechatUserStatics = wechatUserStaticMapper.selectByExample(wechatUserStaticExample);
+        if(CollectionUtils.isEmpty(wechatUserStatics)){
+          WechatUserStatic wechatUserStatic = new WechatUserStatic();
+          wechatUserStatic.setWechatUserId(wechatUsers.get(0).getId());
+          wechatUserStatic.setFirstLoginTime(AmcDateUtils.toUTCDateFromLocal(openIdTimestamp.getTimeStamp()));
+          wechatUserStaticMapper.insertSelective(wechatUserStatic);
+        }else{
+          wechatUserStatics.get(0).setFirstLoginTime(AmcDateUtils.toUTCDate(openIdTimestamp.getTimeStamp()));
+          wechatUserStaticMapper.updateByPrimaryKeySelective(wechatUserStatics.get(0));
+        }
+      }else{
+        log.error( "no such openId:{}", openIdTimestamp.getOpenId());
+      }
+    }
+  }
+
+  @Override
+  public void patchGeoRecord() {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").ne(null));
+     List<WXUserGeoRecord> wxUserGeoRecords = mongoTemplate.find(query, WXUserGeoRecord.class);
+     Set<String> openIds = new HashSet<>();
+     for(WXUserGeoRecord wxUserGeoRecord: wxUserGeoRecords){
+       if(!openIds.contains(wxUserGeoRecord.getOpenId())){
+         openIds.add(wxUserGeoRecord.getOpenId());
+         continue;
+       }else{
+         mongoTemplate.remove(wxUserGeoRecord);
+       }
+     }
+  }
+
+  @Override
+  public void patchUserFavor() {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("openId").ne(null));
+    List<WXUserFavor> wxUserFavors = mongoTemplate.find(query, WXUserFavor.class);
+
+    for(WXUserFavor wxUserFavor: wxUserFavors){
+      if(wxUserFavor.getCreateTime() != null){
+        continue;
+      }
+      wxUserFavor.setCreateTime(AmcDateUtils.getCurrentDate());
+      mongoTemplate.save(wxUserFavor);
+    }
+  }
+
+  @Override
+  public void pushUserVisitInfo(List<RecomUserVisitInfo> recomUserVisitInfos) {
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.setOrderByClause(" id desc ");
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    Map<String, WechatUser> wechatUserMap = wechatUsers.stream().collect(Collectors.toMap(item->item.getOpenId(), item->item));
+
+    for(RecomUserVisitInfo recomUserVisitInfo: recomUserVisitInfos){
+      try{
+        wxUserService.updateUserVisitInfo(recomUserVisitInfo.getOpenid(), recomUserVisitInfo.getLastTime(),
+            recomUserVisitInfo.getTimeSpent(), recomUserVisitInfo.getFirstLoginTime());
+        wechatUserMap.remove(recomUserVisitInfo.getOpenid());
+
+      }catch (Exception ex){
+        log.error("Failed to update openId:{}, {} {} {}", recomUserVisitInfo.getOpenid(),
+            recomUserVisitInfo.getFirstLoginTime(), recomUserVisitInfo.getLastTime(),
+            recomUserVisitInfo.getTimeSpent());
+      }
+
+    }
+    if(!CollectionUtils.isEmpty(wechatUserMap)){
+      WechatUserInfo wechatUserInfo = new WechatUserInfo();
+      for(Entry<String, WechatUser> item: wechatUserMap.entrySet()){
+        AmcBeanUtils.copyProperties(item.getValue(), wechatUserInfo);
+        notifyWechatUserLogin(wechatUserInfo);
+        AmcBeanUtils.fillNullObjects(wechatUserInfo);
+      }
+    }
+  }
+
+  @Data
+  class RecommUserInfoResp{
+    Integer page;
+    Integer pageSize;
+    List<String> openIds;
+    List<RecmmUserInfo> infos;
+  }
+
+  @Data
+  class RecmmUserInfo{
+    @SerializedName("openid")
+    String openId;
+    Long timeSpent;
+    String disposal;
+    String link;
+    String title;
+    Long timestamp;
+  }
+
+  @Data
+  class OpenIdTimestamp{
+    @SerializedName("_id")
+    String openId;
+    @SerializedName("timestamp")
+    Long timeStamp;
+
+  }
+
+
+
+
 }

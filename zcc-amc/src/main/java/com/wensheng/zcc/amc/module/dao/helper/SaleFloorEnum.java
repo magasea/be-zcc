@@ -6,7 +6,7 @@ import java.util.function.Function;
 public enum SaleFloorEnum {
   LATESTASSET(1, "最新资产"),
   HOTDEBT(2, "最热债权"),
-  
+  LOCALRECOMM(3, "本地推介"),
 
   ;
 

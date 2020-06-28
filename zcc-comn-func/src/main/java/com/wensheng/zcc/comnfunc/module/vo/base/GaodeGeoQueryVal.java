@@ -15,13 +15,13 @@ public class GaodeGeoQueryVal {
   @SerializedName("citycode")
   String cityCode;
   String city;
-  Object district;
-  List<Object> township;
-  Neighborhood neighborhood;
-  Building building;
+//  Object district;
+//  List<Object> township;
+//  Neighborhood neighborhood;
+//  Building building;
   String adcode;
-  String[] street;
-  String[] number;
+//  String[] street;
+//  String number;
   String location;
   String level;
 

@@ -7,6 +7,7 @@ import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
+import com.wensheng.zcc.wechat.controller.helper.QueryParam;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.vo.AmcWechatUserInfo;
 import com.wensheng.zcc.wechat.module.vo.TagMod;
@@ -17,6 +18,7 @@ import com.wensheng.zcc.wechat.module.vo.WXUserWatchCount;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnCheckVo;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnVo;
+import com.wensheng.zcc.wechat.module.vo.WechatUserVo;
 import com.wensheng.zcc.wechat.service.WXBasicService;
 import com.wensheng.zcc.wechat.service.WXUserService;
 import com.wensheng.zcc.wechat.service.impl.WXMaterialServiceImpl;
@@ -26,8 +28,10 @@ import com.wensheng.zcc.wechat.service.impl.WXUserServiceImpl.UserIdsResp;
 import com.wensheng.zcc.wechat.utils.wechat.AesException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.parsers.ParserConfigurationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,11 +41,14 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.multipart.MultipartFile;
 import org.xml.sax.SAXException;
 @Slf4j
@@ -136,6 +143,15 @@ public class WechatUserController {
   {
 
     return  wxService.getWechatPublicUserInfo(openIds);
+
+  }
+
+  @RequestMapping(value = "/updateWXUser", method = RequestMethod.POST)
+  @ResponseBody
+  public void updateWXUser(@RequestBody WechatUser wechatUser)
+  {
+
+      wxService.updateWXUser(wechatUser);
 
   }
 
@@ -260,6 +276,14 @@ public class WechatUserController {
 
   }
 
+  @RequestMapping(value = "/user/unWatchOnList", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean unWatchOnList(@RequestBody List<WXUserWatchOnVo> wxUserWatchOnVos ) throws Exception {
+
+    return wxService.unWatchOnList( wxUserWatchOnVos);
+
+  }
+
   @RequestMapping(value = "/user/userWatched", method = RequestMethod.POST)
   @ResponseBody
   public List<WXUserWatchObject> userWatched(@RequestBody String openId ) throws Exception {
@@ -293,9 +317,9 @@ public class WechatUserController {
 
   @RequestMapping(value = "/user/getUserFavor", method = RequestMethod.POST)
   @ResponseBody
-  public  WXUserFavor getUserFavor(@RequestBody String openId ) throws Exception {
-
-    return wxService.getUserFavor( openId);
+  public  WXUserFavor getUserFavor(@RequestBody String openId, @RequestHeader(value = "X-FORWARDED-FOR", required = false) String loginIp ) throws Exception {
+    log.info(loginIp);
+    return wxService.getUserFavor( openId, loginIp);
 
   }
 
@@ -310,6 +334,7 @@ public class WechatUserController {
   @RequestMapping(value = "/user/getUserLocation", method = RequestMethod.POST)
   @ResponseBody
   public AmcRegionInfo getUserLocation(@RequestBody UserLngLat userLngLat ) throws Exception {
+
 
     return wxService.getUserLocation( userLngLat);
 
@@ -333,27 +358,61 @@ public class WechatUserController {
 
   @RequestMapping(value = "/user/getUserInfos", method = RequestMethod.POST)
   @ResponseBody
-  public AmcPage<WechatUser> getUserInfos(@RequestBody PageInfo pageInfo) throws Exception {
+  public AmcPage<WechatUserVo> getUserInfos(@RequestBody QueryParam queryParam) throws Exception {
+//    Map<String, Direction> orderByParam = new HashMap<>();
+//    if(queryParam.getPageInfo()!= null && queryParam.getPageInfo().getSort() == null){
+//      orderByParam.put("id", Direction.DESC);
+//    }else{
+//      orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+//    }
+//    if (CollectionUtils.isEmpty(orderByParam)) {
+//      orderByParam.put("id", Direction.DESC);
+//    }
 
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(pageInfo);
-    if (CollectionUtils.isEmpty(orderByParam)) {
-      orderByParam.put("id", Direction.DESC);
-    }
-
-    int offset = PageReqRepHelper.getOffset(pageInfo);
-    List<WechatUser> wechatUsers;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    List<WechatUserVo> wechatUsers;
     try {
-      wechatUsers = wxService.getAllWechatUsers(offset, pageInfo.getSize(), orderByParam);
+      wechatUsers = wxService.getAllWechatUsers(offset, queryParam.getPageInfo().getSize(), queryParam);
 
     } catch (Exception ex) {
       log.error("got error when query:" + ex.getMessage());
       throw ex;
     }
-    Long totalCount = wxService.getAllWechatUserCount();
+    Long totalCount = wxService.getAllWechatUserCount(queryParam);
 //    Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
     return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
 
   }
+
+  @RequestMapping(value = "/user/getSimpleUserInfos", method = RequestMethod.POST)
+  @ResponseBody
+  public AmcPage<WechatUser> getSimpleUserInfos(@RequestBody QueryParam queryParam) throws Exception {
+//    Map<String, Direction> orderByParam = new HashMap<>();
+//    if(queryParam.getPageInfo()!= null && queryParam.getPageInfo().getSort() == null){
+//      orderByParam.put("id", Direction.DESC);
+//    }else{
+//      orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+//    }
+//    if (CollectionUtils.isEmpty(orderByParam)) {
+//      orderByParam.put("id", Direction.DESC);
+//    }
+
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    List<WechatUser> wechatUsers;
+    try {
+      wechatUsers = wxService.getSimpleWechatUsers(offset, queryParam.getPageInfo().getSize(), queryParam);
+
+    } catch (Exception ex) {
+      log.error("got error when query:" + ex.getMessage());
+      throw ex;
+    }
+    Long totalCount = wxService.getAllWechatUserCount(queryParam);
+//    Page<AmcOrigCreditor> amcOrigCreditorPage = PageReqRepHelper.getPageResp(totalCount, amcOrigCreditors, pageable);
+    return PageReqRepHelper.getAmcPage(wechatUsers, totalCount);
+
+  }
+
+
   @RequestMapping(value = "/user/getUserStatistics", method = RequestMethod.POST)
   @ResponseBody
   public WXUserStatistics getUserStatistics(@RequestParam String startDate, @RequestParam String endDate) throws Exception {

@@ -6,8 +6,8 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
-@RunWith(SpringRunner.class)
-@ActiveProfiles(value = "dev")
+//@RunWith(SpringRunner.class)
+//@ActiveProfiles(value = "dev")
 public class AmcDateUtilsTest {
 
   @Test
@@ -23,5 +23,9 @@ public class AmcDateUtilsTest {
   }
 
 
-
+  @Test
+  public void toUTCDateFromLocal() {
+    Date date = AmcDateUtils.toUTCDateFromLocal(1592449966L);
+    System.out.println(date);
+  }
 }

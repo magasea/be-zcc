@@ -19,6 +19,7 @@ import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WXUserFavor;
+import com.wenshengamc.zcc.wechat.WXUserFavorGrpcInfo;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp;
 import com.wenshengamc.zcc.wechat.WXVistorInfo;
@@ -165,13 +166,13 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
   @Override
   public void getWXUserFavor(com.wenshengamc.zcc.wechat.WXUserReq request,
       io.grpc.stub.StreamObserver<com.wenshengamc.zcc.wechat.WXUserFavor> responseObserver) {
-    com.wensheng.zcc.common.module.dto.WXUserFavor wxUserFavor = wxUserService.getUserFavor(request.getOpenId());
+    com.wensheng.zcc.common.module.dto.WXUserFavor wxUserFavor = wxUserService.getUserFavor(request.getOpenId(), null);
     if(wxUserFavor == null){
       log.error("Failed to get user favor for:{}", request.getOpenId());
       responseObserver.onError(new Exception(String.format("Failed to get user favor for:%s", request.getOpenId())));
       return;
     }
-    AmcSaleFilter amcSaleFilter = wxUserService.getUserFavor(request.getOpenId()).getAmcSaleFilter();
+    AmcSaleFilter amcSaleFilter = wxUserService.getUserFavor(request.getOpenId(), null).getAmcSaleFilter();
       WXUserFavor.Builder WXUFB = WXUserFavor.newBuilder();
      if(amcSaleFilter != null){
        WXUFB.setUserFavor(gson.toJson(amcSaleFilter));
@@ -243,6 +244,23 @@ public class WechatGrpcService extends WechatGrpcServiceImplBase {
 
 
 
+  }
+
+  /**
+   */
+  @Override
+  public void getWXUserFavorOfRegion(com.wenshengamc.zcc.wechat.WXUserReq request,
+      io.grpc.stub.StreamObserver<com.wenshengamc.zcc.wechat.WXUserFavorGrpcInfo> responseObserver) {
+    try{
+      com.wensheng.zcc.common.module.dto.WXUserFavor wxUserFavor = wxUserService.getUserFavor(request.getOpenId(),null);
+      WXUserFavorGrpcInfo.Builder wxufgiBuilder = WXUserFavorGrpcInfo.newBuilder();
+      AmcBeanUtils.copyProperties(wxUserFavor, wxufgiBuilder);
+      responseObserver.onNext(wxufgiBuilder.build());
+      responseObserver.onCompleted();
+    }catch (Exception ex){
+      log.error("Failed to get user favor by:{}", request.getOpenId(), ex);
+      responseObserver.onError(ex);
+    }
   }
 
 }

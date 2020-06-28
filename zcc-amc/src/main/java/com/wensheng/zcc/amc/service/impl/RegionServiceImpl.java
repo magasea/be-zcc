@@ -8,6 +8,9 @@ import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.AmcRegionItem;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.AmcRegionReq;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.logging.Handler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -84,18 +87,24 @@ public class RegionServiceImpl implements RegionService {
         HttpHeaders headers = getHttpJsonHeader();
 
         HttpEntity<Long> entity = new HttpEntity<>(regionId, headers);
+        try{
 
-        ResponseEntity response = restTemplate.exchange(getRegionByIdUrl, HttpMethod.POST, entity,
-                Region.class);
-        Region resp = (Region) response.getBody();
+            StringBuilder url = new StringBuilder(getRegionByIdUrl).append(String.format("?id=%s", regionId));
+            ResponseEntity<Region> response = restTemplate.getForEntity(url.toString(),Region.class);
+            Region resp = (Region) response.getBody();
+            return resp;
+        }catch (Exception ex){
+            log.error("failed to get region info by:{}", regionId, ex);
+            return null;
+        }
 
-        return resp;
     }
 
     public HttpHeaders getHttpJsonHeader(){
         HttpHeaders headers = new HttpHeaders();
-        headers.getAccept().clear();
+//        headers.getAccept().clear();
         headers.set("Accept", MediaType.APPLICATION_JSON_VALUE);
+
         return headers;
     }
 }

@@ -45,6 +45,20 @@ public class WechatUser {
 
     private String stateInfo;
 
+    private String wxusername;
+
+    private Integer amcTag;
+
+    private Long onlineTime;
+
+    private Date lastTime;
+
+    private String note;
+
+    private Long updateBy;
+
+    private Date updateTime;
+
     public Long getId() {
         return id;
     }
@@ -211,5 +225,61 @@ public class WechatUser {
 
     public void setStateInfo(String stateInfo) {
         this.stateInfo = stateInfo == null ? null : stateInfo.trim();
+    }
+
+    public String getWxusername() {
+        return wxusername;
+    }
+
+    public void setWxusername(String wxusername) {
+        this.wxusername = wxusername == null ? null : wxusername.trim();
+    }
+
+    public Integer getAmcTag() {
+        return amcTag;
+    }
+
+    public void setAmcTag(Integer amcTag) {
+        this.amcTag = amcTag;
+    }
+
+    public Long getOnlineTime() {
+        return onlineTime;
+    }
+
+    public void setOnlineTime(Long onlineTime) {
+        this.onlineTime = onlineTime;
+    }
+
+    public Date getLastTime() {
+        return lastTime;
+    }
+
+    public void setLastTime(Date lastTime) {
+        this.lastTime = lastTime;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note == null ? null : note.trim();
+    }
+
+    public Long getUpdateBy() {
+        return updateBy;
+    }
+
+    public void setUpdateBy(Long updateBy) {
+        this.updateBy = updateBy;
+    }
+
+    public Date getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(Date updateTime) {
+        this.updateTime = updateTime;
     }
 }

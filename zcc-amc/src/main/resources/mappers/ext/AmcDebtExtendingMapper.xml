@@ -60,8 +60,6 @@
       <!--<id property="debtId" column="aa_debt_id"/>-->
 
     <!--</collection>-->
-    <association property="amcDebtContactor"
-      resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper.BaseResultMap" columnPrefix="adc_"/>
     <collection property="amcAssets"
       resultMap="com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper.BaseResultMap" columnPrefix="aa_"/>
 
@@ -156,7 +154,7 @@
   ${prefix}company_id as ${alias}company_id,
   ${prefix}note as ${alias}note
   </sql>
-  <select id="selectByExampleWithRowboundsExt"
+  <select id="selectSimpleByExampleExt"
     parameterType="com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample" resultMap="BaseResultMapExt">
     select
     <if test="distinct">
@@ -169,15 +167,10 @@
     <include
       refid="DEBTOR_Column_List"><property name="prefix" value="adr."></property><property name="alias"
       value="adr_"></property>
-    </include>,
-    <include
-      refid="com.wensheng.zcc.amc.dao.mysql.mapper.ext.Common.DEBTCONTACTOR_LIST"><property name="prefix" value="adc."></property><property name="alias"
-      value="adc_"></property>
     </include>
+
     from AMC_DEBT ad
---     left join AMC_ASSET aa on ad.id = aa.debt_id
     left join AMC_DEBTOR adr on ad.id = adr.debt_id
-    left join AMC_DEBT_CONTACTOR adc on ad.amc_contactor_id = adc.id
     <if test="_parameter != null">
       <include refid="com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper.Example_Where_Clause" />
     </if>
@@ -195,14 +188,13 @@
       value="aa_"></property></include>,
     <include
       refid="DEBTOR_Column_List"><property name="prefix" value="adr."></property><property name="alias"
-      value="adr_"></property></include>,
-    <include
-      refid="com.wensheng.zcc.amc.dao.mysql.mapper.ext.Common.DEBTCONTACTOR_LIST"><property name="prefix" value="adc."></property><property name="alias"
-      value="adc_"></property></include>
+      value="adr_"></property></include>
+<!--    <include-->
+<!--      refid="com.wensheng.zcc.amc.dao.mysql.mapper.ext.Common.DEBTCONTACTOR_LIST"><property name="prefix" value="adc."></property><property name="alias"-->
+<!--      value="adc_"></property></include>-->
     from AMC_DEBT ad
     left join AMC_ASSET aa on ad.id = aa.debt_id
     left join AMC_DEBTOR adr on ad.id = adr.debt_id
-    left join AMC_DEBT_CONTACTOR adc on ad.amc_contactor_id = adc.id
     where ad.id = #{id}
   </select>
 

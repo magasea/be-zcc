@@ -82,6 +82,19 @@ message GeoLocationResp {
   string cityCode = 4;
 }
 
+message GeoIp2LocationResp{
+  string province = 1;
+  string city = 2;
+  string adcode = 3;
+  double lng = 4;
+  double lat = 5;
+  string provinceCode = 6;
+}
+
+message GeoIpReq{
+  string ipadd = 1;
+}
+
 service ComnFuncService {
   rpc getAddress(WXUserGeoReq) returns (WXUserGeoReq);
 
@@ -96,5 +109,7 @@ service ComnFuncService {
   rpc sendVerifyCode(PhoneMsgReq) returns (PhoneMsgRep);
 
   rpc getAmcGeoInfoByLngLat(GeoLngLatReq) returns (GeoLocationResp);
+
+  rpc getCityByIp(GeoIpReq) returns (GeoIp2LocationResp);
 
 }

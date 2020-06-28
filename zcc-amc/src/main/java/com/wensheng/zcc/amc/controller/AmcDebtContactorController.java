@@ -4,6 +4,7 @@ import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.service.AmcContactorService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.AmcSSOContactorService;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.util.ArrayList;
@@ -36,6 +37,9 @@ public class AmcDebtContactorController {
   @Autowired
   AmcOssFileService amcOssFileService;
 
+  @Autowired
+  AmcSSOContactorService amcSSOContactorService;
+
   @RequestMapping(value = "/getAll", method = RequestMethod.GET)
   @ResponseBody
   public List<AmcDebtContactor> getAllContactor(
@@ -49,12 +53,14 @@ public class AmcDebtContactorController {
   ) throws Exception {
     return  amcContactorService.getDebtContactors();
   }
-  @RequestMapping(value = "/initContactor", method = RequestMethod.GET)
+  @RequestMapping(value = "/checkContactorWithSSOUser", method = RequestMethod.GET)
   @ResponseBody
   public void initContactor(){
 
-      amcContactorService.initializeDebtContactor();
+    amcSSOContactorService.checkContactorWithSSOUser();
   }
+
+
 
 
   @RequestMapping(value = "/addContactor", method = RequestMethod.POST)

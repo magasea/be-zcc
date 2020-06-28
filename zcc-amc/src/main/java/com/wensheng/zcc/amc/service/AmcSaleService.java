@@ -6,7 +6,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleBannerPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleBannerVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListByOpenId;
-import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
+import com.wensheng.zcc.amc.module.vo.AmcSaleUserLocalFavorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import com.wensheng.zcc.amc.module.vo.AmcSaleFloorFrontEndVo;
@@ -78,6 +78,10 @@ public interface AmcSaleService {
 
     AmcSaleFloorPageVo getFloorPage(Long floorId) throws Exception;
 
+    AmcSaleFloor getFloorByFixType(int type) throws Exception;
+
+
+
     AmcSaleMenuPageVo getMenuPage(Long menuId) throws Exception;
 
     AmcSaleBannerPageVo getBannerPage(Long bannerId) throws Exception;
@@ -114,4 +118,6 @@ public interface AmcSaleService {
       AmcSaleGetRandomListByOpenId amcSaleGetRandomListInPage)
       throws Exception;
   public void initFixFloors();
+
+  AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId) throws Exception;
 }

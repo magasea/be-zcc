@@ -149,6 +149,7 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
             }
             AmcDebt amcDebt = new AmcDebt();
             AmcBeanUtils.copyProperties(amcDebtPre, amcDebt);
+            amcDebt.setAmcContactorId(amcDebtPre.getAmcContactorId());
             amcDebt.setId(null);
             if(StringUtils.isEmpty(amcDebtPre.getAmcContactorName()) ){
                 log.error("amc contactor is empty ");
@@ -191,6 +192,7 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
                 AmcBeanUtils.copyProperties(amcAssetPre, amcAsset);
                 amcAsset.setId(null);
                 amcAsset.setDebtId(amcDebt.getId());
+                amcAsset.setAmcContactorId(amcDebt.getAmcContactorId());
                 amcAsset.setAmcContactorName(amcDebt.getAmcContactorName());
                 amcAsset.setAmcContactorPhone(amcDebt.getAmcContactorPhone());
                 AmcAssetVo amcAssetVo = amcAssetService.create(amcAsset);

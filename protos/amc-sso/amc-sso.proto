@@ -1,0 +1,62 @@
+syntax = "proto3";
+
+
+package com.wenshengamc.sso;
+
+
+option java_multiple_files = true;
+
+message AmcContactorName {
+    string contactorName = 1;
+    string phone = 2;
+}
+
+message AmcSSOContactorName {
+  string contactorName = 1;
+  string phone = 2;
+  int64 id = 3;
+}
+
+message CheckSSOContactorNameReq{
+  repeated AmcContactorName contactorNames = 1;
+}
+
+message CheckSSOContactorNameResp{
+  repeated AmcSSOContactorName ssoContactorNames = 1;
+}
+
+message GetSSOUsersByIdsReq{
+  repeated int64 ssoUserIds = 1;
+}
+
+
+ message SSOUser{
+  int64 id = 1;
+  string userName = 2;
+  string userCname = 3;
+  string mobilePhone = 4;
+  string salePhone = 5;
+  string email = 6;
+  int64 deptId = 7;
+  int64 companyId = 8;
+  int32 location = 9;
+  int32 lgroup = 10;
+  int32 valid = 11;
+  int32 title = 12;
+  string nickName = 13;
+  string note = 14;
+  string wxImgUrl = 15;
+  string imgUrl = 16;
+  int32 sex = 17;
+  string familyName = 18;
+
+}
+
+message SSOUserResp{
+  repeated SSOUser ssoUsers = 1;
+}
+
+service AmcSSOGrpcService {
+  rpc checkSSOContactorName(CheckSSOContactorNameReq) returns (CheckSSOContactorNameResp);
+  rpc getSSOUsersByIds(GetSSOUsersByIdsReq) returns (SSOUserResp);
+}

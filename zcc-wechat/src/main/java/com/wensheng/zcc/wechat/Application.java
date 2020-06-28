@@ -2,6 +2,8 @@ package com.wensheng.zcc.wechat;
 
 import io.grpc.Server;
 import java.io.IOException;
+import java.util.TimeZone;
+import javax.annotation.PostConstruct;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -17,6 +19,10 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableCaching
 public class Application {
 
+    @PostConstruct
+    public void init(){
+        TimeZone.setDefault(TimeZone.getDefault());
+    }
 
     public static void main(String[] args) throws IOException, InterruptedException {
         SpringApplication.run(Application.class, args);

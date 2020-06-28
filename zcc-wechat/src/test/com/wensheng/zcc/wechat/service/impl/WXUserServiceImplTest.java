@@ -20,7 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration
-@ActiveProfiles(value = "preProd")
+@ActiveProfiles(value = "dev")
 @Slf4j
 public class WXUserServiceImplTest {
 

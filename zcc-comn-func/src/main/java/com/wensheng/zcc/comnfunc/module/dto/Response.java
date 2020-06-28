@@ -4,24 +4,24 @@ import com.google.gson.annotations.SerializedName;
 
 public class Response{
 
-	@SerializedName("result")
-	private Result result;
+  @SerializedName("result")
+  private Result result;
 
-	@SerializedName("status")
-	private String status;
+  @SerializedName("status")
+  private String status;
 
-	@SerializedName("info")
-	private String info;
+  @SerializedName("info")
+  private String info;
 
-	public Result getResult(){
-		return result;
-	}
+  public Result getResult(){
+    return result;
+  }
 
-	public String getStatus(){
-		return status;
-	}
+  public String getStatus(){
+    return status;
+  }
 
-	public String getInfo(){
-		return info;
-	}
+  public String getInfo(){
+    return info;
+  }
 }

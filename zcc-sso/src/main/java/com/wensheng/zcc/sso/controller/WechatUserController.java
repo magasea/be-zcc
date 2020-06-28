@@ -7,15 +7,20 @@ import com.wensheng.zcc.sso.module.vo.WechatPhoneRegistry;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.sso.service.WechatService;
 import java.io.IOException;
+import javax.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * @author chenwei on 3/14/19
@@ -23,6 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
  */
 @Controller
 @RequestMapping(value="/wechat")
+@Slf4j
 public class WechatUserController {
 
   @Autowired
@@ -39,7 +45,6 @@ public class WechatUserController {
   @RequestMapping(value="/wechatPubLogin",method= RequestMethod.POST)
   @ResponseBody
   public WechatLoginResult wechatPubLogin(@RequestBody WechatLogin login) throws IOException {
-
     return wechatService.loginPubWechat(login);
 
   }

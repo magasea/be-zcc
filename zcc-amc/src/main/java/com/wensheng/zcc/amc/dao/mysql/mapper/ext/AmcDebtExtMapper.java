@@ -9,7 +9,7 @@ import java.util.List;
 public interface AmcDebtExtMapper extends AmcDebtMapper {
 
 
-    List<AmcDebtExt> selectByExampleWithRowboundsExt(AmcDebtExample example);
+    List<AmcDebtExt> selectSimpleByExampleExt(AmcDebtExample example);
 
     List<AmcDebtExt> selectByPrimaryKeyExt(Long id);
 

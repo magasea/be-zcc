@@ -2,6 +2,7 @@ package com.wensheng.zcc.amc.module.vo;
 
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtAdditional;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.DebtImage;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +61,8 @@ public class AmcDebtVo {
 
   private Long curtCounty;
 
+  private Long amcContactorId;
+
   private String amcContactorName;
 
   private String amcContactorPhone;
@@ -87,6 +90,7 @@ public class AmcDebtVo {
   List<AmcAssetVo> assetVos;
 
   private DebtAdditional debtAdditional;
+  SSOAmcUser debtContactor;
 
   DebtImage debtImage;
 

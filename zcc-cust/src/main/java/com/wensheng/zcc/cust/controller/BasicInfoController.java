@@ -140,9 +140,9 @@ public class BasicInfoController {
 
   }
 
-  @RequestMapping(value = "/regionsById", method = RequestMethod.POST)
+  @RequestMapping(value = "/regionsById", method = RequestMethod.GET)
   @ResponseBody
-  public CustRegionDetail getRegionById(@RequestBody(required = false) Long id){
+  public CustRegionDetail getRegionById(@RequestParam(required = false) Long id){
     if(id == null){
       return null;
     }else{

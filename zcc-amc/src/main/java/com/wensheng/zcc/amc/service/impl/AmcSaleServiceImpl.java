@@ -24,6 +24,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenu;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleMenuExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTag;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleTagExample;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListByOpenId;
@@ -32,6 +33,7 @@ import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListByOpenId;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecommAssets;
 import com.wensheng.zcc.amc.module.vo.AmcSaleRecommDebts;
+import com.wensheng.zcc.amc.module.vo.AmcSaleUserLocalFavorPageVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleWatchonPageVo;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
@@ -51,6 +53,7 @@ import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
 import com.wensheng.zcc.amc.service.AmcSaleService;
+import com.wensheng.zcc.common.module.dto.WXUserFavor;
 import com.wensheng.zcc.common.module.dto.WXUserWatchObject;
 import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
@@ -64,6 +67,8 @@ import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
@@ -71,6 +76,7 @@ import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
+@CacheConfig(cacheNames = {"FLOOR"})
 public class AmcSaleServiceImpl implements AmcSaleService {
     @Autowired
     AmcAssetService amcAssetService;
@@ -110,11 +116,15 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     final static String FIX_TITLE_LATEST_ASSET = "最新资产";
     final static String FIX_SLOGON_LATEST_DEBT = "这儿有大家都关注的债权";
     final static String FIX_TITLE_LATEST_DEBT = "最热债权";
+    final static String FIX_SLOGON_LOCALRECOMM = "智能本地化推介";
+    final static String FIX_TITLE_LOCALRECOMM = "属地优选资产";
 
     @Value("${env.name}")
     String envName;
 
     private Gson gson = new Gson();
+
+    private final static int PAGE_ITEM_SIZE = 15;
 
     @Override
     public List<AmcSaleFloorVo> getFloors(){
@@ -152,7 +162,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         // get all published floors
         AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
         amcSaleFloorExample.setOrderByClause(" floor_seq asc ");
-        amcSaleFloorExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus())
+        amcSaleFloorExample.createCriteria().andPublishStateEqualTo(FloorPublishStateEnum.PUBLISHED.getStatus()).andFloorTypeNotEqualTo(SaleFloorEnum.LOCALRECOMM.getId())
             .andFloorStartTimeLessThan(AmcDateUtils.getCurrentDate()).andFloorEndTimeGreaterThan(AmcDateUtils.getCurrentDate());
 
         List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
@@ -657,6 +667,18 @@ public class AmcSaleServiceImpl implements AmcSaleService {
     }
 
     @Override
+    @Cacheable
+    public AmcSaleFloor getFloorByFixType(int type) throws Exception {
+        AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
+        amcSaleFloorExample.createCriteria().andFloorTypeEqualTo(type);
+        List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
+        if(CollectionUtils.isEmpty(amcSaleFloors)){
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_PARAMETER_NOOBJAVAIL_ERROR, String.format("type:%s", type));
+        }
+        return amcSaleFloors.get(0);
+    }
+
+    @Override
     public AmcSaleFloorPageVo getFloorPageWithFilter(AmcSalePageModVo amcSaleFloorPageModVo)
         throws Exception {
         AmcSaleFloorPageVo amcSaleFloorPageVo = new AmcSaleFloorPageVo();
@@ -881,6 +903,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
         }
         amcSaleBannerPageVo.setResultList(resultList);
+        amcSaleBannerPageVo.setAmcSaleBanner(amcSaleBanner);
         return amcSaleBannerPageVo;
     }
 
@@ -1186,17 +1209,21 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         AmcSaleFloor amcSaleFloorLatestAsset = getLatestAssetFloor();
         //2. init latest debt floor
         AmcSaleFloor amcSaleFloorLatestDebt = getLatestDebtFloor();
+        //3. init local recomm floor
+        AmcSaleFloor amcSaleFloorLocalRecomm = getLocalRecommFloor();
 
         AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
         amcSaleFloorExample.createCriteria().andFloorTypeIn(Arrays.asList(SaleFloorEnum.LATESTASSET.getId(),
-            SaleFloorEnum.HOTDEBT.getId()));
+            SaleFloorEnum.HOTDEBT.getId(), SaleFloorEnum.LOCALRECOMM.getId()));
         List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
         if(CollectionUtils.isEmpty(amcSaleFloors)){
             amcSaleFloorMapper.insertSelective(amcSaleFloorLatestAsset);
             amcSaleFloorMapper.insertSelective(amcSaleFloorLatestDebt);
+            amcSaleFloorMapper.insertSelective(amcSaleFloorLocalRecomm);
         }else{
             boolean needAsset = true;
             boolean needDebt = true;
+            boolean needLocalRecomm = true;
             for(AmcSaleFloor amcSaleFloor: amcSaleFloors){
                 if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.LATESTASSET.getId())){
                     log.info("No need to init latest asset floor");
@@ -1208,6 +1235,11 @@ public class AmcSaleServiceImpl implements AmcSaleService {
                     needDebt = false;
                     continue;
                 }
+                if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.LOCALRECOMM.getId())){
+                    log.info("No need to init local recomm floor");
+                    needLocalRecomm = false;
+                    continue;
+                }
 
             }
             if(needAsset){
@@ -1215,6 +1247,9 @@ public class AmcSaleServiceImpl implements AmcSaleService {
             }
             if(needDebt){
                 amcSaleFloorMapper.insertSelective(amcSaleFloorLatestDebt);
+            }
+            if(needLocalRecomm){
+                amcSaleFloorMapper.insertSelective(amcSaleFloorLocalRecomm);
             }
         }
 
@@ -1224,7 +1259,36 @@ public class AmcSaleServiceImpl implements AmcSaleService {
 
     }
 
-    private AmcSaleFloor getLatestDebtFloor() {
+  @Override
+  public AmcSaleUserLocalFavorPageVo getUserLocalPage(String openId) throws Exception {
+      //step 1 get WXUserFavor info
+      //step 2 depend on city code to find top 12 asset or debt
+      //step 3 if cannot find enough asset or debt with city code, find top 12 asset or debt by provCode
+      //step 4 if cannot find enough asset or debt with provCode , find top 12 asset or debt by latlng
+      WXUserRegionFavor wxUserRegionFavor = wechatGrpcService.getWXUserRegionFavor(openId);
+      WXUserFavor wxUserFavor = new WXUserFavor();
+      AmcBeanUtils.copyProperties(wxUserRegionFavor, wxUserFavor);
+      AmcSaleFloor amcSaleFloor = getFloorByFixType(SaleFloorEnum.LOCALRECOMM.getId());
+      List<AmcAssetVo> amcAssetVos = amcAssetService.getUserLocalAssets(wxUserRegionFavor, amcSaleFloor);
+      List<AmcDebtVo> amcDebtVos = new ArrayList<>();
+      if(amcAssetVos == null || amcAssetVos.size() <= PAGE_ITEM_SIZE){
+          amcDebtVos = amcDebtService.getUserLocalDebts(wxUserRegionFavor, amcSaleFloor);
+      }
+      AmcSaleUserLocalFavorPageVo amcSaleUserFavorPageVo = new AmcSaleUserLocalFavorPageVo();
+      amcSaleUserFavorPageVo.setResultList(new ArrayList<>());
+      if(amcAssetVos != null && !CollectionUtils.isEmpty(amcAssetVos)){
+          amcSaleUserFavorPageVo.getResultList().addAll(amcAssetVos);
+      }
+      amcSaleUserFavorPageVo.getResultList().addAll(amcSaleUserFavorPageVo.getResultList().size(), amcDebtVos);
+      amcSaleUserFavorPageVo.setWxUserFavor(wxUserFavor);
+
+
+      amcSaleUserFavorPageVo.setAmcSaleFloor(amcSaleFloor);
+
+      return amcSaleUserFavorPageVo;
+  }
+
+  private AmcSaleFloor getLatestDebtFloor() {
         AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
         AmcSaleFilter amcSaleFilter = new AmcSaleFilter();
         AmcSaleRecomItems amcSaleRecomItems = new AmcSaleRecomItems();
@@ -1238,6 +1302,23 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleFloor.setSlogan(FIX_SLOGON_LATEST_DEBT);
         amcSaleFloor.setTitle(FIX_TITLE_LATEST_DEBT);
         amcSaleFloor.setFloorType(SaleFloorEnum.HOTDEBT.getId());
+        return amcSaleFloor;
+    }
+
+    private AmcSaleFloor getLocalRecommFloor() {
+        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
+        AmcSaleFilter amcSaleFilter = new AmcSaleFilter();
+//        AmcSaleRecomItems amcSaleRecomItems = new AmcSaleRecomItems();
+//        AmcSaleRecommDebts amcSaleRecommDebts = new AmcSaleRecommDebts();
+//        amcSaleRecomItems.setAmcSaleRecommDebts(amcSaleRecommDebts);
+//        List<Long> latestDebtIds = amcDebtService.getLatestIds();
+//        amcSaleRecomItems.getAmcSaleRecommDebts().setDebtIds(latestDebtIds);
+//        amcSaleFilter.setFilterDebt(new AmcFilterContentDebt());
+//        amcSaleFloor.setFilterContent(gson.toJson(amcSaleFilter));
+//        amcSaleFloor.setRecomItems(gson.toJson(amcSaleRecomItems));
+        amcSaleFloor.setSlogan(FIX_SLOGON_LOCALRECOMM);
+        amcSaleFloor.setTitle(FIX_TITLE_LOCALRECOMM);
+        amcSaleFloor.setFloorType(SaleFloorEnum.LOCALRECOMM.getId());
         return amcSaleFloor;
     }
 

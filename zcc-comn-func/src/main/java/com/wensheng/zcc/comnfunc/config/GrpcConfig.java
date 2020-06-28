@@ -2,6 +2,8 @@ package com.wensheng.zcc.comnfunc.config;
 
 import com.wensheng.zcc.comnfunc.service.impl.ComnFuncGrpcServiceImpl;
 import com.wensheng.zcc.common.utils.UnknownStatusDescriptionInterceptor;
+import io.grpc.ManagedChannel;
+import io.grpc.ManagedChannelBuilder;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import io.grpc.ServerInterceptors;
@@ -17,6 +19,19 @@ public class GrpcConfig {
 
   @Value("${grpc.port}")
   int grpcPort;
+
+  @Value("${grpc.client.comnfunc.pubhost}")
+  String comnfuncPubHost;
+  @Value("${grpc.client.comnfunc.pubport}")
+  int comnfuncPubPort;
+
+
+  @Bean(name = "comnFuncPubChannel")
+  ManagedChannel comnFuncPubChannel(){
+    ManagedChannelBuilder managedChannelBuilder =
+        ManagedChannelBuilder.forAddress(comnfuncPubHost, comnfuncPubPort).usePlaintext();
+    return managedChannelBuilder.build();
+  }
 
   @Autowired
   ComnFuncGrpcServiceImpl comnFuncGrpcService;

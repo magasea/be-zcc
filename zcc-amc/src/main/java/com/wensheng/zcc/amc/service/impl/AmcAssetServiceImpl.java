@@ -10,14 +10,17 @@ import com.wensheng.zcc.amc.module.dao.helper.ImagePathClassEnum;
 import com.wensheng.zcc.amc.module.dao.helper.OrderByFieldEnum;
 import com.wensheng.zcc.amc.module.dao.helper.PublishStateEnum;
 import com.wensheng.zcc.amc.module.dao.helper.QueryParamEnum;
+import com.wensheng.zcc.amc.module.dao.helper.SaleFloorLocalTitleEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.*;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.*;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
+import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcAssetDetailVo;
 import com.wensheng.zcc.amc.module.vo.AmcAssetGeoNear;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetListInPage;
 import com.wensheng.zcc.amc.module.vo.AmcSaleGetRandomListInPage;
+import com.wensheng.zcc.amc.service.AmcSSORpcService;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentAsset;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
@@ -26,7 +29,7 @@ import com.wensheng.zcc.amc.service.RegionService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.module.dto.Region;
-import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
+import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -95,6 +98,9 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     WechatGrpcService wechatGrpcService;
 
     @Autowired
+    AmcSSORpcService amcSSORpcService;
+
+    @Autowired
     ComnFuncServiceBlockingStub comnfuncServiceStub;
 
     @Autowired
@@ -106,6 +112,8 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     @Value("${env.name}")
     String envName;
 
+
+    private final static int PAGE_ITEM_SIZE = 15;
 
     @Override
     @Transactional
@@ -291,11 +299,15 @@ public class AmcAssetServiceImpl implements AmcAssetService {
     List<AmcDebt> debtSimpleByIds = amcDebtService
         .getDebtSimpleByIds(debtIds.stream().collect(Collectors.toList()));
     Map<Long, Long> debtId2ContactorIdMap = debtSimpleByIds.stream().collect(Collectors.toMap(item->item.getId(), item->item.getAmcContactorId()));
-    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
-    amcDebtContactorExample.createCriteria().andIdIn(debtId2ContactorIdMap.values().stream().collect(Collectors.toList()));
-    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper
-        .selectByExample(amcDebtContactorExample);
-    Map<Long, AmcDebtContactor> amcDebtContactorMap = amcDebtContactors.stream()
+    Set<Long> contactorIdsSet =  debtId2ContactorIdMap.values().stream().collect(Collectors.toSet());
+    List<Long> contactorIds = new ArrayList<>(contactorIdsSet);
+    List<SSOAmcUser> ssoAmcUsers =  amcSSORpcService.getSSOUsersByIds(contactorIds);
+    //    AmcDebtContactorExample amcDebtContactorExample = new AmcDebtContactorExample();
+//    amcDebtContactorExample.createCriteria().andIdIn(debtId2ContactorIdMap.values().stream().collect(Collectors.toList()));
+//    List<AmcDebtContactor> amcDebtContactors = amcDebtContactorMapper
+//        .selectByExample(amcDebtContactorExample);
+
+    Map<Long, SSOAmcUser> amcDebtContactorMap = ssoAmcUsers.stream()
         .collect(Collectors.toMap(item -> item.getId(), item -> item));
     Query query = new Query();
     query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
@@ -314,7 +326,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
   private void setContactors(Map<Long, Long> asset2debtIdMap, Map<Long, Long> debtId2ContactorIdMap,
       List<AmcAssetVo> amcAssetVos,
-      Map<Long, AmcDebtContactor> amcDebtContactors) {
+      Map<Long, SSOAmcUser> amcDebtContactors) {
 
       for(AmcAssetVo amcAssetVo: amcAssetVos){
         if(asset2debtIdMap.containsKey(amcAssetVo.getId())){
@@ -348,7 +360,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
             }
 
         }
-        AmcDebtContactor amcDebtContactor = amcDebtService.getDebtContactorByDebtId(amcAsset.getDebtId());
+        SSOAmcUser amcDebtContactor = amcDebtService.getDebtContactorByDebtId(amcAsset.getDebtId());
         amcAssetDetailVo.setAmcDebtContactor(amcDebtContactor);
         return amcAssetDetailVo;
     }
@@ -586,7 +598,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
   public List<AmcAssetVo> getAssetByTitleLike(String assetTitle) throws Exception {
       AmcAssetExample amcAssetExample = new AmcAssetExample();
       StringBuilder sb = new StringBuilder("%");
-      amcAssetExample.createCriteria().andTitleLike(sb.append(assetTitle).append("%").toString());
+      amcAssetExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus()).andTitleLike(sb.append(assetTitle).append("%").toString());
       List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
 
 
@@ -927,6 +939,100 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
     return amcAssetVos;
   }
+
+  @Override
+  public List<AmcAssetVo> getUserLocalAssets(WXUserRegionFavor wxUserRegionFavor,
+      AmcSaleFloor amcSaleFloor) throws Exception {
+
+      String localCityCode = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefCityCode()) ? wxUserRegionFavor.getUserPrefCityCode():
+          !StringUtils.isEmpty(wxUserRegionFavor.getLastIpCityCode())? wxUserRegionFavor.getLastIpCityCode(): wxUserRegionFavor.getLocationCode();
+
+
+
+      if(!StringUtils.isEmpty(localCityCode)){
+        //query by city
+        StringBuilder sbLocation = new StringBuilder();
+        if(!StringUtils.isEmpty(localCityCode)){
+          sbLocation.append( localCityCode.substring(0,4)).append("%");
+        }else if(!StringUtils.isEmpty(wxUserRegionFavor.getLastIpCityCode())){
+          sbLocation.append( wxUserRegionFavor.getLastIpCityCode().substring(0,4)).append("%");
+        }
+        List<AmcAsset> cityAssets = getAssetByLocationCodeLike(sbLocation.toString(), PAGE_ITEM_SIZE);
+        if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
+          //try to get asset by province
+          sbLocation.setLength(0);
+          sbLocation.append(localCityCode.substring(0,2)).append("%");
+          cityAssets = getAssetByLocationCodeLike(sbLocation.toString(), PAGE_ITEM_SIZE);
+        }else if(cityAssets != null){
+          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getTitle());
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
+          return getAssetListVo(cityAssets);
+        }
+        String localProv = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefProvName()) ? wxUserRegionFavor.getUserPrefProvName():
+            !StringUtils.isEmpty(wxUserRegionFavor.getLastIpProv())? wxUserRegionFavor.getLastIpProv(): wxUserRegionFavor.getLocationProvName();
+        GeoJsonPoint geoJsonPoint = null;
+        if(wxUserRegionFavor.getUserPrefCityLng() != null){
+          geoJsonPoint =
+              new GeoJsonPoint(wxUserRegionFavor.getUserPrefCityLng(), wxUserRegionFavor.getUserPrefCityLat());
+        } else if(wxUserRegionFavor.getLastIpLat() != null){
+          geoJsonPoint =
+              new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
+        }else if(wxUserRegionFavor.getLastLat() != null){
+          geoJsonPoint
+              = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
+        }
+        if(cityAssets == null || cityAssets.size() < PAGE_ITEM_SIZE ){
+          amcSaleFloor.setTitle(StringUtils.isEmpty(localProv) ?
+              SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s%s", localProv,
+              SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
+          if(wxUserRegionFavor.getLastLat() != null && wxUserRegionFavor.getLastLng() != null){
+            //use last lat lng to query
+
+            List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, PAGE_ITEM_SIZE);
+            return amcAssetVos;
+
+          }else if(wxUserRegionFavor.getLastIpLng() != null && wxUserRegionFavor.getLastIpLat() != null){
+            //use last lat lng to query
+
+            List<AmcAssetVo> amcAssetVos = queryByGeopointWithLimitCount(geoJsonPoint, PAGE_ITEM_SIZE);
+            return amcAssetVos;
+          }
+
+        }else if(cityAssets != null){
+          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getTitle());
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getSlogon());
+          return getAssetListVo(cityAssets);
+        }
+      }
+    return null;
+  }
+
+  private List<AmcAsset> getAssetByCityCode(String locationCode) throws Exception {
+      AmcAssetExample amcAssetExample = new AmcAssetExample();
+      amcAssetExample.createCriteria().andCityEqualTo(locationCode);
+      amcAssetExample.setOrderByClause(" has_img desc , id desc");
+      List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+      return amcAssets;
+
+  }
+
+  private List<AmcAsset> getAssetByLocationCodeLike(String locationCode, Integer limit) throws Exception {
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    amcAssetExample.createCriteria().andCityLike(locationCode);
+    amcAssetExample.setOrderByClause(String.format(" has_img desc , id desc  limit %s",limit));
+    List<AmcAsset> amcAssets = amcAssetMapper.selectByExample(amcAssetExample);
+    return amcAssets;
+
+  }
+//  private List<AmcAssetVo> getAssetWithImages(List<AmcAsset> amcAssets) throws Exception {
+//    List<AmcAssetVo> amcAssetVos = Dao2VoUtils.convertDoList2VoList(amcAssets);
+//    List<Long> assetIds = amcAssetVos.stream().map(item->item.getId()).collect(Collectors.toList());
+//    Query query = new Query();
+//    query.addCriteria(Criteria.where("amcAssetId").in(assetIds));
+//    List<AssetImage> assetImages = wszccTemplate.find(query, AssetImage.class);
+//
+//  }
 
   private AmcAssetExample getAmcAssetExampleWithRandomFloorFilter(AmcFilterContentAsset filterAsset, AmcSaleGetRandomListInPage pageInfo) {
 
@@ -1521,7 +1627,18 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                 for(AmcAsset amcAsset : amcAssets){
                     AddressTmp addressTmp = new AddressTmp();
                     addressTmp.setAddress(amcAsset.getAddress());
-                    addressTmp.setCity(amcAsset.getCity());
+                    if(Character.isDigit(amcAsset.getCity().charAt(0))){
+
+                      Region regionById = regionService
+                          .getRegionById((Long.valueOf(amcAsset.getCity())/100)*100);
+                      if(regionById != null){
+                        addressTmp.setCity(regionById.getName());
+                      }else{
+                        continue;
+                      }
+                    }else{
+                      addressTmp.setCity(amcAsset.getCity());
+                    }
                     addresses.put(amcAsset.getId(), addressTmp);
                 }
                 findGeoAndUpdate(addresses);
@@ -1588,6 +1705,36 @@ public class AmcAssetServiceImpl implements AmcAssetService {
 
         return assetGeoNears;
     }
+
+  @Override
+  @Cacheable
+  public List<AmcAssetVo> queryByGeopointWithLimitCount(GeoJsonPoint geoJsonPoint, int limit) throws Exception {
+
+    List<AmcAssetVo> assetVos = new ArrayList<>();
+    int stepLimit = 60;
+    int initR = 0;
+    int rStep = 100;
+    int stepIdx = 0;
+    int circleLowR = initR;
+    int circleHighR = initR+rStep;
+    while(assetVos.size() < limit && stepIdx < stepLimit ){
+
+      initR += initR + rStep;
+      stepIdx++;
+      List<AmcAssetVo> amcAssetVoList = queryNearByAssets(geoJsonPoint, new Integer[]{circleLowR, circleHighR})
+          .getAmcAssetVoList();
+      circleLowR = initR;
+      circleHighR = initR + rStep;
+      if(!CollectionUtils.isEmpty(amcAssetVoList)){
+        assetVos.addAll(assetVos.size(), amcAssetVoList);
+      }
+    }
+
+
+
+
+    return assetVos;
+  }
 
     @Override
     public void patchAssetLocationWithCode() throws Exception {

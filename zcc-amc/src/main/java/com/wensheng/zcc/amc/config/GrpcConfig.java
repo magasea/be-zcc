@@ -3,6 +3,8 @@ package com.wensheng.zcc.amc.config;
 import com.wensheng.zcc.amc.service.impl.AmcGrpcServiceImpl;
 import com.wensheng.zcc.amc.service.impl.WechatGrpcService;
 import com.wensheng.zcc.common.utils.UnknownStatusDescriptionInterceptor;
+import com.wenshengamc.sso.AmcSSOGrpcServiceGrpc;
+import com.wenshengamc.sso.AmcSSOGrpcServiceGrpc.AmcSSOGrpcServiceBlockingStub;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc;
@@ -34,6 +36,27 @@ public class GrpcConfig {
 
   @Value("${grpc.client.comnfunc.port}")
   int comnfuncPort;
+
+  @Value("${grpc.client.amcsso.host}")
+  String amcssoHost;
+
+
+  @Value("${grpc.client.amcsso.port}")
+  int amcssoPort;
+
+  @Bean
+  ManagedChannel amcSSOChannel(){
+    ManagedChannelBuilder managedChannelBuilder = ManagedChannelBuilder.forAddress(amcssoHost, amcssoPort).usePlaintext();
+    return managedChannelBuilder.build();
+  }
+
+
+  @Bean
+  AmcSSOGrpcServiceBlockingStub amcSSOServiceStub(ManagedChannel amcSSOChannel){
+    AmcSSOGrpcServiceGrpc.AmcSSOGrpcServiceBlockingStub ssoGrpcServiceStub =
+        AmcSSOGrpcServiceGrpc.newBlockingStub(amcSSOChannel);
+    return ssoGrpcServiceStub;
+  }
 
   @Bean
   ManagedChannel wechatChannel(){

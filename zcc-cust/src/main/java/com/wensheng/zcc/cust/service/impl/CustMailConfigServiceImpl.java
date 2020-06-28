@@ -5,6 +5,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpyExample;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import com.wensheng.zcc.cust.service.CustMailConfigService;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -78,19 +80,22 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
   @Override
   public void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy) {
-    //根据配置信息生成临时文件
+
     try {
-      creatAttachment(mailConfigNewCmpy);
+      //根据配置信息生成临时文件
+      boolean creatAttachment = creatAttachment(mailConfigNewCmpy);
+      if(!creatAttachment){
+        return;
+      }
+      //根据配置信息发送邮件
+      sendMail(mailConfigNewCmpy);
+
     } catch (IOException e) {
       log.error("根据配置信息生成临时文件异常e:{}",e);
-    }
-
-    //根据配置信息发送邮件
-    try {
-      sendSimpleMail(mailConfigNewCmpy);
-    } catch (MessagingException e) {
+    }catch (MessagingException e) {
       log.error("根据配置信息发送邮件异常e:{}",e);
     }
+
   }
 
   /**
@@ -98,7 +103,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
    * @param mailConfigNewCmpy
    * @return
    */
-  public void creatAttachment(MailConfigNewCmpy mailConfigNewCmpy) throws IOException {
+  public boolean creatAttachment(MailConfigNewCmpy mailConfigNewCmpy) throws IOException {
     File file = new File(fileBase);
     boolean dirCreated = file.mkdir();
 
@@ -127,6 +132,11 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
     //查询对应省的新增公司数据
     List<CustTrdCmpy>  newTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(calendar.getTime(), Arrays.asList(proviceArray));
+    if(newTrdCmpyList.size() == 0){
+      log.info("暂无查询到新增公司信息，省份为proviceArray：{}", proviceArray);
+      return false;
+    }
+
     try(
         Workbook workbook = new XSSFWorkbook();
         // Write the output to a file
@@ -172,6 +182,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
       workbook.write(fileOut);
     }
+    return true;
   }
 
   /**
@@ -194,7 +205,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
    * 根据配置信息发送邮件
    * @param mailConfigNewCmpy
    */
-  public void sendSimpleMail(MailConfigNewCmpy mailConfigNewCmpy) throws MessagingException {
+  public void sendMail(MailConfigNewCmpy mailConfigNewCmpy) throws MessagingException {
     String[] to = mailConfigNewCmpy.getToMail().split(";");
     String[] cc = mailConfigNewCmpy.getCcMail().split(";");
     String subject = mailConfigNewCmpy.getSubject();
@@ -214,9 +225,36 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     javaMailSender.send(mimeMessage);//发送
   }
 
-  public static void main(String[] args) {
-    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM-dd");
-    String dateString = simpleDateFormat.format(new Date());
-    System.out.println(dateString);
+
+  @Scheduled(cron = "${spring.task.scheduling.sendNewCmpyMailScheduled}")
+  public void sendNewCmpyMailScheduled(){
+    //搜索条件
+    Date today = new Date();
+    Calendar c = Calendar.getInstance();
+    c.setTime(today);
+    int weekday = c.get(Calendar.DAY_OF_WEEK);
+    int hour = c.get(Calendar.HOUR_OF_DAY);
+    weekday = weekday-1;
+    if(weekday == 0){
+      weekday =7;
+    }
+
+    //查询数据库
+    MailConfigNewCmpyExample mailConfigNewCmpyExample = new MailConfigNewCmpyExample();
+    mailConfigNewCmpyExample.createCriteria().andSendWeekEqualTo(weekday+"")
+                                                      .andSendHourEqualTo(hour+"");
+    List<MailConfigNewCmpy> configNewCmpieList = mailConfigNewCmpyMapper.selectByExample(mailConfigNewCmpyExample);
+
+    if(configNewCmpieList.size() == 0){
+      log.info("暂无配置发送新增公司邮件，星期weekday：{}，时间：hour{}", weekday, hour);
+      return;
+    }
+
+    //发送邮件
+    for (MailConfigNewCmpy mailConfigNewCmpy: configNewCmpieList){
+      sendMailOfNewCmpy(mailConfigNewCmpy);
+    }
   }
+
 }
+

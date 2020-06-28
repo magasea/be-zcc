@@ -47,7 +47,7 @@ public class CustMailConfigController {
 
   @RequestMapping(value = "/sendMailById", method = RequestMethod.POST)
   @ResponseBody
-  public void sendMailById(@RequestParam Long mailConfigId) throws Exception {
+  public void sendMailById(@RequestParam Long mailConfigId) {
     MailConfigNewCmpy mailConfigNewCmpy=mailConfigNewCmpyMapper.selectByPrimaryKey(mailConfigId);
     custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy);
   }

@@ -19,7 +19,9 @@ public class MailConfigNewCmpy {
 
     private String provice;
 
-    private String sendTime;
+    private String sendWeek;
+
+    private String sendHour;
 
     private Integer status;
 
@@ -95,12 +97,20 @@ public class MailConfigNewCmpy {
         this.provice = provice == null ? null : provice.trim();
     }
 
-    public String getSendTime() {
-        return sendTime;
+    public String getSendWeek() {
+        return sendWeek;
     }
 
-    public void setSendTime(String sendTime) {
-        this.sendTime = sendTime == null ? null : sendTime.trim();
+    public void setSendWeek(String sendWeek) {
+        this.sendWeek = sendWeek == null ? null : sendWeek.trim();
+    }
+
+    public String getSendHour() {
+        return sendHour;
+    }
+
+    public void setSendHour(String sendHour) {
+        this.sendHour = sendHour == null ? null : sendHour.trim();
     }
 
     public Integer getStatus() {

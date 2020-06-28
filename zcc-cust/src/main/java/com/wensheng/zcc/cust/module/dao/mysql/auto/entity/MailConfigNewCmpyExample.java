@@ -655,73 +655,143 @@ public class MailConfigNewCmpyExample {
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeIsNull() {
-            addCriterion("send_time is null");
+        public Criteria andSendWeekIsNull() {
+            addCriterion("send_week is null");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeIsNotNull() {
-            addCriterion("send_time is not null");
+        public Criteria andSendWeekIsNotNull() {
+            addCriterion("send_week is not null");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeEqualTo(String value) {
-            addCriterion("send_time =", value, "sendTime");
+        public Criteria andSendWeekEqualTo(String value) {
+            addCriterion("send_week =", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotEqualTo(String value) {
-            addCriterion("send_time <>", value, "sendTime");
+        public Criteria andSendWeekNotEqualTo(String value) {
+            addCriterion("send_week <>", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeGreaterThan(String value) {
-            addCriterion("send_time >", value, "sendTime");
+        public Criteria andSendWeekGreaterThan(String value) {
+            addCriterion("send_week >", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeGreaterThanOrEqualTo(String value) {
-            addCriterion("send_time >=", value, "sendTime");
+        public Criteria andSendWeekGreaterThanOrEqualTo(String value) {
+            addCriterion("send_week >=", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeLessThan(String value) {
-            addCriterion("send_time <", value, "sendTime");
+        public Criteria andSendWeekLessThan(String value) {
+            addCriterion("send_week <", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeLessThanOrEqualTo(String value) {
-            addCriterion("send_time <=", value, "sendTime");
+        public Criteria andSendWeekLessThanOrEqualTo(String value) {
+            addCriterion("send_week <=", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeLike(String value) {
-            addCriterion("send_time like", value, "sendTime");
+        public Criteria andSendWeekLike(String value) {
+            addCriterion("send_week like", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotLike(String value) {
-            addCriterion("send_time not like", value, "sendTime");
+        public Criteria andSendWeekNotLike(String value) {
+            addCriterion("send_week not like", value, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeIn(List<String> values) {
-            addCriterion("send_time in", values, "sendTime");
+        public Criteria andSendWeekIn(List<String> values) {
+            addCriterion("send_week in", values, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotIn(List<String> values) {
-            addCriterion("send_time not in", values, "sendTime");
+        public Criteria andSendWeekNotIn(List<String> values) {
+            addCriterion("send_week not in", values, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeBetween(String value1, String value2) {
-            addCriterion("send_time between", value1, value2, "sendTime");
+        public Criteria andSendWeekBetween(String value1, String value2) {
+            addCriterion("send_week between", value1, value2, "sendWeek");
             return (Criteria) this;
         }
 
-        public Criteria andSendTimeNotBetween(String value1, String value2) {
-            addCriterion("send_time not between", value1, value2, "sendTime");
+        public Criteria andSendWeekNotBetween(String value1, String value2) {
+            addCriterion("send_week not between", value1, value2, "sendWeek");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourIsNull() {
+            addCriterion("send_hour is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourIsNotNull() {
+            addCriterion("send_hour is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourEqualTo(String value) {
+            addCriterion("send_hour =", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourNotEqualTo(String value) {
+            addCriterion("send_hour <>", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourGreaterThan(String value) {
+            addCriterion("send_hour >", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourGreaterThanOrEqualTo(String value) {
+            addCriterion("send_hour >=", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourLessThan(String value) {
+            addCriterion("send_hour <", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourLessThanOrEqualTo(String value) {
+            addCriterion("send_hour <=", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourLike(String value) {
+            addCriterion("send_hour like", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourNotLike(String value) {
+            addCriterion("send_hour not like", value, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourIn(List<String> values) {
+            addCriterion("send_hour in", values, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourNotIn(List<String> values) {
+            addCriterion("send_hour not in", values, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourBetween(String value1, String value2) {
+            addCriterion("send_hour between", value1, value2, "sendHour");
+            return (Criteria) this;
+        }
+
+        public Criteria andSendHourNotBetween(String value1, String value2) {
+            addCriterion("send_hour not between", value1, value2, "sendHour");
             return (Criteria) this;
         }
 

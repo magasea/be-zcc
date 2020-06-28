@@ -96,7 +96,7 @@ spring:
             cronExprCust: 0 0 7,13,19,0 * * *
             cronExprGeo: 0 0 7,19,0 * * *
             cronExpCmpyInfo: 0 0 22 * * *
-            sendNewCmpyMailScheduled:  0 * */1 * * ?
+            sendNewCmpyMailScheduled:  0 1 */1 * * ?
             pool:
                 size: 3
 

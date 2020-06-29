@@ -151,7 +151,7 @@ kafka:
 logging:
     level:
         com:
-            wensheng: INFO
+            wensheng: DEBUG
         root: WARN
 cust:
     syncUrls:

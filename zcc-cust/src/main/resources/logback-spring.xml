@@ -14,7 +14,7 @@
 
     <appender name="RollingFile"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>${LOGS}/zcc-cust-logger.log</file>
+<!--        <file>${LOGS}/zcc-cust-logger.log</file>-->
         <encoder
                 class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
             <Pattern>%d [%X{TRACE_LOG_ID}] %p %C{1.} [%t] %m%n</Pattern>

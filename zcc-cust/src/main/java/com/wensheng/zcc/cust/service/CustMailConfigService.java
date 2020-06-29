@@ -2,6 +2,7 @@ package com.wensheng.zcc.cust.service;
 
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpy;
+import java.util.Date;
 
 public interface CustMailConfigService {
 
@@ -20,5 +21,5 @@ public interface CustMailConfigService {
    */
   void getAllCustMailConfig() throws Exception;
 
-  void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy);
+  void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy,  Date today);
 }

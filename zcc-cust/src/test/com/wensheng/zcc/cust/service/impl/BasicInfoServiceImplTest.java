@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.MailConfigNewCmpyMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpy;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.mail.internet.MimeMessage;
@@ -77,7 +78,7 @@ CustMailConfigServiceImpl custMailConfigService;
   @Test
   public void sendMail() throws Exception {
     MailConfigNewCmpy mailConfigNewCmpy=mailConfigNewCmpyMapper.selectByPrimaryKey(1l);
-    custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy);
+    custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy,new Date());
 
   }
 

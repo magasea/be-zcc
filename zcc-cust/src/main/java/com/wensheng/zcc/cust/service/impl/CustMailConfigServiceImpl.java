@@ -79,17 +79,17 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
 
   @Override
-  public void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy) {
+  public void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy, Date today) {
 
     try {
       //根据配置信息生成临时文件
-      boolean creatAttachment = creatAttachment(mailConfigNewCmpy);
+      boolean creatAttachment = creatAttachment(mailConfigNewCmpy, today);
       if(!creatAttachment){
         return;
       }
       //根据配置信息发送邮件
       sendMail(mailConfigNewCmpy);
-
+      log.info("新增公司发邮件定时任务完成");
     } catch (IOException e) {
       log.error("根据配置信息生成临时文件异常e:{}",e);
     }catch (MessagingException e) {
@@ -103,7 +103,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
    * @param mailConfigNewCmpy
    * @return
    */
-  public boolean creatAttachment(MailConfigNewCmpy mailConfigNewCmpy) throws IOException {
+  public boolean creatAttachment(MailConfigNewCmpy mailConfigNewCmpy,  Date today) throws IOException {
     File file = new File(fileBase);
     boolean dirCreated = file.mkdir();
 
@@ -121,15 +121,14 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
       sbProvice.append(provinceNameMap.get(proviceArray[i]));
     }
     SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MMdd");
-    String dateString = simpleDateFormat.format(new Date());
+    String dateString = simpleDateFormat.format(today);
     String subject= String.format("%s新增投资人数据%s",sbProvice.toString(),dateString);
     mailConfigNewCmpy.setSubject(subject);
 
     Calendar calendar = Calendar.getInstance();
     //1.过去七天
-    calendar.setTime(new Date());
+    calendar.setTime(today);
     calendar.add(Calendar.DATE, -7);
-
     //查询对应省的新增公司数据
     List<CustTrdCmpy>  newTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(calendar.getTime(), Arrays.asList(proviceArray));
     if(newTrdCmpyList.size() == 0){
@@ -247,13 +246,13 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     List<MailConfigNewCmpy> configNewCmpieList = mailConfigNewCmpyMapper.selectByExample(mailConfigNewCmpyExample);
 
     if(configNewCmpieList.size() == 0){
-      log.info("暂无配置发送新增公司邮件，星期weekday：{}，时间：hour{}", weekday, hour);
+      log.info("暂无配置发送新增公司邮件，星期weekday：{}，时间hour：{}", weekday, hour);
       return;
     }
 
     //发送邮件
     for (MailConfigNewCmpy mailConfigNewCmpy: configNewCmpieList){
-      sendMailOfNewCmpy(mailConfigNewCmpy);
+      sendMailOfNewCmpy(mailConfigNewCmpy,today);
     }
   }
 

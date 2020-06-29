@@ -5,6 +5,9 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.MailConfigNewCmpyMapper;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpy;
 import com.wensheng.zcc.cust.service.CustMailConfigService;
 import com.wensheng.zcc.cust.service.impl.CustMailConfigServiceImpl;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -47,9 +50,12 @@ public class CustMailConfigController {
 
   @RequestMapping(value = "/sendMailById", method = RequestMethod.POST)
   @ResponseBody
-  public void sendMailById(@RequestParam Long mailConfigId) {
+  public void sendMailById(@RequestParam Long mailConfigId, @RequestParam String toDayString)
+      throws ParseException {
     MailConfigNewCmpy mailConfigNewCmpy=mailConfigNewCmpyMapper.selectByPrimaryKey(mailConfigId);
-    custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy);
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
+    Date today = sdf.parse(toDayString);
+    custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy, today);
   }
 
 }

@@ -158,6 +158,7 @@ public class AmcUserServiceImpl implements AmcUserService {
 
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     List<AmcUser> amcUsersWithSSOId = new ArrayList<>();
+    String histMobile = null;
     if(amcUser.getSsoUserId() != null && amcUser.getSsoUserId() != -1L){
       amcUserExample.clear();
       amcUserExample.createCriteria().andSsoUserIdEqualTo(amcUser.getSsoUserId());
@@ -202,25 +203,26 @@ public class AmcUserServiceImpl implements AmcUserService {
         needUpdateDb = true;
       }
 
-      if(amcUsers.get(0).getDeptId() > 0 && amcUser.getDeptId() != amcUsers.get(0).getDeptId()){
+      if(amcUsers.get(0).getDeptId() > 0 && !amcUser.getDeptId().equals(amcUsers.get(0).getDeptId())){
         amcUsers.get(0).setDeptId(amcUser.getDeptId());
         needUpdateDb = true;
         needUpdatePrivilege = true;
       }
-      if(amcUser.getTitle() > 0 && amcUser.getTitle() != amcUsers.get(0).getTitle()){
+      if(amcUser.getTitle() > 0 && amcUser.getTitle().equals(amcUsers.get(0).getTitle())){
         amcUsers.get(0).setTitle(amcUser.getTitle());
         needUpdateDb = true;
         needUpdatePrivilege = true;
       }
-      if(amcUser.getLocation() > 0 && amcUser.getLocation() != amcUsers.get(0).getLocation()){
+      if(amcUser.getLocation() > 0 && !amcUser.getLocation().equals(amcUsers.get(0).getLocation())){
         amcUsers.get(0).setLocation(amcUser.getLocation());
         needUpdateDb = true;
       }
-      if(amcUser.getLgroup() > 0 && amcUser.getLgroup() != amcUsers.get(0).getLgroup()){
+      if(amcUser.getLgroup() > 0 && !amcUser.getLgroup().equals(amcUsers.get(0).getLgroup())){
         amcUsers.get(0).setLgroup(amcUser.getLgroup());
         needUpdateDb = true;
       }
-      if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0 && amcUser.getCompanyId() != amcUsers.get(0).getCompanyId()){
+      if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0 && !amcUser.getCompanyId().
+          equals(amcUsers.get(0).getCompanyId())){
         amcUsers.get(0).setCompanyId(amcUser.getCompanyId());
         needUpdateDb = true;
         needUpdatePrivilege = true;

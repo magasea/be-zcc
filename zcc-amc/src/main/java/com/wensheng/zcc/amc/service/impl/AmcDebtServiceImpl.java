@@ -8,6 +8,7 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
+import com.wensheng.zcc.amc.module.dao.helper.DebtPrecheckErrorEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.HasImageEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
@@ -51,9 +52,11 @@ import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcDebtpackService;
 import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcOssFileService;
+import com.wensheng.zcc.amc.service.RegionService;
 import com.wensheng.zcc.amc.service.impl.helper.Dao2VoUtils;
 import com.wensheng.zcc.amc.utils.SQLUtils;
 import com.wensheng.zcc.common.module.dto.AmcFilterContentDebt;
+import com.wensheng.zcc.common.module.dto.Region;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
@@ -148,6 +151,8 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   AmcDebtContactorMapper amcDebtContactorMapper;
 
 
+  @Autowired
+  RegionService regionService;
 
 
 
@@ -270,6 +275,24 @@ public class AmcDebtServiceImpl implements AmcDebtService {
   @CacheEvict(allEntries = true)
   public AmcDebtVo create(AmcDebt amcDebt) {
     amcDebt.setCreatedDate(AmcDateUtils.getCurrentDate());
+    CurtInfo curtInfo = curtInfoMapper.selectByPrimaryKey(amcDebt.getCourtId());
+    if(curtInfo != null){
+      if(!StringUtils.isEmpty(curtInfo.getCurtProvince()) ){
+        List<Region> regions = regionService.getRegionByName(curtInfo.getCurtProvince());
+        if(!CollectionUtils.isEmpty(regions)){
+          amcDebt.setCurtProv(regions.get(0).getId());
+
+        }
+      }
+
+      if(!StringUtils.isEmpty(curtInfo.getCurtCity()) ){
+        List<Region> regions = regionService.getRegionByName(curtInfo.getCurtCity());
+        if(!CollectionUtils.isEmpty(regions)){
+          amcDebt.setCurtCity(regions.get(0).getId());
+        }
+      }
+    }
+
     amcDebtMapper.insertSelective(amcDebt);
     amcDebt.setZccDebtCode(amcMiscService.generateZccDebtCode(amcDebt.getDebtpackId(), amcDebt.getId()));
     amcDebtMapper.updateByPrimaryKeySelective(amcDebt);

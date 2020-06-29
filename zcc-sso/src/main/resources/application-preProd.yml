@@ -121,7 +121,7 @@ weixin:
         appId: wx6d88c0a98ec3d700
         appSecret: acec37bccfe93dae52390e36a957bd64
         loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.open.appId}&secret=${weixin.open.appSecret}&code=%s&grant_type=authorization_code
-        getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=$s
+        getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s
     pub:
         appId: wx6f60584065dd3e45
         appSecret: 3217390a438df7cd13189b6a9c69abf2

@@ -14,21 +14,28 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAssetExample;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtContactor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtExample;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.CurtInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.ZccDebtpack;
+import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcMiscService;
+import com.wensheng.zcc.amc.service.RegionService;
+import com.wensheng.zcc.common.module.dto.Region;
 import com.wensheng.zcc.common.params.AmcSexEnum;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import net.bytebuddy.asm.Advice.Unused;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -64,6 +71,12 @@ public class AmcMiscServiceImpl implements AmcMiscService {
 
   @Autowired
   AmcDebtContactorMapper amcDebtContactorMapper;
+
+  @Autowired
+  AmcHelperService amcHelperService;
+
+  @Autowired
+  RegionService regionService;
 
   @Value("${recom.urls.getClickCount}")
   String getClickCountUrl;
@@ -375,5 +388,40 @@ public class AmcMiscServiceImpl implements AmcMiscService {
       }
     }
     return statusResult;
+  }
+
+  public void patchAmcDebtCurts() throws Exception {
+
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andCurtCityEqualTo(-1L).andCourtIdGreaterThan(0L);
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    List<Long> curtIds = amcDebts.stream().map(item->item.getCourtId()).collect(Collectors.toList());
+
+    List<CurtInfo> curtByIds = amcHelperService.getCurtByIds(curtIds);
+     Iterator<CurtInfo> curtInfoIterator = curtByIds.iterator();
+     while(curtInfoIterator.hasNext()){
+       CurtInfo currentCurt = curtInfoIterator.next();
+       List<Region> regionByName = regionService.getRegionByName(currentCurt.getCurtCity());
+       if(!CollectionUtils.isEmpty(regionByName)){
+         currentCurt.setCurtCity(regionByName.get(0).getId().toString());
+       }else{
+         curtInfoIterator.remove();
+       }
+       regionByName = regionService.getRegionByName(currentCurt.getCurtProvince());
+       if(!CollectionUtils.isEmpty(regionByName)){
+         currentCurt.setCurtProvince(regionByName.get(0).getId().toString());
+       }
+     }
+
+    Map<Long, CurtInfo> curtInfoMap = curtByIds.stream().collect(Collectors.toMap(item->item.getId(), item->item));
+    AmcDebt amcDebtUpdate = new AmcDebt();
+     for(AmcDebt amcDebt: amcDebts){
+      if(curtInfoMap.containsKey(amcDebt.getCourtId())){
+        amcDebtUpdate.setId(amcDebt.getId());
+        amcDebtUpdate.setCurtCity(Long.valueOf(curtInfoMap.get(amcDebt.getCourtId()).getCurtCity()));
+        amcDebtUpdate.setCurtProv(Long.valueOf(curtInfoMap.get(amcDebt.getCourtId()).getCurtProvince()));
+        amcDebtMapper.updateByPrimaryKeySelective(amcDebtUpdate);
+      }
+    }
   }
 }

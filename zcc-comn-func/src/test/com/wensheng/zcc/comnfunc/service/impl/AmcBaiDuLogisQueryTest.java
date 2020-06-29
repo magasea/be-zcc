@@ -26,7 +26,7 @@ public class AmcBaiDuLogisQueryTest {
 
   @Test
   public void getAddressByIp() throws UnsupportedEncodingException {
-    Content addressByIp = amcBaiDuLogisQuery.getAddressByIp("223.104.213.47");
+    Content addressByIp = amcBaiDuLogisQuery.getAddressByIp("182.47.145.251");
     log.info(gson.toJson(addressByIp));
   }
 

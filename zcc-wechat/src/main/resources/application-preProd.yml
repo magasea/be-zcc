@@ -88,7 +88,7 @@ spring:
         scheduling:
             thread-name-prefix: synchWithScrapySystem
             cronExpr: 0 0 6,10,11,12,13,14,15,16,17,18,19,23 * * *
-            cronTagUserExpr: 0 0 23 * * *
+            cronTagUserExpr: 0 0 5,11,17,23 * * *
             cronSyncUserFromRecommExpr: 0 0 5,11,17,23 * * *
     cache:
         cache-names: TOKEN
@@ -133,7 +133,7 @@ weixin:
         appId: wx6d88c0a98ec3d700
         appSecret: acec37bccfe93dae52390e36a957bd64
         loginUrl: https://api.weixin.qq.com/sns/oauth2/access_token?appid=${weixin.open.appId}&secret=${weixin.open.appSecret}&code=%s&grant_type=authorization_code
-        getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=$s
+        getUserInfoUrl: https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s
 
     # user and tag management
     get_public_users_url: https://api.weixin.qq.com/cgi-bin/user/get?access_token=%s&next_openid=%s

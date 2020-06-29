@@ -22,6 +22,7 @@ public class WXUserFavor {
   //城市编码
   Double lastLat;
   Double lastLng;
+  Date lastLocationTime;
   String locationCode;
   String locationCityName;
   String locationProvName;

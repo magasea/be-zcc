@@ -604,9 +604,13 @@ public class WXUserServiceImpl implements WXUserService {
 
     List<WechatUserInfoVo> wechatUserInfoVos =  response.getBody().getUserInfoVoList();
     WechatUserExample wechatUserExample = new WechatUserExample();
+    WechatUserInfo wechatUserInfo = null;
+    WechatUser wechatUser = null;
     for(WechatUserInfoVo userInfoVo: wechatUserInfoVos){
-      WechatUser wechatUser = new WechatUser();
+      wechatUser = new WechatUser();
+      wechatUserInfo = new WechatUserInfo();
       AmcBeanUtils.copyProperties(userInfoVo, wechatUser);
+      AmcBeanUtils.copyProperties(userInfoVo, wechatUserInfo);
       wechatUser.setSubscribeTime(AmcDateUtils.toUTCDate(userInfoVo.getSubscribeTime()));
       wechatUserExample.clear();
       if(!StringUtils.isEmpty(wechatUser.getUnionId())){
@@ -629,6 +633,9 @@ public class WXUserServiceImpl implements WXUserService {
       if(CollectionUtils.isEmpty(userInfoVo.getTagIdList())){
         
       }
+      wxToolService.notifyWechatUserLogin(wechatUserInfo);
+      wechatUserInfo = null;
+      wechatUser = null;
     }
 
 //    pubDataInDb(data);
@@ -1031,6 +1038,7 @@ public class WXUserServiceImpl implements WXUserService {
       wxUserFavor.setOpenId(userLngLat.getOpenId());
       wxUserFavor.setLastLat(userLngLat.getLat());
       wxUserFavor.setLastLng(userLngLat.getLng());
+      wxUserFavor.setLastLocationTime(AmcDateUtils.getCurrentDate());
       if(regionInfo != null){
         wxUserFavor.setLocationCode(regionInfo.getCityCode());
         wxUserFavor.setLocationCityName(regionInfo.getCityName());
@@ -1046,6 +1054,7 @@ public class WXUserServiceImpl implements WXUserService {
     else{
       wxUserFavorList.get(0).setLastLng(userLngLat.getLng());
       wxUserFavorList.get(0).setLastLat(userLngLat.getLat());
+      wxUserFavorList.get(0).setLastLocationTime(AmcDateUtils.getCurrentDate());
       if(regionInfo != null){
         wxUserFavorList.get(0).setLocationCode(regionInfo.getCityCode());
         wxUserFavorList.get(0).setLocationCityName(regionInfo.getCityName());
@@ -1326,6 +1335,7 @@ public class WXUserServiceImpl implements WXUserService {
       responseEntity = restTemplate.getForEntity(url,
           WechatUserInfo.class);
       wechatUserInfo = responseEntity.getBody();
+      log.info(wechatUserInfo.getHeadImgUrl());
     }catch (Exception ex){
       log.error("Failed to get userInfo by accessToken:{}, openId:{}", accessToken, openId, ex);
       ResponseEntity<String> responseStrEntity = restTemplate.getForEntity(url,

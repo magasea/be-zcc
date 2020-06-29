@@ -752,6 +752,12 @@ public class AmcDebtController {
     amcPatchService.patchAmcDebtAssetContactor();
   }
 
+  @RequestMapping(value = "/patchAmcDebtCurts", method = RequestMethod.POST)
+  @ResponseBody
+  public void patchAmcDebtCurts() throws Exception {
+    amcPatchService.patchAmcDebtCurts();
+  }
+
   @RequestMapping(value = "/patchAmcDebtAssetPublishDate", method = RequestMethod.POST)
   @ResponseBody
   public void patchAmcDebtAssetPublishDate() throws Exception {

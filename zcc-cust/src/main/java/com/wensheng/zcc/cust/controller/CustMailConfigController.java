@@ -52,7 +52,7 @@ public class CustMailConfigController {
   @ResponseBody
   public void sendMailById(@RequestParam Long mailConfigId, @RequestParam String toDayString)
       throws ParseException {
-    MailConfigNewCmpy mailConfigNewCmpy=mailConfigNewCmpyMapper.selectByPrimaryKey(mailConfigId);
+    MailConfigNewCmpy mailConfigNewCmpy = mailConfigNewCmpyMapper.selectByPrimaryKey(mailConfigId);
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     Date today = sdf.parse(toDayString);
     custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy, today);

@@ -19,7 +19,7 @@ public class CmpyBasicBizInfoSync {
   private String ieCode;
   private String legalPerson;
   private String operatingStatus;
-  private double regCapital;
+  private String regCapital;
   private String regCapitalStr;
   private String paidCapital;
   private String paidCapitalStr;

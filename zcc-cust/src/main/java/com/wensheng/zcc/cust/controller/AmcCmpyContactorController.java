@@ -2,18 +2,16 @@ package com.wensheng.zcc.cust.controller;
 
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustCmpycontactor;
-import com.wensheng.zcc.cust.config.aop.QueryChecker;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdInfo;
-import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 import com.wensheng.zcc.cust.service.SyncBidService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.service.TrdInfoService;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -53,18 +51,28 @@ public class AmcCmpyContactorController {
   @RequestMapping(value = "/addCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustCmpycontactor
-  public void addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor)
+  public ModifyResult addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor)
       throws Exception {
     amcContactorService.createAmcCmpyContactor(custAmcCmpycontactor);
+    ModifyResult modifyResult = new ModifyResult();
+    modifyResult.setSuccess(true);
+    return modifyResult;
   }
-
-
 
   @RequestMapping(value = "/updateCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   @ModifyCheckerCustCmpycontactor
-  public void updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
-    amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
+  public ModifyResult updateCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor) throws Exception{
+   return amcContactorService.updateAmcCmpyContactor(custAmcCmpycontactor);
+  }
+
+  @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
+  @ResponseBody
+  public void mergeCmpyAmcContactor(@RequestBody MergeCustVo mergeCustVo) throws Exception {
+    List<Long> fromContactorIds = mergeCustVo.getFromPersonIds();
+    Long toContactorId = mergeCustVo.getToPersonId();
+    Long updateBy = mergeCustVo.getUpdateBy();
+    amcContactorService.mergeCmpycontactor(fromContactorIds, toContactorId, updateBy);
   }
 
 
@@ -79,6 +87,12 @@ public class AmcCmpyContactorController {
   @ResponseBody
   public List<CustAmcCmpycontactorExtVo> getCmpyAmcContactor(@RequestBody Long cmpyId){
     return amcContactorService.getCmpyAmcContactorNew(cmpyId);
+  }
+
+  @RequestMapping(value = "/getContactorByIdlist", method = RequestMethod.POST)
+  @ResponseBody
+  public List<CustAmcCmpycontactor> getContactorByIdlist(@RequestBody List<Long> idList){
+    return amcContactorService.selectContactorByIdlist(idList);
   }
 
 //  @RequestMapping(value = "/initCmpyAmcContactor", method = RequestMethod.POST)

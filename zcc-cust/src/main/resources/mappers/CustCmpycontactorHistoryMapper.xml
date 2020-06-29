@@ -33,6 +33,8 @@
     <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
     <result column="update_by" jdbcType="BIGINT" property="updateBy" />
     <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="trd_info_bak" jdbcType="VARCHAR" property="trdInfoBak" />
     <result column="remark" jdbcType="VARCHAR" property="remark" />
   </resultMap>
   <sql id="Example_Where_Clause">
@@ -98,7 +100,7 @@
     mobile_prep, mobile_history, phone_update, phone_prep, phone_history, province, city, 
     county, address, title, cmpy_id, company, branch_cmpy, history_cmpy, recorder_name, 
     favorite_city_update, favorite_type_update, fav_type_note, note, create_by, create_time, 
-    update_by, update_time, remark
+    update_by, update_time, status, trd_info_bak, remark
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistoryExample" resultMap="BaseResultMap">
     select
@@ -144,7 +146,8 @@
       history_cmpy, recorder_name, favorite_city_update, 
       favorite_type_update, fav_type_note, note, 
       create_by, create_time, update_by, 
-      update_time, remark)
+      update_time, status, trd_info_bak, 
+      remark)
     values (#{cmpycontactorId,jdbcType=BIGINT}, #{updateMethod,jdbcType=CHAR}, #{name,jdbcType=CHAR}, 
       #{phone,jdbcType=CHAR}, #{mobile,jdbcType=CHAR}, #{trdPhone,jdbcType=CHAR}, #{mobileUpdate,jdbcType=CHAR}, 
       #{mobilePrep,jdbcType=CHAR}, #{mobileHistory,jdbcType=CHAR}, #{phoneUpdate,jdbcType=CHAR}, 
@@ -154,7 +157,8 @@
       #{historyCmpy,jdbcType=CHAR}, #{recorderName,jdbcType=CHAR}, #{favoriteCityUpdate,jdbcType=CHAR}, 
       #{favoriteTypeUpdate,jdbcType=CHAR}, #{favTypeNote,jdbcType=CHAR}, #{note,jdbcType=CHAR}, 
       #{createBy,jdbcType=BIGINT}, #{createTime,jdbcType=TIMESTAMP}, #{updateBy,jdbcType=BIGINT}, 
-      #{updateTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR})
+      #{updateTime,jdbcType=TIMESTAMP}, #{status,jdbcType=INTEGER}, #{trdInfoBak,jdbcType=VARCHAR}, 
+      #{remark,jdbcType=VARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustCmpycontactorHistory">
     <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
@@ -252,6 +256,12 @@
       <if test="updateTime != null">
         update_time,
       </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="trdInfoBak != null">
+        trd_info_bak,
+      </if>
       <if test="remark != null">
         remark,
       </if>
@@ -346,6 +356,12 @@
       </if>
       <if test="updateTime != null">
         #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="trdInfoBak != null">
+        #{trdInfoBak,jdbcType=VARCHAR},
       </if>
       <if test="remark != null">
         #{remark,jdbcType=VARCHAR},
@@ -454,6 +470,12 @@
       <if test="record.updateTime != null">
         update_time = #{record.updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="record.status != null">
+        status = #{record.status,jdbcType=INTEGER},
+      </if>
+      <if test="record.trdInfoBak != null">
+        trd_info_bak = #{record.trdInfoBak,jdbcType=VARCHAR},
+      </if>
       <if test="record.remark != null">
         remark = #{record.remark,jdbcType=VARCHAR},
       </if>
@@ -495,6 +517,8 @@
       create_time = #{record.createTime,jdbcType=TIMESTAMP},
       update_by = #{record.updateBy,jdbcType=BIGINT},
       update_time = #{record.updateTime,jdbcType=TIMESTAMP},
+      status = #{record.status,jdbcType=INTEGER},
+      trd_info_bak = #{record.trdInfoBak,jdbcType=VARCHAR},
       remark = #{record.remark,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -593,6 +617,12 @@
       <if test="updateTime != null">
         update_time = #{updateTime,jdbcType=TIMESTAMP},
       </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="trdInfoBak != null">
+        trd_info_bak = #{trdInfoBak,jdbcType=VARCHAR},
+      </if>
       <if test="remark != null">
         remark = #{remark,jdbcType=VARCHAR},
       </if>
@@ -631,6 +661,8 @@
       create_time = #{createTime,jdbcType=TIMESTAMP},
       update_by = #{updateBy,jdbcType=BIGINT},
       update_time = #{updateTime,jdbcType=TIMESTAMP},
+      status = #{status,jdbcType=INTEGER},
+      trd_info_bak = #{trdInfoBak,jdbcType=VARCHAR},
       remark = #{remark,jdbcType=VARCHAR}
     where id = #{id,jdbcType=BIGINT}
   </update>

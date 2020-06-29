@@ -67,13 +67,14 @@
     </where>
   </sql>
 <!--  <sql id="Base_Column_List">-->
-<!--    id, name, age_range, gender, mobile_num, tel_num, email, id_card_num, province, city, -->
+<!--    id, name, age_range, gender, mobile_prep, tel_num, email, id_card_num, province, city, -->
 <!--    addr, notes, create_by, create_time-->
 <!--  </sql>-->
   <sql id="All_Base_Column_List">
-    id, orig_id, name, age_range, gender, mobile_num, history_mobile_num, tel_num, email,
-    id_card_num, province, city, addr, history_addr, notes, data_status, data_quality,
-    update_time, update_by, create_by, create_time, sync_time
+    id, orig_id, name, age_range, gender, mobile_update, mobile_prep, mobile_history,
+    phone_prep, phone_history, phone_update, email, id_card_num, province, city, addr,
+    history_addr, notes, data_status, data_quality, update_time, update_by, create_by,
+    create_time, sync_time, mobile_num_bak
   </sql>
 
   <sql id="Base_Column_List">
@@ -81,8 +82,12 @@
     ${prefix}name as name,
     ${prefix}age_range as age_range,
     ${prefix}gender as gender,
-    ${prefix}mobile_num as mobile_num,
-    ${prefix}tel_num as tel_num,
+    ${prefix}mobile_prep as mobile_prep,
+    ${prefix}mobile_update as mobile_update,
+    ${prefix}mobile_history as mobile_history,
+    ${prefix}phone_update as phone_update,
+    ${prefix}phone_prep as phone_prep,
+    ${prefix}phone_history as phone_history,
     ${prefix}email as email,
     ${prefix}id_card_num as id_card_num,
     ${prefix}province as province,
@@ -92,7 +97,7 @@
     ${prefix}create_by as create_by,
     ${prefix}create_time as create_time,
     ${prefix}data_status as data_status,
-        ${prefix}data_quality as data_quality
+    ${prefix}data_quality as data_quality
 
   </sql>
   <sql id="cust_trd_info_list">
@@ -312,13 +317,31 @@
     ) as tmp
   </select>
 
+  <select id="selectPersonByMobileList" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
+    SELECT
+      'true' as QUERYID,
+      <include refid="All_Base_Column_List" />
+    from CUST_TRD_PERSON
+    where name =  #{name}
+    <if test="mobileList != null">
+      and (
+      1=2
+      <foreach item="item" index="index" collection="mobileList">
+        OR mobile_update LIKE CONCAT('%',#{item},'%')
+        OR mobile_prep LIKE CONCAT('%',#{item},'%')
+        OR mobile_history LIKE CONCAT('%',#{item},'%')
+      </foreach>
+      )
+    </if>
+  </select>
+
   <select id="selectTrdPersonByPhoneSign" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
     select
     'true' as QUERYID,
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    mobile_num LIKE CONCAT('%',#{sign},'%')
+    mobile_prep LIKE CONCAT('%',#{sign},'%')
   </select>
 
   <select id="selectTrdPersonByRightPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
@@ -327,7 +350,7 @@
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    LENGTH(mobile_num) <![CDATA[<=]]> 15 AND mobile_num !=-1
+    LENGTH(mobile_prep) <![CDATA[<=]]> 15 AND mobile_prep !=-1
   </select>
 
   <select id="selectTrdPersonByUnknowPhone" resultMap="com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper.BaseResultMap">
@@ -336,12 +359,12 @@
     <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where
-    mobile_num !=-1
-    AND mobile_num not LIKE '%、%'
-    AND mobile_num not LIKE '%/%'
-    AND LENGTH(mobile_num) > 15
-    AND mobile_num not LIKE '%，%'
-    AND mobile_num not LIKE '%；%'
+    mobile_prep !=-1
+    AND mobile_prep not LIKE '%、%'
+    AND mobile_prep not LIKE '%/%'
+    AND LENGTH(mobile_prep) > 15
+    AND mobile_prep not LIKE '%，%'
+    AND mobile_prep not LIKE '%；%'
   </select>
 
   <select id="selectTrePersonBymobileList"
@@ -356,7 +379,7 @@
       and (
       1=2
       <foreach item="item" index="index" collection="mobileList">
-        OR mobile_num LIKE CONCAT('%',#{item},'%')
+        OR mobile_prep LIKE CONCAT('%',#{item},'%')
       </foreach>
       )
     </if>

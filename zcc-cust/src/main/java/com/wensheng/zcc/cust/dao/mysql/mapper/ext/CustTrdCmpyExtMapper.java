@@ -1,14 +1,12 @@
 package com.wensheng.zcc.cust.dao.mysql.mapper.ext;
 
-import com.mysql.cj.result.Row;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpyExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
-import com.wensheng.zcc.cust.module.dao.mysql.ext.PreGroupResult;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.session.RowBounds;
 
 public interface CustTrdCmpyExtMapper {
 
@@ -24,5 +22,8 @@ public interface CustTrdCmpyExtMapper {
     Long countByFilterAllowNoTrd(CustTrdCmpyExample example   );
 
     List<Map> selectDuplicateNameCmpy();
+
+    List<CustTrdCmpy> selectNewCmpyByProvince(@Param("updateTime") Date updateTime,
+                                              @Param("provinceList") List<String> provinceList);
 
 }

@@ -10,6 +10,8 @@ import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
+import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 
 import java.lang.management.ManagementFactory;
@@ -219,6 +221,69 @@ public class AmcAspect {
       return joinPoint.proceed(joinPoint.getArgs());
   }
 
+  @Around("@annotation(ModifyCheckerCustPerson) ")
+  public Object modifyCheckerCustPerson(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    if (joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null) {
+      log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    CustTrdPerson custTrdPerson = (CustTrdPerson) joinPoint.getArgs()[0];
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
+    }
+    log.info(authentication.getDetails().toString());
+
+
+    Map<String, Object> detailsParam =
+            (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+    if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+      Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
+      if (joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
+              "create")) {
+        custTrdPerson.setCreateBy(ssoUserId);
+        custTrdPerson.setUpdateTime(AmcDateUtils.getCurrentDate());
+        custTrdPerson.setCreateTime(AmcDateUtils.getCurrentDate());
+      }
+      if (joinPoint.getSignature().getName().startsWith("update") || joinPoint.getSignature().getName().startsWith(
+              "mod")) {
+        custTrdPerson.setUpdateBy(ssoUserId);
+        custTrdPerson.setUpdateTime(AmcDateUtils.getCurrentDate());
+      }
+    }
+      return joinPoint.proceed(joinPoint.getArgs());
+  }
+
+  @Around("@annotation(MergeCustChecker) ")
+  public Object mergeCustChecker(ProceedingJoinPoint joinPoint) throws Throwable {
+    log.info("now get the point cut");
+    if (joinPoint.getArgs().length < 1 || joinPoint.getArgs()[0] == null) {
+      log.error("cannot process check for this method with args:{}", joinPoint.getArgs());
+      return joinPoint.proceed(joinPoint.getArgs());
+    }
+
+    MergeCustVo mergeCustVo = (MergeCustVo) joinPoint.getArgs()[0];
+
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null || !(authentication.getDetails() instanceof OAuth2AuthenticationDetails)) {
+      throw ExceptionUtils.getAmcException(AmcExceptions.LOGIN_REQUIRE_ERROR);
+    }
+    log.info(authentication.getDetails().toString());
+
+
+    Map<String, Object> detailsParam =
+            (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+    if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
+      Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
+      mergeCustVo.setUpdateBy(ssoUserId);
+    }
+      return joinPoint.proceed(joinPoint.getArgs());
+  }
+
+
   @Around("@annotation(ModifyCheckerCustCmpycontactor) ")
   public Object modifyCheckerCustCmpycontactor(ProceedingJoinPoint joinPoint) throws Throwable {
     log.info("now get the point cut");
@@ -237,24 +302,23 @@ public class AmcAspect {
 
 
     Map<String, Object> detailsParam =
-            (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
+        (Map<String, Object>) ((OAuth2AuthenticationDetails) authentication.getDetails()).getDecodedDetails();
     if (detailsParam.containsKey("ssoUserId") && null != detailsParam.get("ssoUserId")) {
       Long ssoUserId = Long.valueOf((Integer) detailsParam.get("ssoUserId"));
       if (joinPoint.getSignature().getName().startsWith("add") || joinPoint.getSignature().getName().startsWith(
-              "create")) {
+          "create")) {
         custAmcCmpycontactor.setCreateBy(ssoUserId);
         custAmcCmpycontactor.setUpdateTime(AmcDateUtils.getCurrentDate());
         custAmcCmpycontactor.setCreateTime(AmcDateUtils.getCurrentDate());
       }
       if (joinPoint.getSignature().getName().startsWith("update") || joinPoint.getSignature().getName().startsWith(
-              "mod")) {
+          "mod")) {
         custAmcCmpycontactor.setUpdateBy(ssoUserId);
         custAmcCmpycontactor.setUpdateTime(AmcDateUtils.getCurrentDate());
       }
     }
-      return joinPoint.proceed(joinPoint.getArgs());
+    return joinPoint.proceed(joinPoint.getArgs());
   }
-
 
 
   @Around("@annotation(QueryValidCmpy)")

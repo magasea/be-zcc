@@ -65,6 +65,10 @@ public class CustCmpycontactorHistory {
 
     private Date updateTime;
 
+    private Integer status;
+
+    private String trdInfoBak;
+
     private String remark;
 
     public Long getId() {
@@ -313,6 +317,22 @@ public class CustCmpycontactorHistory {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public Integer getStatus() {
+        return status;
+    }
+
+    public void setStatus(Integer status) {
+        this.status = status;
+    }
+
+    public String getTrdInfoBak() {
+        return trdInfoBak;
+    }
+
+    public void setTrdInfoBak(String trdInfoBak) {
+        this.trdInfoBak = trdInfoBak == null ? null : trdInfoBak.trim();
     }
 
     public String getRemark() {

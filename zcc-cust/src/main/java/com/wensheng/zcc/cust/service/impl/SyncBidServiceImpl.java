@@ -23,6 +23,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSeller;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdSellerExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.BidTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.CustTypeSyncEnum;
@@ -346,9 +347,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   private boolean updatePersonInfo(CustPersonInfoFromSync custPersonInfoFromSync) {
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobileNumEqualTo(
+    custTrdPersonExample.createCriteria().andNameEqualTo(custPersonInfoFromSync.getName()).andMobilePrepEqualTo(
         StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? "-1": custPersonInfoFromSync.getMobileNum()).
-        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum());
+        andIdCardNumEqualTo(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())? "-1": custPersonInfoFromSync.getIdCardNum())
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
     int action = -1;
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
@@ -543,7 +545,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       buyerId = syncCmpyInfoById(trdInfoFromSync, true, action == 1);
       custTrdInfo.setBuyerType(CustTypeEnum.COMPANY.getId());
     }else if(trdInfoFromSync.getBuyerType() == CustTypeSyncEnum.PERSON.getId()){
-      buyerId = syncPersonInfoById(trdInfoFromSync, true, action == 1);
+      buyerId = syncPersonInfoById(trdInfoFromSync, true, action == 1, custTrdInfos);
       custTrdInfo.setBuyerType(CustTypeEnum.PERSON.getId());
     }
     if(buyerId < 0){
@@ -577,6 +579,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 //    custTrdInfo.setSellerId(sellerId);
     if(action == 1){
       //make new trdInfo
+      custTrdInfo.setCreateTime(new Date());
       custTrdInfoMapper.insertSelective(custTrdInfo);
     }else if(action == 2){
       //update trdInfo
@@ -593,12 +596,13 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
   }
 
-  private synchronized Long syncPersonInfoById(BidTrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd) {
+  private synchronized Long syncPersonInfoById(BidTrdInfoFromSync trdInfoFromSync, boolean isBuyer, boolean isNewTrd, List<CustTrdInfo> custTrdInfoList) {
      if(trdInfoFromSync.getBuyerId().equals("-1")){
        //insert person with name directlly
        CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
        custTrdPersonExample.createCriteria().andNameEqualTo(StringUtils.isEmpty(trdInfoFromSync.getBuyerName())?"-1":
-           trdInfoFromSync.getBuyerName()).andMobileNumEqualTo("-1");
+           trdInfoFromSync.getBuyerName()).andMobilePrepEqualTo("-1")
+           .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
        List<CustTrdPerson> custTrdPeople =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
        if(CollectionUtils.isEmpty(custTrdPeople)){
          CustTrdPerson custTrdPerson = new CustTrdPerson();
@@ -609,7 +613,6 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
        }else{
          return custTrdPeople.get(0).getId();
        }
-
      }
 
       CustPersonInfoFromSync custPersonInfoFromSync = getPersonInfoById(isBuyer? trdInfoFromSync.getBuyerId():
@@ -690,42 +693,56 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     }
 
     String mobileNum =custPersonInfoFromSync.getMobileNum();
-    List<CustTrdPerson> custTrdPeople = null;
-    if(!StringUtils.isEmpty(mobileNum)){
-      List<String> mobileList = Arrays.asList(mobileNum.split(";"));
-      custTrdPeople =  custTrdPersonExtMapper.selectTrePersonBymobileList(
-          StringUtils.isEmpty(custPersonInfoFromSync.getName())?"-1": custPersonInfoFromSync.getName(),
-          mobileList);
+    List<CustTrdPerson> custTrdPeopleList = null;
+
+    Long personId = null;
+    if(!CollectionUtils.isEmpty(custTrdInfoList)){
+      personId = custTrdInfoList.get(0).getBuyerId();
+    }
+    if(null != personId && -1 != personId){
+      CustTrdPerson custTrdPeople =  custTrdPersonMapper.selectByPrimaryKey(personId);
+      custTrdPeopleList = new ArrayList<>();
+      custTrdPeopleList.add(custTrdPeople);
+    }else {
+      if (!StringUtils.isEmpty(mobileNum)) {
+        List<String> mobileList = Arrays.asList(mobileNum.split(";"));
+        custTrdPeopleList = custTrdPersonExtMapper.selectTrePersonBymobileList(
+            StringUtils.isEmpty(custPersonInfoFromSync.getName()) ? "-1"
+                : custPersonInfoFromSync.getName(),
+            mobileList);
+      }
     }
 
     int action = -1;
 
-    if(CollectionUtils.isEmpty(custTrdPeople)){
+    if(CollectionUtils.isEmpty(custTrdPeopleList)){
       //make new person
       action = 1;
-    }else if(custTrdPeople.get(0).getUpdateTime().before(updateTime)|| isNewTrd || custTrdPeople.get(0).getDataQuality() <= 2){
+    }else if(custTrdPeopleList.get(0).getUpdateTime().before(updateTime)|| isNewTrd || custTrdPeopleList.get(0).getDataQuality() <= 2){
       //update person
       action = 2;
-      if(custTrdPeople.size() > 0){
+      if(custTrdPeopleList.size() > 0){
         CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
-        for(int idx = 0; idx < custTrdPeople.size(); idx ++){
+        for(int idx = 0; idx < custTrdPeopleList.size(); idx ++){
           if(idx == 0){
             continue;
           }
           //before delete check the related trd info
           custTrdInfoExample.clear();
-          custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPeople.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
+          custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPeopleList.get(idx).getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
           List<CustTrdInfo> custTrdInfos = custTrdInfoMapper.selectByExample(custTrdInfoExample);
-          for(CustTrdInfo custTrdInfoOld: custTrdInfos){
-            custTrdInfoOld.setBuyerId(custTrdPeople.get(0).getId());
+          for(CustTrdInfo custTrdInfoOld : custTrdInfos){
+            custTrdInfoOld.setBuyerId(custTrdPeopleList.get(0).getId());
             custTrdInfoMapper.updateByPrimaryKeySelective(custTrdInfoOld);
           }
-          custTrdPersonMapper.deleteByPrimaryKey(custTrdPeople.get(idx).getId());
+          commonHandler.creatPersonHistory(null,"SyncServiceImpl",
+              "同步交易信息时删除重复自然人信息", custTrdPeopleList.get(idx));
+          custTrdPersonMapper.deleteByPrimaryKey(custTrdPeopleList.get(idx).getId());
         }
       }
     }else{
-      log.info("no change for this personInfo:{} current record time:{}", custTrdPeople.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
-      return custTrdPeople.get(0).getId();
+      log.info("no change for this personInfo:{} current record time:{}", custTrdPeopleList.get(0).getUpdateTime(), custPersonInfoFromSync.getUpdateTime() );
+      return custTrdPeopleList.get(0).getId();
     }
     CustTrdPerson custTrdPerson = new CustTrdPerson();
     copyPersonSync2PersonInfo(custPersonInfoFromSync, custTrdPerson);
@@ -742,7 +759,9 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       custTrdPersonMapper.insertSelective(custTrdPerson);
 
     }else if(action == 2 ){
-      custTrdPerson = custTrdPeople.get(0);
+      custTrdPerson = custTrdPeopleList.get(0);
+      commonHandler.creatPersonHistory(null,"SyncBidServiceImpl",
+          "同步交易信息时更新自然人信息", custTrdPerson);
       if(isBuyer){
         int count = getTrdCntForPerson(custTrdPerson.getId()).intValue();
         if(isNewTrd){
@@ -811,7 +830,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     } else {
       dataQuality = dataQuality + 1;
     }
-    if (StringUtils.isEmpty(custTrdPerson.getTelNum())) {
+    if (StringUtils.isEmpty(custTrdPerson.getPhonePrep())) {
       dataQuality = dataQuality ;
     } else {
       dataQuality = dataQuality + 1;
@@ -823,7 +842,7 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
       dataQuality = dataQuality + 1;
     }
 
-    if (StringUtils.isEmpty(custTrdPerson.getMobileNum())) {
+    if (StringUtils.isEmpty(custTrdPerson.getMobilePrep())) {
       dataQuality = -1 ;
     } else {
       dataQuality = dataQuality + 1;
@@ -841,11 +860,11 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     custTrdPerson.setGender(custPersonInfoFromSync.getGender());
     custTrdPerson.setIdCardNum(StringUtils.isEmpty(custPersonInfoFromSync.getIdCardNum())?null:
         custPersonInfoFromSync.getIdCardNum()) ;
-    custTrdPerson.setMobileNum(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
-        custPersonInfoFromSync.getMobileNum()) ;
+    custTrdPerson.setMobilePrep(StringUtils.isEmpty(custPersonInfoFromSync.getMobileNum())? null:
+        custPersonInfoFromSync.getMobileNum()); ;
     custTrdPerson.setName(StringUtils.isEmpty(custPersonInfoFromSync.getName())? null: custPersonInfoFromSync.getName());
     custTrdPerson.setProvince(custPersonInfoFromSync.getProvince());
-    custTrdPerson.setTelNum(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
+    custTrdPerson.setPhonePrep(StringUtils.isEmpty(custPersonInfoFromSync.getTelNum())?null: custPersonInfoFromSync.getTelNum());
     Date updateTime = AmcDateUtils.toUTCDate(custPersonInfoFromSync.getUpdateTime());
     custTrdPerson.setUpdateTime(updateTime);
     custTrdPerson.setSyncTime(AmcDateUtils.getCurrentDate());
@@ -955,7 +974,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
           }
           //before delete check the related id in custAmcCmpycontactor and update it with current cmpy id
           custAmcCmpycontactorExample.clear();
-          custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpyList.get(idx).getId());
+          custAmcCmpycontactorExample.createCriteria().andCmpyIdEqualTo(custTrdCmpyList.get(idx).getId())
+              .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
           List<CustAmcCmpycontactor> custAmcCmpycontactors =
               custAmcCmpycontactorMapper.selectByExample(custAmcCmpycontactorExample);
           if(!CollectionUtils.isEmpty(custAmcCmpycontactors)){
@@ -1289,8 +1309,8 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
 
         StringBuilder sbMobileNum = new StringBuilder();
         StringBuilder sbTelNum = new StringBuilder();
-        String mobileNum = custTrdPerson.getMobileNum();
-        String mobileNumBak = custTrdPerson.getMobileNum();
+        String mobileNum = custTrdPerson.getMobilePrep();
+        String mobileNumBak = custTrdPerson.getMobilePrep();
         mobileNum = mobileNum.replace(";","；");
         mobileNum = mobileNum.replace(",","，");
         String[] telMobiles =mobileNum.split(sign);
@@ -1315,12 +1335,12 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
         CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
         custTrdPersonNew.setId(custTrdPerson.getId());
         if(sbTelNum.length()>=1){
-          custTrdPersonNew.setTelNum(sbTelNum.toString());
+          custTrdPersonNew.setPhonePrep(sbTelNum.toString());
         }
         if(sbMobileNum.length()>=1){
-          custTrdPersonNew.setMobileNum(sbMobileNum.toString());
+          custTrdPersonNew.setMobilePrep(sbMobileNum.toString());
         }else {
-          custTrdPersonNew.setMobileNum("-1");
+          custTrdPersonNew.setMobilePrep("-1");
         }
         custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
@@ -1331,14 +1351,14 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     //只有手机号和固话
     List<CustTrdPerson> custTrdPersonList = custTrdPersonExtMapper.selectTrdPersonByRightPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonList){
-      String mobileNum = custTrdPerson.getMobileNum();
-      String mobileNumBak = custTrdPerson.getMobileNum();
+      String mobileNum = custTrdPerson.getMobilePrep();
+      String mobileNumBak = custTrdPerson.getMobilePrep();
       Boolean isMobile = checkMobile(mobileNum);
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
       custTrdPersonNew.setId(custTrdPerson.getId());
       if(!isMobile){
-        custTrdPersonNew.setTelNum(mobileNum);
-        custTrdPersonNew.setMobileNum("-1");
+        custTrdPersonNew.setPhonePrep(mobileNum);
+        custTrdPersonNew.setMobilePrep("-1");
         custTrdPersonNew.setMobileNumBak(mobileNumBak);
         custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
       }
@@ -1348,10 +1368,10 @@ String[] provinceCodes = {"410000000000","130000000000","230000000000","22000000
     List<CustTrdPerson> custTrdPersonListAllTel = custTrdPersonExtMapper.selectTrdPersonByUnknowPhone();
     for (CustTrdPerson custTrdPerson : custTrdPersonListAllTel) {
       CustTrdPerson  custTrdPersonNew= new  CustTrdPerson();
-      String mobileNumBak = custTrdPerson.getMobileNum();
+      String mobileNumBak = custTrdPerson.getMobilePrep();
       custTrdPersonNew.setId(custTrdPerson.getId());
-      custTrdPersonNew.setTelNum(custTrdPerson.getMobileNum());
-      custTrdPersonNew.setMobileNum("-1");
+      custTrdPersonNew.setPhonePrep(custTrdPerson.getMobilePrep());
+      custTrdPersonNew.setMobilePrep("-1");
       custTrdPersonNew.setMobileNumBak(mobileNumBak);
       custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPersonNew);
     }

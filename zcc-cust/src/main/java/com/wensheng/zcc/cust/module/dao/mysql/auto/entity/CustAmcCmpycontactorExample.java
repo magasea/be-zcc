@@ -2074,6 +2074,136 @@ public class CustAmcCmpycontactorExample {
             addCriterion("update_time not between", value1, value2, "updateTime");
             return (Criteria) this;
         }
+
+        public Criteria andStatusIsNull() {
+            addCriterion("status is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusIsNotNull() {
+            addCriterion("status is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusEqualTo(Integer value) {
+            addCriterion("status =", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusNotEqualTo(Integer value) {
+            addCriterion("status <>", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusGreaterThan(Integer value) {
+            addCriterion("status >", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusGreaterThanOrEqualTo(Integer value) {
+            addCriterion("status >=", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusLessThan(Integer value) {
+            addCriterion("status <", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusLessThanOrEqualTo(Integer value) {
+            addCriterion("status <=", value, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusIn(List<Integer> values) {
+            addCriterion("status in", values, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusNotIn(List<Integer> values) {
+            addCriterion("status not in", values, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusBetween(Integer value1, Integer value2) {
+            addCriterion("status between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andStatusNotBetween(Integer value1, Integer value2) {
+            addCriterion("status not between", value1, value2, "status");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakIsNull() {
+            addCriterion("trd_info_bak is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakIsNotNull() {
+            addCriterion("trd_info_bak is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakEqualTo(String value) {
+            addCriterion("trd_info_bak =", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakNotEqualTo(String value) {
+            addCriterion("trd_info_bak <>", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakGreaterThan(String value) {
+            addCriterion("trd_info_bak >", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakGreaterThanOrEqualTo(String value) {
+            addCriterion("trd_info_bak >=", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakLessThan(String value) {
+            addCriterion("trd_info_bak <", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakLessThanOrEqualTo(String value) {
+            addCriterion("trd_info_bak <=", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakLike(String value) {
+            addCriterion("trd_info_bak like", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakNotLike(String value) {
+            addCriterion("trd_info_bak not like", value, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakIn(List<String> values) {
+            addCriterion("trd_info_bak in", values, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakNotIn(List<String> values) {
+            addCriterion("trd_info_bak not in", values, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakBetween(String value1, String value2) {
+            addCriterion("trd_info_bak between", value1, value2, "trdInfoBak");
+            return (Criteria) this;
+        }
+
+        public Criteria andTrdInfoBakNotBetween(String value1, String value2) {
+            addCriterion("trd_info_bak not between", value1, value2, "trdInfoBak");
+            return (Criteria) this;
+        }
     }
 
     public static class Criteria extends GeneratedCriteria {

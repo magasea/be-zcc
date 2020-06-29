@@ -31,6 +31,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
+import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CmpyBasicBizInfoSync;
@@ -203,6 +204,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     addCrawlCmpyDTO.setCmpyCount(1);
     String addCrawlCmpyJson = new Gson().toJson(addCrawlCmpyDTO);
     try {
+      log.info("请求添加爬取公司信息kafka");
       crawlSystemKafkaTemplate.send(ADD_CRAWL_CMPY_TOPIC, addCrawlCmpyJson);
       log.info("请求添加爬取公司信息kafka发送成功,addCrawlCmpyJson:{}",addCrawlCmpyJson);
     }catch (Exception e){
@@ -602,7 +604,16 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdPersonExtExample.setFilterByClause(null);
 
     custTrdPersonTrdExtList = custTrdPersonExtMapper.selectByExample(custTrdPersonExtExample);
-    return  custTrdPersonTrdExtList;
+
+    //custTrdCmpyTrdExts 转map
+    Map<Long, CustTrdPersonTrdExt> cmpyTrdExtMap = custTrdPersonTrdExtList.stream().collect(Collectors.toMap(CustTrdPersonTrdExt::getId, custTrdPersonTrdExt -> custTrdPersonTrdExt));
+    //根据id重新排列
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExtArrayList = new ArrayList<>();
+    for (Long id : ids) {
+      custTrdPersonTrdExtArrayList.add(cmpyTrdExtMap.get(id));
+    }
+
+    return  custTrdPersonTrdExtArrayList;
   }
 
   @Override
@@ -656,8 +667,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
       custTrdInfoExcelVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
       custTrdInfoExcelVo.setPhone(String.format("%s;%s",
-          custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
-          custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
+          custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
+          custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
       custTrdInfoExcelVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long debtTotalAmount = 0L;
       Long trdTotalAmount = 0L;
@@ -716,6 +727,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
+    String whereClause = " ctp.status != 2";
+    custTrdPersonExtExample.setWhereClause(whereClause);
     custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
     if(!StringUtils.isEmpty(filterBy)){
       custTrdPersonExtExample.setFilterByClause(filterBy);
@@ -751,14 +764,14 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdPerson custTrdPerson =  custTrdPersonMapper.selectByPrimaryKey(personId);
     CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
     AmcBeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
-    if(!StringUtils.isEmpty(custTrdPerson.getHistoryMobileNum()) && (custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)
-    ||custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_ORIGINAL))){
+    if(!StringUtils.isEmpty(custTrdPerson.getMobileHistory()) && (custTrdPerson.getMobileHistory().contains(SEP_INDICATOR_EDITABLE)
+    ||custTrdPerson.getMobileHistory().contains(SEP_INDICATOR_ORIGINAL))){
       List<String> listEditable = new ArrayList<>();
-      if(custTrdPerson.getHistoryMobileNum().contains(SEP_INDICATOR_EDITABLE)){
-        listEditable = Lists.newArrayList(custTrdPerson.getHistoryMobileNum().split(SEP_INDICATOR_EDITABLE_USED));
+      if(custTrdPerson.getMobileHistory().contains(SEP_INDICATOR_EDITABLE)){
+        listEditable = Lists.newArrayList(custTrdPerson.getMobileHistory().split(SEP_INDICATOR_EDITABLE_USED));
 
       }else{
-        listEditable.add(custTrdPerson.getHistoryMobileNum());
+        listEditable.add(custTrdPerson.getMobileHistory());
       }
       if(!CollectionUtils.isEmpty(listEditable)){
         for(int idx = listEditable.size() -1; idx >= 0 ; idx--){
@@ -772,7 +785,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       custTrdPersonVo.setHistoryPhoneNums(listEditable);
     }else{
-      custTrdPersonVo.setOriginPhoneNum(custTrdPerson.getMobileNum());
+      custTrdPersonVo.setOriginPhoneNum(custTrdPerson.getMobilePrep());
     }
 
     if(!StringUtils.isEmpty(custTrdPerson.getHistoryAddr())
@@ -810,11 +823,15 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+      custTrdInfoVo.setAddressUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddrUpdate());
       custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
+      custTrdInfoVo.setPhonePrep(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
@@ -859,8 +876,12 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
       custTrdInfoVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
       custTrdInfoVo.setPhone(String.format("%s;%s",
-          custTrdPersonTrdExt.getCustTrdPerson().getMobileNum(),
-          custTrdPersonTrdExt.getCustTrdPerson().getTelNum()));
+          custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
+          custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
+      custTrdInfoVo.setMobilePrep(custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep());
+      custTrdInfoVo.setMobileUpdate(custTrdPersonTrdExt.getCustTrdPerson().getMobileUpdate());
+      custTrdInfoVo.setPhonePrep(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep());
+      custTrdInfoVo.setPhoneUpdate(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
@@ -917,16 +938,16 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     if(CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
       log.error("no history mobiles");
-      custTrdPersonVo.setHistoryMobileNum(custTrdPersonVo.getOriginPhoneNum());
+      custTrdPersonVo.setMobileHistory(custTrdPersonVo.getOriginPhoneNum());
     }else{
       StringBuilder historyMobileNums =
           new StringBuilder(Joiner.on(SEP_INDICATOR_EDITABLE).join(custTrdPersonVo.getHistoryPhoneNums()));
       historyMobileNums.append(SEP_INDICATOR_ORIGINAL).append(custTrdPersonVo.getOriginPhoneNum());
-      custTrdPersonVo.setHistoryMobileNum(historyMobileNums.toString());
+      custTrdPersonVo.setMobileHistory(historyMobileNums.toString());
     }
 
     if(null != custTrdPersonVo.getHistoryPhoneNums() && !CollectionUtils.isEmpty(custTrdPersonVo.getHistoryPhoneNums())){
-      updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobileNum(),
+      updateCustPersonTrdRelations(custTrdPersonVo.getHistoryPhoneNums(), custTrdPersonVo.getMobilePrep(),
           custTrdPersonVo.getName(), custTrdPersonVo.getId());
     }
 
@@ -947,7 +968,8 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdPerson> getPersonFromDate(Date beginDate) {
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(beginDate);
+    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(beginDate)
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
     return custTrdPersonList;
   }
@@ -960,7 +982,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdCmpy> custTrdCmpyList =  custTrdCmpyMapper.selectByExample(custTrdCmpyExample);
 
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(startDate);
+    custTrdPersonExample.createCriteria().andCreateTimeGreaterThan(startDate)
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
 
     List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
 
@@ -1254,7 +1277,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       Long currentCustPersonId){
     // find origin cust and search the trd info of the cust, update the trd info ref buyer id to the
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-    custTrdPersonExample.createCriteria().andMobileNumEqualTo(phoneNum).andNameEqualTo(custName);
+    custTrdPersonExample.createCriteria().andMobilePrepEqualTo(phoneNum).andNameEqualTo(custName)
+        .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
     List<CustTrdPerson> custTrdPeople = custTrdPersonMapper.selectByExample(custTrdPersonExample);
     if(CollectionUtils.isEmpty(custTrdPeople)){
       return true;
@@ -1262,11 +1286,12 @@ public class CustInfoServiceImpl implements CustInfoService {
     List<CustTrdPerson> merged = new ArrayList();
     for(String custHistPhone: histPhoneNumList){
       custTrdPersonExample.clear();
-      custTrdPersonExample.createCriteria().andMobileNumEqualTo(custHistPhone).andNameEqualTo(custName);
+      custTrdPersonExample.createCriteria().andMobilePrepEqualTo(custHistPhone).andNameEqualTo(custName)
+          .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       List<CustTrdPerson> custTrdPeopleHistory = custTrdPersonMapper.selectByExample(custTrdPersonExample);
       merged =  ListUtils.union(custTrdPeople, custTrdPeopleHistory);
     }
-    custTrdPeople = merged.stream().filter(item -> item.getId() != currentCustPersonId).collect(Collectors.toList());
+    custTrdPeople = merged.stream().filter(item -> !item.getId().equals(currentCustPersonId)).collect(Collectors.toList());
     CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
     for(CustTrdPerson custTrdPerson: custTrdPeople){
       custTrdInfoExample.createCriteria().andBuyerIdEqualTo(custTrdPerson.getId()).andBuyerTypeEqualTo(CustTypeEnum.PERSON.getId());
@@ -1353,10 +1378,11 @@ public class CustInfoServiceImpl implements CustInfoService {
     if(!CollectionUtils.isEmpty(personIds)){
       custInfoGeoNear.setCustTrdPersonList( new ArrayList<>());
       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
-      custTrdPersonExample.createCriteria().andIdIn(personIds.keySet().stream().collect(Collectors.toList()));
+      custTrdPersonExample.createCriteria().andIdIn(personIds.keySet().stream().collect(Collectors.toList()))
+          .andStatusNotEqualTo(PresonStatusEnum.MERGED_STATUS.getId());
       List<CustTrdPerson> custTrdPersonList =  custTrdPersonMapper.selectByExample(custTrdPersonExample);
       for(CustTrdPerson custTrdPerson: custTrdPersonList){
-        if(StringUtils.isEmpty(custTrdPerson.getMobileNum())||custTrdPerson.getMobileNum().equals("-1")){
+        if(StringUtils.isEmpty(custTrdPerson.getMobilePrep())||custTrdPerson.getMobilePrep().equals("-1")){
           log.error("Ignore not useful info for custTrdPerson:{}", custTrdPerson.getId());
           continue;
         }

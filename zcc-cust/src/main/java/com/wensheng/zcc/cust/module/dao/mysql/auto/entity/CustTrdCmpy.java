@@ -1,9 +1,7 @@
 package com.wensheng.zcc.cust.module.dao.mysql.auto.entity;
 
 import java.util.Date;
-import lombok.ToString;
 
-@ToString
 public class CustTrdCmpy {
     private Long id;
 

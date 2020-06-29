@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class CustAmcCmpycontactorExtVo {
     private Long id;
-
+    private String name;
     private CustAmcCmpycontactor custAmcCmpycontactor;
     private Map<String, Integer> favorCityPrep;
     private Map<String, Integer> favorTypePrep;

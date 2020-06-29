@@ -8,6 +8,11 @@ grpc:
             host: ${env.rpchost}
             port: 10016
 spring:
+    mail:
+        host: smtp.mxhichina.com
+        port: 25
+        default-encoding: UTF-8
+
     autoconfigure:
         exclude:
             - org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration
@@ -100,6 +105,7 @@ spring:
             cronExprCust: 0 0 7,13,19,0 * * *
             cronExprGeo: 0 0 7,19,0 * * *
             cronExpCmpyInfo: 0 0 22 * * *
+            sendNewCmpyMailScheduled: 0 1 */1 * * ?
             pool:
                 size: 3
     servlet:
@@ -145,7 +151,7 @@ kafka:
 logging:
     level:
         com:
-            wensheng: INFO
+            wensheng: DEBUG
         root: WARN
 cust:
     syncUrls:
@@ -166,7 +172,7 @@ cust:
         getAddressCodeByAddress: http://10.20.200.100:5050/pre/amap_code/api?address=%s
         crawledCompany: http://10.20.100.252:8086/debtTradeCompanys/forceSave?cmpyName=%s
         getCompanyBasicBizInfo: http://10.20.100.252:8000/entInfos/getJson?page=1&name=%s
-
+        cmpyLinkMould : http://10.20.100.238/amc/market/tradeInfo/list/1/%s/%s/2/1
 
 recom:
     urls:

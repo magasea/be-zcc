@@ -228,6 +228,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
   @Scheduled(cron = "${spring.task.scheduling.sendNewCmpyMailScheduled}")
   public void sendNewCmpyMailScheduled(){
+    log.info("新增公司发邮件定时任务开始");
     //搜索条件
     Date today = new Date();
     Calendar c = Calendar.getInstance();

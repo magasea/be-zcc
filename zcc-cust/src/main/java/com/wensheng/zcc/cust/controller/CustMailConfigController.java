@@ -8,6 +8,7 @@ import com.wensheng.zcc.cust.service.impl.CustMailConfigServiceImpl;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -44,8 +45,8 @@ public class CustMailConfigController {
 
   @RequestMapping(value = "/getAllCustMailConfig", method = RequestMethod.POST)
   @ResponseBody
-  public void getAllCustMailConfig() throws Exception {
-    custMailConfigService.getAllCustMailConfig();
+  public List<MailConfigNewCmpy> getAllCustMailConfig() throws Exception {
+    return custMailConfigService.getAllCustMailConfig();
   }
 
   @RequestMapping(value = "/sendMailById", method = RequestMethod.POST)

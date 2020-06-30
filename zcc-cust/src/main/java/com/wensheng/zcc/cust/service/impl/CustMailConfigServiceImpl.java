@@ -73,8 +73,8 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
   }
 
   @Override
-  public void getAllCustMailConfig() throws Exception {
-    mailConfigNewCmpyMapper.selectByExample(null);
+  public List<MailConfigNewCmpy> getAllCustMailConfig() throws Exception {
+    return mailConfigNewCmpyMapper.selectByExample(null);
   }
 
 

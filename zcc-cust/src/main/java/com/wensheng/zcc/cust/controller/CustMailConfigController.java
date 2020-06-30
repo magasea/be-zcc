@@ -49,6 +49,12 @@ public class CustMailConfigController {
     return custMailConfigService.getAllCustMailConfig();
   }
 
+  @RequestMapping(value = "/getCustMailConfigById", method = RequestMethod.POST)
+  @ResponseBody
+  public MailConfigNewCmpy getCustMailConfigById(@RequestParam Long id) throws Exception {
+    return custMailConfigService.getCustMailConfigById(id);
+  }
+
   @RequestMapping(value = "/sendMailById", method = RequestMethod.POST)
   @ResponseBody
   public void sendMailById(@RequestParam Long mailConfigId, @RequestParam String toDayString)

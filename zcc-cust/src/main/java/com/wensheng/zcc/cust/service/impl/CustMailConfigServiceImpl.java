@@ -77,6 +77,11 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     return mailConfigNewCmpyMapper.selectByExample(null);
   }
 
+  @Override
+  public MailConfigNewCmpy getCustMailConfigById(Long id) throws Exception {
+    return mailConfigNewCmpyMapper.selectByPrimaryKey(id);
+  }
+
 
   @Override
   public void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy, Date today) {

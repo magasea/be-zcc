@@ -22,5 +22,7 @@ public interface CustMailConfigService {
    */
   List<MailConfigNewCmpy> getAllCustMailConfig() throws Exception;
 
+  MailConfigNewCmpy getCustMailConfigById(Long id) throws Exception;
+
   void sendMailOfNewCmpy(MailConfigNewCmpy mailConfigNewCmpy,  Date today);
 }

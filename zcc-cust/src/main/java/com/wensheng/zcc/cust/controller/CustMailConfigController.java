@@ -54,6 +54,10 @@ public class CustMailConfigController {
   public void sendMailById(@RequestParam Long mailConfigId, @RequestParam String toDayString)
       throws ParseException {
     MailConfigNewCmpy mailConfigNewCmpy = mailConfigNewCmpyMapper.selectByPrimaryKey(mailConfigId);
+    if(mailConfigNewCmpy.getStatus() == 0){
+      log.error("该配置已停用mailConfigId：",mailConfigId);
+      return;
+    }
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmmss");
     Date today = sdf.parse(toDayString);
     custMailConfigService.sendMailOfNewCmpy(mailConfigNewCmpy, today);

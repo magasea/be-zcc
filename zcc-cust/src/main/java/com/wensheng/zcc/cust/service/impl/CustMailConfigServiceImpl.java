@@ -242,7 +242,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     //查询数据库
     MailConfigNewCmpyExample mailConfigNewCmpyExample = new MailConfigNewCmpyExample();
     mailConfigNewCmpyExample.createCriteria().andSendWeekEqualTo(weekday+"")
-                                                      .andSendHourEqualTo(hour+"");
+                      .andSendHourEqualTo(hour+"").andStatusEqualTo(1);
     List<MailConfigNewCmpy> configNewCmpieList = mailConfigNewCmpyMapper.selectByExample(mailConfigNewCmpyExample);
 
     if(configNewCmpieList.size() == 0){

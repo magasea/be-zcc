@@ -116,7 +116,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
     //生成主题
     Map<String, String> provinceNameMap = basicInfoService.getProvinceNameMap();
-    String provice = mailConfigNewCmpy.getProvice();
+    String provice = mailConfigNewCmpy.getProvince();
     String[] proviceArray = provice.split(";");
     StringBuffer sbProvice = new StringBuffer();
     for (int i = 0; i < proviceArray.length; i++) {

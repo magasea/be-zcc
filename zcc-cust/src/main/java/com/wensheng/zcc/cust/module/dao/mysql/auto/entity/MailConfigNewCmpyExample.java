@@ -585,73 +585,73 @@ public class MailConfigNewCmpyExample {
             return (Criteria) this;
         }
 
-        public Criteria andProviceIsNull() {
-            addCriterion("provice is null");
+        public Criteria andProvinceIsNull() {
+            addCriterion("province is null");
             return (Criteria) this;
         }
 
-        public Criteria andProviceIsNotNull() {
-            addCriterion("provice is not null");
+        public Criteria andProvinceIsNotNull() {
+            addCriterion("province is not null");
             return (Criteria) this;
         }
 
-        public Criteria andProviceEqualTo(String value) {
-            addCriterion("provice =", value, "provice");
+        public Criteria andProvinceEqualTo(String value) {
+            addCriterion("province =", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceNotEqualTo(String value) {
-            addCriterion("provice <>", value, "provice");
+        public Criteria andProvinceNotEqualTo(String value) {
+            addCriterion("province <>", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceGreaterThan(String value) {
-            addCriterion("provice >", value, "provice");
+        public Criteria andProvinceGreaterThan(String value) {
+            addCriterion("province >", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceGreaterThanOrEqualTo(String value) {
-            addCriterion("provice >=", value, "provice");
+        public Criteria andProvinceGreaterThanOrEqualTo(String value) {
+            addCriterion("province >=", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceLessThan(String value) {
-            addCriterion("provice <", value, "provice");
+        public Criteria andProvinceLessThan(String value) {
+            addCriterion("province <", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceLessThanOrEqualTo(String value) {
-            addCriterion("provice <=", value, "provice");
+        public Criteria andProvinceLessThanOrEqualTo(String value) {
+            addCriterion("province <=", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceLike(String value) {
-            addCriterion("provice like", value, "provice");
+        public Criteria andProvinceLike(String value) {
+            addCriterion("province like", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceNotLike(String value) {
-            addCriterion("provice not like", value, "provice");
+        public Criteria andProvinceNotLike(String value) {
+            addCriterion("province not like", value, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceIn(List<String> values) {
-            addCriterion("provice in", values, "provice");
+        public Criteria andProvinceIn(List<String> values) {
+            addCriterion("province in", values, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceNotIn(List<String> values) {
-            addCriterion("provice not in", values, "provice");
+        public Criteria andProvinceNotIn(List<String> values) {
+            addCriterion("province not in", values, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceBetween(String value1, String value2) {
-            addCriterion("provice between", value1, value2, "provice");
+        public Criteria andProvinceBetween(String value1, String value2) {
+            addCriterion("province between", value1, value2, "province");
             return (Criteria) this;
         }
 
-        public Criteria andProviceNotBetween(String value1, String value2) {
-            addCriterion("provice not between", value1, value2, "provice");
+        public Criteria andProvinceNotBetween(String value1, String value2) {
+            addCriterion("province not between", value1, value2, "province");
             return (Criteria) this;
         }
 

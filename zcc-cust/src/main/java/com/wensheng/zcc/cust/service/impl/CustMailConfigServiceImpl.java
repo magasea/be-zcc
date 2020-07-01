@@ -63,8 +63,9 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
   String cmpyLinkMould;
 
   @Override
-  public void createCustMailConfig(MailConfigNewCmpy mailConfigNewCmpy) throws Exception {
+  public MailConfigNewCmpy createCustMailConfig(MailConfigNewCmpy mailConfigNewCmpy) throws Exception {
     mailConfigNewCmpyMapper.insertSelective(mailConfigNewCmpy);
+    return mailConfigNewCmpy;
   }
 
   @Override

@@ -33,8 +33,8 @@ public class CustMailConfigController {
 
   @RequestMapping(value = "/createCustMailConfig", method = RequestMethod.POST)
   @ResponseBody
-  public void createCustMailConfig(@RequestBody MailConfigNewCmpy mailConfigNewCmpy) throws Exception {
-    custMailConfigService.createCustMailConfig(mailConfigNewCmpy);
+  public MailConfigNewCmpy createCustMailConfig(@RequestBody MailConfigNewCmpy mailConfigNewCmpy) throws Exception {
+    return custMailConfigService.createCustMailConfig(mailConfigNewCmpy);
   }
 
   @RequestMapping(value = "/updateCustMailConfig", method = RequestMethod.POST)

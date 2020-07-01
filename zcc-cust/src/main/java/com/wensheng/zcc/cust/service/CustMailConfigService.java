@@ -10,7 +10,7 @@ public interface CustMailConfigService {
   /**
    * 新建发送邮件配置
    */
-  void createCustMailConfig(MailConfigNewCmpy mailConfigNewCmpy) throws Exception;
+  MailConfigNewCmpy createCustMailConfig(MailConfigNewCmpy mailConfigNewCmpy) throws Exception;
 
   /**
    * 修改发送邮件配置

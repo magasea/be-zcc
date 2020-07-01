@@ -64,7 +64,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
   @Override
   public void createCustMailConfig(MailConfigNewCmpy mailConfigNewCmpy) throws Exception {
-    mailConfigNewCmpyMapper.insert(mailConfigNewCmpy);
+    mailConfigNewCmpyMapper.insertSelective(mailConfigNewCmpy);
   }
 
   @Override

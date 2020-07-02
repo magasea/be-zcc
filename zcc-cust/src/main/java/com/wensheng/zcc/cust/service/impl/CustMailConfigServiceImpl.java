@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
@@ -120,6 +121,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     String provice = mailConfigNewCmpy.getProvince();
     String[] proviceArray = provice.split(";");
     StringBuffer sbProvice = new StringBuffer();
+
     for (int i = 0; i < proviceArray.length; i++) {
       if(sbProvice.length() > 0){
         sbProvice.append("、");
@@ -150,39 +152,44 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     ){
       CreationHelper createHelper = workbook.getCreationHelper();
 
-      Sheet sheet = workbook.createSheet("sheet1");
-      Font headerFont = workbook.createFont();
-      headerFont.setBold(true);
-      headerFont.setColor(IndexedColors.BLUE.getIndex());
-      CellStyle headerCellStyle = workbook.createCellStyle();
-      headerCellStyle.setFont(headerFont);
-      // Row for Header
-      Row headerRow = sheet.createRow(0);
-      // Header
-      for (int col = 0; col < COLUMNs.length; col++) {
-        Cell cell = headerRow.createCell(col);
-        cell.setCellValue(COLUMNs[col]);
-        cell.setCellStyle(headerCellStyle);
-      }
-      CellStyle custCellStyle = workbook.createCellStyle();
-      custCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#"));
-      int rowIdx = 1;
+      for (int i = 0; i < proviceArray.length; i++) {
+        List<String> provinceList = new ArrayList<String>();
+        provinceList.add(proviceArray[i]);
+        List<CustTrdCmpy>  sheetTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(calendar.getTime(), provinceList);
+        Sheet sheet = workbook.createSheet(provinceNameMap.get(proviceArray[i]));
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setColor(IndexedColors.BLUE.getIndex());
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+        // Row for Header
+        Row headerRow = sheet.createRow(0);
+        // Header
+        for (int col = 0; col < COLUMNs.length; col++) {
+          Cell cell = headerRow.createCell(col);
+          cell.setCellValue(COLUMNs[col]);
+          cell.setCellStyle(headerCellStyle);
+        }
+        CellStyle custCellStyle = workbook.createCellStyle();
+        custCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#"));
+        int rowIdx = 1;
 
-      for (CustTrdCmpy custTrdCmpy : newTrdCmpyList) {
-        Row row = sheet.createRow(rowIdx++);
+        for (CustTrdCmpy custTrdCmpy : sheetTrdCmpyList) {
+          Row row = sheet.createRow(rowIdx++);
 
-        //"公司名称", "信用代码", "联系电话", "联系地址","年报电话","年报地址","链接"
-        row.createCell(0).setCellValue(custTrdCmpy.getCmpyName());
-        row.createCell(1).setCellValue(custTrdCmpy.getUniSocialCode());
+          //"公司名称", "信用代码", "联系电话", "联系地址","年报电话","年报地址","链接"
+          row.createCell(0).setCellValue(custTrdCmpy.getCmpyName());
+          row.createCell(1).setCellValue(custTrdCmpy.getUniSocialCode());
 
-        row.createCell(2).setCellValue(checkValue(custTrdCmpy.getCmpyPhone()));
-        row.createCell(3).setCellValue(checkValue(custTrdCmpy.getCmpyAddr()));
-        row.createCell(4).setCellValue(checkValue(custTrdCmpy.getAnnuReptPhone()));
-        row.createCell(5).setCellValue(checkValue(custTrdCmpy.getAnnuReptAddr()));
+          row.createCell(2).setCellValue(checkValue(custTrdCmpy.getCmpyPhone()));
+          row.createCell(3).setCellValue(checkValue(custTrdCmpy.getCmpyAddr()));
+          row.createCell(4).setCellValue(checkValue(custTrdCmpy.getAnnuReptPhone()));
+          row.createCell(5).setCellValue(checkValue(custTrdCmpy.getAnnuReptAddr()));
 
-        //链接
-        String cmpyLink = String.format(cmpyLinkMould,custTrdCmpy.getId(),custTrdCmpy.getCmpyName());
-        row.createCell(6).setCellValue(cmpyLink);
+          //链接
+          String cmpyLink = String.format(cmpyLinkMould,custTrdCmpy.getId(),custTrdCmpy.getCmpyName());
+          row.createCell(6).setCellValue(cmpyLink);
+        }
       }
 
       workbook.write(fileOut);

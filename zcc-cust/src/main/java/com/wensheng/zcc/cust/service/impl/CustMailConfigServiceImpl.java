@@ -138,7 +138,8 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     calendar.setTime(today);
     calendar.add(Calendar.DATE, -7);
     //查询对应省的新增公司数据
-    List<CustTrdCmpy>  newTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(calendar.getTime(), Arrays.asList(proviceArray));
+    List<CustTrdCmpy>  newTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(
+                                            calendar.getTime(), today, Arrays.asList(proviceArray));
     if(newTrdCmpyList.size() == 0){
       log.info("暂无查询到新增公司信息，省份为proviceArray：{}", proviceArray);
       return false;
@@ -155,7 +156,8 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
       for (int i = 0; i < proviceArray.length; i++) {
         List<String> provinceList = new ArrayList<String>();
         provinceList.add(proviceArray[i]);
-        List<CustTrdCmpy>  sheetTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(calendar.getTime(), provinceList);
+        List<CustTrdCmpy>  sheetTrdCmpyList = custTrdCmpyExtMapper.selectNewCmpyByProvince(
+                                                          calendar.getTime(), today, provinceList);
         Sheet sheet = workbook.createSheet(provinceNameMap.get(proviceArray[i]));
         Font headerFont = workbook.createFont();
         headerFont.setBold(true);

@@ -23,7 +23,8 @@ public interface CustTrdCmpyExtMapper {
 
     List<Map> selectDuplicateNameCmpy();
 
-    List<CustTrdCmpy> selectNewCmpyByProvince(@Param("updateTime") Date updateTime,
+    List<CustTrdCmpy> selectNewCmpyByProvince(@Param("updateStartTime") Date updateStartTime,
+                                              @Param("updateEndTime") Date updateEndTime,
                                               @Param("provinceList") List<String> provinceList);
 
 }

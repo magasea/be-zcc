@@ -328,7 +328,10 @@
         <foreach item="item" index="index" collection="provinceList" open="(" separator="," close=")">
           #{item}
         </foreach>
-        AND update_time >= #{updateTime}
+        AND update_time >= #{updateStartTime}
+        <![CDATA[
+        AND update_time < #{updateEndTime}
+        ]]>
       )
   </select>
 

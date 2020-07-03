@@ -9,7 +9,7 @@
     <result column="cc_mail" jdbcType="VARCHAR" property="ccMail" />
     <result column="subject" jdbcType="VARCHAR" property="subject" />
     <result column="text" jdbcType="VARCHAR" property="text" />
-    <result column="provice" jdbcType="VARCHAR" property="provice" />
+    <result column="province" jdbcType="VARCHAR" property="province" />
     <result column="send_week" jdbcType="VARCHAR" property="sendWeek" />
     <result column="send_hour" jdbcType="VARCHAR" property="sendHour" />
     <result column="status" jdbcType="INTEGER" property="status" />
@@ -77,7 +77,7 @@
     </where>
   </sql>
   <sql id="Base_Column_List">
-    id, user_mail, password, to_mail, cc_mail, subject, text, provice, send_week, send_hour, 
+    id, user_mail, password, to_mail, cc_mail, subject, text, province, send_week, send_hour, 
     status, updated_by, updated_at, created_by, created_at
   </sql>
   <select id="selectByExample" parameterType="com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpyExample" resultMap="BaseResultMap">
@@ -117,12 +117,12 @@
     </selectKey>
     insert into MAIL_CONFIG_NEW_CMPY (user_mail, password, to_mail, 
       cc_mail, subject, text, 
-      provice, send_week, send_hour, 
+      province, send_week, send_hour, 
       status, updated_by, updated_at, 
       created_by, created_at)
     values (#{userMail,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, #{toMail,jdbcType=VARCHAR}, 
       #{ccMail,jdbcType=VARCHAR}, #{subject,jdbcType=VARCHAR}, #{text,jdbcType=VARCHAR}, 
-      #{provice,jdbcType=VARCHAR}, #{sendWeek,jdbcType=VARCHAR}, #{sendHour,jdbcType=VARCHAR}, 
+      #{province,jdbcType=VARCHAR}, #{sendWeek,jdbcType=VARCHAR}, #{sendHour,jdbcType=VARCHAR}, 
       #{status,jdbcType=INTEGER}, #{updatedBy,jdbcType=BIGINT}, #{updatedAt,jdbcType=TIMESTAMP}, 
       #{createdBy,jdbcType=BIGINT}, #{createdAt,jdbcType=TIMESTAMP})
   </insert>
@@ -150,8 +150,8 @@
       <if test="text != null">
         text,
       </if>
-      <if test="provice != null">
-        provice,
+      <if test="province != null">
+        province,
       </if>
       <if test="sendWeek != null">
         send_week,
@@ -194,8 +194,8 @@
       <if test="text != null">
         #{text,jdbcType=VARCHAR},
       </if>
-      <if test="provice != null">
-        #{provice,jdbcType=VARCHAR},
+      <if test="province != null">
+        #{province,jdbcType=VARCHAR},
       </if>
       <if test="sendWeek != null">
         #{sendWeek,jdbcType=VARCHAR},
@@ -250,8 +250,8 @@
       <if test="record.text != null">
         text = #{record.text,jdbcType=VARCHAR},
       </if>
-      <if test="record.provice != null">
-        provice = #{record.provice,jdbcType=VARCHAR},
+      <if test="record.province != null">
+        province = #{record.province,jdbcType=VARCHAR},
       </if>
       <if test="record.sendWeek != null">
         send_week = #{record.sendWeek,jdbcType=VARCHAR},
@@ -288,7 +288,7 @@
       cc_mail = #{record.ccMail,jdbcType=VARCHAR},
       subject = #{record.subject,jdbcType=VARCHAR},
       text = #{record.text,jdbcType=VARCHAR},
-      provice = #{record.provice,jdbcType=VARCHAR},
+      province = #{record.province,jdbcType=VARCHAR},
       send_week = #{record.sendWeek,jdbcType=VARCHAR},
       send_hour = #{record.sendHour,jdbcType=VARCHAR},
       status = #{record.status,jdbcType=INTEGER},
@@ -321,8 +321,8 @@
       <if test="text != null">
         text = #{text,jdbcType=VARCHAR},
       </if>
-      <if test="provice != null">
-        provice = #{provice,jdbcType=VARCHAR},
+      <if test="province != null">
+        province = #{province,jdbcType=VARCHAR},
       </if>
       <if test="sendWeek != null">
         send_week = #{sendWeek,jdbcType=VARCHAR},
@@ -356,7 +356,7 @@
       cc_mail = #{ccMail,jdbcType=VARCHAR},
       subject = #{subject,jdbcType=VARCHAR},
       text = #{text,jdbcType=VARCHAR},
-      provice = #{provice,jdbcType=VARCHAR},
+      province = #{province,jdbcType=VARCHAR},
       send_week = #{sendWeek,jdbcType=VARCHAR},
       send_hour = #{sendHour,jdbcType=VARCHAR},
       status = #{status,jdbcType=INTEGER},

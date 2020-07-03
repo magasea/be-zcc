@@ -17,7 +17,7 @@ public class MailConfigNewCmpy {
 
     private String text;
 
-    private String provice;
+    private String province;
 
     private String sendWeek;
 
@@ -89,12 +89,12 @@ public class MailConfigNewCmpy {
         this.text = text == null ? null : text.trim();
     }
 
-    public String getProvice() {
-        return provice;
+    public String getProvince() {
+        return province;
     }
 
-    public void setProvice(String provice) {
-        this.provice = provice == null ? null : provice.trim();
+    public void setProvince(String province) {
+        this.province = province == null ? null : province.trim();
     }
 
     public String getSendWeek() {

@@ -220,6 +220,7 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
    * @param mailConfigNewCmpy
    */
   public void sendMail(MailConfigNewCmpy mailConfigNewCmpy) throws MessagingException {
+    System.setProperty("mail.mime.splitlongparameters","false");
     String[] to = mailConfigNewCmpy.getToMail().split(";");
     String[] cc = mailConfigNewCmpy.getCcMail().split(";");
     String subject = mailConfigNewCmpy.getSubject();

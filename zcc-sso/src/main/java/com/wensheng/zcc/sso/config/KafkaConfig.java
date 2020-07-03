@@ -3,6 +3,7 @@ package com.wensheng.zcc.sso.config;
 import com.wensheng.zcc.common.mq.kafka.GsonDeserializer;
 import com.wensheng.zcc.common.mq.kafka.GsonSerializer;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
+import com.wensheng.zcc.common.mq.kafka.module.SSOUserModDto;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class KafkaConfig {
   public ConsumerFactory<? super String, ? super Object> baAmcUserFactory() {
     GsonDeserializer gsonDeserializer = new GsonDeserializer<>();
     Map<String, String> config = new HashMap<>();
-    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, AmcUser.class.getName());
+    config.put(GsonDeserializer.CONFIG_VALUE_CLASS, SSOUserModDto.class.getName());
     gsonDeserializer.configure(config, false);
     gsonDeserializer.close();
     return new DefaultKafkaConsumerFactory<>(

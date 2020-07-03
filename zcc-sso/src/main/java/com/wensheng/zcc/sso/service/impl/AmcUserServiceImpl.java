@@ -133,20 +133,20 @@ public class AmcUserServiceImpl implements AmcUserService {
   }
 
   @Override
-  public AmcUser createUser(AmcUser amcUser) {
+  public AmcUser createUser(AmcUser amcUserSSO) {
 
-    if(!StringUtils.isEmpty(amcUser.getUserName()) && (amcUser.getUserName().equals(AmcSpecialUserEnum.SYSTEM_ADMIN1.getName()) ||
-        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.SYSTEM_ADMIN1.getMobileNum()) ||
-        amcUser.getUserName().equals(AmcSpecialUserEnum.SYSTEM_ADMIN2.getName()) ||
-        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.SYSTEM_ADMIN2.getMobileNum())||
+    if(!StringUtils.isEmpty(amcUserSSO.getUserName()) && (amcUserSSO.getUserName().equals(AmcSpecialUserEnum.SYSTEM_ADMIN1.getName()) ||
+        amcUserSSO.getMobilePhone().equals(AmcSpecialUserEnum.SYSTEM_ADMIN1.getMobileNum()) ||
+        amcUserSSO.getUserName().equals(AmcSpecialUserEnum.SYSTEM_ADMIN2.getName()) ||
+        amcUserSSO.getMobilePhone().equals(AmcSpecialUserEnum.SYSTEM_ADMIN2.getMobileNum())||
 
-        amcUser.getUserName().equals(AmcSpecialUserEnum.ZCC_SYSTEM_ADMIN.getName()) ||
-        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.ZCC_SYSTEM_ADMIN.getMobileNum())
+        amcUserSSO.getUserName().equals(AmcSpecialUserEnum.ZCC_SYSTEM_ADMIN.getName()) ||
+        amcUserSSO.getMobilePhone().equals(AmcSpecialUserEnum.ZCC_SYSTEM_ADMIN.getMobileNum())
     )){
-      return makeSpecuser(amcUser, AmcRolesEnum.ROLE_SYSTEM_ADMIN);
-    }else if(!StringUtils.isEmpty(amcUser.getUserName()) && (amcUser.getUserName().equals(AmcSpecialUserEnum.ZCC_CO_ADMIN.getName()) ||
-        amcUser.getMobilePhone().equals(AmcSpecialUserEnum.ZCC_CO_ADMIN.getMobileNum()))){
-      return makeSpecuser(amcUser, AmcRolesEnum.ROLE_CO_ADMIN);
+      return makeSpecuser(amcUserSSO, AmcRolesEnum.ROLE_SYSTEM_ADMIN);
+    }else if(!StringUtils.isEmpty(amcUserSSO.getUserName()) && (amcUserSSO.getUserName().equals(AmcSpecialUserEnum.ZCC_CO_ADMIN.getName()) ||
+        amcUserSSO.getMobilePhone().equals(AmcSpecialUserEnum.ZCC_CO_ADMIN.getMobileNum()))){
+      return makeSpecuser(amcUserSSO, AmcRolesEnum.ROLE_CO_ADMIN);
     }
 
     boolean isInDb = false;
@@ -154,90 +154,137 @@ public class AmcUserServiceImpl implements AmcUserService {
     boolean needUpdatePrivilege = false;
 
     AmcUserExample amcUserExample = new AmcUserExample();
-    amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUser.getMobilePhone());
+    amcUserExample.createCriteria().andMobilePhoneEqualTo(amcUserSSO.getMobilePhone());
 
     List<AmcUser> amcUsers = amcUserMapper.selectByExample(amcUserExample);
     List<AmcUser> amcUsersWithSSOId = new ArrayList<>();
     String histMobile = null;
-    if(amcUser.getSsoUserId() != null && amcUser.getSsoUserId() != -1L){
+    if(amcUserSSO.getId() != null && amcUserSSO.getId() != -1L){
       amcUserExample.clear();
-      amcUserExample.createCriteria().andSsoUserIdEqualTo(amcUser.getSsoUserId());
+      amcUserExample.createCriteria().andSsoUserIdEqualTo(amcUserSSO.getId());
       amcUsersWithSSOId = amcUserMapper.selectByExample(amcUserExample);
 
+
     }
+    Long amcUserId = -1L;
+    AmcUser amcUserNew = null;
+    AmcUser amcUserInDb = null;
     if(CollectionUtils.isEmpty(amcUsers) && CollectionUtils.isEmpty(amcUsersWithSSOId)){
-      if(StringUtils.isEmpty(amcUser.getPassword())){
-        amcUser.setPassword( UserUtils.getEncode( defaultPasswd));
-        amcUser.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
+      amcUserNew = new AmcUser();
+      if(StringUtils.isEmpty(amcUserSSO.getPassword())){
+
+        AmcBeanUtils.copyProperties(amcUserSSO, amcUserNew);
+        amcUserNew.setPassword( UserUtils.getEncode( defaultPasswd));
+        amcUserNew.setCreateDate(java.sql.Date.valueOf(LocalDate.now()));
+        amcUserNew.setSsoUserId(amcUserSSO.getId());
         needUpdatePrivilege = true;
       }
-      int cnt = amcUserMapper.insertSelective(amcUser);
+      int cnt = amcUserMapper.insertSelective(amcUserNew);
       if(cnt > 0){
-        log.info("Insert new user with mobile phone:{}", amcUser.getMobilePhone());
+        log.info("Insert new user with mobile phone:{}", amcUserSSO.getMobilePhone());
       }else{
-        log.error("Insert new user with mobile phone:{} failed", amcUser.getMobilePhone());
+        log.error("Insert new user with mobile phone:{} failed", amcUserSSO.getMobilePhone());
         return null;
       }
+      amcUserId = amcUserNew.getId();
     }else{
+
       if(CollectionUtils.isEmpty(amcUsers) && !CollectionUtils.isEmpty(amcUsersWithSSOId)){
         //update the mobile info with the current amc sso user
-        amcUsersWithSSOId.get(0).setMobilePhone(amcUser.getMobilePhone());
+        int keepIdx = 0;
+        if(amcUsersWithSSOId.size() > 1){
+          Date initDate = null;
+
+          for(int idx = 0; idx < amcUsersWithSSOId.size() ; idx++){
+            if(initDate == null){
+              initDate = amcUsersWithSSOId.get(idx).getUpdateDate();
+            }else{
+              if(amcUsersWithSSOId.get(idx).getUpdateDate() != null && initDate.compareTo(amcUsersWithSSOId.get(idx).getUpdateDate()) < 0){
+                  keepIdx = idx;
+                  continue;
+              }
+            }
+
+          }
+          for(int idx = 0; idx < amcUsersWithSSOId.size() ; idx++){
+            if(idx != keepIdx){
+              amcUserMapper.deleteByPrimaryKey(amcUsersWithSSOId.get(idx).getId());
+              AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
+              amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsersWithSSOId.get(idx).getId());
+              amcUserRoleMapper.deleteByExample(amcUserRoleExample);
+              amcUserRoleExample = null;
+            }
+          }
+        }
+
+        amcUsersWithSSOId.get(keepIdx).setMobilePhone(amcUserSSO.getMobilePhone());
+        histMobile = amcUsersWithSSOId.get(keepIdx).getMobilePhone();
+        amcUsersWithSSOId.get(0).setSsoUserId(amcUserSSO.getId());
+        amcUserId = amcUsersWithSSOId.get(keepIdx).getId();
+        amcUserInDb = amcUsersWithSSOId.get(keepIdx);
         amcUserMapper.updateByPrimaryKeySelective(amcUsersWithSSOId.get(0));
         if(amcUsersWithSSOId.size() > 1){
           log.error("There is multiple zcc amc user with the same sso user id:{} need to be handle carefully",
-              amcUser.getSsoUserId());
+              amcUserSSO.getSsoUserId());
         }
+      }else if(!CollectionUtils.isEmpty(amcUsers)){
+        amcUserInDb = amcUsers.get(0);
+        histMobile = amcUsers.get(0).getMobilePhone();
       }
       AmcUserRoleExample amcUserRoleExample = new AmcUserRoleExample();
-      amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUsers.get(0).getId());
+      amcUserRoleExample.createCriteria().andUserIdEqualTo(amcUserId);
       List<AmcUserRole> amcUserRoleList =  amcUserRoleMapper.selectByExample(amcUserRoleExample);
       if(CollectionUtils.isEmpty(amcUserRoleList) ){
         needUpdatePrivilege = true;
       }
-      if(! amcUsers.get(0).getUserCname().equals(amcUser.getUserCname())){
-        amcUsers.get(0).setUserCname(amcUser.getUserCname());
+      if(amcUserSSO.getId() != null &&amcUserInDb != null){
+        needUpdateDb = true;
+        amcUserInDb.setSsoUserId(amcUserSSO.getId());
+      }
+      if(null != amcUserInDb && !amcUserInDb.getUserCname().equals(amcUserSSO.getUserCname())){
+        amcUserInDb.setUserCname(amcUserSSO.getUserCname());
         needUpdateDb = true;
       }
-      if(!amcUsers.get(0).getUserName().equals(amcUser.getUserName())){
-        amcUsers.get(0).setUserName(amcUser.getUserName());
+      if(null != amcUserInDb && !amcUserInDb.getUserName().equals(amcUserSSO.getUserName())){
+        amcUserInDb.setUserName(amcUserSSO.getUserName());
         needUpdateDb = true;
       }
 
-      if(amcUsers.get(0).getDeptId() > 0 && !amcUser.getDeptId().equals(amcUsers.get(0).getDeptId())){
-        amcUsers.get(0).setDeptId(amcUser.getDeptId());
+      if(null != amcUserInDb && amcUserInDb.getDeptId() > 0 && !amcUserSSO.getDeptId().equals(amcUserInDb.getDeptId())){
+        amcUserInDb.setDeptId(amcUserSSO.getDeptId());
         needUpdateDb = true;
         needUpdatePrivilege = true;
       }
-      if(amcUser.getTitle() > 0 && amcUser.getTitle().equals(amcUsers.get(0).getTitle())){
-        amcUsers.get(0).setTitle(amcUser.getTitle());
+      if(null != amcUserInDb && amcUserSSO.getTitle() > 0 && !amcUserSSO.getTitle().equals(amcUserInDb.getTitle())){
+        amcUserInDb.setTitle(amcUserSSO.getTitle());
         needUpdateDb = true;
         needUpdatePrivilege = true;
       }
-      if(amcUser.getLocation() > 0 && !amcUser.getLocation().equals(amcUsers.get(0).getLocation())){
-        amcUsers.get(0).setLocation(amcUser.getLocation());
+      if(null != amcUserInDb && amcUserSSO.getLocation() > 0 && !amcUserSSO.getLocation().equals(amcUserInDb.getLocation())){
+        amcUserInDb.setLocation(amcUserSSO.getLocation());
         needUpdateDb = true;
       }
-      if(amcUser.getLgroup() > 0 && !amcUser.getLgroup().equals(amcUsers.get(0).getLgroup())){
-        amcUsers.get(0).setLgroup(amcUser.getLgroup());
+      if(null != amcUserInDb && amcUserSSO.getLgroup() > 0 && !amcUserSSO.getLgroup().equals(amcUserInDb.getLgroup())){
+        amcUserInDb.setLgroup(amcUserSSO.getLgroup());
         needUpdateDb = true;
       }
-      if(amcUser.getCompanyId() != null && amcUser.getCompanyId() > 0 && !amcUser.getCompanyId().
-          equals(amcUsers.get(0).getCompanyId())){
-        amcUsers.get(0).setCompanyId(amcUser.getCompanyId());
+      if(null != amcUserInDb && amcUserSSO.getCompanyId() != null && amcUserSSO.getCompanyId() > 0 && !amcUserSSO.getCompanyId().
+          equals(amcUserInDb.getCompanyId())){
+        amcUserInDb.setCompanyId(amcUserSSO.getCompanyId());
         needUpdateDb = true;
         needUpdatePrivilege = true;
       }
 //      if(StringUtils.isEmpty(amcUsers.get(0).getPassword())){
 
-        amcUsers.get(0).setUpdateDate(java.sql.Date.valueOf(LocalDate.now()));
+      amcUserInDb.setUpdateDate(java.sql.Date.valueOf(LocalDate.now()));
 //      }
-      if(amcUsers.size() == 1 && amcUsers.get(0).getSsoUserId() == -1L){
+      if(null != amcUserInDb  && amcUserInDb.getSsoUserId() == -1L){
         //need update the user's sso userId
-        amcUsers.get(0).setSsoUserId(amcUser.getSsoUserId());
+        amcUserInDb.setSsoUserId(amcUserSSO.getId());
         needUpdateDb = true;
       }
       if(needUpdateDb){
-        amcUserMapper.updateByPrimaryKeySelective(amcUsers.get(0));
+        amcUserMapper.updateByPrimaryKeySelective(amcUserInDb);
       }
       isInDb = true;
     }
@@ -245,26 +292,26 @@ public class AmcUserServiceImpl implements AmcUserService {
     if(needUpdatePrivilege){
       AmcUserRole amcUserRole = new AmcUserRole();
       if(!isInDb){
-        amcUserRole.setUserId(amcUser.getId());
+        amcUserRole.setUserId(amcUserNew.getId());
       }else{
-        amcUserRole.setUserId(amcUsers.get(0).getId());
+        amcUserRole.setUserId(amcUserInDb.getId());
       }
 
-      List<Integer> roleIds =  amcUserRoleRuleService.getRolesByDeptAndTitle(amcUser.getDeptId().intValue(),
-          amcUser.getTitle());
+      List<Integer> roleIds =  amcUserRoleRuleService.getRolesByDeptAndTitle(amcUserSSO.getDeptId().intValue(),
+          amcUserSSO.getTitle());
       if(CollectionUtils.isEmpty(roleIds)){
         log.error("Database based role control logic is not yet ready !!");
 
-        AmcDeptEnum amcDeptEnum =  AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue());
-        AmcSSOTitleEnum amcSSOTitleEnum = AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle());
+        AmcDeptEnum amcDeptEnum =  AmcDeptEnum.lookupByDisplayIdUtil(amcUserSSO.getDeptId().intValue());
+        AmcSSOTitleEnum amcSSOTitleEnum = AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUserSSO.getTitle());
         if(amcDeptEnum == null || amcSSOTitleEnum == null){
-          log.error("Failed find valild dept enum or ssoTitle enum for user:{} deptId:{} title:{}", amcUser.getId(),
-              amcUser.getDeptId(), amcUser.getTitle());
-          return amcUser;
+          log.error("Failed find valild dept enum or ssoTitle enum for user:{} deptId:{} title:{}", amcUserSSO.getId(),
+              amcUserSSO.getDeptId(), amcUserSSO.getTitle());
+          return amcUserSSO;
         }
         AmcRolesEnum amcRolesEnum =
-            UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUser.getDeptId().intValue()),
-                AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUser.getTitle()));
+            UserUtils.getRoleByUser(AmcDeptEnum.lookupByDisplayIdUtil(amcUserSSO.getDeptId().intValue()),
+                AmcSSOTitleEnum.lookupByDisplayIdUtil(amcUserSSO.getTitle()));
 
         amcUserRole.setRoleId(Long.valueOf(amcRolesEnum.getId()));
       }else{
@@ -294,13 +341,13 @@ public class AmcUserServiceImpl implements AmcUserService {
         amcUserRoleMapper.insertSelective(amcUserRole);
       }
     }
-    if(needUpdateDb || needUpdatePrivilege){
-      amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
+    if((needUpdateDb || needUpdatePrivilege ) && !StringUtils.isEmpty(histMobile)){
+      amcTokenService.revokeTokenByMobilePhone(histMobile);
     }
     if(!isInDb){
-      return amcUser;
+      return amcUserNew;
     }else{
-      return amcUsers.get(0);
+      return amcUserInDb;
     }
   }
 

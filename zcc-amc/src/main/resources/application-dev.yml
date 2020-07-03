@@ -118,6 +118,15 @@ spring:
   data:
     mongodb:
       auto-index-creation: false
+  mail:
+    host: smtp.mxhichina.com
+    port: 25
+    default-encoding: UTF-8
+    username: 债查查后台
+    sso-user-change:
+      targetMail: chenwei@wenshengamc.com,chenwei@wenshengamc.com
+      ccMail: chenwei@wenshengamc.com,chenwei@wenshengamc.com,chenwei@wenshengamc.com
+      subject: [开发环境] 业务人员变动需要调整的债权
 #  http:
 #    converters:
 #      preferred-json-mapper: gson

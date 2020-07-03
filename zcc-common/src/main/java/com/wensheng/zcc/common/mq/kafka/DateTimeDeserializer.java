@@ -18,17 +18,19 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class DateTimeDeserializer implements JsonDeserializer {
 
-  String pattern = "MM/dd/yyyy HH:mm:ss";
+  String pattern = "yyyy-MM-dd HH:mm:SS";
+
   DateFormat df = new SimpleDateFormat(pattern);
 
   @Override
   public Date deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
     try {
       String result = json.getAsJsonPrimitive().getAsString();
-      log.info(result);
+
       return df.parse(result);
     } catch (ParseException e) {
       e.printStackTrace();
+
     }
     return null;
   }

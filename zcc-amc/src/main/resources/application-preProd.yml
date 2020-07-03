@@ -115,7 +115,15 @@ spring:
   data:
     mongodb:
       auto-index-creation: true
-
+  mail:
+    host: smtp.mxhichina.com
+    port: 25
+    default-encoding: UTF-8
+    username: 债查查后台
+    sso-user-change:
+      targetMail: zhangmingji@wenshengamc.com,yangliujun@wenshengamc.com
+      ccMail: liuzhishan@wenshengamc.com,chenwei@wenshengamc.com,wufei@wenshengamc.com
+      subject: 业务人员变动需要调整的债权
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
   mapper-locations:

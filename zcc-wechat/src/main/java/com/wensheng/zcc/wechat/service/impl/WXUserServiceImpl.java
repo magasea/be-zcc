@@ -739,6 +739,7 @@ public class WXUserServiceImpl implements WXUserService {
       wechatUsers.get(0).setMobile("-1");
 
       wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
+      throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,String.format("验证码不匹配", openId));
     }
 
     return true;

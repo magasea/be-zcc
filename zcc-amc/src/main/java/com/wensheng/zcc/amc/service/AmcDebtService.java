@@ -10,6 +10,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebtor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcInfo;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcOrigCreditor;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcSaleFloor;
+import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.dto.AmcContactorDTO;
 import com.wensheng.zcc.amc.module.dto.grpc.WXUserRegionFavor;
 import com.wensheng.zcc.amc.module.vo.AmcDebtExtVo;
@@ -167,4 +168,6 @@ public interface AmcDebtService {
 
   List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor,
       AmcSaleFloor amcSaleFloor) throws Exception;
+
+  List<AmcDebtExt> findDebtsAssetsOfUser(Long userId);
 }

@@ -1,5 +1,6 @@
 package com.wensheng.zcc.sso.service;
 
+import com.wensheng.zcc.common.mq.kafka.module.SSOUserDto;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcPermission;

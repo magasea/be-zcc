@@ -2,6 +2,7 @@ package com.wensheng.zcc.sso.service.impl;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.wensheng.zcc.common.mq.kafka.module.SSOUserDto;
 import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.params.PageInfo;
@@ -359,18 +360,18 @@ public class AmcSsoServiceImpl implements AmcSsoService {
       HttpEntity<SSOQueryParam> entity = new HttpEntity<>(ssoQueryParam, headers);
 
       ResponseEntity response = restTemplate.exchange(ssoUrl, HttpMethod.POST, entity,
-          new ParameterizedTypeReference<AmcPage<SSOAmcUser>>() {} );
-      AmcPage<SSOAmcUser> resp = (AmcPage<SSOAmcUser>) response.getBody();
+          new ParameterizedTypeReference<AmcPage<SSOUserDto>>() {} );
+      AmcPage<SSOUserDto> resp = (AmcPage<SSOUserDto>) response.getBody();
       if(!CollectionUtils.isEmpty(resp.getContent())){
         pageNum = pageNum + 1;
       }else{
         pageNum  = -1 ;
         break;
       }
-      List<SSOAmcUser> ssoAmcUsers = resp.getContent();
+      List<SSOUserDto> ssoAmcUsers = resp.getContent();
       AmcUser amcUser = new AmcUser();
       if(!CollectionUtils.isEmpty(ssoAmcUsers)){
-        for(SSOAmcUser ssoAmcUser: ssoAmcUsers){
+        for(SSOUserDto ssoAmcUser: ssoAmcUsers){
           amcUser = new AmcUser();
           AmcBeanUtils.copyProperties(ssoAmcUser, amcUser);
           amcUser.setSsoUserId(ssoAmcUser.getId());

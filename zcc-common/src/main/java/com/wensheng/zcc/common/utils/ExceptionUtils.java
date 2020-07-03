@@ -11,7 +11,7 @@ public class ExceptionUtils {
   }
 
   public static Exception getAmcException(AmcExceptions amcExceptions, String additional){
-    return new Exception(String.format("%d:%s:%s-%s",amcExceptions.code, amcExceptions.name, amcExceptions.reason,
+    return new Exception(String.format("%d:%s:%s--%s",amcExceptions.code, amcExceptions.name, amcExceptions.reason,
         additional));
   }
 

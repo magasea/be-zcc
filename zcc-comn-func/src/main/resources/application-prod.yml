@@ -161,7 +161,7 @@ env:
     kfkhost: 10.20.100.238
     mongodb-host: 10.20.100.235
     image-repo: /backup/temp
-    regionhost: 10.20.100.228
+    regionhost: 10.20.100.252
     regionport: 5050
     oauth2:
         host: 10.20.100.238

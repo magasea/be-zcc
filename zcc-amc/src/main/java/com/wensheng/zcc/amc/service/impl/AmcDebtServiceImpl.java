@@ -1839,6 +1839,19 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     }
     return amcDebtVos;
   }
+
+  @Override
+  public List<AmcDebtExt> findDebtsAssetsOfUser(Long userId) {
+
+
+      AmcDebtExample amcDebtExample = new AmcDebtExample();
+      amcDebtExample.createCriteria().andAmcContactorIdEqualTo(userId);
+      List<AmcDebtExt> amcDebts = amcDebtExtMapper.selectSimpleByExampleExt(amcDebtExample);
+      return amcDebts;
+
+
+  }
+
   @Cacheable
   public List<AmcDebt> getDebtVosByCurtInfos(List<Long> curtIds, Integer limit) throws Exception {
     AmcDebtExample amcDebtExample = new AmcDebtExample();

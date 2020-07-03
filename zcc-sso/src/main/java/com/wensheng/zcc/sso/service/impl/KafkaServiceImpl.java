@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.dto.WechatCode2SessionVo;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
+import com.wensheng.zcc.common.mq.kafka.module.SSOUserModDto;
 import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
@@ -91,16 +92,16 @@ public class KafkaServiceImpl implements KafkaService {
 
   @KafkaListener( topics = "${kafka.topic-sso-userchanged}", clientIdPrefix = "zcc-sso",
       containerFactory = "kafkaListenerStringContainerFactory")
-  public void listenUserOperation(ConsumerRecord<String, AmcUser> cr,
-      @Payload AmcUser amcUser) {
+  public void listenUserOperation(ConsumerRecord<String, SSOUserModDto> cr,
+      @Payload SSOUserModDto ssoUserModDto) {
     log.info("Logger 1 [JSON] received key {}: Type [{}] | Payload: {} | Record: {}", cr.key(),
-        typeIdHeader(cr.headers()), amcUser, cr.toString());
+        typeIdHeader(cr.headers()), ssoUserModDto, cr.toString());
     String gsonStr = null;
     try{
 //      gsonStr = gson.toJson(payload);
-//      AmcUser amcUser = new AmcUser();
-//      AmcBeanUtils.copyProperties(payload, amcUser);
-      amcTokenService.revokeTokenByMobilePhone(amcUser.getMobilePhone());
+      AmcUser amcUser = new AmcUser();
+      AmcBeanUtils.copyProperties(ssoUserModDto.getAmcUserDtoCurr(), amcUser);
+      amcTokenService.revokeTokenByMobilePhone(ssoUserModDto.getAmcUserDtoHis().getMobilePhone());
 //      wszccTemplate.save(amcUser);
       amcUserService.createUser(amcUser);
     }catch (Exception ex){

@@ -2,11 +2,10 @@ package com.wensheng.zcc.cust.service.impl;
 
 import com.wensheng.zcc.cust.dao.mysql.mapper.MailConfigNewCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
-import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactorExample;
+import com.wensheng.zcc.cust.module.dao.mongo.MailNewCmpyDetail;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.MailConfigNewCmpyExample;
-import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import com.wensheng.zcc.cust.service.CustMailConfigService;
 import java.io.File;
@@ -35,11 +34,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -59,6 +58,9 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
 
   @Autowired
   CustTrdCmpyExtMapper custTrdCmpyExtMapper;
+
+  @Autowired
+  MongoTemplate mongoTemplate;
 
   @Value("${cust.syncUrls.cmpyLinkMould}")
   String cmpyLinkMould;
@@ -96,6 +98,10 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
       }
       //根据配置信息发送邮件
       sendMail(mailConfigNewCmpy);
+
+      //mongo邮件记录
+      saveMongoMailDetail(mailConfigNewCmpy);
+
       log.info("新增公司发邮件定时任务完成");
     } catch (IOException e) {
       log.error("根据配置信息生成临时文件异常e:{}",e);
@@ -238,6 +244,22 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
     FileSystemResource file = new FileSystemResource(new File(fileBase+File.separator+String.format("%s.xlsx", subject)));
     mimeMessageHelper.addAttachment(String.format("%s.xlsx",subject), file);
     javaMailSender.send(mimeMessage);//发送
+  }
+
+  /**
+   * mongo邮件记录
+   * @param mailConfigNewCmpy
+   */
+  public void saveMongoMailDetail(MailConfigNewCmpy mailConfigNewCmpy){
+    MailNewCmpyDetail mailNewCmpyDetail = new MailNewCmpyDetail();
+    mailNewCmpyDetail.setUserMail(mailConfigNewCmpy.getUserMail());
+    mailNewCmpyDetail.setToMail(mailConfigNewCmpy.getToMail());
+    mailNewCmpyDetail.setCcMail(mailConfigNewCmpy.getCcMail());
+    mailNewCmpyDetail.setSubject(mailConfigNewCmpy.getSubject());
+    mailNewCmpyDetail.setText(mailConfigNewCmpy.getText());
+    mailNewCmpyDetail.setProvince(mailConfigNewCmpy.getProvince());
+    mailNewCmpyDetail.setCreatedAt(new Date());
+    mongoTemplate.save(mailNewCmpyDetail);
   }
 
 

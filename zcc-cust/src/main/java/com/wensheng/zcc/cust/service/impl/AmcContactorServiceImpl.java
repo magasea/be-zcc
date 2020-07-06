@@ -24,6 +24,8 @@ import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
+import com.wensheng.zcc.cust.module.vo.helper.MergeCustRestult;
 import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.AmcContactorService;
 
@@ -161,7 +163,16 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId,  Long updateBy) throws Exception {
+  public MergeCustRestult mergeCmpycontactor(MergeCustVo mergeCustVo) throws Exception {
+
+    List<Long> fromContactorIds = mergeCustVo.getFromPersonIds();
+    Long toContactorId = mergeCustVo.getToPersonId();
+    Long updateBy = mergeCustVo.getUpdateBy();
+    String phoneUpdate  = mergeCustVo.getPhoneUpdate();
+    String mobileUpdate  = mergeCustVo.getMobileUpdate();
+
+    MergeCustRestult mergeCustRestult = new MergeCustRestult();
+    mergeCustRestult.setSuccess(true);
 
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
     fromContactorIds.add(toContactorId);
@@ -203,6 +214,8 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
       }
       CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorHashMap.get(cmpycontactorId);
       creatCustAmcCmpycontactorNew(toCustAmcCmpycontactorNew, originalCmpycontactor);
+
+
       CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
       custAmcCmpycontactor.setId(cmpycontactorId);
       custAmcCmpycontactor.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
@@ -239,22 +252,46 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
       commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
           String.format("人工合并至%d",toContactorId), originalCmpycontactor);
       custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+
     }
 
     //去重
-    toCustAmcCmpycontactorNew.setMobileUpdate(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobileUpdate()));
-    toCustAmcCmpycontactorNew.setMobilePrep(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobilePrep()));
-    toCustAmcCmpycontactorNew.setMobileHistory(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobileHistory()));
-    toCustAmcCmpycontactorNew.setPhoneUpdate(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhoneUpdate()));
-    toCustAmcCmpycontactorNew.setPhonePrep(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhonePrep()));
-    toCustAmcCmpycontactorNew.setPhoneHistory(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhoneHistory()));
+    phoneRepeatRemove(toCustAmcCmpycontactorNew);
+    if(!StringUtils.isEmpty(phoneUpdate)){
+      toCustAmcCmpycontactorNew.setPhoneUpdate(phoneUpdate);
+    }
+    if(!StringUtils.isEmpty(mobileUpdate)){
+      toCustAmcCmpycontactorNew.setMobileUpdate(mobileUpdate);
+    }
+    //判断电话是否超出限制
+    String[] phoneArray = toCustAmcCmpycontactorNew.getPhoneUpdate().split(";");
+    String[] mobileArray = toCustAmcCmpycontactorNew.getMobileUpdate().split(";");
+    if(phoneArray.length>3 || mobileArray.length>3){
+      mergeCustRestult.setSuccess(false);
+      mergeCustRestult.setMobileUpdate(toCustAmcCmpycontactorNew.getMobileUpdate());
+      mergeCustRestult.setPhoneUpdate(toCustAmcCmpycontactorNew.getPhoneUpdate());
+      return mergeCustRestult;
+    }
 
     //修改合并人的电话
     commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
         "合并记录", toCustAmcCmpycontactor);
     toCustAmcCmpycontactorNew.setUpdateTime(new Date());
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(toCustAmcCmpycontactorNew);
+    return mergeCustRestult;
+  }
 
+  /**
+   * 去重
+   * @param toCustAmcCmpycontactorNew
+   */
+  private void phoneRepeatRemove(CustAmcCmpycontactor toCustAmcCmpycontactorNew) {
+    toCustAmcCmpycontactorNew.setMobileUpdate(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobileUpdate()));
+    toCustAmcCmpycontactorNew.setMobilePrep(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobilePrep()));
+    toCustAmcCmpycontactorNew.setMobileHistory(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getMobileHistory()));
+    toCustAmcCmpycontactorNew.setPhoneUpdate(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhoneUpdate()));
+    toCustAmcCmpycontactorNew.setPhonePrep(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhonePrep()));
+    toCustAmcCmpycontactorNew.setPhoneHistory(commonHandler.removalPhone(toCustAmcCmpycontactorNew.getPhoneHistory()));
   }
 
   private void creatCustAmcCmpycontactorNew(CustAmcCmpycontactor toCustAmcCmpycontactorNew,

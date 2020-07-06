@@ -148,7 +148,6 @@ public class CommonHandler {
       }
       sbPhoneNew.append(phoneNew);
     }
-
     return sbPhoneNew.toString();
   }
 

@@ -70,7 +70,15 @@ public class AmcCmpyContactorController {
   @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
   public MergeCustRestult mergeCmpyAmcContactor(@RequestBody MergeCustVo mergeCustVo) throws Exception {
-    return amcContactorService.mergeCmpycontactor(mergeCustVo);
+    MergeCustRestult mergeCustRestult = new MergeCustRestult();
+    mergeCustRestult.setSuccess(true);
+    try {
+      amcContactorService.mergeCmpycontactor(mergeCustRestult, mergeCustVo);
+    } catch (Exception e) {
+      mergeCustRestult.setSuccess(false);
+      log.error("合并失败");
+    }
+    return mergeCustRestult;
   }
 
 

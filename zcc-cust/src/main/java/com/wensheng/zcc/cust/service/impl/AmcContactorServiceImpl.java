@@ -163,16 +163,14 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public MergeCustRestult mergeCmpycontactor(MergeCustVo mergeCustVo) throws Exception {
+  public void mergeCmpycontactor(MergeCustRestult mergeCustRestult,
+      MergeCustVo mergeCustVo) throws Exception {
 
     List<Long> fromContactorIds = mergeCustVo.getFromPersonIds();
     Long toContactorId = mergeCustVo.getToPersonId();
     Long updateBy = mergeCustVo.getUpdateBy();
     String phoneUpdate  = mergeCustVo.getPhoneUpdate();
     String mobileUpdate  = mergeCustVo.getMobileUpdate();
-
-    MergeCustRestult mergeCustRestult = new MergeCustRestult();
-    mergeCustRestult.setSuccess(true);
 
     CustAmcCmpycontactorExample custAmcCmpycontactorExample = new CustAmcCmpycontactorExample();
     fromContactorIds.add(toContactorId);
@@ -252,7 +250,6 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
       commonHandler.creatCmpycontactorHistory(updateBy, "mergeCmpycontactor",
           String.format("人工合并至%d",toContactorId), originalCmpycontactor);
       custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
-
     }
 
     //去重
@@ -270,7 +267,8 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
       mergeCustRestult.setSuccess(false);
       mergeCustRestult.setMobileUpdate(toCustAmcCmpycontactorNew.getMobileUpdate());
       mergeCustRestult.setPhoneUpdate(toCustAmcCmpycontactorNew.getPhoneUpdate());
-      return mergeCustRestult;
+      mergeCustRestult.setErrCode("PHONE_COUNT_GREATER_THREE");
+      throw new Exception("PHONE_COUNT_GREATER_THREE");
     }
 
     //修改合并人的电话
@@ -278,7 +276,6 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
         "合并记录", toCustAmcCmpycontactor);
     toCustAmcCmpycontactorNew.setUpdateTime(new Date());
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(toCustAmcCmpycontactorNew);
-    return mergeCustRestult;
   }
 
   /**

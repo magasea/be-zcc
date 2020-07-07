@@ -14,7 +14,7 @@ public interface AmcContactorService {
 
   ModifyResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
-  MergeCustRestult mergeCmpycontactor(MergeCustVo mergeCustVo) throws Exception;
+  void mergeCmpycontactor(MergeCustRestult mergeCustRestult, MergeCustVo mergeCustVo) throws Exception;
 
   List<CustAmcCmpycontactor> getCmpyAmcContactor(String cmpyName);
 

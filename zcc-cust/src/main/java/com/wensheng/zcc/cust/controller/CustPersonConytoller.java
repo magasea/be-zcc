@@ -5,6 +5,7 @@ import com.wensheng.zcc.cust.config.aop.MergeCustChecker;
 import com.wensheng.zcc.cust.config.aop.ModifyCheckerCustPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.vo.MergeCustVo;
+import com.wensheng.zcc.cust.module.vo.helper.MergeCustRestult;
 import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.List;
@@ -52,10 +53,15 @@ public class CustPersonConytoller {
   @RequestMapping(value = "/mergeCustPerson", method = RequestMethod.POST)
   @ResponseBody
   @MergeCustChecker
-  public void mergeCustPerson(@RequestBody MergeCustVo mergeCustVo) throws Exception {
-    List<Long> fromPersonIds = mergeCustVo.getFromPersonIds();
-    Long toPersonId = mergeCustVo.getToPersonId();
-    Long updateBy = mergeCustVo.getUpdateBy();
-    custPersonService.mergeCustPerson(fromPersonIds, toPersonId, updateBy);
+  public MergeCustRestult mergeCustPerson(@RequestBody MergeCustVo mergeCustVo){
+    MergeCustRestult mergeCustRestult = new MergeCustRestult();
+    mergeCustRestult.setSuccess(true);
+    try {
+      custPersonService.mergeCustPerson(mergeCustRestult, mergeCustVo);
+    } catch (Exception e) {
+      mergeCustRestult.setSuccess(false);
+      log.error("合并失败");
+    }
+    return mergeCustRestult;
   }
 }

@@ -69,7 +69,7 @@ public class AmcCmpyContactorController {
 
   @RequestMapping(value = "/mergeCmpyAmcContactor", method = RequestMethod.POST)
   @ResponseBody
-  public MergeCustRestult mergeCmpyAmcContactor(@RequestBody MergeCustVo mergeCustVo) throws Exception {
+  public MergeCustRestult mergeCmpyAmcContactor(@RequestBody MergeCustVo mergeCustVo) {
     MergeCustRestult mergeCustRestult = new MergeCustRestult();
     mergeCustRestult.setSuccess(true);
     try {

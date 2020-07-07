@@ -3,6 +3,8 @@ package com.wensheng.zcc.cust.service;
 
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
+import com.wensheng.zcc.cust.module.vo.helper.MergeCustRestult;
 import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import java.util.List;
 
@@ -31,10 +33,8 @@ public interface CustPersonService {
 
   /**
    * 合并联系人
-   * @param fromPersonIds
-   * @param toPersonId
    * @throws Exception
    */
-  void mergeCustPerson(List<Long> fromPersonIds, Long toPersonId, Long updateBy) throws Exception;
+  void mergeCustPerson(MergeCustRestult mergeCustRestult, MergeCustVo mergeCustVo) throws Exception;
 
 }

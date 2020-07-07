@@ -12,6 +12,8 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
+import com.wensheng.zcc.cust.module.vo.helper.MergeCustRestult;
 import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.CustPersonService;
 import java.util.ArrayList;
@@ -27,6 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 @Service
 @Slf4j
@@ -200,7 +203,13 @@ public class CustPersonServiceImpl implements CustPersonService {
 
   @Override
   @Transactional(rollbackFor = Exception.class)
-  public void mergeCustPerson(List<Long> fromPersonIds, Long toPersonId, Long updateBy) throws Exception {
+  public void mergeCustPerson(MergeCustRestult mergeCustRestult, MergeCustVo mergeCustVo) throws Exception {
+
+    List<Long> fromPersonIds = mergeCustVo.getFromPersonIds();
+    Long toPersonId = mergeCustVo.getToPersonId();
+    Long updateBy = mergeCustVo.getUpdateBy();
+    String phoneUpdate  = mergeCustVo.getPhoneUpdate();
+    String mobileUpdate  = mergeCustVo.getMobileUpdate();
 
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
     fromPersonIds.add(toPersonId);
@@ -268,18 +277,39 @@ public class CustPersonServiceImpl implements CustPersonService {
     }
 
     //去重
-    toCustTrdPersonNew.setMobileUpdate(commonHandler.removalPhone(toCustTrdPersonNew.getMobileUpdate()));
-    toCustTrdPersonNew.setMobilePrep(commonHandler.removalPhone(toCustTrdPersonNew.getMobilePrep()));
-    toCustTrdPersonNew.setMobileHistory(commonHandler.removalPhone(toCustTrdPersonNew.getMobileHistory()));
-    toCustTrdPersonNew.setPhoneUpdate(commonHandler.removalPhone(toCustTrdPersonNew.getPhoneUpdate()));
-    toCustTrdPersonNew.setPhonePrep(commonHandler.removalPhone(toCustTrdPersonNew.getPhonePrep()));
-    toCustTrdPersonNew.setPhoneHistory(commonHandler.removalPhone(toCustTrdPersonNew.getPhoneHistory()));
+    phoneRepeatRemove(toCustTrdPersonNew);
+
+    if(!StringUtils.isEmpty(phoneUpdate)){
+      toCustTrdPersonNew.setPhoneUpdate(phoneUpdate);
+    }
+    if(!StringUtils.isEmpty(mobileUpdate)){
+      toCustTrdPersonNew.setMobileUpdate(mobileUpdate);
+    }
+    //判断电话是否超出限制
+    String[] phoneArray = toCustTrdPersonNew.getPhoneUpdate().split(";");
+    String[] mobileArray = toCustTrdPersonNew.getMobileUpdate().split(";");
+    if(phoneArray.length>3 || mobileArray.length>3){
+      mergeCustRestult.setSuccess(false);
+      mergeCustRestult.setMobileUpdate(toCustTrdPersonNew.getMobileUpdate());
+      mergeCustRestult.setPhoneUpdate(toCustTrdPersonNew.getPhoneUpdate());
+      mergeCustRestult.setErrCode("PHONE_COUNT_GREATER_THREE");
+      throw new Exception("PHONE_COUNT_GREATER_THREE");
+    }
 
     //修改合并人的电话
     commonHandler.creatPersonHistory(updateBy, "mergeCustPerson",
         "合并记录", toCustTrdPerson);
     toCustTrdPersonNew.setUpdateTime(new Date());
     custTrdPersonMapper.updateByPrimaryKeySelective(toCustTrdPersonNew);
+  }
+
+  private void phoneRepeatRemove(CustTrdPerson toCustTrdPersonNew) {
+    toCustTrdPersonNew.setMobileUpdate(commonHandler.removalPhone(toCustTrdPersonNew.getMobileUpdate()));
+    toCustTrdPersonNew.setMobilePrep(commonHandler.removalPhone(toCustTrdPersonNew.getMobilePrep()));
+    toCustTrdPersonNew.setMobileHistory(commonHandler.removalPhone(toCustTrdPersonNew.getMobileHistory()));
+    toCustTrdPersonNew.setPhoneUpdate(commonHandler.removalPhone(toCustTrdPersonNew.getPhoneUpdate()));
+    toCustTrdPersonNew.setPhonePrep(commonHandler.removalPhone(toCustTrdPersonNew.getPhonePrep()));
+    toCustTrdPersonNew.setPhoneHistory(commonHandler.removalPhone(toCustTrdPersonNew.getPhoneHistory()));
   }
 
   private void creatCustTrdPersonNew(CustTrdPerson toCustTrdPersonNew,

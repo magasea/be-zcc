@@ -13,6 +13,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonHistory;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
@@ -170,4 +171,40 @@ public class CommonHandler {
     custTrdPersonHistory.setRemark(remark);
     custTrdPersonHistoryMapper.insertSelective(custTrdPersonHistory);
   }
+
+  /**
+   * 合并时生成历史电话
+   * @param mergePhoneUpdate
+   * @param phoneUpdate
+   * @param phoneHistory
+   * @return
+   */
+  public String mergePhoneHistory(String mergePhoneUpdate, String phoneUpdate, String phoneHistory) {
+    List<String> mergePhoneUpdateList = Arrays.asList(mergePhoneUpdate.split(";"));
+    List<String> phoneUpdateList = Arrays.asList(phoneUpdate.split(";"));
+    List<String> phoneHistoryList = Arrays.asList(phoneHistory.split(";"));
+    Set<String> phoneHistorySet = new HashSet<>();
+
+    //找出mergePhoneUpdate比phoneUpdate多的号码
+    for (String  phoneUpdateString : mergePhoneUpdateList) {
+      if(!phoneUpdateList.contains(phoneUpdateString)){
+        phoneHistorySet.add(phoneUpdateString);
+      }
+    }
+
+    //phoneHistory合并去重
+    phoneHistoryList.forEach(a -> phoneHistorySet.add(a));
+    StringBuffer sb = new StringBuffer();
+    for (String phoneHistoryNew:phoneHistorySet) {
+      if("-1".equals(phoneHistoryNew)){
+        continue;
+      }
+      if(sb.length()>0){
+        sb.append(";");
+      }
+      sb.append(phoneHistoryNew);
+    }
+    return sb.toString();
+  }
+
 }

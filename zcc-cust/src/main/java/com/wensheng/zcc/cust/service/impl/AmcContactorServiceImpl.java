@@ -213,7 +213,6 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
       CustAmcCmpycontactor originalCmpycontactor =custAmcCmpycontactorHashMap.get(cmpycontactorId);
       creatCustAmcCmpycontactorNew(toCustAmcCmpycontactorNew, originalCmpycontactor);
 
-
       CustAmcCmpycontactor custAmcCmpycontactor = new CustAmcCmpycontactor();
       custAmcCmpycontactor.setId(cmpycontactorId);
       custAmcCmpycontactor.setStatus(PresonStatusEnum.MERGED_STATUS.getId());
@@ -254,12 +253,20 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
 
     //去重
     phoneRepeatRemove(toCustAmcCmpycontactorNew);
+
     if(!StringUtils.isEmpty(phoneUpdate)){
+      toCustAmcCmpycontactorNew.setPhoneHistory(
+          commonHandler.mergePhoneHistory(toCustAmcCmpycontactorNew.getPhoneUpdate(), phoneUpdate,
+              toCustAmcCmpycontactorNew.getPhoneHistory()));
       toCustAmcCmpycontactorNew.setPhoneUpdate(phoneUpdate);
     }
     if(!StringUtils.isEmpty(mobileUpdate)){
+      toCustAmcCmpycontactorNew.setMobileHistory(
+          commonHandler.mergePhoneHistory(toCustAmcCmpycontactorNew.getMobileUpdate(), mobileUpdate,
+              toCustAmcCmpycontactorNew.getMobileHistory()));
       toCustAmcCmpycontactorNew.setMobileUpdate(mobileUpdate);
     }
+
     //判断电话是否超出限制
     String[] phoneArray = toCustAmcCmpycontactorNew.getPhoneUpdate().split(";");
     String[] mobileArray = toCustAmcCmpycontactorNew.getMobileUpdate().split(";");
@@ -267,8 +274,8 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
       mergeCustRestult.setSuccess(false);
       mergeCustRestult.setMobileUpdate(toCustAmcCmpycontactorNew.getMobileUpdate());
       mergeCustRestult.setPhoneUpdate(toCustAmcCmpycontactorNew.getPhoneUpdate());
-      mergeCustRestult.setErrCode("PHONE_COUNT_GREATER_THREE");
-      throw new Exception("PHONE_COUNT_GREATER_THREE");
+      mergeCustRestult.setErrCode("PHONE_COUNT_GREATER_MAX");
+      throw new Exception("PHONE_COUNT_GREATER_MAX");
     }
 
     //修改合并人的电话
@@ -277,6 +284,7 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
     toCustAmcCmpycontactorNew.setUpdateTime(new Date());
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(toCustAmcCmpycontactorNew);
   }
+
 
   /**
    * 去重

@@ -204,13 +204,14 @@ public class CustPersonServiceImpl implements CustPersonService {
   @Override
   @Transactional(rollbackFor = Exception.class)
   public void mergeCustPerson(MergeCustRestult mergeCustRestult, MergeCustVo mergeCustVo) throws Exception {
-
+    //得到入参
     List<Long> fromPersonIds = mergeCustVo.getFromPersonIds();
     Long toPersonId = mergeCustVo.getToPersonId();
     Long updateBy = mergeCustVo.getUpdateBy();
     String phoneUpdate  = mergeCustVo.getPhoneUpdate();
     String mobileUpdate  = mergeCustVo.getMobileUpdate();
 
+    //查询元数据
     CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
     fromPersonIds.add(toPersonId);
     custTrdPersonExample.createCriteria().andIdIn(fromPersonIds);
@@ -280,9 +281,15 @@ public class CustPersonServiceImpl implements CustPersonService {
     phoneRepeatRemove(toCustTrdPersonNew);
 
     if(!StringUtils.isEmpty(phoneUpdate)){
+      toCustTrdPersonNew.setPhoneHistory(
+          commonHandler.mergePhoneHistory(toCustTrdPersonNew.getPhoneUpdate(), phoneUpdate,
+              toCustTrdPersonNew.getPhoneHistory()));
       toCustTrdPersonNew.setPhoneUpdate(phoneUpdate);
     }
     if(!StringUtils.isEmpty(mobileUpdate)){
+      toCustTrdPersonNew.setMobileHistory(
+          commonHandler.mergePhoneHistory(toCustTrdPersonNew.getMobileUpdate(), mobileUpdate,
+              toCustTrdPersonNew.getMobileHistory()));
       toCustTrdPersonNew.setMobileUpdate(mobileUpdate);
     }
     //判断电话是否超出限制
@@ -292,8 +299,8 @@ public class CustPersonServiceImpl implements CustPersonService {
       mergeCustRestult.setSuccess(false);
       mergeCustRestult.setMobileUpdate(toCustTrdPersonNew.getMobileUpdate());
       mergeCustRestult.setPhoneUpdate(toCustTrdPersonNew.getPhoneUpdate());
-      mergeCustRestult.setErrCode("PHONE_COUNT_GREATER_THREE");
-      throw new Exception("PHONE_COUNT_GREATER_THREE");
+      mergeCustRestult.setErrCode("PHONE_COUNT_GREATER_MAX");
+      throw new Exception("PHONE_COUNT_GREATER_MAX");
     }
 
     //修改合并人的电话

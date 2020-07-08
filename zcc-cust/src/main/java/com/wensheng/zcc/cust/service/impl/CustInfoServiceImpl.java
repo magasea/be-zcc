@@ -827,8 +827,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
-      custTrdInfoVo.setPhonePrep(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
-          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoVo.setPhonePrep(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+              custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
       custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
@@ -866,6 +866,26 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
 
     return custTrdInfoVos;
+  }
+
+  /**
+   * 拼接PhonePrep
+   * @param cmpyPhone
+   * @param annuReptPhone
+   * @return
+   */
+  private String creatPhonePrep (String cmpyPhone, String annuReptPhone){
+    StringBuffer sbPhoneNew = new StringBuffer();
+    if(!"-1".equals(cmpyPhone) && !StringUtils.isEmpty(sbPhoneNew)){
+      sbPhoneNew.append(cmpyPhone);
+    }
+    if(sbPhoneNew.length()>0){
+      sbPhoneNew.append(";");
+    }
+    if(!"-1".equals(annuReptPhone) && !StringUtils.isEmpty(annuReptPhone)){
+      sbPhoneNew.append(annuReptPhone);
+    }
+    return sbPhoneNew.toString();
   }
 
   private List<CustTrdInfoVo> convertPersonToVoes(List<CustTrdPersonTrdExt> custTrdPersonTrdExtList) {

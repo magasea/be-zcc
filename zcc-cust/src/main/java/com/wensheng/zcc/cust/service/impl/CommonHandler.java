@@ -25,6 +25,7 @@ import org.springframework.http.converter.json.GsonHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 @Component
@@ -144,6 +145,9 @@ public class CommonHandler {
     }
     StringBuffer sbPhoneNew = new StringBuffer();
     for (String phoneNew:phoneSet){
+      if("-1".equals(phoneNew) || StringUtils.isEmpty(phoneNew)){
+        continue;
+      }
       if(sbPhoneNew.length()>0){
         sbPhoneNew.append(";");
       }
@@ -196,7 +200,7 @@ public class CommonHandler {
     phoneHistoryList.forEach(a -> phoneHistorySet.add(a));
     StringBuffer sb = new StringBuffer();
     for (String phoneHistoryNew:phoneHistorySet) {
-      if("-1".equals(phoneHistoryNew)){
+      if("-1".equals(phoneHistoryNew) || StringUtils.isEmpty(phoneHistoryNew)){
         continue;
       }
       if(sb.length()>0){

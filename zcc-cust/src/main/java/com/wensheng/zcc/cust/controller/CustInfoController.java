@@ -14,6 +14,7 @@ import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
 import com.wensheng.zcc.cust.module.sync.CmpyBizInfoResult;
+import com.wensheng.zcc.cust.module.vo.CustCountVo;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
@@ -254,6 +255,24 @@ public class CustInfoController {
 //    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
     return PageReqRepHelper.getAmcPage(queryResults, totalCount );
 
+  }
+
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
+  @RequestMapping(value = "/getCustCount", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public CustCountVo getCustCount() throws Exception {
+    CustCountVo custCountVo = new CustCountVo();
+    custCountVo.setAllCmpycount(100);
+    custCountVo.setAllPersonCount(100);
+    custCountVo.setUpdateCmpycount(100);
+    custCountVo.setUpdatePersonCount(100);
+    custCountVo.setCreatCmpycount(100);
+    custCountVo.setCreatPersonCount(100);
+    custCountVo.setTradeCmpycount(100);
+    custCountVo.setTradePersonCount(100);
+    return custCountVo;
   }
 
 //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")

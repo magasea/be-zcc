@@ -727,8 +727,8 @@ public class CustInfoServiceImpl implements CustInfoService {
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
-    String whereClause = " ctp.status != 2";
-    custTrdPersonExtExample.setWhereClause(whereClause);
+//    String whereClause = " ctp.status != 2";
+//    custTrdPersonExtExample.setWhereClause(whereClause);
     custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
     if(!StringUtils.isEmpty(filterBy)){
       custTrdPersonExtExample.setFilterByClause(filterBy);

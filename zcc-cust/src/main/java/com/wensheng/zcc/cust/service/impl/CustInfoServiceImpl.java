@@ -593,7 +593,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       Map<String, Direction> orderByParam) throws Exception {
 
     if(CollectionUtils.isEmpty(orderByParam)){
-      if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctp.data_quality", Direction.DESC);
         orderByParam.put("ctp.id", Direction.DESC);
       }

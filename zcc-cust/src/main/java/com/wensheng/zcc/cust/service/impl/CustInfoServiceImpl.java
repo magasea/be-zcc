@@ -613,6 +613,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdPersonExtExample custTrdPersonExtExample = SQLUtils.getCustPersonTrdExample(queryParam);
+    //使用whereClause因为无法对两个表有相同字段做筛选
+    String whereClause = SQLUtils.getCustWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdPersonExtExample.setWhereClause(whereClause);
+    }
     custTrdPersonExtExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);

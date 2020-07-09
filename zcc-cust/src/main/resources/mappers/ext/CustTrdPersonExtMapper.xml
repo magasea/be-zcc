@@ -188,6 +188,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
+    <if test="whereClause != null">
+      ${whereClause}
+    </if>
     <if test="orderByClause != null">
       group by ctp.id order by ${orderByClause}
     </if>
@@ -290,6 +293,9 @@
     </if>
     <if test="filterByClause != null">
       ${filterByClause}
+    </if>
+    <if test="whereClause != null">
+      ${whereClause}
     </if>
     <if test="orderByClause != null">
       group by ctp.id order by ${orderByClause}

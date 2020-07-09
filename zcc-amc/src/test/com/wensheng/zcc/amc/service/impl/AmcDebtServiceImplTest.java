@@ -49,4 +49,9 @@ public class AmcDebtServiceImplTest {
       System.out.println("OK");
     }
   }
+
+  @Test
+  public void updateGeoInfo4SpeicialDebt() {
+    amcDebtService.updateGeoInfo4SpeicialDebt(2584L);
+  }
 }

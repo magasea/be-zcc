@@ -5,9 +5,18 @@ import lombok.Data;
 
 @Data
 public class GaodeGeneralResp {
-  Integer status;
-  String info;
+  @SerializedName("count")
+  private String count;
+
   @SerializedName("infocode")
-  String infoCode;
-  Integer count;
+  private String infocode;
+
+
+
+  @SerializedName("status")
+  private String status;
+
+  @SerializedName("info")
+  private String info;
+
 }

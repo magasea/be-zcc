@@ -15,16 +15,20 @@ import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.controller.helper.QueryParam;
 import com.wensheng.zcc.wechat.controller.helper.WechatUserSortEnum;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
+import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserPendingPhoneMapper;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.ext.WechatUserExtMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserExample;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhone;
+import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhoneExample;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStatic;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserStaticExample;
 import com.wensheng.zcc.wechat.module.dao.mysql.ext.WechatUserExtExample;
@@ -180,7 +184,14 @@ public class WXUserServiceImpl implements WXUserService {
   @Autowired
   WechatUserStaticMapper wechatUserStaticMapper;
 
-  private final Long MAX_TIME_LAG = 1200L;
+  @Autowired
+  WechatUserPendingPhoneMapper wechatUserPendingPhoneMapper;
+
+  private final Long MAX_TIME_LAG = 300L;
+
+  private final Long DAY_SECONDS = 24*60*60L;
+
+  private final int TIMES_SEND_VCODE_LIMIT = 5;
 
 
   private Gson gson = new Gson();
@@ -656,8 +667,10 @@ public class WXUserServiceImpl implements WXUserService {
 
   }
 
+
+
   @Override
-  public boolean sendPhoneVcode(String openId, String phone, String code) throws Exception {
+  public boolean sendPhoneVcode(String openId, String phone) throws Exception {
 //throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_JSON_CONTENT_ERROR,String.format("没有找到该用户", openId));
     WechatUserExample wechatUserExample = new WechatUserExample();
     wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
@@ -672,17 +685,141 @@ public class WXUserServiceImpl implements WXUserService {
       }
     }
 
+
+    boolean isVcodeExpired = false;
     if(!StringUtils.isEmpty(wechatUser.getVerifyCode()) && !wechatUser.getVerifyCode().equals("-1")){
       Date currDate = AmcDateUtils.getCurrentDate();
-      if(currDate.toInstant().getEpochSecond() < (wechatUser.getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG/20)){
+      if(currDate.toInstant().getEpochSecond() < (wechatUser.getVcodeTime().toInstant().getEpochSecond() + 60)){
         throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR, "请过1分钟后再次申请");
+      }else if(currDate.toInstant().getEpochSecond() > (wechatUser.getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG)){
+        isVcodeExpired = true;
+      }
+    }else if(StringUtils.isEmpty(wechatUser.getVerifyCode()) || wechatUser.getVerifyCode().equals("-1")){
+      isVcodeExpired = true;
+    }
+    wechatUserExample.clear();
+    wechatUserExample.createCriteria().andMobileEqualTo(phone);
+    wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(!CollectionUtils.isEmpty(wechatUsers)){
+      for(WechatUser wechatUserItem: wechatUsers){
+        if(!StringUtils.isEmpty(wechatUserItem.getMobile()) && wechatUserItem.getVerifyCode().equals("-1")){
+          //already bind phone
+          throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR, String.format("该手机号码:[%s]已经被别人绑定,请换一个手机号",phone));
+        }
       }
     }
-    String result =  comnfuncGrpcService.sendVCode(phone, code);
+
+    String vcode = null;
+    if(isVcodeExpired){
+      vcode = AmcNumberUtils.getValidationCode();
+      String result =  comnfuncGrpcService.sendVCode(phone, vcode);
 //    wechatUsers.get(0).setMobile(phone);
-    wechatUser.setVerifyCode(code);
-    wechatUser.setVcodeTime(AmcDateUtils.getCurrentDate());
-    wechatUserMapper.updateByPrimaryKeySelective(wechatUser);
+      wechatUser.setVerifyCode(vcode);
+      wechatUser.setVcodeTime(AmcDateUtils.getCurrentDate());
+      wechatUserMapper.updateByPrimaryKeySelective(wechatUser);
+    }
+
+
+    return true;
+  }
+
+
+  @Override
+  public boolean sendChangePhoneVerifyCode(String openId, String phone) throws Exception {
+
+    //1.
+    //  create pending phone info
+    //
+
+
+    WechatUserExample wechatUserExample = new WechatUserExample();
+    wechatUserExample.createCriteria().andOpenIdEqualTo(openId);
+    WechatUser wechatUser = null;
+    List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(CollectionUtils.isEmpty(wechatUsers)){
+      throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,String.format("没有找到该用户", openId));
+    }else{
+      wechatUser = wechatUsers.get(0);
+      if(!StringUtils.isEmpty(wechatUsers.get(0).getMobile())&&wechatUsers.get(0).getMobile().equals(phone)&&wechatUsers.get(0).getVerifyCode().equals("-1")){
+        throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR, String.format("该手机号码:[%s]已经绑定，无需再次绑定",phone));
+      }
+    }
+
+    WechatUserPendingPhoneExample wechatUserPendingPhoneExample = new WechatUserPendingPhoneExample();
+    wechatUserPendingPhoneExample.createCriteria().andUserIdEqualTo(wechatUser.getId());
+    List<WechatUserPendingPhone> wechatUserPendingPhones = wechatUserPendingPhoneMapper.selectByExample(wechatUserPendingPhoneExample);
+    WechatUserPendingPhone wechatUserPendingPhone = null;
+    if(CollectionUtils.isEmpty(wechatUserPendingPhones)){
+      wechatUserPendingPhone = new WechatUserPendingPhone();
+    }else{
+      wechatUserPendingPhone = wechatUserPendingPhones.get(0);
+    }
+
+
+
+    boolean isVcodeExpired = false;
+    if(!StringUtils.isEmpty(wechatUserPendingPhone.getVerifyCode()) && !wechatUserPendingPhone.getVerifyCode().equals("-1")){
+      Date currDate = AmcDateUtils.getCurrentDate();
+      if(currDate.toInstant().getEpochSecond() < (wechatUserPendingPhone.getVcodeTime().toInstant().getEpochSecond() + 60)){
+        throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR, "请过1分钟后再次申请");
+      }else if(currDate.toInstant().getEpochSecond() > (wechatUserPendingPhone.getVcodeTime().toInstant().getEpochSecond() + MAX_TIME_LAG)){
+        isVcodeExpired = true;
+      }
+    }else if(StringUtils.isEmpty(wechatUserPendingPhone.getVerifyCode()) || wechatUserPendingPhone.getVerifyCode().equals("-1")){
+      isVcodeExpired = true;
+    }
+    wechatUserExample.clear();
+    wechatUserExample.createCriteria().andMobileEqualTo(phone);
+    wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
+    if(!CollectionUtils.isEmpty(wechatUsers)){
+      for(WechatUser wechatUserItem: wechatUsers){
+        if(!StringUtils.isEmpty(wechatUserItem.getMobile()) && wechatUserItem.getVerifyCode().equals("-1")){
+          //already bind phone
+          throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR, String.format("该手机号码:[%s]已经被别人绑定,请换一个手机号",phone));
+        }
+      }
+    }
+
+    String vcode = null;
+    Date timeNow = new Date();
+
+    if( timeNow.toInstant().getEpochSecond() -
+        wechatUserPendingPhone.getVcodeTime().toInstant().getEpochSecond() > DAY_SECONDS ){
+      wechatUserPendingPhone.setSentTime(1);
+    }else {
+      if(wechatUserPendingPhone.getSentTime() >= TIMES_SEND_VCODE_LIMIT){
+        throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR, String.format("一天内发送验证码超过%s", TIMES_SEND_VCODE_LIMIT));
+      }
+    }
+    if(isVcodeExpired) {
+      vcode = AmcNumberUtils.getValidationCode();
+    }else{
+        vcode = wechatUserPendingPhone.getVerifyCode();
+    }
+    String result =  comnfuncGrpcService.sendVCode(phone, vcode);
+    if(!result.equals(vcode)){
+      log.error("Failed to send vcode out");
+      return false;
+//    wechatUsers.get(0).setMobile(phone)
+    };
+
+
+      if( timeNow.toInstant().getEpochSecond() -
+        wechatUserPendingPhone.getVcodeTime().toInstant().getEpochSecond() > DAY_SECONDS ){
+        // can set count to 1 after send vcode
+        wechatUser.setVerifyCode(vcode);
+        wechatUser.setVcodeTime(AmcDateUtils.getCurrentDate());
+
+
+      }
+
+
+      wechatUserMapper.updateByPrimaryKeySelective(wechatUser);
+
+
+
+
+
     return true;
   }
 
@@ -736,9 +873,6 @@ public class WXUserServiceImpl implements WXUserService {
       wechatUsers.get(0).setVerifyCode("-1");
       wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
     }else{
-      wechatUsers.get(0).setMobile("-1");
-
-      wechatUserMapper.updateByPrimaryKeySelective(wechatUsers.get(0));
       throw ExceptionUtils.getAmcException(AmcExceptions.WECHAT_USER_ERROR,String.format("验证码不匹配", openId));
     }
 
@@ -969,6 +1103,10 @@ public class WXUserServiceImpl implements WXUserService {
       log.info(gson.toJson(cityByIp));
       if(cityByIp != null){
         wxUserFavor.setLastIp(ipadd);
+        if(!StringUtils.isEmpty(wxUserFavor.getLastIpCity())){
+          wxUserFavor.setHistIpCity(wxUserFavor.getLastIpCity());
+        }
+
         wxUserFavor.setLastIpCity(cityByIp.getCity());
         wxUserFavor.setLastIpCityCode(cityByIp.getAdcode());
         wxUserFavor.setLastIpProv(cityByIp.getProvince());
@@ -1281,7 +1419,12 @@ public class WXUserServiceImpl implements WXUserService {
       criteria.andMobileLike(sb.toString());
       hasCond = true;
     }
-
+    if(!StringUtils.isEmpty(queryParam.getNote())){
+      StringBuilder sb = new StringBuilder("%");
+      sb.append(queryParam.getNote()).append("%");
+      criteria.andNoteLike(sb.toString());
+      hasCond = true;
+    }
 
 
     if(!CollectionUtils.isEmpty(queryParam.getFirstLoginTime()) && queryParam.getFirstLoginTime().size() >= 2){
@@ -1492,10 +1635,10 @@ public class WXUserServiceImpl implements WXUserService {
 
 
     WechatUserExample wechatUserExample = new WechatUserExample();
-    wechatUserExample.createCriteria().andOpenIdEqualTo(wxUserWatchObjects.get(0).getOpenId());
+    wechatUserExample.createCriteria().andOpenIdEqualTo(wxUserWatchOnVos.get(0).getOpenId());
     List<WechatUser> wechatUsers = wechatUserMapper.selectByExample(wechatUserExample);
     if(CollectionUtils.isEmpty(wechatUsers)){
-      log.error("This openId:{} is not available in wechatUser table", wxUserWatchObjects.get(0).getOpenId());
+      log.error("This openId:{} is not available in wechatUser table", wxUserWatchOnVos.get(0).getOpenId());
       return true;
     }
     WechatUserStatic wechatUserStatic = new WechatUserStatic();
@@ -1505,6 +1648,8 @@ public class WXUserServiceImpl implements WXUserService {
     wechatUserStaticMapper.updateByExampleSelective(wechatUserStatic, wechatUserStaticExample);
     return true;
   }
+
+
 
   public Long getAllWechatUserCount(QueryParam queryParam) throws ParseException {
     WechatUserExtExample exampleByParam = getExampleByParam(queryParam);

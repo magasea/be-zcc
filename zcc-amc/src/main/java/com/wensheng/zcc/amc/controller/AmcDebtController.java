@@ -726,6 +726,14 @@ public class AmcDebtController {
 
   }
 
+  @RequestMapping(value = "/api/amcid/{amcId}/debt/updateGeo4SpecDebt", method = RequestMethod.POST)
+  @ResponseBody
+  public void updateGeo4SpecDebt(Long debtId) throws Exception {
+
+    amcDebtService.updateGeoInfo4SpeicialDebt(debtId);
+
+  }
+
   @LogExecutionTime
   @RequestMapping(value = "/getDebtGeoNear", method = RequestMethod.POST)
   @ResponseBody

@@ -154,7 +154,7 @@ public class GaoDeServiceImpl implements GaoDeService {
       throw new Exception(String.format("Failed to get geo info for :%s and city:%s", address, city));
     }
     System.out.println(results.get(0).getLocation());
-    System.out.println(results.get(0).getCityCode());
+    System.out.println(results.get(0).getAdcode());
 //    List<GaodeGeoQueryVal> results = new ArrayList();
     return results;
 

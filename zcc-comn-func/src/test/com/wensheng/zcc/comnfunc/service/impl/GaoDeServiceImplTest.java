@@ -38,8 +38,8 @@ public class GaoDeServiceImplTest {
 
   @Test
   public void getGaoDeAddress() throws Exception {
-    String address = "上海";
-    String city = "上海";
+    String address = "银川市";
+    String city = "银川市";
     List<GaodeGeoQueryVal> gaodeGeoQueryVals =  gaoDeService.getGeoInfoFromAddress(address, city);
     for(GaodeGeoQueryVal gaodeGeoQueryVal: gaodeGeoQueryVals){
       log.info(gaodeGeoQueryVal.getFormattedAddress());

@@ -32,6 +32,7 @@ public class WXUserFavor {
   String lastIpCityCode;
   Double lastIpLat;
   Double lastIpLng;
+  String histIpCity;
   String userPrefCityName;
   String userPrefCityCode;
   String userPrefProvName;

@@ -1,7 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
 import com.google.gson.Gson;
-import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcDebt;
 import com.wensheng.zcc.amc.module.dao.mysql.auto.ext.AmcDebtExt;
 import com.wensheng.zcc.amc.module.vo.AmcAssetVo;
 import com.wensheng.zcc.amc.module.vo.AmcDebtVo;
@@ -11,14 +10,10 @@ import com.wensheng.zcc.amc.service.KafkaService;
 import com.wensheng.zcc.amc.service.MailService;
 import com.wensheng.zcc.common.mq.kafka.KafkaParams;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
-import com.wensheng.zcc.common.mq.kafka.module.SSOUserDto;
 import com.wensheng.zcc.common.mq.kafka.module.SSOUserModDto;
-import com.wensheng.zcc.common.mq.kafka.module.WechatUserLocation;
 import com.wensheng.zcc.common.params.sso.AmcDeptEnum;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
-import com.wensheng.zcc.common.params.sso.SSOAmcUser;
-import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import java.util.List;
 import java.util.stream.StreamSupport;
 import javax.annotation.PostConstruct;
@@ -113,37 +108,43 @@ public class KafkaServiceImpl implements KafkaService {
           if(userModDto.getAmcUserDtoHis().getDeptId() != -1){
             sb.append(AmcDeptEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoHis().getDeptId().intValue()).getCname());
           }
+
           if(userModDto.getAmcUserDtoHis().getLocation() != -1){
             sb.append(
                 AmcLocationEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoHis().getLocation().intValue()).getCname());
           }
-          sb.append("业务人员:").append(userModDto.getAmcUserDtoHis().getUserCname());
-              if(!userModDto.getAmcUserDtoCurr().getValid().equals(AmcUserValidEnum.VALID.getId())){
-                sb.append("已经离职:");
-              }else{
-                sb.append("已经发生职位变更,");
-                if(userModDto.getAmcUserDtoCurr().getDeptId() != -1 && !(userModDto.getAmcUserDtoHis().getDeptId().equals(userModDto.getAmcUserDtoCurr().getDeptId()))){
-                  sb.append("部门变为:").append(AmcDeptEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getDeptId().intValue()).getCname());
-                }
-                if(userModDto.getAmcUserDtoCurr().getLocation() != -1 && !userModDto.getAmcUserDtoHis().getLocation().equals(userModDto.getAmcUserDtoCurr().getLocation())){
-                  sb.append("地区变为:").append(
-                      AmcLocationEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getLocation().intValue()).getCname());
-                }
-              }
+          sb.append(":").append(userModDto.getAmcUserDtoHis().getUserCname()).append(",");
 
 
-          sb.append("，请把下列他/她负责的资产债权移交给合适的业务人员.\n");
 
+          if(!userModDto.getAmcUserDtoCurr().getValid().equals(AmcUserValidEnum.VALID.getId())){
+            sb.append("已经离职,");
+          }else{
+            sb.append("已经发生职位变更,");
+            if(userModDto.getAmcUserDtoCurr().getDeptId() != -1 && !(userModDto.getAmcUserDtoHis().getDeptId().equals(userModDto.getAmcUserDtoCurr().getDeptId()))){
+              sb.append("部门变为:").append(AmcDeptEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getDeptId().intValue()).getCname()).append(",");
+            }
+            if(userModDto.getAmcUserDtoCurr().getLocation() != -1 && !userModDto.getAmcUserDtoHis().getLocation().equals(userModDto.getAmcUserDtoCurr().getLocation())){
+              sb.append("地区变为:").append(
+                  AmcLocationEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getLocation().intValue()).getCname()).append(",");
+            }
+            if(sb.charAt(sb.length()-1) == ','){
+              sb.setLength(sb.length() -1);
+              sb.append(";");
+            }
+          }
+
+
+          sb.append("请把以下资产/债权移交给新承办人;\n");
+          int idx = 1;
           for(AmcDebtExt amcDebtExt: amcDebtExts){
 
-            sb.append("\t债权 id:[").append(amcDebtExt.getDebtInfo().getId()).append("]")
+            sb.append("\t债权").append(idx++).append("\t")
                 .append(amcDebtExt.getDebtInfo().getTitle()).append("\n");
 
           }
           mailService.sendMail(sb.toString(), null,null);
         }
-
-
       }
 
 

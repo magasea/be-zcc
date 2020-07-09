@@ -72,11 +72,11 @@ public class PhoneMsgServiceImpl implements PhoneMsgService {
     @Override
     public String generateVerificationCodeToPhoneByAliYun(String phoneNum, String vcode) {
 
-      String url = "http://101.132.27.96:6900/api/message?phones=%s&message=验证码:%s, 有效期20分钟";
+      String url = "http://101.132.27.96:6900/api/message?phones=%s&message=验证码:%s, 有效期5分钟";
       String finalUrl = String.format(url,phoneNum,vcode);
       HttpEntity<Map> entity = new HttpEntity<>(null, getHttpJsonHeader());
       ResponseEntity<String> resp = restTemplate.exchange(finalUrl, HttpMethod.GET, entity, String.class);
-      if(resp.getBody().contains("errorcode=0")){
+      if(resp.getBody().contains("errcode=0")){
         return vcode;
       }else{
         log.error(String.format("call message service failed with:%s", resp.getBody()));

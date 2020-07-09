@@ -170,4 +170,6 @@ public interface AmcDebtService {
       AmcSaleFloor amcSaleFloor) throws Exception;
 
   List<AmcDebtExt> findDebtsAssetsOfUser(Long userId);
+
+  public void updateGeoInfo4SpeicialDebt(Long debtId);
 }

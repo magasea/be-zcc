@@ -126,7 +126,7 @@ spring:
     sso-user-change:
       targetMail: chenwei@wenshengamc.com,chenwei@wenshengamc.com
       ccMail: chenwei@wenshengamc.com,chenwei@wenshengamc.com,chenwei@wenshengamc.com
-      subject: [开发环境] 业务人员变动需要调整的债权
+      subject: 开发环境-业务人员变动需要调整的债权
 #  http:
 #    converters:
 #      preferred-json-mapper: gson

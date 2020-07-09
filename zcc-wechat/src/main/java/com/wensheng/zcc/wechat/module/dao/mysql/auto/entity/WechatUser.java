@@ -43,6 +43,8 @@ public class WechatUser {
 
     private Date vcodeTime;
 
+    private Integer sentTimes;
+
     private String stateInfo;
 
     private String wxusername;
@@ -217,6 +219,14 @@ public class WechatUser {
 
     public void setVcodeTime(Date vcodeTime) {
         this.vcodeTime = vcodeTime;
+    }
+
+    public Integer getSentTimes() {
+        return sentTimes;
+    }
+
+    public void setSentTimes(Integer sentTimes) {
+        this.sentTimes = sentTimes;
     }
 
     public String getStateInfo() {

@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserPendingPhoneMapper">
+  <resultMap id="BaseResultMap" type="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhone">
+    <id column="id" jdbcType="BIGINT" property="id" />
+    <result column="pending_phone" jdbcType="CHAR" property="pendingPhone" />
+    <result column="verify_code" jdbcType="CHAR" property="verifyCode" />
+    <result column="user_id" jdbcType="BIGINT" property="userId" />
+    <result column="vcode_time" jdbcType="TIMESTAMP" property="vcodeTime" />
+    <result column="sent_time" jdbcType="INTEGER" property="sentTime" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    id, pending_phone, verify_code, user_id, vcode_time, sent_time
+  </sql>
+  <select id="selectByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhoneExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_USER_PENDING_PHONE
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Long" resultMap="BaseResultMap">
+    select 'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_USER_PENDING_PHONE
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long">
+    delete from WECHAT_USER_PENDING_PHONE
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhoneExample">
+    delete from WECHAT_USER_PENDING_PHONE
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhone">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_USER_PENDING_PHONE (pending_phone, verify_code, user_id, 
+      vcode_time, sent_time)
+    values (#{pendingPhone,jdbcType=CHAR}, #{verifyCode,jdbcType=CHAR}, #{userId,jdbcType=BIGINT}, 
+      #{vcodeTime,jdbcType=TIMESTAMP}, #{sentTime,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhone">
+    <selectKey keyProperty="id" order="AFTER" resultType="java.lang.Long">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into WECHAT_USER_PENDING_PHONE
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="pendingPhone != null">
+        pending_phone,
+      </if>
+      <if test="verifyCode != null">
+        verify_code,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="vcodeTime != null">
+        vcode_time,
+      </if>
+      <if test="sentTime != null">
+        sent_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="pendingPhone != null">
+        #{pendingPhone,jdbcType=CHAR},
+      </if>
+      <if test="verifyCode != null">
+        #{verifyCode,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="vcodeTime != null">
+        #{vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sentTime != null">
+        #{sentTime,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhoneExample" resultType="java.lang.Long">
+    select count(*) from WECHAT_USER_PENDING_PHONE
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update WECHAT_USER_PENDING_PHONE
+    <set>
+      <if test="record.id != null">
+        id = #{record.id,jdbcType=BIGINT},
+      </if>
+      <if test="record.pendingPhone != null">
+        pending_phone = #{record.pendingPhone,jdbcType=CHAR},
+      </if>
+      <if test="record.verifyCode != null">
+        verify_code = #{record.verifyCode,jdbcType=CHAR},
+      </if>
+      <if test="record.userId != null">
+        user_id = #{record.userId,jdbcType=BIGINT},
+      </if>
+      <if test="record.vcodeTime != null">
+        vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="record.sentTime != null">
+        sent_time = #{record.sentTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update WECHAT_USER_PENDING_PHONE
+    set id = #{record.id,jdbcType=BIGINT},
+      pending_phone = #{record.pendingPhone,jdbcType=CHAR},
+      verify_code = #{record.verifyCode,jdbcType=CHAR},
+      user_id = #{record.userId,jdbcType=BIGINT},
+      vcode_time = #{record.vcodeTime,jdbcType=TIMESTAMP},
+      sent_time = #{record.sentTime,jdbcType=INTEGER}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhone">
+    update WECHAT_USER_PENDING_PHONE
+    <set>
+      <if test="pendingPhone != null">
+        pending_phone = #{pendingPhone,jdbcType=CHAR},
+      </if>
+      <if test="verifyCode != null">
+        verify_code = #{verifyCode,jdbcType=CHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="vcodeTime != null">
+        vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="sentTime != null">
+        sent_time = #{sentTime,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhone">
+    update WECHAT_USER_PENDING_PHONE
+    set pending_phone = #{pendingPhone,jdbcType=CHAR},
+      verify_code = #{verifyCode,jdbcType=CHAR},
+      user_id = #{userId,jdbcType=BIGINT},
+      vcode_time = #{vcodeTime,jdbcType=TIMESTAMP},
+      sent_time = #{sentTime,jdbcType=INTEGER}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByExampleWithRowbounds" parameterType="com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUserPendingPhoneExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    'true' as QUERYID,
+    <include refid="Base_Column_List" />
+    from WECHAT_USER_PENDING_PHONE
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+</mapper>

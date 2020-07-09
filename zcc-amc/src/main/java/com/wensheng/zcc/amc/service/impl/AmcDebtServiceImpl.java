@@ -8,7 +8,6 @@ import com.wensheng.zcc.amc.dao.mysql.mapper.AmcInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcOrigCreditorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.CurtInfoMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.ext.AmcDebtExtMapper;
-import com.wensheng.zcc.amc.module.dao.helper.DebtPrecheckErrorEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.helper.HasImageEnum;
 import com.wensheng.zcc.amc.module.dao.helper.ImageClassEnum;
@@ -1395,7 +1394,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     Long count = amcDebtMapper.countByExample(null);
     RowBounds rowBounds = null;
     Map<Long, Long> debt2Court = new HashMap<>();
-    for(;offset  < count;){
+    for(;offset  < count + pageSize;){
       rowBounds = new RowBounds(offset, pageSize);
       List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
       if(!CollectionUtils.isEmpty(amcDebts)){
@@ -1403,6 +1402,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
       }else{
         break;
       }
+      debt2Court.clear();
       amcDebts.forEach(item -> debt2Court.put(item.getId(), item.getCourtId()));
       handleCourtGeoInfo(debt2Court);
     }
@@ -1478,7 +1478,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtExample.createCriteria().andIdIn(debtIds).andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
     amcDebtExample.setOrderByClause(" has_img desc , id desc ");
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
-    getDebtVos(amcDebts);
+    amcDebtVos = getDebtVos(amcDebts);
     return amcDebtVos;
 
   }
@@ -1772,70 +1772,154 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     amcDebtMapper.updateByPrimaryKeySelective(amcDebts.get(0));
   }
 
+  private List<AmcDebt> getDebtByCurtCityCode(String cityCode, int limit){
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.createCriteria().andCurtCityEqualTo(Long.valueOf(cityCode)).andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    amcDebtExample.setOrderByClause(String.format(" has_img desc, id desc limit %s ", limit));
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
+  }
+
+  private List<AmcDebt> getDebtByCurtCityCodeLike(String provCode, int limit){
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    Long valueLowLimit = provCode.length() >= 6? Long.valueOf(provCode.substring(0,2))*10000: Long.valueOf(provCode)*10000;
+    Long valueHighLimit = valueLowLimit + 9999;
+    amcDebtExample.createCriteria().andCurtCityGreaterThan(valueLowLimit).andCurtCityLessThan(valueHighLimit).andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
+    amcDebtExample.setOrderByClause(String.format(" has_img desc, id desc limit %s ", limit));
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);
+    return amcDebts;
+  }
+
   @Override
   public List<AmcDebtVo> getUserLocalDebts(WXUserRegionFavor wxUserRegionFavor,
       AmcSaleFloor amcSaleFloor) throws Exception {
     // 1. location city location prov and finally lat lng
     // 2. ip city, ip prov and finally ip city lat lng
-    String cityName;
+
     List<AmcDebtVo> amcDebtVos = new ArrayList<>();
-    if( !StringUtils.isEmpty(wxUserRegionFavor.getLocationCityName()) ){
-      List<CurtInfo> curtInfos = amcHelperService
-          .queryCurtInfoByCityNames(Arrays.asList(wxUserRegionFavor.getLocationCityName()));
-      if(CollectionUtils.isEmpty(curtInfos)){
-        return amcDebtVos;
-      }
-      List<AmcDebt> amcDebts = getDebtVosByCurtInfos(
-          curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
-      if(amcDebts!= null && amcDebts.size() < PAGE_ITEM_SIZE){
-        //not enough , need call geo
-        if(StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName())){
-          curtInfos = amcHelperService.queryCurtInfoByProvNames(Arrays.asList(wxUserRegionFavor.getLocationProvName()));
-          amcDebts = getDebtVosByCurtInfos(
-              curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
+    String localCity =
+        !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefCityName()) ? wxUserRegionFavor
+            .getUserPrefCityName() :
+            !StringUtils.isEmpty(wxUserRegionFavor.getLocationCityName()) ? wxUserRegionFavor
+                .getLocationCityName() : wxUserRegionFavor.getLastIpCity();
+
+    String localCityCode =
+        !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefCityCode()) ? wxUserRegionFavor
+            .getUserPrefCityCode() :
+            !StringUtils.isEmpty(wxUserRegionFavor.getLocationCode()) ? wxUserRegionFavor
+                .getLocationCode() : wxUserRegionFavor.getLastIpCityCode();
+    String localProv =
+        !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefProvName()) ? wxUserRegionFavor
+            .getUserPrefProvName() :
+            !StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName()) ? wxUserRegionFavor
+                .getLocationProvName() : wxUserRegionFavor.getLastIpProv();
+    String locationProvCode =
+        StringUtils.isEmpty(localCityCode) ? null : localCityCode.substring(0, 2);
+    boolean needUserName = false;
+    if (!StringUtils.isEmpty(localCityCode)) {
+      List<AmcDebt> amcDebts = getDebtByCurtCityCode(localCityCode, PAGE_ITEM_SIZE);
+      if (amcDebts != null && amcDebts.size() < PAGE_ITEM_SIZE) {
+        amcDebts = getDebtByCurtCityCodeLike(locationProvCode, PAGE_ITEM_SIZE);
+        if (amcDebts != null && amcDebts.size() < PAGE_ITEM_SIZE) {
+          log.info("Failed to get enough debt by {}", localCityCode);
+          if (amcDebts.size() < PAGE_ITEM_SIZE) {
+            log.error("need to use geo query now");
+            amcSaleFloor.setTitle(StringUtils.isEmpty(localProv) ?
+                SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()
+                : String.format("%s%s", localProv,
+                    SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
+            amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
+            GeoJsonPoint geoJsonPoint = null;
+            if (wxUserRegionFavor.getUserPrefCityLng() != null) {
+              geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getUserPrefCityLng(),
+                  wxUserRegionFavor.getUserPrefCityLat());
+            } else if (wxUserRegionFavor.getLastLng() != null
+                && wxUserRegionFavor.getLastLat() != null) {
+              geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastLng(),
+                  wxUserRegionFavor.getLastLat());
+
+            } else if (wxUserRegionFavor.getLastIpLat() != null
+                && wxUserRegionFavor.getLastIpLng() != null) {
+              geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(),
+                  wxUserRegionFavor.getLastIpLat());
+
+            }
+            return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+          } else if (amcDebts != null) {
+            amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getSlogon());
+            amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getTitle());
+            return getDebtVos(amcDebts);
+          }
+
+        } else if (amcDebts != null) {
+          amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
+          amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getTitle());
+          return getDebtVos(amcDebts);
         }
-      }else if(amcDebts != null){
-        amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
-        amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getTitle());
-        return getDebtVos(amcDebts);
+
       }
-      String provName = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefProvName()) ? wxUserRegionFavor.getUserPrefProvName():
-          !StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName()) ? wxUserRegionFavor.getLocationProvName(): wxUserRegionFavor.getLastIpProv();
-
-
-      if( !StringUtils.isEmpty(provName)){
-        curtInfos = amcHelperService
-            .queryCurtInfoByProvNames(Arrays.asList(provName));
-        amcDebts = getDebtVosByCurtInfos(
-            curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
-      }
-
-      if(amcDebts.size() < PAGE_ITEM_SIZE){
-        log.error("need to use geo query now");
-        amcSaleFloor.setTitle(StringUtils.isEmpty(provName) ?
-            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s%s", provName,
-            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
-        amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
-        GeoJsonPoint geoJsonPoint = null;
-        if(wxUserRegionFavor.getUserPrefCityLng() != null){
-          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getUserPrefCityLng(), wxUserRegionFavor.getUserPrefCityLat());
-        }
-        else if(wxUserRegionFavor.getLastLng() != null && wxUserRegionFavor.getLastLat() != null){
-          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
-
-        } else if(wxUserRegionFavor.getLastIpLat() != null && wxUserRegionFavor.getLastIpLng() != null){
-          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
-
-        }
-        return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+//    if( !StringUtils.isEmpty(localCity) && needUserName ){
+//      List<CurtInfo> curtInfos = amcHelperService
+//          .queryCurtInfoByCityNames(Arrays.asList(localCity));
+//      if(CollectionUtils.isEmpty(curtInfos)){
 //        return amcDebtVos;
-
-      }else if(amcDebts != null){
-        amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getSlogon());
-        amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getTitle());
-        return getDebtVos(amcDebts);
-      }
-
+//      }
+//      List<AmcDebt> amcDebts = getDebtVosByCurtInfos(
+//          curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
+//
+//
+//
+//      if(amcDebts!= null && amcDebts.size() < PAGE_ITEM_SIZE){
+//        //not enough , need call geo
+//        if(StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName())){
+//          curtInfos = amcHelperService.queryCurtInfoByProvNames(Arrays.asList(localProv));
+//          amcDebts = getDebtVosByCurtInfos(
+//              curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
+//        }
+//      }else if(amcDebts != null){
+//        amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getSlogon());
+//        amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_CITY.getTitle());
+//        return getDebtVos(amcDebts);
+//      }
+////      String provName = !StringUtils.isEmpty(wxUserRegionFavor.getUserPrefProvName()) ? wxUserRegionFavor.getUserPrefProvName():
+////          !StringUtils.isEmpty(wxUserRegionFavor.getLocationProvName()) ? wxUserRegionFavor.getLocationProvName(): wxUserRegionFavor.getLastIpProv();
+//
+//
+//      if( !StringUtils.isEmpty(localProv)){
+//        curtInfos = amcHelperService
+//            .queryCurtInfoByProvNames(Arrays.asList(localProv));
+//        amcDebts = getDebtVosByCurtInfos(
+//            curtInfos.stream().map(item -> item.getId()).collect(Collectors.toList()), PAGE_ITEM_SIZE);
+//      }
+//
+//      if(amcDebts.size() < PAGE_ITEM_SIZE){
+//        log.error("need to use geo query now");
+//        amcSaleFloor.setTitle(StringUtils.isEmpty(localProv) ?
+//            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle():String.format("%s%s", localProv,
+//            SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getTitle()));
+//        amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_RANGE.getSlogon());
+//        GeoJsonPoint geoJsonPoint = null;
+//        if(wxUserRegionFavor.getUserPrefCityLng() != null){
+//          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getUserPrefCityLng(), wxUserRegionFavor.getUserPrefCityLat());
+//        }
+//        else if(wxUserRegionFavor.getLastLng() != null && wxUserRegionFavor.getLastLat() != null){
+//          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastLng(), wxUserRegionFavor.getLastLat());
+//
+//        } else if(wxUserRegionFavor.getLastIpLat() != null && wxUserRegionFavor.getLastIpLng() != null){
+//          geoJsonPoint = new GeoJsonPoint(wxUserRegionFavor.getLastIpLng(), wxUserRegionFavor.getLastIpLat());
+//
+//        }
+//        return queryNearByDebtsWithLimit(geoJsonPoint, PAGE_ITEM_SIZE);
+////        return amcDebtVos;
+//
+//      }else if(amcDebts != null){
+//        amcSaleFloor.setSlogan(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getSlogon());
+//        amcSaleFloor.setTitle(SaleFloorLocalTitleEnum.LOCAL_LEVEL_PROV.getTitle());
+//        return getDebtVos(amcDebts);
+//      }
+//
+//    }
+//
     }
     return amcDebtVos;
   }
@@ -2076,6 +2160,40 @@ amcHelperService.getCurtByIds(amcDebtVos.stream().map(item->item.getCourtId()).c
     updateGeoInfo4Debt(courtAddress);
 
   }
+
+  public void updateGeoInfo4SpeicialDebt(Long debtId){
+    AmcDebt amcDebt = amcDebtMapper.selectByPrimaryKey(debtId);
+    Long curtId =  amcDebt.getCourtId();
+    CurtInfo curtInfo = curtInfoMapper.selectByPrimaryKey(curtId);
+    Address.Builder aBuilder = Address.newBuilder();
+    String courtName = curtInfo.getCurtName();
+    if(StringUtils.isEmpty(courtName)){
+      log.error(" the courtName is empty:{} of amcId:{}", courtName, debtId );
+    }
+    aBuilder.setAddress(courtName);
+    aBuilder.setCity(curtInfo.getCurtCity());
+    GeoJson geoJson = null;
+    try{
+      geoJson = comnfuncServiceStub.getGeoByAddress(aBuilder.build());
+    }catch (Exception ex){
+      log.error("", ex);
+
+    }
+
+
+    Query query = new Query();
+    query.addCriteria(Criteria.where("amcDebtId").is(debtId));
+    List<DebtAdditional> debtAdditionals = wszccTemplate.find(query, DebtAdditional.class);
+    if(CollectionUtils.isEmpty(debtAdditionals)){
+      log.error("Failed to find debtAdditionals by:{}", debtId);
+      query = null;
+
+    }
+    debtAdditionals.get(0).setLocation(new GeoJsonPoint(geoJson.getCoordinates(0), geoJson.getCoordinates(1)));
+    wszccTemplate.save(debtAdditionals.get(0));
+    query = null;
+  }
+
 
   private void updateGeoInfo4Debt(HashMap<Long, AddressTmp> courtAddress) {
     Query query = new Query();

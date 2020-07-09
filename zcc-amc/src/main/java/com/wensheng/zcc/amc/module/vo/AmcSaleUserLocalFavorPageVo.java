@@ -12,5 +12,6 @@ public class AmcSaleUserLocalFavorPageVo {
   WXUserFavor wxUserFavor;
   AmcSaleFloor amcSaleFloor;
   AmcSaleFilter amcSaleFilter;
-  List<Object> resultList;
+  List<Object> assetList;
+  List<Object> debtList;
 }

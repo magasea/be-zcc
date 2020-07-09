@@ -236,8 +236,17 @@ public class WechatUserController {
   @ResponseBody
   public boolean sendVerifyCode(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
 
-    String vcode = AmcNumberUtils.getValidationCode();
-    return wxService.sendPhoneVcode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone(),vcode);
+
+    return wxService.sendPhoneVcode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone());
+
+  }
+
+  @RequestMapping(value = "/user/sendChangePhoneVerifyCode", method = RequestMethod.POST)
+  @ResponseBody
+  public boolean sendChangePhoneVerifyCode(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
+
+
+    return wxService.sendChangePhoneVerifyCode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone());
 
   }
 

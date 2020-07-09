@@ -1,30 +1,54 @@
 package com.wensheng.zcc.comnfunc.module.vo.base;
 
 import com.google.gson.annotations.SerializedName;
-import com.wensheng.zcc.common.module.dto.Building;
-import com.wensheng.zcc.common.module.dto.Neighborhood;
+import com.wensheng.zcc.comnfunc.module.vo.base.test.Building;
+import com.wensheng.zcc.comnfunc.module.vo.base.test.Neighborhood;
 import java.util.List;
 import lombok.Data;
 
 @Data
 public class GaodeGeoQueryVal {
-  @SerializedName("formatted_address")
-  String formattedAddress;
-  String country;
-  String province;
-  @SerializedName("citycode")
-  String cityCode;
-  String city;
-//  Object district;
-//  List<Object> township;
-//  Neighborhood neighborhood;
-//  Building building;
-  String adcode;
-//  String[] street;
-//  String number;
-  String location;
-  String level;
+  @SerializedName("country")
+  private String country;
 
+  @SerializedName("formatted_address")
+  private String formattedAddress;
+
+  @SerializedName("city")
+  private String city;
+
+  @SerializedName("adcode")
+  private String adcode;
+
+  @SerializedName("level")
+  private String level;
+
+  @SerializedName("building")
+  private Building building;
+
+  @SerializedName("number")
+  private List<Object> number;
+
+  @SerializedName("province")
+  private String province;
+
+//  @SerializedName("citycode")
+//  private String citycode;
+
+//  @SerializedName("street")
+//  private List<Object> street;
+
+//  @SerializedName("district")
+//  private String district;
+
+  @SerializedName("location")
+  private String location;
+
+  @SerializedName("neighborhood")
+  private Neighborhood neighborhood;
+
+  @SerializedName("township")
+  private List<Object> township;
 
 
 

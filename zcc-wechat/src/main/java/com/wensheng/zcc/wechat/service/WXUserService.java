@@ -24,7 +24,7 @@ public interface WXUserService {
 
   void syncUserInfoFromWX();
 
-  boolean sendPhoneVcode(String phone,String openId,  String code) throws Exception;
+  boolean sendPhoneVcode(String phone,String openId) throws Exception;
   boolean sendPhoneVcodeTest(String phone, String openId,  String code) throws Exception;
 
   boolean bindPhone(String openId, String phone, String code) throws Exception;
@@ -74,4 +74,6 @@ public interface WXUserService {
 
 
   boolean unWatchOnList(List<WXUserWatchOnVo> wxUserWatchOnVos);
+
+  boolean sendChangePhoneVerifyCode(String openId, String phone) throws Exception;
 }

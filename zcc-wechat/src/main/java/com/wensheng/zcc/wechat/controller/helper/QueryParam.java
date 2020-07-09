@@ -17,6 +17,7 @@ public class QueryParam {
   String stateInfo = null;
   Boolean phoneBinded = false;
   String mobileNum = null;
+  String note = null;
   PageInfo pageInfo;
 
 }

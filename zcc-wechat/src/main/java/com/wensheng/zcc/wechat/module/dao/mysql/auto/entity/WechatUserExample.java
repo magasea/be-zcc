@@ -1435,6 +1435,66 @@ public class WechatUserExample {
             return (Criteria) this;
         }
 
+        public Criteria andSentTimesIsNull() {
+            addCriterion("sent_times is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesIsNotNull() {
+            addCriterion("sent_times is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesEqualTo(Integer value) {
+            addCriterion("sent_times =", value, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesNotEqualTo(Integer value) {
+            addCriterion("sent_times <>", value, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesGreaterThan(Integer value) {
+            addCriterion("sent_times >", value, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesGreaterThanOrEqualTo(Integer value) {
+            addCriterion("sent_times >=", value, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesLessThan(Integer value) {
+            addCriterion("sent_times <", value, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesLessThanOrEqualTo(Integer value) {
+            addCriterion("sent_times <=", value, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesIn(List<Integer> values) {
+            addCriterion("sent_times in", values, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesNotIn(List<Integer> values) {
+            addCriterion("sent_times not in", values, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesBetween(Integer value1, Integer value2) {
+            addCriterion("sent_times between", value1, value2, "sentTimes");
+            return (Criteria) this;
+        }
+
+        public Criteria andSentTimesNotBetween(Integer value1, Integer value2) {
+            addCriterion("sent_times not between", value1, value2, "sentTimes");
+            return (Criteria) this;
+        }
+
         public Criteria andStateInfoIsNull() {
             addCriterion("state_info is null");
             return (Criteria) this;

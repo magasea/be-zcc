@@ -121,9 +121,9 @@ spring:
     default-encoding: UTF-8
     username: 债查查后台
     sso-user-change:
-      targetMail: chenwei@wenshengamc.com,chenwei@wenshengamc.com
-      ccMail: chenwei@wenshengamc.com,chenwei@wenshengamc.com,chenwei@wenshengamc.com
-      subject: [测试环境] 业务人员变动需要调整的债权
+      targetMail: chenwei@wenshengamc.com,zhangmingji@wenshengamc.com
+      ccMail: liuzhishan@wenshengamc.com,chenwei@wenshengamc.com,zhangmingji@wenshengamc.com
+      subject: 测试环境-业务人员变动需要调整的债权
 mybatis:
   type-aliases-package: com.wensheng.zcc.amc.module
   mapper-locations:

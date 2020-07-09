@@ -1271,15 +1271,20 @@ public class AmcSaleServiceImpl implements AmcSaleService {
       AmcSaleFloor amcSaleFloor = getFloorByFixType(SaleFloorEnum.LOCALRECOMM.getId());
       List<AmcAssetVo> amcAssetVos = amcAssetService.getUserLocalAssets(wxUserRegionFavor, amcSaleFloor);
       List<AmcDebtVo> amcDebtVos = new ArrayList<>();
-      if(amcAssetVos == null || amcAssetVos.size() <= PAGE_ITEM_SIZE){
+//      if(amcAssetVos == null || amcAssetVos.size() <= PAGE_ITEM_SIZE){
           amcDebtVos = amcDebtService.getUserLocalDebts(wxUserRegionFavor, amcSaleFloor);
-      }
+//      }
       AmcSaleUserLocalFavorPageVo amcSaleUserFavorPageVo = new AmcSaleUserLocalFavorPageVo();
-      amcSaleUserFavorPageVo.setResultList(new ArrayList<>());
+      amcSaleUserFavorPageVo.setAssetList(new ArrayList<>());
       if(amcAssetVos != null && !CollectionUtils.isEmpty(amcAssetVos)){
-          amcSaleUserFavorPageVo.getResultList().addAll(amcAssetVos);
+          amcSaleUserFavorPageVo.getAssetList().addAll(amcAssetVos);
       }
-      amcSaleUserFavorPageVo.getResultList().addAll(amcSaleUserFavorPageVo.getResultList().size(), amcDebtVos);
+      amcSaleUserFavorPageVo.setDebtList(new ArrayList<>());
+
+      if(amcDebtVos != null && !CollectionUtils.isEmpty(amcDebtVos)) {
+          amcSaleUserFavorPageVo.getDebtList()
+              .addAll(amcDebtVos);
+      }
       amcSaleUserFavorPageVo.setWxUserFavor(wxUserFavor);
 
 

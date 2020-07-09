@@ -242,6 +242,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
+    <if test="whereClause != null">
+      ${whereClause}
+    </if>
     group by ctp.id
     ) as tmp
   </select>
@@ -309,6 +312,9 @@
     and cti.buyer_type = 1
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
+    </if>
+    <if test="whereClause != null">
+      ${whereClause}
     </if>
     <if test="filterByClause != null">
       ${filterByClause}

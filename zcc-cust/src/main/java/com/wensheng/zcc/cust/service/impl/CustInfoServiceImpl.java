@@ -32,6 +32,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
+import com.wensheng.zcc.cust.module.helper.SelectCustTypeEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CmpyBasicBizInfoSync;
@@ -328,6 +329,20 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+
+    if(CollectionUtils.isEmpty(orderByParam)){
+      if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.data_quality", Direction.DESC);
+        orderByParam.put("ctc.id", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.update_time", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.create_time", Direction.DESC);
+      }
+    }
+
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
     return convertCmpyToVoes(custTrdCmpyTrdExts);
   }
@@ -537,6 +552,7 @@ public class CustInfoServiceImpl implements CustInfoService {
 //    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    //使用whereClause因为无法对两个表有相同字段做筛选
     String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
     if(!StringUtils.isEmpty(whereClause)){
       custTrdCmpyExtExample.setWhereClause(whereClause);
@@ -558,14 +574,38 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   }
 
+  public Long selectNewCmpyCountByProvince(QueryParam queryParam) {
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    //使用whereClause因为无法对两个表有相同字段做筛选
+    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdCmpyExtExample.setWhereClause(whereClause);
+    }
+
+    Long queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
+    return queryResult;
+
+  }
+
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
 
+    if(CollectionUtils.isEmpty(orderByParam)){
+      if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.data_quality", Direction.DESC);
+        orderByParam.put("ctp.id", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.update_time", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.create_time", Direction.DESC);
+      }
+    }
 
     List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
-
-
     return convertPersonToVoes(custTrdPersonTrdExts);
   }
 
@@ -727,8 +767,11 @@ public class CustInfoServiceImpl implements CustInfoService {
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
-//    String whereClause = " ctp.status != 2";
-//    custTrdPersonExtExample.setWhereClause(whereClause);
+    //使用whereClause因为无法对两个表有相同字段做筛选
+    String whereClause = SQLUtils.getCustWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdPersonExtExample.setWhereClause(whereClause);
+    }
     custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
     if(!StringUtils.isEmpty(filterBy)){
       custTrdPersonExtExample.setFilterByClause(filterBy);

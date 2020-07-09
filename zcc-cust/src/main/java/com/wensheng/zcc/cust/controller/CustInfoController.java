@@ -11,6 +11,7 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.SelectCustTypeEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
 import com.wensheng.zcc.cust.module.sync.CmpyBizInfoResult;
@@ -181,25 +182,15 @@ public class CustInfoController {
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
-
     List<CustTrdInfoVo> queryResults = null;
     Long totalCount = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     try{
       if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctc.data_quality", Direction.DESC);
-          orderByParam.put("ctc.id", Direction.DESC);
-        }
         queryResults = custInfoService.queryCmpyTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getCmpyTradeCount(queryParam);
       }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
-
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctp.data_quality", Direction.DESC);
-          orderByParam.put("ctp.id", Direction.DESC);
-        }
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getPersonTradeCount(queryParam);
@@ -262,16 +253,32 @@ public class CustInfoController {
   @RequestMapping(value = "/getCustCount", method = RequestMethod.POST)
   @ResponseBody
   @LogExecutionTime
-  public CustCountVo getCustCount() throws Exception {
+  public CustCountVo getCustCount(@RequestBody QueryParam queryParam) throws Exception {
     CustCountVo custCountVo = new CustCountVo();
-    custCountVo.setAllCmpycount(100);
-    custCountVo.setAllPersonCount(100);
-    custCountVo.setUpdateCmpycount(100);
-    custCountVo.setUpdatePersonCount(100);
-    custCountVo.setCreatCmpycount(100);
-    custCountVo.setCreatPersonCount(100);
-    custCountVo.setTradeCmpycount(100);
-    custCountVo.setTradePersonCount(100);
+    //查询所有SelectCustTypeEnum
+    queryParam.setSelectCustType(SelectCustTypeEnum.ALL.getEname());
+    Long allCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setAllCmpycount(allCmpycount);
+    Long allPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setAllPersonCount(allPersonCount);
+
+    //查询最新更新
+    queryParam.setSelectCustType(SelectCustTypeEnum.UPDATE.getEname());
+    Long updateCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setUpdateCmpycount(updateCmpycount);
+    Long updatePersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setUpdatePersonCount(updatePersonCount);
+
+    //最近新增
+    queryParam.setSelectCustType(SelectCustTypeEnum.CREATE.getEname());
+    Long creatCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setCreatCmpycount(creatCmpycount);
+    Long creatPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setCreatPersonCount(creatPersonCount);
+
+    custCountVo.setTradeCmpycount(400L);
+    custCountVo.setTradePersonCount(400L);
+
     return custCountVo;
   }
 

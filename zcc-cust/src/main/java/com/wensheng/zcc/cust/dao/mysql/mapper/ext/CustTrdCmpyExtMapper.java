@@ -26,5 +26,4 @@ public interface CustTrdCmpyExtMapper {
     List<CustTrdCmpy> selectNewCmpyByProvince(@Param("updateStartTime") Date updateStartTime,
                                               @Param("updateEndTime") Date updateEndTime,
                                               @Param("provinceList") List<String> provinceList);
-
 }

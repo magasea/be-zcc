@@ -341,6 +341,9 @@ public class CustInfoServiceImpl implements CustInfoService {
       if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctc.create_time", Direction.DESC);
       }
+      if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.update_time", Direction.DESC);
+      }
     }
 
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
@@ -603,6 +606,9 @@ public class CustInfoServiceImpl implements CustInfoService {
       if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctp.create_time", Direction.DESC);
       }
+      if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.update_time", Direction.DESC);
+      }
     }
 
     List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
@@ -788,8 +794,6 @@ public class CustInfoServiceImpl implements CustInfoService {
         queryResult = custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
       }
     }
-
-
     return queryResult;
   }
 

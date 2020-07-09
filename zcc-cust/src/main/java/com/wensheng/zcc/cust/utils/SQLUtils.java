@@ -89,6 +89,28 @@ public class SQLUtils {
   public static String getCustWhereClause(QueryParam queryParam) {
     StringBuilder sb = new StringBuilder();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    //选择时间
+    if (!StringUtils.isEmpty(queryParam.getCreateStartDay())) {
+      try {
+        formatter.parse(queryParam.getCreateStartDay());
+      } catch (Exception e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      sb.append(" and ");
+      sb.append("ctp.create_time >= ")
+          .append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
+    }
+    if (!StringUtils.isEmpty(queryParam.getCreateEndDay())) {
+      try {
+        formatter.parse(queryParam.getCreateEndDay());
+      } catch (Exception e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      sb.append(" and ");
+      sb.append(" ctp.create_time < ")
+          .append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
+    }
+
     //最新更改
     if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
       if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
@@ -131,28 +153,27 @@ public class SQLUtils {
         sb.append(" ctp.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
       }
     }
-    //选择时间
-    if (!StringUtils.isEmpty(queryParam.getCreateStartDay())) {
-      try {
-        formatter.parse(queryParam.getCreateStartDay());
-      } catch (Exception e) {
-        throw new RuntimeException(String.format("入参时间格式不对"));
+    //最新交易
+    if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append("cti.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
       }
-      sb.append(" and ");
-      sb.append("ctp.create_time >= ")
-          .append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
-    }
-    if (!StringUtils.isEmpty(queryParam.getCreateEndDay())) {
-      try {
-        formatter.parse(queryParam.getCreateEndDay());
-      } catch (Exception e) {
-        throw new RuntimeException(String.format("入参时间格式不对"));
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append(" cti.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
       }
-      sb.append(" and ");
-      sb.append(" ctp.create_time < ")
-          .append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
     }
-
     return sb.toString();
   }
 
@@ -252,6 +273,30 @@ public class SQLUtils {
     }
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
+    //选择创建时间
+    if(!StringUtils.isEmpty(queryParam.getCreateStartDay())){
+      try {
+        formatter.parse(queryParam.getCreateStartDay());
+      }catch (Exception e){
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      if(sb.length()>0){
+        sb.append(" and ");
+      }
+      sb.append("ctc.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
+    }
+    if(!StringUtils.isEmpty(queryParam.getCreateEndDay())){
+      try {
+        formatter.parse(queryParam.getCreateEndDay());
+      }catch (Exception e){
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      if(sb.length() > 0){
+        sb.append(" and ");
+      }
+      sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
+    }
+
     //最新更改
     if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
       if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
@@ -303,28 +348,31 @@ public class SQLUtils {
         sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
       }
     }
-    //选择创建时间
-    if(!StringUtils.isEmpty(queryParam.getCreateStartDay())){
-      try {
-        formatter.parse(queryParam.getCreateStartDay());
-      }catch (Exception e){
-        throw new RuntimeException(String.format("入参时间格式不对"));
+
+    //最新交易
+    if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length()>0){
+          sb.append(" and ");
+        }
+        sb.append("cti.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
       }
-      if(sb.length()>0){
-        sb.append(" and ");
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length() > 0){
+          sb.append(" and ");
+        }
+        sb.append(" cti.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
       }
-      sb.append("ctc.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
-    }
-    if(!StringUtils.isEmpty(queryParam.getCreateEndDay())){
-      try {
-        formatter.parse(queryParam.getCreateEndDay());
-      }catch (Exception e){
-        throw new RuntimeException(String.format("入参时间格式不对"));
-      }
-      if(sb.length() > 0){
-        sb.append(" and ");
-      }
-      sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
     }
     return sb.toString();
   }

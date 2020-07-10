@@ -49,6 +49,7 @@ import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -1323,6 +1324,25 @@ public class CustInfoServiceImpl implements CustInfoService {
     //修改公司名称，先判断是否已有该公司
     List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(companyName);
     return custTrdCmpieList;
+  }
+
+  @Override
+  public Long cmpyTradInfoCount(QueryParam queryParam) {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //选择更新时间
+    Date latestStartDay = null;
+    Date latestEndDay = null;
+    try {
+      latestStartDay = formatter.parse(queryParam.getLatestStartDay()+" 00:00:00");
+      latestEndDay = formatter.parse(queryParam.getLatestEndDay()+" 23:59:59");
+    } catch (Exception e) {
+      throw new RuntimeException(String.format("入参时间格式不对"));
+    }
+
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+      custTrdInfoExample.createCriteria().andBuyerTypeEqualTo(queryParam.getCustType())
+      .andCreateTimeBetween(latestStartDay, latestEndDay);
+      return custTrdInfoMapper.countByExample(custTrdInfoExample);
   }
 
   @Override

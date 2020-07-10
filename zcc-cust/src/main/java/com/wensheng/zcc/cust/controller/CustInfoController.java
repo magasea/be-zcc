@@ -284,7 +284,12 @@ public class CustInfoController {
     custCountVo.setTradePersonCount(tradePersonCount);
 
     //最近交易数量
-
+    queryParam.setCustType(2);
+    Long cmpyTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    custCountVo.setCmpyTradInfoCount(cmpyTradInfoCount);
+    queryParam.setCustType(1);
+    Long presonTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    custCountVo.setPresonTradInfoCount(presonTradInfoCount);
 
     return custCountVo;
   }

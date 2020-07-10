@@ -13,4 +13,6 @@ public class CustCountVo {
   private Long creatCmpycount;
   private Long tradePersonCount;
   private Long tradeCmpycount;
+  private Long cmpyTradInfoCount;
+  private Long presonTradInfoCount;
 }

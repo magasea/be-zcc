@@ -72,4 +72,6 @@ public interface CustInfoService {
   List<CustTrdCmpy> getCompanyByName(String companyName) throws Exception;
 
   List<CustTrdCmpy> getAccurateCmpyByName(String companyName) throws Exception;
+
+  Long cmpyTradInfoCount(QueryParam queryParam);
 }

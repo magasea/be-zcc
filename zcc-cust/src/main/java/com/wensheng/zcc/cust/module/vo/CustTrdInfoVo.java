@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.module.vo;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import lombok.Data;
@@ -24,6 +25,9 @@ public class CustTrdInfoVo {
 
   String address;
   String addressUpdate;
+
+  Date updateTime;
+  Date createTime;
 
   //公司爬取状态
   String crawledStatus;

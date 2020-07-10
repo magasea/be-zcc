@@ -28,10 +28,14 @@ public class QueryParam {
   //导出的数量
   int exportSize = -1;
   boolean allowNoTrd = false;
-  //只适用于最近更改的公司信息查询2020-07-03
+  //默认开始结束时间2020-07-03
   String latestStartDay;
   String latestEndDay;
+
   //创建时间2020-07-03
   String createStartDay;
   String createEndDay;
+  //更新时间2020-07-03
+  String updateStartDay;
+  String updateEndDay;
 }

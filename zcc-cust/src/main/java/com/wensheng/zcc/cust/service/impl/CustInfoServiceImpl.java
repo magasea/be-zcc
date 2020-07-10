@@ -577,20 +577,6 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   }
 
-  public Long selectNewCmpyCountByProvince(QueryParam queryParam) {
-    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
-    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
-    //使用whereClause因为无法对两个表有相同字段做筛选
-    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
-    if(!StringUtils.isEmpty(whereClause)){
-      custTrdCmpyExtExample.setWhereClause(whereClause);
-    }
-
-    Long queryResult = custTrdCmpyExtMapper.countByFilter(custTrdCmpyExtExample);
-    return queryResult;
-
-  }
-
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
@@ -875,16 +861,20 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+
       custTrdInfoVo.setAddressUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddrUpdate());
       custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
       custTrdInfoVo.setPhonePrep(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
               custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
-      custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+      custTrdInfoVo.setPhone(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+
       custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
+      custTrdInfoVo.setUpdateTime(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getUpdateTime());
+      custTrdInfoVo.setCreateTime(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCreateTime());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
       Set<String> cities = new HashSet<>();
@@ -928,13 +918,13 @@ public class CustInfoServiceImpl implements CustInfoService {
    */
   private String creatPhonePrep (String cmpyPhone, String annuReptPhone){
     StringBuffer sbPhoneNew = new StringBuffer();
-    if(!"-1".equals(cmpyPhone) && !StringUtils.isEmpty(sbPhoneNew)){
+    if((!"-1".equals(cmpyPhone) || !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(sbPhoneNew)){
       sbPhoneNew.append(cmpyPhone);
     }
-    if(sbPhoneNew.length()>0){
-      sbPhoneNew.append(";");
-    }
-    if(!"-1".equals(annuReptPhone) && !StringUtils.isEmpty(annuReptPhone)){
+    if((!"-1".equals(annuReptPhone) || !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(annuReptPhone)){
+      if(sbPhoneNew.length()>0){
+        sbPhoneNew.append(";");
+      }
       sbPhoneNew.append(annuReptPhone);
     }
     return sbPhoneNew.toString();
@@ -955,6 +945,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setPhonePrep(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep());
       custTrdInfoVo.setPhoneUpdate(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
+      custTrdInfoVo.setUpdateTime(custTrdPersonTrdExt.getCustTrdPerson().getUpdateTime());
+      custTrdInfoVo.setCreateTime(custTrdPersonTrdExt.getCustTrdPerson().getCreateTime());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
       Set<String> cities = new HashSet<>();

@@ -276,12 +276,15 @@ public class CustInfoController {
     Long creatPersonCount = custInfoService.getPersonTradeCount(queryParam);
     custCountVo.setCreatPersonCount(creatPersonCount);
 
-    //最近交易
+    //最近交易联系人
     queryParam.setSelectCustType(SelectCustTypeEnum.TRADE.getEname());
     Long tradeCmpycount = custInfoService.getCmpyTradeCount(queryParam);
     custCountVo.setTradeCmpycount(tradeCmpycount);
     Long tradePersonCount = custInfoService.getPersonTradeCount(queryParam);
     custCountVo.setTradePersonCount(tradePersonCount);
+
+    //最近交易数量
+
 
     return custCountVo;
   }

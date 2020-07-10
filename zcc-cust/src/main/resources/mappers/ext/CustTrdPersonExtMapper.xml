@@ -95,6 +95,7 @@
     ${prefix}addr as addr,
     ${prefix}notes as notes,
     ${prefix}create_by as create_by,
+    ${prefix}update_time as update_time,
     ${prefix}create_time as create_time,
     ${prefix}data_status as data_status,
     ${prefix}data_quality as data_quality

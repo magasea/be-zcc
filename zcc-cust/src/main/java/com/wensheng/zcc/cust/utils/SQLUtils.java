@@ -89,7 +89,7 @@ public class SQLUtils {
   public static String getCustWhereClause(QueryParam queryParam) {
     StringBuilder sb = new StringBuilder();
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
-    //选择创建时间
+    //选择更新时间
     if (!StringUtils.isEmpty(queryParam.getUpdateStartDay())) {
       try {
         formatter.parse(queryParam.getUpdateStartDay());
@@ -97,7 +97,7 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       sb.append(" and ");
-      sb.append("ctp.create_time >= ")
+      sb.append("ctp.update_time >= ")
           .append(String.format("'%s 00:00:00'", queryParam.getUpdateStartDay()));
     }
     if (!StringUtils.isEmpty(queryParam.getUpdateEndDay())) {
@@ -107,10 +107,10 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       sb.append(" and ");
-      sb.append(" ctp.create_time < ")
+      sb.append(" ctp.update_time < ")
           .append(String.format("'%s 23:59:59'", queryParam.getUpdateEndDay()));
     }
-    //选择更新时间
+    //选择创建时间
     if (!StringUtils.isEmpty(queryParam.getCreateStartDay())) {
       try {
         formatter.parse(queryParam.getCreateStartDay());
@@ -118,7 +118,7 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       sb.append(" and ");
-      sb.append("ctp.update_time >= ")
+      sb.append("ctp.create_time >= ")
           .append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
     }
     if (!StringUtils.isEmpty(queryParam.getCreateEndDay())) {
@@ -128,7 +128,7 @@ public class SQLUtils {
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       sb.append(" and ");
-      sb.append(" ctp.update_time < ")
+      sb.append(" ctp.create_time < ")
           .append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
     }
 
@@ -294,7 +294,7 @@ public class SQLUtils {
     }
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
 
-    //选择创建时间
+    //选择更新时间
     if(!StringUtils.isEmpty(queryParam.getUpdateStartDay())){
       try {
         formatter.parse(queryParam.getUpdateStartDay());
@@ -304,7 +304,7 @@ public class SQLUtils {
       if(sb.length()>0){
         sb.append(" and ");
       }
-      sb.append("ctc.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getUpdateStartDay()));
+      sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getUpdateStartDay()));
     }
     if(!StringUtils.isEmpty(queryParam.getUpdateEndDay())){
       try {
@@ -315,10 +315,10 @@ public class SQLUtils {
       if(sb.length() > 0){
         sb.append(" and ");
       }
-      sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getUpdateEndDay()));
+      sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getUpdateEndDay()));
     }
 
-    //选择更新时间
+    //选择创建时间
     if(!StringUtils.isEmpty(queryParam.getCreateStartDay())){
       try {
         formatter.parse(queryParam.getCreateStartDay());
@@ -328,7 +328,7 @@ public class SQLUtils {
       if(sb.length()>0){
         sb.append(" and ");
       }
-      sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
+      sb.append("ctc.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
     }
     if(!StringUtils.isEmpty(queryParam.getCreateEndDay())){
       try {
@@ -339,7 +339,7 @@ public class SQLUtils {
       if(sb.length() > 0){
         sb.append(" and ");
       }
-      sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
+      sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
     }
 
     //最新更改

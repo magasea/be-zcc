@@ -6,6 +6,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
@@ -74,4 +75,6 @@ public interface CustInfoService {
   List<CustTrdCmpy> getAccurateCmpyByName(String companyName) throws Exception;
 
   Long cmpyTradInfoCount(QueryParam queryParam);
+
+  List<CustTrdInfoExtVo> getLatestCustTrdExtInfo(QueryParam queryParam) throws Exception;
 }

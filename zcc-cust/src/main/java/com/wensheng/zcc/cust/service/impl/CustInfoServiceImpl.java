@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.service.impl;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -15,6 +16,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
@@ -27,6 +29,7 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
@@ -42,6 +45,7 @@ import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
@@ -63,6 +67,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -99,6 +104,9 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Autowired
   CustTrdPersonExtMapper custTrdPersonExtMapper;
+
+  @Autowired
+  CustTrdInfoExtMapper custTrdInfoExtMapper;
 
   @Autowired
   CustRegionMapper custRegionMapper;
@@ -1343,6 +1351,62 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExample.createCriteria().andBuyerTypeEqualTo(queryParam.getCustType())
       .andCreateTimeBetween(latestStartDay, latestEndDay);
       return custTrdInfoMapper.countByExample(custTrdInfoExample);
+  }
+
+  @Override
+  public List<CustTrdInfoExtVo> getLatestCustTrdExtInfo(QueryParam queryParam) throws Exception {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    int size = queryParam.getPageInfo().getSize();
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+    if(CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("create_time", Direction.DESC);
+    }
+    String orderBy = SQLUtils.getOrderBy(orderByParam);
+
+    //选择更新时间
+    Date latestStartDay = null;
+    Date latestEndDay = null;
+    try {
+      latestStartDay = formatter.parse(queryParam.getLatestStartDay()+" 00:00:00");
+      latestEndDay = formatter.parse(queryParam.getLatestEndDay()+" 23:59:59");
+    } catch (Exception e) {
+      throw new RuntimeException(String.format("入参时间格式不对"));
+    }
+
+    CustTrdInfoExtExample custTrdInfoExtExample = new CustTrdInfoExtExample();
+    custTrdInfoExtExample.createCriteria().andBuyerTypeEqualTo(queryParam.getCustType())
+      .andCreateTimeBetween(latestStartDay, latestEndDay);
+    custTrdInfoExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
+    custTrdInfoExtExample.setOrderByClause(orderBy);
+    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectByExample(custTrdInfoExtExample);
+    List<CustTrdInfoExtVo> custTrdInfoExtVoList = new ArrayList<>();
+    List<Long> idList = new ArrayList<>();
+    for (CustTrdInfo custTrdInfo : custTrdInfoList) {
+      CustTrdInfoExtVo custTrdInfoExtVo = new CustTrdInfoExtVo();
+      BeanUtils.copyProperties(custTrdInfo, custTrdInfoExtVo);
+      custTrdInfoExtVoList.add(custTrdInfoExtVo);
+      idList.add(custTrdInfoExtVo.getBuyerId());
+    }
+
+    Map<Long,String> idBuyerNameMap = new HashMap<>();
+    //取buyerName
+    if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+      custTrdCmpyExtExample.createCriteria().andIdIn(idList);
+      List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+      idBuyerNameMap = custTrdCmpyList.stream().collect(Collectors.toMap(CustTrdCmpy::getId, custTrdCmpy -> custTrdCmpy.getCmpyName()));
+
+    }else if (queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+      custTrdPersonExample.createCriteria().andIdIn(idList);
+      List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+      idBuyerNameMap = custTrdPersonList.stream().collect(Collectors.toMap(CustTrdPerson::getId, custTrdPerson -> custTrdPerson.getName()));
+    }
+    for (CustTrdInfoExtVo custTrdInfoExtVo : custTrdInfoExtVoList) {
+      custTrdInfoExtVo.setBuyerName(idBuyerNameMap.get(custTrdInfoExtVo.getBuyerId()));
+    }
+    return custTrdInfoExtVoList;
   }
 
   @Override

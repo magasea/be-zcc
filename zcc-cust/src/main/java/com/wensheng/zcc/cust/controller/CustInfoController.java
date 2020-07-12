@@ -19,6 +19,7 @@ import com.wensheng.zcc.cust.module.vo.CustCountVo;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
@@ -250,6 +251,20 @@ public class CustInfoController {
 
   @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
   @QueryValidCmpy
+  @RequestMapping(value = "/getLatestCustTrdExtInfo", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public AmcPage<CustTrdInfoExtVo> getLatestCustTrdExtInfo(@RequestBody QueryParam queryParam) throws Exception {
+
+    List<CustTrdInfoExtVo> custTrdInfoExtVoList = custInfoService.getLatestCustTrdExtInfo(queryParam);
+    Long totalCount = custInfoService.cmpyTradInfoCount(queryParam);
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(custTrdInfoExtVoList, totalCount );
+
+  }
+
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
   @RequestMapping(value = "/getCustCount", method = RequestMethod.POST)
   @ResponseBody
   @LogExecutionTime
@@ -293,6 +308,10 @@ public class CustInfoController {
 
     return custCountVo;
   }
+
+
+
+
 
 //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)

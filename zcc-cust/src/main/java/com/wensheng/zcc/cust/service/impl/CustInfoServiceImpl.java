@@ -1397,7 +1397,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
       idBuyerNameMap = custTrdCmpyList.stream().collect(Collectors.toMap(CustTrdCmpy::getId, custTrdCmpy -> custTrdCmpy.getCmpyName()));
 
-    }else if (queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+    }else if (queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
       CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
       custTrdPersonExample.createCriteria().andIdIn(idList);
       List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);

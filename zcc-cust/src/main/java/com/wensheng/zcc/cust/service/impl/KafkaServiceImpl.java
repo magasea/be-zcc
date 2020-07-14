@@ -197,6 +197,10 @@ public class KafkaServiceImpl {
         break;
       }
     }
+    if(null == cmpyBasicBizInfoSync){
+      log.info("查询爬虫基础库中信息,暂无信息");
+      return;
+    }
     log.info("查询爬虫基础库中信息,cmpyBasicBizInfoSync: {}", cmpyBasicBizInfoSync);
 
     //对应修改名称则判断原公司名称是查询公司信息的曾用名中，

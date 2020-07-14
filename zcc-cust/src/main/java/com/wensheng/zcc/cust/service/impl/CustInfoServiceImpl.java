@@ -932,7 +932,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       sbPhoneNew.append(cmpyPhone);
     }
     if((!"-1".equals(annuReptPhone) && !"暂无信息".equals(annuReptPhone)) && !StringUtils.isEmpty(annuReptPhone)
-        && !"-".equals(cmpyPhone)){
+        && !"-".equals(annuReptPhone)){
       if(!annuReptPhone.equals(cmpyPhone)){
         if(sbPhoneNew.length()>0){
           sbPhoneNew.append(";");

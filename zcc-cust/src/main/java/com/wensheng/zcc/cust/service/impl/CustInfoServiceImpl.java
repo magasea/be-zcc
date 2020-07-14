@@ -927,10 +927,12 @@ public class CustInfoServiceImpl implements CustInfoService {
    */
   private String creatPhonePrep (String cmpyPhone, String annuReptPhone){
     StringBuffer sbPhoneNew = new StringBuffer();
-    if((!"-1".equals(cmpyPhone) && !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(cmpyPhone)){
+    if((!"-1".equals(cmpyPhone) && !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(cmpyPhone)
+    && !"-".equals(cmpyPhone)){
       sbPhoneNew.append(cmpyPhone);
     }
-    if((!"-1".equals(annuReptPhone) && !"暂无信息".equals(annuReptPhone)) && !StringUtils.isEmpty(annuReptPhone)){
+    if((!"-1".equals(annuReptPhone) && !"暂无信息".equals(annuReptPhone)) && !StringUtils.isEmpty(annuReptPhone)
+        && !"-".equals(cmpyPhone)){
       if(!annuReptPhone.equals(cmpyPhone)){
         if(sbPhoneNew.length()>0){
           sbPhoneNew.append(";");

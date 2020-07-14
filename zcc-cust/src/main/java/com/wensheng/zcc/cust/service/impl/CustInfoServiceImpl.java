@@ -877,8 +877,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
       custTrdInfoVo.setPhonePrep(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
               custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
-      custTrdInfoVo.setPhone(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
-          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+//      custTrdInfoVo.setPhone(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+//          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
 
       custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
@@ -927,14 +927,16 @@ public class CustInfoServiceImpl implements CustInfoService {
    */
   private String creatPhonePrep (String cmpyPhone, String annuReptPhone){
     StringBuffer sbPhoneNew = new StringBuffer();
-    if((!"-1".equals(cmpyPhone) || !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(sbPhoneNew)){
+    if((!"-1".equals(cmpyPhone) || !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(cmpyPhone)){
       sbPhoneNew.append(cmpyPhone);
     }
-    if((!"-1".equals(annuReptPhone) || !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(annuReptPhone)){
-      if(sbPhoneNew.length()>0){
-        sbPhoneNew.append(";");
+    if((!"-1".equals(annuReptPhone) || !"暂无信息".equals(annuReptPhone)) && !StringUtils.isEmpty(annuReptPhone)){
+      if(!annuReptPhone.equals(cmpyPhone)){
+        if(sbPhoneNew.length()>0){
+          sbPhoneNew.append(";");
+        }
+        sbPhoneNew.append(annuReptPhone);
       }
-      sbPhoneNew.append(annuReptPhone);
     }
     return sbPhoneNew.toString();
   }

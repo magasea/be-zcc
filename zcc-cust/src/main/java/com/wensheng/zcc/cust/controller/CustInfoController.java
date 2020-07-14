@@ -427,9 +427,9 @@ public class CustInfoController {
     String addCrawlCmpyResultDTOJson = new Gson().toJson(addCrawlCmpyResultDTO);
     try {
       crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyResultDTOJson);
-      log.info("请求添加爬取公司信息kafka发送成功,addCrawlCmpyJson:{}", addCrawlCmpyResultDTOJson);
+      log.info("添加爬取公司信息kafka发送成功,addCrawlCmpyResultDTOJson:{}", addCrawlCmpyResultDTOJson);
     } catch (Exception e) {
-      log.error("请求添加爬取公司信息失败，,addCrawlCmpyJson:{}", addCrawlCmpyResultDTOJson);
+      log.error("添加爬取公司信息失败,addCrawlCmpyResultDTOJson:{}", addCrawlCmpyResultDTOJson);
     }
     return "success";
   }

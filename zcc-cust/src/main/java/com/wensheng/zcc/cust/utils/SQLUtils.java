@@ -430,9 +430,9 @@ public class SQLUtils {
       criteria.andNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append(
           "%").toString() );
     }
-    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
-      criteria.andProvinceIn(queryParam.getCustCity());
-    }
+//    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
+//      criteria.andProvinceIn(queryParam.getCustCity());
+//    }
     return custTrdPersonExtExample;
   }
 }

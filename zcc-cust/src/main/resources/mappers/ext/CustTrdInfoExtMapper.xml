@@ -98,6 +98,7 @@
     ${prefix}trd_date as trd_date,
     ${prefix}pub_date as pub_date,
     ${prefix}update_time as update_time,
+    ${prefix}create_time as create_time,
     ${prefix}notes as notes,
     ${prefix}buyer_type as buyer_type,
     ${prefix}buyer_id as buyer_id,

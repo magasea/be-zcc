@@ -800,7 +800,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     //修改的名称不用给前端
     custTrdCmpy.setCmpyNameUpdate("-1");
     BeanUtils.copyProperties(custTrdCmpy, custTrdCmpyVo);
-    CustTrdFavorVo custTrdFavorVo =getCustFavor(companyId,1);
+    CustTrdFavorVo custTrdFavorVo =getCustFavor(companyId, CustTypeEnum.COMPANY.getId());
     custTrdCmpyVo.setCustTrdFavorVo(custTrdFavorVo);
     return custTrdCmpyVo;
   }
@@ -810,7 +810,7 @@ public class CustInfoServiceImpl implements CustInfoService {
     CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
     CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(personId);
     BeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
-    CustTrdFavorVo custTrdFavorVo = getCustFavor(personId,2);
+    CustTrdFavorVo custTrdFavorVo = getCustFavor(personId, CustTypeEnum.PERSON.getId());
     custTrdPersonVo.setCustTrdFavorVo(custTrdFavorVo);
     return custTrdPersonVo;
   }

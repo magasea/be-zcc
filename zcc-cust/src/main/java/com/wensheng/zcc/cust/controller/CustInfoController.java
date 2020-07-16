@@ -23,6 +23,7 @@ import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.ExcelGenerator;
@@ -75,9 +76,19 @@ public class CustInfoController {
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
   @QueryCheckerCmpy
-  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
+  public ModifyResult addCompany(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
+    custInfoService.addCompany(custTrdCmpy);
+    ModifyResult modifyResult = new ModifyResult(custTrdCmpy);
+    return modifyResult;
+  }
 
-    return custInfoService.addCompany(custTrdCmpy);
+  @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
+  @ResponseBody
+  @QueryCheckerCmpy
+  public ModifyResult modCmpy(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
+    custInfoService.updateCompany(custTrdCmpy);
+    ModifyResult modifyResult = new ModifyResult(custTrdCmpy);
+    return modifyResult;
   }
 
   @RequestMapping(value = "/getCmpies", method = RequestMethod.POST)
@@ -118,15 +129,6 @@ public class CustInfoController {
   public CustTrdFavorVo getCustFavor(@RequestParam Long custId, @RequestParam Integer custType){
 
     return custInfoService.getCustFavor(custId, custType);
-
-  }
-
-  @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
-  @ResponseBody
-  @QueryCheckerCmpy
-  public void modCmpy(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
-
-     custInfoService.updateCompany(custTrdCmpy);
 
   }
 

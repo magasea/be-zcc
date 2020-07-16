@@ -158,6 +158,7 @@ public class AmcContactorServiceImpl implements  AmcContactorService{
     commonHandler.creatCmpycontactorHistory(custAmcCmpycontactor.getUpdateBy(), "updateAmcCmpyContactor",
         "人工修改",originalCmpycontactor);
     custAmcCmpycontactorMapper.updateByPrimaryKeySelective(custAmcCmpycontactor);
+    modifyResult.setResult(custAmcCmpycontactor);
     return modifyResult;
   }
 

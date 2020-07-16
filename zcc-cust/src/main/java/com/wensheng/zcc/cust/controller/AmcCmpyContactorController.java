@@ -55,8 +55,7 @@ public class AmcCmpyContactorController {
   public ModifyResult addCmpyAmcContactor(@RequestBody CustAmcCmpycontactor custAmcCmpycontactor)
       throws Exception {
     amcContactorService.createAmcCmpyContactor(custAmcCmpycontactor);
-    ModifyResult modifyResult = new ModifyResult();
-    modifyResult.setSuccess(true);
+    ModifyResult modifyResult = new ModifyResult(custAmcCmpycontactor);
     return modifyResult;
   }
 

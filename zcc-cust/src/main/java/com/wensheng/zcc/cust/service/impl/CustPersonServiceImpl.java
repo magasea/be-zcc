@@ -117,7 +117,7 @@ public class CustPersonServiceImpl implements CustPersonService {
 
     //修改自然人
     custTrdPersonMapper.updateByPrimaryKeySelective(custTrdPerson);
-
+    modifyResult.setResult(custTrdPerson);
     return modifyResult;
   }
 

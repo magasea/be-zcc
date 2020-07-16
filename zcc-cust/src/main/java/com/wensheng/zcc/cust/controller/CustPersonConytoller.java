@@ -32,8 +32,7 @@ public class CustPersonConytoller {
   @ModifyCheckerCustPerson
   public ModifyResult addCustPerson(@RequestBody CustTrdPerson custTrdPerson) throws Exception {
     custPersonService.createCustPerson(custTrdPerson);
-    ModifyResult modifyResult = new ModifyResult();
-    modifyResult.setSuccess(true);
+    ModifyResult modifyResult = new ModifyResult(custTrdPerson);
     return modifyResult;
   }
 

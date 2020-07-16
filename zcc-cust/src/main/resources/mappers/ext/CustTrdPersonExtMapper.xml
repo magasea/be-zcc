@@ -336,6 +336,7 @@
       <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where name =  #{name}
+    and status != 2
     <if test="mobileList != null">
       and (
       1=2

@@ -27,7 +27,7 @@ public class QueryParam {
   PageInfo pageInfo;
   //导出的数量
   int exportSize = -1;
-  boolean allowNoTrd = false;
+  boolean allowNoTrd = true;
   //默认开始结束时间2020-07-03
   String latestStartDay;
   String latestEndDay;

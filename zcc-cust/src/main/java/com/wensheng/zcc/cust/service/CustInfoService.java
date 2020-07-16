@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
@@ -48,9 +49,9 @@ public interface CustInfoService {
 
   Long getPersonTradeCount(QueryParam queryParam);
 
-  CustTrdCmpy getCompany(Long companyId);
+  CustTrdCmpyVo getCompany(Long companyId);
 
-  CustTrdPerson getPerson(Long personId);
+  CustTrdPersonVo getPerson(Long personId);
   CustTrdPersonVo getPersonEditable(Long personId);
 
   public List<CustInfoGeoNear> queryAllNearByCusts(GeoJsonPoint geoJsonPoint);

@@ -17,6 +17,7 @@ import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
 import com.wensheng.zcc.cust.module.sync.CmpyBizInfoResult;
 import com.wensheng.zcc.cust.module.vo.CustCountVo;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
@@ -102,10 +103,10 @@ public class CustInfoController {
 
   @RequestMapping(value = "/getCmpy", method = RequestMethod.POST)
   @ResponseBody
-  public CustTrdCmpy getCmpy(@RequestParam Long companyId){
+  public CustTrdCmpyVo getCmpy(@RequestParam Long companyId){
 
-    CustTrdCmpy custTrdCmpy = custInfoService.getCompany(companyId);
-    return custTrdCmpy;
+    CustTrdCmpyVo custTrdCmpyVo = custInfoService.getCompany(companyId);
+    return custTrdCmpyVo;
   }
 
   @RequestMapping(value = "/getCmpyByName", method = RequestMethod.POST)
@@ -134,7 +135,7 @@ public class CustInfoController {
 
   @RequestMapping(value = "/getPerson", method = RequestMethod.POST)
   @ResponseBody
-  public CustTrdPerson getPerson(@RequestParam Long personId){
+  public CustTrdPersonVo getPerson(@RequestParam Long personId){
 
     return custInfoService.getPerson(personId);
 

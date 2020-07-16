@@ -43,6 +43,7 @@ import com.wensheng.zcc.cust.module.sync.CrawlResultDTO;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
@@ -793,17 +794,25 @@ public class CustInfoServiceImpl implements CustInfoService {
   }
 
   @Override
-  public CustTrdCmpy getCompany(Long companyId) {
-
+  public CustTrdCmpyVo getCompany(Long companyId) {
+    CustTrdCmpyVo custTrdCmpyVo = new CustTrdCmpyVo();
     CustTrdCmpy custTrdCmpy = custTrdCmpyMapper.selectByPrimaryKey(companyId);
     //修改的名称不用给前端
     custTrdCmpy.setCmpyNameUpdate("-1");
-    return custTrdCmpy;
+    BeanUtils.copyProperties(custTrdCmpy, custTrdCmpyVo);
+    CustTrdFavorVo custTrdFavorVo =getCustFavor(companyId,1);
+    custTrdCmpyVo.setCustTrdFavorVo(custTrdFavorVo);
+    return custTrdCmpyVo;
   }
 
   @Override
-  public CustTrdPerson getPerson(Long personId) {
-    return custTrdPersonMapper.selectByPrimaryKey(personId);
+  public CustTrdPersonVo getPerson(Long personId) {
+    CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
+    CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(personId);
+    BeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
+    CustTrdFavorVo custTrdFavorVo = getCustFavor(personId,2);
+    custTrdPersonVo.setCustTrdFavorVo(custTrdFavorVo);
+    return custTrdPersonVo;
   }
 
   @Override

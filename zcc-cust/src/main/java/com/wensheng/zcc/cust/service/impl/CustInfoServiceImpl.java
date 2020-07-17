@@ -1394,6 +1394,9 @@ public class CustInfoServiceImpl implements CustInfoService {
     custTrdInfoExtExample.setOrderByClause(orderBy);
     List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectByExample(custTrdInfoExtExample);
     List<CustTrdInfoExtVo> custTrdInfoExtVoList = new ArrayList<>();
+    if(CollectionUtils.isEmpty(custTrdInfoList)){
+      return custTrdInfoExtVoList;
+    }
     List<Long> idList = new ArrayList<>();
     for (CustTrdInfo custTrdInfo : custTrdInfoList) {
       CustTrdInfoExtVo custTrdInfoExtVo = new CustTrdInfoExtVo();

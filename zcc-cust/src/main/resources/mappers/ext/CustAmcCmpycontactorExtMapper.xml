@@ -143,6 +143,7 @@
     from CUST_AMC_CMPYCONTACTOR cac
     where cac.company = #{company}
     and cac.name = #{name}
+    and cac.status != 2
     <if test="mobileList != null">
       and (
       1=2

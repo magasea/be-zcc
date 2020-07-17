@@ -11,4 +11,5 @@ public class CustTrdCmpyVo extends CustTrdCmpy {
   String originPhoneNum;
   List<String> historyAddrs;
   String originAddrs;
+  CustTrdFavorVo custTrdFavorVo;
 }

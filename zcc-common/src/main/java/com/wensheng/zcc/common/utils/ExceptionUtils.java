@@ -84,6 +84,7 @@ public class ExceptionUtils {
     COMPANY_UPDATE_ERROR(1053, "company update error", "公司信息修改错误"),
     INVALID_PARAMETER_NOOBJAVAIL_ERROR(1054, "invalid parameter no object available", "参数错误查不到"),
     CANNOT_DELETE(1055, "cannot delete", "不能删除"),
+    PHONE_COUNT_GREATER_THREE(1055, "phone coUnt greater three", "电话号大于3个"),
     ;
     int code;
     String name;

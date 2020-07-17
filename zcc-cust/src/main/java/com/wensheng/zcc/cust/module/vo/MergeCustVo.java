@@ -9,4 +9,14 @@ public class MergeCustVo{
   Long updateBy;
   List<Long> fromPersonIds;
   Long toPersonId;
+  /**
+   *  固话号
+   */
+  private String phoneUpdate;
+
+  /**
+   * 手机号
+   */
+  private String mobileUpdate;
+
 }

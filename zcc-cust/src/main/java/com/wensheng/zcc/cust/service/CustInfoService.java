@@ -4,8 +4,10 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
@@ -40,17 +42,16 @@ public interface CustInfoService {
   Long getCmpyTradeCount(QueryParam queryParam);
 
   List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam)
-      throws Exception;
+      Map<String, Direction> orderByParam) throws Exception;
 
   List<CustTrdInfoExcelVo> queryPersonTrade(int offset, int size,  QueryParam queryParam, Map<String, Direction> orderByParam) throws Exception;
 
 
   Long getPersonTradeCount(QueryParam queryParam);
 
-  CustTrdCmpy getCompany(Long companyId);
+  CustTrdCmpyVo getCompany(Long companyId);
 
-  CustTrdPerson getPerson(Long personId);
+  CustTrdPersonVo getPerson(Long personId);
   CustTrdPersonVo getPersonEditable(Long personId);
 
   public List<CustInfoGeoNear> queryAllNearByCusts(GeoJsonPoint geoJsonPoint);
@@ -73,4 +74,8 @@ public interface CustInfoService {
   List<CustTrdCmpy> getCompanyByName(String companyName) throws Exception;
 
   List<CustTrdCmpy> getAccurateCmpyByName(String companyName) throws Exception;
+
+  Long cmpyTradInfoCount(QueryParam queryParam);
+
+  List<CustTrdInfoExtVo> getLatestCustTrdExtInfo(QueryParam queryParam) throws Exception;
 }

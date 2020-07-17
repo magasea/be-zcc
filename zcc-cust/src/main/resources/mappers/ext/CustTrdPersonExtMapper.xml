@@ -95,6 +95,7 @@
     ${prefix}addr as addr,
     ${prefix}notes as notes,
     ${prefix}create_by as create_by,
+    ${prefix}update_time as update_time,
     ${prefix}create_time as create_time,
     ${prefix}data_status as data_status,
     ${prefix}data_quality as data_quality
@@ -188,6 +189,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
+    <if test="whereClause != null">
+      ${whereClause}
+    </if>
     <if test="orderByClause != null">
       group by ctp.id order by ${orderByClause}
     </if>
@@ -242,6 +246,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
+    <if test="whereClause != null">
+      ${whereClause}
+    </if>
     group by ctp.id
     ) as tmp
   </select>
@@ -288,6 +295,9 @@
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
+    <if test="whereClause != null">
+      ${whereClause}
+    </if>
     <if test="orderByClause != null">
       group by ctp.id order by ${orderByClause}
     </if>
@@ -310,6 +320,9 @@
     <if test="_parameter != null">
       <include refid="Example_Where_Clause" />
     </if>
+    <if test="whereClause != null">
+      ${whereClause}
+    </if>
     <if test="filterByClause != null">
       ${filterByClause}
     </if>
@@ -323,6 +336,7 @@
       <include refid="All_Base_Column_List" />
     from CUST_TRD_PERSON
     where name =  #{name}
+    and status != 2
     <if test="mobileList != null">
       and (
       1=2

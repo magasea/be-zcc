@@ -3,6 +3,7 @@ package com.wensheng.zcc.cust.service.impl;
 import com.google.common.base.Joiner;
 import com.google.common.collect.Lists;
 import com.google.gson.Gson;
+import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
@@ -15,6 +16,7 @@ import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdCmpyMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdInfoMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.CustTrdPersonMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdCmpyExtMapper;
+import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdInfoExtMapper;
 import com.wensheng.zcc.cust.dao.mysql.mapper.ext.CustTrdPersonExtMapper;
 import com.wensheng.zcc.cust.module.dao.mongo.CustTrdGeo;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
@@ -27,11 +29,13 @@ import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPersonExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyTrdExt;
+import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdInfoExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonTrdExt;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
 import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PresonStatusEnum;
+import com.wensheng.zcc.cust.module.helper.SelectCustTypeEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AdressResp;
 import com.wensheng.zcc.cust.module.sync.CmpyBasicBizInfoSync;
@@ -39,8 +43,10 @@ import com.wensheng.zcc.cust.module.sync.CrawlResultDTO;
 import com.wensheng.zcc.cust.module.sync.CustCmpyInfoFromSync;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
 import com.wensheng.zcc.cust.module.vo.CustTrdCmpyExtVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
@@ -48,6 +54,7 @@ import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.SQLUtils;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -61,6 +68,7 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -97,6 +105,9 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Autowired
   CustTrdPersonExtMapper custTrdPersonExtMapper;
+
+  @Autowired
+  CustTrdInfoExtMapper custTrdInfoExtMapper;
 
   @Autowired
   CustRegionMapper custRegionMapper;
@@ -328,6 +339,23 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+
+    if(CollectionUtils.isEmpty(orderByParam)){
+      if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.data_quality", Direction.DESC);
+        orderByParam.put("ctc.id", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.update_time", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.create_time", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctc.update_time", Direction.DESC);
+      }
+    }
+
     List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
     return convertCmpyToVoes(custTrdCmpyTrdExts);
   }
@@ -537,6 +565,7 @@ public class CustInfoServiceImpl implements CustInfoService {
 //    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
     CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    //使用whereClause因为无法对两个表有相同字段做筛选
     String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
     if(!StringUtils.isEmpty(whereClause)){
       custTrdCmpyExtExample.setWhereClause(whereClause);
@@ -562,10 +591,23 @@ public class CustInfoServiceImpl implements CustInfoService {
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
 
+    if(CollectionUtils.isEmpty(orderByParam)){
+      if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.data_quality", Direction.DESC);
+        orderByParam.put("ctp.id", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.update_time", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.create_time", Direction.DESC);
+      }
+      if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+        orderByParam.put("ctp.update_time", Direction.DESC);
+      }
+    }
 
     List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
-
-
     return convertPersonToVoes(custTrdPersonTrdExts);
   }
 
@@ -573,6 +615,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdPersonExtExample custTrdPersonExtExample = SQLUtils.getCustPersonTrdExample(queryParam);
+    //使用whereClause因为无法对两个表有相同字段做筛选
+    String whereClause = SQLUtils.getCustWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdPersonExtExample.setWhereClause(whereClause);
+    }
     custTrdPersonExtExample.setOrderByClause(orderBy);
     RowBounds rowBounds = new RowBounds(offset, size);
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
@@ -727,8 +774,11 @@ public class CustInfoServiceImpl implements CustInfoService {
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
-    String whereClause = " ctp.status != 2";
-    custTrdPersonExtExample.setWhereClause(whereClause);
+    //使用whereClause因为无法对两个表有相同字段做筛选
+    String whereClause = SQLUtils.getCustWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdPersonExtExample.setWhereClause(whereClause);
+    }
     custTrdPersonExample.getOredCriteria().forEach(item -> custTrdPersonExtExample.getOredCriteria().add(item));
     if(!StringUtils.isEmpty(filterBy)){
       custTrdPersonExtExample.setFilterByClause(filterBy);
@@ -740,23 +790,29 @@ public class CustInfoServiceImpl implements CustInfoService {
         queryResult = custTrdPersonExtMapper.countByFilter(custTrdPersonExtExample);
       }
     }
-
-
     return queryResult;
   }
 
   @Override
-  public CustTrdCmpy getCompany(Long companyId) {
-
+  public CustTrdCmpyVo getCompany(Long companyId) {
+    CustTrdCmpyVo custTrdCmpyVo = new CustTrdCmpyVo();
     CustTrdCmpy custTrdCmpy = custTrdCmpyMapper.selectByPrimaryKey(companyId);
     //修改的名称不用给前端
     custTrdCmpy.setCmpyNameUpdate("-1");
-    return custTrdCmpy;
+    BeanUtils.copyProperties(custTrdCmpy, custTrdCmpyVo);
+    CustTrdFavorVo custTrdFavorVo =getCustFavor(companyId, CustTypeEnum.COMPANY.getId());
+    custTrdCmpyVo.setCustTrdFavorVo(custTrdFavorVo);
+    return custTrdCmpyVo;
   }
 
   @Override
-  public CustTrdPerson getPerson(Long personId) {
-    return custTrdPersonMapper.selectByPrimaryKey(personId);
+  public CustTrdPersonVo getPerson(Long personId) {
+    CustTrdPersonVo custTrdPersonVo = new CustTrdPersonVo();
+    CustTrdPerson custTrdPerson = custTrdPersonMapper.selectByPrimaryKey(personId);
+    BeanUtils.copyProperties(custTrdPerson, custTrdPersonVo);
+    CustTrdFavorVo custTrdFavorVo = getCustFavor(personId, CustTypeEnum.PERSON.getId());
+    custTrdPersonVo.setCustTrdFavorVo(custTrdFavorVo);
+    return custTrdPersonVo;
   }
 
   @Override
@@ -823,16 +879,20 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setCustId(custTrdCmpyTrdExts.get(idx).getId());
       custTrdInfoVo.setAddress(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddr(),
           custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptAddr()));
+
       custTrdInfoVo.setAddressUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyAddrUpdate());
       custTrdInfoVo.setCrawledStatus(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCrawledStatus());
       custTrdInfoVo.setCustName(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyName());
       custTrdInfoVo.setCustCity(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyProvince());
-      custTrdInfoVo.setPhonePrep(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
-          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
-      custTrdInfoVo.setPhone(String.format("%s;%s",custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
-          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+      custTrdInfoVo.setPhonePrep(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+              custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+//      custTrdInfoVo.setPhone(creatPhonePrep(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhone(),
+//          custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getAnnuReptPhone()));
+
       custTrdInfoVo.setPhoneUpdate(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCmpyPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdCmpyTrdExts.get(idx).getCustTrdInfoList().size());
+      custTrdInfoVo.setUpdateTime(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getUpdateTime());
+      custTrdInfoVo.setCreateTime(custTrdCmpyTrdExts.get(idx).getCustTrdCmpy().getCreateTime());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
       Set<String> cities = new HashSet<>();
@@ -868,6 +928,30 @@ public class CustInfoServiceImpl implements CustInfoService {
     return custTrdInfoVos;
   }
 
+  /**
+   * 拼接PhonePrep
+   * @param cmpyPhone
+   * @param annuReptPhone
+   * @return
+   */
+  private String creatPhonePrep (String cmpyPhone, String annuReptPhone){
+    StringBuffer sbPhoneNew = new StringBuffer();
+    if((!"-1".equals(cmpyPhone) && !"暂无信息".equals(cmpyPhone)) && !StringUtils.isEmpty(cmpyPhone)
+    && !"-".equals(cmpyPhone)){
+      sbPhoneNew.append(cmpyPhone);
+    }
+    if((!"-1".equals(annuReptPhone) && !"暂无信息".equals(annuReptPhone)) && !StringUtils.isEmpty(annuReptPhone)
+        && !"-".equals(annuReptPhone)){
+      if(!annuReptPhone.equals(cmpyPhone)){
+        if(sbPhoneNew.length()>0){
+          sbPhoneNew.append(";");
+        }
+        sbPhoneNew.append(annuReptPhone);
+      }
+    }
+    return sbPhoneNew.toString();
+  }
+
   private List<CustTrdInfoVo> convertPersonToVoes(List<CustTrdPersonTrdExt> custTrdPersonTrdExtList) {
     List<CustTrdInfoVo> custTrdInfoVos = new ArrayList<>();
     for(CustTrdPersonTrdExt custTrdPersonTrdExt: custTrdPersonTrdExtList){
@@ -883,6 +967,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoVo.setPhonePrep(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep());
       custTrdInfoVo.setPhoneUpdate(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate());
       custTrdInfoVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
+      custTrdInfoVo.setUpdateTime(custTrdPersonTrdExt.getCustTrdPerson().getUpdateTime());
+      custTrdInfoVo.setCreateTime(custTrdPersonTrdExt.getCustTrdPerson().getCreateTime());
       Long totalDebtAmount = 0L;
       Long totalTrdAmount = 0L;
       Set<String> cities = new HashSet<>();
@@ -1259,6 +1345,81 @@ public class CustInfoServiceImpl implements CustInfoService {
     //修改公司名称，先判断是否已有该公司
     List<CustTrdCmpy> custTrdCmpieList = commonHandler.queryCmpyByName(companyName);
     return custTrdCmpieList;
+  }
+
+  @Override
+  public Long cmpyTradInfoCount(QueryParam queryParam) {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //选择更新时间
+    Date latestStartDay = null;
+    Date latestEndDay = null;
+    try {
+      latestStartDay = formatter.parse(queryParam.getLatestStartDay()+" 00:00:00");
+      latestEndDay = formatter.parse(queryParam.getLatestEndDay()+" 23:59:59");
+    } catch (Exception e) {
+      throw new RuntimeException(String.format("入参时间格式不对"));
+    }
+
+    CustTrdInfoExample custTrdInfoExample = new CustTrdInfoExample();
+      custTrdInfoExample.createCriteria().andBuyerTypeEqualTo(queryParam.getCustType())
+      .andCreateTimeBetween(latestStartDay, latestEndDay);
+      return custTrdInfoMapper.countByExample(custTrdInfoExample);
+  }
+
+  @Override
+  public List<CustTrdInfoExtVo> getLatestCustTrdExtInfo(QueryParam queryParam) throws Exception {
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    int size = queryParam.getPageInfo().getSize();
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+    if(CollectionUtils.isEmpty(orderByParam)) {
+      orderByParam.put("create_time", Direction.DESC);
+    }
+    String orderBy = SQLUtils.getOrderBy(orderByParam);
+
+    //选择更新时间
+    Date latestStartDay = null;
+    Date latestEndDay = null;
+    try {
+      latestStartDay = formatter.parse(queryParam.getLatestStartDay()+" 00:00:00");
+      latestEndDay = formatter.parse(queryParam.getLatestEndDay()+" 23:59:59");
+    } catch (Exception e) {
+      throw new RuntimeException(String.format("入参时间格式不对"));
+    }
+
+    CustTrdInfoExtExample custTrdInfoExtExample = new CustTrdInfoExtExample();
+    custTrdInfoExtExample.createCriteria().andBuyerTypeEqualTo(queryParam.getCustType())
+      .andCreateTimeBetween(latestStartDay, latestEndDay);
+    custTrdInfoExtExample.setLimitByClause(String.format(" %d , %d ", offset, size));
+    custTrdInfoExtExample.setOrderByClause(orderBy);
+    List<CustTrdInfo> custTrdInfoList = custTrdInfoExtMapper.selectByExample(custTrdInfoExtExample);
+    List<CustTrdInfoExtVo> custTrdInfoExtVoList = new ArrayList<>();
+    List<Long> idList = new ArrayList<>();
+    for (CustTrdInfo custTrdInfo : custTrdInfoList) {
+      CustTrdInfoExtVo custTrdInfoExtVo = new CustTrdInfoExtVo();
+      BeanUtils.copyProperties(custTrdInfo, custTrdInfoExtVo);
+      custTrdInfoExtVoList.add(custTrdInfoExtVo);
+      idList.add(custTrdInfoExtVo.getBuyerId());
+    }
+
+    Map<Long,String> idBuyerNameMap = new HashMap<>();
+    //取buyerName
+    if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+      custTrdCmpyExtExample.createCriteria().andIdIn(idList);
+      List<CustTrdCmpy> custTrdCmpyList = custTrdCmpyMapper.selectByExample(custTrdCmpyExtExample);
+      idBuyerNameMap = custTrdCmpyList.stream().collect(Collectors.toMap(CustTrdCmpy::getId, custTrdCmpy -> custTrdCmpy.getCmpyName()));
+
+    }else if (queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
+      CustTrdPersonExample custTrdPersonExample = new CustTrdPersonExample();
+      custTrdPersonExample.createCriteria().andIdIn(idList);
+      List<CustTrdPerson> custTrdPersonList = custTrdPersonMapper.selectByExample(custTrdPersonExample);
+      idBuyerNameMap = custTrdPersonList.stream().collect(Collectors.toMap(CustTrdPerson::getId, custTrdPerson -> custTrdPerson.getName()));
+    }
+    for (CustTrdInfoExtVo custTrdInfoExtVo : custTrdInfoExtVoList) {
+      custTrdInfoExtVo.setBuyerName(idBuyerNameMap.get(custTrdInfoExtVo.getBuyerId()));
+    }
+    return custTrdInfoExtVoList;
   }
 
   @Override

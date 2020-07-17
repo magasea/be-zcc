@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ModifyResult<T> {
+public class MergeCustRestult {
 
   /**
    * 调用是否成功
@@ -17,19 +17,13 @@ public class ModifyResult<T> {
   private String errCode;
 
   /**
-   * 调用重复的id
+   *  固话号
    */
-  private List<Long> idList;
+  private String phoneUpdate;
 
   /**
-   * result
+   * 手机号
    */
-  private T result;
-  public ModifyResult(){}
-
-  public ModifyResult(T result){
-    this.result=result;
-    this.success=true;
-  }
+  private String mobileUpdate;
 
 }

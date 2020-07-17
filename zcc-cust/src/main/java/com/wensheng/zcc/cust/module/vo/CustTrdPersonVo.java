@@ -10,4 +10,5 @@ public class CustTrdPersonVo extends CustTrdPerson {
   String originPhoneNum;
   List<String> historyAddrs;
   String originAddrs;
+  private CustTrdFavorVo custTrdFavorVo;
 }

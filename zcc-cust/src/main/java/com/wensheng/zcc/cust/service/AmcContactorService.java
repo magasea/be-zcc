@@ -3,6 +3,8 @@ package com.wensheng.zcc.cust.service;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcCmpycontactor;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorExtVo;
 import com.wensheng.zcc.cust.module.vo.CustAmcCmpycontactorTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.MergeCustVo;
+import com.wensheng.zcc.cust.module.vo.helper.MergeCustRestult;
 import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import java.util.List;
 
@@ -12,7 +14,7 @@ public interface AmcContactorService {
 
   ModifyResult updateAmcCmpyContactor(CustAmcCmpycontactor custAmcCmpycontactor) throws Exception;
 
-  void mergeCmpycontactor(List<Long> fromContactorIds, Long toContactorId,  Long updateBy) throws Exception;
+  void mergeCmpycontactor(MergeCustRestult mergeCustRestult, MergeCustVo mergeCustVo) throws Exception;
 
   List<CustAmcCmpycontactor> getCmpyAmcContactor(String cmpyName);
 

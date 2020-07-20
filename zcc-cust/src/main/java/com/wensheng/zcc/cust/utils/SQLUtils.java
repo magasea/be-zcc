@@ -4,6 +4,7 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdCmpyExtExample;
 import com.wensheng.zcc.cust.module.dao.mysql.ext.CustTrdPersonExtExample;
 import com.wensheng.zcc.cust.module.helper.InvestScaleEnum;
+import com.wensheng.zcc.cust.module.helper.SelectCustTypeEnum;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -84,6 +85,119 @@ public class SQLUtils {
     }
     return custTrdCmpyExtExample;
   }
+
+  public static String getCustWhereClause(QueryParam queryParam) {
+    StringBuilder sb = new StringBuilder();
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    //选择更新时间
+    if (!StringUtils.isEmpty(queryParam.getUpdateStartDay())) {
+      try {
+        formatter.parse(queryParam.getUpdateStartDay());
+      } catch (Exception e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      sb.append(" and ");
+      sb.append("ctp.update_time >= ")
+          .append(String.format("'%s 00:00:00'", queryParam.getUpdateStartDay()));
+    }
+    if (!StringUtils.isEmpty(queryParam.getUpdateEndDay())) {
+      try {
+        formatter.parse(queryParam.getUpdateEndDay());
+      } catch (Exception e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      sb.append(" and ");
+      sb.append(" ctp.update_time < ")
+          .append(String.format("'%s 23:59:59'", queryParam.getUpdateEndDay()));
+    }
+    //选择创建时间
+    if (!StringUtils.isEmpty(queryParam.getCreateStartDay())) {
+      try {
+        formatter.parse(queryParam.getCreateStartDay());
+      } catch (Exception e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      sb.append(" and ");
+      sb.append("ctp.create_time >= ")
+          .append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
+    }
+    if (!StringUtils.isEmpty(queryParam.getCreateEndDay())) {
+      try {
+        formatter.parse(queryParam.getCreateEndDay());
+      } catch (Exception e) {
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      sb.append(" and ");
+      sb.append(" ctp.create_time < ")
+          .append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
+    }
+
+    //最新更改
+    if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append("ctp.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      }
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append(" ctp.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      }
+    }
+    //最新创建
+    if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append("ctp.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      }
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append(" ctp.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      }
+    }
+    //最新交易
+    if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append("cti.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      }
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        sb.append(" and ");
+        sb.append(" cti.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      }
+    }
+    return sb.toString();
+  }
+
   public static String getFilterByForCustTrd(QueryParam queryParam){
     StringBuilder sb = new StringBuilder();
     if(!StringUtils.isEmpty(queryParam.getCity())){
@@ -178,29 +292,132 @@ public class SQLUtils {
       }
       sb.append("ctc.cmpy_province in ").append("(").append(proviceSb.toString()).append(")");
     }
-    if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
-      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+
+    //选择更新时间
+    if(!StringUtils.isEmpty(queryParam.getUpdateStartDay())){
       try {
-        formatter.parse(queryParam.getLatestStartDay());
+        formatter.parse(queryParam.getUpdateStartDay());
       }catch (Exception e){
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       if(sb.length()>0){
         sb.append(" and ");
       }
-      sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getUpdateStartDay()));
     }
-    if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
-      SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+    if(!StringUtils.isEmpty(queryParam.getUpdateEndDay())){
       try {
-        formatter.parse(queryParam.getLatestEndDay());
+        formatter.parse(queryParam.getUpdateEndDay());
       }catch (Exception e){
         throw new RuntimeException(String.format("入参时间格式不对"));
       }
       if(sb.length() > 0){
         sb.append(" and ");
       }
-      sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getUpdateEndDay()));
+    }
+
+    //选择创建时间
+    if(!StringUtils.isEmpty(queryParam.getCreateStartDay())){
+      try {
+        formatter.parse(queryParam.getCreateStartDay());
+      }catch (Exception e){
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      if(sb.length()>0){
+        sb.append(" and ");
+      }
+      sb.append("ctc.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getCreateStartDay()));
+    }
+    if(!StringUtils.isEmpty(queryParam.getCreateEndDay())){
+      try {
+        formatter.parse(queryParam.getCreateEndDay());
+      }catch (Exception e){
+        throw new RuntimeException(String.format("入参时间格式不对"));
+      }
+      if(sb.length() > 0){
+        sb.append(" and ");
+      }
+      sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getCreateEndDay()));
+    }
+
+    //最新更改
+    if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length()>0){
+          sb.append(" and ");
+        }
+        sb.append("ctc.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      }
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length() > 0){
+          sb.append(" and ");
+        }
+        sb.append(" ctc.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      }
+    }
+
+    //最新创建
+    if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length()>0){
+          sb.append(" and ");
+        }
+        sb.append("ctc.create_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      }
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length() > 0){
+          sb.append(" and ");
+        }
+        sb.append(" ctc.create_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      }
+    }
+
+    //最新交易
+    if(SelectCustTypeEnum.TRADE.getEname().equals(queryParam.getSelectCustType())){
+      if(!StringUtils.isEmpty(queryParam.getLatestStartDay())){
+        try {
+          formatter.parse(queryParam.getLatestStartDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length()>0){
+          sb.append(" and ");
+        }
+        sb.append("cti.update_time >= ").append(String.format("'%s 00:00:00'", queryParam.getLatestStartDay()));
+      }
+      if(!StringUtils.isEmpty(queryParam.getLatestEndDay())){
+        try {
+          formatter.parse(queryParam.getLatestEndDay());
+        }catch (Exception e){
+          throw new RuntimeException(String.format("入参时间格式不对"));
+        }
+        if(sb.length() > 0){
+          sb.append(" and ");
+        }
+        sb.append(" cti.update_time < ").append(String.format("'%s 23:59:59'", queryParam.getLatestEndDay()));
+      }
     }
     return sb.toString();
   }
@@ -213,10 +430,9 @@ public class SQLUtils {
       criteria.andNameLike(new StringBuilder("%").append(StringUtils.trimWhitespace(queryParam.getName())).append(
           "%").toString() );
     }
-
-    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
-      criteria.andProvinceIn(queryParam.getCustCity());
-    }
+//    if(!CollectionUtils.isEmpty(queryParam.getCustCity())){
+//      criteria.andProvinceIn(queryParam.getCustCity());
+//    }
     return custTrdPersonExtExample;
   }
 }

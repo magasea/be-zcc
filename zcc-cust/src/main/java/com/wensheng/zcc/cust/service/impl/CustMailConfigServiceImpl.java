@@ -39,6 +39,7 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 @Service
 @Slf4j
@@ -182,18 +183,20 @@ public class CustMailConfigServiceImpl implements CustMailConfigService {
         custCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("#"));
         int rowIdx = 1;
 
+        if(CollectionUtils.isEmpty(sheetTrdCmpyList)){
+          Row row = sheet.createRow(rowIdx++);
+          row.createCell(0).setCellValue("该省份暂无新增数据");
+        }
+
         for (CustTrdCmpy custTrdCmpy : sheetTrdCmpyList) {
           Row row = sheet.createRow(rowIdx++);
-
           //"公司名称", "信用代码", "联系电话", "联系地址","年报电话","年报地址","链接"
           row.createCell(0).setCellValue(custTrdCmpy.getCmpyName());
           row.createCell(1).setCellValue(custTrdCmpy.getUniSocialCode());
-
           row.createCell(2).setCellValue(checkValue(custTrdCmpy.getCmpyPhone()));
           row.createCell(3).setCellValue(checkValue(custTrdCmpy.getCmpyAddr()));
           row.createCell(4).setCellValue(checkValue(custTrdCmpy.getAnnuReptPhone()));
           row.createCell(5).setCellValue(checkValue(custTrdCmpy.getAnnuReptAddr()));
-
           //链接
           String cmpyLink = String.format(cmpyLinkMould,custTrdCmpy.getId(),custTrdCmpy.getCmpyName());
           row.createCell(6).setCellValue(cmpyLink);

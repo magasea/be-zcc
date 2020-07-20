@@ -11,15 +11,20 @@ import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdCmpy;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustTrdPerson;
 import com.wensheng.zcc.cust.module.helper.CustTypeEnum;
+import com.wensheng.zcc.cust.module.helper.SelectCustTypeEnum;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyDTO;
 import com.wensheng.zcc.cust.module.sync.AddCrawlCmpyResultDTO;
 import com.wensheng.zcc.cust.module.sync.CmpyBizInfoResult;
+import com.wensheng.zcc.cust.module.vo.CustCountVo;
 import com.wensheng.zcc.cust.module.vo.CustInfoGeoNear;
+import com.wensheng.zcc.cust.module.vo.CustTrdCmpyVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdFavorVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoExcelVo;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoExtVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
 import com.wensheng.zcc.cust.module.vo.CustTrdPersonVo;
 import com.wensheng.zcc.cust.module.vo.CustsCountByTime;
+import com.wensheng.zcc.cust.module.vo.helper.ModifyResult;
 import com.wensheng.zcc.cust.service.CustInfoService;
 import com.wensheng.zcc.cust.service.SyncService;
 import com.wensheng.zcc.cust.utils.ExcelGenerator;
@@ -72,9 +77,19 @@ public class CustInfoController {
   @RequestMapping(value = "/addCmpy", method = RequestMethod.POST)
   @ResponseBody
   @QueryCheckerCmpy
-  public CustTrdCmpy addCompany(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
+  public ModifyResult addCompany(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
+    custInfoService.addCompany(custTrdCmpy);
+    ModifyResult modifyResult = new ModifyResult(custTrdCmpy);
+    return modifyResult;
+  }
 
-    return custInfoService.addCompany(custTrdCmpy);
+  @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
+  @ResponseBody
+  @QueryCheckerCmpy
+  public ModifyResult modCmpy(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
+    custInfoService.updateCompany(custTrdCmpy);
+    ModifyResult modifyResult = new ModifyResult(custTrdCmpy);
+    return modifyResult;
   }
 
   @RequestMapping(value = "/getCmpies", method = RequestMethod.POST)
@@ -88,10 +103,10 @@ public class CustInfoController {
 
   @RequestMapping(value = "/getCmpy", method = RequestMethod.POST)
   @ResponseBody
-  public CustTrdCmpy getCmpy(@RequestParam Long companyId){
+  public CustTrdCmpyVo getCmpy(@RequestParam Long companyId){
 
-    CustTrdCmpy custTrdCmpy = custInfoService.getCompany(companyId);
-    return custTrdCmpy;
+    CustTrdCmpyVo custTrdCmpyVo = custInfoService.getCompany(companyId);
+    return custTrdCmpyVo;
   }
 
   @RequestMapping(value = "/getCmpyByName", method = RequestMethod.POST)
@@ -118,18 +133,9 @@ public class CustInfoController {
 
   }
 
-  @RequestMapping(value = "/updateCmpy", method = RequestMethod.POST)
-  @ResponseBody
-  @QueryCheckerCmpy
-  public void modCmpy(@RequestBody CustTrdCmpy custTrdCmpy) throws Exception {
-
-     custInfoService.updateCompany(custTrdCmpy);
-
-  }
-
   @RequestMapping(value = "/getPerson", method = RequestMethod.POST)
   @ResponseBody
-  public CustTrdPerson getPerson(@RequestParam Long personId){
+  public CustTrdPersonVo getPerson(@RequestParam Long personId){
 
     return custInfoService.getPerson(personId);
 
@@ -180,25 +186,15 @@ public class CustInfoController {
   public AmcPage<CustTrdInfoVo> getCustTrdInfo(@RequestBody QueryParam queryParam) throws Exception {
 
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
-
     List<CustTrdInfoVo> queryResults = null;
     Long totalCount = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     try{
       if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctc.data_quality", Direction.DESC);
-          orderByParam.put("ctc.id", Direction.DESC);
-        }
         queryResults = custInfoService.queryCmpyTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getCmpyTradeCount(queryParam);
       }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
-
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctp.data_quality", Direction.DESC);
-          orderByParam.put("ctp.id", Direction.DESC);
-        }
         queryResults = custInfoService.queryPersonTradePage(offset, queryParam.getPageInfo().getSize(), queryParam,
             orderByParam);
         totalCount = custInfoService.getPersonTradeCount(queryParam);
@@ -255,6 +251,70 @@ public class CustInfoController {
     return PageReqRepHelper.getAmcPage(queryResults, totalCount );
 
   }
+
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
+  @RequestMapping(value = "/getLatestCustTrdExtInfo", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public AmcPage<CustTrdInfoExtVo> getLatestCustTrdExtInfo(@RequestBody QueryParam queryParam) throws Exception {
+
+    List<CustTrdInfoExtVo> custTrdInfoExtVoList = custInfoService.getLatestCustTrdExtInfo(queryParam);
+    Long totalCount = custInfoService.cmpyTradInfoCount(queryParam);
+//    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
+    return PageReqRepHelper.getAmcPage(custTrdInfoExtVoList, totalCount );
+
+  }
+
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
+  @RequestMapping(value = "/getCustCount", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public CustCountVo getCustCount(@RequestBody QueryParam queryParam) throws Exception {
+    CustCountVo custCountVo = new CustCountVo();
+    //查询所有SelectCustTypeEnum
+    queryParam.setSelectCustType(SelectCustTypeEnum.ALL.getEname());
+    Long allCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setAllCmpycount(allCmpycount);
+    Long allPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setAllPersonCount(allPersonCount);
+
+    //查询最新更新
+    queryParam.setSelectCustType(SelectCustTypeEnum.UPDATE.getEname());
+    Long updateCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setUpdateCmpycount(updateCmpycount);
+    Long updatePersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setUpdatePersonCount(updatePersonCount);
+
+    //最近新增
+    queryParam.setSelectCustType(SelectCustTypeEnum.CREATE.getEname());
+    Long creatCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setCreatCmpycount(creatCmpycount);
+    Long creatPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setCreatPersonCount(creatPersonCount);
+
+    //最近交易联系人
+    queryParam.setSelectCustType(SelectCustTypeEnum.TRADE.getEname());
+    Long tradeCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    custCountVo.setTradeCmpycount(tradeCmpycount);
+    Long tradePersonCount = custInfoService.getPersonTradeCount(queryParam);
+    custCountVo.setTradePersonCount(tradePersonCount);
+
+    //最近交易数量
+    queryParam.setCustType(2);
+    Long cmpyTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    custCountVo.setCmpyTradInfoCount(cmpyTradInfoCount);
+    queryParam.setCustType(1);
+    Long presonTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    custCountVo.setPresonTradInfoCount(presonTradInfoCount);
+
+    return custCountVo;
+  }
+
+
+
+
 
 //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)
@@ -370,9 +430,9 @@ public class CustInfoController {
     String addCrawlCmpyResultDTOJson = new Gson().toJson(addCrawlCmpyResultDTO);
     try {
       crawlSystemKafkaTemplate.send(TOPIC, addCrawlCmpyResultDTOJson);
-      log.info("请求添加爬取公司信息kafka发送成功,addCrawlCmpyJson:{}", addCrawlCmpyResultDTOJson);
+      log.info("添加爬取公司信息kafka发送成功,addCrawlCmpyResultDTOJson:{}", addCrawlCmpyResultDTOJson);
     } catch (Exception e) {
-      log.error("请求添加爬取公司信息失败，,addCrawlCmpyJson:{}", addCrawlCmpyResultDTOJson);
+      log.error("添加爬取公司信息失败,addCrawlCmpyResultDTOJson:{}", addCrawlCmpyResultDTOJson);
     }
     return "success";
   }

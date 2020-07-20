@@ -273,40 +273,57 @@ public class CustInfoController {
   @LogExecutionTime
   public CustCountVo getCustCount(@RequestBody QueryParam queryParam) throws Exception {
     CustCountVo custCountVo = new CustCountVo();
+    QueryParam queryParamNew = new QueryParam ();
+    queryParamNew.setSelectCustType(queryParam.getSelectCustType());
+    queryParamNew.setLatestStartDay(queryParam.getLatestStartDay());
+    queryParamNew.setLatestEndDay(queryParam.getLatestEndDay());
+
     //查询所有SelectCustTypeEnum
-    queryParam.setSelectCustType(SelectCustTypeEnum.ALL.getEname());
-    Long allCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    queryParamNew.setSelectCustType(SelectCustTypeEnum.ALL.getEname());
+    Long allCmpycount = custInfoService.getCmpyTradeCount(
+        SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setAllCmpycount(allCmpycount);
-    Long allPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    Long allPersonCount = custInfoService.getPersonTradeCount(
+        SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setAllPersonCount(allPersonCount);
 
     //查询最新更新
-    queryParam.setSelectCustType(SelectCustTypeEnum.UPDATE.getEname());
-    Long updateCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    queryParamNew.setSelectCustType(SelectCustTypeEnum.UPDATE.getEname());
+    Long updateCmpycount = custInfoService.getCmpyTradeCount(
+        SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setUpdateCmpycount(updateCmpycount);
-    Long updatePersonCount = custInfoService.getPersonTradeCount(queryParam);
+    Long updatePersonCount = custInfoService.getPersonTradeCount(
+        SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setUpdatePersonCount(updatePersonCount);
 
     //最近新增
-    queryParam.setSelectCustType(SelectCustTypeEnum.CREATE.getEname());
-    Long creatCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    queryParamNew.setSelectCustType(SelectCustTypeEnum.CREATE.getEname());
+    Long creatCmpycount = custInfoService.getCmpyTradeCount(
+        SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setCreatCmpycount(creatCmpycount);
-    Long creatPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    Long creatPersonCount = custInfoService.getPersonTradeCount(
+        SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setCreatPersonCount(creatPersonCount);
 
-    //最近交易联系人
-    queryParam.setSelectCustType(SelectCustTypeEnum.TRADE.getEname());
-    Long tradeCmpycount = custInfoService.getCmpyTradeCount(queryParam);
-    custCountVo.setTradeCmpycount(tradeCmpycount);
-    Long tradePersonCount = custInfoService.getPersonTradeCount(queryParam);
-    custCountVo.setTradePersonCount(tradePersonCount);
+//    //最近交易联系人
+//    queryParam.setSelectCustType(SelectCustTypeEnum.TRADE.getEname());
+//    Long tradeCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+//    custCountVo.setTradeCmpycount(tradeCmpycount);
+//    Long tradePersonCount = custInfoService.getPersonTradeCount(queryParam);
+//    custCountVo.setTradePersonCount(tradePersonCount);
 
     //最近交易数量
-    queryParam.setCustType(2);
-    Long cmpyTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    queryParamNew.setCustType(2);
+    Long cmpyTradInfoCount = custInfoService.cmpyTradInfoCount(queryParamNew);
     custCountVo.setCmpyTradInfoCount(cmpyTradInfoCount);
-    queryParam.setCustType(1);
-    Long presonTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    queryParamNew.setCustType(1);
+    Long presonTradInfoCount = custInfoService.cmpyTradInfoCount(queryParamNew);
     custCountVo.setPresonTradInfoCount(presonTradInfoCount);
 
     return custCountVo;

@@ -33,7 +33,7 @@ import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wenshengamc.zcc.common.Common.GeoJson;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
@@ -1804,7 +1804,7 @@ public class AmcAssetServiceImpl implements AmcAssetService {
                     }
 
                     if(CollectionUtils.isEmpty(regions)){
-                        log.error("{} {}",ExceptionUtils.AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",amcAsset.getCounty()));
+                        log.error("{} {}", AmcExceptions.INVALID_EXCEL_CONTENT_ERROR, String.format("cellAssetCounty:%s",amcAsset.getCounty()));
 
                     }else if(regions.size() > 1){
                         for(Region region: regions){

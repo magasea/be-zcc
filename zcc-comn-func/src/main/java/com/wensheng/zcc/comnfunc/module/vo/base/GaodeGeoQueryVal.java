@@ -26,8 +26,8 @@ public class GaodeGeoQueryVal {
   @SerializedName("building")
   private Building building;
 
-  @SerializedName("number")
-  private List<Object> number;
+//  @SerializedName("number")
+//  private List<Object> number;
 
   @SerializedName("province")
   private String province;

@@ -1,12 +1,9 @@
 package com.wensheng.zcc.cust.utils.sync;
 
-import com.google.common.collect.Lists;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
-import java.util.ArrayList;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import java.util.Arrays;
 import java.util.Comparator;
-import java.util.List;
 
 public class SyncUtils {
 

@@ -19,7 +19,7 @@ import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.mq.kafka.module.AmcUserOperation;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;

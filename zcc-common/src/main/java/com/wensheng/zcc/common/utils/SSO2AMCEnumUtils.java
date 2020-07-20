@@ -1,8 +1,5 @@
 package com.wensheng.zcc.common.utils;
 
-import com.wensheng.zcc.common.params.AmcBranchLocationEnum;
-import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j

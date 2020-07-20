@@ -61,7 +61,7 @@ import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wenshengamc.zcc.common.Common.GeoJson;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.Address;
 import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc.ComnFuncServiceBlockingStub;
@@ -534,6 +534,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
   @Override
   public List<AmcDebtVo> getMostVisitedDebts(int num) throws Exception {
+
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
     StringBuilder stringBuilder = new StringBuilder("has_img desc , visit_count desc limit ");
@@ -619,7 +620,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebt.getValuation() !=null && amcDebt.getValuation() > 0 ){
       amcDebtVo.setValuation(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getValuation()));
 
-    }else if( 0 == amcDebt.getValuation() ){
+    }else if(amcDebt.getValuation() != null &&  0 == amcDebt.getValuation() ){
       amcDebtVo.setValuation(BigDecimal.ZERO);
     }
     if( amcDebt.getBaseAmount() != null && amcDebt.getBaseAmount() > 0 && amcDebt.getInterestAmount() != null &&
@@ -635,7 +636,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
     if(amcDebt.getInterestAmount() !=null && amcDebt.getInterestAmount() > 0 ){
       amcDebtVo.setInterestAmount(AmcNumberUtils.getDecimalFromLongDiv100(amcDebt.getInterestAmount()));
 
-    }else if(0 == amcDebt.getInterestAmount()){
+    }else if(amcDebt.getInterestAmount() != null && 0 == amcDebt.getInterestAmount()){
       amcDebtVo.setInterestAmount(BigDecimal.ZERO);
     }
 //    if(amcDebt.getAmcContactorId() > 0){

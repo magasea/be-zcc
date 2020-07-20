@@ -31,4 +31,8 @@ public class DebtAdditional implements Serializable {
     GeoJson location;
     int bizCount;//业务设置访问次数
     String debtClue;//财产线索
+    String debtNews;//债权近况
+    String bidLink;//拍卖链接
+    String bidDesc; //拍卖链接说明
+
 }

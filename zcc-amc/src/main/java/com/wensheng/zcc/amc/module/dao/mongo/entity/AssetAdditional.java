@@ -47,7 +47,9 @@ public class AssetAdditional {
 //    String mortgageNum; //抵押编号
 
     String bidLink; //拍卖链接
+    String bidDesc; //拍卖链接说明
     String warrant; //权证信息
+    String assetNews;//资产近况
 
     int bizCount=0;//业务设置访问次数
 

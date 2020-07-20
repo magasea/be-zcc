@@ -59,7 +59,7 @@ import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -170,7 +170,7 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         for(AmcSaleFloor amcSaleFloor : amcSaleFloors){
             AmcSaleFloorFrontEndVo amcSaleFloorFrontEndVo = new AmcSaleFloorFrontEndVo();
             amcSaleFloorFrontEndVo.setAmcSaleFloor(amcSaleFloor);
-            if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.HOTDEBT)){
+            if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.HOTDEBT.getId())){
                 //get latest debts
                 amcSaleFloorFrontEndVo.setAmcDebtVos(amcDebtService.getMostVisitedDebts(5));
             }else if(amcSaleFloor.getFloorType().equals(SaleFloorEnum.LATESTASSET.getId())){
@@ -1309,6 +1309,28 @@ public class AmcSaleServiceImpl implements AmcSaleService {
         amcSaleFloor.setFloorType(SaleFloorEnum.HOTDEBT.getId());
         return amcSaleFloor;
     }
+
+//    private AmcSaleFloor getLatestDebtFloor() {
+//        AmcSaleFloorExample amcSaleFloorExample = new AmcSaleFloorExample();
+//        List<AmcSaleFloor> amcSaleFloors = amcSaleFloorMapper.selectByExample(amcSaleFloorExample);
+//        if(CollectionUtils.isEmpty(amcSaleFloors)){
+//
+//        }
+//        AmcSaleFloor amcSaleFloor = new AmcSaleFloor();
+//        AmcSaleFilter amcSaleFilter = new AmcSaleFilter();
+//        AmcSaleRecomItems amcSaleRecomItems = new AmcSaleRecomItems();
+//        AmcSaleRecommDebts amcSaleRecommDebts = new AmcSaleRecommDebts();
+//        amcSaleRecomItems.setAmcSaleRecommDebts(amcSaleRecommDebts);
+//        List<Long> latestDebtIds = amcDebtService.getLatestIds();
+//        amcSaleRecomItems.getAmcSaleRecommDebts().setDebtIds(latestDebtIds);
+//        amcSaleFilter.setFilterDebt(new AmcFilterContentDebt());
+//        amcSaleFloor.setFilterContent(gson.toJson(amcSaleFilter));
+//        amcSaleFloor.setRecomItems(gson.toJson(amcSaleRecomItems));
+//        amcSaleFloor.setSlogan(FIX_SLOGON_LATEST_DEBT);
+//        amcSaleFloor.setTitle(FIX_TITLE_LATEST_DEBT);
+//        amcSaleFloor.setFloorType(SaleFloorEnum.HOTDEBT.getId());
+//        return amcSaleFloor;
+//    }
 
     private AmcSaleFloor getLocalRecommFloor() {
         AmcSaleFloor amcSaleFloor = new AmcSaleFloor();

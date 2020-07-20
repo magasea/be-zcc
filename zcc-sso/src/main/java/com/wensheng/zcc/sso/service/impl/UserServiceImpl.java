@@ -3,7 +3,7 @@ package com.wensheng.zcc.sso.service.impl;
 import com.wensheng.zcc.common.params.AmcPermEnum;
 import com.wensheng.zcc.common.params.AmcRolesEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcPermissionMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRoleMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcRolePermissionMapper;

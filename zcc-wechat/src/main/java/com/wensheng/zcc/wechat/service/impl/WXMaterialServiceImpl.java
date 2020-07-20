@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName;
 import com.wensheng.zcc.amc.utils.ImageUtils;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.SystemUtils;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatMsgCkitemMapper;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatMsgMapper;

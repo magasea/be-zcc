@@ -12,15 +12,14 @@ import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import com.wensheng.zcc.common.utils.StringToolUtils;
 import com.wensheng.zcc.common.utils.sso.SSOQueryParam;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.ibatis.session.RowBounds;
-import org.apache.kafka.common.protocol.types.Field;
 import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -34,12 +33,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.sql.BatchUpdateException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -274,7 +269,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                         missingHeader = strDebtClue;
                     }
 
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                    throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
                 }else{
                     hasGotHeader = true;
                 }
@@ -402,7 +397,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     if(idxDebtCourtCity == -1){
                         missingHeader = strCourtCity;
                     }
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                    throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
                 }else{
                     hasGotHeader = true;
                 }
@@ -448,7 +443,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
         Workbook workbook =  WorkbookFactory.create(targetFile);
         Sheet sheetCurt =  workbook.getSheet(KEY_WORD_CURT);
         if(null == sheetCurt){
-            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("没有找到名字为:%s 的sheet", KEY_WORD_CURT));
+            throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_EXCEL_CONTENT_ERROR, String.format("没有找到名字为:%s 的sheet", KEY_WORD_CURT));
         }
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -633,7 +628,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                             idxNote = idxOfCell;
                             break;
                         default:
-                            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
+                            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
 
                     }
                 }
@@ -691,7 +686,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     if(idxNote == -1){
                         missingHeader = strNote;
                     }
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                    throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
                 }else{
                     hasGotHeader = true;
                 }
@@ -997,7 +992,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                             idxDebtClue = idxOfCell;
                             break;
                         default:
-                            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
+                            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_EXCEL_HEADER_ERROR, cellValue);
 
                     }
                 }
@@ -1054,7 +1049,7 @@ public class AmcExcelFileServiceImpl implements AmcExcelFileService {
                     if(idxDebtClue == -1){
                         missingHeader = strDebtClue;
                     }
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
+                    throw ExceptionUtils.getAmcException(AmcExceptions.MISSING_EXCEL_HEADER_ERROR, missingHeader);
                 }else{
                     hasGotHeader = true;
                 }

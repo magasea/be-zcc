@@ -1,6 +1,5 @@
 package com.wensheng.zcc.common.utils;
 
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
 import java.io.File;
 
 public class SystemUtils {

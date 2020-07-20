@@ -24,6 +24,7 @@ import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 /**
  * @author chenwei on 4/1/19
@@ -101,7 +102,9 @@ public class KafkaServiceImpl implements KafkaService {
 //      gsonStr = gson.toJson(payload);
       AmcUser amcUser = new AmcUser();
       AmcBeanUtils.copyProperties(ssoUserModDto.getAmcUserDtoCurr(), amcUser);
-      amcTokenService.revokeTokenByMobilePhone(ssoUserModDto.getAmcUserDtoHis().getMobilePhone());
+      if(ssoUserModDto.getAmcUserDtoHis() != null && !StringUtils.isEmpty(ssoUserModDto.getAmcUserDtoHis().getMobilePhone())){
+        amcTokenService.revokeTokenByMobilePhone(ssoUserModDto.getAmcUserDtoHis().getMobilePhone());
+      }
 //      wszccTemplate.save(amcUser);
       amcUserService.createUser(amcUser);
     }catch (Exception ex){

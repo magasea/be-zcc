@@ -1,13 +1,11 @@
 package com.wensheng.zcc.wechat.service.impl;
 
-import static io.grpc.stub.ServerCalls.asyncUnimplementedUnaryCall;
-
 import com.google.gson.Gson;
 import com.wensheng.zcc.common.module.dto.AmcSaleFilter;
 import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.wechat.module.vo.MediaUploadResp;
 import com.wensheng.zcc.wechat.module.vo.WXUserWatchOnObject;
 import com.wensheng.zcc.wechat.service.WXUserService;
@@ -16,7 +14,6 @@ import com.wenshengamc.zcc.wechat.AmcDebtImage;
 import com.wenshengamc.zcc.wechat.DebtImageUploadResult;
 import com.wenshengamc.zcc.wechat.ImageUploadResult;
 import com.wenshengamc.zcc.wechat.UploadDebtImg2WechatResp;
-import com.wenshengamc.zcc.wechat.UploadImg2WechatReq;
 import com.wenshengamc.zcc.wechat.UploadImg2WechatResp;
 import com.wenshengamc.zcc.wechat.WXUserFavor;
 import com.wenshengamc.zcc.wechat.WXUserFavorGrpcInfo;
@@ -24,15 +21,12 @@ import com.wenshengamc.zcc.wechat.WXUserWatchOnObj;
 import com.wenshengamc.zcc.wechat.WXUserWatchOnObjResp;
 import com.wenshengamc.zcc.wechat.WXVistorInfo;
 import com.wenshengamc.zcc.wechat.WechatAssetImage;
-import com.wenshengamc.zcc.wechat.WechatAssetImageOrBuilder;
 import com.wenshengamc.zcc.wechat.WechatGrpcServiceGrpc.WechatGrpcServiceImplBase;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.A;
 import org.lognet.springboot.grpc.GRpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;

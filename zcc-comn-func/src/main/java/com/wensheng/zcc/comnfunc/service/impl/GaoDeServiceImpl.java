@@ -167,8 +167,17 @@ public class GaoDeServiceImpl implements GaoDeService {
     sb.append(latLng.getLat()).append(",").append(latLng.getLng());
     String gaodeUrl = String.format(regeoCoderUrl, sb.toString());
 
-    ResponseEntity<GaodeRegeoQueryResp> resp =  restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
-        GaodeRegeoQueryResp.class);
+    ResponseEntity<GaodeRegeoQueryResp> resp =  null;
+    try{
+      resp = restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+          GaodeRegeoQueryResp.class);
+    }catch (Exception ex){
+      log.error("Failed to get geo info by:{}", latLng, ex);
+      ResponseEntity<String> respStr = restTemplate.exchange(gaodeUrl, HttpMethod.GET, null,
+          String.class);
+      log.info(respStr.getBody());
+    }
+
 
     GaodeRegeoQueryVal gaoRegeoResult = resp.getBody().getRegeocode();
 

@@ -237,7 +237,8 @@ public class WechatUserController {
   public boolean sendVerifyCode(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
 
 
-    return wxService.sendPhoneVcode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone());
+//    return wxService.sendPhoneVcode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone());
+    return wxService.sendChangePhoneVerifyCode( wxBindPhoneVo.getOpenId(),  wxBindPhoneVo.getPhone());
 
   }
 
@@ -250,20 +251,21 @@ public class WechatUserController {
 
   }
 
-  @RequestMapping(value = "/user/sendVerifyCodeTest", method = RequestMethod.POST)
-  @ResponseBody
-  public boolean sendVerifyCodeTest(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
-
-    String vcode = AmcNumberUtils.getValidationCode();
-    return wxService.sendPhoneVcodeTest(  wxBindPhoneVo.getOpenId(),wxBindPhoneVo.getPhone(), vcode);
-
-  }
+//  @RequestMapping(value = "/user/sendVerifyCodeTest", method = RequestMethod.POST)
+//  @ResponseBody
+//  public boolean sendVerifyCodeTest(@RequestBody WXBindPhoneVo wxBindPhoneVo) throws Exception {
+//
+//    String vcode = AmcNumberUtils.getValidationCode();
+//    return wxService.sendPhoneVcodeTest(  wxBindPhoneVo.getOpenId(),wxBindPhoneVo.getPhone(), vcode);
+//
+//  }
 
   @RequestMapping(value = "/user/bindPhone", method = RequestMethod.POST)
   @ResponseBody
   public boolean bindPhone(@RequestBody WXBindPhoneVo wxBindPhoneVo ) throws Exception {
 
-    return wxService.bindPhone(wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getPhone(),  wxBindPhoneVo.getVcode());
+//    return wxService.bindPhone(wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getPhone(),  wxBindPhoneVo.getVcode());
+    return wxService.bindNewPhone(wxBindPhoneVo.getOpenId(), wxBindPhoneVo.getPhone(),  wxBindPhoneVo.getVcode());
 
   }
 

@@ -5,6 +5,7 @@ import com.wensheng.zcc.amc.module.dao.mysql.auto.entity.AmcAsset;
 import com.wensheng.zcc.amc.service.AmcAssetService;
 import com.wensheng.zcc.amc.service.AmcDebtService;
 import com.wensheng.zcc.amc.service.AmcImageBatchImportService;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.compress.archivers.ArchiveEntry;
@@ -133,7 +134,7 @@ public class AmcImageBatchImportServiceImpl implements AmcImageBatchImportServic
         String targetFolder = String.format("%s%s%s%s",debtImageRepo,File.separator,tempFolder,File.separator);
         File dir = new File(targetFolder);
         if(!dir.exists()){
-            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.INVALID_FOLDER);
+            throw ExceptionUtils.getAmcException(AmcExceptions.INVALID_FOLDER);
         }
         traverseFile(dir.listFiles());
     }
@@ -174,7 +175,7 @@ public class AmcImageBatchImportServiceImpl implements AmcImageBatchImportServic
             log.error("There is no such asset with title:{} under debt with title:{}", assetDir.getName(), debtDir.getName());
             return;
         }else if(assetList.size() > 1){
-            throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.DUPLICATE_ITEM_ERROR,
+            throw ExceptionUtils.getAmcException(AmcExceptions.DUPLICATE_ITEM_ERROR,
                     String.format("There is no such asset with title:%s under debt with title:%s", assetDir.getName(), debtDir.getName()));
         }
         //2. get oss prepath

@@ -1,7 +1,7 @@
 package com.wensheng.zcc.sso.controller;
 
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcUser;
 import com.wensheng.zcc.sso.module.vo.LoginVo;
 import com.wensheng.zcc.sso.module.vo.UserCreateVo;

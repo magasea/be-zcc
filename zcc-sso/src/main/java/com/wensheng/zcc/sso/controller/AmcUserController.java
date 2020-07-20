@@ -6,7 +6,7 @@ import com.wensheng.zcc.common.params.PageReqRepHelper;
 import com.wensheng.zcc.common.params.sso.AmcUserValidEnum;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.sso.aop.AmcUserCreateChecker;
 import com.wensheng.zcc.sso.aop.AmcUserModifyChecker;
 import com.wensheng.zcc.sso.aop.LogExecutionTime;

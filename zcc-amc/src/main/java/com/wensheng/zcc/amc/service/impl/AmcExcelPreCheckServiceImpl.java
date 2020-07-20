@@ -3,7 +3,6 @@ package com.wensheng.zcc.amc.service.impl;
 import com.wensheng.zcc.amc.aop.QueryAssetPreChecker;
 import com.wensheng.zcc.amc.aop.QueryDebtPreChecker;
 import com.wensheng.zcc.amc.dao.mysql.mapper.*;
-import com.wensheng.zcc.amc.module.dao.helper.DebtPrecheckErrorEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorRoleEnum;
 import com.wensheng.zcc.amc.module.dao.helper.DebtorTypeEnum;
 import com.wensheng.zcc.amc.module.dao.mongo.entity.AssetAdditional;
@@ -14,6 +13,7 @@ import com.wensheng.zcc.amc.service.*;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.params.sso.SSOAmcUser;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +145,7 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
 
         for(AmcDebtPre amcDebtPre: amcDebtPres){
             if(checkDebtTitleExist(amcDebtPre.getTitle())){
-                throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB, String.format("数据库中已经有名字为:%s 的债权", amcDebtPre.getTitle()));
+                throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB, String.format("数据库中已经有名字为:%s 的债权", amcDebtPre.getTitle()));
             }
             AmcDebt amcDebt = new AmcDebt();
             AmcBeanUtils.copyProperties(amcDebtPre, amcDebt);
@@ -153,7 +153,7 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
             amcDebt.setId(null);
             if(StringUtils.isEmpty(amcDebtPre.getAmcContactorName()) ){
                 log.error("amc contactor is empty ");
-                throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
+                throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
                         String.format("amc contactor is %s  ", amcDebtPre.getAmcContactorName()));
 
             }else if(amcDebtPre.getDebtpackId() <= 0){
@@ -161,7 +161,7 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
 
                 List<ZccDebtpack> zccDebtpacks =  amcDebtpackService.queryPacksWithLocation(AmcLocationEnum.lookupByDisplayIdUtil(ssoAmcUser.getLocation()));
                 if(CollectionUtils.isEmpty(zccDebtpacks)){
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
+                    throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
                             String.format("ssoAmcUser location is %s  ", ssoAmcUser.getLocation()));
 //                        log.error(String.format("错误提示： %s %s There is no zccDebtPack for ssoAmcUser with location: %s", sheetDebt.getSheetName(), row.getRowNum(), ssoAmcUser.getLocation()));
                 }else{
@@ -185,7 +185,7 @@ public class AmcExcelPreCheckServiceImpl implements AmcExcelPreCheckService {
             }
             for(AmcAssetPre amcAssetPre: amcAssetPres){
                 if(checkAssetTitleExist(amcAssetPre.getTitle(), amcDebt.getId())){
-                    throw ExceptionUtils.getAmcException(ExceptionUtils.AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
+                    throw ExceptionUtils.getAmcException(AmcExceptions.FAILED_TRANSFEREXCEL_TO_DB,
                             String.format("duplicate asset title:%s in debt with title:%s and id:%s", amcDebtPre.getTitle(), amcDebt.getTitle(), amcDebt.getId()));
                 }
                 AmcAsset amcAsset = new AmcAsset();

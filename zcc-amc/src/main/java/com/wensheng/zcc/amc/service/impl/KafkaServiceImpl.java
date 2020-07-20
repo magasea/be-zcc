@@ -97,7 +97,9 @@ public class KafkaServiceImpl implements KafkaService {
         typeIdHeader(cr.headers()), userModDto, cr.toString());
     String gsonStr = null;
     try{
-
+      if(userModDto.getAmcUserDtoHis() == null){
+        return;
+      }
       if(!userModDto.getAmcUserDtoHis().getLocation().equals(userModDto.getAmcUserDtoCurr().getLocation())||
           !(userModDto.getAmcUserDtoHis().getDeptId().equals(userModDto.getAmcUserDtoCurr().getDeptId()))||
           !userModDto.getAmcUserDtoCurr().getValid().equals(AmcUserValidEnum.VALID.getId())){
@@ -113,33 +115,33 @@ public class KafkaServiceImpl implements KafkaService {
             sb.append(
                 AmcLocationEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoHis().getLocation().intValue()).getCname());
           }
-          sb.append(":").append(userModDto.getAmcUserDtoHis().getUserCname()).append(",");
+          sb.append("：").append(userModDto.getAmcUserDtoHis().getUserCname()).append("，");
 
 
 
           if(!userModDto.getAmcUserDtoCurr().getValid().equals(AmcUserValidEnum.VALID.getId())){
-            sb.append("已经离职,");
+            sb.append("已经离职，");
           }else{
-            sb.append("已经发生职位变更,");
+            sb.append("已经发生职位变更，");
             if(userModDto.getAmcUserDtoCurr().getDeptId() != -1 && !(userModDto.getAmcUserDtoHis().getDeptId().equals(userModDto.getAmcUserDtoCurr().getDeptId()))){
-              sb.append("部门变为:").append(AmcDeptEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getDeptId().intValue()).getCname()).append(",");
+              sb.append("部门变为：").append(AmcDeptEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getDeptId().intValue()).getCname()).append("，");
             }
             if(userModDto.getAmcUserDtoCurr().getLocation() != -1 && !userModDto.getAmcUserDtoHis().getLocation().equals(userModDto.getAmcUserDtoCurr().getLocation())){
-              sb.append("地区变为:").append(
-                  AmcLocationEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getLocation().intValue()).getCname()).append(",");
+              sb.append("地区变为：").append(
+                  AmcLocationEnum.lookupByDisplayIdUtil(userModDto.getAmcUserDtoCurr().getLocation().intValue()).getCname()).append("，");
             }
-            if(sb.charAt(sb.length()-1) == ','){
+            if(sb.charAt(sb.length()-1) == '，'){
               sb.setLength(sb.length() -1);
-              sb.append(";");
+              sb.append("；");
             }
           }
 
 
-          sb.append("请把以下资产/债权移交给新承办人;\n");
+          sb.append("请把以下资产/债权移交给新承办人；\n");
           int idx = 1;
           for(AmcDebtExt amcDebtExt: amcDebtExts){
 
-            sb.append("\t债权").append(idx++).append("\t")
+            sb.append("\t债权").append(idx++).append("：\t")
                 .append(amcDebtExt.getDebtInfo().getTitle()).append("\n");
 
           }

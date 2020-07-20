@@ -11,7 +11,7 @@ import com.wensheng.zcc.common.module.dto.WechatUserInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserMapper;
 import com.wensheng.zcc.wechat.dao.mysql.mapper.WechatUserStaticMapper;
 import com.wensheng.zcc.wechat.module.dao.mysql.auto.entity.WechatUser;

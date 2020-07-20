@@ -1,7 +1,7 @@
 package com.wensheng.zcc.sso.service.impl;
 
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.ExceptionUtils.AmcExceptions;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcCompanyMapper;
 import com.wensheng.zcc.sso.dao.mysql.mapper.AmcDeptMapper;
 import com.wensheng.zcc.sso.module.dao.mysql.auto.entity.AmcCompany;

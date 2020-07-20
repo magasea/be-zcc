@@ -25,9 +25,10 @@ public interface WXUserService {
   void syncUserInfoFromWX();
 
   boolean sendPhoneVcode(String phone,String openId) throws Exception;
-  boolean sendPhoneVcodeTest(String phone, String openId,  String code) throws Exception;
+//  boolean sendPhoneVcodeTest(String phone, String openId,  String code) throws Exception;
 
-  boolean bindPhone(String openId, String phone, String code) throws Exception;
+//  boolean bindPhone(String openId, String phone, String code) throws Exception;
+  boolean bindNewPhone(String openId, String phone, String code) throws Exception;
 
   String userSubscribe(String xmlMsg);
 
@@ -53,7 +54,7 @@ public interface WXUserService {
   boolean unWatchOn(String openId, String phone, Long objectId, Integer type);
 
   public List<WechatUserVo> getAllWechatUsers(int offset, int size,
-      QueryParam queryParam) throws ParseException;
+      QueryParam queryParam) throws Exception;
 
   public List<WechatUser> getSimpleWechatUsers(int offset, int size,
       QueryParam queryParam) throws ParseException;

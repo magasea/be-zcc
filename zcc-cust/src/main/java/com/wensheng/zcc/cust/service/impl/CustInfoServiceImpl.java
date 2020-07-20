@@ -337,6 +337,12 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
+    return convertCmpyToVoes(custTrdCmpyTrdExts);
+  }
+
+  private List<CustTrdCmpyTrdExt> queryCmpy(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
 
     if(CollectionUtils.isEmpty(orderByParam)){
       if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
@@ -353,13 +359,6 @@ public class CustInfoServiceImpl implements CustInfoService {
         orderByParam.put("ctc.update_time", Direction.DESC);
       }
     }
-
-    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
-    return convertCmpyToVoes(custTrdCmpyTrdExts);
-  }
-
-  private List<CustTrdCmpyTrdExt> queryCmpy(int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam) throws Exception {
 
     String orderBy = SQLUtils.getOrderBy(orderByParam);
 //   CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
@@ -588,6 +587,12 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
+    return convertPersonToVoes(custTrdPersonTrdExts);
+  }
+
+  private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
 
     if(CollectionUtils.isEmpty(orderByParam)){
       if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
@@ -605,12 +610,6 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
     }
 
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
-    return convertPersonToVoes(custTrdPersonTrdExts);
-  }
-
-  private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdPersonExtExample custTrdPersonExtExample = SQLUtils.getCustPersonTrdExample(queryParam);
     //使用whereClause因为无法对两个表有相同字段做筛选

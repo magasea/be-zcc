@@ -207,7 +207,33 @@ public class CustInfoController {
 
 //    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
     return PageReqRepHelper.getAmcPage(queryResults, totalCount );
+  }
 
+  //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
+  @RequestMapping(value = "/export", method = RequestMethod.POST)
+  public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+
+    List<CustTrdInfoExcelVo> queryResults = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
+
+    if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      queryResults = custInfoService.queryCmpyTrade(offset, size, queryParam, orderByParam);
+    }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
+      queryResults = custInfoService.queryPersonTrade(offset, size, queryParam, orderByParam);
+    }
+
+    File output = excelGenerator.customersToExcel(queryResults);
+    Resource resource = new UrlResource(output.toPath().toUri());
+    if(resource.exists()) {
+      return ResponseEntity.ok()
+          .contentType(MediaType.parseMediaType("application/octet-stream"))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+          .body(resource);
+    } else {
+      throw new Exception("File not found " + output.toPath());
+    }
   }
 
 
@@ -328,53 +354,6 @@ public class CustInfoController {
 
     return custCountVo;
   }
-
-
-
-
-
-//  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
-  @RequestMapping(value = "/export", method = RequestMethod.POST)
-  public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
-
-    List<CustTrdInfoExcelVo> queryResults = null;
-    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
-    int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
-
-
-      if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctc.data_quality", Direction.DESC);
-          orderByParam.put("ctc.id", Direction.DESC);
-        }
-
-        queryResults = custInfoService.queryCmpyTrade(offset, size, queryParam,
-            orderByParam);
-      }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
-
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctp.data_quality", Direction.DESC);
-          orderByParam.put("ctp.id", Direction.DESC);
-        }
-        queryResults = custInfoService.queryPersonTrade(offset, size, queryParam,
-            orderByParam);
-      }
-
-    File output = excelGenerator.customersToExcel(queryResults);
-    Resource resource = new UrlResource(output.toPath().toUri());
-    if(resource.exists()) {
-      return ResponseEntity.ok()
-          .contentType(MediaType.parseMediaType("application/octet-stream"))
-          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-          .body(resource);
-    } else {
-      throw new Exception("File not found " + output.toPath());
-    }
-
-
-  }
-
 
   @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_SYSTEM_ADMIN', 'ROLE_CO_ADMIN') or hasPermission(null, "
       + "'PERM_INVCUST_VIEW')")

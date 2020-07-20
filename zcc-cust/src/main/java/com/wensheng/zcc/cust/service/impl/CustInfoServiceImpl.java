@@ -484,11 +484,16 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       custTrdInfoExcelVo.setAddress(sbAddress.toString());
       custTrdInfoExcelVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
-      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
-        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()).append(";");
-      }
-      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
-        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone());
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhoneUpdate()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhoneUpdate().equals("-1")){
+        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhoneUpdate()).append(";");
+      }else {
+//        if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
+//          sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()).append(";");
+//        }
+//        if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
+//          sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone());
+//        }
+        sbPhone.append(creatPhonePrep(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone(), custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()));
       }
       custTrdInfoExcelVo.setPhone(sbPhone.toString());
       custTrdInfoExcelVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
@@ -549,6 +554,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setTrdTotalAmount(trdTotalAmount > 0? trdTotalAmount/100:-1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoExcelVo.setUpdateTime(custTrdCmpyTrdExt.getCustTrdCmpy().getUpdateTime());
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
     }
 
@@ -710,9 +716,22 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setCustId(custTrdPersonTrdExt.getId());
       custTrdInfoExcelVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
       custTrdInfoExcelVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
-      custTrdInfoExcelVo.setPhone(String.format("%s;%s",
-          custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
-          custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
+      StringBuffer sbPhone = new StringBuffer();
+      if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate())){
+        sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate());
+      }else {
+        if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep())){
+          sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep());
+        }
+      }
+      if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getMobileUpdate())){
+        sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getMobileUpdate());
+      }else {
+        if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep())){
+          sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep());
+        }
+      }
+      custTrdInfoExcelVo.setPhone(sbPhone.toString());
       custTrdInfoExcelVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long debtTotalAmount = 0L;
       Long trdTotalAmount = 0L;
@@ -948,6 +967,15 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     return sbPhoneNew.toString();
   }
+
+  private Boolean checkPhoneEmpty (String phone){
+    if((!"-1".equals(phone) && !"暂无信息".equals(phone)) && !StringUtils.isEmpty(phone)
+        && !"-".equals(phone)){
+      return true;
+    }
+    return false;
+  }
+
 
   private List<CustTrdInfoVo> convertPersonToVoes(List<CustTrdPersonTrdExt> custTrdPersonTrdExtList) {
     List<CustTrdInfoVo> custTrdInfoVos = new ArrayList<>();

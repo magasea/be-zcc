@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -35,16 +36,15 @@ public class ExcelGenerator {
     public  File customersToExcel(List<CustTrdInfoExcelVo> custTrdInfoExcelVos) throws IOException {
       File file = new File(fileBase);
       boolean dirCreated = file.mkdir();
+      SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-      String[] COLUMNs = {"#", "投资人名称", "投资偏好类型", "偏好地区","债权本息总额(元)","交易总额(元)","联系方式","联系地址"};
+      String[] COLUMNs = {"#", "投资人名称", "投资偏好类型(统计)", "偏好地区(统计)","债权本息总额(元)","交易总额(元)","联系方式","联系地址","更新时间"};
       Long timeStamp = System.currentTimeMillis();
       try(
           Workbook workbook = new XSSFWorkbook();
           // Write the output to a file
           FileOutputStream fileOut = new FileOutputStream(fileBase+File.separator+String.format("custInfo-%s.xlsx",
               timeStamp));
-
-
 //          ByteArrayOutputStream out = new ByteArrayOutputStream();
       ){
         CreationHelper createHelper = workbook.getCreationHelper();
@@ -110,6 +110,7 @@ public class ExcelGenerator {
             row.createCell(6).setCellValue(custTrdInfoExcelVo.getPhone());
           }
           row.createCell(7).setCellValue(custTrdInfoExcelVo.getAddress());
+          row.createCell(8).setCellValue(simpleDateFormat.format(custTrdInfoExcelVo.getUpdateTime()));
 
         }
 

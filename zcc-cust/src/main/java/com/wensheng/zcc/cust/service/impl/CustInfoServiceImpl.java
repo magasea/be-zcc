@@ -774,6 +774,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setTrdTotalAmount( trdTotalAmount > 0? trdTotalAmount/100: -1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoExcelVo.setUpdateTime(custTrdPersonTrdExt.getCustTrdPerson().getUpdateTime());
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
     }
 

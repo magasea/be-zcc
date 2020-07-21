@@ -351,6 +351,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctc.update_time", Direction.DESC);
+        //近期更新情况，当有updateTime时，latestTime不起作用
+        if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+          queryParam.setLatestStartDay(null);
+          queryParam.setLatestEndDay(null);
+        }
       }
       if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctc.create_time", Direction.DESC);

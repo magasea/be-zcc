@@ -568,6 +568,13 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public Long getCmpyTradeCount(QueryParam queryParam) {
+    if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      //近期更新情况，当有updateTime时，latestTime不起作用
+      if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+        queryParam.setLatestStartDay(null);
+        queryParam.setLatestEndDay(null);
+      }
+    }
 
 //    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
 //    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
@@ -794,10 +801,16 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public Long getPersonTradeCount(QueryParam queryParam) {
+    if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      //近期更新情况，当有updateTime时，latestTime不起作用
+      if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+        queryParam.setLatestStartDay(null);
+        queryParam.setLatestEndDay(null);
+      }
+    }
+
     CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
-
     Long queryResult = -1L;
-
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();

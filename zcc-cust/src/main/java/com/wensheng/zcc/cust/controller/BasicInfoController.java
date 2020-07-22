@@ -1,6 +1,10 @@
 package com.wensheng.zcc.cust.controller;
 
+import com.wensheng.zcc.common.params.AmcPage;
 import com.wensheng.zcc.cust.config.aop.AddTraceLogId;
+import com.wensheng.zcc.cust.config.aop.LogExecutionTime;
+import com.wensheng.zcc.cust.config.aop.QueryValidCmpy;
+import com.wensheng.zcc.cust.controller.helper.QueryParam;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustAmcUserpriv;
 import com.wensheng.zcc.cust.module.dao.mysql.auto.entity.CustRegionDetail;
 import com.wensheng.zcc.cust.module.helper.AgeRangeEnum;
@@ -10,6 +14,8 @@ import com.wensheng.zcc.cust.module.helper.ItemTypeEnum;
 import com.wensheng.zcc.cust.module.helper.PersonSexEnum;
 import com.wensheng.zcc.cust.module.helper.SyncTrdTypeEnum;
 import com.wensheng.zcc.cust.module.helper.sync.BidTypeEnum;
+import com.wensheng.zcc.cust.module.vo.CustTrdInfoVo;
+import com.wensheng.zcc.cust.module.vo.LocationProvinceVo;
 import com.wensheng.zcc.cust.service.BasicInfoService;
 import com.wensheng.zcc.cust.service.GeoInfoService;
 import java.util.ArrayList;
@@ -17,6 +23,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -171,4 +178,21 @@ public class BasicInfoController {
   public void createOrUpdateAmcUserPriv(@RequestBody List<CustAmcUserpriv> custAmcUserprivs){
      basicInfoService.createOrUpdateAmcUserPriv(custAmcUserprivs);
   }
+
+  @QueryValidCmpy
+  @RequestMapping(value = "/getLocationProvince", method = RequestMethod.POST)
+  @ResponseBody
+  public LocationProvinceVo getLocationProvince(@RequestBody QueryParam queryParam) throws Exception{
+    List<String> custCity = queryParam.getCustCity();
+    LocationProvinceVo locationProvinceVo = new LocationProvinceVo();
+    if(CollectionUtils.isEmpty(custCity)){
+      locationProvinceVo.setAll(true);
+    }else{
+      locationProvinceVo.setAll(false);
+      locationProvinceVo.setCustCity(custCity);
+    }
+    return locationProvinceVo;
+  }
+
+
 }

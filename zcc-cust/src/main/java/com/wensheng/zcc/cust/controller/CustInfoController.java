@@ -211,6 +211,7 @@ public class CustInfoController {
 
   //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)
+  @QueryValidCmpy
   public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
 

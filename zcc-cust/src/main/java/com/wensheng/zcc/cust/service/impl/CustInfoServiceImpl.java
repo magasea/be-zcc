@@ -420,6 +420,37 @@ public class CustInfoServiceImpl implements CustInfoService {
     return custTrdCmpyTrdExtNewList;
   }
 
+  @Override
+  public List<String> queryCmpyProvince(QueryParam queryParam) throws Exception {
+
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdCmpyExtExample.setWhereClause(whereClause);
+    }
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    List<String> preCmpyProvince = new ArrayList<>();
+    if(!StringUtils.isEmpty(filterBy)){
+      custTrdCmpyExtExample.setFilterByClause(filterBy);
+      preCmpyProvince =
+          custTrdCmpyExtMapper.selectByPreProvince(custTrdCmpyExtExample);
+      log.info("preCmpyProvince:{}", gson.toJson(preCmpyProvince));
+
+    }else{
+      if(queryParam.isAllowNoTrd()){
+        preCmpyProvince =
+            custTrdCmpyExtMapper.selectByPreProvinceAllowNoTrd(custTrdCmpyExtExample);
+      }else{
+        preCmpyProvince =
+            custTrdCmpyExtMapper.selectByPreProvince(custTrdCmpyExtExample);
+      }
+      log.info("preCmpyProvince:{}", gson.toJson(preCmpyProvince));
+    }
+    preCmpyProvince.remove("-1");
+    preCmpyProvince.remove("");
+    return preCmpyProvince;
+  }
+
 
 
   @Override

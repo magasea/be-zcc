@@ -209,6 +209,29 @@ public class CustInfoController {
     return PageReqRepHelper.getAmcPage(queryResults, totalCount );
   }
 
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
+  @RequestMapping(value = "/getCmpyProvince", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public List<String> getCmpyProvince(@RequestBody QueryParam queryParam) throws Exception {
+
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+    List<String> queryResults = null;
+    Long totalCount = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    try{
+      if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+        queryResults = custInfoService.queryCmpyProvince( queryParam);
+      }
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+
+    return queryResults;
+  }
+
   //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
   @RequestMapping(value = "/export", method = RequestMethod.POST)
   @QueryValidCmpy

@@ -216,10 +216,7 @@ public class CustInfoController {
   @LogExecutionTime
   public List<String> getCmpyProvince(@RequestBody QueryParam queryParam) throws Exception {
 
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
     List<String> queryResults = null;
-    Long totalCount = null;
-    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     try{
       if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
         queryResults = custInfoService.queryCmpyProvince( queryParam);

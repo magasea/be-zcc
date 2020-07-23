@@ -16,4 +16,6 @@ public class CustTrdInfoExcelVo {
   String phone;
   String address;
   Date updateTime;
+  String cmpyProvince;
+  int custType;
 }

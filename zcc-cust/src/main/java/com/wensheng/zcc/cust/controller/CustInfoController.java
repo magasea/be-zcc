@@ -235,6 +235,11 @@ public class CustInfoController {
   public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
     Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
 
+    List<String> cmpyProvinceList = null;
+    if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      cmpyProvinceList = custInfoService.queryCmpyProvince( queryParam);
+    }
+
     List<CustTrdInfoExcelVo> queryResults = null;
     int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
     int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
@@ -245,7 +250,7 @@ public class CustInfoController {
       queryResults = custInfoService.queryPersonTrade(offset, size, queryParam, orderByParam);
     }
 
-    File output = excelGenerator.customersToExcel(queryResults);
+    File output = excelGenerator.customersToExcel(queryResults, cmpyProvinceList);
     Resource resource = new UrlResource(output.toPath().toUri());
     if(resource.exists()) {
       return ResponseEntity.ok()

@@ -591,6 +591,8 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
       custTrdInfoExcelVo.setUpdateTime(custTrdCmpyTrdExt.getCustTrdCmpy().getUpdateTime());
+      custTrdInfoExcelVo.setCmpyProvince(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyProvince());
+      custTrdInfoExcelVo.setCustType(CustTypeEnum.COMPANY.getId());
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
     }
 

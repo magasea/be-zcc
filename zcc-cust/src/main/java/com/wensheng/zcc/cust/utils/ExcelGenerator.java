@@ -50,7 +50,7 @@ public class ExcelGenerator {
   CustRegionDetailMapper custRegionMapper;
 
     public  File customersToExcel(List<CustTrdInfoExcelVo> custTrdInfoExcelVos, List<String> cmpyProvinceList) throws IOException {
-      String[] COLUMNs = {"#", "投资人名称","投资偏好类型(统计)", "偏好地区(统计)","债权本息总额(元)","交易总额(元)","联系方式","联系地址","更新时间"};
+      String[] COLUMNs = {"#", "投资人名称", "投资偏好类型(统计)", "偏好地区(统计)","债权本息总额(元)","交易总额(元)","联系方式","联系地址","更新时间"};
       Map<Long, String> provinceName = new HashMap<>();
       if(CustTypeEnum.COMPANY.getId() == custTrdInfoExcelVos.get(0).getCustType()){
         //数据库中查询地区信息
@@ -62,7 +62,7 @@ public class ExcelGenerator {
         //成map
         provinceName = custRegionDetailList.stream().collect(
             Collectors.toMap(CustRegionDetail::getId, custRegion -> custRegion.getName()));
-        COLUMNs = {"#", "投资人名称","所属地区", "投资偏好类型(统计)", "偏好地区(统计)","债权本息总额(元)","交易总额(元)","联系方式","联系地址","更新时间"};
+        COLUMNs = new  String[]{"#", "投资人名称","所属地区", "投资偏好类型(统计)", "偏好地区(统计)","债权本息总额(元)","交易总额(元)","联系方式","联系地址","更新时间"};
       }
 
       File file = new File(fileBase);

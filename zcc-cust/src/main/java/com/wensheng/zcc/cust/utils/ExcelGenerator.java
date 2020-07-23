@@ -15,6 +15,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -49,15 +50,18 @@ public class ExcelGenerator {
   CustRegionDetailMapper custRegionMapper;
 
     public  File customersToExcel(List<CustTrdInfoExcelVo> custTrdInfoExcelVos, List<String> cmpyProvinceList) throws IOException {
-      //数据库中查询地区信息
-      CustRegionDetailExample custRegionDetailExample = new CustRegionDetailExample();
-      List<Long> cmpyProvinceIdList = new ArrayList<>(cmpyProvinceList.size());
-      cmpyProvinceList.forEach(a->cmpyProvinceIdList.add(Long.valueOf(a)));
-      custRegionDetailExample.createCriteria().andIdIn(cmpyProvinceIdList);
-      List<CustRegionDetail>  custRegionDetailList = custRegionMapper.selectByExample(custRegionDetailExample);
-      //成map
-      Map<Long, String> provinceName = custRegionDetailList.stream().collect(
-          Collectors.toMap(CustRegionDetail::getId, custRegion -> custRegion.getName()));
+      Map<Long, String> provinceName = new HashMap<>();
+      if(CustTypeEnum.COMPANY.getId() == custTrdInfoExcelVos.get(0).getCustType()){
+        //数据库中查询地区信息
+        CustRegionDetailExample custRegionDetailExample = new CustRegionDetailExample();
+        List<Long> cmpyProvinceIdList = new ArrayList<>(cmpyProvinceList.size());
+        cmpyProvinceList.forEach(a->cmpyProvinceIdList.add(Long.valueOf(a)));
+        custRegionDetailExample.createCriteria().andIdIn(cmpyProvinceIdList);
+        List<CustRegionDetail>  custRegionDetailList = custRegionMapper.selectByExample(custRegionDetailExample);
+        //成map
+        provinceName = custRegionDetailList.stream().collect(
+            Collectors.toMap(CustRegionDetail::getId, custRegion -> custRegion.getName()));
+      }
 
       File file = new File(fileBase);
       boolean dirCreated = file.mkdir();

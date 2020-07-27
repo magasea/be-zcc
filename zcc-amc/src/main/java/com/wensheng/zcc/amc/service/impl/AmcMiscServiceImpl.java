@@ -1,5 +1,6 @@
 package com.wensheng.zcc.amc.service.impl;
 
+import com.wensheng.zcc.amc.aop.LogExecutionTime;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcAssetMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtContactorMapper;
 import com.wensheng.zcc.amc.dao.mysql.mapper.AmcDebtMapper;
@@ -20,10 +21,8 @@ import com.wensheng.zcc.amc.service.AmcHelperService;
 import com.wensheng.zcc.amc.service.AmcMiscService;
 import com.wensheng.zcc.amc.service.RegionService;
 import com.wensheng.zcc.common.module.dto.Region;
-import com.wensheng.zcc.common.params.AmcSexEnum;
 import com.wensheng.zcc.common.params.sso.AmcLocationEnum;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
-import com.wenshengamc.zcc.comnfunc.gaodegeo.ComnFuncServiceGrpc;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,12 +30,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
-import net.bytebuddy.asm.Advice.Unused;
-import org.checkerframework.checker.units.qual.A;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -81,6 +78,8 @@ public class AmcMiscServiceImpl implements AmcMiscService {
   @Value("${recom.urls.getClickCount}")
   String getClickCountUrl;
 
+  @Value("${recom.urls.getClickCountOneByOne}")
+  String getClickCountOneByOneUrl;
 
   Map<Long, String> areaMapper = null;
 
@@ -231,41 +230,95 @@ public class AmcMiscServiceImpl implements AmcMiscService {
   }
   @Scheduled(cron = "${spring.task.scheduling.cronExprRecom}")
   @Override
+  @LogExecutionTime
   public void updateClickCountInfo(){
-    String param = "type=debt";
-    String urlFinal = String.format(getClickCountUrl, param);
-    ResponseEntity<Map> clickInfo = null;
-    try{
-      clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
-    }catch (Exception ex){
-      log.error("Error:", ex);
-      ResponseEntity<String> resp = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   String.class);
-      log.info(resp.getBody());
-    }
-    Map<String, Double> clickCount = (Map<String, Double>) clickInfo.getBody();
-    if(!CollectionUtils.isEmpty(clickCount)){
-      for(Entry<String, Double> entry: clickCount.entrySet()){
-        if(entry.getValue() > 0){
-          AmcDebt amcDebt =  amcDebtMapper.selectByPrimaryKey(Long.valueOf(entry.getKey()));
-          amcDebt.setVisitCount(entry.getValue().longValue());
+//    String param = "type=debt";
+//    String urlFinal = String.format(getClickCountUrl, param);
+//    ResponseEntity<Map> clickInfo = null;
+//    try{
+//      clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
+//    }catch (Exception ex){
+//      log.error("Error:", ex);
+//      ResponseEntity<String> resp = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   String.class);
+//      log.info(resp.getBody());
+//    }
+//    Map<String, Double> clickCount = (Map<String, Double>) clickInfo.getBody();
+//    if(!CollectionUtils.isEmpty(clickCount)){
+//      for(Entry<String, Double> entry: clickCount.entrySet()){
+//        if(entry.getValue() > 0){
+//          AmcDebt amcDebt =  amcDebtMapper.selectByPrimaryKey(Long.valueOf(entry.getKey()));
+//          amcDebt.setVisitCount(entry.getValue().longValue());
+//          amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
+//        }
+//      }
+//    }
+//
+//    param = "type=asset";
+//    urlFinal = String.format(getClickCountUrl, param);
+//    clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
+//    clickCount = (Map<String, Double>) clickInfo.getBody();
+//    if(!CollectionUtils.isEmpty(clickCount)){
+//      for(Entry<String, Double> entry: clickCount.entrySet()){
+//        if(entry.getValue() > 0){
+//          AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(Long.valueOf(entry.getKey()));
+//          amcAsset.setVisitCount(entry.getValue().longValue());
+//          amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
+//        }
+//      }
+//    }
+
+  }
+
+
+  @Scheduled(cron = "${spring.task.scheduling.cronExprRecom}")
+  @Override
+  @LogExecutionTime
+  public void updateClickCountInfoOneByOne(){
+    int offset = 0;
+    int limit = 20;
+    AmcDebtExample amcDebtExample = new AmcDebtExample();
+    amcDebtExample.setOrderByClause(" id desc ");
+    RowBounds rowBounds = new RowBounds(offset, limit);
+
+    List<AmcDebt> amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
+    String param = "debt_%s";
+    while(amcDebts != null && !CollectionUtils.isEmpty(amcDebts)){
+      for(AmcDebt amcDebt: amcDebts){
+        String parameter = String.format(param, amcDebt.getId());
+        String url = String.format(getClickCountOneByOneUrl, parameter);
+        ResponseEntity<Long> resp = restTemplate.exchange(url, HttpMethod.GET, null,   Long.class);
+        if(resp != null && resp.getBody() != null && resp.getBody() > 0){
+          amcDebt.setVisitCount(resp.getBody());
           amcDebtMapper.updateByPrimaryKeySelective(amcDebt);
         }
       }
+      offset += limit;
+      rowBounds = new RowBounds(offset, limit);
+      amcDebts = amcDebtMapper.selectByExampleWithRowbounds(amcDebtExample, rowBounds);
     }
 
-    param = "type=asset";
-    urlFinal = String.format(getClickCountUrl, param);
-    clickInfo = restTemplate.exchange(urlFinal, HttpMethod.GET, null,   Map.class);
-    clickCount = (Map<String, Double>) clickInfo.getBody();
-    if(!CollectionUtils.isEmpty(clickCount)){
-      for(Entry<String, Double> entry: clickCount.entrySet()){
-        if(entry.getValue() > 0){
-          AmcAsset amcAsset =  amcAssetMapper.selectByPrimaryKey(Long.valueOf(entry.getKey()));
-          amcAsset.setVisitCount(entry.getValue().longValue());
+    offset = 0;
+    limit = 20;
+    AmcAssetExample amcAssetExample = new AmcAssetExample();
+    amcAssetExample.setOrderByClause(" id desc ");
+    rowBounds = new RowBounds(offset, limit);
+    List<AmcAsset> amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
+    param = "asset_%s";
+    while (amcAssets != null && !CollectionUtils.isEmpty(amcAssets)){
+      for(AmcAsset amcAsset: amcAssets){
+        String parameter = String.format(param, amcAsset.getId());
+        String url = String.format(getClickCountOneByOneUrl, parameter);
+        ResponseEntity<Long> resp = restTemplate.exchange(url, HttpMethod.GET, null,   Long.class);
+        if(resp != null && resp.getBody() != null && resp.getBody() > 0){
+          amcAsset.setVisitCount(resp.getBody());
           amcAssetMapper.updateByPrimaryKeySelective(amcAsset);
         }
       }
+      offset += limit;
+      rowBounds = new RowBounds(offset, limit);
+      amcAssets = amcAssetMapper.selectByExampleWithRowbounds(amcAssetExample, rowBounds);
     }
+
 
   }
 

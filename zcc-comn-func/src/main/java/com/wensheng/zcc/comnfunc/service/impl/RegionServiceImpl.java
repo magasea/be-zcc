@@ -3,9 +3,10 @@ package com.wensheng.zcc.comnfunc.service.impl;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegion;
 import com.wensheng.zcc.common.module.dto.AmcRegionInfo;
 import com.wensheng.zcc.comnfunc.module.dto.AmcRegionItem;
-import com.wensheng.zcc.comnfunc.module.dto.BaiduResponse;
-import com.wensheng.zcc.comnfunc.module.dto.Response;
+
+import com.wensheng.zcc.comnfunc.module.dto.region.Response;
 import com.wensheng.zcc.comnfunc.service.RegionService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.GsonHttpMessageConverter;
@@ -19,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 @Service
+@Slf4j
 public class RegionServiceImpl implements RegionService {
 
     private RestTemplate restTemplate = null;
@@ -52,12 +54,19 @@ public class RegionServiceImpl implements RegionService {
     public AmcRegionInfo getRegionInfoByLngLat(Double lng, Double lat) {
         String url = String.format(getGeoInfoUrl, String.format("%s,%s", lng,lat));
 
-        Response resp = restTemplate.getForEntity(url, Response.class).getBody();
+        Response resp = null;
+        try{
+            resp = restTemplate.getForEntity(url, Response.class).getBody();
+        }catch (Exception ex){
+            log.error("Failed to get for:{} {}", lng, lat, ex);
+            String respStr = restTemplate.getForEntity(url, String.class).getBody();
+            log.info(respStr);
+        }
         AmcRegionInfo amcRegionInfo = new AmcRegionInfo();
-        amcRegionInfo.setProvName(resp.getResult().getStatsResult().getProvince().get(1));
-        amcRegionInfo.setProvCode(resp.getResult().getStatsResult().getProvince().get(0));
-        amcRegionInfo.setCityName(resp.getResult().getStatsResult().getCity().get(1));
-        amcRegionInfo.setCityCode(resp.getResult().getStatsResult().getCity().get(0));
+        amcRegionInfo.setProvName((String)resp.getResult().getStatsResult().getProvince().get(1));
+        amcRegionInfo.setProvCode(""+((Double)resp.getResult().getStatsResult().getProvince().get(0)).longValue());
+        amcRegionInfo.setCityName((String)resp.getResult().getStatsResult().getCity().get(1));
+        amcRegionInfo.setCityCode(""+((Double)resp.getResult().getStatsResult().getCity().get(0)).longValue());
         return amcRegionInfo;
     }
 }

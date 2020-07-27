@@ -1,4 +1,4 @@
-package com.wensheng.zcc.comnfunc.module.dto;
+package com.wensheng.zcc.comnfunc.module.dto.region;
 
 import java.util.List;
 import com.google.gson.annotations.SerializedName;
@@ -34,17 +34,15 @@ public class AmapResult{
 	@SerializedName("street_number")
 	private String streetNumber;
 
-	@SerializedName("ne_type")
-	private List<Object> neType;
-
+//	@SerializedName("ne_type")
+//	private String neType;
+//
 //	@SerializedName("neighborhood")
-//	private List<Object> neighborhood;
+//	private String neighborhood;
 
 	@SerializedName("township")
 	private String township;
 
 	@SerializedName("lat")
 	private String lat;
-
-
 }

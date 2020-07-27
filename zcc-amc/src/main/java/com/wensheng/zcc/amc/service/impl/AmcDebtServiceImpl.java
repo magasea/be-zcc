@@ -537,7 +537,7 @@ public class AmcDebtServiceImpl implements AmcDebtService {
 
     AmcDebtExample amcDebtExample = new AmcDebtExample();
     amcDebtExample.createCriteria().andPublishStateEqualTo(PublishStateEnum.PUBLISHED.getStatus());
-    StringBuilder stringBuilder = new StringBuilder("has_img desc , visit_count desc limit ");
+    StringBuilder stringBuilder = new StringBuilder(" visit_count desc, has_img desc  limit ");
     stringBuilder.append(" ").append(num).append(" ");
     amcDebtExample.setOrderByClause(stringBuilder.toString());
     List<AmcDebt> amcDebts = amcDebtMapper.selectByExample(amcDebtExample);

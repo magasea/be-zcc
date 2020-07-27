@@ -11,7 +11,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest
 @RunWith(SpringRunner.class)
 @ContextConfiguration
-@ActiveProfiles(value = "dev")
+@ActiveProfiles(value = "preProd")
 public class AmcMiscServiceImplTest {
 
   @Autowired
@@ -25,5 +25,10 @@ public class AmcMiscServiceImplTest {
   @Test
   public void updateHasImgTag() {
     amcMiscService.updateHasImgTag();
+  }
+
+  @Test
+  public void updateClickCountInfoOneByOne() {
+    amcMiscService.updateClickCountInfoOneByOne();
   }
 }

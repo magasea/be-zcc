@@ -860,4 +860,11 @@ public class AmcDebtController {
     amcContactorService.initializeDebtContactor();
   }
 
+
+  @RequestMapping(value = "/syncVisitCount", method = RequestMethod.POST)
+  @ResponseBody
+  public void syncVisitCount() throws Exception {
+    amcMiscService.updateClickCountInfoOneByOne();
+  }
+
 }

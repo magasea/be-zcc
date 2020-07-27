@@ -179,6 +179,7 @@ recom:
   urls:
     getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/?%s
     getTopVisited: http://${env.recmhost}:${env.recmport}/api/suggest/action/operationDetail/realHeatMax/?type=%s&number=%s
+    getClickCountOneByOne: http://${env.recmhost}:${env.recmport}/api/suggest/action/disposalView/frontViewCount?type=15&disposal=%s
 env:
   name: prod
   dbhost: 10.20.100.235
@@ -189,7 +190,7 @@ env:
   kfkhost: 10.20.100.235
   ws-sso-host: 10.20.100.235
   cust-host: 10.20.100.235
-  recmhost: 10.20.100.228
+  recmhost: 10.20.100.236
   recmport: 7654
   mongodb-host: 10.20.100.235
   image-repo: /home/chenwei/temp

@@ -6,6 +6,7 @@ import java.util.Map;
 
 public interface AmcMiscService {
   public void updateClickCountInfo();
+  public void updateClickCountInfoOneByOne();
   void updateHasImgTag();
   void patchAmcDebtAssetContactor();
   void patchPublishDate() throws ParseException;

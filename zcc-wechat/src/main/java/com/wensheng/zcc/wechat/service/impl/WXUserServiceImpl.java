@@ -2,6 +2,7 @@ package com.wensheng.zcc.wechat.service.impl;
 
 import static io.grpc.netty.shaded.io.netty.handler.codec.http.HttpConstants.DEFAULT_CHARSET;
 
+import com.ctc.wstx.util.StringUtil;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
@@ -16,9 +17,9 @@ import com.wensheng.zcc.common.params.AmcDebtAssetTypeEnum;
 import com.wensheng.zcc.common.params.PageInfo;
 import com.wensheng.zcc.common.utils.AmcBeanUtils;
 import com.wensheng.zcc.common.utils.AmcDateUtils;
+import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.AmcNumberUtils;
 import com.wensheng.zcc.common.utils.ExceptionUtils;
-import com.wensheng.zcc.common.utils.AmcExceptions;
 import com.wensheng.zcc.common.utils.GeoUtils;
 import com.wensheng.zcc.wechat.controller.helper.QueryParam;
 import com.wensheng.zcc.wechat.controller.helper.WechatUserSortEnum;
@@ -79,6 +80,7 @@ import javax.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.collections4.ListUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
@@ -101,7 +103,6 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
 
 //import com.mysql.cj.x.protobuf.MysqlxDatatypes.Scalar.String;
@@ -258,6 +259,7 @@ public class WXUserServiceImpl implements WXUserService {
       Iterator<List<String>> iterator = subSets.iterator();
       while(iterator.hasNext()){
         List<String> subSeg = iterator.next();
+        userListReq.getUser_list().clear();
         subSeg.forEach(item-> userListReq.getUser_list().add(new UserIdInfoReq(item, "zh_CN")));
         String url = String.format(getPublicUsersInfoUrl, token );
         HttpHeaders headers = getHttpJsonHeader();
@@ -1356,6 +1358,9 @@ public class WXUserServiceImpl implements WXUserService {
     if(geoJsonPoint != null && regionInfo == null){
       log.info("query again for regionInfo");
       regionInfo = comnfuncGrpcService.getRegionInfo(geoJsonPoint.getCoordinates().get(0), geoJsonPoint.getCoordinates().get(1));
+    }
+    if(userLngLat.getOpenId() == null || StringUtils.isEmpty(userLngLat.getOpenId())){
+      return regionInfo;
     }
     Query query = new Query();
     query.addCriteria(Criteria.where("openId").is(userLngLat.getOpenId()));

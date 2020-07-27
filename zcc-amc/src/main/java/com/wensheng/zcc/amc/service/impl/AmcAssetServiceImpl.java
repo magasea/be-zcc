@@ -1300,11 +1300,23 @@ public class AmcAssetServiceImpl implements AmcAssetService {
       if(filterAsset.getArea().get(0) < filterAsset.getArea().get(1)){
         lowLimit = filterAsset.getArea().get(0)*100;
         highLimit = filterAsset.getArea().get(1)*100;
-      }else{
+        criteria.andBuildingAreaBetween(lowLimit, highLimit);
+      }else if(filterAsset.getArea().get(0) <= -1 && filterAsset.getArea().get(1) > 0){
+        lowLimit = 0L;
+        highLimit = filterAsset.getArea().get(1)*100;
+        criteria.andBuildingAreaBetween(lowLimit, highLimit);
+
+      }else if(filterAsset.getArea().get(1) <= -1 && filterAsset.getArea().get(0) > 0){
+        lowLimit = filterAsset.getArea().get(0)*100;
+
+        criteria.andBuildingAreaGreaterThan(lowLimit);
+      }
+      else {
         highLimit = filterAsset.getArea().get(0)*100;
         lowLimit = filterAsset.getArea().get(1)*100;
+        criteria.andBuildingAreaBetween(lowLimit, highLimit);
       }
-      criteria.andBuildingAreaBetween(lowLimit, highLimit);
+
     }
 
     if(!CollectionUtils.isEmpty(filterAsset.getLandArea())){

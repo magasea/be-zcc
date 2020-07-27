@@ -80,6 +80,9 @@ public class AmcDebtVo {
   private Long origCreditorId;
 
   private String briefDesc;
+
+  private Long visitCount;
+
   private Long updateBy;
 
   private Date updateDate;

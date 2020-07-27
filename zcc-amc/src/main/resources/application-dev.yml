@@ -191,6 +191,7 @@ recom:
   urls:
     getClickCount: http://${env.recmhost}:${env.recmport}/api/suggest/actionDetail/sortedResource/?%s
     getTopVisited: http://${env.recmhost}:${env.recmport}/api/suggest/action/operationDetail/realHeatMax/?type=%s&number=%s
+    getClickCountOneByOne: http://${env.recmhost}:${env.recmport}/api/suggest/action/disposalView/frontViewCount?type=15&disposal=%s
 
 env:
   name: dev

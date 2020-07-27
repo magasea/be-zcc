@@ -1,5 +1,6 @@
 package com.wensheng.zcc.cust.module.vo;
 
+import java.util.Date;
 import java.util.Map;
 import lombok.Data;
 
@@ -14,5 +15,7 @@ public class CustTrdInfoExcelVo {
   Map<String, Integer> intrestCities;
   String phone;
   String address;
-
+  Date updateTime;
+  String cmpyProvince;
+  int custType;
 }

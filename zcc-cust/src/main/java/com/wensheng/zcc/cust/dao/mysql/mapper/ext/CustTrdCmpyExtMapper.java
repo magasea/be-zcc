@@ -16,6 +16,9 @@ public interface CustTrdCmpyExtMapper {
     List<Long> selectByPreFilter(CustTrdCmpyExample example);
     List<Long> selectByPreFilterAllowNoTrd(CustTrdCmpyExample example);
 
+    List<String> selectByPreProvince(CustTrdCmpyExample example);
+    List<String> selectByPreProvinceAllowNoTrd(CustTrdCmpyExample example);
+
     List<CustTrdCmpyTrdExt> selectByFilter(CustTrdCmpyExample example);
 
     Long countByFilter(CustTrdCmpyExample example   );

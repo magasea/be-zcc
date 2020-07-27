@@ -337,6 +337,12 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
+    return convertCmpyToVoes(custTrdCmpyTrdExts);
+  }
+
+  private List<CustTrdCmpyTrdExt> queryCmpy(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
 
     if(CollectionUtils.isEmpty(orderByParam)){
       if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
@@ -345,6 +351,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctc.update_time", Direction.DESC);
+        //近期更新情况，当有updateTime时，latestTime不起作用
+        if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+          queryParam.setLatestStartDay(null);
+          queryParam.setLatestEndDay(null);
+        }
       }
       if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctc.create_time", Direction.DESC);
@@ -353,13 +364,6 @@ public class CustInfoServiceImpl implements CustInfoService {
         orderByParam.put("ctc.update_time", Direction.DESC);
       }
     }
-
-    List<CustTrdCmpyTrdExt> custTrdCmpyTrdExts = queryCmpy(offset, size, queryParam, orderByParam);
-    return convertCmpyToVoes(custTrdCmpyTrdExts);
-  }
-
-  private List<CustTrdCmpyTrdExt> queryCmpy(int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam) throws Exception {
 
     String orderBy = SQLUtils.getOrderBy(orderByParam);
 //   CustTrdCmpyExtExample custTrdCmpyExtExample = SQLUtils.getCustCmpyTrdExample(queryParam);
@@ -414,6 +418,37 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdCmpyTrdExtNewList.add(cmpyTrdExtMap.get(id));
     }
     return custTrdCmpyTrdExtNewList;
+  }
+
+  @Override
+  public List<String> queryCmpyProvince(QueryParam queryParam) throws Exception {
+
+    CustTrdCmpyExtExample custTrdCmpyExtExample = new CustTrdCmpyExtExample();
+    String whereClause = SQLUtils.getTrdCmpyExtWhereClause(queryParam);
+    if(!StringUtils.isEmpty(whereClause)){
+      custTrdCmpyExtExample.setWhereClause(whereClause);
+    }
+    String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
+    List<String> preCmpyProvince = new ArrayList<>();
+    if(!StringUtils.isEmpty(filterBy)){
+      custTrdCmpyExtExample.setFilterByClause(filterBy);
+      preCmpyProvince =
+          custTrdCmpyExtMapper.selectByPreProvince(custTrdCmpyExtExample);
+      log.info("preCmpyProvince:{}", gson.toJson(preCmpyProvince));
+
+    }else{
+      if(queryParam.isAllowNoTrd()){
+        preCmpyProvince =
+            custTrdCmpyExtMapper.selectByPreProvinceAllowNoTrd(custTrdCmpyExtExample);
+      }else{
+        preCmpyProvince =
+            custTrdCmpyExtMapper.selectByPreProvince(custTrdCmpyExtExample);
+      }
+      log.info("preCmpyProvince:{}", gson.toJson(preCmpyProvince));
+    }
+    preCmpyProvince.remove("-1");
+    preCmpyProvince.remove("");
+    return preCmpyProvince;
   }
 
 
@@ -485,11 +520,16 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       custTrdInfoExcelVo.setAddress(sbAddress.toString());
       custTrdInfoExcelVo.setCustName(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyName());
-      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
-        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()).append(";");
-      }
-      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
-        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone());
+      if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhoneUpdate()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhoneUpdate().equals("-1")){
+        sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhoneUpdate()).append(";");
+      }else {
+//        if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone().equals("-1")){
+//          sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone()).append(";");
+//        }
+//        if(!StringUtils.isEmpty(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()) && !custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone().equals("-1")){
+//          sbPhone.append(custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone());
+//        }
+        sbPhone.append(creatPhonePrep(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyPhone(), custTrdCmpyTrdExt.getCustTrdCmpy().getAnnuReptPhone()));
       }
       custTrdInfoExcelVo.setPhone(sbPhone.toString());
       custTrdInfoExcelVo.setTrdCount(custTrdCmpyTrdExt.getCustTrdInfoList().size());
@@ -550,6 +590,9 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setTrdTotalAmount(trdTotalAmount > 0? trdTotalAmount/100:-1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoExcelVo.setUpdateTime(custTrdCmpyTrdExt.getCustTrdCmpy().getUpdateTime());
+      custTrdInfoExcelVo.setCmpyProvince(custTrdCmpyTrdExt.getCustTrdCmpy().getCmpyProvince());
+      custTrdInfoExcelVo.setCustType(CustTypeEnum.COMPANY.getId());
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
     }
 
@@ -558,6 +601,13 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public Long getCmpyTradeCount(QueryParam queryParam) {
+    if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      //近期更新情况，当有updateTime时，latestTime不起作用
+      if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+        queryParam.setLatestStartDay(null);
+        queryParam.setLatestEndDay(null);
+      }
+    }
 
 //    CustTrdCmpyExample custTrdCmpyExample = SQLUtils.getCustCmpyTrdExample(queryParam);
 //    CustTrdCmpyExample custTrdCmpyExample = new CustTrdCmpyExample();
@@ -588,6 +638,12 @@ public class CustInfoServiceImpl implements CustInfoService {
   @Override
   public List<CustTrdInfoVo> queryPersonTradePage(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception {
+    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
+    return convertPersonToVoes(custTrdPersonTrdExts);
+  }
+
+  private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
+      Map<String, Direction> orderByParam) throws Exception {
 
     if(CollectionUtils.isEmpty(orderByParam)){
       if(SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())){
@@ -596,6 +652,11 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
       if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctp.update_time", Direction.DESC);
+        //近期更新情况，当有updateTime时，latestTime不起作用
+        if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+          queryParam.setLatestStartDay(null);
+          queryParam.setLatestEndDay(null);
+        }
       }
       if(SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())){
         orderByParam.put("ctp.create_time", Direction.DESC);
@@ -605,12 +666,6 @@ public class CustInfoServiceImpl implements CustInfoService {
       }
     }
 
-    List<CustTrdPersonTrdExt> custTrdPersonTrdExts = queryPerson(offset, size, queryParam, orderByParam);
-    return convertPersonToVoes(custTrdPersonTrdExts);
-  }
-
-  private List<CustTrdPersonTrdExt> queryPerson(int offset, int size, QueryParam queryParam,
-      Map<String, Direction> orderByParam) throws Exception {
     String orderBy = SQLUtils.getOrderBy(orderByParam);
     CustTrdPersonExtExample custTrdPersonExtExample = SQLUtils.getCustPersonTrdExample(queryParam);
     //使用whereClause因为无法对两个表有相同字段做筛选
@@ -711,9 +766,22 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setCustId(custTrdPersonTrdExt.getId());
       custTrdInfoExcelVo.setAddress(String.format("%s",custTrdPersonTrdExt.getCustTrdPerson().getAddr()));
       custTrdInfoExcelVo.setCustName(custTrdPersonTrdExt.getCustTrdPerson().getName());
-      custTrdInfoExcelVo.setPhone(String.format("%s;%s",
-          custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep(),
-          custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep()));
+      StringBuffer sbPhone = new StringBuffer();
+      if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate())){
+        sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getPhoneUpdate());
+      }else {
+        if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep())){
+          sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getPhonePrep());
+        }
+      }
+      if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getMobileUpdate())){
+        sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getMobileUpdate());
+      }else {
+        if(checkPhoneEmpty(custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep())){
+          sbPhone.append(custTrdPersonTrdExt.getCustTrdPerson().getMobilePrep());
+        }
+      }
+      custTrdInfoExcelVo.setPhone(sbPhone.toString());
       custTrdInfoExcelVo.setTrdCount(custTrdPersonTrdExt.getCustTrdInfoList().size());
       Long debtTotalAmount = 0L;
       Long trdTotalAmount = 0L;
@@ -756,6 +824,7 @@ public class CustInfoServiceImpl implements CustInfoService {
       custTrdInfoExcelVo.setTrdTotalAmount( trdTotalAmount > 0? trdTotalAmount/100: -1);
       custTrdInfoExcelVo.setIntrestCities(city2Counts);
       custTrdInfoExcelVo.setInvestType2Counts(invest2Counts);
+      custTrdInfoExcelVo.setUpdateTime(custTrdPersonTrdExt.getCustTrdPerson().getUpdateTime());
       custTrdInfoExcelVos.add(custTrdInfoExcelVo);
     }
 
@@ -765,10 +834,16 @@ public class CustInfoServiceImpl implements CustInfoService {
 
   @Override
   public Long getPersonTradeCount(QueryParam queryParam) {
+    if(SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())){
+      //近期更新情况，当有updateTime时，latestTime不起作用
+      if(!StringUtils.isEmpty(queryParam.getUpdateStartDay()) || !StringUtils.isEmpty(queryParam.getUpdateEndDay())){
+        queryParam.setLatestStartDay(null);
+        queryParam.setLatestEndDay(null);
+      }
+    }
+
     CustTrdPersonExample custTrdPersonExample = SQLUtils.getCustPersonTrdExample(queryParam);
-
     Long queryResult = -1L;
-
     String filterBy = SQLUtils.getFilterByForCustTrd(queryParam);
 //    filterBy = filterBy + " and ctp.mobile_num > -1 ";
     CustTrdPersonExtExample custTrdPersonExtExample = new CustTrdPersonExtExample();
@@ -949,6 +1024,15 @@ public class CustInfoServiceImpl implements CustInfoService {
     }
     return sbPhoneNew.toString();
   }
+
+  private Boolean checkPhoneEmpty (String phone){
+    if((!"-1".equals(phone) && !"暂无信息".equals(phone)) && !StringUtils.isEmpty(phone)
+        && !"-".equals(phone)){
+      return true;
+    }
+    return false;
+  }
+
 
   private List<CustTrdInfoVo> convertPersonToVoes(List<CustTrdPersonTrdExt> custTrdPersonTrdExtList) {
     List<CustTrdInfoVo> custTrdInfoVos = new ArrayList<>();

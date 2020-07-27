@@ -207,7 +207,59 @@ public class CustInfoController {
 
 //    Page<AmcAssetVo> page = PageReqRepHelper.getPageResp(totalCount, queryResults, assetQueryParam.getPageInfo());
     return PageReqRepHelper.getAmcPage(queryResults, totalCount );
+  }
 
+  @PreAuthorize("hasAnyRole('AMC_LOCAL_VISITOR','SYSTEM_ADMIN','CO_ADMIN') or hasPermission(null, 'PERM_INVCUST_VIEW')")
+  @QueryValidCmpy
+  @RequestMapping(value = "/getCmpyProvince", method = RequestMethod.POST)
+  @ResponseBody
+  @LogExecutionTime
+  public List<String> getCmpyProvince(@RequestBody QueryParam queryParam) throws Exception {
+
+    List<String> queryResults = null;
+    try{
+      if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+        queryResults = custInfoService.queryCmpyProvince( queryParam);
+      }
+    }catch (Exception ex){
+      log.error("got error when query:"+ex.getMessage());
+      throw ex;
+    }
+
+    return queryResults;
+  }
+
+  //  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
+  @RequestMapping(value = "/export", method = RequestMethod.POST)
+  @QueryValidCmpy
+  public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
+    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
+
+    List<String> cmpyProvinceList = null;
+    if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      cmpyProvinceList = custInfoService.queryCmpyProvince( queryParam);
+    }
+
+    List<CustTrdInfoExcelVo> queryResults = null;
+    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
+    int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
+
+    if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
+      queryResults = custInfoService.queryCmpyTrade(offset, size, queryParam, orderByParam);
+    }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
+      queryResults = custInfoService.queryPersonTrade(offset, size, queryParam, orderByParam);
+    }
+
+    File output = excelGenerator.customersToExcel(queryResults, cmpyProvinceList);
+    Resource resource = new UrlResource(output.toPath().toUri());
+    if(resource.exists()) {
+      return ResponseEntity.ok()
+          .contentType(MediaType.parseMediaType("application/octet-stream"))
+          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+          .body(resource);
+    } else {
+      throw new Exception("File not found " + output.toPath());
+    }
   }
 
 
@@ -273,91 +325,61 @@ public class CustInfoController {
   @LogExecutionTime
   public CustCountVo getCustCount(@RequestBody QueryParam queryParam) throws Exception {
     CustCountVo custCountVo = new CustCountVo();
+    QueryParam queryParamNew = new QueryParam ();
+    queryParamNew.setSelectCustType(queryParam.getSelectCustType());
+    queryParamNew.setLatestStartDay(queryParam.getLatestStartDay());
+    queryParamNew.setLatestEndDay(queryParam.getLatestEndDay());
+
     //查询所有SelectCustTypeEnum
-    queryParam.setSelectCustType(SelectCustTypeEnum.ALL.getEname());
-    Long allCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    queryParamNew.setSelectCustType(SelectCustTypeEnum.ALL.getEname());
+    Long allCmpycount = custInfoService.getCmpyTradeCount(
+        SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setAllCmpycount(allCmpycount);
-    Long allPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    Long allPersonCount = custInfoService.getPersonTradeCount(
+        SelectCustTypeEnum.ALL.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setAllPersonCount(allPersonCount);
 
     //查询最新更新
-    queryParam.setSelectCustType(SelectCustTypeEnum.UPDATE.getEname());
-    Long updateCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    queryParamNew.setSelectCustType(SelectCustTypeEnum.UPDATE.getEname());
+    Long updateCmpycount = custInfoService.getCmpyTradeCount(
+        SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setUpdateCmpycount(updateCmpycount);
-    Long updatePersonCount = custInfoService.getPersonTradeCount(queryParam);
+    Long updatePersonCount = custInfoService.getPersonTradeCount(
+        SelectCustTypeEnum.UPDATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setUpdatePersonCount(updatePersonCount);
 
     //最近新增
-    queryParam.setSelectCustType(SelectCustTypeEnum.CREATE.getEname());
-    Long creatCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+    queryParamNew.setSelectCustType(SelectCustTypeEnum.CREATE.getEname());
+    Long creatCmpycount = custInfoService.getCmpyTradeCount(
+        SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setCreatCmpycount(creatCmpycount);
-    Long creatPersonCount = custInfoService.getPersonTradeCount(queryParam);
+    Long creatPersonCount = custInfoService.getPersonTradeCount(
+        SelectCustTypeEnum.CREATE.getEname().equals(queryParam.getSelectCustType())?queryParam:queryParamNew
+    );
     custCountVo.setCreatPersonCount(creatPersonCount);
 
-    //最近交易联系人
-    queryParam.setSelectCustType(SelectCustTypeEnum.TRADE.getEname());
-    Long tradeCmpycount = custInfoService.getCmpyTradeCount(queryParam);
-    custCountVo.setTradeCmpycount(tradeCmpycount);
-    Long tradePersonCount = custInfoService.getPersonTradeCount(queryParam);
-    custCountVo.setTradePersonCount(tradePersonCount);
+//    //最近交易联系人
+//    queryParam.setSelectCustType(SelectCustTypeEnum.TRADE.getEname());
+//    Long tradeCmpycount = custInfoService.getCmpyTradeCount(queryParam);
+//    custCountVo.setTradeCmpycount(tradeCmpycount);
+//    Long tradePersonCount = custInfoService.getPersonTradeCount(queryParam);
+//    custCountVo.setTradePersonCount(tradePersonCount);
 
     //最近交易数量
-    queryParam.setCustType(2);
-    Long cmpyTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    queryParamNew.setCustType(2);
+    Long cmpyTradInfoCount = custInfoService.cmpyTradInfoCount(queryParamNew);
     custCountVo.setCmpyTradInfoCount(cmpyTradInfoCount);
-    queryParam.setCustType(1);
-    Long presonTradInfoCount = custInfoService.cmpyTradInfoCount(queryParam);
+    queryParamNew.setCustType(1);
+    Long presonTradInfoCount = custInfoService.cmpyTradInfoCount(queryParamNew);
     custCountVo.setPresonTradInfoCount(presonTradInfoCount);
 
     return custCountVo;
   }
-
-
-
-
-
-//  @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_AMC_VISITOR')")
-  @RequestMapping(value = "/export", method = RequestMethod.POST)
-  public ResponseEntity<Resource> excelCustomersReport(@RequestBody QueryParam queryParam) throws Exception {
-    Map<String, Direction> orderByParam = PageReqRepHelper.getOrderParam(queryParam.getPageInfo());
-
-    List<CustTrdInfoExcelVo> queryResults = null;
-    int offset = PageReqRepHelper.getOffset(queryParam.getPageInfo());
-    int size = queryParam.getExportSize() > 0 ? queryParam.getExportSize() : queryParam.getPageInfo().getSize();
-
-
-      if(queryParam.getCustType() == CustTypeEnum.COMPANY.getId()){
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctc.data_quality", Direction.DESC);
-          orderByParam.put("ctc.id", Direction.DESC);
-        }
-
-        queryResults = custInfoService.queryCmpyTrade(offset, size, queryParam,
-            orderByParam);
-      }else if(queryParam.getCustType() == CustTypeEnum.PERSON.getId()){
-
-        if(CollectionUtils.isEmpty(orderByParam)){
-          orderByParam.put("ctp.data_quality", Direction.DESC);
-          orderByParam.put("ctp.id", Direction.DESC);
-        }
-        queryResults = custInfoService.queryPersonTrade(offset, size, queryParam,
-            orderByParam);
-      }
-
-    File output = excelGenerator.customersToExcel(queryResults);
-    Resource resource = new UrlResource(output.toPath().toUri());
-    if(resource.exists()) {
-      return ResponseEntity.ok()
-          .contentType(MediaType.parseMediaType("application/octet-stream"))
-          .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-          .body(resource);
-    } else {
-      throw new Exception("File not found " + output.toPath());
-    }
-
-
-  }
-
 
   @PreAuthorize("hasAnyRole('ROLE_AMC_LOCAL_VISITOR','ROLE_SYSTEM_ADMIN', 'ROLE_CO_ADMIN') or hasPermission(null, "
       + "'PERM_INVCUST_VIEW')")

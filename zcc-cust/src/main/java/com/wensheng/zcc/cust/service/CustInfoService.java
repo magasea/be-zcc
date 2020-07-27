@@ -36,6 +36,8 @@ public interface CustInfoService {
   List<CustTrdInfoVo> queryCmpyTradePage(int offset, int size, QueryParam queryParam, Map<String, Direction> orderByParam)
       throws Exception;
 
+  List<String> queryCmpyProvince(QueryParam queryParam) throws Exception;
+
   List<CustTrdInfoExcelVo> queryCmpyTrade(int offset, int size, QueryParam queryParam,
       Map<String, Direction> orderByParam) throws Exception;
 

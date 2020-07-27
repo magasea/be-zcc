@@ -361,11 +361,12 @@ public class AmcAspect {
     }else{
       return joinPoint.proceed(joinPoint.getArgs());
     }
-
-    if(title.equals(AmcSSOTitleEnum.TITLE_MGR.getId())||title.equals(AmcSSOTitleEnum.TITLE_SYS_ADM.getId())){
+    //两个级别不做限制
+    if(title.equals(AmcSSOTitleEnum.TITLE_MGR.getId())
+        ||title.equals(AmcSSOTitleEnum.TITLE_SYS_ADM.getId())){
       return joinPoint.proceed(joinPoint.getArgs());
+    //业务部门做限制
     }else if(deptId.equals(AmcDeptEnum.BUSINESS_DEPT.getId())){
-
         if(CollectionUtils.isEmpty(queryParam.getCustCity())){
           queryParam.setCustCity(amcUserProvsMap.get(location));
         }else{

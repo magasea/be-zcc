@@ -170,7 +170,7 @@ env:
     comnfuncport: 10006
     aliyunrpcport: 5444
     image-repo: /backup/temp
-    regionhost: 10.20.100.252
+    regionhost: 10.20.200.88
     regionport: 5050
     amaphost: 10.20.200.100
     amapport: 5050

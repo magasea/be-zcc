@@ -234,7 +234,7 @@
         <module>zcc-log</module>
         <module>zcc-common</module>
       <module>zcc-comn-func</module>
-        <module>zcc-comn-service</module>
+      <!--        <module>zcc-comn-service</module> -->
     </modules>
     <build>
         <extensions>
